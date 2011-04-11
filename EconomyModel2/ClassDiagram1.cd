@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EconomyModel2.CFactory">
+    <Position X="3.25" Y="2.75" Width="1.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>BAAAAAEIAAAAAABAAAQAACCAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>CFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EconomyModel2.CGatheringCompany">
+    <Position X="3.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CGatheringCompany.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EconomyModel2.CManufacturingFactory">
+    <Position X="5.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CManufacturingFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EconomyModel2.CTradingCompany">
+    <Position X="7.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>DAAAAAAIAgCQAAABAEAAAAQgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CTradingCompany.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Offers" />
+      <Property Name="Demands" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="EconomyModel2.CTradingRecord">
+    <Position X="10" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAMAACAAQAIAAAAAAQAAIQAAAAAAAAQAAAAAAQCACA=</HashCode>
+      <FileName>CTradingRecord.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Goods" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EconomyModel2.CTradersLeague">
+    <Position X="7.25" Y="7.75" Width="1.5" />
+    <NestedTypes>
+      <Class Name="EconomyModel2.CTradersLeague.PricesTable" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CTradersLeague.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAAAAAQAAAAEAAAAQAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>CTradersLeague.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Filials" />
+      <Property Name="Routes" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="EconomyModel2.CStock">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAggAAAAAgAAAAAQBAACA=</HashCode>
+      <FileName>CStock.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EconomyModel2.CWorld">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>BgAAAMAIAAAAgAAoEAACAICBgAEAAAAAEGAQABBAYAA=</HashCode>
+      <FileName>CWorld.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Stock" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Factories" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="EconomyModel2.CUniverse">
+    <Position X="0.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAAAAABBAAIQAAAAAEAEAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>CUniverse.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TradersLeague" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Worlds" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="EconomyModel2.CTradingRoute">
+    <Position X="9.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAIAAAAAQAAAAAAAAgAACAAAAAAAAAAIAAIACCCQ=</HashCode>
+      <FileName>CTradingRoute.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Seller" />
+      <Property Name="Byer" />
+    </ShowAsAssociation>
+  </Class>
+  <Enum Name="EconomyModel2.Goods" Collapsed="true">
+    <Position X="7" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAADAACBAAABAQAAAAIAIAgAAAAgmEAAACkEACAA=</HashCode>
+      <FileName>Goods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

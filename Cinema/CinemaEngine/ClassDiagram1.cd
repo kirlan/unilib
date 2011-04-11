@@ -1,0 +1,386 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CinemaEngine.Action" Collapsed="true">
+    <Position X="12" Y="7.25" Width="1.5" />
+    <AssociationLine Name="Roles" Type="CinemaEngine.Role" FixedToPoint="true">
+      <Path>
+        <Point X="12.5" Y="7.25" />
+        <Point X="12.5" Y="4.772" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Tags" Type="CinemaEngine.GenreTag" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.062" Y="7.25" />
+        <Point X="13.062" Y="6.173" />
+        <Point X="14.5" Y="6.173" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQAABQAAAAgAEAAAAAAAAQAAiAAAEAgAAAAgAEAAAA=</HashCode>
+      <FileName>Universe\Action.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Roles" />
+      <Property Name="Tags" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Actor" Collapsed="true">
+    <Position X="2.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>World\Actor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.Character" Collapsed="true">
+    <Position X="5" Y="5.75" Width="1.5" />
+    <AssociationLine Name="Performer" Type="CinemaEngine.Actor" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.625" Y="5.75" />
+        <Point X="5.625" Y="5.375" />
+        <Point X="3.5" Y="5.375" />
+        <Point X="3.5" Y="5.75" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQEAAAAAAAQAACAAAAIBAQAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenario\Character.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Performer" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Episode" Collapsed="true">
+    <Position X="5" Y="7.25" Width="1.5" />
+    <AssociationLine Name="Location" Type="CinemaEngine.Location" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="7.772" />
+        <Point X="5.75" Y="9.875" />
+        <Point X="3.438" Y="9.875" />
+        <Point X="3.438" Y="10.25" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Roles" Type="CinemaEngine.CharacterState" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="7.25" />
+        <Point X="5.75" Y="6.961" />
+        <Point X="7.688" Y="6.961" />
+        <Point X="7.688" Y="6.272" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.11" Y="0.386" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAgABAAAAAAAACAgQIAAAAAAiAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Scenario\Episode.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Location" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Roles" />
+      <Property Name="Scenes" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.EquipmentSlot" Collapsed="true">
+    <Position X="12" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Universe\EquipmentSlot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.FurnitureTemplate" Collapsed="true">
+    <Position X="12" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAgAAAAAAAAAAAAAAQAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Universe\Furniture\FurnitureTemplate.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Anchors" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.FurnitureAnchor" Collapsed="true">
+    <Position X="14.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Universe\Furniture\FurnitureAnchor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.GenreTag" Collapsed="true">
+    <Position X="14.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAQAAAAAAAAAQAAAAAAQIAAAAAAEQACAAAAEAQAA=</HashCode>
+      <FileName>Universe\GenreTag.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.Item" Collapsed="true">
+    <Position X="7.25" Y="4.25" Width="1.5" />
+    <AssociationLine Name="CouldBeEquipped" Type="CinemaEngine.EquipmentSlot" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.062" Y="4.25" />
+        <Point X="8.062" Y="1.813" />
+        <Point X="12" Y="1.813" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAIAAAAAAAAAQAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>World\Item.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="CouldBeEquipped" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Location" Collapsed="true">
+    <Position X="2.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAABAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>World\Location.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Scenery" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Universe" Collapsed="true">
+    <Position X="19.25" Y="7.25" Width="1.5" />
+    <AssociationLine Name="Actions" Type="CinemaEngine.Action">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.162" Y="0.125" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Tags" Type="CinemaEngine.GenreTag" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="19.25" Y="7.5" />
+        <Point X="18.875" Y="7.5" />
+        <Point X="18.875" Y="6" />
+        <Point X="16" Y="6" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Instance" Type="CinemaEngine.Universe" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="20.75" Y="7.625" />
+        <Point X="21" Y="7.625" />
+        <Point X="21" Y="7.375" />
+        <Point X="20.75" Y="7.375" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAoAAAAEEEAAAAQAAgAIAAQEAAQAAAAAFAAAA=</HashCode>
+      <FileName>Universe\Universe.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Instance" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Actions" />
+      <Property Name="Tags" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Role" Collapsed="true">
+    <Position X="12" Y="4.25" Width="1.5" />
+    <AssociationLine Name="Conditions" Type="CinemaEngine.RoleConditions.RoleCondition" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.312" Y="4.772" />
+        <Point X="13.312" Y="5.147" />
+        <Point X="15.25" Y="5.147" />
+        <Point X="15.25" Y="4.772" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Consequences" Type="CinemaEngine.RoleConditions.RoleCondition" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.312" Y="4.25" />
+        <Point X="13.312" Y="3.856" />
+        <Point X="14.844" Y="3.856" />
+        <Point X="14.844" Y="4.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAQAAAABAAAAQAAEAAAAAAAAACAAEQAAA=</HashCode>
+      <FileName>Universe\Role.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Conditions" />
+      <Property Name="Consequences" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Scenario" Collapsed="true">
+    <Position X="0.5" Y="7.25" Width="1.5" />
+    <AssociationLine Name="Roles" Type="CinemaEngine.Character" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.312" Y="7.25" />
+        <Point X="1.312" Y="6.875" />
+        <Point X="5.312" Y="6.875" />
+        <Point X="5.312" Y="6.272" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.084" Y="0.086" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAACAAAQAAiAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenario\Scenario.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Episodes" />
+      <Property Name="Roles" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Scene" Collapsed="true">
+    <Position X="7.25" Y="7.25" Width="1.5" />
+    <AssociationLine Name="Roles" Type="CinemaEngine.CharacterState" FixedFromPoint="true">
+      <Path>
+        <Point X="8" Y="7.25" />
+        <Point X="8" Y="6.272" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.657" Y="0.592" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAABCAIAAAAAAAAAAAAABAAqIAAAAAAAACAIAAAAQ=</HashCode>
+      <FileName>Scenario\Scene.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Actions" />
+      <Property Name="Roles" />
+      <Property Name="Furniture" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.RoleConditions.BindingsCondition" Collapsed="true">
+    <Position X="14.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAgIAAAACAAAAAAIAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Universe\RoleConditions\BindingsCondition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.RoleConditions.GenderCondition" Collapsed="true">
+    <Position X="16.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAQAIAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Universe\RoleConditions\GenderCondition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.RoleConditions.PoseCondition" Collapsed="true">
+    <Position X="12.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAABCAAAAAEIAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Universe\RoleConditions\PoseCondition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.RoleConditions.RoleCondition" Collapsed="true">
+    <Position X="14.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Universe\RoleConditions\RoleCondition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CinemaEngine.ActionCast" Collapsed="true">
+    <Position X="9.75" Y="7.25" Width="1.5" />
+    <AssociationLine Name="Action" Type="CinemaEngine.Action">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.006" Y="-0.279" Height="0.161" Width="0.701" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Roles" Type="CinemaEngine.CharacterState">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.084" Y="0.138" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABiAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Scenario\ActionCast.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Action" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Roles" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.CharacterState" Collapsed="true">
+    <Position X="7.25" Y="5.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="CinemaEngine.CharacterState.Pose" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Scenario\CharacterState.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <AssociationLine Name="Character" Type="CinemaEngine.Character" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.438" Y="5.75" />
+        <Point X="7.438" Y="5.375" />
+        <Point X="6.094" Y="5.375" />
+        <Point X="6.094" Y="5.75" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.074" Y="0.136" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Equipment" Type="CinemaEngine.Item" FixedFromPoint="true">
+      <Path>
+        <Point X="7.688" Y="5.75" />
+        <Point X="7.688" Y="4.772" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Inventory" Type="CinemaEngine.Item">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.931" Y="0.11" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Anchor" Type="CinemaEngine.Furniture" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.312" Y="6.272" />
+        <Point X="8.312" Y="7" />
+        <Point X="9" Y="7" />
+        <Point X="9" Y="9" />
+        <Point X="8.75" Y="9" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAgAAEgAAIAAAAAAABAAAQBAAAAAAAAAEBAAiAgCAA=</HashCode>
+      <FileName>Scenario\CharacterState.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Character" />
+      <Property Name="Anchor" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Equipment" />
+      <Property Name="Inventory" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CinemaEngine.Furniture" Collapsed="true">
+    <Position X="7.25" Y="8.75" Width="1.5" />
+    <AssociationLine Name="Template" Type="CinemaEngine.FurnitureTemplate" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8" Y="9.272" />
+        <Point X="8" Y="9.869" />
+        <Point X="12.312" Y="9.869" />
+        <Point X="12.312" Y="10.25" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Characters" Type="CinemaEngine.CharacterState" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.75" Y="9" />
+        <Point X="9" Y="9" />
+        <Point X="9" Y="7" />
+        <Point X="8.312" Y="7" />
+        <Point X="8.312" Y="6.272" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.035" Y="0.071" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAABAAAAAAAAAAAAAAAQAAAAAAAAQ=</HashCode>
+      <FileName>Scenario\Furniture.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Template" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Characters" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Trebuchet MS" Size="9" />
+</ClassDiagram>

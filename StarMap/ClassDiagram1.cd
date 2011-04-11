@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="StarMap.CStar">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAIA=</HashCode>
+      <FileName>CStar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StarMap.CStarsMap">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAEAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>CStarsMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StarMap.CRace">
+    <Position X="4.5" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="StarMap.CRace.TechLevel" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CRace.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="StarMap.CRace.Extraversion" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CRace.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAABAEIBAUAAAAEQAAgGgYAAQAEAAAAAAIAQACAAAA=</HashCode>
+      <FileName>CRace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StarMap.CUniverse">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAABAAQAAAAAEAAAAAACAAAAAQAAAAAAgAAA=</HashCode>
+      <FileName>CUniverse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StarMap.CWorld">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="StarMap.CWorld.WorldType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CWorld.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="StarMap.CWorld.WorldProduction" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CWorld.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="StarMap.CWorld.Resources" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CWorld.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAMAABAgAAEABQAAAIAAIAIDEAAgAACAAAgAAA=</HashCode>
+      <FileName>CWorld.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>
