@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SS30Conf.CLeisure">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CLeisure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.CWorld">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAIAAAAAAIIAAAAAAAAAAAAgAAAE=</HashCode>
+      <FileName>CWorld.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.Actions.CAction">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAQAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Actions\CAction.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_pSkillUsed" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SS30Conf.CSkill">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CSkill.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.Actions.CReaction">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAIAAAAAAQAAA=</HashCode>
+      <FileName>Actions\CReaction.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="m_cConditions" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="SS30Conf.Actions.Conditions.CReactionCondition">
+    <Position X="3.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Actions\Conditions\CReactionCondition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.Actions.Commands.CCommand">
+    <Position X="8" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Actions\Commands\CCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.Actions.Conditions.CReactionConditionSkill">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAQAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAE=</HashCode>
+      <FileName>Actions\Conditions\CReactionConditionSkill.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_pSkill" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SS30Conf.Actions.Conditions.CReactionConditionItem">
+    <Position X="3.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAABAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Actions\Conditions\CReactionConditionItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.Actions.Commands.CCommandChangeSkill">
+    <Position X="6.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAABAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Actions\Commands\CCommandChangeSkill.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_pSkill" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SS30Conf.Actions.Commands.CCommandChangeStat">
+    <Position X="8.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACQAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Actions\Commands\CCommandChangeStat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.CRoom">
+    <Position X="10.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>CRoom.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SS30Conf.Actions.Commands.CCommandBuildRoom">
+    <Position X="10.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Actions\Commands\CCommandBuildRoom.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_pRoom" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SS30Conf.CMaidStat">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>CMaidStat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SS30Conf.MaidStats" Collapsed="true">
+    <Position X="6" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAIAABAABAAAAAAAACAAAAAAAAAEAgAQAQAAAAAAA=</HashCode>
+      <FileName>CMaidStat.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Trebuchet MS" Size="9" />
+</ClassDiagram>
