@@ -710,50 +710,8 @@ namespace VQMapTest2
             return cRoadLine;
         }
 
-        private static Pen s_DarkGrey3Pen = new Pen(Color.DarkGray, 3);
-
-        private void DrawPathLine(Graphics gr, List<Point> cPathLine, bool bBack, int iRoadLevel, Pen pPen)
+        private void DrawPathLine(Graphics gr, List<Point> cPathLine, Pen pPen)
         {
-            if (bBack)
-            {
-                switch (iRoadLevel)
-                {
-                    case 1:
-                        return;
-                    //pPen = new Pen(Color.Silver, 1);
-                    //pPen.DashStyle = DashStyle.Dot;
-                    //break;
-                    case 2:
-                        return;
-                    //pPen = new Pen(Color.Silver, 3);
-                    //break;
-                    case 3:
-                        pPen = s_DarkGrey3Pen;
-                        break;
-                }
-            }
-            else
-            {
-                switch (iRoadLevel)
-                {
-                    case 0:
-                        pPen.Width = 5;
-                        pPen.DashPattern = new float[] { 2, 1 };
-                        break;
-                    case 1:
-                        //pPen = new Pen(Color.Black, 1);
-                        pPen.DashPattern = new float[] { 1, 2 };
-                        break;
-                    case 2:
-                        //pPen = new Pen(Color.Black, 1);
-                        //pPen.DashStyle = DashStyle.Dash;
-                        break;
-                    case 3:
-                        pPen.Width = 2;
-                        break;
-                }
-            }
-
             if (m_bUseCurves)
                 gr.DrawCurve(pPen, cPathLine.ToArray());
             else
@@ -770,34 +728,79 @@ namespace VQMapTest2
 
         public void AddPath(TransportationNode[] aPath, Color pColor)
         {
-            m_cPaths[aPath] = new Pen(pColor, 1);
+            Pen pPen = new Pen(pColor, 5);
+            pPen.DashPattern = new float[] {2, 3};
+            m_cPaths[aPath] = pPen;
             DrawMap();
         }
 
+        private static Pen s_DarkGrey3Pen = new Pen(Color.DarkGray, 3);
+        private static Pen s_pAqua2Pen = new Pen(Color.Aqua, 2);
+        private static Pen s_pAqua1Pen = new Pen(Color.Aqua, 1);
+        private static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
+
         private void DrawRoad(Graphics gr, TransportationLink pRoad, bool bBack)
         {
+            Pen pPen = Pens.Black;
+
+            if (bBack)
+            {
+                if (pRoad.m_bSea || pRoad.m_bEmbark)
+                    return;
+
+                if (pRoad.RoadLevel != 3)
+                    return;
+
+                pPen = s_DarkGrey3Pen;
+            }
+            else
+            {
+                switch (pRoad.RoadLevel)
+                {
+                    case 1:
+                        if (pRoad.m_bSea || pRoad.m_bEmbark)
+                            pPen = s_pAqua1Pen;
+                        else
+                            pPen = s_pBlack1Pen;
+                        pPen.DashPattern = new float[] { 1, 2 };
+                        break;
+                    case 2:
+                        if (pRoad.m_bSea || pRoad.m_bEmbark)
+                            pPen = s_pAqua1Pen;
+                        else
+                            pPen = s_pBlack1Pen;
+                        break;
+                    case 3:
+                        if (pRoad.m_bSea || pRoad.m_bEmbark)
+                            pPen = s_pAqua2Pen;
+                        else
+                            pPen = s_pBlack2Pen;
+                        break;
+                }
+            }
+
             if (pRoad.RoadLevel > 0)
-                DrawTransportationLink(gr, pRoad, (pRoad.m_bSea || pRoad.m_bEmbark) ? false : bBack, pRoad.RoadLevel, (pRoad.m_bSea || pRoad.m_bEmbark) ? Pens.Aqua : Pens.Black);
+                DrawTransportationLink(gr, pRoad, pPen);
         }
 
-        private void DrawTransportationLink(Graphics gr, TransportationLink pRoad, bool bBack, int iLevel, Pen pPen)
+        private void DrawTransportationLink(Graphics gr, TransportationLink pRoad, Pen pPen)
         {
             bool bCross;
             List<Point> cPathLine = BuildPathLine(pRoad, 0, out bCross);
 
-            DrawPathLine(gr, cPathLine, bBack, iLevel, pPen);
+            DrawPathLine(gr, cPathLine, pPen);
             
             if (m_pWorld.m_cGrid.m_bCycled && bCross)
             {
                 if (pRoad.m_aPoints[0].X > 0)
                 {
                     cPathLine = BuildPathLine(pRoad, -m_pWorld.m_cGrid.RX * 2, out bCross);
-                    DrawPathLine(gr, cPathLine, bBack, iLevel, pPen);
+                    DrawPathLine(gr, cPathLine, pPen);
                 }
                 else
                 {
                     cPathLine = BuildPathLine(pRoad, m_pWorld.m_cGrid.RX * 2, out bCross);
-                    DrawPathLine(gr, cPathLine, bBack, iLevel, pPen);
+                    DrawPathLine(gr, cPathLine, pPen);
                 }
             }
         }
@@ -895,7 +898,7 @@ namespace VQMapTest2
             {
                 gr.FillEllipse(Brushes.Red, x - r1, y - r1, r1 * 2, r1 * 2);
                 gr.DrawEllipse(Pens.Black, x - r1, y - r1, r1 * 2, r1 * 2);
-                Pen pDot = Pens.Black;
+                Pen pDot = s_pBlack1Pen;
                 pDot.DashStyle = DashStyle.Dot;
                 gr.DrawEllipse(pDot, x - r2, y - r2, r2 * 2, r2 * 2);
             }
@@ -1375,7 +1378,7 @@ namespace VQMapTest2
             {
                 if (pLastNode != null)
                 {
-                    DrawTransportationLink(gr, pLastNode.m_cLinks[pNode], false, 0, pPen);
+                    DrawTransportationLink(gr, pLastNode.m_cLinks[pNode], pPen);
                 }
 
                 pLastNode = pNode;
