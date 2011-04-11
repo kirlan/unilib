@@ -178,6 +178,7 @@ namespace VQMapTest2
 
             BuildActualMap(m_fScale);
 
+            PrebuildPaths();
             DrawMap();
 
             if(!bFirstTime)
@@ -560,9 +561,45 @@ namespace VQMapTest2
             return pPath;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cFirstLines"></param>
+        /// <param name="bMirror">Строить ли отражения для зацикленного мира. Нужно при отрисовке, но нельзя при определении описывающего прямоугольника.</param>
+        /// <returns></returns>
+        private GraphicsPath BuildPath(Line pFirstLine, bool bMirror)
+        {
+            GraphicsPath pPath = new GraphicsPath();
+
+            bool bCross;
+            List<Point> cBorder = BuildBorder(pFirstLine, 0, out bCross);
+
+            if (m_bUseCurves)
+                pPath.AddClosedCurve(cBorder.ToArray());
+            else
+                pPath.AddPolygon(cBorder.ToArray());
+
+            if (m_pWorld.m_cGrid.m_bCycled && bMirror && bCross)
+            {
+                if (pFirstLine.m_pPoint1.X > 0)
+                    cBorder = BuildBorder(pFirstLine, -m_pWorld.m_cGrid.RX * 2, out bCross);
+                else
+                    cBorder = BuildBorder(pFirstLine, m_pWorld.m_cGrid.RX * 2, out bCross);
+
+                if (m_bUseCurves)
+                    pPath.AddClosedCurve(cBorder.ToArray());
+                else
+                    pPath.AddPolygon(cBorder.ToArray());
+            }
+
+            return pPath;
+        }
+
         private void DrawContinentBorder(Graphics gr, ContinentX pContinent, int iDX, int iDY)
         {
-            GraphicsPath pPath = BuildPath(pContinent.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cContinentBorders.TryGetValue(pContinent, out pPath))
+                return;
             
             Matrix pMatrix = new Matrix();
             pMatrix.Translate(iDX, iDY);
@@ -573,7 +610,9 @@ namespace VQMapTest2
 
         private void DrawContinentShape(Graphics gr, ContinentX pContinent)
         {
-            GraphicsPath pPath = BuildPath(pContinent.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cContinentBorders.TryGetValue(pContinent, out pPath))
+                return;
 
             Color mark = LandTypes<LandTypeInfoX>.Plains.m_pColor;
 
@@ -587,7 +626,9 @@ namespace VQMapTest2
             if (pArea.m_pType == LandTypes<LandTypeInfoX>.Plains)
                 return;
 
-            GraphicsPath pPath = BuildPath(pArea.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cAreaBorders.TryGetValue(pArea, out pPath))
+                return;
 
             gr.FillPath(new SolidBrush(pArea.m_pType.m_pColor), pPath);
         }
@@ -597,7 +638,9 @@ namespace VQMapTest2
             if (pArea.m_pRace == null)
                 return;
 
-            GraphicsPath pPath = BuildPath(pArea.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cAreaBorders.TryGetValue(pArea, out pPath))
+                return;
 
             gr.FillPath(new SolidBrush(m_cRaceColorsID[pArea.m_pRace]), pPath);
         }
@@ -607,7 +650,9 @@ namespace VQMapTest2
             if (pState == null)
                 return;
 
-            GraphicsPath pPath = BuildPath(pState.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cStateBorders.TryGetValue(pState, out pPath))
+                return;
 
             if (bFocused)
                 gr.DrawPath(new Pen(Color.Red, 3), pPath);
@@ -624,7 +669,9 @@ namespace VQMapTest2
             if (pProvince == null)
                 return;
 
-            GraphicsPath pPath = BuildPath(pProvince.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cProvinceBorders.TryGetValue(pProvince, out pPath))
+                return;
 
             Pen pPen = new Pen(Color.White, 2);
             gr.DrawPath(pPen, pPath);
@@ -632,7 +679,9 @@ namespace VQMapTest2
 
         private void DrawDominatedRace(Graphics gr, Province pProvince)
         {
-            GraphicsPath pPath = BuildPath(pProvince.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cProvinceBorders.TryGetValue(pProvince, out pPath))
+                return;
 
             gr.FillPath(new SolidBrush(m_cRaceColorsID[pProvince.m_pRace]), pPath);
         }
@@ -661,10 +710,10 @@ namespace VQMapTest2
             return cRoadLine;
         }
 
-        private void DrawPathLine(Graphics gr, List<Point> cPathLine, bool bBack, int iRoadLevel, Color pColor)
-        {
-            Pen pPen = new Pen(pColor);
+        private static Pen s_DarkGrey3Pen = new Pen(Color.DarkGray, 3);
 
+        private void DrawPathLine(Graphics gr, List<Point> cPathLine, bool bBack, int iRoadLevel, Pen pPen)
+        {
             if (bBack)
             {
                 switch (iRoadLevel)
@@ -679,7 +728,7 @@ namespace VQMapTest2
                     //pPen = new Pen(Color.Silver, 3);
                     //break;
                     case 3:
-                        pPen = new Pen(Color.DarkGray, 3);
+                        pPen = s_DarkGrey3Pen;
                         break;
                 }
             }
@@ -688,7 +737,7 @@ namespace VQMapTest2
                 switch (iRoadLevel)
                 {
                     case 0:
-                        pPen = new Pen(pColor, 5);
+                        pPen.Width = 5;
                         pPen.DashPattern = new float[] { 2, 1 };
                         break;
                     case 1:
@@ -700,7 +749,7 @@ namespace VQMapTest2
                         //pPen.DashStyle = DashStyle.Dash;
                         break;
                     case 3:
-                        pPen = new Pen(pColor, 2);
+                        pPen.Width = 2;
                         break;
                 }
             }
@@ -711,7 +760,7 @@ namespace VQMapTest2
                 gr.DrawLines(pPen, cPathLine.ToArray());
         }
 
-        private Dictionary<TransportationNode[], Color> m_cPaths = new Dictionary<TransportationNode[],Color>();
+        private Dictionary<TransportationNode[], Pen> m_cPaths = new Dictionary<TransportationNode[],Pen>();
 
         public void ClearPath()
         {
@@ -721,46 +770,54 @@ namespace VQMapTest2
 
         public void AddPath(TransportationNode[] aPath, Color pColor)
         {
-            m_cPaths[aPath] = pColor;
+            m_cPaths[aPath] = new Pen(pColor, 1);
             DrawMap();
         }
 
         private void DrawRoad(Graphics gr, TransportationLink pRoad, bool bBack)
         {
             if (pRoad.RoadLevel > 0)
-                DrawTransportationLink(gr, pRoad, (pRoad.m_bSea || pRoad.m_bEmbark) ? false : bBack, pRoad.RoadLevel, (pRoad.m_bSea || pRoad.m_bEmbark) ? Color.Aqua : Color.Black);
+                DrawTransportationLink(gr, pRoad, (pRoad.m_bSea || pRoad.m_bEmbark) ? false : bBack, pRoad.RoadLevel, (pRoad.m_bSea || pRoad.m_bEmbark) ? Pens.Aqua : Pens.Black);
         }
 
-        private void DrawTransportationLink(Graphics gr, TransportationLink pRoad, bool bBack, int iLevel, Color pColor)
+        private void DrawTransportationLink(Graphics gr, TransportationLink pRoad, bool bBack, int iLevel, Pen pPen)
         {
             bool bCross;
             List<Point> cPathLine = BuildPathLine(pRoad, 0, out bCross);
 
-            DrawPathLine(gr, cPathLine, bBack, iLevel, pColor);
+            DrawPathLine(gr, cPathLine, bBack, iLevel, pPen);
             
             if (m_pWorld.m_cGrid.m_bCycled && bCross)
             {
                 if (pRoad.m_aPoints[0].X > 0)
                 {
                     cPathLine = BuildPathLine(pRoad, -m_pWorld.m_cGrid.RX * 2, out bCross);
-                    DrawPathLine(gr, cPathLine, bBack, iLevel, pColor);
+                    DrawPathLine(gr, cPathLine, bBack, iLevel, pPen);
                 }
                 else
                 {
                     cPathLine = BuildPathLine(pRoad, m_pWorld.m_cGrid.RX * 2, out bCross);
-                    DrawPathLine(gr, cPathLine, bBack, iLevel, pColor);
+                    DrawPathLine(gr, cPathLine, bBack, iLevel, pPen);
                 }
             }
         }
 
         private void DrawLandHumidity(Graphics gr, LandX pLand)
         {
-            GraphicsPath pPath = BuildPath(pLand.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cLandBorders.TryGetValue(pLand, out pPath))
+                return;
 
-            //gr.FillPolygon(new SolidBrush(m_aColorsID[pLand]), cLandBorder.ToArray());
             gr.FillPath(new SolidBrush(pLand.IsWater ? pLand.Type.m_pColor : GetHumidityColor(pLand.Humidity)), pPath);
-            //gr.FillClosedCurve(new SolidBrush(m_aColorsID[pLoc]), cBorder.ToArray());
         }
+
+        private static Pen s_pBlack2Pen = new Pen(Color.Black, 2);
+
+        private static Font s_CapitalFont = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline);
+        private static Font s_CityFont = new Font("Arial", 12, FontStyle.Bold);
+        private static Font s_TownFont = new Font("Arial", 10);
+        private static Font s_VillageFont = new Font("Arial", 8, FontStyle.Italic);
+        private static Font s_FortFont = new Font("Arial", 10);
 
         private void DrawSignCapital(Graphics gr, int x, int y, string sName)
         {
@@ -770,15 +827,12 @@ namespace VQMapTest2
                 r1 = 2;
             if (r2 < 1)
                 r2 = 1;
-            gr.FillEllipse(new SolidBrush(Color.White), x - r1, y - r1, r1 * 2, r1 * 2);
-            gr.FillEllipse(new SolidBrush(Color.Black), x - r2, y - r2, r2 * 2, r2 * 2);
-            gr.DrawEllipse(new Pen(Color.Black, 2), x - r1, y - r1, r1 * 2, r1 * 2);
+            gr.FillEllipse(Brushes.White, x - r1, y - r1, r1 * 2, r1 * 2);
+            gr.FillEllipse(Brushes.Black, x - r2, y - r2, r2 * 2, r2 * 2);
+            gr.DrawEllipse(s_pBlack2Pen, x - r1, y - r1, r1 * 2, r1 * 2);
 
             if (m_fScale > 4)
-            {
-                Font drawFont = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline);
-                gr.DrawString(sName, drawFont, Brushes.Black, x + r1, y);
-            }
+                gr.DrawString(sName, s_CapitalFont, Brushes.Black, x + r1, y);
         }
 
         private void DrawSignCity(Graphics gr, int x, int y, string sName)
@@ -786,14 +840,11 @@ namespace VQMapTest2
             int r = (int)(m_fkX * 120);
             if (r < 2)
                 r = 2;
-            gr.FillEllipse(new SolidBrush(Color.Black), x - r, y - r, r * 2, r * 2);
-            gr.DrawEllipse(new Pen(Color.White, 1), x - r, y - r, r * 2, r * 2);
+            gr.FillEllipse(Brushes.Black, x - r, y - r, r * 2, r * 2);
+            gr.DrawEllipse(Pens.White, x - r, y - r, r * 2, r * 2);
 
             if (m_fScale > 4)
-            {
-                Font drawFont = new Font("Arial", 12, FontStyle.Bold);
-                gr.DrawString(sName, drawFont, Brushes.Black, x + r, y);
-            }
+                gr.DrawString(sName, s_CityFont, Brushes.Black, x + r, y);
         }
 
         private void DrawSignTown(Graphics gr, int x, int y, string sName)
@@ -801,28 +852,24 @@ namespace VQMapTest2
             int r = (int)(m_fkX * 80);
             if (r < 1)
                 r = 1;
-            gr.FillEllipse(new SolidBrush(Color.Black), x - r, y - r, r * 2, r * 2);
-            gr.DrawEllipse(new Pen(Color.Black, 1), x - r, y - r, r * 2, r * 2);
+            gr.FillEllipse(Brushes.Black, x - r, y - r, r * 2, r * 2);
+            gr.DrawEllipse(Pens.Black, x - r, y - r, r * 2, r * 2);
 
             if (m_fScale > 4)
-            {
-                Font drawFont = new Font("Arial", 10);
-                gr.DrawString(sName, drawFont, Brushes.Black, x + r, y);
-            }
+                gr.DrawString(sName, s_TownFont, Brushes.Black, x + r, y);
         }
 
-        private void DrawSignVillage(Graphics gr, int x, int y, Color pBackColor, string sName)
+        private void DrawSignVillage(Graphics gr, int x, int y, Brush pBrush, string sName)
         {
             int r = (int)(m_fkX * 80);
             if (r < 1)
                 r = 1;
-            gr.FillEllipse(new SolidBrush(pBackColor), x - r, y - r, r * 2, r * 2);
-            gr.DrawEllipse(new Pen(Color.Black, 1), x - r, y - r, r * 2, r * 2);
+            gr.FillEllipse(pBrush, x - r, y - r, r * 2, r * 2);
+            gr.DrawEllipse(Pens.Black, x - r, y - r, r * 2, r * 2);
 
             if (m_fScale > 4)
             {
-                Font drawFont = new Font("Arial", 8, FontStyle.Italic);
-                gr.DrawString(sName, drawFont, Brushes.Black, x + r, y);
+                gr.DrawString(sName, s_VillageFont, Brushes.Black, x + r, y);
             }
         }
 
@@ -833,8 +880,8 @@ namespace VQMapTest2
                 r1 = 1;
             int r2 = r1+1;
 
-            gr.FillPie(new SolidBrush(Color.DarkRed), x - r2, y - r2, r2 * 2, r2 * 2, 180, 180);
-            gr.DrawPie(new Pen(Color.Black, 1), x - r2, y - r2, r2 * 2, r2 * 2, 180, 180);
+            gr.FillPie(Brushes.DarkRed, x - r2, y - r2, r2 * 2, r2 * 2, 180, 180);
+            gr.DrawPie(Pens.Black, x - r2, y - r2, r2 * 2, r2 * 2, 180, 180);
         }
 
         private void DrawSignHideout(Graphics gr, int x, int y)
@@ -846,9 +893,9 @@ namespace VQMapTest2
 
             if (r1 > 0)
             {
-                gr.FillEllipse(new SolidBrush(Color.Red), x - r1, y - r1, r1 * 2, r1 * 2);
-                gr.DrawEllipse(new Pen(Color.Black, 1), x - r1, y - r1, r1 * 2, r1 * 2);
-                Pen pDot = new Pen(Color.Black, 1);
+                gr.FillEllipse(Brushes.Red, x - r1, y - r1, r1 * 2, r1 * 2);
+                gr.DrawEllipse(Pens.Black, x - r1, y - r1, r1 * 2, r1 * 2);
+                Pen pDot = Pens.Black;
                 pDot.DashStyle = DashStyle.Dot;
                 gr.DrawEllipse(pDot, x - r2, y - r2, r2 * 2, r2 * 2);
             }
@@ -870,8 +917,8 @@ namespace VQMapTest2
             cPoints.Add(new Point(x - r1, y - r2));
             cPoints.Add(new Point(x - r2, y));
 
-            gr.FillPolygon(new SolidBrush(Color.Gray), cPoints.ToArray());
-            gr.DrawPolygon(new Pen(Color.Black, 2), cPoints.ToArray());
+            gr.FillPolygon(Brushes.Gray, cPoints.ToArray());
+            gr.DrawPolygon(s_pBlack2Pen, cPoints.ToArray());
 
             //int r2 = r1 + 1;
 
@@ -884,10 +931,7 @@ namespace VQMapTest2
             //}
 
             if (m_fScale > 4)
-            {
-                Font drawFont = new Font("Arial", 10);
-                gr.DrawString(sName, drawFont, Brushes.Black, x + r1, y);
-            }
+                gr.DrawString(sName, s_FortFont, Brushes.Black, x + r1, y);
         }
 
         private void DrawSignRuin(Graphics gr, int x, int y)
@@ -905,8 +949,8 @@ namespace VQMapTest2
                 cPoints.Add(new Point(x, y + r1));
                 cPoints.Add(new Point(x - r1, y));
 
-                gr.FillPolygon(new SolidBrush(Color.Silver), cPoints.ToArray());
-                gr.DrawPolygon(new Pen(Color.Black, 2), cPoints.ToArray());
+                gr.FillPolygon(Brushes.Silver, cPoints.ToArray());
+                gr.DrawPolygon(s_pBlack2Pen, cPoints.ToArray());
             }
         }
 
@@ -923,9 +967,11 @@ namespace VQMapTest2
             cPoints.Add(new Point(x, y - 2*r));
             cPoints.Add(new Point(x + r, y));
 
-            gr.FillPolygon(new SolidBrush(Color.Silver), cPoints.ToArray());
-            gr.DrawLines(new Pen(Color.Black, 1), cPoints.ToArray());
+            gr.FillPolygon(Brushes.Silver, cPoints.ToArray());
+            gr.DrawLines(Pens.Black, cPoints.ToArray());
         }
+
+        private static Pen s_Red2Pen = new Pen(Color.Red, 2);
 
         private void DrawSignVolkano(Graphics gr, int x, int y)
         {
@@ -940,8 +986,8 @@ namespace VQMapTest2
             cPoints.Add(new Point(x, y - 2*r));
             cPoints.Add(new Point(x + r, y));
 
-            gr.FillPolygon(new SolidBrush(Color.Silver), cPoints.ToArray());
-            gr.DrawLines(new Pen(Color.Black, 1), cPoints.ToArray());
+            gr.FillPolygon(Brushes.Silver, cPoints.ToArray());
+            gr.DrawLines(Pens.Black, cPoints.ToArray());
 
             cPoints.Clear();
             cPoints.Add(new Point(x - r / 2, y - r));
@@ -949,8 +995,8 @@ namespace VQMapTest2
             cPoints.Add(new Point(x + r / 2, y - r));
             cPoints.Add(new Point(x, y - r / 2));
 
-            gr.FillPolygon(new SolidBrush(Color.Red), cPoints.ToArray());
-            gr.DrawLines(new Pen(Color.Red, 2), cPoints.ToArray());
+            gr.FillPolygon(Brushes.Red, cPoints.ToArray());
+            gr.DrawLines(s_Red2Pen, cPoints.ToArray());
         }
 
         private void DrawLocation(Graphics gr, LocationX pLoc)
@@ -994,10 +1040,10 @@ namespace VQMapTest2
                             DrawSignTown(gr, iPointX, iPointY, pLoc.m_pSettlement.m_sName);
                             break;
                         case SettlementSize.Village:
-                            DrawSignVillage(gr, iPointX, iPointY, (pLoc.Owner as LandX).Type.m_pColor, pLoc.m_pSettlement.m_sName);
+                            DrawSignVillage(gr, iPointX, iPointY, (pLoc.Owner as LandX).Type.m_pBrush, pLoc.m_pSettlement.m_sName);
                             break;
                         case SettlementSize.Hamlet:
-                            DrawSignVillage(gr, iPointX, iPointY, (pLoc.Owner as LandX).Type.m_pColor, pLoc.m_pSettlement.m_sName);
+                            DrawSignVillage(gr, iPointX, iPointY, (pLoc.Owner as LandX).Type.m_pBrush, pLoc.m_pSettlement.m_sName);
                             break;
                         case SettlementSize.Fort:
                             DrawSignFort(gr, iPointX, iPointY, pLoc.m_pSettlement.m_sName);
@@ -1024,36 +1070,28 @@ namespace VQMapTest2
 
         private void DrawLocationBorder(Graphics gr, LocationX pLoc)
         {
-            bool bCross;
-            List<Point> cLocBorder = BuildBorder(pLoc.m_pFirstLine, 0, out bCross);
+            GraphicsPath pPath;
+            if (!m_cLocationBorders.TryGetValue(pLoc, out pPath))
+                return;
 
-            gr.DrawPolygon(Pens.DarkGray, cLocBorder.ToArray());
-
-            if (m_pWorld.m_cGrid.m_bCycled && bCross)
-            {
-                if (pLoc.m_pFirstLine.m_pPoint1.X > 0)
-                    cLocBorder = BuildBorder(pLoc.m_pFirstLine, -m_pWorld.m_cGrid.RX * 2, out bCross);
-                else
-                    cLocBorder = BuildBorder(pLoc.m_pFirstLine, m_pWorld.m_cGrid.RX * 2, out bCross);
-
-                gr.DrawPolygon(Pens.DarkGray, cLocBorder.ToArray());
-            }
+            gr.DrawPath(Pens.DarkGray, pPath);
         }
 
         private void DrawLandBorder(Graphics gr, LandX pLand)
         {
-            GraphicsPath pPath = BuildPath(pLand.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cLandBorders.TryGetValue(pLand, out pPath))
+                return;
 
             gr.DrawPath(Pens.Black, pPath);
         }
 
         private void DrawLandMass(Graphics gr, LandMass<LandX> pLandMass)
         {
-            GraphicsPath pPath = BuildPath(pLandMass.m_cFirstLines, true);
+            GraphicsPath pPath;
+            if (!m_cLandMassBorders.TryGetValue(pLandMass, out pPath))
+                return;
 
-            //Pen pPen = new Pen(pLandMass.m_pDrift > 0 ? Color.Red : Color.Blue, 1 + Math.Abs(pLandMass.m_pDrift));
-            //if (pLandMass.m_pDrift <= 0)
-            //    pPen.DashStyle = DashStyle.Dot;
             Pen pPen = new Pen(Color.Red, 2);
             gr.DrawPath(pPen, pPath);
         }
@@ -1123,10 +1161,58 @@ namespace VQMapTest2
                 m_pMiniMap.DrawMap(this);
         }
 
+        private Dictionary<ContinentX, GraphicsPath> m_cContinentBorders = new Dictionary<ContinentX, GraphicsPath>();
+        private Dictionary<AreaX, GraphicsPath> m_cAreaBorders = new Dictionary<AreaX, GraphicsPath>();
+        private Dictionary<Province, GraphicsPath> m_cProvinceBorders = new Dictionary<Province, GraphicsPath>();
+        private Dictionary<LandMass<LandX>, GraphicsPath> m_cLandMassBorders = new Dictionary<LandMass<LandX>, GraphicsPath>();
+        private Dictionary<LandX, GraphicsPath> m_cLandBorders = new Dictionary<LandX, GraphicsPath>();
+        private Dictionary<LocationX, GraphicsPath> m_cLocationBorders = new Dictionary<LocationX, GraphicsPath>();
+        private Dictionary<State, GraphicsPath> m_cStateBorders = new Dictionary<State, GraphicsPath>();
+
+        private void PrebuildPaths()
+        {
+            m_cContinentBorders.Clear();
+            m_cAreaBorders.Clear();
+            m_cProvinceBorders.Clear();
+            m_cLandMassBorders.Clear();
+            m_cLandBorders.Clear();
+            m_cLocationBorders.Clear();
+            m_cStateBorders.Clear();
+
+            foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
+            {
+                m_cLandMassBorders[pLandMass] = BuildPath(pLandMass.m_cFirstLines, true);
+                foreach (LandX pLand in pLandMass.m_cContents)
+                {
+                    m_cLandBorders[pLand] = BuildPath(pLand.m_cFirstLines, true);
+                    foreach (LocationX pLoc in pLand.m_cContents)
+                    {
+                        m_cLocationBorders[pLoc] = BuildPath(pLoc.m_pFirstLine, true);
+                    }
+                }
+            }
+            
+            foreach (ContinentX pContinent in m_pWorld.m_aContinents)
+            {
+                m_cContinentBorders[pContinent] = BuildPath(pContinent.m_cFirstLines, true);
+
+                foreach (State pState in pContinent.m_cStates)
+                    m_cStateBorders[pState] = BuildPath(pState.m_cFirstLines, true);
+                
+                foreach (AreaX pArea in pContinent.m_cAreas)
+                    m_cAreaBorders[pArea] = BuildPath(pArea.m_cFirstLines, true);
+            }
+
+            foreach (Province pProvince in m_pWorld.m_aProvinces)
+                m_cProvinceBorders[pProvince] = BuildPath(pProvince.m_cFirstLines, true);
+        }
+
         public void DrawMap()
         {
             if (ActualMap == null)
                 return;
+
+            DateTime pTime1 = DateTime.Now;
 
             Graphics gr = Graphics.FromImage(ActualMap);
 
@@ -1278,16 +1364,18 @@ namespace VQMapTest2
                 DrawStateBorder(gr, m_pSelectedState, true);
 
             Refresh();
+
+            DateTime pTime2 = DateTime.Now;
         }
 
-        private void DrawPath(Graphics gr, TransportationNode[] aPath, Color pColor)
+        private void DrawPath(Graphics gr, TransportationNode[] aPath, Pen pPen)
         {
             TransportationNode pLastNode = null;
             foreach (TransportationNode pNode in aPath)
             {
                 if (pLastNode != null)
                 {
-                    DrawTransportationLink(gr, pLastNode.m_cLinks[pNode], false, 0, pColor);
+                    DrawTransportationLink(gr, pLastNode.m_cLinks[pNode], false, 0, pPen);
                 }
 
                 pLastNode = pNode;

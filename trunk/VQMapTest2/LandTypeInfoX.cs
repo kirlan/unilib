@@ -10,6 +10,13 @@ namespace VQMapTest2
     public class LandTypeInfoX : LandTypeInfo
     {
         public Color m_pColor;
+        public Brush m_pBrush;
+
+        public void SetColor(Color pColor)
+        {
+            m_pColor = pColor;
+            m_pBrush = new SolidBrush(m_pColor);
+        }
 
         public float m_fFood;
         public float m_fWood;
