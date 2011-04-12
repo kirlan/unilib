@@ -406,12 +406,19 @@ namespace VQMapTest2
         float m_fkX = 1;
         float m_fkY = 1;
 
+        Brush[] m_aHumidity;
+
         public WorldMap()
         {
             InitializeComponent();
 
             m_pDrawFrame = new Rectangle(0, 0, ClientRectangle.Width, ClientRectangle.Height);
             //BuildActualMap(1);
+
+            List<Brush> cHumidity = new List<Brush>();
+            for (int i = 0; i <= 100; i++)
+                cHumidity.Add(GetHumidityColor(i));
+            m_aHumidity = cHumidity.ToArray();
         }
 
         private Rectangle m_pDrawFrame;
@@ -621,7 +628,7 @@ namespace VQMapTest2
                 m_pMasterMap.SinchronizeDrawFrame(this);
         }
 
-        private Dictionary<Race, Color> m_cRaceColorsID = new Dictionary<Race, Color>();
+        private Dictionary<Race, Brush> m_cRaceColorsID = new Dictionary<Race, Brush>();
 
         private Color[] m_aRaceColorsTemplate = new Color[] 
         { 
@@ -1027,7 +1034,7 @@ namespace VQMapTest2
             if (!m_cAreaBorders.TryGetValue(pArea, out pPath))
                 return;
 
-            gr.FillPath(new SolidBrush(m_cRaceColorsID[pArea.m_pRace]), pPath);
+            gr.FillPath(m_cRaceColorsID[pArea.m_pRace], pPath);
         }
 
         private void DrawStateBorder(Graphics gr, State pState, bool bFocused)
@@ -1068,7 +1075,7 @@ namespace VQMapTest2
             if (!m_cProvinceBorders.TryGetValue(pProvince, out pPath))
                 return;
 
-            gr.FillPath(new SolidBrush(m_cRaceColorsID[pProvince.m_pRace]), pPath);
+            gr.FillPath(m_cRaceColorsID[pProvince.m_pRace], pPath);
         }
 
         private List<Point> BuildPathLine(TransportationLink pPath, float fShift, out bool bCross)
@@ -1127,6 +1134,7 @@ namespace VQMapTest2
         internal static Pen s_pRed2Pen = new Pen(Color.Red, 2);
         internal static Pen s_pAqua1DotPen = new Pen(Color.Aqua, 1);
         internal static Pen s_pBlack1DotPen = new Pen(Color.Black, 1);
+        internal static Pen s_pWhite2Pen = new Pen(Color.White, 2);
 
 
         private void DrawRoad(Graphics gr, TransportationLink pRoad, bool bBack)
@@ -1209,7 +1217,7 @@ namespace VQMapTest2
             if (!m_cLandBorders.TryGetValue(pLand, out pPath))
                 return;
 
-            gr.FillPath(new SolidBrush(pLand.IsWater ? pLand.Type.m_pColor : GetHumidityColor(pLand.Humidity)), pPath);
+            gr.FillPath(pLand.IsWater ? pLand.Type.m_pBrush : GetHumidityColor(pLand.Humidity), pPath);
         }
 
         private void AddLocationSign(LocationX pLoc)
@@ -1370,7 +1378,7 @@ namespace VQMapTest2
                     while (cUsedColors.Contains(iIndex));
 
                     cUsedColors.Add(iIndex);
-                    m_cRaceColorsID[pRace] = m_aRaceColorsTemplate[iIndex];
+                    m_cRaceColorsID[pRace] = new SolidBrush(m_aRaceColorsTemplate[iIndex]);
                 }
             }
 
@@ -1392,8 +1400,21 @@ namespace VQMapTest2
         private Dictionary<State, GraphicsPath> m_cStateBorders = new Dictionary<State, GraphicsPath>();
         private List<ILandMark> m_cLandmarks = new List<ILandMark>();
 
+        private GraphicsPath m_pContinentsPath = new GraphicsPath();
+        private GraphicsPath m_pContinentsPath2 = new GraphicsPath();
+        private GraphicsPath m_pLocationsPath = new GraphicsPath();
+        private GraphicsPath m_pLandsPath = new GraphicsPath();
+        private GraphicsPath m_pProvinciesPath = new GraphicsPath();
+
+        private Dictionary<Brush, GraphicsPath> m_cAreaMap = new Dictionary<Brush, GraphicsPath>();
+        private Dictionary<Brush, GraphicsPath> m_cNativesMap = new Dictionary<Brush, GraphicsPath>();
+        private Dictionary<Brush, GraphicsPath> m_cNationsMap = new Dictionary<Brush, GraphicsPath>();
+        private Dictionary<Brush, GraphicsPath> m_cHumidityMap = new Dictionary<Brush, GraphicsPath>();
+
         private void PrebuildPaths()
         {
+            DateTime pTime1 = DateTime.Now;
+
             m_cContinentBorders.Clear();
             m_cAreaBorders.Clear();
             m_cProvinceBorders.Clear();
@@ -1403,17 +1424,35 @@ namespace VQMapTest2
             m_cStateBorders.Clear();
             m_cLandmarks.Clear();
 
+            m_pContinentsPath.Reset();
+            m_pLocationsPath.Reset();
+            m_pLandsPath.Reset();
+            m_pProvinciesPath.Reset();
+
+            m_cAreaMap.Clear();
+            m_cHumidityMap.Clear();
+            m_cNativesMap.Clear();
+            m_cNationsMap.Clear();
+
             foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
             {
                 m_cLandMassBorders[pLandMass] = BuildPath(pLandMass.m_cFirstLines, true);
                 foreach (LandX pLand in pLandMass.m_cContents)
                 {
                     m_cLandBorders[pLand] = BuildPath(pLand.m_cFirstLines, true);
+                    m_pLandsPath.AddPath(m_cLandBorders[pLand], false);
+
                     foreach (LocationX pLoc in pLand.m_cContents)
                     {
                         m_cLocationBorders[pLoc] = BuildPath(pLoc.m_pFirstLine, true);
+                        m_pLocationsPath.AddPath(m_cLocationBorders[pLoc], false);
                         AddLocationSign(pLoc);
                     }
+
+                    Brush pBrush = pLand.IsWater ? pLand.Type.m_pBrush : m_aHumidity[pLand.Humidity];
+                    if (!m_cHumidityMap.ContainsKey(pBrush))
+                        m_cHumidityMap[pBrush] = new GraphicsPath();
+                    m_cHumidityMap[pBrush].AddPath(m_cLandBorders[pLand], false);
                 }
             }
             
@@ -1421,15 +1460,49 @@ namespace VQMapTest2
             {
                 m_cContinentBorders[pContinent] = BuildPath(pContinent.m_cFirstLines, true);
 
+                m_pContinentsPath.AddPath(m_cContinentBorders[pContinent], false);
+
                 foreach (State pState in pContinent.m_cStates)
                     m_cStateBorders[pState] = BuildPath(pState.m_cFirstLines, true);
-                
+
                 foreach (AreaX pArea in pContinent.m_cAreas)
+                {
                     m_cAreaBorders[pArea] = BuildPath(pArea.m_cFirstLines, true);
+
+                    if (pArea.m_pType != LandTypes<LandTypeInfoX>.Plains)
+                    {
+                        if (!m_cAreaMap.ContainsKey(pArea.m_pType.m_pBrush))
+                            m_cAreaMap[pArea.m_pType.m_pBrush] = new GraphicsPath();
+                        m_cAreaMap[pArea.m_pType.m_pBrush].AddPath(m_cAreaBorders[pArea], false);
+                    }
+                    if (pArea.m_pRace != null)
+                    {
+                        Brush pBrush = m_cRaceColorsID[pArea.m_pRace];
+                        if (!m_cNativesMap.ContainsKey(pBrush))
+                            m_cNativesMap[pBrush] = new GraphicsPath();
+                        m_cNativesMap[pBrush].AddPath(m_cAreaBorders[pArea], false);
+                    }
+                }
             }
+            m_pContinentsPath2 = (GraphicsPath)m_pContinentsPath.Clone();
+            Matrix pMatrix = new Matrix();
+            pMatrix.Translate(1, 1);
+            m_pContinentsPath2.Transform(pMatrix);
 
             foreach (Province pProvince in m_pWorld.m_aProvinces)
+            {
                 m_cProvinceBorders[pProvince] = BuildPath(pProvince.m_cFirstLines, true);
+
+                if (!pProvince.m_pCenter.IsWater)
+                    m_pProvinciesPath.AddPath(m_cProvinceBorders[pProvince], false);
+
+                Brush pBrush = m_cRaceColorsID[pProvince.m_pRace];
+                if (!m_cNationsMap.ContainsKey(pBrush))
+                    m_cNationsMap[pBrush] = new GraphicsPath();
+                m_cNationsMap[pBrush].AddPath(m_cProvinceBorders[pProvince], false);
+            }
+
+            DateTime pTime2 = DateTime.Now;
         }
 
         public void DrawMap()
@@ -1452,79 +1525,66 @@ namespace VQMapTest2
             switch (m_eMode)
             {
                 case VisType.LandType:
-                    foreach (ContinentX pContinent in m_pWorld.m_aContinents)
-                    {
-                        DrawContinentBorder(gr, pContinent, 1, 1);
-                        DrawContinentShape(gr, pContinent);
+                    gr.DrawPath(new Pen(Color.Black, 2), m_pContinentsPath2);
+                    gr.FillPath(LandTypes<LandTypeInfoX>.Plains.m_pBrush, m_pContinentsPath);
 
-                        foreach (AreaX pArea in pContinent.m_cAreas)
-                            DrawArea(gr, pArea);
+                    foreach (var pArea in m_cAreaMap)
+                        gr.FillPath(pArea.Key, pArea.Value);
 
-                        //DrawContinentBorder(gr, pContinent, 0, 0);
-                    }
                     break;
                 case VisType.Humidity:
-                    foreach (LandX pLand in m_pWorld.m_aLands)
-                    //foreach (ContinentX pContinent in m_pWorld.m_aContinents)
-                    //    foreach (LandMass<LandX> pLandMass in pContinent.m_cContents)
-                    //        foreach (LandX pLand in pLandMass.m_cContents)
-                                DrawLandHumidity(gr, pLand);
+                    foreach(var pHum in m_cHumidityMap)
+                        gr.FillPath(pHum.Key, pHum.Value);
 
-                    foreach (ContinentX pContinent in m_pWorld.m_aContinents)
-                        DrawContinentBorder(gr, pContinent, 0, 0);
-
+                    gr.DrawPath(Pens.Black, m_pContinentsPath);
                     break;
                 case VisType.RacesNative:
-                    foreach (ContinentX pContinent in m_pWorld.m_aContinents)
-                    {
-                        DrawContinentBorder(gr, pContinent, 0, 0);
-                        //DrawContinentShape(gr, pContinent);
-
-                        foreach (AreaX pArea in pContinent.m_cAreas)
-                            DrawRace(gr, pArea);
-
-                        //DrawContinentBorder(gr, pContinent, 0, 0);
-                    }
+                    gr.DrawPath(Pens.Black, m_pContinentsPath);
+                    foreach(var pNative in m_cNativesMap)
+                        gr.FillPath(pNative.Key, pNative.Value);
+                    //foreach (ContinentX pContinent in m_pWorld.m_aContinents)
+                    //{
+                    //    foreach (AreaX pArea in pContinent.m_cAreas)
+                    //        DrawRace(gr, pArea);
+                    //}
                     break;
                 case VisType.RacesStates:
-                    foreach (ContinentX pContinent in m_pWorld.m_aContinents)
-                    {
-                        DrawContinentBorder(gr, pContinent, 0, 0);
-                        //DrawContinentShape(gr, pContinent);
+                    gr.DrawPath(Pens.Black, m_pContinentsPath);
+                    foreach (var pNation in m_cNationsMap)
+                        gr.FillPath(pNation.Key, pNation.Value);
 
-                        //DrawContinentBorder(gr, pContinent, 0, 0);
-                    }
-                    foreach (Province pProvince in m_pWorld.m_aProvinces)
-                        DrawDominatedRace(gr, pProvince);
+                    //foreach (Province pProvince in m_pWorld.m_aProvinces)
+                    //    DrawDominatedRace(gr, pProvince);
 
                     break;
             }
 
             if (m_bShowLocationsBorders)
             {
-                foreach(LocationX pLoc in m_pWorld.m_cGrid.m_aLocations)
-                //foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
-                //    foreach (LandX pLand in pLandMass.m_cContents)
-                //        foreach (LocationX pLoc in pLand.m_cContents)
-                            DrawLocationBorder(gr, pLoc);
+                gr.DrawPath(Pens.DarkGray, m_pLocationsPath);
 
-                //foreach (Land pLand in pState.m_cLands)
-                //    DrawLandBorder(gr, pLand);
+                //foreach(var pLoc in m_cLocationBorders)
+                //    gr.DrawPath(Pens.DarkGray, pLoc.Value);
+
+                //foreach(LocationX pLoc in m_pWorld.m_cGrid.m_aLocations)
+                //    DrawLocationBorder(gr, pLoc);
             }
 
             if (m_bShowLands)
             {
-                foreach(LandX pLand in m_pWorld.m_aLands)
-                //foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
-                //    foreach (LandX pLand in pLandMass.m_cContents)
-                        DrawLandBorder(gr, pLand);
+                gr.DrawPath(Pens.Black, m_pLandsPath);
+
+                //foreach(LandX pLand in m_pWorld.m_aLands)
+                //    DrawLandBorder(gr, pLand);
             }
 
             if (m_bShowProvincies)
             {
-                foreach (Province pProvince in m_pWorld.m_aProvinces)
-                    if(!pProvince.m_pCenter.IsWater)
-                        DrawProvinceBorder(gr, pProvince);
+                gr.DrawPath(s_pWhite2Pen, m_pProvinciesPath);
+                
+                //foreach (Province pProvince in m_pWorld.m_aProvinces)
+                //    if(!pProvince.m_pCenter.IsWater)
+                //        DrawProvinceBorder(gr, pProvince);
             }
 
             foreach (TransportationNode[] aPath in m_cPaths.Keys)
@@ -1546,23 +1606,18 @@ namespace VQMapTest2
                     foreach (State pState in pContinent.m_cStates)
                         DrawStateBorder(gr, pState, false);
                 }
+            }
 
-                if (m_bShowLocations)
-                {
-                    foreach (ILandMark pLandMark in m_cLandmarks)
-                        pLandMark.Draw(gr);
-                }
+            if (m_bShowLocations)
+            {
+                foreach (ILandMark pLandMark in m_cLandmarks)
+                    pLandMark.Draw(gr);
             }
 
             if (m_bShowLandMasses)
             {
                 foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
-                    //if (pLandMass.m_pDrift > 0)
-                        DrawLandMass(gr, pLandMass);
-
-                //foreach (LandMass<LandX> pLandMass in m_pWorld.m_cLandMasses)
-                //    if (pLandMass.m_pDrift <= 0 )
-                //        DrawLandMass(gr, pLandMass);
+                    DrawLandMass(gr, pLandMass);
             }
 
             //foreach (TransportationNode pNode in m_pWorld.m_cSeaTransportGrid.Values)
@@ -1608,12 +1663,12 @@ namespace VQMapTest2
             }
         }
 
-        private Color GetHumidityColor(int iHumidity)
+        private Brush GetHumidityColor(int iHumidity)
         {
             KColor color = new KColor();
             color.RGB = Color.LightBlue;
             color.Lightness = 1.0 - (double)iHumidity / 200;
-            return color.RGB; //Color.FromArgb(0, 0, 255 - 128 * iHumidity / 100);
+            return new SolidBrush(color.RGB); //Color.FromArgb(0, 0, 255 - 128 * iHumidity / 100);
         }
 
         private ContinentX m_pFocusedContinent = null;
