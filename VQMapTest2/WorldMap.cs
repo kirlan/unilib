@@ -16,275 +16,364 @@ namespace VQMapTest2
 {
     internal interface ILandMark
     {
-        void Draw(Graphics gr);
+        void Draw(Graphics gr, float fScale);
+
+        void Scale(float fScale);
     }
 
     public struct SignCapital: ILandMark
     {
-        int x, y, r1, r2;
+        float x, y, r1, r2;
         string name;
 
         private static Font s_pFont = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline);
 
-        public SignCapital(float fkX, int iX, int iY, string sName)
+        public SignCapital(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = (int)(fkX * 200);
-            r2 = (int)(fkX * 120);
-            if (r1 < 2)
-                r1 = 2;
-            if (r2 < 1)
-                r2 = 1;
+            r1 = fkX * 200;
+            r2 = fkX * 120;
 
             name = sName;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
-            gr.FillEllipse(Brushes.White, x - r1, y - r1, r1 * 2, r1 * 2);
-            gr.FillEllipse(Brushes.Black, x - r2, y - r2, r2 * 2, r2 * 2);
-            gr.DrawEllipse(WorldMap.s_pBlack2Pen, x - r1, y - r1, r1 * 2, r1 * 2);
+            if (fScale <= 1)
+                return;
 
-            if (name != null)
-                gr.DrawString(name, s_pFont, Brushes.Black, x + r1, y);
+            float rr1 = r1;
+            float rr2 = r2;
+            if (rr1 < 2)
+                rr1 = 2;
+            if (rr2 < 1)
+                rr2 = 1;
+
+            gr.FillEllipse(Brushes.White, x - rr1, y - rr1, rr1 * 2, rr1 * 2);
+            gr.FillEllipse(Brushes.Black, x - rr2, y - rr2, rr2 * 2, rr2 * 2);
+            gr.DrawEllipse(WorldMap.s_pBlack2Pen, x - rr1, y - rr1, rr1 * 2, rr1 * 2);
+
+            if (fScale > 4)
+                gr.DrawString(name, s_pFont, Brushes.Black, x + rr1, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r1 *= fScale;
+            r2 *= fScale;
         }
     }
 
     public struct SignCity : ILandMark
     {
-        int x, y, r;
+        float x, y, r;
         string name;
 
         internal static Font s_pFont = new Font("Arial", 12, FontStyle.Bold);
 
-        public SignCity(float fkX, int iX, int iY, string sName)
+        public SignCity(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r = (int)(fkX * 120);
-            if (r < 2)
-                r = 2;
+            r = fkX * 120;
             name = sName;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
-            gr.FillEllipse(Brushes.Black, x - r, y - r, r * 2, r * 2);
-            gr.DrawEllipse(Pens.White, x - r, y - r, r * 2, r * 2);
+            if (fScale <= 1)
+                return;
 
-            if (name != null)
-                gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
+            float rr = r;
+            if (rr < 2)
+                rr = 2;
+                
+            gr.FillEllipse(Brushes.Black, x - rr, y - rr, rr * 2, rr * 2);
+            gr.DrawEllipse(Pens.White, x - rr, y - rr, rr * 2, rr * 2);
+
+            if (fScale > 4)
+                gr.DrawString(name, s_pFont, Brushes.Black, x + rr, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r *= fScale;
         }
     }
 
     public struct SignTown: ILandMark
     {
-        int x, y, r;
+        float x, y, r;
         string name;
 
         internal static Font s_pFont = new Font("Arial", 10);
 
-        public SignTown(float fkX, int iX, int iY, string sName)
+        public SignTown(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r = (int)(fkX * 80);
-            if (r < 1)
-                r = 1;
-
+            r = fkX * 80;
             name = sName;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
-            gr.FillEllipse(Brushes.Black, x - r, y - r, r * 2, r * 2);
-            gr.DrawEllipse(Pens.Black, x - r, y - r, r * 2, r * 2);
+            if (fScale <= 2)
+                return;
 
-            if (name != null)
-                gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
+            float rr = r;
+            if (rr < 1)
+                rr = 1;
+
+            gr.FillEllipse(Brushes.Black, x - rr, y - rr, rr * 2, rr * 2);
+            gr.DrawEllipse(Pens.Black, x - rr, y - rr, rr * 2, rr * 2);
+
+            if (fScale > 4)
+                gr.DrawString(name, s_pFont, Brushes.Black, x + rr, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r *= fScale;
         }
     }
 
     public struct SignVillage: ILandMark
     {
-        int x, y, r;
+        float x, y, r;
         string name;
         Brush brush;
 
         internal static Font s_pFont = new Font("Arial", 8, FontStyle.Italic);
 
-        public SignVillage(float fkX, int iX, int iY, string sName, Brush pBrush)
+        public SignVillage(float fkX, float iX, float iY, string sName, Brush pBrush)
         {
             x = iX;
             y = iY;
 
-            r = (int)(fkX * 80);
-            if (r < 1)
-                r = 1;
+            r = fkX * 80;
 
             name = sName;
 
             brush = pBrush;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
-            gr.FillEllipse(brush, x - r, y - r, r * 2, r * 2);
-            gr.DrawEllipse(Pens.Black, x - r, y - r, r * 2, r * 2);
+            if (fScale <= 4)
+                return;
 
-            if (name != null)
-                gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
+            float rr = r;
+            if (rr < 1)
+                rr = 1;
+
+            gr.FillEllipse(brush, x - rr, y - rr, rr * 2, rr * 2);
+            gr.DrawEllipse(Pens.Black, x - rr, y - rr, rr * 2, rr * 2);
+
+            if (fScale > 4)
+                gr.DrawString(name, s_pFont, Brushes.Black, x + rr, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r *= fScale;
         }
     }
 
     public struct SignFort : ILandMark
     {
-        int x, y, r1, r2;
+        float x, y, r1, r2;
         string name;
-        Point[] points;
+        PointF[] points;
 
         internal static Font s_pFont = new Font("Arial", 10);
 
-        public SignFort(float fkX, int iX, int iY, string sName)
+        public SignFort(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = (int)(fkX * 133);
-            if (r1 < 1)
-                r1 = 1;
-            r2 = (int)(fkX * 200);
-            if (r2 <= r1)
-                r2 = r1+1;
+            r1 = fkX * 133;
+            r2 = fkX * 200;
 
-            List<Point> cPoints = new List<Point>();
-            cPoints.Add(new Point(x, y + r1));
-            cPoints.Add(new Point(x + r2, y));
-            cPoints.Add(new Point(x + r1, y - r2));
-            cPoints.Add(new Point(x - r1, y - r2));
-            cPoints.Add(new Point(x - r2, y));
+            List<PointF> cPoints = new List<PointF>();
+            cPoints.Add(new PointF(x, y + r1));
+            cPoints.Add(new PointF(x + r2, y));
+            cPoints.Add(new PointF(x + r1, y - r2));
+            cPoints.Add(new PointF(x - r1, y - r2));
+            cPoints.Add(new PointF(x - r2, y));
 
             points = cPoints.ToArray();
 
             name = sName;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
+            if (fScale <= 2)
+                return;
+
+            float rr1 = r1;
+            if (rr1 < 1)
+                rr1 = 1;
+            float rr2 = r2;
+            if (rr2 <= rr1)
+                rr2 = rr1 + 1;
+
             gr.FillPolygon(Brushes.Gray, points);
             gr.DrawPolygon(WorldMap.s_pBlack2Pen, points);
 
-            //int r2 = r1 + 1;
+            if (fScale > 4)
+                gr.DrawString(name, s_pFont, Brushes.Black, x + rr1, y);
+        }
 
-            //if (r1 > 0)
-            //{
-            //    gr.DrawEllipse(new Pen(Color.Black, 2), x - r1, y - r1, r1 * 2, r1 * 2);
-            //    Pen pDot = new Pen(Color.Black, 2);
-            //    pDot.DashStyle = DashStyle.Dot;
-            //    gr.DrawEllipse(pDot, x - r2, y - r2, r2 * 2, r2 * 2);
-            //}
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
 
-            if (name != null)
-                gr.DrawString(name, s_pFont, Brushes.Black, x + r1, y);
+            r1 *= fScale;
+            r2 *= fScale;
+
+            for (int i = 0; i < points.Length; i++ )
+            {
+                points[i].X *= fScale;
+                points[i].Y *= fScale;
+            }
         }
     }
 
     public struct SignHideout: ILandMark
     {
-        int x, y, r1, r2;
+        float x, y, r1;
         string name;
 
         //internal static Font s_pFont = new Font("Arial", 10);
         internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
 
-        public SignHideout(float fkX, int iX, int iY, string sName)
+        public SignHideout(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = (int)(fkX * 80);
-            if (r1 < 1)
-                r1 = 1;
-            r2 = r1 + 1;
+            r1 = fkX * 80;
 
             name = sName;
 
             s_pBlack1Pen.DashStyle = DashStyle.Dot;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
-            if (r1 > 0)
-            {
-                gr.FillEllipse(Brushes.Red, x - r1, y - r1, r1 * 2, r1 * 2);
-                gr.DrawEllipse(Pens.Black, x - r1, y - r1, r1 * 2, r1 * 2);
-                gr.DrawEllipse(s_pBlack1Pen, x - r2, y - r2, r2 * 2, r2 * 2);
-            }
+            if (fScale <= 2)
+                return;
+
+            float rr1 = r1;
+            if (rr1 < 1)
+                rr1 = 1;
+            float rr2 = rr1 + 1;
+
+            gr.FillEllipse(Brushes.Red, x - rr1, y - rr1, rr1 * 2, rr1 * 2);
+            gr.DrawEllipse(Pens.Black, x - rr1, y - rr1, rr1 * 2, rr1 * 2);
+            gr.DrawEllipse(s_pBlack1Pen, x - rr2, y - rr2, rr2 * 2, rr2 * 2);
 
             //if (name != null)
             //    gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r1 *= fScale;
         }
     }
 
     public struct SignLair: ILandMark
     {
-        int x, y, r1, r2;
+        float x, y, r1;
         string name;
 
         //internal static Font s_pFont = new Font("Arial", 10);
         //internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
 
-        public SignLair(float fkX, int iX, int iY, string sName)
+        public SignLair(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = (int)(fkX * 80);
-            if (r1 < 1)
-                r1 = 1;
-            r2 = r1+1;
+            r1 = fkX * 80;
 
             name = sName;
 
             //s_pBlack1Pen.DashStyle = DashStyle.Dot;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
-            gr.FillPie(Brushes.DarkRed, x - r2, y - r2, r2 * 2, r2 * 2, 180, 180);
-            gr.DrawPie(Pens.Black, x - r2, y - r2, r2 * 2, r2 * 2, 180, 180);
+            if (fScale <= 2)
+                return;
+
+            float rr1 = r1;
+            if (rr1 < 1)
+                rr1 = 1;
+            float rr2 = rr1 + 1;
+
+            gr.FillPie(Brushes.DarkRed, x - rr2, y - rr2, rr2 * 2, rr2 * 2, 180, 180);
+            gr.DrawPie(Pens.Black, x - rr2, y - rr2, rr2 * 2, rr2 * 2, 180, 180);
 
             //if (name != null)
             //    gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r1 *= fScale;
         }
     }
     
     public struct SignPeak: ILandMark
     {
-        int x, y, r;
+        float x, y, r;
         string name;
-        Point[] points;
+        PointF[] points;
 
         //internal static Font s_pFont = new Font("Arial", 10);
         //internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
 
-        public SignPeak(float fkX, int iX, int iY, string sName)
+        public SignPeak(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r = (int)(fkX * 200);
+            r = fkX * 200;
             if (r < 1)
                 r = 1;
             
-            List<Point> cPoints = new List<Point>();
-            cPoints.Add(new Point(x - r, y));
-            cPoints.Add(new Point(x, y - 2*r));
-            cPoints.Add(new Point(x + r, y));
+            List<PointF> cPoints = new List<PointF>();
+            cPoints.Add(new PointF(x - r, y));
+            cPoints.Add(new PointF(x, y - 2*r));
+            cPoints.Add(new PointF(x + r, y));
             points = cPoints.ToArray();
 
             name = sName;
@@ -292,7 +381,7 @@ namespace VQMapTest2
             //s_pBlack1Pen.DashStyle = DashStyle.Dot;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
             gr.FillEllipse(Brushes.Silver, x - r, y - r / 2, r * 2, r);
             gr.FillPolygon(Brushes.Silver, points);
@@ -301,32 +390,46 @@ namespace VQMapTest2
             //if (name != null)
             //    gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
         }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r *= fScale;
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i].X *= fScale;
+                points[i].Y *= fScale;
+            }
+        }
     }
     
     public struct SignRuin: ILandMark
     {
-        int x, y, r1, r2;
+        float x, y, r1, r2;
         string name;
-        Point[] points;
+        PointF[] points;
 
         //internal static Font s_pFont = new Font("Arial", 10);
         //internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
 
-        public SignRuin(float fkX, int iX, int iY, string sName)
+        public SignRuin(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = (int)(fkX * 120);
+            r1 = fkX * 120;
             if (r1 < 1)
                 r1 = 1;
             r2 = r1 + 1;
             
-            List<Point> cPoints = new List<Point>();
-            cPoints.Add(new Point(x, y - r1));
-            cPoints.Add(new Point(x + r1, y));
-            cPoints.Add(new Point(x, y + r1));
-            cPoints.Add(new Point(x - r1, y));
+            List<PointF> cPoints = new List<PointF>();
+            cPoints.Add(new PointF(x, y - r1));
+            cPoints.Add(new PointF(x + r1, y));
+            cPoints.Add(new PointF(x, y + r1));
+            cPoints.Add(new PointF(x - r1, y));
             points = cPoints.ToArray();
 
             name = sName;
@@ -334,49 +437,64 @@ namespace VQMapTest2
             //s_pBlack1Pen.DashStyle = DashStyle.Dot;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
-            if (r1 > 0)
-            {
-                gr.FillPolygon(Brushes.Silver, points);
-                gr.DrawPolygon(WorldMap.s_pBlack2Pen, points);
-            }
+            if (fScale <= 2)
+                return;
+
+            gr.FillPolygon(Brushes.Silver, points);
+            gr.DrawPolygon(WorldMap.s_pBlack2Pen, points);
 
             //if (name != null)
             //    gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r1 *= fScale;
+            r2 *= fScale;
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i].X *= fScale;
+                points[i].Y *= fScale;
+            }
         }
     }
     
     public struct SignVolkano: ILandMark
     {
-        int x, y, r;
+        float x, y, r;
         string name;
-        Point[] points1;
-        Point[] points2;
+        PointF[] points1;
+        PointF[] points2;
 
         //internal static Font s_pFont = new Font("Arial", 10);
         //internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
 
-        public SignVolkano(float fkX, int iX, int iY, string sName)
+        public SignVolkano(float fkX, float iX, float iY, string sName)
         {
             x = iX;
             y = iY;
 
-            r = (int)(fkX * 200);
+            r = fkX * 200;
             if (r < 1)
                 r = 1;
             
-            List<Point> cPoints = new List<Point>();
-            cPoints.Add(new Point(x - r, y));
-            cPoints.Add(new Point(x, y - 2*r));
-            cPoints.Add(new Point(x + r, y));
+            List<PointF> cPoints = new List<PointF>();
+            cPoints.Add(new PointF(x - r, y));
+            cPoints.Add(new PointF(x, y - 2*r));
+            cPoints.Add(new PointF(x + r, y));
             points1 = cPoints.ToArray();
 
             cPoints.Clear();
-            cPoints.Add(new Point(x - r / 2, y - r));
-            cPoints.Add(new Point(x, y - 2*r));
-            cPoints.Add(new Point(x + r / 2, y - r));
-            cPoints.Add(new Point(x, y - r / 2));
+            cPoints.Add(new PointF(x - r / 2, y - r));
+            cPoints.Add(new PointF(x, y - 2*r));
+            cPoints.Add(new PointF(x + r / 2, y - r));
+            cPoints.Add(new PointF(x, y - r / 2));
             points2 = cPoints.ToArray();
 
             name = sName;
@@ -384,7 +502,7 @@ namespace VQMapTest2
             //s_pBlack1Pen.DashStyle = DashStyle.Dot;
         }
 
-        public void Draw(Graphics gr)
+        public void Draw(Graphics gr, float fScale)
         {
             gr.FillEllipse(Brushes.Silver, x - r, y - r / 2, r * 2, r);
             
@@ -396,6 +514,26 @@ namespace VQMapTest2
 
             //if (name != null)
             //    gr.DrawString(name, s_pFont, Brushes.Black, x + r, y);
+        }
+
+        public void Scale(float fScale)
+        {
+            x *= fScale;
+            y *= fScale;
+
+            r *= fScale;
+
+            for (int i = 0; i < points1.Length; i++)
+            {
+                points1[i].X *= fScale;
+                points1[i].Y *= fScale;
+            }
+
+            for (int i = 0; i < points2.Length; i++)
+            {
+                points2[i].X *= fScale;
+                points2[i].Y *= fScale;
+            }
         }
     }
 
@@ -566,11 +704,16 @@ namespace VQMapTest2
                 iDrawFrameCenterY = (int)((m_pDrawFrame.Y + m_pDrawFrame.Height / 2) / m_fkY);
             }
 
+
+            float fScale = fNewScale / m_fScale;
+
             m_fScale = fNewScale;
 
             BuildActualMap(m_fScale);
 
             PrebuildPaths();
+            ScalePaths(fScale);
+
             DrawMap();
 
             if(!bFirstTime)
@@ -859,35 +1002,35 @@ namespace VQMapTest2
             }
         }
 
-        private int GetScaledX(float fX)
+        private float GetScaledX(float fX)
         {
             //if (fX < -m_pWorld.m_cGrid.RX)
             //    fX += m_pWorld.m_cGrid.RX * 2;
             //if (fX >= m_pWorld.m_cGrid.RX)
             //    fX -= m_pWorld.m_cGrid.RX * 2;
-            return (int)(m_fkX + (m_pWorld.m_cGrid.RX + fX) * m_fkX);
+            return m_fkX + (m_pWorld.m_cGrid.RX + fX) * m_fkX;
         }
 
-        private int GetScaledY(float fY)
+        private float GetScaledY(float fY)
         {
-            return (int)(m_fkY + (m_pWorld.m_cGrid.RY + fY) * m_fkY);
+            return m_fkY + (m_pWorld.m_cGrid.RY + fY) * m_fkY;
         }
 
-        private Point GetScaledPoint(IPointF pPoint, float fDX)
+        private PointF GetScaledPoint(IPointF pPoint, float fDX)
         {
-            return new Point(GetScaledX(pPoint.X + fDX), GetScaledY(pPoint.Y));
+            return new PointF(GetScaledX(pPoint.X + fDX), GetScaledY(pPoint.Y));
         }
 
-        private Point GetScaledPoint(PointF pPoint, float fDX)
+        private PointF GetScaledPoint(PointF pPoint, float fDX)
         {
-            return new Point(GetScaledX(pPoint.X + fDX), GetScaledY(pPoint.Y));
+            return new PointF(GetScaledX(pPoint.X + fDX), GetScaledY(pPoint.Y));
         }
 
-        private List<Point> BuildBorder(Line pFirstLine, float fShift, out bool bCross)
+        private PointF[] BuildBorder(Line pFirstLine, float fShift, out bool bCross)
         {
             bCross = false;
 
-            List<Point> cBorder = new List<Point>();
+            List<PointF> cBorder = new List<PointF>();
             Line pLine = pFirstLine;
             cBorder.Add(GetScaledPoint(pLine.m_pPoint1, fShift));
             float fLastPointX = pLine.m_pPoint1.X + fShift;
@@ -914,7 +1057,7 @@ namespace VQMapTest2
             }
             while (pLine != pFirstLine);
 
-            return cBorder;
+            return cBorder.ToArray();
         }
 
         /// <summary>
@@ -923,34 +1066,34 @@ namespace VQMapTest2
         /// <param name="cFirstLines"></param>
         /// <param name="bMirror">Строить ли отражения для зацикленного мира. Нужно при отрисовке, но нельзя при определении описывающего прямоугольника.</param>
         /// <returns></returns>
-        private GraphicsPath BuildPath(List<Line> cFirstLines, bool bMirror)
+        private PointF[][] BuildPath(List<Line> cFirstLines, bool bMirror)
         {
-            GraphicsPath pPath = new GraphicsPath();
+            List<PointF[]> cPath = new List<PointF[]>();
             foreach (Line pFirstLine in cFirstLines)
             {
                 bool bCross;
-                List<Point> cBorder = BuildBorder(pFirstLine, 0, out bCross);
+                cPath.Add(BuildBorder(pFirstLine, 0, out bCross));
 
-                if (m_bUseCurves)
-                    pPath.AddClosedCurve(cBorder.ToArray());
-                else
-                    pPath.AddPolygon(cBorder.ToArray());
+                //if (m_bUseCurves)
+                //    pPath.AddClosedCurve(cBorder.ToArray());
+                //else
+                //    pPath.AddPolygon(cBorder.ToArray());
 
                 if (m_pWorld.m_cGrid.m_bCycled && bMirror && bCross)
                 {
                     if (pFirstLine.m_pPoint1.X > 0)
-                        cBorder = BuildBorder(pFirstLine, -m_pWorld.m_cGrid.RX * 2, out bCross);
+                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_cGrid.RX * 2, out bCross));
                     else
-                        cBorder = BuildBorder(pFirstLine, m_pWorld.m_cGrid.RX * 2, out bCross);
+                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_cGrid.RX * 2, out bCross));
 
-                    if (m_bUseCurves)
-                        pPath.AddClosedCurve(cBorder.ToArray());
-                    else
-                        pPath.AddPolygon(cBorder.ToArray());
+                    //if (m_bUseCurves)
+                    //    pPath.AddClosedCurve(cBorder.ToArray());
+                    //else
+                    //    pPath.AddPolygon(cBorder.ToArray());
                 }
             }
 
-            return pPath;
+            return cPath.ToArray();
         }
 
         /// <summary>
@@ -959,32 +1102,32 @@ namespace VQMapTest2
         /// <param name="cFirstLines"></param>
         /// <param name="bMirror">Строить ли отражения для зацикленного мира. Нужно при отрисовке, но нельзя при определении описывающего прямоугольника.</param>
         /// <returns></returns>
-        private GraphicsPath BuildPath(Line pFirstLine, bool bMirror)
+        private PointF[][] BuildPath(Line pFirstLine, bool bMirror)
         {
-            GraphicsPath pPath = new GraphicsPath();
+            List<PointF[]> cPath = new List<PointF[]>();
 
             bool bCross;
-            List<Point> cBorder = BuildBorder(pFirstLine, 0, out bCross);
+            cPath.Add(BuildBorder(pFirstLine, 0, out bCross));
 
-            if (m_bUseCurves)
-                pPath.AddClosedCurve(cBorder.ToArray());
-            else
-                pPath.AddPolygon(cBorder.ToArray());
+            //if (m_bUseCurves)
+            //    cPath.AddClosedCurve(cBorder.ToArray());
+            //else
+            //    cPath.AddPolygon(cBorder.ToArray());
 
             if (m_pWorld.m_cGrid.m_bCycled && bMirror && bCross)
             {
                 if (pFirstLine.m_pPoint1.X > 0)
-                    cBorder = BuildBorder(pFirstLine, -m_pWorld.m_cGrid.RX * 2, out bCross);
+                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_cGrid.RX * 2, out bCross));
                 else
-                    cBorder = BuildBorder(pFirstLine, m_pWorld.m_cGrid.RX * 2, out bCross);
+                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_cGrid.RX * 2, out bCross));
 
-                if (m_bUseCurves)
-                    pPath.AddClosedCurve(cBorder.ToArray());
-                else
-                    pPath.AddPolygon(cBorder.ToArray());
+                //if (m_bUseCurves)
+                //    cPath.AddClosedCurve(cBorder.ToArray());
+                //else
+                //    cPath.AddPolygon(cBorder.ToArray());
             }
 
-            return pPath;
+            return cPath.ToArray();
         }
 
         private void DrawContinentBorder(Graphics gr, ContinentX pContinent, int iDX, int iDY)
@@ -1078,10 +1221,10 @@ namespace VQMapTest2
             gr.FillPath(m_cRaceColorsID[pProvince.m_pRace], pPath);
         }
 
-        private List<Point> BuildPathLine(TransportationLink pPath, float fShift, out bool bCross)
+        private List<PointF> BuildPathLine(TransportationLink pPath, float fShift, out bool bCross)
         {
             bCross = false;
-            List<Point> cRoadLine = new List<Point>();
+            List<PointF> cRoadLine = new List<PointF>();
             float fLastPointX = pPath.m_aPoints[0].X + fShift;
             foreach (PointF pPoint in pPath.m_aPoints)
             {
@@ -1102,7 +1245,7 @@ namespace VQMapTest2
             return cRoadLine;
         }
 
-        private void DrawPathLine(Graphics gr, List<Point> cPathLine, Pen pPen)
+        private void DrawPathLine(Graphics gr, List<PointF> cPathLine, Pen pPen)
         {
             if (m_bUseCurves)
                 gr.DrawCurve(pPen, cPathLine.ToArray());
@@ -1192,7 +1335,7 @@ namespace VQMapTest2
         private void DrawTransportationLink(Graphics gr, TransportationLink pRoad, Pen pPen)
         {
             bool bCross;
-            List<Point> cPathLine = BuildPathLine(pRoad, 0, out bCross);
+            List<PointF> cPathLine = BuildPathLine(pRoad, 0, out bCross);
 
             DrawPathLine(gr, cPathLine, pPen);
             
@@ -1222,8 +1365,8 @@ namespace VQMapTest2
 
         private void AddLocationSign(LocationX pLoc)
         {
-            int iPointX = GetScaledX(pLoc.m_pCenter.X);
-            int iPointY = GetScaledY(pLoc.m_pCenter.Y);
+            float fPointX = GetScaledX(pLoc.m_pCenter.X);
+            float fPointY = GetScaledY(pLoc.m_pCenter.Y);
 
             //gr.FillEllipse(new SolidBrush(Color.White), (int)(m_fkX / 2 + (m_pWorld.m_iWorldScale * 1.5 + pLoc.m_pCenter.X) * m_fkX),
             //                                  (int)(m_fkY / 2 + (m_pWorld.m_iWorldScale + pLoc.m_pCenter.Y) * m_fkY), m_fkX, m_fkY);
@@ -1234,10 +1377,10 @@ namespace VQMapTest2
             switch (pLoc.m_eType)
             {
                 case RegionType.Peak:
-                    m_cLandmarks.Add(new SignPeak(m_fkX, iPointX, iPointY, ""));
+                    m_cLandmarks.Add(new SignPeak(m_fkX, fPointX, fPointY, ""));
                     break;
                 case RegionType.Volcano:
-                    m_cLandmarks.Add(new SignVolkano(m_fkX, iPointX, iPointY, ""));
+                    m_cLandmarks.Add(new SignVolkano(m_fkX, fPointX, fPointY, ""));
                     break;
             }
 
@@ -1245,36 +1388,29 @@ namespace VQMapTest2
             {
                 if (pLoc.m_pSettlement.m_iRuinsAge > 0)
                 {
-                    if(m_fScale > 2)
-                        m_cLandmarks.Add(new SignRuin(m_fkX, iPointX, iPointY, ""));
+                    m_cLandmarks.Add(new SignRuin(m_fkX, fPointX, fPointY, ""));
                 }
                 else
                 {
                     switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
                     {
                         case SettlementSize.Capital:
-                            if (m_fScale > 1)
-                                m_cLandmarks.Add(new SignCapital(m_fkX, iPointX, iPointY, m_fScale > 4 ? pLoc.m_pSettlement.m_sName : ""));
+                            m_cLandmarks.Add(new SignCapital(m_fkX, fPointX, fPointY, pLoc.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.City:
-                            if (m_fScale > 1)
-                                m_cLandmarks.Add(new SignCity(m_fkX, iPointX, iPointY, m_fScale > 4 ? pLoc.m_pSettlement.m_sName : ""));
+                            m_cLandmarks.Add(new SignCity(m_fkX, fPointX, fPointY, pLoc.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Town:
-                            if (m_fScale > 2)
-                                m_cLandmarks.Add(new SignTown(m_fkX, iPointX, iPointY, m_fScale > 4 ? pLoc.m_pSettlement.m_sName : ""));
+                            m_cLandmarks.Add(new SignTown(m_fkX, fPointX, fPointY, pLoc.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Village:
-                            if (m_fScale > 4)
-                                m_cLandmarks.Add(new SignVillage(m_fkX, iPointX, iPointY, m_fScale > 4 ? pLoc.m_pSettlement.m_sName : "", (pLoc.Owner as LandX).Type.m_pBrush));
+                            m_cLandmarks.Add(new SignVillage(m_fkX, fPointX, fPointY, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
                             break;
                         case SettlementSize.Hamlet:
-                            if (m_fScale > 4)
-                                m_cLandmarks.Add(new SignVillage(m_fkX, iPointX, iPointY, m_fScale > 4 ? pLoc.m_pSettlement.m_sName : "", (pLoc.Owner as LandX).Type.m_pBrush));
+                            m_cLandmarks.Add(new SignVillage(m_fkX, fPointX, fPointY, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
                             break;
                         case SettlementSize.Fort:
-                            if (m_fScale > 2)
-                                m_cLandmarks.Add(new SignFort(m_fkX, iPointX, iPointY, m_fScale > 4 ? pLoc.m_pSettlement.m_sName : ""));
+                            m_cLandmarks.Add(new SignFort(m_fkX, fPointX, fPointY, pLoc.m_pSettlement.m_sName));
                             break;
                     }
                 }
@@ -1286,12 +1422,10 @@ namespace VQMapTest2
                     switch (pLoc.m_pBuilding.m_eType)
                     {
                         case BuildingType.Lair:
-                            if (m_fScale > 2)
-                                m_cLandmarks.Add(new SignLair(m_fkX, iPointX, iPointY, ""));
+                            m_cLandmarks.Add(new SignLair(m_fkX, fPointX, fPointY, ""));
                             break;
                         case BuildingType.Hideout:
-                            if (m_fScale > 2)
-                                m_cLandmarks.Add(new SignHideout(m_fkX, iPointX, iPointY, ""));
+                            m_cLandmarks.Add(new SignHideout(m_fkX, fPointX, fPointY, ""));
                             break;
                     }
                 }
@@ -1326,10 +1460,14 @@ namespace VQMapTest2
             gr.DrawPath(pPen, pPath);
         }
 
+        private bool m_bRebuild = false;
+
         public void DrawMap(WorldMap pMasterMap)
         {
             m_pMasterMap = pMasterMap;
             m_pWorld = m_pMasterMap.m_pWorld;
+
+            m_bRebuild = true;
 
             m_cRaceColorsID = m_pMasterMap.m_cRaceColorsID;
 
@@ -1385,6 +1523,8 @@ namespace VQMapTest2
             m_pDrawFrame.X = 0;
             m_pDrawFrame.Y = 0;
 
+            m_bRebuild = true;
+
             MapScale = fScale;
 
             if (m_pMiniMap != null)
@@ -1411,77 +1551,196 @@ namespace VQMapTest2
         private Dictionary<Brush, GraphicsPath> m_cNationsMap = new Dictionary<Brush, GraphicsPath>();
         private Dictionary<Brush, GraphicsPath> m_cHumidityMap = new Dictionary<Brush, GraphicsPath>();
 
+        private void ScalePaths(float fScale)
+        {
+            if (fScale == 1)
+                return;
+
+            DateTime pTime1 = DateTime.Now;
+
+            Matrix pMatrix = new Matrix();
+            pMatrix.Scale(fScale, fScale);
+
+            foreach (var pPair in m_cContinentBorders)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cAreaBorders)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cProvinceBorders)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cLandMassBorders)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cLandBorders)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cLocationBorders)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cStateBorders)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cLandmarks)
+            {
+                pPair.Scale(fScale);
+            }
+
+            m_pContinentsPath.Transform(pMatrix);
+            m_pLocationsPath.Transform(pMatrix);
+            m_pLandsPath.Transform(pMatrix);
+            m_pProvinciesPath.Transform(pMatrix);
+
+            m_pContinentsPath2 = (GraphicsPath)m_pContinentsPath.Clone();
+            Matrix pMatrixT = new Matrix();
+            pMatrixT.Translate(1, 1);
+            m_pContinentsPath2.Transform(pMatrixT);
+
+            foreach (var pPair in m_cAreaMap)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cHumidityMap)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cNativesMap)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cNationsMap)
+                pPair.Value.Transform(pMatrix);
+
+            DateTime pTime2 = DateTime.Now;
+        }
+        
         private void PrebuildPaths()
         {
+            if (!m_bRebuild)
+                return;
+
             DateTime pTime1 = DateTime.Now;
 
             m_cContinentBorders.Clear();
             m_cAreaBorders.Clear();
-            m_cProvinceBorders.Clear();
-            m_cLandMassBorders.Clear();
-            m_cLandBorders.Clear();
-            m_cLocationBorders.Clear();
-            m_cStateBorders.Clear();
-            m_cLandmarks.Clear();
 
             m_pContinentsPath.Reset();
-            m_pLocationsPath.Reset();
-            m_pLandsPath.Reset();
-            m_pProvinciesPath.Reset();
-
+            
             m_cAreaMap.Clear();
-            m_cHumidityMap.Clear();
-            m_cNativesMap.Clear();
-            m_cNationsMap.Clear();
 
-            foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
+            if (m_pMasterMap == null)
             {
-                m_cLandMassBorders[pLandMass] = BuildPath(pLandMass.m_cFirstLines, true);
-                foreach (LandX pLand in pLandMass.m_cContents)
+                m_cProvinceBorders.Clear();
+                m_cLandMassBorders.Clear();
+                m_cLandBorders.Clear();
+                m_cLocationBorders.Clear();
+                m_cStateBorders.Clear();
+                m_cLandmarks.Clear();
+
+                m_pLocationsPath.Reset();
+                m_pLandsPath.Reset();
+                m_pProvinciesPath.Reset();
+
+                m_cHumidityMap.Clear();
+                m_cNativesMap.Clear();
+                m_cNationsMap.Clear();
+            }
+
+            PointF[][] aPoints;
+            GraphicsPath pPath;
+
+            if (m_pMasterMap == null)
+            {
+                foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
                 {
-                    m_cLandBorders[pLand] = BuildPath(pLand.m_cFirstLines, true);
-                    m_pLandsPath.AddPath(m_cLandBorders[pLand], false);
-
-                    foreach (LocationX pLoc in pLand.m_cContents)
+                    aPoints = BuildPath(pLandMass.m_cFirstLines, true);
+                    pPath = new GraphicsPath();
+                    foreach (var aPts in aPoints)
+                        pPath.AddPolygon(aPts);
+                    m_cLandMassBorders[pLandMass] = pPath;
+                    foreach (LandX pLand in pLandMass.m_cContents)
                     {
-                        m_cLocationBorders[pLoc] = BuildPath(pLoc.m_pFirstLine, true);
-                        m_pLocationsPath.AddPath(m_cLocationBorders[pLoc], false);
-                        AddLocationSign(pLoc);
-                    }
+                        aPoints = BuildPath(pLand.m_cFirstLines, true);
+                        pPath = new GraphicsPath();
+                        foreach (var aPts in aPoints)
+                        {
+                            pPath.AddPolygon(aPts);
+                            m_pLandsPath.AddPolygon(aPts);
 
-                    Brush pBrush = pLand.IsWater ? pLand.Type.m_pBrush : m_aHumidity[pLand.Humidity];
-                    if (!m_cHumidityMap.ContainsKey(pBrush))
-                        m_cHumidityMap[pBrush] = new GraphicsPath();
-                    m_cHumidityMap[pBrush].AddPath(m_cLandBorders[pLand], false);
+                            Brush pBrush = pLand.IsWater ? pLand.Type.m_pBrush : m_aHumidity[pLand.Humidity];
+                            if (!m_cHumidityMap.ContainsKey(pBrush))
+                                m_cHumidityMap[pBrush] = new GraphicsPath();
+                            m_cHumidityMap[pBrush].AddPolygon(aPts);
+                        }
+                        m_cLandBorders[pLand] = pPath;
+
+                        foreach (LocationX pLoc in pLand.m_cContents)
+                        {
+                            aPoints = BuildPath(pLoc.m_pFirstLine, true);
+                            pPath = new GraphicsPath();
+                            foreach (var aPts in aPoints)
+                            {
+                                pPath.AddPolygon(aPts);
+                                m_pLocationsPath.AddPolygon(aPts);
+                            }
+                            m_cLocationBorders[pLoc] = pPath;
+                            AddLocationSign(pLoc);
+                        }
+
+                    }
                 }
             }
             
             foreach (ContinentX pContinent in m_pWorld.m_aContinents)
             {
-                m_cContinentBorders[pContinent] = BuildPath(pContinent.m_cFirstLines, true);
+                aPoints = BuildPath(pContinent.m_cFirstLines, true);
+                pPath = new GraphicsPath();
+                foreach (var aPts in aPoints)
+                {
+                    pPath.AddPolygon(aPts);
+                    m_pContinentsPath.AddPolygon(aPts);
+                }
+                m_cContinentBorders[pContinent] = pPath;
 
-                m_pContinentsPath.AddPath(m_cContinentBorders[pContinent], false);
-
-                foreach (State pState in pContinent.m_cStates)
-                    m_cStateBorders[pState] = BuildPath(pState.m_cFirstLines, true);
+                if (m_pMasterMap == null)
+                {
+                    foreach (State pState in pContinent.m_cStates)
+                    {
+                        aPoints = BuildPath(pState.m_cFirstLines, true);
+                        pPath = new GraphicsPath();
+                        foreach (var aPts in aPoints)
+                        {
+                            pPath.AddPolygon(aPts);
+                        }
+                        m_cStateBorders[pState] = pPath;
+                    }
+                }
 
                 foreach (AreaX pArea in pContinent.m_cAreas)
                 {
-                    m_cAreaBorders[pArea] = BuildPath(pArea.m_cFirstLines, true);
+                    aPoints = BuildPath(pArea.m_cFirstLines, true);
+                    pPath = new GraphicsPath();
+                    foreach (var aPts in aPoints)
+                    {
+                        pPath.AddPolygon(aPts);
 
-                    if (pArea.m_pType != LandTypes<LandTypeInfoX>.Plains)
-                    {
-                        if (!m_cAreaMap.ContainsKey(pArea.m_pType.m_pBrush))
-                            m_cAreaMap[pArea.m_pType.m_pBrush] = new GraphicsPath();
-                        m_cAreaMap[pArea.m_pType.m_pBrush].AddPath(m_cAreaBorders[pArea], false);
+                        if (pArea.m_pType != LandTypes<LandTypeInfoX>.Plains)
+                        {
+                            if (!m_cAreaMap.ContainsKey(pArea.m_pType.m_pBrush))
+                                m_cAreaMap[pArea.m_pType.m_pBrush] = new GraphicsPath();
+                            m_cAreaMap[pArea.m_pType.m_pBrush].AddPolygon(aPts);
+                        }
+
+                        if (m_pMasterMap == null)
+                        {
+                            if (pArea.m_pRace != null)
+                            {
+                                Brush pBrush = m_cRaceColorsID[pArea.m_pRace];
+                                if (!m_cNativesMap.ContainsKey(pBrush))
+                                    m_cNativesMap[pBrush] = new GraphicsPath();
+                                m_cNativesMap[pBrush].AddPolygon(aPts);
+                            }
+                        }
                     }
-                    if (pArea.m_pRace != null)
-                    {
-                        Brush pBrush = m_cRaceColorsID[pArea.m_pRace];
-                        if (!m_cNativesMap.ContainsKey(pBrush))
-                            m_cNativesMap[pBrush] = new GraphicsPath();
-                        m_cNativesMap[pBrush].AddPath(m_cAreaBorders[pArea], false);
-                    }
+                    m_cAreaBorders[pArea] = pPath;
                 }
             }
             m_pContinentsPath2 = (GraphicsPath)m_pContinentsPath.Clone();
@@ -1489,19 +1748,28 @@ namespace VQMapTest2
             pMatrix.Translate(1, 1);
             m_pContinentsPath2.Transform(pMatrix);
 
-            foreach (Province pProvince in m_pWorld.m_aProvinces)
+            if (m_pMasterMap == null)
             {
-                m_cProvinceBorders[pProvince] = BuildPath(pProvince.m_cFirstLines, true);
+                foreach (Province pProvince in m_pWorld.m_aProvinces)
+                {
+                    aPoints = BuildPath(pProvince.m_cFirstLines, true);
+                    pPath = new GraphicsPath();
+                    foreach (var aPts in aPoints)
+                    {
+                        pPath.AddPolygon(aPts);
+                        if (!pProvince.m_pCenter.IsWater)
+                            m_pProvinciesPath.AddPolygon(aPts);
 
-                if (!pProvince.m_pCenter.IsWater)
-                    m_pProvinciesPath.AddPath(m_cProvinceBorders[pProvince], false);
-
-                Brush pBrush = m_cRaceColorsID[pProvince.m_pRace];
-                if (!m_cNationsMap.ContainsKey(pBrush))
-                    m_cNationsMap[pBrush] = new GraphicsPath();
-                m_cNationsMap[pBrush].AddPath(m_cProvinceBorders[pProvince], false);
+                        Brush pBrush = m_cRaceColorsID[pProvince.m_pRace];
+                        if (!m_cNationsMap.ContainsKey(pBrush))
+                            m_cNationsMap[pBrush] = new GraphicsPath();
+                        m_cNationsMap[pBrush].AddPolygon(aPts);
+                    }
+                    m_cProvinceBorders[pProvince] = pPath;
+                }
             }
 
+            m_bRebuild = false;
             DateTime pTime2 = DateTime.Now;
         }
 
@@ -1611,7 +1879,7 @@ namespace VQMapTest2
             if (m_bShowLocations)
             {
                 foreach (ILandMark pLandMark in m_cLandmarks)
-                    pLandMark.Draw(gr);
+                    pLandMark.Draw(gr, m_fScale);
             }
 
             if (m_bShowLandMasses)
@@ -1731,7 +1999,10 @@ namespace VQMapTest2
             if (m_pSelectedState == null)
                 return;
 
-            GraphicsPath pPath = BuildPath(m_pSelectedState.m_cFirstLines, false);
+            PointF[][] aPoints = BuildPath(m_pSelectedState.m_cFirstLines, false);
+            GraphicsPath pPath = new GraphicsPath();
+            foreach (var aPts in aPoints)
+                pPath.AddPolygon(aPts);
             RectangleF pRect = pPath.GetBounds();
 
             // Copy to a temporary variable to be thread-safe.
@@ -1742,7 +2013,10 @@ namespace VQMapTest2
 
         public Point GetCentralPoint(State pState)
         {
-            GraphicsPath pPath = BuildPath(pState.m_cFirstLines, false);
+            PointF[][] aPoints = BuildPath(pState.m_cFirstLines, false);
+            GraphicsPath pPath = new GraphicsPath();
+            foreach (var aPts in aPoints)
+                pPath.AddPolygon(aPts);
             RectangleF pRect = pPath.GetBounds();
 
             return new Point((int)(pRect.Left + pRect.Width / 2), (int)(pRect.Top + pRect.Height / 2));
@@ -1792,7 +2066,7 @@ namespace VQMapTest2
             bool bContinent = false;
             foreach (ContinentX pContinent in m_pWorld.m_aContinents)
             {
-                GraphicsPath pContinentPath = BuildPath(pContinent.m_cFirstLines, true);
+                GraphicsPath pContinentPath = m_cContinentBorders[pContinent];
 
                 if (pContinentPath.IsVisible(iX, iY))
                 {
@@ -1800,7 +2074,7 @@ namespace VQMapTest2
 
                     foreach (State pState in pContinent.m_cStates)
                     {
-                        GraphicsPath pStatePath = BuildPath(pState.m_cFirstLines, true);
+                        GraphicsPath pStatePath = m_cStateBorders[pState];
 
                         if (pStatePath.IsVisible(iX, iY))
                         {
@@ -1808,7 +2082,7 @@ namespace VQMapTest2
 
                             foreach (Province pProvince in pState.m_cContents)
                             {
-                                GraphicsPath pProvincePath = BuildPath(pProvince.m_cFirstLines, true);
+                                GraphicsPath pProvincePath = m_cProvinceBorders[pProvince];
 
                                 if (pProvincePath.IsVisible(iX, iY))
                                 {
@@ -1830,7 +2104,7 @@ namespace VQMapTest2
             {
                 foreach (LandX pLand in pLandMass.m_cContents)
                 {
-                    GraphicsPath pLandPath = BuildPath(pLand.m_cFirstLines, true);
+                    GraphicsPath pLandPath = m_cLandBorders[pLand];
 
                     if (pLandPath.IsVisible(iX, iY))
                     {
@@ -1838,11 +2112,7 @@ namespace VQMapTest2
 
                         foreach (LocationX pLoc in pLand.m_cContents)
                         {
-                            bool bCross;
-                            List<Point> cLocationBorder = BuildBorder(pLoc.m_pFirstLine, 0, out bCross);
-
-                            GraphicsPath pLocationPath = new GraphicsPath();
-                            pLocationPath.AddPolygon(cLocationBorder.ToArray());
+                            GraphicsPath pLocationPath = m_cLocationBorders[pLoc];
 
                             if (pLocationPath.IsVisible(iX, iY))
                             {
