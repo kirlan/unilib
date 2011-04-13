@@ -14,6 +14,7 @@ using nsUniLibControls;
 
 namespace VQMapTest2
 {
+    #region Signs
     internal interface ILandMark
     {
         void Draw(Graphics gr, float fScale);
@@ -536,6 +537,7 @@ namespace VQMapTest2
             }
         }
     }
+    #endregion
 
     public partial class WorldMap : UserControl
     {
@@ -544,7 +546,7 @@ namespace VQMapTest2
         float m_fkX = 1;
         float m_fkY = 1;
 
-        Brush[] m_aHumidity;
+        private Brush[] m_aHumidity;
 
         public WorldMap()
         {
@@ -557,6 +559,10 @@ namespace VQMapTest2
             for (int i = 0; i <= 100; i++)
                 cHumidity.Add(GetHumidityColor(i));
             m_aHumidity = cHumidity.ToArray();
+
+            s_pBlack1DotPen.DashPattern = new float[] { 1, 2 };
+            s_pAqua1DotPen.DashPattern = new float[] { 1, 2 };
+
         }
 
         private Rectangle m_pDrawFrame;
@@ -1130,56 +1136,6 @@ namespace VQMapTest2
             return cPath.ToArray();
         }
 
-        private void DrawContinentBorder(Graphics gr, ContinentX pContinent, int iDX, int iDY)
-        {
-            GraphicsPath pPath;
-            if (!m_cContinentBorders.TryGetValue(pContinent, out pPath))
-                return;
-            
-            Matrix pMatrix = new Matrix();
-            pMatrix.Translate(iDX, iDY);
-            pPath.Transform(pMatrix);
-
-            gr.DrawPath(new Pen(Color.Black, 2), pPath);
-        }
-
-        private void DrawContinentShape(Graphics gr, ContinentX pContinent)
-        {
-            GraphicsPath pPath;
-            if (!m_cContinentBorders.TryGetValue(pContinent, out pPath))
-                return;
-
-            Color mark = LandTypes<LandTypeInfoX>.Plains.m_pColor;
-
-            gr.FillPath(new SolidBrush(mark), pPath);
-
-            //gr.DrawClosedCurve(new Pen(mark, 5), cContinentBorder.ToArray(), 0.01f, FillMode.Winding);
-        }
-
-        private void DrawArea(Graphics gr, AreaX pArea)
-        {
-            if (pArea.m_pType == LandTypes<LandTypeInfoX>.Plains)
-                return;
-
-            GraphicsPath pPath;
-            if (!m_cAreaBorders.TryGetValue(pArea, out pPath))
-                return;
-
-            gr.FillPath(new SolidBrush(pArea.m_pType.m_pColor), pPath);
-        }
-
-        private void DrawRace(Graphics gr, AreaX pArea)
-        {
-            if (pArea.m_pRace == null)
-                return;
-
-            GraphicsPath pPath;
-            if (!m_cAreaBorders.TryGetValue(pArea, out pPath))
-                return;
-
-            gr.FillPath(m_cRaceColorsID[pArea.m_pRace], pPath);
-        }
-
         private void DrawStateBorder(Graphics gr, State pState, bool bFocused)
         {
             if (pState == null)
@@ -1199,29 +1155,7 @@ namespace VQMapTest2
             gr.DrawPath(pPen, pPath);
         }
 
-        private void DrawProvinceBorder(Graphics gr, Province pProvince)
-        {
-            if (pProvince == null)
-                return;
-
-            GraphicsPath pPath;
-            if (!m_cProvinceBorders.TryGetValue(pProvince, out pPath))
-                return;
-
-            Pen pPen = new Pen(Color.White, 2);
-            gr.DrawPath(pPen, pPath);
-        }
-
-        private void DrawDominatedRace(Graphics gr, Province pProvince)
-        {
-            GraphicsPath pPath;
-            if (!m_cProvinceBorders.TryGetValue(pProvince, out pPath))
-                return;
-
-            gr.FillPath(m_cRaceColorsID[pProvince.m_pRace], pPath);
-        }
-
-        private List<PointF> BuildPathLine(TransportationLink pPath, float fShift, out bool bCross)
+        private PointF[] BuildPathLine(TransportationLink pPath, float fShift, out bool bCross)
         {
             bCross = false;
             List<PointF> cRoadLine = new List<PointF>();
@@ -1242,7 +1176,7 @@ namespace VQMapTest2
                 fLastPointX = pPoint.X + fDX;
             }
 
-            return cRoadLine;
+            return cRoadLine.ToArray();
         }
 
         private void DrawPathLine(Graphics gr, List<PointF> cPathLine, Pen pPen)
@@ -1278,20 +1212,31 @@ namespace VQMapTest2
         internal static Pen s_pAqua1DotPen = new Pen(Color.Aqua, 1);
         internal static Pen s_pBlack1DotPen = new Pen(Color.Black, 1);
         internal static Pen s_pWhite2Pen = new Pen(Color.White, 2);
+        internal static Pen s_pBlack3Pen = new Pen(Color.Black, 3);
 
+        private enum RoadType
+        {
+            Back,
+            LandRoad1,
+            LandRoad2,
+            LandRoad3,
+            SeaRoute1,
+            SeaRoute2,
+            SeaRoute3,
+        }
 
-        private void DrawRoad(Graphics gr, TransportationLink pRoad, bool bBack)
+        private void AddRoad(TransportationLink pRoad, bool bBack)
         {
             if (pRoad.RoadLevel == 0)
                 return;
                 
-            if (m_fScale <= 2 && pRoad.RoadLevel <= 1)
-                return;
+            //if (m_fScale <= 2 && pRoad.RoadLevel <= 1)
+            //    return;
 
             //if (m_fScale <= 2 && pRoad.RoadLevel == 2)
             //    return;
 
-            Pen pPen = Pens.Black;
+            RoadType eRoadType = RoadType.LandRoad2;
 
             if (bBack)
             {
@@ -1301,7 +1246,7 @@ namespace VQMapTest2
                 if (pRoad.RoadLevel != 3)
                     return;
 
-                pPen = s_pDarkGrey3Pen;
+                eRoadType = RoadType.Back;
             }
             else
             {
@@ -1309,58 +1254,54 @@ namespace VQMapTest2
                 {
                     case 1:
                         if (pRoad.m_bSea || pRoad.m_bEmbark)
-                            pPen = s_pAqua1DotPen;
+                            eRoadType = RoadType.SeaRoute1;
                         else
-                            pPen = s_pBlack1DotPen;
-                        pPen.DashPattern = new float[] { 1, 2 };
+                            eRoadType = RoadType.LandRoad1;
                         break;
                     case 2:
                         if (pRoad.m_bSea || pRoad.m_bEmbark)
-                            pPen = s_pAqua1Pen;
+                            eRoadType = RoadType.SeaRoute2;
                         else
-                            pPen = s_pBlack1Pen;
+                            eRoadType = RoadType.LandRoad2;
                         break;
                     case 3:
                         if (pRoad.m_bSea || pRoad.m_bEmbark)
-                            pPen = s_pAqua2Pen;
+                            eRoadType = RoadType.SeaRoute3;
                         else
-                            pPen = s_pBlack2Pen;
+                            eRoadType = RoadType.LandRoad3;
                         break;
                 }
             }
-
-            DrawTransportationLink(gr, pRoad, pPen);
+            if(!m_cRoadsMap.ContainsKey(eRoadType))
+                m_cRoadsMap[eRoadType] = new GraphicsPath();
+            PointF[][] aLinks = GetTransportationLink(pRoad);
+            foreach (var aLink in aLinks)
+            {
+                m_cRoadsMap[eRoadType].StartFigure();
+                m_cRoadsMap[eRoadType].AddLines(aLink);
+            }
         }
 
-        private void DrawTransportationLink(Graphics gr, TransportationLink pRoad, Pen pPen)
+        private PointF[][] GetTransportationLink(TransportationLink pRoad)
         {
-            bool bCross;
-            List<PointF> cPathLine = BuildPathLine(pRoad, 0, out bCross);
+            List<PointF[]> cPathLines = new List<PointF[]>();
 
-            DrawPathLine(gr, cPathLine, pPen);
-            
+            bool bCross;
+            cPathLines.Add(BuildPathLine(pRoad, 0, out bCross));
+
             if (m_pWorld.m_cGrid.m_bCycled && bCross)
             {
                 if (pRoad.m_aPoints[0].X > 0)
                 {
-                    cPathLine = BuildPathLine(pRoad, -m_pWorld.m_cGrid.RX * 2, out bCross);
-                    DrawPathLine(gr, cPathLine, pPen);
+                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.m_cGrid.RX * 2, out bCross));
                 }
                 else
                 {
-                    cPathLine = BuildPathLine(pRoad, m_pWorld.m_cGrid.RX * 2, out bCross);
-                    DrawPathLine(gr, cPathLine, pPen);
+                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.m_cGrid.RX * 2, out bCross));
                 }
             }
-        }
 
-        private void DrawLandHumidity(Graphics gr, LandX pLand)
-        {
-            GraphicsPath pPath;
-            if (!m_cLandBorders.TryGetValue(pLand, out pPath))
-                return;
-
-            gr.FillPath(pLand.IsWater ? pLand.Type.m_pBrush : GetHumidityColor(pLand.Humidity), pPath);
+            return cPathLines.ToArray();
         }
 
         private void AddLocationSign(LocationX pLoc)
@@ -1430,34 +1371,6 @@ namespace VQMapTest2
                     }
                 }
             }
-        }
-
-        private void DrawLocationBorder(Graphics gr, LocationX pLoc)
-        {
-            GraphicsPath pPath;
-            if (!m_cLocationBorders.TryGetValue(pLoc, out pPath))
-                return;
-
-            gr.DrawPath(Pens.DarkGray, pPath);
-        }
-
-        private void DrawLandBorder(Graphics gr, LandX pLand)
-        {
-            GraphicsPath pPath;
-            if (!m_cLandBorders.TryGetValue(pLand, out pPath))
-                return;
-
-            gr.DrawPath(Pens.Black, pPath);
-        }
-
-        private void DrawLandMass(Graphics gr, LandMass<LandX> pLandMass)
-        {
-            GraphicsPath pPath;
-            if (!m_cLandMassBorders.TryGetValue(pLandMass, out pPath))
-                return;
-
-            Pen pPen = new Pen(Color.Red, 2);
-            gr.DrawPath(pPen, pPath);
         }
 
         private bool m_bRebuild = false;
@@ -1545,11 +1458,14 @@ namespace VQMapTest2
         private GraphicsPath m_pLocationsPath = new GraphicsPath();
         private GraphicsPath m_pLandsPath = new GraphicsPath();
         private GraphicsPath m_pProvinciesPath = new GraphicsPath();
+        private GraphicsPath m_pLandMassesPath = new GraphicsPath();
+        private GraphicsPath m_pStatesPath = new GraphicsPath();
 
         private Dictionary<Brush, GraphicsPath> m_cAreaMap = new Dictionary<Brush, GraphicsPath>();
         private Dictionary<Brush, GraphicsPath> m_cNativesMap = new Dictionary<Brush, GraphicsPath>();
         private Dictionary<Brush, GraphicsPath> m_cNationsMap = new Dictionary<Brush, GraphicsPath>();
         private Dictionary<Brush, GraphicsPath> m_cHumidityMap = new Dictionary<Brush, GraphicsPath>();
+        private Dictionary<RoadType, GraphicsPath> m_cRoadsMap = new Dictionary<RoadType, GraphicsPath>();
 
         private void ScalePaths(float fScale)
         {
@@ -1591,6 +1507,8 @@ namespace VQMapTest2
             m_pLocationsPath.Transform(pMatrix);
             m_pLandsPath.Transform(pMatrix);
             m_pProvinciesPath.Transform(pMatrix);
+            m_pLandMassesPath.Transform(pMatrix);
+            m_pStatesPath.Transform(pMatrix);
 
             m_pContinentsPath2 = (GraphicsPath)m_pContinentsPath.Clone();
             Matrix pMatrixT = new Matrix();
@@ -1607,6 +1525,9 @@ namespace VQMapTest2
                 pPair.Value.Transform(pMatrix);
 
             foreach (var pPair in m_cNationsMap)
+                pPair.Value.Transform(pMatrix);
+
+            foreach (var pPair in m_cRoadsMap)
                 pPair.Value.Transform(pMatrix);
 
             DateTime pTime2 = DateTime.Now;
@@ -1638,10 +1559,13 @@ namespace VQMapTest2
                 m_pLocationsPath.Reset();
                 m_pLandsPath.Reset();
                 m_pProvinciesPath.Reset();
+                m_pLandMassesPath.Reset();
+                m_pStatesPath.Reset();
 
                 m_cHumidityMap.Clear();
                 m_cNativesMap.Clear();
                 m_cNationsMap.Clear();
+                m_cRoadsMap.Clear();
             }
 
             PointF[][] aPoints;
@@ -1654,7 +1578,10 @@ namespace VQMapTest2
                     aPoints = BuildPath(pLandMass.m_cFirstLines, true);
                     pPath = new GraphicsPath();
                     foreach (var aPts in aPoints)
+                    {
                         pPath.AddPolygon(aPts);
+                        m_pLandMassesPath.AddPolygon(aPts);
+                    }
                     m_cLandMassBorders[pLandMass] = pPath;
                     foreach (LandX pLand in pLandMass.m_cContents)
                     {
@@ -1709,6 +1636,7 @@ namespace VQMapTest2
                         foreach (var aPts in aPoints)
                         {
                             pPath.AddPolygon(aPts);
+                            m_pStatesPath.AddPolygon(aPts);
                         }
                         m_cStateBorders[pState] = pPath;
                     }
@@ -1767,6 +1695,12 @@ namespace VQMapTest2
                     }
                     m_cProvinceBorders[pProvince] = pPath;
                 }
+
+                foreach (TransportationLink pRoad in m_pWorld.m_cTransportGrid)
+                {
+                    AddRoad(pRoad, true);
+                    AddRoad(pRoad, false);
+                }
             }
 
             m_bRebuild = false;
@@ -1784,97 +1718,76 @@ namespace VQMapTest2
 
             gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Sea.m_pColor), 0, 0, ActualMap.Width, ActualMap.Height);
 
-            if (m_pWorld == null)
-                return;
-
-            if (m_pWorld.m_cGrid.m_aLocations.Length == 0)
+            if (m_pWorld == null || m_pWorld.m_cGrid.m_aLocations.Length == 0)
                 return;
 
             switch (m_eMode)
             {
                 case VisType.LandType:
-                    gr.DrawPath(new Pen(Color.Black, 2), m_pContinentsPath2);
-                    gr.FillPath(LandTypes<LandTypeInfoX>.Plains.m_pBrush, m_pContinentsPath);
-
-                    foreach (var pArea in m_cAreaMap)
-                        gr.FillPath(pArea.Key, pArea.Value);
-
+                    {
+                        gr.DrawPath(new Pen(Color.Black, 2), m_pContinentsPath2);
+                        gr.FillPath(LandTypes<LandTypeInfoX>.Plains.m_pBrush, m_pContinentsPath);
+                        
+                        foreach (var pArea in m_cAreaMap)
+                            gr.FillPath(pArea.Key, pArea.Value);
+                    }
                     break;
                 case VisType.Humidity:
-                    foreach(var pHum in m_cHumidityMap)
-                        gr.FillPath(pHum.Key, pHum.Value);
-
-                    gr.DrawPath(Pens.Black, m_pContinentsPath);
+                    {
+                        foreach (var pHum in m_cHumidityMap)
+                            gr.FillPath(pHum.Key, pHum.Value);
+                        
+                        gr.DrawPath(Pens.Black, m_pContinentsPath);
+                    }
                     break;
                 case VisType.RacesNative:
-                    gr.DrawPath(Pens.Black, m_pContinentsPath);
-                    foreach(var pNative in m_cNativesMap)
-                        gr.FillPath(pNative.Key, pNative.Value);
-                    //foreach (ContinentX pContinent in m_pWorld.m_aContinents)
-                    //{
-                    //    foreach (AreaX pArea in pContinent.m_cAreas)
-                    //        DrawRace(gr, pArea);
-                    //}
+                    {
+                        gr.DrawPath(Pens.Black, m_pContinentsPath);
+                        
+                        foreach (var pNative in m_cNativesMap)
+                            gr.FillPath(pNative.Key, pNative.Value);
+                    }
                     break;
                 case VisType.RacesStates:
-                    gr.DrawPath(Pens.Black, m_pContinentsPath);
-                    foreach (var pNation in m_cNationsMap)
-                        gr.FillPath(pNation.Key, pNation.Value);
-
-                    //foreach (Province pProvince in m_pWorld.m_aProvinces)
-                    //    DrawDominatedRace(gr, pProvince);
-
+                    {
+                        gr.DrawPath(Pens.Black, m_pContinentsPath);
+                        
+                        foreach (var pNation in m_cNationsMap)
+                            gr.FillPath(pNation.Key, pNation.Value);
+                    }
                     break;
             }
 
             if (m_bShowLocationsBorders)
-            {
                 gr.DrawPath(Pens.DarkGray, m_pLocationsPath);
 
-                //foreach(var pLoc in m_cLocationBorders)
-                //    gr.DrawPath(Pens.DarkGray, pLoc.Value);
-
-                //foreach(LocationX pLoc in m_pWorld.m_cGrid.m_aLocations)
-                //    DrawLocationBorder(gr, pLoc);
-            }
-
             if (m_bShowLands)
-            {
                 gr.DrawPath(Pens.Black, m_pLandsPath);
 
-                //foreach(LandX pLand in m_pWorld.m_aLands)
-                //    DrawLandBorder(gr, pLand);
-            }
-
             if (m_bShowProvincies)
-            {
                 gr.DrawPath(s_pWhite2Pen, m_pProvinciesPath);
-                
-                //foreach (Province pProvince in m_pWorld.m_aProvinces)
-                //    if(!pProvince.m_pCenter.IsWater)
-                //        DrawProvinceBorder(gr, pProvince);
-            }
 
             foreach (TransportationNode[] aPath in m_cPaths.Keys)
                 DrawPath(gr, aPath, m_cPaths[aPath]);
 
             if (m_bShowRoads)
             {
-                foreach (TransportationLink pRoad in m_pWorld.m_cTransportGrid)
-                    DrawRoad(gr, pRoad, true);
+                gr.DrawPath(s_pDarkGrey3Pen, m_cRoadsMap[RoadType.Back]);
+                gr.DrawPath(s_pBlack2Pen, m_cRoadsMap[RoadType.LandRoad3]);
+                gr.DrawPath(s_pAqua2Pen, m_cRoadsMap[RoadType.SeaRoute3]);
 
-                foreach (TransportationLink pRoad in m_pWorld.m_cTransportGrid)
-                    DrawRoad(gr, pRoad, false);
-            }
+                gr.DrawPath(s_pBlack1Pen, m_cRoadsMap[RoadType.LandRoad2]);
+                gr.DrawPath(s_pAqua1Pen, m_cRoadsMap[RoadType.SeaRoute2]);
 
-            foreach (ContinentX pContinent in m_pWorld.m_aContinents)
-            {
-                if (m_bShowStates)
+                if (m_fScale > 2)
                 {
-                    foreach (State pState in pContinent.m_cStates)
-                        DrawStateBorder(gr, pState, false);
+                    gr.DrawPath(s_pBlack1DotPen, m_cRoadsMap[RoadType.LandRoad1]);
+                    gr.DrawPath(s_pAqua1DotPen, m_cRoadsMap[RoadType.SeaRoute1]);
                 }
             }
+
+            if (m_bShowStates)
+                gr.DrawPath(s_pBlack3Pen, m_pStatesPath);
 
             if (m_bShowLocations)
             {
@@ -1883,10 +1796,7 @@ namespace VQMapTest2
             }
 
             if (m_bShowLandMasses)
-            {
-                foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
-                    DrawLandMass(gr, pLandMass);
-            }
+                gr.DrawPath(s_pRed2Pen, m_pLandMassesPath);
 
             //foreach (TransportationNode pNode in m_pWorld.m_cSeaTransportGrid.Values)
             //{
@@ -1919,16 +1829,21 @@ namespace VQMapTest2
 
         private void DrawPath(Graphics gr, TransportationNode[] aPath, Pen pPen)
         {
+            GraphicsPath pPath = new GraphicsPath();
             TransportationNode pLastNode = null;
             foreach (TransportationNode pNode in aPath)
             {
                 if (pLastNode != null)
                 {
-                    DrawTransportationLink(gr, pLastNode.m_cLinks[pNode], pPen);
+                    PointF[][] aLinks = GetTransportationLink(pLastNode.m_cLinks[pNode]);
+                    foreach (var aLink in aLinks)
+                        pPath.AddLines(aLink);
                 }
 
                 pLastNode = pNode;
             }
+
+            gr.DrawPath(pPen, pPath);
         }
 
         private Brush GetHumidityColor(int iHumidity)
