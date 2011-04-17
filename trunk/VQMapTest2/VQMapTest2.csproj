@@ -89,6 +89,7 @@
     <Compile Include="Languages\Orkish.cs" />
     <Compile Include="Languages\Slavic.cs" />
     <Compile Include="LocationX.cs" />
+    <Compile Include="MapQuadrant.cs" />
     <Compile Include="Organization.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
