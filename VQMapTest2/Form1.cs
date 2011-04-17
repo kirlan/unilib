@@ -107,11 +107,11 @@ namespace VQMapTest2
             if (radioButton1.Checked)
                 worldMap1.MapScale = 1;
             if (radioButton2.Checked)
-                worldMap1.MapScale = 2;
-            if (radioButton3.Checked)
                 worldMap1.MapScale = 4;
-            if (radioButton4.Checked)
+            if (radioButton3.Checked)
                 worldMap1.MapScale = 8;
+            if (radioButton4.Checked)
+                worldMap1.MapScale = 16;
 
             comboBox1.Focus();
         }
@@ -384,7 +384,7 @@ namespace VQMapTest2
 
         private GenerationForm m_pGenerationForm = new GenerationForm();
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void ToolStripMenuItem_New_Click(object sender, EventArgs e)
         {
             if (m_pGenerationForm.ShowDialog() == DialogResult.OK)
             {
@@ -394,7 +394,7 @@ namespace VQMapTest2
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItem_Exit_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -447,7 +447,8 @@ namespace VQMapTest2
         {
             Point pPoint = worldMap1.GetCentralPoint(worldMap1.SelectedState);
 
-            worldMap1.SetPan(pPoint.X - worldMap1.ClientRectangle.Width / 2, pPoint.Y - worldMap1.ClientRectangle.Height / 2);
+            //Получаем новые координаты для DrawFrame, чтобы выбранное государство было в центре
+            worldMap1.SetPan(pPoint.X - worldMap1.DrawFrame.Width / 2, pPoint.Y - worldMap1.DrawFrame.Height / 2);
 
             comboBox1.Focus();
         }
@@ -546,7 +547,7 @@ namespace VQMapTest2
         LocationX m_pTPFStart = null;
         LocationX m_pTPFFinish = null;
 
-        private void testPathFinding1ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItem_TestPathFinding1_Click(object sender, EventArgs e)
         {
             do
             {
@@ -644,7 +645,7 @@ namespace VQMapTest2
 
         private int m_iPassword = 0;
 
-        private void testPathFinding2ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItem_TestPathFinding2_Click(object sender, EventArgs e)
         {
             worldMap1.ClearPath();
 
@@ -675,7 +676,7 @@ namespace VQMapTest2
             worldMap1.AddPath(pLandsPath.m_aNodes, Color.Fuchsia);
         }
 
-        private void testPathFinding3ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItem_TestPathFinding3_Click(object sender, EventArgs e)
         {
             worldMap1.ClearPath();
 

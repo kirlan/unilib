@@ -143,6 +143,7 @@
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
+            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.radioButton1.Location = new System.Drawing.Point(3, 3);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(36, 17);
@@ -159,29 +160,31 @@
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(36, 17);
             this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "x2";
+            this.radioButton2.Text = "x4";
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
+            this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.radioButton3.Location = new System.Drawing.Point(3, 63);
             this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(36, 17);
+            this.radioButton3.Size = new System.Drawing.Size(33, 16);
             this.radioButton3.TabIndex = 2;
-            this.radioButton3.Text = "x4";
+            this.radioButton3.Text = "x8";
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
+            this.radioButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.radioButton4.Location = new System.Drawing.Point(3, 93);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(36, 17);
+            this.radioButton4.Size = new System.Drawing.Size(35, 13);
             this.radioButton4.TabIndex = 3;
-            this.radioButton4.Text = "x8";
+            this.radioButton4.Text = "x16";
             this.radioButton4.UseVisualStyleBackColor = true;
             this.radioButton4.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
@@ -436,7 +439,7 @@
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.newToolStripMenuItem.Text = "New...";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.button1_Click_1);
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_New_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -455,7 +458,7 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_Exit_Click);
             // 
             // debugToolStripMenuItem
             // 
@@ -567,21 +570,21 @@
             this.testPathFinding1ToolStripMenuItem.Name = "testPathFinding1ToolStripMenuItem";
             this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.testPathFinding1ToolStripMenuItem.Text = "TestPathFinding1";
-            this.testPathFinding1ToolStripMenuItem.Click += new System.EventHandler(this.testPathFinding1ToolStripMenuItem_Click);
+            this.testPathFinding1ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding1_Click);
             // 
             // testPathFinding2ToolStripMenuItem
             // 
             this.testPathFinding2ToolStripMenuItem.Name = "testPathFinding2ToolStripMenuItem";
             this.testPathFinding2ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.testPathFinding2ToolStripMenuItem.Text = "TestPathFinding2";
-            this.testPathFinding2ToolStripMenuItem.Click += new System.EventHandler(this.testPathFinding2ToolStripMenuItem_Click);
+            this.testPathFinding2ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding2_Click);
             // 
             // testPathFinding3ToolStripMenuItem
             // 
             this.testPathFinding3ToolStripMenuItem.Name = "testPathFinding3ToolStripMenuItem";
             this.testPathFinding3ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.testPathFinding3ToolStripMenuItem.Text = "TestPathFinding3";
-            this.testPathFinding3ToolStripMenuItem.Click += new System.EventHandler(this.testPathFinding3ToolStripMenuItem_Click);
+            this.testPathFinding3ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding3_Click);
             // 
             // contextMenuStrip1
             // 
