@@ -10,6 +10,7 @@ using Random;
 using LandscapeGeneration;
 using Microsoft.Win32;
 using System.IO;
+using Socium;
 
 namespace VQMapTest2
 {
