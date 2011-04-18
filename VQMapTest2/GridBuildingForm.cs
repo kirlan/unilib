@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using LandscapeGeneration;
 using System.IO;
+using Socium;
 
 namespace VQMapTest2
 {

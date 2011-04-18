@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Random;
 using LandscapeGeneration.PathFind;
 using LandscapeGeneration;
+using Socium;
 
 namespace VQMapTest2
 {
