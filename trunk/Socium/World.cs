@@ -988,10 +988,10 @@ namespace Socium
                             {
                                 int iMaxRoadLevel = 1;
                                 foreach(var pRoad in pBestTown1.m_cRoads)
-                                    if(pRoad.Key > iMaxRoadLevel)
+                                    if(pRoad.Value.Count > 0 && pRoad.Key > iMaxRoadLevel)
                                         iMaxRoadLevel = pRoad.Key;
                                 foreach(var pRoad in pBestTown2.m_cRoads)
-                                    if(pRoad.Key > iMaxRoadLevel)
+                                    if (pRoad.Value.Count > 0 && pRoad.Key > iMaxRoadLevel)
                                         iMaxRoadLevel = pRoad.Key;
                                 //int iRoadLevel = 2;
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad <= 1 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad <= 1)
