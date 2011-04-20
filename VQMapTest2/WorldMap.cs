@@ -1547,7 +1547,8 @@ namespace VQMapTest2
                         foreach (var aLink in aLinks)
                         {
                             m_aQuadrants[i, j].m_cRoadsMap[eRoadType].StartFigure();
-                            m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddLines(aLink);
+                            //m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddLines(aLink);
+                            m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddCurve(aLink);
                         }
                     }
         }
@@ -2485,8 +2486,8 @@ namespace VQMapTest2
                 if (m_pFocusedLocation.m_cHaveRoadTo.Count > 0)
                 {
                     sToolTip += "\nHave roads to:";
-                    foreach (LocationX pRoad in m_pFocusedLocation.m_cHaveRoadTo)
-                        sToolTip += "\n - " + pRoad.m_pSettlement.m_sName;
+                    foreach (var pRoad in m_pFocusedLocation.m_cHaveRoadTo)
+                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_sName;
                 }
 
                 if (m_pFocusedLocation.m_cHaveSeaRouteTo.Count > 0)
