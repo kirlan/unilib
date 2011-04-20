@@ -375,6 +375,40 @@ namespace Socium
                 m_cBorderWith[pState].AddRange(m_cBorder[pProvince]);
             }
             FillBorderWithKeys();
+
+            Dictionary<Race, int> cRacesCount = new Dictionary<Race, int>();
+
+            int iMaxPop = 0;
+            Race pMaxRace = null;
+
+            foreach (Province pProvince in m_cContents)
+            {
+                //bool bRestricted = true;
+                //foreach (LocationX pLoc in pProvince.m_cContents)
+                //    if (!pLoc.Forbidden && !pLoc.m_bBorder)
+                //        bRestricted = false;
+
+                //if (bRestricted)
+                //    continue;
+
+                if (!cRacesCount.ContainsKey(pProvince.m_pRace))
+                    cRacesCount[pProvince.m_pRace] = 0;
+                cRacesCount[pProvince.m_pRace] += pProvince.m_cContents.Count;
+                if (cRacesCount[pProvince.m_pRace] > iMaxPop)
+                {
+                    iMaxPop = cRacesCount[pProvince.m_pRace];
+                    pMaxRace = pProvince.m_pRace;
+                }
+            }
+
+            if (pMaxRace != null)
+            {
+                m_pRace = pMaxRace;
+
+                m_pMethropoly.m_pRace = pMaxRace;
+                foreach (LandX pLand in m_pMethropoly.m_cContents)
+                    pLand.m_pRace = m_pRace;
+            }
         }
 
         public Race m_pRace = null;
