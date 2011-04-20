@@ -970,7 +970,7 @@ namespace Socium
                             {
                                 foreach (LocationX pOtherTown in pBorderState.m_cSettlements)
                                 {
-                                    if (pTown != pOtherTown && !pTown.m_cHaveRoadTo.Contains(pOtherTown))
+                                    if (pTown != pOtherTown && !pTown.m_cHaveRoadTo.ContainsKey(pOtherTown))
                                     {
                                         float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
 
@@ -986,14 +986,20 @@ namespace Socium
                             }
                             if (pBestTown1 != null && State.InfrastructureLevels[pState.m_iInfrastructureLevel].m_iMaxGroundRoad > 0 && State.InfrastructureLevels[pBorderState.m_iInfrastructureLevel].m_iMaxGroundRoad > 0)
                             {
-                                int iRoadLevel = Math.Max(pBestTown1.m_iRoad, pBestTown2.m_iRoad);
+                                int iMaxRoadLevel = 1;
+                                foreach(var pRoad in pBestTown1.m_cRoads)
+                                    if(pRoad.Key > iMaxRoadLevel)
+                                        iMaxRoadLevel = pRoad.Key;
+                                foreach(var pRoad in pBestTown2.m_cRoads)
+                                    if(pRoad.Key > iMaxRoadLevel)
+                                        iMaxRoadLevel = pRoad.Key;
                                 //int iRoadLevel = 2;
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad <= 1 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad <= 1)
                                 //    iRoadLevel = 1;
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad > 2 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad > 2)
                                 //    iRoadLevel = 3;
 
-                                BuildRoad(pBestTown1, pBestTown2, iRoadLevel, fCycleShift);
+                                BuildRoad(pBestTown1, pBestTown2, iMaxRoadLevel, fCycleShift);
                             }
                         }
                     }
@@ -1383,7 +1389,10 @@ namespace Socium
 
             foreach (LocationX pLoc in m_cGrid.m_aLocations)
             {
-                pLoc.m_iRoad = 0;
+                pLoc.m_cRoads.Clear();
+                pLoc.m_cRoads[1] = new List<Road>();
+                pLoc.m_cRoads[2] = new List<Road>();
+                pLoc.m_cRoads[3] = new List<Road>();
                 pLoc.m_cHaveRoadTo.Clear();
                 pLoc.m_cHaveSeaRouteTo.Clear();
 
@@ -1404,56 +1413,181 @@ namespace Socium
             }
         }
 
+        private static void DestroyRoad(Road pOldRoad)
+        {
+            LocationX pTown1 = pOldRoad.Locations[0];
+            LocationX pTown2 = pOldRoad.Locations[pOldRoad.Locations.Length - 1];
+
+            //удаляем старую дорогу
+            foreach (LocationX pLoc in pOldRoad.Locations)
+            {
+                if (pLoc != pTown2)
+                    pLoc.m_cHaveRoadTo.Remove(pTown2);
+                if (pLoc != pTown1)
+                    pLoc.m_cHaveRoadTo.Remove(pTown1);
+
+                pLoc.m_cRoads[pOldRoad.m_iLevel].Remove(pOldRoad);
+            }
+        }
+
+        /// <summary>
+        /// Подготовка к строительству новой дороги:
+        /// проверяем, нет ли уже между городами старой дороги, и если есть, то не лучше ли она чем та, которую хотим построоить.
+        /// если хуже, то удаляем старую дорогу.
+        /// Возвращаемое значение: true - можно строить новую дорогу, false - нельзя (уже есть такого же уровня или лучше)
+        /// </summary>
+        /// <param name="pTown1">первый город</param>
+        /// <param name="pTown2">второй город</param>
+        /// <param name="iRoadLevel">уровень новой дороги</param>
+        /// <returns>true - можно строить новую дорогу, false - нельзя</returns>
+        private static bool CheckOldRoad(LocationX pTown1, LocationX pTown2, int iRoadLevel)
+        {
+            //проверим, а нет ли уже между этими городами дороги
+            while (pTown1.m_cHaveRoadTo.ContainsKey(pTown2) && pTown2.m_cHaveRoadTo.ContainsKey(pTown1))
+            {
+                Road pOldRoad = pTown1.m_cHaveRoadTo[pTown2];
+
+                //если существующая дорога лучше или такая же, как та, которую мы собираемся строить, то нафиг строить?
+                if (pOldRoad.m_iLevel >= iRoadLevel)
+                    return false;
+
+                //удаляем старую дорогу
+                DestroyRoad(pOldRoad);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Отстраивает заданный участок дороги.
+        /// Предполагается, что на этом участке дорога не проходит ни через какие населённые пункты.
+        /// </summary>
+        /// <param name="pRoad">участок дороги</param>
+        /// <param name="iRoadLevel">уровень дороги</param>
+        private static void BuildRoad(Road pRoad, int iRoadLevel)
+        {
+            LocationX pTown1 = pRoad.Locations[0];
+            LocationX pTown2 = pRoad.Locations[pRoad.Locations.Length - 1];
+
+            //если между этими двумя городами уже есть дорога не хуже - новую не строим
+            if (!CheckOldRoad(pTown1, pTown2, iRoadLevel))
+                return;
+
+            LocationX pLastNode = null;
+            foreach (LocationX pNode in pRoad.Locations)
+            {
+                if (pNode != pTown1 && !pNode.m_cHaveRoadTo.ContainsKey(pTown1))
+                    pNode.m_cHaveRoadTo[pTown1] = pRoad;
+                if (pNode != pTown2 && !pNode.m_cHaveRoadTo.ContainsKey(pTown2))
+                    pNode.m_cHaveRoadTo[pTown2] = pRoad;
+
+                pNode.m_cRoads[iRoadLevel].Add(pRoad);
+
+                if (pLastNode != null)
+                {
+                    pLastNode.m_cLinks[pNode].BuildRoad(iRoadLevel);
+                    //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
+
+                    if (pLastNode.Owner != pNode.Owner)
+                    {
+                        try
+                        {
+                            (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(iRoadLevel);
+
+                            if ((pLastNode.Owner as LandX).Owner != (pNode.Owner as LandX).Owner)
+                            {
+                                ((pLastNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(iRoadLevel);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.WriteLine(ex.Message);
+                        }
+                    }
+                }
+
+                pLastNode = pNode;
+            }
+        }
+
+        /// <summary>
+        /// "обновляем" дорогу.
+        /// если она проходит через какие-то населённые пункты, то разбиваем её на отдельный сегменты 
+        /// от одного поселения до другого.
+        /// </summary>
+        /// <param name="pRoad">дорога</param>
+        public static void RenewRoad(Road pOldRoad)
+        {
+            //разобьем найденный путь на участки от одного населённого пункта до другого
+            List<Road> cRoadsChain = new List<Road>();
+            Road pNewRoad = null;
+            foreach (LocationX pNode in pOldRoad.Locations)
+            {
+                if (pNewRoad == null)
+                    pNewRoad = new Road(pNode, pOldRoad.m_iLevel);
+                else
+                {
+                    pNewRoad.BuidTo(pNode);
+
+                    if (pNode.m_pSettlement != null && pNode.m_pSettlement.m_iRuinsAge == 0)
+                    {
+                        cRoadsChain.Add(pNewRoad);
+                        pNewRoad = new Road(pNode, pOldRoad.m_iLevel);
+                    }
+                }
+            }
+            if (cRoadsChain.Count == 1)
+                return;
+
+            DestroyRoad(pOldRoad);
+        
+            Road[] aRoadsChain = cRoadsChain.ToArray();
+
+            foreach (Road pRoad in aRoadsChain)
+                BuildRoad(pRoad, pOldRoad.m_iLevel);
+        }
+
+        /// <summary>
+        /// Строит дорогу из одного города в другой. Если дорога проходит через другие населённые пункты, она разбивается на 
+        /// отдельные участки от одного поселения до другого.
+        /// </summary>
+        /// <param name="pTown1">первый город</param>
+        /// <param name="pTown2">второй город</param>
+        /// <param name="iRoadLevel">уровень строящейся дороги</param>
+        /// <param name="fCycleShift">циклический сдвиг координат по горизонтали для закольцованных карт</param>
         public static void BuildRoad(LocationX pTown1, LocationX pTown2, int iRoadLevel, float fCycleShift)
         {
+            if (!CheckOldRoad(pTown1, pTown2, iRoadLevel))
+                return;
+
             //PathFinder pBestPath = new PathFinder(pTown1, pTown2, fCycleShift, -1);
             ShortestPath pBestPath = FindReallyBestPath(pTown1, pTown2, fCycleShift, false);
 
             if (pBestPath.m_aNodes != null && pBestPath.m_aNodes.Length > 1)
             {
-                //if (!pTown1.m_cHaveRoadTo.Contains(pTown2))
-                //    pTown1.m_cHaveRoadTo.Add(pTown2);
-                //if (!pTown2.m_cHaveRoadTo.Contains(pTown1))
-                //    pTown2.m_cHaveRoadTo.Add(pTown1);
-
-                LocationX pLastNode = null;
+                //разобьем найденный путь на участки от одного населённого пункта до другого
+                List<Road> cRoadsChain = new List<Road>();
+                Road pNewRoad = null;
                 foreach (LocationX pNode in pBestPath.m_aNodes)
                 {
-                    if (pNode != pTown1 && !pNode.m_cHaveRoadTo.Contains(pTown1))
-                        pNode.m_cHaveRoadTo.Add(pTown1);
-                    if (pNode != pTown2 && !pNode.m_cHaveRoadTo.Contains(pTown2))
-                        pNode.m_cHaveRoadTo.Add(pTown2);
-
-                    if (pLastNode != null)
+                    if (pNewRoad == null)
+                        pNewRoad = new Road(pNode, iRoadLevel);
+                    else
                     {
-                        pLastNode.m_cLinks[pNode].BuildRoad(iRoadLevel);
-                        //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
+                        pNewRoad.BuidTo(pNode);
 
-                        if (pLastNode.Owner != pNode.Owner)
+                        if (pNode.m_pSettlement != null && pNode.m_pSettlement.m_iRuinsAge == 0)
                         {
-                            try
-                            {
-                                (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(iRoadLevel);
-                                //(pNode.Owner as LandX).m_cLinks[pLastNode.Owner as LandX].BuildRoad(iRoadLevel);
-
-                                if ((pLastNode.Owner as LandX).Owner != (pNode.Owner as LandX).Owner)
-                                {
-                                    ((pLastNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(iRoadLevel);
-                                    //((pNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pLastNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(iRoadLevel);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.WriteLine(ex.Message);
-                            }
+                            cRoadsChain.Add(pNewRoad);
+                            pNewRoad = new Road(pNode, iRoadLevel);
                         }
                     }
-
-                    pLastNode = pNode;
-
-                    if (pNode.m_iRoad < iRoadLevel)
-                        pNode.m_iRoad = iRoadLevel;
                 }
+
+                Road[] aRoadsChain = cRoadsChain.ToArray();
+
+                foreach (Road pRoad in aRoadsChain)
+                    BuildRoad(pRoad, iRoadLevel);
             }
         }
     }

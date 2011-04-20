@@ -48,7 +48,7 @@ namespace Socium
 
                 if (pLoc.m_pSettlement != null || 
                     pLoc.m_pBuilding != null || 
-                    pLoc.m_iRoad > 0 || 
+                    pLoc.m_cRoads.Count > 0 || 
                     pLoc.m_bBorder)
                     iChances = 0;
                 else
@@ -110,7 +110,7 @@ namespace Socium
                         bCoast = true;
                 }
 
-                int iChances = (bBorder ? ((bCoast || pLoc.m_iRoad > 0) ? 50 : 1) : ((bCoast || pLoc.m_iRoad > 0) ? 50 : 10));
+                int iChances = (bBorder ? ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 1) : ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 10));
 
                 if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)
                     iChances = 0;
@@ -142,7 +142,7 @@ namespace Socium
                                 bCoast = true;
                         }
 
-                        int iChances = (bBorder ? ((bCoast || pLoc.m_iRoad > 0) ? 50 : 1) : ((bCoast || pLoc.m_iRoad > 0) ? 50 : 10));
+                        int iChances = (bBorder ? ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 1) : ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 10));
 
                         if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)
                             iChances = 1;
@@ -171,6 +171,15 @@ namespace Socium
             foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
                 if (pLoc.m_pBuilding == null)
                     pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
+
+            List<Road> cRoads = new List<Road>();
+            cRoads.AddRange(m_cContents[iTown].m_cRoads[1]);
+            cRoads.AddRange(m_cContents[iTown].m_cRoads[2]);
+            cRoads.AddRange(m_cContents[iTown].m_cRoads[3]);
+
+            Road[] aRoads = cRoads.ToArray();
+            foreach(Road pRoad in aRoads)
+                World.RenewRoad(pRoad);
 
             return m_cContents[iTown];
         }
@@ -255,6 +264,15 @@ namespace Socium
                 foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
                     if (pLoc.m_pBuilding == null)
                         pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
+
+                List<Road> cRoads = new List<Road>();
+                cRoads.AddRange(m_cContents[iFort].m_cRoads[1]);
+                cRoads.AddRange(m_cContents[iFort].m_cRoads[2]);
+                cRoads.AddRange(m_cContents[iFort].m_cRoads[3]);
+
+                Road[] aRoads = cRoads.ToArray();
+                foreach (Road pRoad in aRoads)
+                    World.RenewRoad(pRoad);
 
                 return m_cContents[iFort];
             }

@@ -1000,7 +1000,7 @@ namespace Socium
 
             foreach (LocationX pTown in aSettlements)
             {
-                if (!cConnected.Contains(pTown) && pTown.m_iRoad > 1)
+                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[2].Count > 0 || pTown.m_cRoads[3].Count > 1))
                     cConnected.Add(pTown);
             }
 
