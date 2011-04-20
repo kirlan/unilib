@@ -1056,9 +1056,6 @@ namespace Socium
                 }
             }
 
-            //TODO: На самом деле морские пути должны быть не дорогами, а прямыми транспортными линками из одного порта в другой - такими же, как обычные, только из большего чем 2 числа звеньев.
-            //Это же решит и проблему смежности государств, имеющих водное сообщение.
-
             LocationX[] aHarbors = cHarbors.ToArray();
             foreach (LocationX pHarbor in aHarbors)
             {
@@ -1177,6 +1174,25 @@ namespace Socium
                     continue;
 
                 SetLink(pPath.Key.m_aNodes[0], pPath.Key.m_aNodes[pPath.Key.m_aNodes.Length - 1], pNewLink);//aSeaRoute);
+
+                LocationX pHarbor1 = pPath.Key.m_aNodes[0] as LocationX;
+                LocationX pHarbor2 = pPath.Key.m_aNodes[pPath.Key.m_aNodes.Length - 1] as LocationX;
+
+                if ((pHarbor1.Owner as LandX).m_pProvince.Owner != (pHarbor2.Owner as LandX).m_pProvince.Owner)
+                {
+                    State pState1 = (pHarbor1.Owner as LandX).m_pProvince.Owner as State;
+                    State pState2 = (pHarbor2.Owner as LandX).m_pProvince.Owner as State;
+
+                    List<object> pState1Neighbours = new List<object>(pState1.m_aBorderWith);
+                    if (!pState1Neighbours.Contains(pState2))
+                        pState1Neighbours.Add(pState2);
+                    pState1.m_aBorderWith = pState1Neighbours.ToArray();
+
+                    List<object> pState2Neighbours = new List<object>(pState2.m_aBorderWith);
+                    if (!pState2Neighbours.Contains(pState1))
+                        pState2Neighbours.Add(pState1);
+                    pState2.m_aBorderWith = pState2Neighbours.ToArray();
+                }
             }
 
             m_cSeaRoutesProjects.Clear();
