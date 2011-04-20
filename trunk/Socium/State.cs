@@ -1223,7 +1223,7 @@ namespace Socium
         public int GetImportedTech()
         {
             int iMaxTech = m_iTechLevel;
-            foreach (State pState in m_cBorderWith.Keys)
+            foreach (State pState in m_aBorderWith)
             {
                 if (pState.m_iTechLevel > iMaxTech)
                     iMaxTech = pState.m_iTechLevel;
