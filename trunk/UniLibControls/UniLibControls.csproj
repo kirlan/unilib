@@ -112,6 +112,7 @@
     <Compile Include="DoubleProgressBar.Designer.cs">
       <DependentUpon>DoubleProgressBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="EnumCollectionEditor.cs" />
     <Compile Include="GameCalendar.cs">
       <SubType>UserControl</SubType>
     </Compile>

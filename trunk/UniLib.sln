@@ -81,6 +81,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socium", "Socium\Socium.csproj", "{358A8F33-4C83-42EC-B661-AC20467178C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CyberWhore", "CyberWhore", "{28553C9F-6062-4744-BE2A-38916D0AE973}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CWServiseTest", "CyberWhore\CWServiseTest\CWServiseTest.csproj", "{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -426,6 +430,16 @@ Global
 		{358A8F33-4C83-42EC-B661-AC20467178C5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{358A8F33-4C83-42EC-B661-AC20467178C5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{358A8F33-4C83-42EC-B661-AC20467178C5}.Release|x86.ActiveCfg = Release|Any CPU
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Debug|x86.ActiveCfg = Debug|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Debug|x86.Build.0 = Debug|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Release|Any CPU.ActiveCfg = Release|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Release|Mixed Platforms.Build.0 = Release|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Release|x86.ActiveCfg = Release|x86
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -433,5 +447,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{FD52473B-5AB8-4C13-903D-D43B82A14442} = {DE74A5AD-608B-460E-ADCB-B4556C75FC97}
 		{7A568EAF-B768-4F04-84F5-636F391A4100} = {DE74A5AD-608B-460E-ADCB-B4556C75FC97}
+		{7E341C60-9ED5-496C-AE70-882D3EDC4BF3} = {28553C9F-6062-4744-BE2A-38916D0AE973}
 	EndGlobalSection
 EndGlobal
