@@ -320,6 +320,18 @@ namespace VQMapTest2
         //    }
         //}
 
+        private bool GetNewWorkingDir(RegistryKey key)
+        {
+            folderBrowserDialog1.SelectedPath = Application.CommonAppDataPath;
+            if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
+                return false;
+
+            m_sWorkingDir = folderBrowserDialog1.SelectedPath;
+            key.SetValue("WorkingPath", m_sWorkingDir);
+
+            return true;
+        }
+
         public bool Preload()
         {
             RegistryKey key;
@@ -329,21 +341,21 @@ namespace VQMapTest2
 
             m_sWorkingDir = (string)key.GetValue("WorkingPath", "");
 
-            if (m_sWorkingDir == "")
+            if (m_sWorkingDir == "" && !GetNewWorkingDir(key))
             {
-                folderBrowserDialog1.SelectedPath = Application.CommonAppDataPath;
-                if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
-                {
-                    key.Close();
-                    return false;
-                }
-                m_sWorkingDir = folderBrowserDialog1.SelectedPath;
-                key.SetValue("WorkingPath", m_sWorkingDir);
+                key.Close();
+                return false;
+            }
+
+            DirectoryInfo dirInfo = new DirectoryInfo(m_sWorkingDir);
+            if(!dirInfo.Exists && !GetNewWorkingDir(key))
+            {
+                key.Close();
+                return false;
             }
 
             key.Close();
 
-            DirectoryInfo dirInfo = new DirectoryInfo(m_sWorkingDir);
             FileInfo[] fileNames = dirInfo.GetFiles("*.*");
 
             foreach (FileInfo fi in fileNames)
