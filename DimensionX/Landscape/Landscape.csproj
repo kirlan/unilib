@@ -70,11 +70,11 @@
       <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
       <Name>FortuneVoronoi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Random\Random.csproj">
+    <ProjectReference Include="..\..\Random\Random.csproj">
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
       <Name>Random</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SimpleVectors\SimpleVectors.csproj">
+    <ProjectReference Include="..\..\SimpleVectors\SimpleVectors.csproj">
       <Project>{9D04A744-D09B-4B4E-B843-1763A47339A5}</Project>
       <Name>SimpleVectors</Name>
     </ProjectReference>

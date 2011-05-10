@@ -65,15 +65,8 @@
     <Compile Include="GridBuildingForm.Designer.cs">
       <DependentUpon>GridBuildingForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapQuadrant.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WorldMap.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="WorldMap.Designer.cs">
-      <DependentUpon>WorldMap.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -93,9 +86,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="WorldMap.resx">
-      <DependentUpon>WorldMap.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -116,11 +106,11 @@
       <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>
       <Name>Landscape</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NameGen\NameGen.csproj">
+    <ProjectReference Include="..\..\NameGen\NameGen.csproj">
       <Project>{A21776DA-BEA3-46E1-9C94-26FFBBDF7A66}</Project>
       <Name>NameGen</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Random\Random.csproj">
+    <ProjectReference Include="..\..\Random\Random.csproj">
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
       <Name>Random</Name>
     </ProjectReference>
@@ -128,7 +118,7 @@
       <Project>{358A8F33-4C83-42EC-B661-AC20467178C5}</Project>
       <Name>Socium</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UniLibControls\UniLibControls.csproj">
+    <ProjectReference Include="..\..\UniLibControls\UniLibControls.csproj">
       <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
       <Name>UniLibControls</Name>
     </ProjectReference>
