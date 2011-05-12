@@ -28,7 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutoPopDelay = 500000;
+            this.toolTip1.InitialDelay = 0;
+            this.toolTip1.ReshowDelay = 0;
             // 
             // MapDraw
             // 
@@ -37,11 +45,19 @@
             this.DoubleBuffered = true;
             this.Name = "MapDraw";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.MapDraw_Paint);
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseDoubleClick);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseDown);
+            this.MouseLeave += new System.EventHandler(this.MapDraw_MouseLeave);
+            this.MouseHover += new System.EventHandler(this.MapDraw_MouseHover);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseUp);
             this.Resize += new System.EventHandler(this.MapDraw_Resize);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
