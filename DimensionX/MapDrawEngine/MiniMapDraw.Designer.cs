@@ -28,8 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // MiniMapDraw
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.DoubleBuffered = true;
+            this.Name = "MiniMapDraw";
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MiniMapDraw_Paint);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MiniMapDraw_MouseDown);
+            this.MouseLeave += new System.EventHandler(this.MiniMapDraw_MouseLeave);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MiniMapDraw_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MiniMapDraw_MouseUp);
+            this.Resize += new System.EventHandler(this.MiniMapDraw_Resize);
+            this.ResumeLayout(false);
+
         }
 
         #endregion

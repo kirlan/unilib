@@ -10,6 +10,7 @@ using Random;
 using LandscapeGeneration.PathFind;
 using LandscapeGeneration;
 using Socium;
+using MapDrawEngine;
 
 namespace VQMapTest2
 {
@@ -26,7 +27,7 @@ namespace VQMapTest2
             showLandmarksToolStripMenuItem.Checked = true;
             showRoadsToolStripMenuItem.Checked = true;
 
-            worldMap1.AddMiniMapView(worldMap2);
+            mapDraw1.BindMiniMap(miniMapDraw1);
         }
 
         private World m_pWorld;
@@ -88,8 +89,8 @@ namespace VQMapTest2
             if (radioButton4.Checked)
                 fScale = 8.0f;
 
-            worldMap1.ClearPath();
-            worldMap1.DrawMap(m_pWorld, fScale);
+            mapDraw1.Assign(m_pWorld);
+            mapDraw1.ScaleMultiplier = fScale;
 
             label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel), m_pWorld.m_iTechLevel);
             label8.Text = string.Format("Psi users: {0}, ", m_pWorld.m_eMagicAbilityPrevalence);
@@ -106,13 +107,13 @@ namespace VQMapTest2
         private void MapScaleChanged(object sender, EventArgs e)
         {
             if (radioButton1.Checked)
-                worldMap1.MapScale = 1;
+                mapDraw1.ScaleMultiplier = 1;
             if (radioButton2.Checked)
-                worldMap1.MapScale = 4;
+                mapDraw1.ScaleMultiplier = 4;
             if (radioButton3.Checked)
-                worldMap1.MapScale = 8;
+                mapDraw1.ScaleMultiplier = 8;
             if (radioButton4.Checked)
-                worldMap1.MapScale = 16;
+                mapDraw1.ScaleMultiplier = 16;
 
             comboBox1.Focus();
         }
@@ -127,16 +128,16 @@ namespace VQMapTest2
             switch (tabControl1.SelectedIndex)
             {
                 case 0:
-                    worldMap1.Mode = WorldMap.VisType.LandType;
+                    mapDraw1.Mode = MapDraw.VisType.LandType;
                     break;
                 case 1:
-                    worldMap1.Mode = WorldMap.VisType.Humidity;
+                    mapDraw1.Mode = MapDraw.VisType.Humidity;
                     break;
                 case 2:
-                    worldMap1.Mode = WorldMap.VisType.RacesNative;
+                    mapDraw1.Mode = MapDraw.VisType.RacesNative;
                     break;
                 case 3:
-                    worldMap1.Mode = WorldMap.VisType.RacesStates;
+                    mapDraw1.Mode = MapDraw.VisType.RacesStates;
                     break;
                 case 4:
                     break;
@@ -149,13 +150,13 @@ namespace VQMapTest2
 
         private void MapLayersChanged(object sender, EventArgs e)
         {
-            worldMap1.ShowLocations = showLandmarksToolStripMenuItem.Checked;
-            worldMap1.ShowRoads = showRoadsToolStripMenuItem.Checked;
-            worldMap1.ShowStates = showStateBordersToolStripMenuItem.Checked;
-            worldMap1.ShowProvincies = showProvinciesBordersToolStripMenuItem.Checked;
-            worldMap1.ShowLocationsBorders = showLocationsToolStripMenuItem.Checked;
-            worldMap1.ShowLands = showLandsToolStripMenuItem.Checked;
-            worldMap1.ShowLandMasses = showLandMassesToolStripMenuItem.Checked;
+            mapDraw1.ShowLocations = showLandmarksToolStripMenuItem.Checked;
+            mapDraw1.ShowRoads = showRoadsToolStripMenuItem.Checked;
+            mapDraw1.ShowStates = showStateBordersToolStripMenuItem.Checked;
+            mapDraw1.ShowProvincies = showProvinciesBordersToolStripMenuItem.Checked;
+            mapDraw1.ShowLocationsBorders = showLocationsToolStripMenuItem.Checked;
+            mapDraw1.ShowLands = showLandsToolStripMenuItem.Checked;
+            mapDraw1.ShowLandMasses = showLandMassesToolStripMenuItem.Checked;
 
             if (toolStripMenuItem3.Checked != showLandmarksToolStripMenuItem.Checked)
                 toolStripMenuItem3.Checked = showLandmarksToolStripMenuItem.Checked;
@@ -177,13 +178,13 @@ namespace VQMapTest2
 
         private void MapLayersChanged2(object sender, EventArgs e)
         {
-            worldMap1.ShowLocations = toolStripMenuItem3.Checked;
-            worldMap1.ShowRoads = toolStripMenuItem4.Checked;
-            worldMap1.ShowStates = toolStripMenuItem5.Checked;
-            worldMap1.ShowProvincies = toolStripMenuItem6.Checked;
-            worldMap1.ShowLocationsBorders = toolStripMenuItem8.Checked;
-            worldMap1.ShowLands = toolStripMenuItem9.Checked;
-            worldMap1.ShowLandMasses = toolStripMenuItem10.Checked;
+            mapDraw1.ShowLocations = toolStripMenuItem3.Checked;
+            mapDraw1.ShowRoads = toolStripMenuItem4.Checked;
+            mapDraw1.ShowStates = toolStripMenuItem5.Checked;
+            mapDraw1.ShowProvincies = toolStripMenuItem6.Checked;
+            mapDraw1.ShowLocationsBorders = toolStripMenuItem8.Checked;
+            mapDraw1.ShowLands = toolStripMenuItem9.Checked;
+            mapDraw1.ShowLandMasses = toolStripMenuItem10.Checked;
 
             if (showLandmarksToolStripMenuItem.Checked != toolStripMenuItem3.Checked)
                 showLandmarksToolStripMenuItem.Checked = toolStripMenuItem3.Checked;
@@ -205,18 +206,18 @@ namespace VQMapTest2
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            worldMap1.SelectedState = comboBox1.SelectedItem as State;
+            mapDraw1.SelectedState = comboBox1.SelectedItem as State;
         }
 
-        private void worldMap1_StateSelectedEvent(object sender, WorldMap.StateSelectedEventArgs e)
+        private void worldMap1_StateSelectedEvent(object sender, MapDraw.SelectedStateChangedEventArgs e)
         {
-            comboBox1.SelectedItem = e.State;
+            comboBox1.SelectedItem = e.m_pState;
 
             richTextBox1.Clear();
 
-            richTextBox1.AppendText(string.Format("Social order : {0} {1} [C{2}]\n\n", State.GetControlString(e.State.m_iControl), e.State.m_pInfo.m_sName, e.State.m_iInfrastructureLevel));
+            richTextBox1.AppendText(string.Format("Social order : {0} {1} [C{2}]\n\n", State.GetControlString(e.m_pState.m_iControl), e.m_pState.m_pInfo.m_sName, e.m_pState.m_iInfrastructureLevel));
 
-            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}B{1}]\n\n", e.State.m_pRace.m_iTechLevel, e.State.m_pRace.m_iMagicLimit, e.State.m_pRace.m_sName));
+            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}B{1}]\n\n", e.m_pState.m_pRace.m_iTechLevel, e.m_pState.m_pRace.m_iMagicLimit, e.m_pState.m_pRace.m_sName));
 
             richTextBox1.AppendText(string.Format("Culture:\n"));
             foreach (Culture.Mentality eMorale in Culture.Mentalities)
@@ -225,55 +226,55 @@ namespace VQMapTest2
                 //richTextBox1.AppendText(string.Format("   {0}: \t", eMorale));
                 //if (eMorale.ToString().Length < 6)
                 //    richTextBox1.AppendText("\t");
-                if (e.State.m_pCulture.MentalityValues[eMorale] < 0.2)
-                    richTextBox1.AppendText("(+5) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.2)
+                    richTextBox1.AppendText("(+5) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                 else
-                    if (e.State.m_pCulture.MentalityValues[eMorale] < 0.4)
-                        richTextBox1.AppendText("(+4) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                    if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.4)
+                        richTextBox1.AppendText("(+4) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                     else
-                        if (e.State.m_pCulture.MentalityValues[eMorale] < 0.6)
-                            richTextBox1.AppendText("(+3) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                        if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.6)
+                            richTextBox1.AppendText("(+3) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                         else
-                            if (e.State.m_pCulture.MentalityValues[eMorale] < 0.8)
-                                richTextBox1.AppendText("(+2) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                            if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.8)
+                                richTextBox1.AppendText("(+2) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                             else
-                                if (e.State.m_pCulture.MentalityValues[eMorale] < 1)
-                                    richTextBox1.AppendText("(+1) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                                if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1)
+                                    richTextBox1.AppendText("(+1) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                                 else
-                                    if (e.State.m_pCulture.MentalityValues[eMorale] < 1.2)
-                                        richTextBox1.AppendText("(-1) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                                    if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.2)
+                                        richTextBox1.AppendText("(-1) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                                     else
-                                        if (e.State.m_pCulture.MentalityValues[eMorale] < 1.4)
-                                            richTextBox1.AppendText("(-2) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                                        if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.4)
+                                            richTextBox1.AppendText("(-2) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                                         else
-                                            if (e.State.m_pCulture.MentalityValues[eMorale] < 1.6)
-                                                richTextBox1.AppendText("(-3) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                                            if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.6)
+                                                richTextBox1.AppendText("(-3) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                                             else
-                                                if (e.State.m_pCulture.MentalityValues[eMorale] < 1.8)
-                                                    richTextBox1.AppendText("(-4) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                                                if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.8)
+                                                    richTextBox1.AppendText("(-4) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                                                 else
-                                                    richTextBox1.AppendText("(-5) " + e.State.m_pCulture.GetMentalityString(eMorale));
+                                                    richTextBox1.AppendText("(-5) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
                 //richTextBox1.AppendText(string.Format("{0:0.00}\n", e.State.m_pCulture.Moral[eMorale]));
                 richTextBox1.AppendText("\n");
             }
             richTextBox1.AppendText("\n");
 
             richTextBox1.AppendText(string.Format("Pariahs:\n"));
-            richTextBox1.AppendText(string.Format("   {0}\n", State.GetGendersPariahString(e.State.m_eGenderPriority)));
+            richTextBox1.AppendText(string.Format("   {0}\n", State.GetGendersPariahString(e.m_pState.m_eGenderPriority)));
             richTextBox1.AppendText("\n");
 
-            if (e.State.GetImportedTech() == -1)
-                richTextBox1.AppendText(string.Format("Used tech: {0} [T{1}]\n\n", State.GetTechString(e.State.m_iTechLevel), e.State.m_iTechLevel));
+            if (e.m_pState.GetImportedTech() == -1)
+                richTextBox1.AppendText(string.Format("Used tech: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.m_iTechLevel), e.m_pState.m_iTechLevel));
             else
-                richTextBox1.AppendText(string.Format("Used tech: {0} [T{1}]\n\n", State.GetTechString(e.State.GetImportedTech()), e.State.GetImportedTech()));
-            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", State.GetTechString(e.State.m_iTechLevel), e.State.m_iTechLevel));
+                richTextBox1.AppendText(string.Format("Used tech: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.GetImportedTech()), e.m_pState.GetImportedTech()));
+            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.m_iTechLevel), e.m_pState.m_iTechLevel));
             
-            richTextBox1.AppendText(string.Format("Psi users: {0}, ", e.State.m_eMagicAbilityPrevalence));
-            richTextBox1.AppendText(string.Format("{2}, up to {0} [B{1}]\n\n", State.GetMagicString(e.State.m_iMagicLimit), e.State.m_iMagicLimit, e.State.m_eMagicAbilityDistribution));
+            richTextBox1.AppendText(string.Format("Psi users: {0}, ", e.m_pState.m_eMagicAbilityPrevalence));
+            richTextBox1.AppendText(string.Format("{2}, up to {0} [B{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution));
             
-            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.State.m_iFood, e.State.m_iWood, e.State.m_iOre, e.State.m_iPopulation));
+            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_iWood, e.m_pState.m_iOre, e.m_pState.m_iPopulation));
 
-            State[] cEnemies = e.State.GetEnemiesList();
+            State[] cEnemies = e.m_pState.GetEnemiesList();
             if(cEnemies.Length > 0)
             {
                 richTextBox1.AppendText("Enemies: ");
@@ -290,7 +291,7 @@ namespace VQMapTest2
             else
                 richTextBox1.AppendText("Enemies: none\n\n");
 
-            State[] cAllies = e.State.GetAlliesList();
+            State[] cAllies = e.m_pState.GetAlliesList();
             if (cAllies.Length > 0)
             {
                 richTextBox1.AppendText("Allies: ");
@@ -309,7 +310,7 @@ namespace VQMapTest2
 
             listBox1.Items.Clear();
 
-            foreach (LocationX pLoc in e.State.m_cSettlements)
+            foreach (LocationX pLoc in e.m_pState.m_cSettlements)
                 listBox1.Items.Add(pLoc);
 
             comboBox1.Focus();
@@ -337,52 +338,6 @@ namespace VQMapTest2
         //    sender.AutoScrollPosition = p;
         //}
 
-        private bool m_bScrolling1 = false;
-        private Point m_pLastMouseLocation1 = new Point(0, 0);
-
-        private bool m_bScrolling2 = false;
-        private Point m_pLastMouseLocation2 = new Point(0, 0);
-
-        private void worldMap1_MouseDown(object sender, MouseEventArgs e)
-        {
-            m_bScrolling1 = true;
-            m_pLastMouseLocation1 = new Point(-1, -1);//new Point(e.X + panel1.AutoScrollPosition.X,
-                //e.Y + panel1.AutoScrollPosition.Y);
-        }
-
-        private void worldMap1_MouseUp(object sender, MouseEventArgs e)
-        {
-            m_bScrolling1 = false;
-            comboBox1.Focus();
-        }
-
-        private void worldMap1_MouseLeave(object sender, EventArgs e)
-        {
-            m_bScrolling1 = false;
-            comboBox1.Focus();
-        }
-
-        private void worldMap1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (!m_bScrolling1)
-                return;
-
-            Point p = worldMap1.DrawFrame.Location;
-
-            //Point realPos = new Point(e.X + panel1.AutoScrollPosition.X,
-            //    e.Y + panel1.AutoScrollPosition.Y);
-
-            if (m_pLastMouseLocation1.X > 0)
-            {
-                p.X -= e.X - m_pLastMouseLocation1.X;
-                p.Y -= e.Y - m_pLastMouseLocation1.Y;
-            }
-            m_pLastMouseLocation1 = e.Location;
-
-            worldMap1.SetPan(p.X, p.Y);
-            //panel1.Refresh();
-        }
-
         private GenerationForm m_pGenerationForm = new GenerationForm();
 
         private void ToolStripMenuItem_New_Click(object sender, EventArgs e)
@@ -400,44 +355,6 @@ namespace VQMapTest2
             Close();
         }
 
-        private void worldMap2_MouseDown(object sender, MouseEventArgs e)
-        {
-            m_bScrolling2 = true;
-            m_pLastMouseLocation2 = new Point(-1, -1);//new Point(e.X + panel1.AutoScrollPosition.X,
-        }
-
-        private void worldMap2_MouseLeave(object sender, EventArgs e)
-        {
-            m_bScrolling2 = false;
-            comboBox1.Focus();
-        }
-
-        private void worldMap2_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (!m_bScrolling2)
-                return;
-
-            Point p = worldMap2.DrawFrame.Location;
-
-            //Point realPos = new Point(e.X + panel1.AutoScrollPosition.X,
-            //    e.Y + panel1.AutoScrollPosition.Y);
-
-            if (m_pLastMouseLocation2.X > 0)
-            {
-                p.X += e.X - m_pLastMouseLocation2.X;
-                p.Y += e.Y - m_pLastMouseLocation2.Y;
-            }
-            m_pLastMouseLocation2 = e.Location;
-
-            worldMap2.SetPan(p.X, p.Y);
-        }
-
-        private void worldMap2_MouseUp(object sender, MouseEventArgs e)
-        {
-            m_bScrolling2 = false;
-            comboBox1.Focus();
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             if (!m_pGenerationForm.Preload())
@@ -446,10 +363,10 @@ namespace VQMapTest2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Point pPoint = worldMap1.GetCentralPoint(worldMap1.SelectedState);
+            Point pPoint = mapDraw1.GetCentralPoint(mapDraw1.SelectedState);
 
             //Получаем новые координаты для DrawFrame, чтобы выбранное государство было в центре
-            worldMap1.SetPan(pPoint.X - worldMap1.DrawFrame.Width / 2, pPoint.Y - worldMap1.DrawFrame.Height / 2);
+            mapDraw1.SetPan(pPoint.X - mapDraw1.DrawFrame.Width / 2, pPoint.Y - mapDraw1.DrawFrame.Height / 2);
 
             comboBox1.Focus();
         }
@@ -468,7 +385,7 @@ namespace VQMapTest2
         private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             int iIndex = int.Parse(e.LinkText.Substring(e.LinkText.IndexOf('#')+1));
-            worldMap1.SelectedState = comboBox1.Items[iIndex] as State;
+            mapDraw1.SelectedState = comboBox1.Items[iIndex] as State;
         }
 
         private int Str2Int(string sStr)
@@ -496,7 +413,7 @@ namespace VQMapTest2
             if (timer1.Enabled)
                 return;
 
-            if (worldMap1.SelectedState == null)
+            if (mapDraw1.SelectedState == null)
                 return;
 
             string sLink = richTextBox1.GetLink(e.Location);
@@ -515,15 +432,15 @@ namespace VQMapTest2
 
                         State pLinkState = comboBox1.Items[iIndex] as State;
 
-                        string sTip = string.Format("{0} {1} to {2} {3}:\n", worldMap1.SelectedState.m_sName, worldMap1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
+                        string sTip = string.Format("{0} {1} to {2} {3}:\n", mapDraw1.SelectedState.m_sName, mapDraw1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
                         string sRelation;
-                        worldMap1.SelectedState.CalcHostility(pLinkState, out sRelation);
+                        mapDraw1.SelectedState.CalcHostility(pLinkState, out sRelation);
 
                         sTip += sRelation;
                         sTip += "\n";
 
-                        sTip += string.Format("{2} {3} to {0} {1}:\n", worldMap1.SelectedState.m_sName, worldMap1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
-                        pLinkState.CalcHostility(worldMap1.SelectedState, out sRelation);
+                        sTip += string.Format("{2} {3} to {0} {1}:\n", mapDraw1.SelectedState.m_sName, mapDraw1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
+                        pLinkState.CalcHostility(mapDraw1.SelectedState, out sRelation);
                         sTip += sRelation;
 
                         toolTip1.SetToolTip(richTextBox1, sTip);
@@ -562,7 +479,7 @@ namespace VQMapTest2
             }
             while (m_pTPFFinish.Forbidden || m_pTPFFinish == m_pTPFStart || (m_pTPFFinish.Owner as LandX).IsWater);
 
-            worldMap1.ClearPath();
+            mapDraw1.ClearPath();
 
             //DateTime pTime1 = DateTime.Now;
             //PathFinder pAltPath = new PathFinder(m_pTPFStart, m_pTPFFinish, m_pWorld.m_cGrid.CycleShift, -1, false);
@@ -641,14 +558,14 @@ namespace VQMapTest2
             //    worldMap1.AddPath(pPath2.m_aNodes, Color.Purple);
             //    worldMap1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
             //}
-            worldMap1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
+            mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
         }
 
         private int m_iPassword = 0;
 
         private void ToolStripMenuItem_TestPathFinding2_Click(object sender, EventArgs e)
         {
-            worldMap1.ClearPath();
+            mapDraw1.ClearPath();
 
             m_iPassword++;
             ShortestPath pLMPath = new ShortestPath((m_pTPFStart.Owner as LandX).Owner as LandMass<LandX>, (m_pTPFFinish.Owner as LandX).Owner as LandMass<LandX>, m_pWorld.m_cGrid.CycleShift, -1, false);
@@ -671,15 +588,15 @@ namespace VQMapTest2
                     }
                 }
             }
-            worldMap1.AddPath(pLMPath.m_aNodes, Color.Purple);
+            mapDraw1.AddPath(pLMPath.m_aNodes, Color.Purple);
 
             ShortestPath pLandsPath = new ShortestPath(m_pTPFStart.Owner as LandX, m_pTPFFinish.Owner as LandX, m_pWorld.m_cGrid.CycleShift, m_iPassword, false);
-            worldMap1.AddPath(pLandsPath.m_aNodes, Color.Fuchsia);
+            mapDraw1.AddPath(pLandsPath.m_aNodes, Color.Fuchsia);
         }
 
         private void ToolStripMenuItem_TestPathFinding3_Click(object sender, EventArgs e)
         {
-            worldMap1.ClearPath();
+            mapDraw1.ClearPath();
 
             m_iPassword++;
             ShortestPath pLMPath = new ShortestPath((m_pTPFStart.Owner as LandX).Owner as LandMass<LandX>, (m_pTPFFinish.Owner as LandX).Owner as LandMass<LandX>, m_pWorld.m_cGrid.CycleShift, -1, false);
@@ -702,7 +619,7 @@ namespace VQMapTest2
                     }
                 }
             }
-            worldMap1.AddPath(pLMPath.m_aNodes, Color.Purple);
+            mapDraw1.AddPath(pLMPath.m_aNodes, Color.Purple);
 
             ShortestPath pLandsPath = new ShortestPath(m_pTPFStart.Owner as LandX, m_pTPFFinish.Owner as LandX, m_pWorld.m_cGrid.CycleShift, m_iPassword, false);
             foreach (TransportationNode pNode in pLandsPath.m_aNodes)
@@ -739,7 +656,7 @@ namespace VQMapTest2
                 pBestPath.m_aNodes = cSucceedPath.ToArray();
             }
 
-            worldMap1.AddPath(pBestPath.m_aNodes, Color.Fuchsia);
+            mapDraw1.AddPath(pBestPath.m_aNodes, Color.Fuchsia);
         }
     }
 }

@@ -12,6 +12,7 @@ using System.Drawing.Drawing2D;
 using LandscapeGeneration;
 using LandscapeGeneration.PathFind;
 using MapDrawEngine.Signs;
+using Random;
 
 namespace MapDrawEngine
 {
@@ -32,6 +33,34 @@ namespace MapDrawEngine
         internal static Pen s_pBlack1DotPen = new Pen(Color.Black, 1);
         internal static Pen s_pBlack3DotPen = new Pen(Color.Black, 3);
         #endregion
+
+        /// <summary>
+        /// Информация о том, какое государство выбрано на карте
+        /// </summary>
+        public class SelectedStateChangedEventArgs : EventArgs
+        {
+            /// <summary>
+            /// Выбранное государство
+            /// </summary>
+            public State m_pState;
+
+            /// <summary>
+            /// X-координата центра государства в экранных координатах
+            /// </summary>
+            public int m_iX;
+            /// <summary>
+            /// Y-координата центра государства в экранных координатах
+            /// </summary>
+            public int m_iY;
+
+            public SelectedStateChangedEventArgs(State pState, int iX, int iY)
+            {
+                m_pState = pState;
+
+                m_iX = iX;
+                m_iY = iY;
+            }
+        }
 
         #region Свойства и переменные
         /// <summary>
@@ -99,7 +128,7 @@ namespace MapDrawEngine
         /// <summary>
         /// мир, карту которого мы рисуем
         /// </summary>
-        private World m_pWorld = null;
+        internal World m_pWorld = null;
 
         public enum VisType
         {
@@ -379,6 +408,90 @@ namespace MapDrawEngine
         /// </summary>
         private MiniMapDraw m_pMiniMap = null;
 
+        /// <summary>
+        /// Континент, над которым находится указатель мыши.
+        /// </summary>
+        private ContinentX m_pFocusedContinent = null;
+
+        /// <summary>
+        /// Континент, над которым находится указатель мыши.
+        /// </summary>
+        public ContinentX ContinentInFocus
+        {
+            get { return m_pFocusedContinent; }
+        }
+
+        /// <summary>
+        /// Провинция, над которой находится указатель мыши.
+        /// </summary>
+        private Province m_pFocusedProvince = null;
+
+        /// <summary>
+        /// Государство, над которым находится указатель мыши.
+        /// </summary>
+        private State m_pFocusedState = null;
+
+        /// <summary>
+        /// Земля, над которой находится указатель мыши.
+        /// </summary>
+        private LandX m_pFocusedLand = null;
+
+        /// <summary>
+        /// Земля, над которой находится указатель мыши.
+        /// </summary>
+        public LandX LandInFocus
+        {
+            get { return m_pFocusedLand; }
+        }
+
+        /// <summary>
+        /// Локация, над которой находится указатель мыши.
+        /// </summary>
+        private LocationX m_pFocusedLocation = null;
+
+        /// <summary>
+        /// Локация, над которой находится указатель мыши.
+        /// </summary>
+        public LocationX LocationInFocus
+        {
+            get { return m_pFocusedLocation; }
+        }
+
+        /// <summary>
+        /// Выбранное на карте государство
+        /// </summary>
+        private State m_pSelectedState = null;
+
+        /// <summary>
+        /// Выбранное на карте государство
+        /// </summary>
+        public State SelectedState
+        {
+            get { return m_pSelectedState; }
+            set
+            {
+                if (value != m_pSelectedState)
+                {
+                    m_pSelectedState = value;
+                    Draw();
+
+                    Refresh();
+
+                    FireSelectedStateEvent();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Событие, извещающее о том, что на карте выбрано новое государство
+        /// </summary>
+        public event EventHandler<SelectedStateChangedEventArgs> SelectedStateChanged;
+
+        /// <summary>
+        /// Маршруты, которые нужно отрисовывать на карте
+        /// </summary>
+        private Dictionary<TransportationNode[], Pen> m_cPaths = new Dictionary<TransportationNode[], Pen>();
+
         #endregion
 
         public MapDraw()
@@ -533,6 +646,30 @@ namespace MapDrawEngine
             foreach (MapQuadrant pQuad in m_aQuadrants)
                 pQuad.Clear();
 
+            m_pWorld = pWorld;
+
+            //если расам ещё не назначены цвета - назначим их
+            if (m_cRaceColorsID.Count == 0)
+            {
+                List<int> cUsedColors = new List<int>();
+                foreach (Race pRace in World.m_cAllRaces)
+                {
+                    int iIndex;
+                    do
+                    {
+                        iIndex = Rnd.Get(m_aRaceColorsTemplate.Length);
+                    }
+                    while (cUsedColors.Contains(iIndex));
+
+                    cUsedColors.Add(iIndex);
+                    m_cRaceColorsID[pRace] = new SolidBrush(m_aRaceColorsTemplate[iIndex]);
+                }
+            }
+
+            //левый верхний угол зоны отображения - в ноль!
+            m_pDrawFrame.X = 0;
+            m_pDrawFrame.Y = 0;
+            
             PointF[][] aPoints;
             GraphicsPath pPath;
             MapQuadrant[] aQuads;
@@ -669,8 +806,11 @@ namespace MapDrawEngine
             
             foreach (MapQuadrant pQuad in m_aQuadrants)
             {
-                pQuad.m_cLayers[MapLayer.ContinentsShadow] = (GraphicsPath)pQuad.m_cModes[MapMode.Continents][LandTypes<LandTypeInfoX>.Plains.m_pBrush].Clone();
-                pQuad.m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrix);
+                if (pQuad.m_cModes[MapMode.Continents].TryGetValue(LandTypes<LandTypeInfoX>.Plains.m_pBrush, out pPath))
+                {
+                    pQuad.m_cLayers[MapLayer.ContinentsShadow] = (GraphicsPath)pPath.Clone();
+                    pQuad.m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrix);
+                }
             }
 
             //вычислим контуры провинций
@@ -742,6 +882,9 @@ namespace MapDrawEngine
             DateTime pTime2 = DateTime.Now;
 
             ScaleMultiplier = 1;
+
+            if (m_pMiniMap != null)
+                m_pMiniMap.WorldAssigned();
         }
 
         #region Вспомогательные функции, используемые в Assign
@@ -1293,7 +1436,7 @@ namespace MapDrawEngine
                 m_pMiniMap.SinchronizeDrawFrame();
         }
 
-        private void SinchronizeDrawFrame()
+        public void SinchronizeDrawFrame()
         {
             if (m_pMiniMap == null || m_pWorld == null)
                 return;
@@ -1458,6 +1601,266 @@ namespace MapDrawEngine
 
             //полностью пересчитываем все коэффициенты и перерисовываем карту
             ScaleMultiplier = ScaleMultiplier;
+        }
+
+        private bool m_bScrolling = false;
+
+        private Point m_pLastMouseLocation = new Point(0, 0);
+
+        private void MapDraw_MouseDown(object sender, MouseEventArgs e)
+        {
+            m_bScrolling = true;
+            //m_pLastMouseLocation = new Point(-1, -1);
+        }
+
+        private void MapDraw_MouseLeave(object sender, EventArgs e)
+        {
+            m_bScrolling = false;
+        }
+
+        private void MapDraw_MouseUp(object sender, MouseEventArgs e)
+        {
+            m_bScrolling = false;
+        }
+
+        private void MapDraw_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point p = m_pDrawFrame.Location;
+
+            if (m_pLastMouseLocation.X > 0)
+            {
+                p.X += e.X - m_pLastMouseLocation.X;
+                p.Y += e.Y - m_pLastMouseLocation.Y;
+            }
+            m_pLastMouseLocation = e.Location;
+
+            if (m_bScrolling)
+                SetPan(p.X, p.Y);
+        }
+
+        /// <summary>
+        /// Определяет, что находится под курсором.
+        /// </summary>
+        /// <returns>true - если какая-то суша, false - если просто океан</returns>
+        private bool CheckMousePosition()
+        {
+            if (m_pWorld == null)
+                return false;
+
+            int iX = m_pLastMouseLocation.X + m_pDrawFrame.X - m_iShiftX;
+            int iY = m_pLastMouseLocation.Y + m_pDrawFrame.Y - m_iShiftY;
+
+            while (iX > m_iScaledMapWidth)
+                iX -= m_iScaledMapWidth;
+
+            while (iX < 0)
+                iX += m_iScaledMapWidth;
+
+            //переведём координаты курсора из экранных в оригинальные/100 координаты
+            iX = (int)(iX / m_fActualScale) / 100;
+            iY = (int)(iY / m_fActualScale) / 100;
+
+            m_pFocusedContinent = null;
+            m_pFocusedLand = null;
+            m_pFocusedLocation = null;
+
+            bool bContinent = false;
+            foreach (ContinentX pContinent in m_pWorld.m_aContinents)
+            {
+                GraphicsPath pContinentPath = m_cContinentBorders[pContinent];
+
+                if (pContinentPath.IsVisible(iX, iY))
+                {
+                    m_pFocusedContinent = pContinent;
+
+                    foreach (State pState in pContinent.m_cStates)
+                    {
+                        GraphicsPath pStatePath = m_cStateBorders[pState];
+
+                        if (pStatePath.IsVisible(iX, iY))
+                        {
+                            m_pFocusedState = pState;
+
+                            foreach (Province pProvince in pState.m_cContents)
+                            {
+                                GraphicsPath pProvincePath = m_cProvinceBorders[pProvince];
+
+                                if (pProvincePath.IsVisible(iX, iY))
+                                {
+                                    m_pFocusedProvince = pProvince;
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+
+                    bContinent = true;
+                    break;
+                }
+            }
+
+            foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
+            {
+                foreach (LandX pLand in pLandMass.m_cContents)
+                {
+                    GraphicsPath pLandPath = m_cLandBorders[pLand];
+
+                    if (pLandPath.IsVisible(iX, iY))
+                    {
+                        m_pFocusedLand = pLand;
+
+                        foreach (LocationX pLoc in pLand.m_cContents)
+                        {
+                            GraphicsPath pLocationPath = m_cLocationBorders[pLoc];
+
+                            if (pLocationPath.IsVisible(iX, iY))
+                            {
+                                m_pFocusedLocation = pLoc;
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return bContinent;
+        }
+
+        private void MapDraw_MouseHover(object sender, EventArgs e)
+        {
+
+            string sToolTip = "";
+
+            bool bContinent = CheckMousePosition();
+
+            if (bContinent && m_pFocusedContinent != null)
+                sToolTip += m_pFocusedContinent.ToString();
+
+            if (m_pFocusedLand != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n - ";
+
+                sToolTip += m_pFocusedLand.ToString();
+            }
+
+            if (bContinent && m_pFocusedState != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n   - ";
+
+                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pInfo.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pRace.m_sName);
+            }
+
+            if (bContinent && m_pFocusedProvince != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n     - ";
+
+                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pRace.m_sName);
+            }
+
+            if (m_pFocusedLocation != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n       - ";
+
+                sToolTip += m_pFocusedLocation.ToString();
+
+                if (m_pFocusedLocation.m_pSettlement != null && m_pFocusedLocation.m_pSettlement.m_cBuildings.Count > 0)
+                {
+                    foreach (Building pBuilding in m_pFocusedLocation.m_pSettlement.m_cBuildings)
+                    {
+                        sToolTip += "\n         - " + pBuilding.ToString();
+                    }
+                }
+
+                if (m_pFocusedLocation.m_cHaveRoadTo.Count > 0)
+                {
+                    sToolTip += "\nHave roads to:";
+                    foreach (var pRoad in m_pFocusedLocation.m_cHaveRoadTo)
+                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_sName;
+                }
+
+                if (m_pFocusedLocation.m_cHaveSeaRouteTo.Count > 0)
+                {
+                    sToolTip += "\nHave sea routes to:";
+                    foreach (LocationX pRoute in m_pFocusedLocation.m_cHaveSeaRouteTo)
+                        sToolTip += "\n - " + pRoute.m_pSettlement.m_sName;
+                }
+            }
+
+            if (toolTip1.GetToolTip(this) != sToolTip)
+                toolTip1.SetToolTip(this, sToolTip);
+        }
+
+        private void MapDraw_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            bool bContinent = CheckMousePosition();
+        
+            if (m_pFocusedState != null)
+                SelectedState = m_pFocusedState;
+        }
+
+        public void FireSelectedStateEvent()
+        {
+            if (m_pSelectedState == null)
+                return;
+
+            MapQuadrant[] aQuads;
+            PointF[][] aPoints = BuildPath(m_pSelectedState.m_cFirstLines, false, out aQuads);
+            GraphicsPath pPath = new GraphicsPath();
+            foreach (var aPts in aPoints)
+                pPath.AddPolygon(aPts);
+            RectangleF pRect = pPath.GetBounds();
+
+            // Copy to a temporary variable to be thread-safe.
+            EventHandler<SelectedStateChangedEventArgs> temp = SelectedStateChanged;
+            if (temp != null)
+                temp(this, new SelectedStateChangedEventArgs(m_pSelectedState, (int)(pRect.Left + pRect.Width / 2), (int)(pRect.Top + pRect.Height / 2)));
+        }
+
+        /// <summary>
+        /// Вычисляет центральную точку указанного государства
+        /// </summary>
+        /// <param name="pState"></param>
+        /// <returns></returns>
+        public Point GetCentralPoint(State pState)
+        {
+            MapQuadrant[] aQuads;
+            PointF[][] aPoints = BuildPath(pState.m_cFirstLines, false, out aQuads);
+            GraphicsPath pPath = new GraphicsPath();
+            foreach (var aPts in aPoints)
+                pPath.AddPolygon(aPts);
+            RectangleF pRect = pPath.GetBounds();
+
+            return new Point((int)(pRect.Left + pRect.Width / 2), (int)(pRect.Top + pRect.Height / 2));
+        }
+
+        /// <summary>
+        /// Удаляет все отображаемые на карте маршруты
+        /// </summary>
+        public void ClearPath()
+        {
+            m_cPaths.Clear();
+            Draw();
+        }
+
+        /// <summary>
+        /// Добавляет новый маршрут для отображения на карте
+        /// </summary>
+        /// <param name="aPath">маршрут</param>
+        /// <param name="pColor">цвет для отображения маршрута</param>
+        public void AddPath(TransportationNode[] aPath, Color pColor)
+        {
+            Pen pPen = new Pen(pColor, 5);
+            pPen.DashPattern = new float[] { 2, 3 };
+            m_cPaths[aPath] = pPen;
+            Draw();
         }
     }
 }

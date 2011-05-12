@@ -18,8 +18,8 @@ namespace nsUniLibControls
         void Select(object value, bool check);
     }
 
-    // This UITypeEditor can be associated with Int32, Double and Single
-    // properties to provide a design-mode angle selection interface.
+    // This UITypeEditor can be associated with any IEnumCollection
+    // properties to provide a design-mode checked combobox interface.
     [PermissionSet(SecurityAction.Demand, Name = "FullTrust")] 
     public class EnumCollectionEditor : UITypeEditor
     {

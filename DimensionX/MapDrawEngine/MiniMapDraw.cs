@@ -6,6 +6,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Socium;
+using System.Drawing.Drawing2D;
+using LandscapeGeneration;
 
 namespace MapDrawEngine
 {
@@ -47,7 +50,7 @@ namespace MapDrawEngine
         /// смещение отображения карты для центрирования по вертикали - если высота карты меньше высоты рабочей поверхности
         /// </summary>
         private int m_iShiftY = 0;
-        
+
         /// <summary>
         /// связанная основная карта
         /// </summary>
@@ -71,11 +74,351 @@ namespace MapDrawEngine
             Refresh();
         }
 
+        internal GraphicsPath m_pContinents = new GraphicsPath();
+        internal GraphicsPath m_pContinentsShadow = new GraphicsPath();
+        internal Dictionary<Brush, GraphicsPath> m_cAreas = new Dictionary<Brush, GraphicsPath>();
+
+        /// <summary>
+        /// Привязать миникарту к основной карте.
+        /// Строим контуры всего, что придётся рисовать в ОРИГИНАЛЬНЫХ координатах.
+        /// </summary>
+        /// <param name="pMasterMap">основная карта</param>
         internal void Assign(MapDraw pMasterMap)
         {
             m_pMasterMap = pMasterMap;
+        }
+
+        internal void WorldAssigned()
+        {
+            if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null)
+                return;
+
+            PointF[][] aPoints;
+            //вычислим контуры континентов
+            foreach (ContinentX pContinent in m_pMasterMap.m_pWorld.m_aContinents)
+            {
+                aPoints = BuildPath(pContinent.m_cFirstLines);
+                foreach (var aPts in aPoints)
+                    m_pContinents.AddPolygon(aPts);
+
+                //вычислим контуры географических регионов
+                foreach (AreaX pArea in pContinent.m_cAreas)
+                {
+                    aPoints = BuildPath(pArea.m_cFirstLines);
+                    foreach (var aPts in aPoints)
+                    {
+                        if (pArea.m_pType != LandTypes<LandTypeInfoX>.Plains)
+                        {
+                            //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
+                            if (!m_cAreas.ContainsKey(pArea.m_pType.m_pBrush))
+                                m_cAreas[pArea.m_pType.m_pBrush] = new GraphicsPath();
+                            m_cAreas[pArea.m_pType.m_pBrush].AddPolygon(aPts);
+                        }
+                    }
+                }
+            }
+
+            //сохраним сдвинутые на 1 вниз и влево контуры континентов - для более красивого отображения береговой линии
+            Matrix pMatrix = new Matrix();
+            pMatrix.Translate(1, 1);
+
+            m_pContinentsShadow = (GraphicsPath)m_pContinents.Clone();
+            m_pContinentsShadow.Transform(pMatrix);
+
+            CreateCanvas();
+            Draw();
 
             SinchronizeDrawFrame();
+        }
+
+        /// <summary>
+        /// Строит сложный контур в ОРИГИНАЛЬНЫХ координатах (с отражениями)
+        /// Сложный контур - это когда например, у континента есть две замкнутые береговые линии - 
+        /// одна с внешним океаном, а другая с внутренним морем. Каждая из них - простой контур,
+        /// а в совокупности - сложный.
+        /// </summary>
+        /// <param name="cFirstLines">Затравки контуров</param>
+        /// <returns></returns>
+        private PointF[][] BuildPath(List<Line> cFirstLines)
+        {
+            List<PointF[]> cPath = new List<PointF[]>();
+
+            //пробежимся по всем затравкам
+            foreach (Line pFirstLine in cFirstLines)
+            {
+                bool bCross;
+
+                //получаем простой одиночный контур
+                cPath.Add(BuildBorder(pFirstLine, 0, out bCross));
+
+                //если карта зациклена по горизонтали, нужно строить отражения и 
+                //контур пересекает нулевой меридиан, то строим отражение!
+                if (m_pMasterMap.m_pWorld.m_cGrid.m_bCycled && bCross)
+                {
+                    //определяем, на западе или на востоке будем строить отражение
+                    if (pFirstLine.m_pPoint1.X > 0)
+                        cPath.Add(BuildBorder(pFirstLine, -m_pMasterMap.m_pWorld.m_cGrid.RX * 2, out bCross));
+                    else
+                        cPath.Add(BuildBorder(pFirstLine, m_pMasterMap.m_pWorld.m_cGrid.RX * 2, out bCross));
+                }
+            }
+
+            return cPath.ToArray();
+        }
+
+        /// <summary>
+        /// строит простой контур в ОРИГИНАЛЬНЫХ координатах (без отражений)
+        /// </summary>
+        /// <param name="pFirstLine">затравка контура</param>
+        /// <param name="fShift">сдвиг по горизонтали для закольцованной карты</param>
+        /// <param name="bCross">признак того, что контур пересекает нулевой меридиан</param>
+        /// <returns></returns>
+        private PointF[] BuildBorder(Line pFirstLine, float fShift, out bool bCross)
+        {
+            bCross = false;
+
+            List<PointF> cBorder = new List<PointF>();
+            Line pLine = pFirstLine;
+            cBorder.Add(ShiftPoint(pLine.m_pPoint1, fShift));
+            float fLastPointX = pLine.m_pPoint1.X + fShift;
+            //последовательно перебирает все связанные линии, пока круг не замкнётся.
+            do
+            {
+                //пересекает-ли линия нулевой меридиан?
+                float fDX = fShift;
+                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pMasterMap.m_pWorld.m_cGrid.RX)
+                {
+                    //определимся, где у нас была предыдущая часть контура - на западе или на востоке?
+                    //в зависимости от этого вычислим смещение для оставшейся части контура, чтобы 
+                    //не было разрыва
+                    fDX += fLastPointX < fShift ? -m_pMasterMap.m_pWorld.m_cGrid.RX * 2 : m_pMasterMap.m_pWorld.m_cGrid.RX * 2;
+                    bCross = true;
+                }
+
+                if (pLine.m_pPoint2.X > m_pMasterMap.m_pWorld.m_cGrid.RX ||
+                    pLine.m_pPoint2.X < -m_pMasterMap.m_pWorld.m_cGrid.RX)
+                    bCross = true;
+
+                cBorder.Add(ShiftPoint(pLine.m_pPoint2, fDX));
+
+                //X-координата последней добавленной точки с учётом вычисленного смещения
+                fLastPointX = pLine.m_pPoint2.X + fDX;
+
+                pLine = pLine.m_pNext;
+            }
+            while (pLine != pFirstLine);
+
+            return cBorder.ToArray();
+        }
+
+        /// <summary>
+        /// Смещает начало координат из пересечения экватора и нулевого меридиана в верхний левый угол карты, плюс заданное смещение по горизонтали.
+        /// </summary>
+        /// <param name="pPoint">исходная точка</param>
+        /// <param name="fDX">заданное смещение</param>
+        /// <returns>смещённая точка</returns>
+        private PointF ShiftPoint(IPointF pPoint, float fDX)
+        {
+            return new PointF(m_pMasterMap.m_pWorld.m_cGrid.RX + pPoint.X + fDX, m_pMasterMap.m_pWorld.m_cGrid.RY + pPoint.Y);
+        }
+
+        /// <summary>
+        /// холст, на котором мы будем рисовать
+        /// </summary>
+        private Bitmap m_pCanvas = null;
+
+        /// <summary>
+        /// ширина всей карты мира в экранных координатах
+        /// </summary>
+        public int m_iScaledMapWidth;
+        /// <summary>
+        /// высота всей карты мира в экранных координатах
+        /// </summary>
+        public int m_iScaledMapHeight;
+
+        /// <summary>
+        /// создаёт холст для рисования видимого участка карты в текущем масштабе.
+        /// размеры холста зависят от размеров окна рисования и выбранного масштаба карты (холст может быть меньше окна рисования).
+        /// так же здесь выполняется пересчёт всех мастабных коэффициентов
+        /// </summary>
+        private void CreateCanvas()
+        {
+            //если компонент не готов - все в сад
+            if (ClientRectangle.Width == 0)
+                return;
+
+            //соотношение высоты и ширины координатной сетки мира
+            float fK = 1;
+            if (m_pMasterMap != null && m_pMasterMap.m_pWorld != null)
+                fK = (float)m_pMasterMap.m_pWorld.m_cGrid.RY / m_pMasterMap.m_pWorld.m_cGrid.RX;
+
+            //ширина и высота карты мира в экранных координатах
+            //из расчёта того, чтобы при единичном масштабе вся карта имела такую же ширину, как окно рисования
+            m_iScaledMapWidth = ClientRectangle.Width;
+            m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
+
+            //создадим холст такого же размера, как и окно рисования, но не больше 
+            //отмасштабированной карты
+            m_pCanvas = new Bitmap(Math.Min(ClientRectangle.Width, m_iScaledMapWidth), Math.Min(ClientRectangle.Height, m_iScaledMapHeight));
+
+            //коэффициент для перевода координат из абсолютной системы координат в экранную
+            if (m_pMasterMap.m_pWorld != null)
+                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pMasterMap.m_pWorld.m_cGrid.RX * 2);
+
+            //если холст уже окна рисования, вычислим смещение для центрирования холста
+            m_iShiftX = (ClientRectangle.Width - m_pCanvas.Width) / 2;
+
+            //если холст меньше окна рисования по вертикали, вычислим смещение для центрирования холста
+            m_iShiftY = (ClientRectangle.Height - m_pCanvas.Height) / 2;
+        }
+
+        /// <summary>
+        /// Нарисовать видимый участок карты на холсте
+        /// </summary>
+        public void Draw()
+        {
+            //если хоста нет - делать нечего
+            if (m_pCanvas == null)
+                return;
+
+            DateTime pTime1 = DateTime.Now;
+
+            Graphics gr = Graphics.FromImage(m_pCanvas);
+
+            //грунтуем холст цветом моря
+            gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Sea.m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
+
+            //если нет мира или мир вырожденный - больше рисовать нечего
+            if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null || m_pMasterMap.m_pWorld.m_cGrid.m_aLocations.Length == 0)
+                return;
+
+            //рисуем контуры континентов и заливаем внутреннее пространство цветом равнин
+            Matrix pMatrix = new Matrix();
+            pMatrix.Scale(m_fActualScale, m_fActualScale);
+
+            GraphicsPath pPath = (GraphicsPath)m_pContinentsShadow.Clone();
+            pPath.Transform(pMatrix);
+            gr.DrawPath(MapDraw.s_pBlack2Pen, pPath);
+
+            pPath = (GraphicsPath)m_pContinents.Clone();
+            pPath.Transform(pMatrix);
+            gr.FillPath(LandTypes<LandTypeInfoX>.Plains.m_pBrush, pPath);
+
+            //закрашиваем карту в соответствии с типами географических регионов
+            foreach (var pArea in m_cAreas)
+            {
+                pPath = (GraphicsPath)pArea.Value.Clone();
+                pPath.Transform(pMatrix);
+
+                gr.FillPath(pArea.Key, pPath);
+            }
+
+            Refresh();
+
+            DateTime pTime2 = DateTime.Now;
+        }
+
+        private void MiniMapDraw_Paint(object sender, PaintEventArgs e)
+        {
+            if (m_pCanvas == null || m_pMasterMap == null)
+                return;
+
+            e.Graphics.DrawImage(m_pCanvas, m_iShiftX, m_iShiftY);
+            e.Graphics.DrawRectangle(Pens.Red, new Rectangle(m_pDrawFrame.X + m_iShiftX, m_pDrawFrame.Y + m_iShiftY, m_pDrawFrame.Width, m_pDrawFrame.Height));
+
+            if (m_pDrawFrame.X < 0)
+                e.Graphics.DrawRectangle(Pens.Red, new Rectangle(m_pDrawFrame.X + m_iShiftX + m_iScaledMapWidth, m_pDrawFrame.Y + m_iShiftY, m_pDrawFrame.Width, m_pDrawFrame.Height));
+
+            if (m_pDrawFrame.X + m_pDrawFrame.Width > m_iScaledMapWidth)
+                e.Graphics.DrawRectangle(Pens.Red, new Rectangle(m_pDrawFrame.X + m_iShiftX - m_iScaledMapWidth, m_pDrawFrame.Y + m_iShiftY, m_pDrawFrame.Width, m_pDrawFrame.Height));
+
+            if (m_iShiftX > 0)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(BackColor), 0, 0, m_iShiftX, ClientRectangle.Height);
+                e.Graphics.FillRectangle(new SolidBrush(BackColor), ClientRectangle.Width - m_iShiftX, 0, m_iShiftX, ClientRectangle.Height);
+            }
+            if (m_iShiftY > 0)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(BackColor), 0, 0, ClientRectangle.Width, m_iShiftY);
+                e.Graphics.FillRectangle(new SolidBrush(BackColor), 0, ClientRectangle.Height - m_iShiftY, ClientRectangle.Width, m_iShiftY);
+            }
+        }
+
+        private void MiniMapDraw_Resize(object sender, EventArgs e)
+        {
+            if (ClientRectangle.Width == 0 || ClientRectangle.Height == 0 || m_pCanvas == null)
+                return;
+
+            //строим холст и вычисляем все связанные с масштабированием параметры
+            //холст перестраиваем при каждом масштабировании, т.к. его размеры - это
+            //меньшие из размеров карты в текущем масштабе и размеров области рисования
+            CreateCanvas();
+        }
+
+        private bool m_bScrolling = false;
+
+        private Point m_pLastMouseLocation = new Point(0, 0);
+
+        private void MiniMapDraw_MouseDown(object sender, MouseEventArgs e)
+        {
+            m_bScrolling = true;
+            m_pLastMouseLocation = new Point(-1, -1);
+        }
+
+        private void MiniMapDraw_MouseLeave(object sender, EventArgs e)
+        {
+            m_bScrolling = false;
+        }
+
+        private void MiniMapDraw_MouseUp(object sender, MouseEventArgs e)
+        {
+            m_bScrolling = false;
+        }
+
+        private void MiniMapDraw_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (m_pMasterMap == null || !m_bScrolling)
+                return;
+
+            Point p = m_pDrawFrame.Location;
+
+            if (m_pLastMouseLocation.X > 0)
+            {
+                p.X += e.X - m_pLastMouseLocation.X;
+                p.Y += e.Y - m_pLastMouseLocation.Y;
+            }
+            m_pLastMouseLocation = e.Location;
+
+            SetPan(p.X, p.Y);
+        }
+
+        /// <summary>
+        /// сдвигает область просмотра в указанные координаты и перерисовывает карту
+        /// </summary>
+        /// <param name="iX">X-координата левого верхнего угла области просмотра</param>
+        /// <param name="iY">Y-координата левого верхнего угла области просмотра</param>
+        public void SetPan(int iX, int iY)
+        {
+            if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null)
+                return;
+
+            if (m_pMasterMap.m_pWorld.m_cGrid.m_bCycled)
+                m_pDrawFrame.X = iX;
+            else
+                m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width));
+
+            while (m_pDrawFrame.X < 0)
+                m_pDrawFrame.X += m_iScaledMapWidth;
+
+            while (m_pDrawFrame.X > m_iScaledMapWidth)
+                m_pDrawFrame.X -= m_iScaledMapWidth;
+
+            m_pDrawFrame.Y = Math.Max(0, Math.Min(iY, m_iScaledMapHeight - m_pDrawFrame.Height));
+
+            Refresh();
+
+            //сигнализируем основной карте о том, что область просмотра сдвинулась
+            m_pMasterMap.SinchronizeDrawFrame();
         }
     }
 }

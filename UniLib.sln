@@ -86,6 +86,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socium", "DimensionX\Socium\Socium.csproj", "{358A8F33-4C83-42EC-B661-AC20467178C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VQMapTest2", "DimensionX\VQMapTest2\VQMapTest2.csproj", "{C3C6054B-7C5B-48C5-BA79-21688369B735}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D4EC0262-98BF-46D0-B90C-FAFAC13DED50} = {D4EC0262-98BF-46D0-B90C-FAFAC13DED50}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapDrawEngine", "DimensionX\MapDrawEngine\MapDrawEngine.csproj", "{D4EC0262-98BF-46D0-B90C-FAFAC13DED50}"
 EndProject
