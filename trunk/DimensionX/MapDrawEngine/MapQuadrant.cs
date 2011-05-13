@@ -11,7 +11,7 @@ namespace MapDrawEngine
 {
     public enum MapLayer
     { 
-        ContinentsShadow,
+        Continents,
         Locations,
         Lands,
         Provincies,
@@ -21,11 +21,30 @@ namespace MapDrawEngine
 
     public enum MapMode
     { 
-        Continents,
+        /// <summary>
+        /// физическая карта
+        /// </summary>
         Areas,
+        /// <summary>
+        /// этническая карта - коренное население
+        /// </summary>
         Natives,
+        /// <summary>
+        /// этническая карта - доминирующая раса
+        /// </summary>    
         Nations,
-        Humidity
+        /// <summary>
+        /// карта влажности
+        /// </summary>
+        Humidity,
+        /// <summary>
+        /// уровень технического развития
+        /// </summary>
+        TechLevel,
+        /// <summary>
+        /// уровень пси-способностей
+        /// </summary>
+        PsiLevel
     }
 
     internal enum RoadType
@@ -95,15 +114,6 @@ namespace MapDrawEngine
                 foreach (var pModeLayer in pMode.Value)
                     pModeLayer.Value.Transform(pMatrix);
 
-            GraphicsPath pPath;
-            if (m_cModes[MapMode.Continents].TryGetValue(LandTypes<LandTypeInfoX>.Plains.m_pBrush, out pPath))
-            {
-                m_cLayers[MapLayer.ContinentsShadow] = (GraphicsPath)pPath.Clone();
-                //Matrix pMatrixT = new Matrix();
-                //pMatrixT.Translate(20, 20);
-                //m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrixT);
-            }
-
             foreach (var pRoadType in m_cRoadsMap)
                 pRoadType.Value.Transform(pMatrix);
 
@@ -124,7 +134,7 @@ namespace MapDrawEngine
 
             switch (eLayer)
             { 
-                case MapLayer.ContinentsShadow:
+                case MapLayer.Continents:
                     pPen = MapDraw.s_pBlack2Pen;
                     break;
                 case MapLayer.Locations:
