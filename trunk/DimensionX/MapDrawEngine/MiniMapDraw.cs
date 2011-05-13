@@ -93,6 +93,10 @@ namespace MapDrawEngine
             if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null)
                 return;
 
+            m_pContinents.Reset();
+            m_pContinentsShadow.Reset();
+            m_cAreas.Clear();
+
             PointF[][] aPoints;
             //вычислим контуры континентов
             foreach (ContinentX pContinent in m_pMasterMap.m_pWorld.m_aContinents)
@@ -119,11 +123,11 @@ namespace MapDrawEngine
             }
 
             //сохраним сдвинутые на 1 вниз и влево контуры континентов - для более красивого отображения береговой линии
-            Matrix pMatrix = new Matrix();
-            pMatrix.Translate(1, 1);
+            //Matrix pMatrix = new Matrix();
+            //pMatrix.Translate(2, 2);
 
             m_pContinentsShadow = (GraphicsPath)m_pContinents.Clone();
-            m_pContinentsShadow.Transform(pMatrix);
+            //m_pContinentsShadow.Transform(pMatrix);
 
             CreateCanvas();
             Draw();
@@ -297,10 +301,14 @@ namespace MapDrawEngine
             pMatrix.Scale(m_fActualScale, m_fActualScale);
 
             GraphicsPath pPath = (GraphicsPath)m_pContinentsShadow.Clone();
-            pPath.Transform(pMatrix);
+            Matrix pMatrix2 = new Matrix();
+            pMatrix2.Scale(m_fActualScale, m_fActualScale);
+            pMatrix2.Translate(2, 2);
+            pPath.Transform(pMatrix2);
             gr.DrawPath(MapDraw.s_pBlack2Pen, pPath);
 
             pPath = (GraphicsPath)m_pContinents.Clone();
+
             pPath.Transform(pMatrix);
             gr.FillPath(LandTypes<LandTypeInfoX>.Plains.m_pBrush, pPath);
 

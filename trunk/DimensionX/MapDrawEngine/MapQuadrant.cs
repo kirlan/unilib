@@ -91,18 +91,18 @@ namespace MapDrawEngine
             foreach (var pLayer in m_cLayers)
                 pLayer.Value.Transform(pMatrix);
 
+            foreach(var pMode in m_cModes)
+                foreach (var pModeLayer in pMode.Value)
+                    pModeLayer.Value.Transform(pMatrix);
+
             GraphicsPath pPath;
             if (m_cModes[MapMode.Continents].TryGetValue(LandTypes<LandTypeInfoX>.Plains.m_pBrush, out pPath))
             {
                 m_cLayers[MapLayer.ContinentsShadow] = (GraphicsPath)pPath.Clone();
-                Matrix pMatrixT = new Matrix();
-                pMatrixT.Translate(1, 1);
-                m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrixT);
+                //Matrix pMatrixT = new Matrix();
+                //pMatrixT.Translate(20, 20);
+                //m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrixT);
             }
-
-            foreach(var pMode in m_cModes)
-                foreach (var pModeLayer in pMode.Value)
-                    pModeLayer.Value.Transform(pMatrix);
 
             foreach (var pRoadType in m_cRoadsMap)
                 pRoadType.Value.Transform(pMatrix);

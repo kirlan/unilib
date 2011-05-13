@@ -35,8 +35,8 @@
             // toolTip1
             // 
             this.toolTip1.AutoPopDelay = 500000;
-            this.toolTip1.InitialDelay = 0;
-            this.toolTip1.ReshowDelay = 0;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 100;
             // 
             // MapDraw
             // 
