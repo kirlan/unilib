@@ -356,6 +356,7 @@ namespace VQMapTest2
 
             key.Close();
 
+            dirInfo = new DirectoryInfo(m_sWorkingDir); 
             FileInfo[] fileNames = dirInfo.GetFiles("*.*");
 
             foreach (FileInfo fi in fileNames)

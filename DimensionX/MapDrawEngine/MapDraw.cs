@@ -801,15 +801,15 @@ namespace MapDrawEngine
             }
 
             //сохраним сдвинутые на 1 вниз и влево контуры континентов - для более красивого отображения береговой линии
-            Matrix pMatrix = new Matrix();
-            pMatrix.Translate(1, 1);
+            //Matrix pMatrix = new Matrix();
+            //pMatrix.Translate(20, 20);
             
             foreach (MapQuadrant pQuad in m_aQuadrants)
             {
                 if (pQuad.m_cModes[MapMode.Continents].TryGetValue(LandTypes<LandTypeInfoX>.Plains.m_pBrush, out pPath))
                 {
                     pQuad.m_cLayers[MapLayer.ContinentsShadow] = (GraphicsPath)pPath.Clone();
-                    pQuad.m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrix);
+                    //pQuad.m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrix);
                 }
             }
 
@@ -1329,7 +1329,7 @@ namespace MapDrawEngine
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 500 пикселей
-            m_iScaledMapWidth = (int)(500 * m_fScaleMultiplier);
+            m_iScaledMapWidth = (int)(620 * m_fScaleMultiplier);
             m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
 
             //создадим холст такого же размера, как и окно рисования, но не больше 
@@ -1507,7 +1507,7 @@ namespace MapDrawEngine
             for (int i = 0; i < m_iQuadsWidth; i++)
                 for (int j = 0; j < m_iQuadsHeight; j++)
                     if (aVisibleQuads[i, j] != null)
-                        aVisibleQuads[i, j].DrawPath(gr, MapLayer.ContinentsShadow, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j].DrawPath(gr, MapLayer.ContinentsShadow, i * m_fOneQuadWidth + iQuadDX + 2, j * m_fOneQuadHeight + iQuadDY + 2, m_fActualScale);
             for (int i = 0; i < m_iQuadsWidth; i++)
                 for (int j = 0; j < m_iQuadsHeight; j++)
                     if (aVisibleQuads[i, j] != null)
@@ -1551,8 +1551,8 @@ namespace MapDrawEngine
                         if (aVisibleQuads[i, j] != null)
                             aVisibleQuads[i, j].DrawPath(gr, MapLayer.Provincies, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
 
-            //foreach (TransportationNode[] aPath in m_cPaths.Keys)
-            //    DrawPath(gr, aPath, m_cPaths[aPath]);
+            foreach (TransportationNode[] aPath in m_cPaths.Keys)
+                DrawPath(gr, aPath, m_cPaths[aPath]);
 
             if (m_bShowRoads)
                 for (int i = 0; i < m_iQuadsWidth; i++)
@@ -1578,12 +1578,124 @@ namespace MapDrawEngine
                         if (aVisibleQuads[i, j] != null)
                             aVisibleQuads[i, j].DrawPath(gr, MapLayer.LandMasses, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
 
-            //if (m_pSelectedState != null)
-            //    DrawStateBorder(gr, m_pSelectedState);
+            if (m_pSelectedState != null)
+                DrawStateBorder(gr, m_pSelectedState);
 
             Refresh();
 
             DateTime pTime2 = DateTime.Now;
+        }
+
+        private void DrawPath(Graphics gr, TransportationNode[] aPath, Pen pPen)
+        {
+            GraphicsPath pPath = new GraphicsPath();
+            TransportationNode pLastNode = null;
+            foreach (TransportationNode pNode in aPath)
+            {
+                if (pLastNode != null)
+                {
+                    bool[,] aQuads;
+                    PointF[][] aLinks = GetTransportationLink(pLastNode.m_cLinks[pNode], out aQuads);
+                    foreach (var aLink in aLinks)
+                    {
+                        pPath.StartFigure();
+                        pPath.AddLines(aLink);
+                    }
+                }
+
+                pLastNode = pNode;
+            }
+
+            Matrix pMatrix = new Matrix();
+            int iDX = m_pDrawFrame.X;
+            while (iDX < 0)
+                iDX += m_iScaledMapWidth;
+            while (iDX >= m_iScaledMapWidth)
+                iDX -= m_iScaledMapWidth;
+            pMatrix.Translate(-iDX, -m_pDrawFrame.Y);
+            pMatrix.Scale(m_fActualScale, m_fActualScale);
+
+            pPath.Transform(pMatrix);
+
+            gr.DrawPath(pPen, pPath);
+
+            RectangleF pBounds = pPath.GetBounds();
+
+            if (pBounds.X < 0)
+            {
+                Matrix pMatrixMirror = new Matrix();
+                pMatrixMirror.Translate(m_iScaledMapWidth, 0);
+
+                GraphicsPath pPath2 = (GraphicsPath)pPath.Clone();
+                pPath2.Transform(pMatrixMirror);
+
+                gr.DrawPath(pPen, pPath2);
+            }
+
+            if (pBounds.X + pBounds.Width > m_pDrawFrame.Width)
+            {
+                Matrix pMatrixMirror = new Matrix();
+                pMatrixMirror.Translate(-m_iScaledMapWidth, 0);
+
+                GraphicsPath pPath2 = (GraphicsPath)pPath.Clone();
+                pPath2.Transform(pMatrixMirror);
+
+                gr.DrawPath(pPen, pPath2);
+            }
+        }
+
+        private void DrawStateBorder(Graphics gr, State pState)
+        {
+            if (pState == null)
+                return;
+
+            GraphicsPath pPath;
+            if (!m_cStateBorders.TryGetValue(pState, out pPath))
+                return;
+
+            Matrix pMatrix = new Matrix();
+
+            int iDX = m_pDrawFrame.X;
+            while (iDX < 0)
+                iDX += m_iScaledMapWidth;
+            while (iDX >= m_iScaledMapWidth)
+                iDX -= m_iScaledMapWidth;
+            pMatrix.Translate(-iDX, -m_pDrawFrame.Y);
+            //контуры государств в m_cStateBorders лежат уменьшенные в 100 раз, поэтому масштабный коэффициент здесь домножаем на 100
+            pMatrix.Scale(m_fActualScale * 100, m_fActualScale * 100);
+
+            GraphicsPath pPath2 = (GraphicsPath)pPath.Clone();
+            pPath2.Transform(pMatrix);
+
+            gr.DrawPath(s_pRed3Pen, pPath2);
+
+            gr.DrawPath(s_pBlack3DotPen, pPath2);
+
+            RectangleF pBounds = pPath2.GetBounds();
+
+            if (pBounds.X < 0)
+            {
+                Matrix pMatrixMirror = new Matrix();
+                pMatrixMirror.Translate(m_iScaledMapWidth, 0);
+
+                GraphicsPath pPath3 = (GraphicsPath)pPath2.Clone();
+                pPath3.Transform(pMatrixMirror);
+
+                gr.DrawPath(s_pRed3Pen, pPath3);
+                gr.DrawPath(s_pBlack3DotPen, pPath3);
+            }
+
+            if (pBounds.X + pBounds.Width > m_pDrawFrame.Width)
+            {
+                Matrix pMatrixMirror = new Matrix();
+                pMatrixMirror.Translate(-m_iScaledMapWidth, 0);
+
+                GraphicsPath pPath3 = (GraphicsPath)pPath2.Clone();
+                pPath3.Transform(pMatrixMirror);
+
+                gr.DrawPath(s_pRed3Pen, pPath3);
+                gr.DrawPath(s_pBlack3DotPen, pPath3);
+            }
         }
 
         private void MapDraw_Paint(object sender, PaintEventArgs e)
@@ -1629,13 +1741,20 @@ namespace MapDrawEngine
 
             if (m_pLastMouseLocation.X > 0)
             {
-                p.X += e.X - m_pLastMouseLocation.X;
-                p.Y += e.Y - m_pLastMouseLocation.Y;
+                p.X -= e.X - m_pLastMouseLocation.X;
+                p.Y -= e.Y - m_pLastMouseLocation.Y;
             }
             m_pLastMouseLocation = e.Location;
 
             if (m_bScrolling)
                 SetPan(p.X, p.Y);
+            else
+            {
+                string sToolTip = GetTooltipString();
+
+                if (toolTip1.GetToolTip(this) != sToolTip)
+                    toolTip1.SetToolTip(this, sToolTip);
+            }
         }
 
         /// <summary>
@@ -1730,9 +1849,8 @@ namespace MapDrawEngine
             return bContinent;
         }
 
-        private void MapDraw_MouseHover(object sender, EventArgs e)
+        private string GetTooltipString()
         {
-
             string sToolTip = "";
 
             bool bContinent = CheckMousePosition();
@@ -1794,8 +1912,15 @@ namespace MapDrawEngine
                 }
             }
 
-            if (toolTip1.GetToolTip(this) != sToolTip)
-                toolTip1.SetToolTip(this, sToolTip);
+            return sToolTip;
+        }
+
+        private void MapDraw_MouseHover(object sender, EventArgs e)
+        {
+            //string sToolTip = GetTooltipString();
+
+            //if (toolTip1.GetToolTip(this) != sToolTip)
+            //    toolTip1.SetToolTip(this, sToolTip);
         }
 
         private void MapDraw_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -1836,6 +1961,11 @@ namespace MapDrawEngine
             GraphicsPath pPath = new GraphicsPath();
             foreach (var aPts in aPoints)
                 pPath.AddPolygon(aPts);
+
+            Matrix pMatrix = new Matrix();
+            pMatrix.Scale(m_fActualScale, m_fActualScale);
+            pPath.Transform(pMatrix);
+
             RectangleF pRect = pPath.GetBounds();
 
             return new Point((int)(pRect.Left + pRect.Width / 2), (int)(pRect.Top + pRect.Height / 2));
