@@ -128,20 +128,22 @@ namespace VQMapTest2
             switch (tabControl1.SelectedIndex)
             {
                 case 0:
-                    mapDraw1.Mode = MapDraw.VisType.LandType;
+                    mapDraw1.Mode = MapMode.Areas;
                     break;
                 case 1:
-                    mapDraw1.Mode = MapDraw.VisType.Humidity;
+                    mapDraw1.Mode = MapMode.Humidity;
                     break;
                 case 2:
-                    mapDraw1.Mode = MapDraw.VisType.RacesNative;
+                    mapDraw1.Mode = MapMode.Natives;
                     break;
                 case 3:
-                    mapDraw1.Mode = MapDraw.VisType.RacesStates;
+                    mapDraw1.Mode = MapMode.Nations;
                     break;
                 case 4:
+                    mapDraw1.Mode = MapMode.TechLevel;
                     break;
                 case 5:
+                    mapDraw1.Mode = MapMode.PsiLevel;
                     break;
             }
 

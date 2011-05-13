@@ -79,6 +79,11 @@ namespace MapDrawEngine
         private Brush[] m_aHumidity;
 
         /// <summary>
+        /// цвета разных уровней технического развития
+        /// </summary>
+        private Brush[] m_aTechLevel;
+
+        /// <summary>
         /// размерность матрицы квадрантов
         /// </summary>
         private const int QUADRANTS_COUNT = 8;
@@ -130,35 +135,15 @@ namespace MapDrawEngine
         /// </summary>
         internal World m_pWorld = null;
 
-        public enum VisType
-        {
-            /// <summary>
-            /// физическая карта
-            /// </summary>
-            LandType,
-            /// <summary>
-            /// карта влажности
-            /// </summary>
-            Humidity,
-            /// <summary>
-            /// этническая карта - коренное население
-            /// </summary>
-            RacesNative,
-            /// <summary>
-            /// этническая карта - доминирующая раса
-            /// </summary>
-            RacesStates
-        }
+        /// <summary>
+        /// Режим отрисовки карты - физическая карта, карта влажности, этническая карта...
+        /// </summary>
+        private MapMode m_eMode = MapMode.Areas;
 
         /// <summary>
         /// Режим отрисовки карты - физическая карта, карта влажности, этническая карта...
         /// </summary>
-        private VisType m_eMode = VisType.LandType;
-
-        /// <summary>
-        /// Режим отрисовки карты - физическая карта, карта влажности, этническая карта...
-        /// </summary>
-        public VisType Mode
+        public MapMode Mode
         {
             get { return m_eMode; }
             set
@@ -513,6 +498,11 @@ namespace MapDrawEngine
             for (int i = 0; i <= 100; i++)
                 cHumidity.Add(GetHumidityColor(i));
             m_aHumidity = cHumidity.ToArray();
+
+            List<Brush> cTechLevel = new List<Brush>();
+            for (int i = 1; i <= 8; i++)
+                cTechLevel.Add(GetTechLevelColor(i));
+            m_aTechLevel = cTechLevel.ToArray();
         }
 
         #region Функции для работы с цветами
@@ -520,13 +510,26 @@ namespace MapDrawEngine
         /// <summary>
         /// Вычисляет цвет для отображения заданного уровня влажности
         /// </summary>
-        /// <param name="iHumidity">заданный уровень влажности</param>
+        /// <param name="iHumidity">заданный уровень влажности (0-100)</param>
         /// <returns>цвет</returns>
         private Brush GetHumidityColor(int iHumidity)
         {
             KColor color = new KColor();
             color.RGB = Color.LightBlue;
             color.Lightness = 1.0 - (double)iHumidity / 200;
+            return new SolidBrush(color.RGB);
+        }
+        /// <summary>
+        /// Вычисляет цвет для отображения заданного уровня технического развития
+        /// </summary>
+        /// <param name="iHumidity">заданный уровень технического развития (1-8)</param>
+        /// <returns>цвет</returns>
+        private Brush GetTechLevelColor(int iTechLevel)
+        {
+            KColor color = new KColor();
+            color.RGB = Color.Yellow;
+            color.Saturation = (double)iTechLevel / 8;
+            color.Lightness = 1.0 - (double)iTechLevel / 12;
             return new SolidBrush(color.RGB);
         }
 
@@ -741,11 +744,7 @@ namespace MapDrawEngine
                 {
                     pPath.AddPolygon(aPts);
                     foreach (MapQuadrant pQuad in aQuads)
-                    {
-                        if (!pQuad.m_cModes[MapMode.Continents].ContainsKey(LandTypes<LandTypeInfoX>.Plains.m_pBrush))
-                            pQuad.m_cModes[MapMode.Continents][LandTypes<LandTypeInfoX>.Plains.m_pBrush] = new GraphicsPath();
-                        pQuad.m_cModes[MapMode.Continents][LandTypes<LandTypeInfoX>.Plains.m_pBrush].AddPolygon(aPts);
-                    }
+                        pQuad.m_cLayers[MapLayer.Continents].AddPolygon(aPts);
                 }
                 m_cContinentBorders[pContinent] = pPath;
 
@@ -757,8 +756,18 @@ namespace MapDrawEngine
                     foreach (var aPts in aPoints)
                     {
                         pPath.AddPolygon(aPts);
+
+                        //определим, каким цветом эта земля должна закрашиваться на карте влажностей
+                        Brush pBrush = m_aTechLevel[pState.m_iTechLevel];
+
                         foreach (MapQuadrant pQuad in aQuads)
+                        {
                             pQuad.m_cLayers[MapLayer.States].AddPolygon(aPts);
+
+                            if (!pQuad.m_cModes[MapMode.TechLevel].ContainsKey(pBrush))
+                                pQuad.m_cModes[MapMode.TechLevel][pBrush] = new GraphicsPath();
+                            pQuad.m_cModes[MapMode.TechLevel][pBrush].AddPolygon(aPts);
+                        }
                     }
                     m_cStateBorders[pState] = pPath;
                 }
@@ -772,15 +781,12 @@ namespace MapDrawEngine
                     {
                         pPath.AddPolygon(aPts);
 
-                        if (pArea.m_pType != LandTypes<LandTypeInfoX>.Plains)
+                        foreach (MapQuadrant pQuad in aQuads)
                         {
-                            foreach (MapQuadrant pQuad in aQuads)
-                            {
-                                //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
-                                if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pArea.m_pType.m_pBrush))
-                                    pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush] = new GraphicsPath();
-                                pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush].AddPolygon(aPts);
-                            }
+                            //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
+                            if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pArea.m_pType.m_pBrush))
+                                pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush] = new GraphicsPath();
+                            pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush].AddPolygon(aPts);
                         }
 
                         //если регион обитаем
@@ -797,19 +803,6 @@ namespace MapDrawEngine
                         }
                     }
                     m_cAreaBorders[pArea] = pPath;
-                }
-            }
-
-            //сохраним сдвинутые на 1 вниз и влево контуры континентов - для более красивого отображения береговой линии
-            //Matrix pMatrix = new Matrix();
-            //pMatrix.Translate(20, 20);
-            
-            foreach (MapQuadrant pQuad in m_aQuadrants)
-            {
-                if (pQuad.m_cModes[MapMode.Continents].TryGetValue(LandTypes<LandTypeInfoX>.Plains.m_pBrush, out pPath))
-                {
-                    pQuad.m_cLayers[MapLayer.ContinentsShadow] = (GraphicsPath)pPath.Clone();
-                    //pQuad.m_cLayers[MapLayer.ContinentsShadow].Transform(pMatrix);
                 }
             }
 
@@ -1507,31 +1500,13 @@ namespace MapDrawEngine
             for (int i = 0; i < m_iQuadsWidth; i++)
                 for (int j = 0; j < m_iQuadsHeight; j++)
                     if (aVisibleQuads[i, j] != null)
-                        aVisibleQuads[i, j].DrawPath(gr, MapLayer.ContinentsShadow, i * m_fOneQuadWidth + iQuadDX + 2, j * m_fOneQuadHeight + iQuadDY + 2, m_fActualScale);
-            for (int i = 0; i < m_iQuadsWidth; i++)
-                for (int j = 0; j < m_iQuadsHeight; j++)
-                    if (aVisibleQuads[i, j] != null)
-                        aVisibleQuads[i, j].FillPath(gr, MapMode.Continents, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j].DrawPath(gr, MapLayer.Continents, i * m_fOneQuadWidth + iQuadDX + 2, j * m_fOneQuadHeight + iQuadDY + 2, m_fActualScale);
 
             //закрашиваем карту в соответствии с выбранным режимом отображения карты
             for (int i = 0; i < m_iQuadsWidth; i++)
                 for (int j = 0; j < m_iQuadsHeight; j++)
                     if (aVisibleQuads[i, j] != null)
-                        switch (m_eMode)
-                        {
-                            case VisType.LandType:
-                                aVisibleQuads[i, j].FillPath(gr, MapMode.Areas, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
-                                break;
-                            case VisType.Humidity:
-                                aVisibleQuads[i, j].FillPath(gr, MapMode.Humidity, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
-                                break;
-                            case VisType.RacesNative:
-                                aVisibleQuads[i, j].FillPath(gr, MapMode.Natives, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
-                                break;
-                            case VisType.RacesStates:
-                                aVisibleQuads[i, j].FillPath(gr, MapMode.Nations, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
-                                break;
-                        }
+                        aVisibleQuads[i, j].FillPath(gr, m_eMode, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
 
             if (m_bShowLocationsBorders)
                 for (int i = 0; i < m_iQuadsWidth; i++)

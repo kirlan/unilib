@@ -709,7 +709,7 @@
             this.mapDraw1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mapDraw1.ContextMenuStrip = this.contextMenuStrip1;
             this.mapDraw1.Location = new System.Drawing.Point(24, 29);
-            this.mapDraw1.Mode = MapDrawEngine.MapDraw.VisType.LandType;
+            this.mapDraw1.Mode = MapDrawEngine.MapMode.Areas;
             this.mapDraw1.Name = "mapDraw1";
             this.mapDraw1.ScaleMultiplier = 1F;
             this.mapDraw1.SelectedState = null;

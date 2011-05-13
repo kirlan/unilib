@@ -75,7 +75,6 @@ namespace MapDrawEngine
         }
 
         internal GraphicsPath m_pContinents = new GraphicsPath();
-        internal GraphicsPath m_pContinentsShadow = new GraphicsPath();
         internal Dictionary<Brush, GraphicsPath> m_cAreas = new Dictionary<Brush, GraphicsPath>();
 
         /// <summary>
@@ -94,7 +93,6 @@ namespace MapDrawEngine
                 return;
 
             m_pContinents.Reset();
-            m_pContinentsShadow.Reset();
             m_cAreas.Clear();
 
             PointF[][] aPoints;
@@ -111,23 +109,13 @@ namespace MapDrawEngine
                     aPoints = BuildPath(pArea.m_cFirstLines);
                     foreach (var aPts in aPoints)
                     {
-                        if (pArea.m_pType != LandTypes<LandTypeInfoX>.Plains)
-                        {
-                            //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
-                            if (!m_cAreas.ContainsKey(pArea.m_pType.m_pBrush))
-                                m_cAreas[pArea.m_pType.m_pBrush] = new GraphicsPath();
-                            m_cAreas[pArea.m_pType.m_pBrush].AddPolygon(aPts);
-                        }
+                        //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
+                        if (!m_cAreas.ContainsKey(pArea.m_pType.m_pBrush))
+                            m_cAreas[pArea.m_pType.m_pBrush] = new GraphicsPath();
+                        m_cAreas[pArea.m_pType.m_pBrush].AddPolygon(aPts);
                     }
                 }
             }
-
-            //сохраним сдвинутые на 1 вниз и влево контуры континентов - для более красивого отображения береговой линии
-            //Matrix pMatrix = new Matrix();
-            //pMatrix.Translate(2, 2);
-
-            m_pContinentsShadow = (GraphicsPath)m_pContinents.Clone();
-            //m_pContinentsShadow.Transform(pMatrix);
 
             CreateCanvas();
             Draw();
@@ -296,21 +284,17 @@ namespace MapDrawEngine
             if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null || m_pMasterMap.m_pWorld.m_cGrid.m_aLocations.Length == 0)
                 return;
 
-            //рисуем контуры континентов и заливаем внутреннее пространство цветом равнин
-            Matrix pMatrix = new Matrix();
-            pMatrix.Scale(m_fActualScale, m_fActualScale);
-
-            GraphicsPath pPath = (GraphicsPath)m_pContinentsShadow.Clone();
+            //рисуем контуры континентов
             Matrix pMatrix2 = new Matrix();
             pMatrix2.Scale(m_fActualScale, m_fActualScale);
             pMatrix2.Translate(2, 2);
+
+            GraphicsPath pPath = (GraphicsPath)m_pContinents.Clone();
             pPath.Transform(pMatrix2);
             gr.DrawPath(MapDraw.s_pBlack2Pen, pPath);
 
-            pPath = (GraphicsPath)m_pContinents.Clone();
-
-            pPath.Transform(pMatrix);
-            gr.FillPath(LandTypes<LandTypeInfoX>.Plains.m_pBrush, pPath);
+            Matrix pMatrix = new Matrix();
+            pMatrix.Scale(m_fActualScale, m_fActualScale);
 
             //закрашиваем карту в соответствии с типами географических регионов
             foreach (var pArea in m_cAreas)
