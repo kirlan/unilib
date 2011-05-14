@@ -44,7 +44,11 @@ namespace MapDrawEngine
         /// <summary>
         /// уровень пси-способностей
         /// </summary>
-        PsiLevel
+        PsiLevel,
+        /// <summary>
+        /// общий уровень жизни, цивилизованность
+        /// </summary>
+        Infrastructure
     }
 
     internal enum RoadType
@@ -135,7 +139,7 @@ namespace MapDrawEngine
             switch (eLayer)
             { 
                 case MapLayer.Continents:
-                    pPen = MapDraw.s_pBlack2Pen;
+                    pPen = MapDraw.s_pBlack3Pen;
                     break;
                 case MapLayer.Locations:
                     pPen = Pens.DarkGray;

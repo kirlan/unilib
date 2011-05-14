@@ -59,11 +59,21 @@ namespace Socium
         {
             int iOldLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
 
+            if (m_iMagicLimit <= pWorld.m_iMagicLimit)
+                m_iMagicLimit = pWorld.m_iMagicLimit;
+            else
+                m_iMagicLimit = (m_iMagicLimit + pWorld.m_iMagicLimit + 1)/2;
+
+            if (m_iTechLevel <= pWorld.m_iTechLevel)
+                m_iTechLevel = pWorld.m_iTechLevel;
+            else
+                m_iTechLevel = (m_iTechLevel + pWorld.m_iTechLevel + 1)/2;
+
             int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
             if (Rnd.OneChanceFrom(10))
-                m_iMagicLimit = pWorld.m_iMagicLimit + iMagicLimit;
+                m_iMagicLimit += iMagicLimit;
             else
-                m_iMagicLimit = pWorld.m_iMagicLimit - iMagicLimit;
+                m_iMagicLimit -= iMagicLimit;
 
             if (m_iMagicLimit < 0)
                 m_iMagicLimit = 0;
@@ -74,14 +84,52 @@ namespace Socium
 
             int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
             if (Rnd.OneChanceFrom(10))
-                m_iTechLevel = pWorld.m_iTechLevel + iTechLevel;
+                m_iTechLevel += iTechLevel;
             else
-                m_iTechLevel = pWorld.m_iTechLevel - iTechLevel;
+                m_iTechLevel -= iTechLevel;
 
             if (m_iTechLevel < 0)
                 m_iTechLevel = 0;
             if (m_iTechLevel > 8)
                 m_iTechLevel = 8;
+
+            if (Rnd.OneChanceFrom(3))
+                m_eGenderPriority = (GenderPriority)Rnd.Get(typeof(GenderPriority));
+            else
+                if (iOldLevel == 0)
+                    m_eGenderPriority = pWorld.m_eGenderPriority;
+
+            if (Rnd.OneChanceFrom(3))
+                m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+            else
+                if (iOldLevel == 0)
+                    m_eMagicAbilityPrevalence = pWorld.m_eMagicAbilityPrevalence;
+
+            if (Rnd.OneChanceFrom(3))
+                m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+            else
+                if (iOldLevel == 0)
+                    m_eMagicAbilityDistribution = pWorld.m_eMagicAbilityDistribution;
+
+            if (iOldLevel == 0 && Rnd.OneChanceFrom(20))
+            {
+                int iBalance = Rnd.Get(201);
+
+                if (iBalance > 100)
+                {
+                    m_iMagicLimit = pWorld.m_iMagicLimit + (9 - pWorld.m_iMagicLimit)/2 + Rnd.Get(4 - pWorld.m_iMagicLimit/2);
+                    m_iTechLevel = (200 - iBalance) * m_iMagicLimit / iBalance;
+                }
+                else
+                {
+                    m_iTechLevel = pWorld.m_iTechLevel + (9 - pWorld.m_iTechLevel)/2 + Rnd.Get(4 - pWorld.m_iTechLevel/2);
+                    m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
+                } 
+                
+                m_eGenderPriority = (GenderPriority)Rnd.Get(typeof(GenderPriority));
+                m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+                m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+            }
 
             int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
             if (iNewLevel > iOldLevel)
@@ -90,21 +138,6 @@ namespace Socium
             else
                 for (int i = 0; i < iOldLevel - iNewLevel; i++)
                     m_pCulture.Degrade();
-
-            if (Rnd.OneChanceFrom(3))
-                m_eGenderPriority = (GenderPriority)Rnd.Get(typeof(GenderPriority));
-            else
-                m_eGenderPriority = pWorld.m_eGenderPriority;
-
-            if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
-            else
-                m_eMagicAbilityPrevalence = pWorld.m_eMagicAbilityPrevalence;
-
-            if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
-            else
-                m_eMagicAbilityDistribution = pWorld.m_eMagicAbilityDistribution;
         }
     }
 }

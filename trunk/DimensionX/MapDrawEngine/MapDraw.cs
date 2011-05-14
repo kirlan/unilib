@@ -81,7 +81,17 @@ namespace MapDrawEngine
         /// <summary>
         /// цвета разных уровней технического развития
         /// </summary>
-        private Brush[] m_aTechLevel;
+        private Brush[,] m_aTechLevel = new Brush[9, 9];
+
+        /// <summary>
+        /// цвета разных уровней магического развития
+        /// </summary>
+        private Dictionary<int, Dictionary<MagicAbilityPrevalence, Brush>> m_cPsiLevel = new Dictionary<int,Dictionary<MagicAbilityPrevalence,Brush>>();
+
+        /// <summary>
+        /// цвета разных уровней технического развития
+        /// </summary>
+        private Brush[,] m_aCivLevel = new Brush[9, 9];
 
         /// <summary>
         /// размерность матрицы квадрантов
@@ -499,10 +509,20 @@ namespace MapDrawEngine
                 cHumidity.Add(GetHumidityColor(i));
             m_aHumidity = cHumidity.ToArray();
 
-            List<Brush> cTechLevel = new List<Brush>();
-            for (int i = 1; i <= 8; i++)
-                cTechLevel.Add(GetTechLevelColor(i));
-            m_aTechLevel = cTechLevel.ToArray();
+            for (int i = 0; i <= 8; i++)
+                for (int j = 0; j <= 8; j++)
+                    m_aTechLevel[i,j] = GetTechLevelColor(i, j);
+
+            for (int i = 0; i <= 8; i++)
+            {
+                m_cPsiLevel[i] = new Dictionary<MagicAbilityPrevalence, Brush>();
+                foreach(MagicAbilityPrevalence ePrevalence in Enum.GetValues(typeof(MagicAbilityPrevalence)))
+                    m_cPsiLevel[i][ePrevalence] = GetPsiLevelColor(i, ePrevalence);
+            }
+
+            for (int i = 0; i <= 8; i++)
+                for (int j = 0; j <= 4; j++)
+                    m_aCivLevel[i, j] = GetCivLevelColor(i, j);
         }
 
         #region Функции для работы с цветами
@@ -522,15 +542,96 @@ namespace MapDrawEngine
         /// <summary>
         /// Вычисляет цвет для отображения заданного уровня технического развития
         /// </summary>
-        /// <param name="iHumidity">заданный уровень технического развития (1-8)</param>
+        /// <param name="iBaseTechLevel">уровень индустриальной базы (0-8)</param>
+        /// <param name="iUsedTechLevel">уровень доступной в стране техники (0-8)</param>
         /// <returns>цвет</returns>
-        private Brush GetTechLevelColor(int iTechLevel)
+        private Brush GetTechLevelColor(int iBaseTechLevel, int iUsedTechLevel)
         {
-            KColor color = new KColor();
-            color.RGB = Color.Yellow;
-            color.Saturation = (double)iTechLevel / 8;
-            color.Lightness = 1.0 - (double)iTechLevel / 12;
-            return new SolidBrush(color.RGB);
+            KColor background = new KColor();
+            background.RGB = Color.ForestGreen;
+            //color1.Saturation = (double)iBaseTechLevel / 8;
+            background.Lightness = 1.0 - (double)iBaseTechLevel / 10;
+
+            KColor foreground = new KColor();
+            foreground.RGB = Color.ForestGreen;
+            //color2.Saturation = (double)iUsedTechLevel / 8;
+            foreground.Lightness = 1.0 - (double)iUsedTechLevel / 10;
+            //return new HatchBrush(HatchStyle.WideDownwardDiagonal, color2.RGB, color1.RGB);
+            //return new HatchBrush(HatchStyle.LargeCheckerBoard, color2.RGB, color1.RGB);
+            return new HatchBrush(HatchStyle.LargeConfetti, foreground.RGB, background.RGB);
+        }
+        /// <summary>
+        /// Вычисляет цвет для отображения заданного уровня магии
+        /// </summary>
+        /// <param name="iMaxPsiLevel">максимальный доступный уровень магии (0-8)</param>
+        /// <param name="ePrevalence">распространённость магии</param>
+        /// <returns>цвет</returns>
+        private Brush GetPsiLevelColor(int iMaxPsiLevel, MagicAbilityPrevalence ePrevalence)
+        {
+            KColor background = new KColor();
+            background.RGB = Color.Orchid;
+            //color2.Saturation = (double)iUsedTechLevel / 8;
+            background.Lightness = 0.9 - (double)iMaxPsiLevel / 10;
+            //return new HatchBrush(HatchStyle.WideDownwardDiagonal, color2.RGB, color1.RGB);
+            //return new HatchBrush(HatchStyle.LargeCheckerBoard, color2.RGB, color1.RGB);
+
+            KColor foreground = new KColor();
+            foreground.RGB = Color.Gray;
+            //color1.Saturation = (double)iBaseTechLevel / 8;
+
+            switch (ePrevalence)
+            {
+                case MagicAbilityPrevalence.rare:
+                    return new SolidBrush(background.RGB);
+                case MagicAbilityPrevalence.common:
+                    return new HatchBrush(HatchStyle.DottedDiamond, foreground.RGB, background.RGB);
+                case MagicAbilityPrevalence.almost_everyone:
+                    return new HatchBrush(HatchStyle.DiagonalCross, foreground.RGB, background.RGB);
+                default:
+                    throw new ArgumentException();
+            }
+        }
+        /// <summary>
+        /// Вычисляет цвет для отображения заданного уровня развития цивилизации в общем
+        /// </summary>
+        /// <param name="iInfrastructureLevel">уровень цивилизованности</param>
+        /// <param name="iControl">уровень правительственного контроля</param>
+        /// <returns>цвет</returns>
+        private Brush GetCivLevelColor(int iInfrastructureLevel, int iControl)
+        {
+            KColor background = new KColor();
+            background.RGB = Color.Red;
+            //color1.Saturation = (double)iBaseTechLevel / 8;
+            //background.Lightness = 0.9-(double)iInfrastructureLevel / 12;
+            background.Hue += iInfrastructureLevel * 16;
+
+            KColor foreground = new KColor();
+            foreground.RGB = Color.Gray;
+            //color2.Saturation = (double)iUsedTechLevel / 8;
+            //foreground.Lightness = 1.0 - (double)iControl / 10;
+            //return new HatchBrush(HatchStyle.WideDownwardDiagonal, color2.RGB, color1.RGB);
+            //return new HatchBrush(HatchStyle.LargeCheckerBoard, color2.RGB, color1.RGB);
+            
+            // 0 - На преступников и диссидентов власти никакого внимания не обращают, спасение утопающих - дело рук самих утопающих.
+            // 1 - Власти занимаются только самыми вопиющими преступлениями.
+            // 2 - Есть законы, их надо соблюдать, кто не соблюдает - тот преступник, а вор должен сидеть в тюрьме.
+            // 3 - Законы крайне строги, широко используется смертная казнь.
+            // 4 - Все граждане, кроме правящей верхушки, попадают по презумпцию виновности.
+            switch (iControl)
+            {
+                case 0:
+                    return new SolidBrush(background.RGB);
+                case 1:
+                    return new HatchBrush(HatchStyle.Percent05, foreground.RGB, background.RGB);
+                case 2:
+                    return new HatchBrush(HatchStyle.DottedDiamond, foreground.RGB, background.RGB);
+                case 3:
+                    return new HatchBrush(HatchStyle.OutlinedDiamond, foreground.RGB, background.RGB);
+                case 4:
+                    return new HatchBrush(HatchStyle.DiagonalCross, foreground.RGB, background.RGB);
+                default:
+                    throw new ArgumentException();
+            }
         }
 
         /// <summary>
@@ -649,6 +750,8 @@ namespace MapDrawEngine
             foreach (MapQuadrant pQuad in m_aQuadrants)
                 pQuad.Clear();
 
+            ClearPath();
+
             m_pWorld = pWorld;
 
             //если расам ещё не назначены цвета - назначим их
@@ -757,16 +860,22 @@ namespace MapDrawEngine
                     {
                         pPath.AddPolygon(aPts);
 
-                        //определим, каким цветом эта земля должна закрашиваться на карте влажностей
-                        Brush pBrush = m_aTechLevel[pState.m_iTechLevel];
+                        //определим, каким цветом эта земля должна закрашиваться на карте технологий
+                        int iImported = pState.GetImportedTech();
+                        Brush pTechBrush = m_aTechLevel[pState.m_iTechLevel, iImported == -1 ? pState.m_iTechLevel : iImported];
+                        Brush pCivBrush = m_aCivLevel[pState.m_iInfrastructureLevel, pState.m_iControl];
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
                             pQuad.m_cLayers[MapLayer.States].AddPolygon(aPts);
 
-                            if (!pQuad.m_cModes[MapMode.TechLevel].ContainsKey(pBrush))
-                                pQuad.m_cModes[MapMode.TechLevel][pBrush] = new GraphicsPath();
-                            pQuad.m_cModes[MapMode.TechLevel][pBrush].AddPolygon(aPts);
+                            if (!pQuad.m_cModes[MapMode.TechLevel].ContainsKey(pTechBrush))
+                                pQuad.m_cModes[MapMode.TechLevel][pTechBrush] = new GraphicsPath();
+                            pQuad.m_cModes[MapMode.TechLevel][pTechBrush].AddPolygon(aPts);
+
+                            if (!pQuad.m_cModes[MapMode.Infrastructure].ContainsKey(pCivBrush))
+                                pQuad.m_cModes[MapMode.Infrastructure][pCivBrush] = new GraphicsPath();
+                            pQuad.m_cModes[MapMode.Infrastructure][pCivBrush].AddPolygon(aPts);
                         }
                     }
                     m_cStateBorders[pState] = pPath;
@@ -787,15 +896,13 @@ namespace MapDrawEngine
                             if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pArea.m_pType.m_pBrush))
                                 pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush] = new GraphicsPath();
                             pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush].AddPolygon(aPts);
-                        }
 
-                        //если регион обитаем
-                        if (pArea.m_pRace != null)
-                        {
-                            //сохраним информацию о контуре региона и для этнографической карты
-                            Brush pBrush = m_cRaceColorsID[pArea.m_pRace];
-                            foreach (MapQuadrant pQuad in aQuads)
+                            //если регион обитаем
+                            if (pArea.m_pRace != null)
                             {
+                                //сохраним информацию о контуре региона и для этнографической карты
+                                Brush pBrush = m_cRaceColorsID[pArea.m_pRace];
+
                                 if (!pQuad.m_cModes[MapMode.Natives].ContainsKey(pBrush))
                                     pQuad.m_cModes[MapMode.Natives][pBrush] = new GraphicsPath();
                                 pQuad.m_cModes[MapMode.Natives][pBrush].AddPolygon(aPts);
@@ -814,17 +921,24 @@ namespace MapDrawEngine
                 foreach (var aPts in aPoints)
                 {
                     pPath.AddPolygon(aPts);
-                    if (!pProvince.m_pCenter.IsWater)
-                        foreach (MapQuadrant pQuad in aQuads)
-                            pQuad.m_cLayers[MapLayer.Provincies].AddPolygon(aPts);
 
                     //сохраним информацию о контуре провинции для этнографической карты
                     Brush pBrush = m_cRaceColorsID[pProvince.m_pRace];
+
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pRace.m_iMagicLimit][pProvince.m_pRace.m_eMagicAbilityPrevalence];
+                    
                     foreach (MapQuadrant pQuad in aQuads)
                     {
+                        if (!pProvince.m_pCenter.IsWater)
+                            pQuad.m_cLayers[MapLayer.Provincies].AddPolygon(aPts);
+
                         if (!pQuad.m_cModes[MapMode.Nations].ContainsKey(pBrush))
                             pQuad.m_cModes[MapMode.Nations][pBrush] = new GraphicsPath();
                         pQuad.m_cModes[MapMode.Nations][pBrush].AddPolygon(aPts);
+
+                        if (!pQuad.m_cModes[MapMode.PsiLevel].ContainsKey(pPsiBrush))
+                            pQuad.m_cModes[MapMode.PsiLevel][pPsiBrush] = new GraphicsPath();
+                        pQuad.m_cModes[MapMode.PsiLevel][pPsiBrush].AddPolygon(aPts);
                     }
                 }
                 m_cProvinceBorders[pProvince] = pPath;
@@ -1322,7 +1436,7 @@ namespace MapDrawEngine
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 500 пикселей
-            m_iScaledMapWidth = (int)(620 * m_fScaleMultiplier);
+            m_iScaledMapWidth = (int)(980 * m_fScaleMultiplier);
             m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
 
             //создадим холст такого же размера, как и окно рисования, но не больше 

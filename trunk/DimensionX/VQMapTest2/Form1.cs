@@ -145,6 +145,9 @@ namespace VQMapTest2
                 case 5:
                     mapDraw1.Mode = MapMode.PsiLevel;
                     break;
+                case 6:
+                    mapDraw1.Mode = MapMode.Infrastructure;
+                    break;
             }
 
             comboBox1.Focus();
@@ -473,192 +476,35 @@ namespace VQMapTest2
             {
                 m_pTPFStart = m_pWorld.m_cGrid.m_aLocations[Rnd.Get(m_pWorld.m_cGrid.m_aLocations.Length)];
             }
-            while (m_pTPFStart.Forbidden || (m_pTPFStart.Owner as LandX).IsWater);
+            while (m_pTPFStart.Forbidden || 
+                   (m_pTPFStart.Owner as LandX).IsWater || 
+                   m_pTPFStart.m_pSettlement == null || 
+                   m_pTPFStart.m_pSettlement.m_iRuinsAge > 0);
 
             do
             {
                 m_pTPFFinish = m_pWorld.m_cGrid.m_aLocations[Rnd.Get(m_pWorld.m_cGrid.m_aLocations.Length)];
             }
-            while (m_pTPFFinish.Forbidden || m_pTPFFinish == m_pTPFStart || (m_pTPFFinish.Owner as LandX).IsWater);
+            while (m_pTPFFinish.Forbidden || 
+                   m_pTPFFinish == m_pTPFStart || 
+                   (m_pTPFFinish.Owner as LandX).IsWater || 
+                   ((m_pTPFFinish.m_pBuilding == null || 
+                     (m_pTPFFinish.m_pBuilding.m_eType != BuildingType.Hideout && 
+                      m_pTPFFinish.m_pBuilding.m_eType != BuildingType.Lair)) && 
+                    m_pTPFFinish.m_pSettlement == null));
 
             mapDraw1.ClearPath();
 
-            //DateTime pTime1 = DateTime.Now;
-            //PathFinder pAltPath = new PathFinder(m_pTPFStart, m_pTPFFinish, m_pWorld.m_cGrid.CycleShift, -1, false);
-            //worldMap1.AddPath(pAltPath.m_cPath, Color.Purple);
-            //DateTime pTime2 = DateTime.Now;
-
-            //m_iPassword++;
-            //PathFinder pLMPath = new PathFinder((m_pTPFStart.Owner as LandX).Owner as LandMass<LandX>, (m_pTPFFinish.Owner as LandX).Owner as LandMass<LandX>, m_pWorld.m_cGrid.CycleShift, -1, false);
-            //foreach (TransportationNode pNode in pLMPath.m_cPath)
-            //{
-            //    LandMass<LandX> pLandMass = pNode as LandMass<LandX>;
-            //    foreach (LandX pLand in pLandMass.m_cContents)
-            //    {
-            //        pLand.m_iPassword = m_iPassword;
-            //    }
-            //    foreach (ITerritory pTerr in pLandMass.m_aBorderWith)
-            //    {
-            //        if (!pTerr.Forbidden)
-            //        {
-            //            LandMass<LandX> pLinkedLandMass = pTerr as LandMass<LandX>;
-            //            foreach (LandX pLand in pLinkedLandMass.m_cContents)
-            //            {
-            //                pLand.m_iPassword = m_iPassword;
-            //            }
-            //        }
-            //    }
-            //}
-
-            //PathFinder pLandsPath = new PathFinder(m_pTPFStart.Owner as LandX, m_pTPFFinish.Owner as LandX, m_pWorld.m_cGrid.CycleShift, m_iPassword, false);
-            //foreach (TransportationNode pNode in pLandsPath.m_cPath)
-            //{
-            //    LandX pLand = pNode as LandX;
-            //    foreach (LocationX pLoc in pLand.m_cContents)
-            //    {
-            //        pLoc.m_iPassword = m_iPassword;
-            //    }
-            //    foreach (ITerritory pTerr in pLand.m_aBorderWith)
-            //    {
-            //        if (!pTerr.Forbidden)
-            //        {
-            //            LandX pLinkedLand = pTerr as LandX;
-            //            foreach (LocationX pLoc in pLinkedLand.m_cContents)
-            //            {
-            //                pLoc.m_iPassword = m_iPassword;
-            //            }
-            //        }
-            //    }
-            //}
-
-            //PathFinder pBestPath = new PathFinder(m_pTPFStart, m_pTPFFinish, m_pWorld.m_cGrid.CycleShift, m_iPassword, false);
-            ////DateTime pTime3 = DateTime.Now;
-
-            //List<TransportationNode> cSucceedPath = new List<TransportationNode>();
-            //if (pBestPath.m_cPath.Length == 0)
-            //{
-            //    foreach (TransportationNode pNode in pLandsPath.m_cPath)
-            //    {
-            //        if (!pBestPath.visited.Contains(pNode))
-            //            break;
-            //        cSucceedPath.Add(pNode);
-            //    }
-            //    pBestPath.m_cPath = cSucceedPath.ToArray();
-            //}
-
-            //worldMap1.AddPath(pBestPath.m_cPath, Color.Fuchsia);
             ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_cGrid.CycleShift, false);
-            //ShortestPath pPath2 = World.FindBestPath(m_pTPFFinish, m_pTPFStart, m_pWorld.m_cGrid.CycleShift, false);
-
-            //if (pPath1.m_fLength < pPath2.m_fLength)
-            //{
-            //    worldMap1.AddPath(pPath1.m_aNodes, Color.Purple);
-            //    worldMap1.AddPath(pPath2.m_aNodes, Color.Fuchsia);
-            //}
-            //else
-            //{
-            //    worldMap1.AddPath(pPath2.m_aNodes, Color.Purple);
-            //    worldMap1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
-            //}
             mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
         }
 
-        private int m_iPassword = 0;
-
         private void ToolStripMenuItem_TestPathFinding2_Click(object sender, EventArgs e)
         {
-            mapDraw1.ClearPath();
-
-            m_iPassword++;
-            ShortestPath pLMPath = new ShortestPath((m_pTPFStart.Owner as LandX).Owner as LandMass<LandX>, (m_pTPFFinish.Owner as LandX).Owner as LandMass<LandX>, m_pWorld.m_cGrid.CycleShift, -1, false);
-            foreach (TransportationNode pNode in pLMPath.m_aNodes)
-            {
-                LandMass<LandX> pLandMass = pNode as LandMass<LandX>;
-                foreach (LandX pLand in pLandMass.m_cContents)
-                {
-                    pLand.m_iPassword = m_iPassword;
-                }
-                foreach (ITerritory pTerr in pLandMass.m_aBorderWith)
-                {
-                    if (!pTerr.Forbidden)
-                    {
-                        LandMass<LandX> pLinkedLandMass = pTerr as LandMass<LandX>;
-                        foreach (LandX pLand in pLinkedLandMass.m_cContents)
-                        {
-                            pLand.m_iPassword = m_iPassword;
-                        }
-                    }
-                }
-            }
-            mapDraw1.AddPath(pLMPath.m_aNodes, Color.Purple);
-
-            ShortestPath pLandsPath = new ShortestPath(m_pTPFStart.Owner as LandX, m_pTPFFinish.Owner as LandX, m_pWorld.m_cGrid.CycleShift, m_iPassword, false);
-            mapDraw1.AddPath(pLandsPath.m_aNodes, Color.Fuchsia);
         }
 
         private void ToolStripMenuItem_TestPathFinding3_Click(object sender, EventArgs e)
         {
-            mapDraw1.ClearPath();
-
-            m_iPassword++;
-            ShortestPath pLMPath = new ShortestPath((m_pTPFStart.Owner as LandX).Owner as LandMass<LandX>, (m_pTPFFinish.Owner as LandX).Owner as LandMass<LandX>, m_pWorld.m_cGrid.CycleShift, -1, false);
-            foreach (TransportationNode pNode in pLMPath.m_aNodes)
-            {
-                LandMass<LandX> pLandMass = pNode as LandMass<LandX>;
-                foreach (LandX pLand in pLandMass.m_cContents)
-                {
-                    pLand.m_iPassword = m_iPassword;
-                }
-                foreach (ITerritory pTerr in pLandMass.m_aBorderWith)
-                {
-                    if (!pTerr.Forbidden)
-                    {
-                        LandMass<LandX> pLinkedLandMass = pTerr as LandMass<LandX>;
-                        foreach (LandX pLand in pLinkedLandMass.m_cContents)
-                        {
-                            pLand.m_iPassword = m_iPassword;
-                        }
-                    }
-                }
-            }
-            mapDraw1.AddPath(pLMPath.m_aNodes, Color.Purple);
-
-            ShortestPath pLandsPath = new ShortestPath(m_pTPFStart.Owner as LandX, m_pTPFFinish.Owner as LandX, m_pWorld.m_cGrid.CycleShift, m_iPassword, false);
-            foreach (TransportationNode pNode in pLandsPath.m_aNodes)
-            {
-                LandX pLand = pNode as LandX;
-                foreach (LocationX pLoc in pLand.m_cContents)
-                {
-                    pLoc.m_iPassword = m_iPassword;
-                }
-                foreach (ITerritory pTerr in pLand.m_aBorderWith)
-                {
-                    if (!pTerr.Forbidden)
-                    {
-                        LandX pLinkedLand = pTerr as LandX;
-                        foreach (LocationX pLoc in pLinkedLand.m_cContents)
-                        {
-                            pLoc.m_iPassword = m_iPassword;
-                        }
-                    }
-                }
-            }
-
-            ShortestPath pBestPath = new ShortestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_cGrid.CycleShift, m_iPassword, false);
-
-            List<TransportationNode> cSucceedPath = new List<TransportationNode>();
-            if (pBestPath.m_aNodes.Length == 0)
-            {
-                foreach (TransportationNode pNode in pLandsPath.m_aNodes)
-                {
-                    if (!pBestPath.visited.Contains(pNode))
-                        break;
-                    cSucceedPath.Add(pNode);
-                }
-                pBestPath.m_aNodes = cSucceedPath.ToArray();
-            }
-
-            mapDraw1.AddPath(pBestPath.m_aNodes, Color.Fuchsia);
         }
     }
 }
