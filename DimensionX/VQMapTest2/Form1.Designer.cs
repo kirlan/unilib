@@ -50,6 +50,7 @@
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.tabPage9 = new System.Windows.Forms.TabPage();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -73,8 +74,6 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.testPathFinding1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testPathFinding2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testPathFinding3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
@@ -299,6 +298,7 @@
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tabPage9);
             this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.tabControl1.Location = new System.Drawing.Point(0, 28);
             this.tabControl1.Multiline = true;
@@ -310,59 +310,68 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(401, 4);
+            this.tabPage1.Location = new System.Drawing.Point(479, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(45, 492);
+            this.tabPage1.Size = new System.Drawing.Size(0, 492);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Land types";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(145, 4);
+            this.tabPage2.Location = new System.Drawing.Point(479, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(301, 492);
+            this.tabPage2.Size = new System.Drawing.Size(0, 492);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Humidity";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(204, 4);
+            this.tabPage3.Location = new System.Drawing.Point(479, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(242, 492);
+            this.tabPage3.Size = new System.Drawing.Size(0, 492);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Natives";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(263, 4);
+            this.tabPage4.Location = new System.Drawing.Point(479, 4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(183, 492);
+            this.tabPage4.Size = new System.Drawing.Size(0, 492);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Nations";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(337, 4);
+            this.tabPage5.Location = new System.Drawing.Point(479, 4);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(109, 492);
+            this.tabPage5.Size = new System.Drawing.Size(0, 492);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Tech level";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(401, 4);
+            this.tabPage6.Location = new System.Drawing.Point(479, 4);
             this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Size = new System.Drawing.Size(45, 492);
+            this.tabPage6.Size = new System.Drawing.Size(0, 492);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "Psi level";
             this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // tabPage9
+            // 
+            this.tabPage9.Location = new System.Drawing.Point(479, 4);
+            this.tabPage9.Name = "tabPage9";
+            this.tabPage9.Size = new System.Drawing.Size(0, 492);
+            this.tabPage9.TabIndex = 6;
+            this.tabPage9.Text = "Civilization";
+            this.tabPage9.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
@@ -558,9 +567,7 @@
             // debugToolStripMenuItem2
             // 
             this.debugToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.testPathFinding1ToolStripMenuItem,
-            this.testPathFinding2ToolStripMenuItem,
-            this.testPathFinding3ToolStripMenuItem});
+            this.testPathFinding1ToolStripMenuItem});
             this.debugToolStripMenuItem2.Name = "debugToolStripMenuItem2";
             this.debugToolStripMenuItem2.Size = new System.Drawing.Size(54, 20);
             this.debugToolStripMenuItem2.Text = "Debug";
@@ -568,23 +575,9 @@
             // testPathFinding1ToolStripMenuItem
             // 
             this.testPathFinding1ToolStripMenuItem.Name = "testPathFinding1ToolStripMenuItem";
-            this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.testPathFinding1ToolStripMenuItem.Text = "TestPathFinding1";
+            this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.testPathFinding1ToolStripMenuItem.Text = "Build random path";
             this.testPathFinding1ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding1_Click);
-            // 
-            // testPathFinding2ToolStripMenuItem
-            // 
-            this.testPathFinding2ToolStripMenuItem.Name = "testPathFinding2ToolStripMenuItem";
-            this.testPathFinding2ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.testPathFinding2ToolStripMenuItem.Text = "TestPathFinding2";
-            this.testPathFinding2ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding2_Click);
-            // 
-            // testPathFinding3ToolStripMenuItem
-            // 
-            this.testPathFinding3ToolStripMenuItem.Name = "testPathFinding3ToolStripMenuItem";
-            this.testPathFinding3ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.testPathFinding3ToolStripMenuItem.Text = "TestPathFinding3";
-            this.testPathFinding3ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding3_Click);
             // 
             // contextMenuStrip1
             // 
@@ -820,12 +813,11 @@
         private RichTextBoxLinks.RichTextBoxEx richTextBox1;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem testPathFinding1ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testPathFinding2ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testPathFinding3ToolStripMenuItem;
         private MapDrawEngine.MapDraw mapDraw1;
         private MapDrawEngine.MiniMapDraw miniMapDraw1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TabPage tabPage9;
     }
 }
 

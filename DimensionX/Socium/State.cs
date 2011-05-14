@@ -356,7 +356,7 @@ namespace Socium
         }
 
         /// <summary>
-        /// Заполняет словарь границ с другими странами.
+        /// Заполняет словарь границ с другими странами и гарантирует принадлежность государства той расе, которая доминирует на его территории.
         /// </summary>
         public void Finish(float fCycleShift)
         {
@@ -409,6 +409,87 @@ namespace Socium
                 foreach (LandX pLand in m_pMethropoly.m_cContents)
                     pLand.m_pRace = m_pRace;
             }
+        }
+
+        public void CalculateMagic()
+        {
+            m_iMagicLimit = 0;
+
+            float fMagesCount = 0;
+            float[] aDistribution = new float[10];
+
+            bool bOneRace = true;
+
+            foreach (Province pProvince in m_cContents)
+            {
+                if (pProvince.m_pRace != m_pRace)
+                    bOneRace = false;
+
+                if (pProvince.m_pRace.m_iMagicLimit > m_iMagicLimit)
+                    m_iMagicLimit = pProvince.m_pRace.m_iMagicLimit;
+
+                float fPrevalence = 1;
+                switch (pProvince.m_pRace.m_eMagicAbilityPrevalence)
+                {
+                    case MagicAbilityPrevalence.rare:
+                        fPrevalence = 0.1f;
+                        break;
+                    case MagicAbilityPrevalence.common:
+                        fPrevalence = 0.5f;
+                        break;
+                    case MagicAbilityPrevalence.almost_everyone:
+                        fPrevalence = 0.9f;
+                        break;
+                }
+
+                float fProvinceMagesCount = 0;
+                foreach (LandX pLand in pProvince.m_cContents)
+                {
+                    fProvinceMagesCount += pLand.m_cContents.Count * fPrevalence;
+                }
+
+                switch (pProvince.m_pRace.m_eMagicAbilityDistribution)
+                {
+                    case MagicAbilityDistribution.mostly_weak:
+                        aDistribution[(1 + pProvince.m_pRace.m_iMagicLimit) / 2] += fProvinceMagesCount;
+                        break;
+                    case MagicAbilityDistribution.mostly_average:
+                        aDistribution[(1 + pProvince.m_pRace.m_iMagicLimit) / 2] += fProvinceMagesCount / 2;
+                        aDistribution[1 + pProvince.m_pRace.m_iMagicLimit] += fProvinceMagesCount / 2;
+                        break;
+                    case MagicAbilityDistribution.mostly_powerful:
+                        aDistribution[1 + pProvince.m_pRace.m_iMagicLimit] += fProvinceMagesCount;
+                        break;
+                }
+                fMagesCount += fProvinceMagesCount;
+            }
+            fMagesCount /= m_iPopulation;
+
+            m_eMagicAbilityPrevalence = MagicAbilityPrevalence.almost_everyone;
+
+            if (fMagesCount <= 0.75)
+                m_eMagicAbilityPrevalence = MagicAbilityPrevalence.common;
+
+            if (fMagesCount <= 0.25)
+                m_eMagicAbilityPrevalence = MagicAbilityPrevalence.rare;
+
+            float fWeakMagesCount = 0;
+            float fPowerfulMagesCount = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                if (i <= (m_iMagicLimit+1) / 2)
+                    fWeakMagesCount += aDistribution[i];
+                else
+                    fPowerfulMagesCount += aDistribution[i];
+            }
+
+            m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
+
+            if (fWeakMagesCount > fPowerfulMagesCount * 2)
+                m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
+
+            if (fPowerfulMagesCount > fWeakMagesCount * 2)
+                m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_powerful;
         }
 
         public Race m_pRace = null;
@@ -473,19 +554,26 @@ namespace Socium
         {
             m_eGenderPriority = m_pRace.m_eGenderPriority;
             m_iTechLevel = m_pRace.m_iTechLevel;
-            m_iMagicLimit = m_pRace.m_iMagicLimit;
+            //m_iMagicLimit = m_pRace.m_iMagicLimit;
 
             if (Rnd.OneChanceFrom(3))
                 m_eGenderPriority = (GenderPriority)Rnd.Get(typeof(GenderPriority));
 
-            m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
-            m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
+            //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
+            //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
             m_pCulture = new Culture(m_pRace.m_pCulture);
 
-            if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
-            if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+            //if (Rnd.OneChanceFrom(3))
+            //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+            //if (Rnd.OneChanceFrom(3))
+            //    m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+
+            int iAverageMagicLimit = 0;
+
+            m_iFood = 0;
+            m_iWood = 0;
+            m_iOre = 0;
+            m_iPopulation = 0;
 
             foreach (Province pProvince in m_cContents)
                 foreach (LandX pLand in pProvince.m_cContents)
@@ -508,11 +596,14 @@ namespace Socium
                     m_iOre += (int)(pLand.m_cContents.Count * pLand.Type.m_fOre);
 
                     m_iPopulation += pLand.m_cContents.Count;
+                    iAverageMagicLimit += pProvince.m_pRace.m_iMagicLimit * pLand.m_cContents.Count;
                 }
 
-            if (m_iWood < m_iPopulation && m_iOre < m_iPopulation)
+            iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
+
+            if (m_iWood < m_iPopulation/2 && m_iOre < m_iPopulation/2)
                 m_iTechLevel -= 2;
-            else if (m_iWood + m_iOre < 2 * m_iPopulation)
+            else if (m_iWood + m_iOre < m_iPopulation)
                 m_iTechLevel--;
             else if (m_iWood > m_iPopulation && m_iOre > m_iPopulation && Rnd.OneChanceFrom(4))
                 m_iTechLevel++;
@@ -522,19 +613,19 @@ namespace Socium
             if (m_iTechLevel > 8)
                 m_iTechLevel = 8;
 
-            int iBioLevel = (int)(Math.Pow(Rnd.Get(14), 3) / 1000);
-            if (Rnd.OneChanceFrom(2))
-                m_iMagicLimit += iBioLevel;
-            else
-                m_iMagicLimit -= iBioLevel;
+            //int iBioLevel = (int)(Math.Pow(Rnd.Get(14), 3) / 1000);
+            //if (Rnd.OneChanceFrom(2))
+            //    m_iMagicLimit += iBioLevel;
+            //else
+            //    m_iMagicLimit -= iBioLevel;
 
-            if (m_iMagicLimit < 0)
-                m_iMagicLimit = 0;
-            if (m_iMagicLimit > 8)
-                m_iMagicLimit = 8;
+            //if (m_iMagicLimit < 0)
+            //    m_iMagicLimit = 0;
+            //if (m_iMagicLimit > 8)
+            //    m_iMagicLimit = 8;
 
             int iOldLevel = Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit);
-            int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
+            int iNewLevel = Math.Max(m_iTechLevel, iAverageMagicLimit);
             if (iNewLevel > iOldLevel)
                 for (int i = 0; i < iNewLevel - iOldLevel; i++)
                     m_pCulture.Evolve();
@@ -544,7 +635,7 @@ namespace Socium
 
             m_iInfrastructureLevel = 4 + (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
             //m_iGovernmentLevel = 1 + Math.Max(m_iTechLevel, m_iMagicLimit) / 2 + Rnd.Get(Math.Max(m_iTechLevel, m_iMagicLimit) / 2);
-            if (m_iTechLevel == 0 && m_iMagicLimit == 0)
+            if (m_iTechLevel == 0 && iAverageMagicLimit == 0)
                 m_iInfrastructureLevel = 0;
 
             if (m_iFood < m_iPopulation || Rnd.OneChanceFrom(10))
@@ -558,10 +649,10 @@ namespace Socium
             if (m_cContents.Count < iMinSize)
                 m_iInfrastructureLevel = Rnd.Get(Math.Min(3, m_iInfrastructureLevel + 1));
 
-            if (m_iInfrastructureLevel < Math.Max(m_iTechLevel + 1, m_iMagicLimit) / 2)
-                m_iInfrastructureLevel = Math.Max(m_iTechLevel + 1, m_iMagicLimit) / 2;
-            if (m_iInfrastructureLevel > Math.Max(m_iTechLevel + 1, m_iMagicLimit - 1))
-                m_iInfrastructureLevel = Math.Max(m_iTechLevel + 1, m_iMagicLimit - 1);
+            if (m_iInfrastructureLevel < Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)
+                m_iInfrastructureLevel = Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2;
+            if (m_iInfrastructureLevel > Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1))
+                m_iInfrastructureLevel = Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1);
             if (m_iInfrastructureLevel > 8)
                 m_iInfrastructureLevel = 8;
 
@@ -713,6 +804,12 @@ namespace Socium
             {
                 iHostility++;
                 sReasons += pOpponent.m_pRace.m_sName + " \t(-1)\n";
+
+                if (m_pRace.m_pLanguage != pOpponent.m_pRace.m_pLanguage)
+                {
+                    iHostility++;
+                    sReasons += "Different language \t(-1)\n";
+                }
             }
             else
             {
@@ -1123,13 +1220,13 @@ namespace Socium
                     sTech = "machineguns";//aviation
                     break;
                 case 6:
-                    sTech = "intellectual weapons";
+                    sTech = "beam guns";
                     break;
                 case 7:
-                    sTech = "beam guns";//limited teleportation
+                    sTech = "desintegrators";//limited teleportation
                     break;
                 case 8:
-                    sTech = "desintegrators";//unlimited teleportation
+                    sTech = "reality destructors";//unlimited teleportation
                     break;
                 //case 8:
                 //    sTech = "mind net";
@@ -1271,7 +1368,7 @@ namespace Socium
 
         public override string ToString()
         {
-            return string.Format("{2}(C{1}T{3}B{4}) - {0} {5}", m_sName, m_iInfrastructureLevel, m_pRace.m_sName, m_iTechLevel, m_iMagicLimit, m_pInfo.m_sName);
+            return string.Format("{2}(C{1}T{3}) - {0} {4}", m_sName, m_iInfrastructureLevel, m_pRace.m_sName, m_iTechLevel, m_pInfo.m_sName);
         }
 
         public override float GetMovementCost()

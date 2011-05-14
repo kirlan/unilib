@@ -190,7 +190,6 @@ namespace Socium
 
         public int m_iTechLevel;
         public int m_iMagicLimit;
-        public int m_iCultureLevel;
 
         public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.rare;
         public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
@@ -225,11 +224,20 @@ namespace Socium
             m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
 
             int iTotalLevel = 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000);
-            //int iBalance = Rnd.Get(101);
+            int iBalance = Rnd.Get(201);
 
-            m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
-            m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
-            m_iCultureLevel = 1 + Rnd.Get(Math.Max(m_iTechLevel, m_iMagicLimit));//(int)(Math.Pow(Rnd.Get(20), 3) / 1000); 
+            if (iBalance > 100)
+            {
+                m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
+                //m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
+                m_iTechLevel = (200 - iBalance) * m_iMagicLimit / iBalance;
+            }
+            else
+            {
+                m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
+                //m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
+                m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
+            }
         }
 
         private void AddRaces()
@@ -252,7 +260,7 @@ namespace Socium
             //Рассчитываем шансы новых рас попасть в новый мир - учитывая, его параметры
             Dictionary<Race, float> cRaceChances = new Dictionary<Race, float>();
             foreach (Race pRace in World.m_cAllRaces)
-                cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : Math.Max(0, 10 + m_iMagicLimit * 10 - pRace.m_iRank);// : 100.0f / pRace.m_iRank;
+                cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : Math.Max(1, 10 + m_iMagicLimit * 10 - pRace.m_iRank);// : 100.0f / pRace.m_iRank;
 
             //Добавляем необходимое количесто новых рас.
             while (cRaces.Count < iDiversity)
@@ -542,6 +550,9 @@ namespace Socium
                         pConti.m_cStates[0].m_sName = pConti.m_cAreas[0].m_sName;
                     else
                         pConti.m_sName = pConti.m_cStates[0].m_sName;
+
+                foreach (State pState in pConti.m_cStates)
+                    pState.CalculateMagic();
             }
         }
 
@@ -645,6 +656,8 @@ namespace Socium
                     throw new Exception();
             }
 
+            int iMaxProvinceSize = (m_aLands.Length * (100 - m_iOceansPercentage) / 100) / m_iProvincesCount;
+
             List<Province> cFinished = new List<Province>();
             do
             {
@@ -653,7 +666,7 @@ namespace Socium
                     if (cFinished.Contains(pProvince))
                         continue;
 
-                    if (!pProvince.Grow())
+                    if (!pProvince.Grow(iMaxProvinceSize))
                         cFinished.Add(pProvince);
                 }
             }
@@ -666,7 +679,7 @@ namespace Socium
                     Province pProvince = new Province();
                     pProvince.Start(pLand);
                     cProvinces.Add(pProvince);
-                    while (pProvince.Grow()) { };
+                    while (pProvince.Grow(iMaxProvinceSize)) { };
                 }
             }
 

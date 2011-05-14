@@ -167,7 +167,7 @@ namespace Socium
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
 
-            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pRace, (m_pProvince.Owner as State).m_iTechLevel, (m_pProvince.Owner as State).m_iMagicLimit, bCapital, bFast);
+            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pRace, (m_pProvince.Owner as State).m_iTechLevel, m_pProvince.m_pRace.m_iMagicLimit, bCapital, bFast);
             foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
                 if (pLoc.m_pBuilding == null)
                     pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
@@ -259,7 +259,7 @@ namespace Socium
 
             if (m_cContents[iFort].m_pSettlement == null && m_cContents[iFort].m_pBuilding == null)
             {
-                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pRace, (m_pProvince.Owner as State).m_iTechLevel, (m_pProvince.Owner as State).m_iMagicLimit, false, bFast);
+                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pRace, (m_pProvince.Owner as State).m_iTechLevel, m_pProvince.m_pRace.m_iMagicLimit, false, bFast);
 
                 foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
                     if (pLoc.m_pBuilding == null)

@@ -80,8 +80,11 @@ namespace Socium
         /// Чем длиннее общая граница с землёй - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public bool Grow()
+        public bool Grow(int iMaxProvinceSize)
         {
+            if (m_cContents.Count > iMaxProvinceSize)
+                return false;
+
             Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
 
             foreach (ITerritory pTerr in m_cBorder.Keys)
