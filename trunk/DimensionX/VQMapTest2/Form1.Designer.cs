@@ -310,7 +310,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(479, 4);
+            this.tabPage1.Location = new System.Drawing.Point(469, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(0, 492);
@@ -320,7 +320,7 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(479, 4);
+            this.tabPage2.Location = new System.Drawing.Point(469, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(0, 492);
@@ -330,7 +330,7 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(479, 4);
+            this.tabPage3.Location = new System.Drawing.Point(469, 4);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(0, 492);
             this.tabPage3.TabIndex = 2;
@@ -339,7 +339,7 @@
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(479, 4);
+            this.tabPage4.Location = new System.Drawing.Point(469, 4);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(0, 492);
             this.tabPage4.TabIndex = 3;
@@ -348,7 +348,7 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(479, 4);
+            this.tabPage5.Location = new System.Drawing.Point(469, 4);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(0, 492);
             this.tabPage5.TabIndex = 4;
@@ -357,16 +357,16 @@
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(479, 4);
+            this.tabPage6.Location = new System.Drawing.Point(469, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 492);
             this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "Psi level";
+            this.tabPage6.Text = "Mages";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
             // tabPage9
             // 
-            this.tabPage9.Location = new System.Drawing.Point(479, 4);
+            this.tabPage9.Location = new System.Drawing.Point(469, 4);
             this.tabPage9.Name = "tabPage9";
             this.tabPage9.Size = new System.Drawing.Size(0, 492);
             this.tabPage9.TabIndex = 6;
@@ -681,9 +681,10 @@
             // 
             // toolTip1
             // 
-            this.toolTip1.AutoPopDelay = 50000;
-            this.toolTip1.InitialDelay = 500;
-            this.toolTip1.ReshowDelay = 100;
+            this.toolTip1.AutomaticDelay = 0;
+            this.toolTip1.AutoPopDelay = 32766;
+            this.toolTip1.InitialDelay = 0;
+            this.toolTip1.ReshowDelay = 0;
             // 
             // miniMapDraw1
             // 

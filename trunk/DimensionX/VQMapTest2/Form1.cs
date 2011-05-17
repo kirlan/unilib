@@ -93,8 +93,16 @@ namespace VQMapTest2
             mapDraw1.ScaleMultiplier = fScale;
 
             label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel), m_pWorld.m_iTechLevel);
-            label8.Text = string.Format("Psi users: {0}, ", m_pWorld.m_eMagicAbilityPrevalence);
-            label2.Text = string.Format("          {2}, up to {0} [B{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit, m_pWorld.m_eMagicAbilityDistribution);
+            if (m_pWorld.m_iMagicLimit > 0)
+            {
+                label8.Text = string.Format("Magic users: {0}, ", m_pWorld.m_eMagicAbilityPrevalence);
+                label2.Text = string.Format("          {2}, up to {0} [B{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit, m_pWorld.m_eMagicAbilityDistribution);
+            }
+            else
+            {
+                label8.Text = "Magic users: none [B0]";
+                label2.Text = "";
+            }
 
             comboBox1.Items.Clear();
             foreach (State pState in m_pWorld.m_aStates)
@@ -225,47 +233,46 @@ namespace VQMapTest2
             richTextBox1.AppendText(string.Format("Major race: {2} [T{0}B{1}]\n\n", e.m_pState.m_pRace.m_iTechLevel, e.m_pState.m_pRace.m_iMagicLimit, e.m_pState.m_pRace.m_sName));
 
             richTextBox1.AppendText(string.Format("Culture:\n"));
-            foreach (Culture.Mentality eMorale in Culture.Mentalities)
+            foreach (Culture.Mentality eMentality in Culture.Mentalities)
             {
                 richTextBox1.AppendText("   ");
                 //richTextBox1.AppendText(string.Format("   {0}: \t", eMorale));
                 //if (eMorale.ToString().Length < 6)
                 //    richTextBox1.AppendText("\t");
-                if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.2)
-                    richTextBox1.AppendText("(+5) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.2)
+                    richTextBox1.AppendText("(+5) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                 else
-                    if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.4)
-                        richTextBox1.AppendText("(+4) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                    if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.4)
+                        richTextBox1.AppendText("(+4) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                     else
-                        if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.6)
-                            richTextBox1.AppendText("(+3) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                        if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.6)
+                            richTextBox1.AppendText("(+3) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                         else
-                            if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 0.8)
-                                richTextBox1.AppendText("(+2) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                            if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.8)
+                                richTextBox1.AppendText("(+2) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                             else
-                                if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1)
-                                    richTextBox1.AppendText("(+1) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                                if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1)
+                                    richTextBox1.AppendText("(+1) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                                 else
-                                    if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.2)
-                                        richTextBox1.AppendText("(-1) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                                    if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.2)
+                                        richTextBox1.AppendText("(-1) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                                     else
-                                        if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.4)
-                                            richTextBox1.AppendText("(-2) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                                        if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.4)
+                                            richTextBox1.AppendText("(-2) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                                         else
-                                            if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.6)
-                                                richTextBox1.AppendText("(-3) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                                            if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.6)
+                                                richTextBox1.AppendText("(-3) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                                             else
-                                                if (e.m_pState.m_pCulture.MentalityValues[eMorale] < 1.8)
-                                                    richTextBox1.AppendText("(-4) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                                                if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.8)
+                                                    richTextBox1.AppendText("(-4) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                                                 else
-                                                    richTextBox1.AppendText("(-5) " + e.m_pState.m_pCulture.GetMentalityString(eMorale));
+                                                    richTextBox1.AppendText("(-5) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
                 //richTextBox1.AppendText(string.Format("{0:0.00}\n", e.State.m_pCulture.Moral[eMorale]));
                 richTextBox1.AppendText("\n");
             }
             richTextBox1.AppendText("\n");
 
-            richTextBox1.AppendText(string.Format("Pariahs:\n"));
-            richTextBox1.AppendText(string.Format("   {0}\n", State.GetGendersPariahString(e.m_pState.m_eGenderPriority)));
+            richTextBox1.AppendText(e.m_pState.m_pCustoms.GetCustomsString());
             richTextBox1.AppendText("\n");
 
             if (e.m_pState.GetImportedTech() == -1)
@@ -273,10 +280,17 @@ namespace VQMapTest2
             else
                 richTextBox1.AppendText(string.Format("Used tech: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.GetImportedTech()), e.m_pState.GetImportedTech()));
             richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.m_iTechLevel), e.m_pState.m_iTechLevel));
-            
-            richTextBox1.AppendText(string.Format("Psi users: {0}, ", e.m_pState.m_eMagicAbilityPrevalence));
-            richTextBox1.AppendText(string.Format("{2}, up to {0} [B{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution));
-            
+
+            if (e.m_pState.m_iMagicLimit > 0)
+            {
+                richTextBox1.AppendText(string.Format("Magic users: {0}, ", e.m_pState.m_eMagicAbilityPrevalence));
+                richTextBox1.AppendText(string.Format("{2}, up to {0} [B{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution));
+            }
+            else
+            {
+                richTextBox1.AppendText("Magic users: none [B0]\n\n");
+            }
+
             richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_iWood, e.m_pState.m_iOre, e.m_pState.m_iPopulation));
 
             State[] cEnemies = e.m_pState.GetEnemiesList();

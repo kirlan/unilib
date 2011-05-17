@@ -579,6 +579,9 @@ namespace MapDrawEngine
             foreground.RGB = Color.Gray;
             //color1.Saturation = (double)iBaseTechLevel / 8;
 
+            if(iMaxPsiLevel == 0)
+                return new SolidBrush(background.RGB);
+
             switch (ePrevalence)
             {
                 case MagicAbilityPrevalence.rare:

@@ -494,8 +494,6 @@ namespace Socium
 
         public Race m_pRace = null;
 
-        public GenderPriority m_eGenderPriority = GenderPriority.GendersEquality;
-
         /// <summary>
         /// 1 - Допороховая эра. В ходу металлические и кожаные доспехи, холодное оружие, из стрелкового оружия – луки, дротики и арбалеты.
         /// 2 - Эпоха пороха. Примитивное однозарядное огнестрельное оружие, лёгкие сабли и шпаги, облегчённая броня (кирасы, кожаные куртки).
@@ -533,6 +531,7 @@ namespace Socium
         public int m_iControl = 0;
 
         public Culture m_pCulture = null;
+        public Customs m_pCustoms = null;
 
         /// <summary>
         /// Как часто встрачаются носители магических способностей
@@ -552,16 +551,13 @@ namespace Socium
 
         public LocationX BuildCapital(int iMinSize, int iMaxSize, bool bFast)
         {
-            m_eGenderPriority = m_pRace.m_eGenderPriority;
             m_iTechLevel = m_pRace.m_iTechLevel;
             //m_iMagicLimit = m_pRace.m_iMagicLimit;
-
-            if (Rnd.OneChanceFrom(3))
-                m_eGenderPriority = (GenderPriority)Rnd.Get(typeof(GenderPriority));
 
             //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
             //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
             m_pCulture = new Culture(m_pRace.m_pCulture);
+            m_pCustoms = new Customs(m_pRace.m_pCustoms);
 
             //if (Rnd.OneChanceFrom(3))
             //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
@@ -628,10 +624,16 @@ namespace Socium
             int iNewLevel = Math.Max(m_iTechLevel, iAverageMagicLimit);
             if (iNewLevel > iOldLevel)
                 for (int i = 0; i < iNewLevel - iOldLevel; i++)
+                {
                     m_pCulture.Evolve();
+                    m_pCustoms.Evolve();
+                }
             else
                 for (int i = 0; i < iOldLevel - iNewLevel; i++)
+                {
                     m_pCulture.Degrade();
+                    m_pCustoms.Degrade();
+                }
 
             m_iInfrastructureLevel = 4 + (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
             //m_iGovernmentLevel = 1 + Math.Max(m_iTechLevel, m_iMagicLimit) / 2 + Rnd.Get(Math.Max(m_iTechLevel, m_iMagicLimit) / 2);
@@ -803,7 +805,7 @@ namespace Socium
             if (m_pRace != pOpponent.m_pRace)
             {
                 iHostility++;
-                sReasons += pOpponent.m_pRace.m_sName + " \t(-1)\n";
+                sReasons += pOpponent.m_pRace.m_sName.Trim() + " \t(-1)\n";
 
                 if (m_pRace.m_pLanguage != pOpponent.m_pRace.m_pLanguage)
                 {
@@ -814,21 +816,10 @@ namespace Socium
             else
             {
                 iHostility--;
-                sReasons += pOpponent.m_pRace.m_sName + " \t(+1)\n";
+                sReasons += pOpponent.m_pRace.m_sName.Trim() + " \t(+1)\n";
             }
 
-            if (m_eGenderPriority == pOpponent.m_eGenderPriority)
-            {
-                iHostility--;
-                sReasons += pOpponent.m_eGenderPriority.ToString() + " \t(+1)\n";
-            }
-            else
-                if (m_eGenderPriority != GenderPriority.GendersEquality &&
-                    pOpponent.m_eGenderPriority != GenderPriority.GendersEquality)
-                {
-                    iHostility++;
-                    sReasons += pOpponent.m_eGenderPriority.ToString() + " \t(-1)\n";
-                }
+            iHostility += m_pCustoms.GetDifference(pOpponent.m_pCustoms, ref sReasons);
 
             if (m_iFood < m_iPopulation && pOpponent.m_iFood > pOpponent.m_iPopulation * 2)
             {
@@ -1313,21 +1304,6 @@ namespace Socium
             }
 
             return sCulture;
-        }
-
-        public static string GetGendersPariahString(GenderPriority eGenderPriority)
-        {
-            switch (eGenderPriority)
-            {
-                case GenderPriority.GendersEquality:
-                    return "";
-                case GenderPriority.Matriarchy:
-                    return "males";
-                case GenderPriority.Patriarchy:
-                    return "females";
-                default:
-                    return "error";
-            }
         }
 
         public static string GetControlString(int iControl)

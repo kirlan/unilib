@@ -12,13 +12,6 @@ using System.Diagnostics;
 
 namespace Socium
 {
-    public enum GenderPriority
-    {
-        Matriarchy,
-        GendersEquality,
-        Patriarchy,
-    }
-
     public enum MagicAbilityPrevalence
     {
         rare,
@@ -186,8 +179,6 @@ namespace Socium
         };
 #endregion
 
-        public GenderPriority m_eGenderPriority = GenderPriority.GendersEquality;
-
         public int m_iTechLevel;
         public int m_iMagicLimit;
 
@@ -206,20 +197,6 @@ namespace Socium
 
         private void SetWorldLevels()
         {
-            int iGender = Rnd.Get(3);
-            switch (iGender)
-            {
-                case 0:
-                    m_eGenderPriority = GenderPriority.Matriarchy;
-                    break;
-                case 1:
-                    m_eGenderPriority = GenderPriority.GendersEquality;
-                    break;
-                case 2:
-                    m_eGenderPriority = GenderPriority.Patriarchy;
-                    break;
-            }
-
             m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
             m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
 

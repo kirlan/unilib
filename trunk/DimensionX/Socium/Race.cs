@@ -17,9 +17,8 @@ namespace Socium
         public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
 
         public Culture m_pCulture = null;
+        public Customs m_pCustoms = null;
         
-        public GenderPriority m_eGenderPriority = GenderPriority.GendersEquality;
-
         public string m_sName;
         public string m_sNameF;
         public int m_iRank;
@@ -93,11 +92,7 @@ namespace Socium
             if (m_iTechLevel > 8)
                 m_iTechLevel = 8;
 
-            if (Rnd.OneChanceFrom(3))
-                m_eGenderPriority = (GenderPriority)Rnd.Get(typeof(GenderPriority));
-            else
-                if (iOldLevel == 0)
-                    m_eGenderPriority = pWorld.m_eGenderPriority;
+            m_pCustoms = new Customs();
 
             if (Rnd.OneChanceFrom(3))
                 m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
@@ -117,16 +112,15 @@ namespace Socium
 
                 if (iBalance > 100)
                 {
-                    m_iMagicLimit = pWorld.m_iMagicLimit + (9 - pWorld.m_iMagicLimit)/2 + Rnd.Get(4 - pWorld.m_iMagicLimit/2);
+                    m_iMagicLimit = pWorld.m_iMagicLimit + (9 - pWorld.m_iMagicLimit) / 2 + (int)(Math.Pow(Rnd.Get(10), 3) * (4 - pWorld.m_iMagicLimit / 2) / 1000);
                     m_iTechLevel = (200 - iBalance) * m_iMagicLimit / iBalance;
                 }
                 else
                 {
-                    m_iTechLevel = pWorld.m_iTechLevel + (9 - pWorld.m_iTechLevel)/2 + Rnd.Get(4 - pWorld.m_iTechLevel/2);
+                    m_iTechLevel = pWorld.m_iTechLevel + (9 - pWorld.m_iTechLevel) / 2 + (int)(Math.Pow(Rnd.Get(10), 3) * (4 - pWorld.m_iTechLevel / 2) / 1000);
                     m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
                 } 
                 
-                m_eGenderPriority = (GenderPriority)Rnd.Get(typeof(GenderPriority));
                 m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
                 m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
             }
@@ -134,10 +128,16 @@ namespace Socium
             int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
             if (iNewLevel > iOldLevel)
                 for (int i = 0; i < iNewLevel - iOldLevel; i++)
+                {
                     m_pCulture.Evolve();
+                    m_pCustoms.Evolve();
+                }
             else
                 for (int i = 0; i < iOldLevel - iNewLevel; i++)
+                {
                     m_pCulture.Degrade();
+                    m_pCustoms.Degrade();
+                }
         }
     }
 }
