@@ -18,7 +18,8 @@ namespace VQMapTest2
     {
         private string m_sWorkingDir = "";
 
-        private LocationsGrid<LocationX> m_cLocations = null; 
+        private LocationsGrid<LocationX> m_cLocations = null;
+        private LocationsGrid<LocationX> m_cLastUsedLocations = null;
         private World m_pWorld = null;
 
         public World World
@@ -102,8 +103,16 @@ namespace VQMapTest2
 
             Refresh();
 
-            m_cLocations.Reset();
-            m_pWorld = new World(m_cLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, (int)ProvinciesCount.Value, (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value);
+            if (m_cLastUsedLocations == m_cLocations)
+                m_cLastUsedLocations.Reset();
+            else
+            {
+                if (m_cLastUsedLocations != null)
+                    m_cLastUsedLocations.Unload();
+                m_cLastUsedLocations = m_cLocations;
+            }
+
+            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, (int)ProvinciesCount.Value, (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value);
             
             Cursor = Cursors.Arrow;
             groupBox1.Enabled = true;
@@ -361,10 +370,17 @@ namespace VQMapTest2
 
             foreach (FileInfo fi in fileNames)
             {
-                string sDescription = "";
-                if (fi.Extension == ".dxg" && LocationsGrid<LocationX>.CheckFile(fi.FullName, out sDescription))
+                if (fi.Extension == ".dxg")
                 {
-                    comboBox1.Items.Add(new LocationsGrid<LocationX>(fi.FullName));
+                    try
+                    {
+                        LocationsGrid<LocationX> pGrid = new LocationsGrid<LocationX>(fi.FullName);
+                        comboBox1.Items.Add(pGrid);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
             }
 

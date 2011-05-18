@@ -249,6 +249,14 @@ namespace MapDrawEngine
             m_iScaledMapWidth = ClientRectangle.Width;
             m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
 
+            //если при этом карта вылезает за пределы области отображения по вертикали, то вычислим ширину и высоту
+            //из расчёта того, чтобы при единичном масштабе вся карта влезла в область отображения по высоте
+            if (m_iScaledMapHeight > ClientRectangle.Height)
+            {
+                m_iScaledMapHeight = ClientRectangle.Height;
+                m_iScaledMapWidth = (int)(m_iScaledMapHeight / fK);
+            }
+
             //создадим холст такого же размера, как и окно рисования, но не больше 
             //отмасштабированной карты
             m_pCanvas = new Bitmap(Math.Min(ClientRectangle.Width, m_iScaledMapWidth), Math.Min(ClientRectangle.Height, m_iScaledMapHeight));

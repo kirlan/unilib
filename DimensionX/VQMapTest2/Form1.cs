@@ -512,13 +512,5 @@ namespace VQMapTest2
             ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_cGrid.CycleShift, false);
             mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
         }
-
-        private void ToolStripMenuItem_TestPathFinding2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void ToolStripMenuItem_TestPathFinding3_Click(object sender, EventArgs e)
-        {
-        }
     }
 }
