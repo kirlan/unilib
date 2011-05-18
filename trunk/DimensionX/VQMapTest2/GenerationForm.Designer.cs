@@ -36,6 +36,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.WaterPercent = new System.Windows.Forms.HScrollBar();
+            this.LandMassesCount = new System.Windows.Forms.HScrollBar();
+            this.LandsCount = new System.Windows.Forms.HScrollBar();
             this.ContinentsRnd = new System.Windows.Forms.Button();
             this.ContinentsCount = new System.Windows.Forms.NumericUpDown();
             this.label16 = new System.Windows.Forms.Label();
@@ -44,6 +47,9 @@
             this.label13 = new System.Windows.Forms.Label();
             this.PartialMap = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.RacesCount = new System.Windows.Forms.HScrollBar();
+            this.ProvinciesCount = new System.Windows.Forms.HScrollBar();
+            this.StatesCount = new System.Windows.Forms.HScrollBar();
             this.button6 = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -54,22 +60,16 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.button5 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label8 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.Equator = new System.Windows.Forms.HScrollBar();
+            this.Pole = new System.Windows.Forms.HScrollBar();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.StatesCount = new System.Windows.Forms.HScrollBar();
-            this.ProvinciesCount = new System.Windows.Forms.HScrollBar();
-            this.RacesCount = new System.Windows.Forms.HScrollBar();
-            this.LandsCount = new System.Windows.Forms.HScrollBar();
-            this.LandMassesCount = new System.Windows.Forms.HScrollBar();
-            this.WaterPercent = new System.Windows.Forms.HScrollBar();
-            this.Equator = new System.Windows.Forms.HScrollBar();
-            this.Pole = new System.Windows.Forms.HScrollBar();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ContinentsCount)).BeginInit();
@@ -156,6 +156,44 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Landscape";
             // 
+            // WaterPercent
+            // 
+            this.WaterPercent.LargeChange = 5;
+            this.WaterPercent.Location = new System.Drawing.Point(96, 70);
+            this.WaterPercent.Maximum = 94;
+            this.WaterPercent.Minimum = 10;
+            this.WaterPercent.Name = "WaterPercent";
+            this.WaterPercent.Size = new System.Drawing.Size(89, 16);
+            this.WaterPercent.TabIndex = 29;
+            this.toolTip1.SetToolTip(this.WaterPercent, "66");
+            this.WaterPercent.Value = 66;
+            this.WaterPercent.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
+            // LandMassesCount
+            // 
+            this.LandMassesCount.Location = new System.Drawing.Point(323, 20);
+            this.LandMassesCount.Maximum = 300;
+            this.LandMassesCount.Minimum = 30;
+            this.LandMassesCount.Name = "LandMassesCount";
+            this.LandMassesCount.Size = new System.Drawing.Size(102, 16);
+            this.LandMassesCount.TabIndex = 28;
+            this.toolTip1.SetToolTip(this.LandMassesCount, "150");
+            this.LandMassesCount.Value = 150;
+            this.LandMassesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
+            // LandsCount
+            // 
+            this.LandsCount.LargeChange = 100;
+            this.LandsCount.Location = new System.Drawing.Point(83, 20);
+            this.LandsCount.Maximum = 4000;
+            this.LandsCount.Minimum = 1000;
+            this.LandsCount.Name = "LandsCount";
+            this.LandsCount.Size = new System.Drawing.Size(102, 16);
+            this.LandsCount.TabIndex = 27;
+            this.toolTip1.SetToolTip(this.LandsCount, "3000");
+            this.LandsCount.Value = 3000;
+            this.LandsCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
             // ContinentsRnd
             // 
             this.ContinentsRnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -172,7 +210,7 @@
             // 
             this.ContinentsCount.Location = new System.Drawing.Point(102, 43);
             this.ContinentsCount.Maximum = new decimal(new int[] {
-            12,
+            30,
             0,
             0,
             0});
@@ -263,6 +301,45 @@
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Population:";
+            // 
+            // RacesCount
+            // 
+            this.RacesCount.LargeChange = 5;
+            this.RacesCount.Location = new System.Drawing.Point(83, 22);
+            this.RacesCount.Maximum = 40;
+            this.RacesCount.Minimum = 6;
+            this.RacesCount.Name = "RacesCount";
+            this.RacesCount.Size = new System.Drawing.Size(102, 16);
+            this.RacesCount.TabIndex = 26;
+            this.toolTip1.SetToolTip(this.RacesCount, "24");
+            this.RacesCount.Value = 24;
+            this.RacesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
+            // ProvinciesCount
+            // 
+            this.ProvinciesCount.LargeChange = 5;
+            this.ProvinciesCount.Location = new System.Drawing.Point(323, 48);
+            this.ProvinciesCount.Maximum = 250;
+            this.ProvinciesCount.Minimum = 50;
+            this.ProvinciesCount.Name = "ProvinciesCount";
+            this.ProvinciesCount.Size = new System.Drawing.Size(102, 16);
+            this.ProvinciesCount.TabIndex = 25;
+            this.toolTip1.SetToolTip(this.ProvinciesCount, "100");
+            this.ProvinciesCount.Value = 100;
+            this.ProvinciesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
+            // StatesCount
+            // 
+            this.StatesCount.LargeChange = 5;
+            this.StatesCount.Location = new System.Drawing.Point(83, 48);
+            this.StatesCount.Maximum = 25;
+            this.StatesCount.Minimum = 5;
+            this.StatesCount.Name = "StatesCount";
+            this.StatesCount.Size = new System.Drawing.Size(102, 16);
+            this.StatesCount.TabIndex = 24;
+            this.toolTip1.SetToolTip(this.StatesCount, "20");
+            this.StatesCount.Value = 20;
+            this.StatesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
             // button6
             // 
@@ -376,6 +453,54 @@
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 46);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(125, 13);
+            this.label8.TabIndex = 18;
+            this.label8.Text = "Pole to equator distance:";
+            this.toolTip1.SetToolTip(this.label8, "Determines a climate scheme.\r\nRegions, layed quite far from equator, will be thun" +
+                    "dra or taiga.\r\n");
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 20);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(150, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Equator position from map top:";
+            this.toolTip1.SetToolTip(this.label6, "Determines a climate pattern.\r\nRegions along equator line will be junjles, savann" +
+                    "as or deserts.\r\n");
+            // 
+            // Equator
+            // 
+            this.Equator.LargeChange = 5;
+            this.Equator.Location = new System.Drawing.Point(159, 20);
+            this.Equator.Maximum = 154;
+            this.Equator.Minimum = -50;
+            this.Equator.Name = "Equator";
+            this.Equator.Size = new System.Drawing.Size(102, 16);
+            this.Equator.TabIndex = 28;
+            this.toolTip1.SetToolTip(this.Equator, "50");
+            this.Equator.Value = 50;
+            this.Equator.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
+            // Pole
+            // 
+            this.Pole.LargeChange = 5;
+            this.Pole.Location = new System.Drawing.Point(159, 46);
+            this.Pole.Maximum = 229;
+            this.Pole.Minimum = 10;
+            this.Pole.Name = "Pole";
+            this.Pole.Size = new System.Drawing.Size(102, 16);
+            this.Pole.TabIndex = 29;
+            this.toolTip1.SetToolTip(this.Pole, "45");
+            this.Pole.Value = 45;
+            this.Pole.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.Pole);
@@ -424,17 +549,6 @@
             this.label9.TabIndex = 20;
             this.label9.Text = "(in % of map height)";
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 46);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(125, 13);
-            this.label8.TabIndex = 18;
-            this.label8.Text = "Pole to equator distance:";
-            this.toolTip1.SetToolTip(this.label8, "Determines a climate scheme.\r\nRegions, layed quite far from equator, will be thun" +
-                    "dra or taiga.\r\n");
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -444,125 +558,11 @@
             this.label7.TabIndex = 17;
             this.label7.Text = "(in % of map height)";
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 20);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(150, 13);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "Equator position from map top:";
-            this.toolTip1.SetToolTip(this.label6, "Determines a climate pattern.\r\nRegions along equator line will be junjles, savann" +
-                    "as or deserts.\r\n");
-            // 
             // folderBrowserDialog1
             // 
             this.folderBrowserDialog1.Description = "No working folder settings found. Please, select a folder to store World Builder " +
                 "data.";
             this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            // 
-            // StatesCount
-            // 
-            this.StatesCount.LargeChange = 5;
-            this.StatesCount.Location = new System.Drawing.Point(83, 48);
-            this.StatesCount.Maximum = 25;
-            this.StatesCount.Minimum = 5;
-            this.StatesCount.Name = "StatesCount";
-            this.StatesCount.Size = new System.Drawing.Size(102, 16);
-            this.StatesCount.TabIndex = 24;
-            this.toolTip1.SetToolTip(this.StatesCount, "20");
-            this.StatesCount.Value = 20;
-            this.StatesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // ProvinciesCount
-            // 
-            this.ProvinciesCount.LargeChange = 5;
-            this.ProvinciesCount.Location = new System.Drawing.Point(323, 48);
-            this.ProvinciesCount.Maximum = 250;
-            this.ProvinciesCount.Minimum = 50;
-            this.ProvinciesCount.Name = "ProvinciesCount";
-            this.ProvinciesCount.Size = new System.Drawing.Size(102, 16);
-            this.ProvinciesCount.TabIndex = 25;
-            this.toolTip1.SetToolTip(this.ProvinciesCount, "100");
-            this.ProvinciesCount.Value = 100;
-            this.ProvinciesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // RacesCount
-            // 
-            this.RacesCount.LargeChange = 5;
-            this.RacesCount.Location = new System.Drawing.Point(83, 22);
-            this.RacesCount.Maximum = 40;
-            this.RacesCount.Minimum = 6;
-            this.RacesCount.Name = "RacesCount";
-            this.RacesCount.Size = new System.Drawing.Size(102, 16);
-            this.RacesCount.TabIndex = 26;
-            this.toolTip1.SetToolTip(this.RacesCount, "24");
-            this.RacesCount.Value = 24;
-            this.RacesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // LandsCount
-            // 
-            this.LandsCount.LargeChange = 100;
-            this.LandsCount.Location = new System.Drawing.Point(83, 20);
-            this.LandsCount.Maximum = 4000;
-            this.LandsCount.Minimum = 1000;
-            this.LandsCount.Name = "LandsCount";
-            this.LandsCount.Size = new System.Drawing.Size(102, 16);
-            this.LandsCount.TabIndex = 27;
-            this.toolTip1.SetToolTip(this.LandsCount, "3000");
-            this.LandsCount.Value = 3000;
-            this.LandsCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // LandMassesCount
-            // 
-            this.LandMassesCount.Location = new System.Drawing.Point(323, 20);
-            this.LandMassesCount.Maximum = 300;
-            this.LandMassesCount.Minimum = 30;
-            this.LandMassesCount.Name = "LandMassesCount";
-            this.LandMassesCount.Size = new System.Drawing.Size(102, 16);
-            this.LandMassesCount.TabIndex = 28;
-            this.toolTip1.SetToolTip(this.LandMassesCount, "150");
-            this.LandMassesCount.Value = 150;
-            this.LandMassesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // WaterPercent
-            // 
-            this.WaterPercent.LargeChange = 5;
-            this.WaterPercent.Location = new System.Drawing.Point(96, 70);
-            this.WaterPercent.Maximum = 94;
-            this.WaterPercent.Minimum = 10;
-            this.WaterPercent.Name = "WaterPercent";
-            this.WaterPercent.Size = new System.Drawing.Size(89, 16);
-            this.WaterPercent.TabIndex = 29;
-            this.toolTip1.SetToolTip(this.WaterPercent, "66");
-            this.WaterPercent.Value = 66;
-            this.WaterPercent.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // Equator
-            // 
-            this.Equator.LargeChange = 5;
-            this.Equator.Location = new System.Drawing.Point(159, 20);
-            this.Equator.Maximum = 154;
-            this.Equator.Minimum = -50;
-            this.Equator.Name = "Equator";
-            this.Equator.Size = new System.Drawing.Size(102, 16);
-            this.Equator.TabIndex = 28;
-            this.toolTip1.SetToolTip(this.Equator, "50");
-            this.Equator.Value = 50;
-            this.Equator.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // Pole
-            // 
-            this.Pole.LargeChange = 5;
-            this.Pole.Location = new System.Drawing.Point(159, 46);
-            this.Pole.Maximum = 229;
-            this.Pole.Minimum = 10;
-            this.Pole.Name = "Pole";
-            this.Pole.Size = new System.Drawing.Size(102, 16);
-            this.Pole.TabIndex = 29;
-            this.toolTip1.SetToolTip(this.Pole, "45");
-            this.Pole.Value = 45;
-            this.Pole.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
             // GenerationForm
             // 

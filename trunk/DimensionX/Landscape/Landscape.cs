@@ -78,6 +78,8 @@ namespace LandscapeGeneration
         {
             m_cGrid = cLocations;
 
+            m_cGrid.Load();
+
             if (iLands > m_cGrid.m_iLocationsCount)
                 throw new ArgumentException("Lands count can't be greater then locations count!");
             if (iLandMasses > iLands)

@@ -553,14 +553,36 @@ namespace LandscapeGeneration
             return true;
         }
 
+        public bool m_bLoaded = false;
+
+        private string m_sFilename;
+
         public LocationsGrid(string sFilename)
         {
-            if (!File.Exists(sFilename))
-                throw new ArgumentException("File not exists!");
+            if (!CheckFile(sFilename, out m_sDescription))
+                throw new ArgumentException("File not exists or have a wrong format!");
+
+            m_sFilename = sFilename;
+        }
+
+        public void Unload()
+        {
+            Reset();
+
+            m_aLocations = null;
+            m_aVertexes = null;
+
+            m_bLoaded = false;
+        }
+
+        public void Load()
+        {
+            if (m_bLoaded)
+                return;
 
             BinaryReader binReader =
-                new BinaryReader(File.Open(sFilename, FileMode.Open));
-        
+                new BinaryReader(File.Open(m_sFilename, FileMode.Open));
+
             try
             {
                 // If the file is not empty,
@@ -580,7 +602,7 @@ namespace LandscapeGeneration
                         throw new Exception("Header mismatch!");
 
                     int iVersion = binReader.ReadInt32();
-                    if(iVersion != s_iVersion)
+                    if (iVersion != s_iVersion)
                         throw new Exception("Version mismatch!");
 
                     m_sDescription = binReader.ReadString();
@@ -620,7 +642,7 @@ namespace LandscapeGeneration
                     }
 
                     m_aLocations = new List<LOC>(cTempDic.Values).ToArray();
-                    
+
                     //Восстанавливаем словарь соседей
                     foreach (LOC pLoc in m_aLocations)
                     {
@@ -647,7 +669,9 @@ namespace LandscapeGeneration
 
                     //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
                     foreach (LOC pLoc in m_aLocations)
-                        pLoc.BuildBorder(m_iRX*2);
+                        pLoc.BuildBorder(m_iRX * 2);
+
+                    m_bLoaded = true;
                 }
             }
             catch (EndOfStreamException e)
@@ -662,6 +686,9 @@ namespace LandscapeGeneration
 
         public void Reset()
         {
+            if (!m_bLoaded)
+                return;
+
             foreach (LOC pLoc in m_aLocations)
                 pLoc.Reset();
         }

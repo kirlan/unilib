@@ -753,9 +753,9 @@ namespace MapDrawEngine
             foreach (MapQuadrant pQuad in m_aQuadrants)
                 pQuad.Clear();
 
-            ClearPath();
-
             m_pWorld = pWorld;
+
+            ClearPath();
 
             //если расам ещё не назначены цвета - назначим их
             if (m_cRaceColorsID.Count == 0)
