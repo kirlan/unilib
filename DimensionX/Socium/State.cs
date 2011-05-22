@@ -1242,7 +1242,7 @@ namespace Socium
                     sMagic = "jedi";//animal empower?
                     break;
                 case 4:
-                    sMagic = "mages";//portals
+                    sMagic = "wizards";//portals
                     break;
                 case 5:
                     sMagic = "jinnes";

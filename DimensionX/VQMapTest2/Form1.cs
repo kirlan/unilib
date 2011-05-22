@@ -95,8 +95,8 @@ namespace VQMapTest2
             label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel), m_pWorld.m_iTechLevel);
             if (m_pWorld.m_iMagicLimit > 0)
             {
-                label8.Text = string.Format("Magic users: {0}, ", m_pWorld.m_eMagicAbilityPrevalence);
-                label2.Text = string.Format("          {2}, up to {0} [B{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit, m_pWorld.m_eMagicAbilityDistribution);
+                label8.Text = string.Format("Magic users: {0}, ", m_pWorld.m_eMagicAbilityPrevalence.ToString().Replace('_', ' '));
+                label2.Text = string.Format("          {2}, up to {0} [B{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit, m_pWorld.m_eMagicAbilityDistribution.ToString().Replace('_', ' '));
             }
             else
             {
@@ -283,8 +283,8 @@ namespace VQMapTest2
 
             if (e.m_pState.m_iMagicLimit > 0)
             {
-                richTextBox1.AppendText(string.Format("Magic users: {0}, ", e.m_pState.m_eMagicAbilityPrevalence));
-                richTextBox1.AppendText(string.Format("{2}, up to {0} [B{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution));
+                richTextBox1.AppendText(string.Format("Magic users: {0}, ", e.m_pState.m_eMagicAbilityPrevalence.ToString().Replace('_', ' ')));
+                richTextBox1.AppendText(string.Format("{2}, up to {0} [B{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution.ToString().Replace('_', ' ')));
             }
             else
             {
