@@ -32,6 +32,19 @@ namespace VQMapTest2
             new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 300, 15, 90, 50, 100),
         };
 
+        SocietyPreset[] m_aSocietyPresets = new SocietyPreset[] 
+        { 
+            new SocietyPreset("Historical - antiquity", "An antique world without magic - like Ancient Greece, Rome, Egypt, Assyria, etc.", 0, 1, 0, 0),
+            new SocietyPreset("Historical - medieval", "A medieval world without magic - castles, knights, tournaments, etc.", 0, 2, 0, 0),
+            new SocietyPreset("Historical - renaissance", "A renaissance world without magic - musketeers, geographic exploration, etc.", 1, 3, 0, 0),
+            new SocietyPreset("Historical - modern", "A modern world without magic - railroads, aviation, world wars, etc.", 4, 5, 0, 0),
+            new SocietyPreset("Antique mythology", "A world of antique mythology - just a usual antique world, but with a bit of magic...", 0, 1, 1, 2),
+            new SocietyPreset("Fantasy - low magic", "A medieval world with a bit of magic - like Knights of the Round Table, Lord of the Rings, etc.", 0, 2, 1, 3),
+            new SocietyPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 0, 2, 4, 5),
+            new SocietyPreset("Cyberpunk", "Nearest future world without magic - mega-corporations, industrial espionage, advanced technologies etc.", 4, 6, 0, 0),
+            new SocietyPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - space travels, energy weapons, etc.", 6, 7, 0, 3),
+        };
+
         private string m_sWorkingDir = "";
 
         private LocationsGrid<LocationX> m_cLocations = null;
@@ -49,15 +62,41 @@ namespace VQMapTest2
         
             m_pWorld = null;
 
-            Presets.Left = CustomMap.Left;
-            Presets.Top = CustomMap.Top;
-            Presets.Visible = false;
-
             groupBox2.Enabled = false;
             groupBox3.Enabled = false;
             groupBox4.Enabled = false;
             tableLayoutPanel2.Enabled = false;
             button8.Enabled = false;
+
+            for (int i = 0; i < 9; i++)
+            {
+                comboBox2.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+                comboBox3.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+
+                comboBox4.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+                comboBox5.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+            }
+
+            comboBox2.SelectedIndex = 0;
+            comboBox4.SelectedIndex = 0;
+
+            comboBox3.SelectedIndex = 8;
+            comboBox5.SelectedIndex = 8;
+
+            listBox1.Items.Clear();
+            listBox1.Items.AddRange(m_aWorldMaps);
+            if (listBox1.Items.Count > 0)
+                listBox1.SelectedIndex = 0;
+
+            listBox2.Items.Clear();
+            listBox2.Items.AddRange(m_aPartialMaps);
+            if (listBox2.Items.Count > 0)
+                listBox2.SelectedIndex = 0;
+
+            listBox3.Items.Clear();
+            listBox3.Items.AddRange(m_aSocietyPresets);
+            if (listBox3.Items.Count > 0)
+                listBox3.SelectedIndex = 0;
         }
 
         private void RndEquator_Click(object sender, EventArgs e)
@@ -99,7 +138,7 @@ namespace VQMapTest2
 
         private void RndAll_Click(object sender, EventArgs e)
         {
-            if (radioButton3.Checked)
+            if (tabControl1.SelectedIndex == 2)
             {
                 RndEquator_Click(sender, e);
                 RndPole_Click(sender, e);
@@ -135,7 +174,7 @@ namespace VQMapTest2
                 m_cLastUsedLocations = m_cLocations;
             }
 
-            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, (int)ProvinciesCount.Value, (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value);
+            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, (int)ProvinciesCount.Value, (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, (int)hScrollBar1.Value, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
             
             Cursor = Cursors.Arrow;
             groupBox1.Enabled = true;
@@ -279,7 +318,7 @@ namespace VQMapTest2
 
         private void button5_Click(object sender, EventArgs e)
         {
-            if (radioButton3.Checked)
+            if (tabControl1.SelectedIndex == 2)
             {
                 ContinentsCount.Value = 5;
                 Equator.Value = 50;
@@ -311,17 +350,19 @@ namespace VQMapTest2
                 button8.Enabled = true;
 
                 if (pForm.m_cLocations.m_bCycled)
-                    m_cLoopedGrids.Add(pForm.m_cLocations);
-                else
-                    m_cUnloopedGrids.Add(pForm.m_cLocations);
-
-                if (pForm.m_cLocations.m_bCycled == radioButton1.Checked)
                 {
-                    comboBox1.Items.Add(pForm.m_cLocations);
-                    comboBox1.SelectedItem = pForm.m_cLocations;
-                    //m_cLocations = pForm.m_cLocations;
+                    comboBox7.Items.Add(pForm.m_cLocations);
+                    comboBox7.SelectedItem = pForm.m_cLocations;
                 }
-            
+                else
+                {
+                    comboBox6.Items.Add(pForm.m_cLocations);
+                    comboBox6.SelectedItem = pForm.m_cLocations;
+                }
+
+                comboBox1.Items.Add(pForm.m_cLocations);
+                comboBox1.SelectedItem = pForm.m_cLocations;
+                //m_cLocations = pForm.m_cLocations;
 
                 //CalculateLimits(m_cLocations.m_iLocationsCount);
             }
@@ -370,9 +411,6 @@ namespace VQMapTest2
             return true;
         }
 
-        private List<LocationsGrid<LocationX>> m_cLoopedGrids = new List<LocationsGrid<LocationX>>();
-        private List<LocationsGrid<LocationX>> m_cUnloopedGrids = new List<LocationsGrid<LocationX>>();
-
         public bool Preload()
         {
             RegistryKey key;
@@ -408,10 +446,10 @@ namespace VQMapTest2
                     {
                         LocationsGrid<LocationX> pGrid = new LocationsGrid<LocationX>(fi.FullName);
                         if (pGrid.m_bCycled)
-                            m_cLoopedGrids.Add(pGrid);
+                            comboBox7.Items.Add(pGrid);
                         else
-                            m_cUnloopedGrids.Add(pGrid);
-                        //comboBox1.Items.Add(pGrid);
+                            comboBox6.Items.Add(pGrid);
+                        comboBox1.Items.Add(pGrid);
                     }
                     catch (Exception ex)
                     {
@@ -420,8 +458,14 @@ namespace VQMapTest2
                 }
             }
 
+            if (comboBox6.Items.Count > 0)
+                comboBox6.SelectedIndex = 0;
 
-            PresetType_CheckedChanged(this, new EventArgs());
+            if (comboBox7.Items.Count > 0)
+                comboBox7.SelectedIndex = 0;
+
+            if (comboBox1.Items.Count > 0)
+                comboBox1.SelectedIndex = 0;
 
             return true;
         }
@@ -440,6 +484,12 @@ namespace VQMapTest2
             button8.Enabled = true;
 
             CalculateLimits(m_cLocations.m_iLocationsCount);
+
+            if (comboBox6.Items.Contains(comboBox1.SelectedItem))
+                comboBox6.SelectedItem = comboBox1.SelectedItem;
+
+            if (comboBox7.Items.Contains(comboBox1.SelectedItem))
+                comboBox7.SelectedItem = comboBox1.SelectedItem;
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
@@ -447,55 +497,42 @@ namespace VQMapTest2
             toolTip1.SetToolTip(sender as HScrollBar, (sender as HScrollBar).Value.ToString());
         }
 
-        private void PresetType_CheckedChanged(object sender, EventArgs e)
+
+        private void ApplyPreset(MapPreset pPreset)
         {
-            object pSelectedItem = comboBox1.SelectedItem;
-            comboBox1.Items.Clear();
-
-            if (radioButton1.Checked)
-            {
-                CustomMap.Visible = false;
-                Presets.Visible = true;
-
-                listBox1.Items.Clear();
-                listBox1.Items.AddRange(m_aWorldMaps);
-                if (listBox1.Items.Count > 0)
-                    listBox1.SelectedIndex = 0;
-
-                comboBox1.Items.AddRange(m_cLoopedGrids.ToArray());
-            }
-
-            if (radioButton2.Checked)
-            {
-                CustomMap.Visible = false;
-                Presets.Visible = true;
-
-                listBox1.Items.Clear();
-                listBox1.Items.AddRange(m_aPartialMaps);
-                if (listBox1.Items.Count > 0)
-                    listBox1.SelectedIndex = 0;
-
-                comboBox1.Items.AddRange(m_cUnloopedGrids.ToArray());
-            }
-
-            if (radioButton3.Checked)
-            {
-                Presets.Visible = false;
-                CustomMap.Visible = true;
-
-                listBox1.Items.Clear();
-
-                comboBox1.Items.AddRange(m_cLoopedGrids.ToArray());
-                comboBox1.Items.AddRange(m_cUnloopedGrids.ToArray());
-            }
-
-            if (pSelectedItem == null)
-            {
-                if (comboBox1.Items.Count > 0)
-                    comboBox1.SelectedIndex = 0;
-            }
+            PartialMap.Checked = !pPreset.m_bBordered;
+            if (pPreset.m_iLandsCountPercent > 0)
+                LandsCount.Value = LandsCount.Minimum + (LandsCount.Maximum - LandsCount.Minimum) * pPreset.m_iLandsCountPercent / 100;
             else
-                comboBox1.SelectedItem = pSelectedItem;
+            {
+                if (LandsCount.Maximum < 6000)
+                    LandsCount.Value = LandsCount.Maximum;
+                else
+                    if (LandsCount.Minimum > 6000)
+                        LandsCount.Value = LandsCount.Minimum;
+                    else
+                        LandsCount.Value = 6000;
+            }
+
+            if (LandMassesCount.Maximum < pPreset.m_iLandMassesCount)
+                LandMassesCount.Value = LandMassesCount.Maximum;
+            else
+                if (LandMassesCount.Minimum > pPreset.m_iLandMassesCount)
+                    LandMassesCount.Value = LandMassesCount.Minimum;
+                else
+                    LandMassesCount.Value = pPreset.m_iLandMassesCount;
+
+            if (ContinentsCount.Maximum < pPreset.m_iContinentsCount)
+                ContinentsCount.Value = ContinentsCount.Maximum;
+            else
+                if (ContinentsCount.Minimum > pPreset.m_iContinentsCount)
+                    ContinentsCount.Value = ContinentsCount.Minimum;
+                else
+                    ContinentsCount.Value = pPreset.m_iContinentsCount;
+
+            WaterPercent.Value = pPreset.m_iWaterCoverage;
+            Equator.Value = pPreset.m_iEquatorPosition;
+            Pole.Value = pPreset.m_iPoleDistance;
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -505,40 +542,141 @@ namespace VQMapTest2
                 MapPreset pPreset = listBox1.SelectedItem as MapPreset;
                 label1.Text = pPreset.m_sDescription;
 
-                PartialMap.Checked = !pPreset.m_bBordered;
-                if (pPreset.m_iLandsCountPercent > 0)
-                    LandsCount.Value = LandsCount.Minimum + (LandsCount.Maximum - LandsCount.Minimum) * pPreset.m_iLandsCountPercent / 100;
-                else
-                {
-                    if (LandsCount.Maximum < 6000)
-                        LandsCount.Value = LandsCount.Maximum;
-                    else
-                        if (LandsCount.Minimum > 6000)
-                            LandsCount.Value = LandsCount.Minimum;
-                        else
-                            LandsCount.Value = 6000;
-                }
-
-                if (LandMassesCount.Maximum < pPreset.m_iLandMassesCount)
-                    LandMassesCount.Value = LandMassesCount.Maximum;
-                else
-                    if (LandMassesCount.Minimum > pPreset.m_iLandMassesCount)
-                        LandMassesCount.Value = LandMassesCount.Minimum;
-                    else
-                        LandMassesCount.Value = pPreset.m_iLandMassesCount;
-
-                if (ContinentsCount.Maximum < pPreset.m_iContinentsCount)
-                    ContinentsCount.Value = ContinentsCount.Maximum;
-                else
-                    if (ContinentsCount.Minimum > pPreset.m_iContinentsCount)
-                        ContinentsCount.Value = ContinentsCount.Minimum;
-                    else
-                        ContinentsCount.Value = pPreset.m_iContinentsCount;
-
-                WaterPercent.Value = pPreset.m_iWaterCoverage;
-                Equator.Value = pPreset.m_iEquatorPosition;
-                Pole.Value = pPreset.m_iPoleDistance;
+                ApplyPreset(pPreset);
             }
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox3.Items.Clear();
+            comboBox8.Items.Clear();
+            for (int i = comboBox2.SelectedIndex; i < 9; i++)
+            {
+                comboBox3.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+                comboBox8.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+            }
+
+            comboBox3.SelectedIndex = Math.Max(0, m_iTechLevelLimit - comboBox2.SelectedIndex);
+            comboBox8.SelectedIndex = Math.Max(0, m_iInvadersTechLevelLimit - comboBox2.SelectedIndex);
+        }
+
+        private int m_iTechLevelLimit = 8;
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(comboBox3.SelectedIndex != -1)
+                m_iTechLevelLimit = comboBox2.SelectedIndex + comboBox3.SelectedIndex;
+        }
+
+        private int m_iMagicLimit = 8;
+
+        private void comboBox5_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox5.SelectedIndex != -1)
+                m_iMagicLimit = comboBox4.SelectedIndex + comboBox5.SelectedIndex;
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox5.Items.Clear();
+            comboBox9.Items.Clear();
+            for (int i = comboBox4.SelectedIndex; i < 9; i++)
+            {
+                comboBox5.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+                comboBox9.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+            }
+
+            comboBox5.SelectedIndex = Math.Max(0, m_iMagicLimit - comboBox4.SelectedIndex);
+            comboBox9.SelectedIndex = Math.Max(0, m_iInvadersMagicLimit - comboBox4.SelectedIndex);
+        }
+
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox2.SelectedIndex != -1)
+            {
+                MapPreset pPreset = listBox2.SelectedItem as MapPreset;
+                label19.Text = pPreset.m_sDescription;
+
+                ApplyPreset(pPreset);
+            }
+        }
+
+        private void comboBox7_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox7.SelectedIndex == -1)
+                return;
+
+            m_cLocations = (LocationsGrid<LocationX>)comboBox7.SelectedItem;
+
+            groupBox2.Enabled = true;
+            groupBox3.Enabled = true;
+            groupBox4.Enabled = true;
+            tableLayoutPanel2.Enabled = true;
+            button8.Enabled = true;
+
+            CalculateLimits(m_cLocations.m_iLocationsCount);
+
+            if (comboBox1.Items.Contains(comboBox7.SelectedItem))
+                comboBox1.SelectedItem = comboBox7.SelectedItem;
+        }
+
+        private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox6.SelectedIndex == -1)
+                return;
+
+            m_cLocations = (LocationsGrid<LocationX>)comboBox6.SelectedItem;
+
+            groupBox2.Enabled = true;
+            groupBox3.Enabled = true;
+            groupBox4.Enabled = true;
+            tableLayoutPanel2.Enabled = true;
+            button8.Enabled = true;
+
+            CalculateLimits(m_cLocations.m_iLocationsCount);
+
+            if (comboBox1.Items.Contains(comboBox6.SelectedItem))
+                comboBox1.SelectedItem = comboBox6.SelectedItem;
+        }
+
+        private int m_iInvadersTechLevelLimit = 8;
+        private int m_iInvadersMagicLimit = 8;
+
+        private void comboBox8_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox8.SelectedIndex != -1)
+                m_iInvadersTechLevelLimit = comboBox2.SelectedIndex + comboBox8.SelectedIndex;
+        }
+
+        private void comboBox9_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox9.SelectedIndex != -1)
+                m_iInvadersMagicLimit = comboBox4.SelectedIndex + comboBox9.SelectedIndex;
+        }
+
+        private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox3.SelectedIndex != -1)
+            {
+                SocietyPreset pPreset = listBox3.SelectedItem as SocietyPreset;
+                label20.Text = pPreset.m_sDescription;
+
+                comboBox2.SelectedIndex = pPreset.m_iMinTechLevel;
+                comboBox3.SelectedIndex = pPreset.m_iMaxTechLevel - pPreset.m_iMinTechLevel;
+
+                comboBox4.SelectedIndex = pPreset.m_iMinMagicLevel;
+                comboBox5.SelectedIndex = pPreset.m_iMaxMagicLevel - pPreset.m_iMinMagicLevel;
+            }
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 0)
+                comboBox7_SelectedIndexChanged(sender, e);
+            if (tabControl1.SelectedIndex == 1)
+                comboBox6_SelectedIndexChanged(sender, e);
+            if (tabControl1.SelectedIndex == 2)
+                comboBox1_SelectedIndexChanged(sender, e);
         }
     }
 }
