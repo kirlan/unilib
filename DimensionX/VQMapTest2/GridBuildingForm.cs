@@ -149,7 +149,9 @@ namespace VQMapTest2
             foreach (FileInfo fi in fileNames)
             {
                 string sDescription;
-                if (fi.Name == sFileName + ".dxg" && LocationsGrid<LocationX>.CheckFile(fi.FullName, out sDescription))
+                int iLocationsCount;
+                bool bCycled;
+                if (fi.Name == sFileName + ".dxg" && LocationsGrid<LocationX>.CheckFile(fi.FullName, out sDescription, out iLocationsCount, out bCycled))
                 {
                     return false;
                 }

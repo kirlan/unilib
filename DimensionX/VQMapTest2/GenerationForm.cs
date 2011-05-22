@@ -16,6 +16,22 @@ namespace VQMapTest2
 {
     public partial class GenerationForm : Form
     {
+        MapPreset[] m_aWorldMaps = new MapPreset[] 
+        {
+            new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 0, 90, 5, 66, 50, 45),
+            new MapPreset("Continents 2", "Earth-like world. 5 big continents ocuppies 33% of world surface. There could be a continents in polar regions in this template.", true, false, 0, 45, 5, 66, 50, 50),
+            new MapPreset("Gondwana", "One big continent ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 0, 90, 1, 66, 50, 45),
+            new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 0, 300, 30, 66, 50, 45),
+        };
+
+        MapPreset[] m_aPartialMaps = new MapPreset[] 
+        {
+            new MapPreset("Coast", "Traditional adventure map of big coastral region, like Europe, Middlearth, Hyperborea or Faerun. This is a part of a one big continent from arctic to tropics, with a long coastral line.", false, false, 50, 45, 1, 50, 95, 95),
+            new MapPreset("Mediterranean", "Mediterranean-like region - there are parts of 3 big continents, divided by a sea. Continents extends from arctic to tropics.", false, false, 50, 45, 3, 50, 95, 95),
+            new MapPreset("Atlantis", "One big continent in middle latitudes, surrounded by ocean.", false, true, 50, 45, 1, 50, 120, 130),
+            new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 300, 15, 90, 50, 100),
+        };
+
         private string m_sWorkingDir = "";
 
         private LocationsGrid<LocationX> m_cLocations = null;
@@ -32,6 +48,10 @@ namespace VQMapTest2
             InitializeComponent();
         
             m_pWorld = null;
+
+            Presets.Left = CustomMap.Left;
+            Presets.Top = CustomMap.Top;
+            Presets.Visible = false;
 
             groupBox2.Enabled = false;
             groupBox3.Enabled = false;
@@ -79,13 +99,16 @@ namespace VQMapTest2
 
         private void RndAll_Click(object sender, EventArgs e)
         {
-            RndEquator_Click(sender, e);
-            RndPole_Click(sender, e);
-            RndWater_Click(sender, e);
+            if (radioButton3.Checked)
+            {
+                RndEquator_Click(sender, e);
+                RndPole_Click(sender, e);
+                RndWater_Click(sender, e);
+                RndContinents_Click(sender, e);
+            }
             RndRaces_Click(sender, e);
             RndStates_Click(sender, e);
             //RndProvincies_Click(sender, e);
-            RndContinents_Click(sender, e);
         }
 
         private void button8_Click(object sender, EventArgs e)
@@ -149,13 +172,15 @@ namespace VQMapTest2
 
             LandsCount.Maximum = iLocationsCount / 2 + LandsCount.LargeChange - 1;
             LandsCount.Minimum = Math.Min(600, iLocationsCount / 4);
-            if (LandsCount.Maximum < 6000)
-                LandsCount.Value = LandsCount.Maximum;
-            else
-                if (LandsCount.Minimum > 6000)
-                    LandsCount.Value = LandsCount.Minimum;
-                else
-                    LandsCount.Value = 6000;
+
+            LandsCount.Value = (LandsCount.Minimum + LandsCount.Maximum) / 2;
+            //if (LandsCount.Maximum < 6000)
+            //    LandsCount.Value = LandsCount.Maximum;
+            //else
+            //    if (LandsCount.Minimum > 6000)
+            //        LandsCount.Value = LandsCount.Minimum;
+            //    else
+            //        LandsCount.Value = 6000;
 
             if (LandMassesCount.Minimum > Math.Min(30, iLocationsCount / 20))
                 LandMassesCount.Minimum = Math.Min(30, iLocationsCount / 20);
@@ -171,13 +196,6 @@ namespace VQMapTest2
 
             LandMassesCount.Maximum = Math.Min(300, iLocationsCount / 4) + LandMassesCount.LargeChange - 1;
             LandMassesCount.Minimum = Math.Min(30, iLocationsCount / 20);
-            if (LandMassesCount.Maximum < 90)
-                LandMassesCount.Value = LandMassesCount.Maximum;
-            else
-                if (LandMassesCount.Minimum > 90)
-                    LandMassesCount.Value = LandMassesCount.Minimum;
-                else
-                    LandMassesCount.Value = 90;
 
             int iNotOcean = iLocationsCount * (100 - (int)WaterPercent.Value) / 100;
 
@@ -210,13 +228,13 @@ namespace VQMapTest2
 
             ProvinciesCount.Maximum = Math.Min(500, iNotOcean / 10) + ProvinciesCount.LargeChange - 1;
             ProvinciesCount.Minimum = Math.Min(100, iNotOcean / 20);
-            if (ProvinciesCount.Maximum < 250)
-                ProvinciesCount.Value = ProvinciesCount.Maximum;
-            else
-                if (ProvinciesCount.Minimum > 250)
-                    ProvinciesCount.Value = ProvinciesCount.Minimum;
-                else
-                    ProvinciesCount.Value = 250;
+            //if (ProvinciesCount.Maximum < 250)
+            //    ProvinciesCount.Value = ProvinciesCount.Maximum;
+            //else
+            //    if (ProvinciesCount.Minimum > 250)
+            //        ProvinciesCount.Value = ProvinciesCount.Minimum;
+            //    else
+            //        ProvinciesCount.Value = 250;
 
             if (StatesCount.Minimum > Math.Min(5, iNotOcean / 40))
                 StatesCount.Minimum = Math.Min(5, iNotOcean / 40);
@@ -232,13 +250,13 @@ namespace VQMapTest2
 
             StatesCount.Maximum = Math.Min(100, iNotOcean / 20) + StatesCount.LargeChange-1;
             StatesCount.Minimum = Math.Min(5, iNotOcean / 40);
-            if (StatesCount.Maximum < 100)
-                StatesCount.Value = StatesCount.Maximum;
-            else
-                if (StatesCount.Minimum > 100)
-                    StatesCount.Value = StatesCount.Minimum;
-                else
-                    StatesCount.Value = 100;
+            //if (StatesCount.Maximum < 100)
+            //    StatesCount.Value = StatesCount.Maximum;
+            //else
+            //    if (StatesCount.Minimum > 100)
+            //        StatesCount.Value = StatesCount.Minimum;
+            //    else
+            //        StatesCount.Value = 100;
         }
 
         private void PartialMap_CheckedChanged(object sender, EventArgs e)
@@ -261,10 +279,13 @@ namespace VQMapTest2
 
         private void button5_Click(object sender, EventArgs e)
         {
-            ContinentsCount.Value = 5;
-            Equator.Value = 50;
-            Pole.Value = 45;
-            WaterPercent.Value = 66;
+            if (radioButton3.Checked)
+            {
+                ContinentsCount.Value = 5;
+                Equator.Value = 50;
+                Pole.Value = 45;
+                WaterPercent.Value = 66;
+            }
 
             if (RacesCount.Maximum > 24)
                 RacesCount.Value = 24;
@@ -283,16 +304,24 @@ namespace VQMapTest2
 
             if (pForm.ShowDialog() == DialogResult.OK)
             {
-                m_cLocations = pForm.m_cLocations;
-            
                 groupBox2.Enabled = true;
                 groupBox3.Enabled = true;
                 groupBox4.Enabled = true;
                 tableLayoutPanel2.Enabled = true;
                 button8.Enabled = true;
 
-                comboBox1.Items.Add(m_cLocations);
-                comboBox1.SelectedItem = m_cLocations;
+                if (pForm.m_cLocations.m_bCycled)
+                    m_cLoopedGrids.Add(pForm.m_cLocations);
+                else
+                    m_cUnloopedGrids.Add(pForm.m_cLocations);
+
+                if (pForm.m_cLocations.m_bCycled == radioButton1.Checked)
+                {
+                    comboBox1.Items.Add(pForm.m_cLocations);
+                    comboBox1.SelectedItem = pForm.m_cLocations;
+                    //m_cLocations = pForm.m_cLocations;
+                }
+            
 
                 //CalculateLimits(m_cLocations.m_iLocationsCount);
             }
@@ -341,6 +370,9 @@ namespace VQMapTest2
             return true;
         }
 
+        private List<LocationsGrid<LocationX>> m_cLoopedGrids = new List<LocationsGrid<LocationX>>();
+        private List<LocationsGrid<LocationX>> m_cUnloopedGrids = new List<LocationsGrid<LocationX>>();
+
         public bool Preload()
         {
             RegistryKey key;
@@ -375,7 +407,11 @@ namespace VQMapTest2
                     try
                     {
                         LocationsGrid<LocationX> pGrid = new LocationsGrid<LocationX>(fi.FullName);
-                        comboBox1.Items.Add(pGrid);
+                        if (pGrid.m_bCycled)
+                            m_cLoopedGrids.Add(pGrid);
+                        else
+                            m_cUnloopedGrids.Add(pGrid);
+                        //comboBox1.Items.Add(pGrid);
                     }
                     catch (Exception ex)
                     {
@@ -384,8 +420,8 @@ namespace VQMapTest2
                 }
             }
 
-            if (comboBox1.Items.Count > 0)
-                comboBox1.SelectedIndex = 0;
+
+            PresetType_CheckedChanged(this, new EventArgs());
 
             return true;
         }
@@ -409,6 +445,100 @@ namespace VQMapTest2
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             toolTip1.SetToolTip(sender as HScrollBar, (sender as HScrollBar).Value.ToString());
+        }
+
+        private void PresetType_CheckedChanged(object sender, EventArgs e)
+        {
+            object pSelectedItem = comboBox1.SelectedItem;
+            comboBox1.Items.Clear();
+
+            if (radioButton1.Checked)
+            {
+                CustomMap.Visible = false;
+                Presets.Visible = true;
+
+                listBox1.Items.Clear();
+                listBox1.Items.AddRange(m_aWorldMaps);
+                if (listBox1.Items.Count > 0)
+                    listBox1.SelectedIndex = 0;
+
+                comboBox1.Items.AddRange(m_cLoopedGrids.ToArray());
+            }
+
+            if (radioButton2.Checked)
+            {
+                CustomMap.Visible = false;
+                Presets.Visible = true;
+
+                listBox1.Items.Clear();
+                listBox1.Items.AddRange(m_aPartialMaps);
+                if (listBox1.Items.Count > 0)
+                    listBox1.SelectedIndex = 0;
+
+                comboBox1.Items.AddRange(m_cUnloopedGrids.ToArray());
+            }
+
+            if (radioButton3.Checked)
+            {
+                Presets.Visible = false;
+                CustomMap.Visible = true;
+
+                listBox1.Items.Clear();
+
+                comboBox1.Items.AddRange(m_cLoopedGrids.ToArray());
+                comboBox1.Items.AddRange(m_cUnloopedGrids.ToArray());
+            }
+
+            if (pSelectedItem == null)
+            {
+                if (comboBox1.Items.Count > 0)
+                    comboBox1.SelectedIndex = 0;
+            }
+            else
+                comboBox1.SelectedItem = pSelectedItem;
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex != -1)
+            { 
+                MapPreset pPreset = listBox1.SelectedItem as MapPreset;
+                label1.Text = pPreset.m_sDescription;
+
+                PartialMap.Checked = !pPreset.m_bBordered;
+                if (pPreset.m_iLandsCountPercent > 0)
+                    LandsCount.Value = LandsCount.Minimum + (LandsCount.Maximum - LandsCount.Minimum) * pPreset.m_iLandsCountPercent / 100;
+                else
+                {
+                    if (LandsCount.Maximum < 6000)
+                        LandsCount.Value = LandsCount.Maximum;
+                    else
+                        if (LandsCount.Minimum > 6000)
+                            LandsCount.Value = LandsCount.Minimum;
+                        else
+                            LandsCount.Value = 6000;
+                }
+
+                if (LandMassesCount.Maximum < pPreset.m_iLandMassesCount)
+                    LandMassesCount.Value = LandMassesCount.Maximum;
+                else
+                    if (LandMassesCount.Minimum > pPreset.m_iLandMassesCount)
+                        LandMassesCount.Value = LandMassesCount.Minimum;
+                    else
+                        LandMassesCount.Value = pPreset.m_iLandMassesCount;
+
+                if (ContinentsCount.Maximum < pPreset.m_iContinentsCount)
+                    ContinentsCount.Value = ContinentsCount.Maximum;
+                else
+                    if (ContinentsCount.Minimum > pPreset.m_iContinentsCount)
+                        ContinentsCount.Value = ContinentsCount.Minimum;
+                    else
+                        ContinentsCount.Value = pPreset.m_iContinentsCount;
+
+                WaterPercent.Value = pPreset.m_iWaterCoverage;
+                Equator.Value = pPreset.m_iEquatorPosition;
+                Pole.Value = pPreset.m_iPoleDistance;
+            }
         }
     }
 }

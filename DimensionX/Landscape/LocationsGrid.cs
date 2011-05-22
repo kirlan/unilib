@@ -507,9 +507,12 @@ namespace LandscapeGeneration
             }
         }
 
-        public static bool CheckFile(string sFilename, out string sDescription)
+        public static bool CheckFile(string sFilename, out string sDescription, out int iLocationsCount, out bool bCycled)
         {
             sDescription = "";
+            bCycled = false;
+            iLocationsCount = 0;
+
             if (!File.Exists(sFilename))
                 return false;
 
@@ -539,6 +542,9 @@ namespace LandscapeGeneration
                         return false;
 
                     sDescription = binReader.ReadString();
+                    iLocationsCount = binReader.ReadInt32();
+                    int iRX = binReader.ReadInt32();
+                    bCycled = binReader.ReadInt32() == 1;
                 }
             }
             catch (EndOfStreamException e)
@@ -559,7 +565,7 @@ namespace LandscapeGeneration
 
         public LocationsGrid(string sFilename)
         {
-            if (!CheckFile(sFilename, out m_sDescription))
+            if (!CheckFile(sFilename, out m_sDescription, out m_iLocationsCount, out m_bCycled))
                 throw new ArgumentException("File not exists or have a wrong format!");
 
             m_sFilename = sFilename;
