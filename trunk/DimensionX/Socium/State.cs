@@ -495,21 +495,21 @@ namespace Socium
         public Race m_pRace = null;
 
         /// <summary>
-        /// 1 - Допороховая эра. В ходу металлические и кожаные доспехи, холодное оружие, из стрелкового оружия – луки, дротики и арбалеты.
-        /// 2 - Эпоха пороха. Примитивное однозарядное огнестрельное оружие, лёгкие сабли и шпаги, облегчённая броня (кирасы, кожаные куртки).
-        /// 3 - Индустриальная эра. Автоматическое огнестрельное оружие, бронежилеты, развитая бронетехника, оружие массового поражения.
-        /// 4 - Кибернетическая эра. Боевые имплантаты могут превратить любого человека в почти неуязвимую машину для убийства. Активно используются вспомогательные боевые механизмы (дроны, дроиды), управляемые искусственным интеллектом.
-        /// 5 - Энергетическая эра. Силовые поля, лучевое оружие.
-        /// 6 - Квантовая эра. Доступна телепортация, материализация, управление скоростью времени.
-        /// 7 - Эра чистого разума. Полный контакт между человеческим сознанием и машиной. Возможна передача и копирование человеческой личности. Больше нет разницы между человеческим разумом и искусственным интеллектом.
-        /// 8 - Переход. Люди давно отказались от физических тел и используют их только для развлечения – как экзотические костюмы. Основное время человеческое сознание проводит внутри мегасети, образованной миллиардами разнообразных машин, которые являются их глазами и руками.
+        /// 1 - Бронзовый век. В ходу бронзовые кирасы и кожаные доспехи, бронзовое холодное оружие, из стрелкового оружия – луки и дротики.
+        /// 2 - Железный век. Стальное холодное оружие, кольчуги, рыцарские доспехи. Из стрелкового оружия - луки и арбалеты.
+        /// 3 - Эпоха пороха. Примитивное однозарядное огнестрельное оружие, лёгкие сабли и шпаги, облегчённая броня (кирасы, кожаные куртки).
+        /// 4 - Индустриальная эра. Нарезное огнестрельное оружие, примитивная бронетехника и авиация, химическое оружие массового поражения.
+        /// 5 - Атомная эра. Автоматическое огнестрельное оружие, бронежилеты, развитая бронетехника и авиация, ядерные ракеты и бомбы.
+        /// 6 - Энергетическая эра. Силовые поля, лучевое оружие.
+        /// 7 - Квантовая эра. Ограниченная телепортация, материализация, дезинтеграция.
+        /// 8 - Переход. Полная и неограниченная власть человека над пространственно-временным континуумом.
         /// </summary>
         public int m_iTechLevel = 0;
         /// <summary>
-        /// 1 - Мистика. Использование психотропных веществ, психология, гипноз, йогические практики, акупунктура.
-        /// 2 - Псионика. Познание окружающего мира силой мысли. Эмпатия, телепатия, ясновиденье, дальновиденье.
+        /// 1 - Мистика. Ритуальная магия, требующая длительной предварительной подготовки. Используя психотропные вещества, гипноз и йогические практики, мистики могут общаться с миром духов, получая из него информацию или заключая сделки с его обитателями.
+        /// 2 - Псионика. Познание окружающего мира силой собственной мысли. Эмпатия, телепатия, ясновиденье, дальновиденье.
         /// 3 - Сверхспособности. Управление материальными объектами без физического контакта: телекинез, пирокинез, левитация и т.д.... Как правило, один отдельно взятый персонаж может развить у себя только одну-две сверхспособности.
-        /// 4 - Магия. То же самое, что и на предыдущем уровне, но гораздо доступнее. Один маг может владеть десятками заклинаний на разные случаи жизни.
+        /// 4 - Традиционная фэнтезийная магия. То же самое, что и на предыдущем уровне, но гораздо доступнее. Один маг может владеть десятками заклинаний на разные случаи жизни.
         /// 5 - Джинны. Способность произвольно менять облик, массу и физические свойства собственного тела. Использование магии без заклинаний - просто усилием мысли.
         /// 6 - Титаны. Уровень личного могущества, обычно приписываемый языческим богам. Телепортация, материализация, управление течением времени.
         /// 7 - Трансцендентность. Отсутствие привязки к физическом телу. Разум способен существовать  в нематериальной форме, при этом сохраняя все свои возможности воспринимать окружающую среду и воздействать на неё.
@@ -526,7 +526,7 @@ namespace Socium
         /// 1 - Власти занимаются только самыми вопиющими преступлениями.
         /// 2 - Есть законы, их надо соблюдать, кто не соблюдает - тот преступник, а вор должен сидеть в тюрьме.
         /// 3 - Законы крайне строги, широко используется смертная казнь.
-        /// 4 - Все граждане, кроме правящей верхушки, попадают по презумпцию виновности.
+        /// 4 - Все граждане, кроме правящей верхушки, попадают под презумпцию виновности.
         /// </summary>
         public int m_iControl = 0;
 
@@ -549,7 +549,7 @@ namespace Socium
 
         public StateInfo m_pInfo = null;
 
-        public LocationX BuildCapital(int iMinSize, int iMaxSize, bool bFast)
+        public LocationX BuildCapital(int iMinSize, int iMaxSize, bool bFast, int iMinTech, int iMaxTech)
         {
             m_iTechLevel = m_pRace.m_iTechLevel;
             //m_iMagicLimit = m_pRace.m_iMagicLimit;
@@ -604,10 +604,10 @@ namespace Socium
             else if (m_iWood > m_iPopulation && m_iOre > m_iPopulation && Rnd.OneChanceFrom(4))
                 m_iTechLevel++;
 
-            if (m_iTechLevel < 0)
-                m_iTechLevel = 0;
-            if (m_iTechLevel > 8)
-                m_iTechLevel = 8;
+            if (m_iTechLevel < iMinTech)
+                m_iTechLevel = iMinTech;
+            if (m_iTechLevel > iMaxTech)
+                m_iTechLevel = iMaxTech;
 
             //int iBioLevel = (int)(Math.Pow(Rnd.Get(14), 3) / 1000);
             //if (Rnd.OneChanceFrom(2))
@@ -620,8 +620,8 @@ namespace Socium
             //if (m_iMagicLimit > 8)
             //    m_iMagicLimit = 8;
 
-            int iOldLevel = Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit);
-            int iNewLevel = Math.Max(m_iTechLevel, iAverageMagicLimit);
+            int iOldLevel = m_pRace.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
+            int iNewLevel = m_iTechLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
             if (iNewLevel > iOldLevel)
                 for (int i = 0; i < iNewLevel - iOldLevel; i++)
                 {
@@ -651,15 +651,17 @@ namespace Socium
             if (m_cContents.Count < iMinSize)
                 m_iInfrastructureLevel = Rnd.Get(Math.Min(3, m_iInfrastructureLevel + 1));
 
-            if (m_iInfrastructureLevel < Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)
-                m_iInfrastructureLevel = Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2;
-            if (m_iInfrastructureLevel > Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1))
-                m_iInfrastructureLevel = Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1);
+            if (m_iInfrastructureLevel < (m_iTechLevel + 1) / 2)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)
+                m_iInfrastructureLevel = (m_iTechLevel + 1) / 2;//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2;
+            if (m_iInfrastructureLevel > m_iTechLevel+1)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1))
+                m_iInfrastructureLevel = m_iTechLevel+1;// Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1);
             if (m_iInfrastructureLevel > 8)
                 m_iInfrastructureLevel = 8;
 
             if (m_iTechLevel > m_iInfrastructureLevel * 2)
                 m_iTechLevel = m_iInfrastructureLevel * 2;
+            if (m_iTechLevel > iMaxTech)
+                m_iTechLevel = iMaxTech;
 
             //if (m_iGovernmentLevel >= 7)
             //    m_eMagicUsingAttitude = MagicUsingAttitude.allowed;
@@ -1229,7 +1231,7 @@ namespace Socium
 
         public static string GetMagicString(int iLevel)
         {
-            string sMagic = "sages";
+            string sMagic = "none";
             switch (iLevel)
             {
                 case 1:
@@ -1254,56 +1256,11 @@ namespace Socium
                     sMagic = "gods";//unlimited teleportation
                     break;
                 case 8:
-                    sMagic = "One";
+                    sMagic = "the One";
                     break;
             }
 
             return sMagic;
-        }
-
-        ///// <summary>
-        ///// 0 - Выживание. Закон джунглей — или ешь ты, или едят тебя. Вместо имен используются клички — имена зверей (Пёс, Ворон) или описательные эпитеты (Хромой, Одноглазый).
-        ///// 1 - Власть. Есть разделение на своих и чужих. В почёте культ силы. В ходу сочетания имени и клички.
-        ///// 2 - Честь. Существует неписаный кодекс поведения, предписывающий благородное отношение даже к врагу, хотя им и не всегда руководствуются. Клички в основном несут прославляющий (Доблестный, Славный) или очерняющий (Жестокий, Безжалостный) характер.
-        ///// 3 - Закон. Закон один для всех — по крайней мере так провозглашается. Подлости и озлобленности ещё хватает, но страх наказания многих останавливает. Клички не используются.
-        ///// 4 - Корпоративный дух. Превалирование заботы о благе своего сообщества над заботой о собственном благе является необходимым условием выживания личности.
-        ///// 5 - Общее Благо. Высокая мера личной ответственности и самосознания. Индивиидум реально ощущает себя частью своего сообщества и искренне заботится о его благе.
-        ///// 6 - Великая Миссия. Ответственность за весь мир и стремление сделать его лучше и чище.
-        ///// 7 - Свобода. Непротивление злу насилием. Каждый волен выбирать свой путь, кем бы он ни был и куда бы ни вёл его путь.
-        ///// 8 - Любовь. Общество безграничной любви и сострадания к ближнему — кем бы он ни был. Полное самоотречение и абсолютная готовность к самопожертвованию.
-        ///// </summary>
-        public static string GetIdeologyString(int iLevel)
-        {
-            string sCulture = "law of the jungle";
-            switch (iLevel)
-            {
-                case 1:
-                    sCulture = "sword law";
-                    break;
-                case 2:
-                    sCulture = "code of honour";
-                    break;
-                case 3:
-                    sCulture = "social equality";
-                    break;
-                case 4:
-                    sCulture = "utilitarianism";
-                    break;
-                case 5:
-                    sCulture = "servants of greater good";
-                    break;
-                case 6:
-                    sCulture = "keepers of the world";
-                    break;
-                case 7:
-                    sCulture = "freedom for all";
-                    break;
-                case 8:
-                    sCulture = "universal love";
-                    break;
-            }
-
-            return sCulture;
         }
 
         public static string GetControlString(int iControl)
@@ -1344,7 +1301,7 @@ namespace Socium
 
         public override string ToString()
         {
-            return string.Format("{2}(C{1}T{3}) - {0} {4}", m_sName, m_iInfrastructureLevel, m_pRace.m_sName, m_iTechLevel, m_pInfo.m_sName);
+            return string.Format("{2}(C{1}T{3}M{5}) - {0} {4}", m_sName, m_iInfrastructureLevel, m_pRace.m_sName, m_iTechLevel, m_pInfo.m_sName, m_iMagicLimit);
         }
 
         public override float GetMovementCost()

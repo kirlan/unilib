@@ -96,11 +96,11 @@ namespace VQMapTest2
             if (m_pWorld.m_iMagicLimit > 0)
             {
                 label8.Text = string.Format("Magic users: {0}, ", m_pWorld.m_eMagicAbilityPrevalence.ToString().Replace('_', ' '));
-                label2.Text = string.Format("          {2}, up to {0} [B{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit, m_pWorld.m_eMagicAbilityDistribution.ToString().Replace('_', ' '));
+                label2.Text = string.Format("          {2}, up to {0} [M{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit, m_pWorld.m_eMagicAbilityDistribution.ToString().Replace('_', ' '));
             }
             else
             {
-                label8.Text = "Magic users: none [B0]";
+                label8.Text = "Magic users: none [M0]";
                 label2.Text = "";
             }
 
@@ -230,7 +230,7 @@ namespace VQMapTest2
 
             richTextBox1.AppendText(string.Format("Social order : {0} {1} [C{2}]\n\n", State.GetControlString(e.m_pState.m_iControl), e.m_pState.m_pInfo.m_sName, e.m_pState.m_iInfrastructureLevel));
 
-            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}B{1}]\n\n", e.m_pState.m_pRace.m_iTechLevel, e.m_pState.m_pRace.m_iMagicLimit, e.m_pState.m_pRace.m_sName));
+            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", e.m_pState.m_pRace.m_iTechLevel, e.m_pState.m_pRace.m_iMagicLimit, e.m_pState.m_pRace.m_sName));
 
             richTextBox1.AppendText(string.Format("Culture:\n"));
             foreach (Culture.Mentality eMentality in Culture.Mentalities)
@@ -284,11 +284,11 @@ namespace VQMapTest2
             if (e.m_pState.m_iMagicLimit > 0)
             {
                 richTextBox1.AppendText(string.Format("Magic users: {0}, ", e.m_pState.m_eMagicAbilityPrevalence.ToString().Replace('_', ' ')));
-                richTextBox1.AppendText(string.Format("{2}, up to {0} [B{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution.ToString().Replace('_', ' ')));
+                richTextBox1.AppendText(string.Format("{2}, up to {0} [M{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution.ToString().Replace('_', ' ')));
             }
             else
             {
-                richTextBox1.AppendText("Magic users: none [B0]\n\n");
+                richTextBox1.AppendText("Magic users: none [M0]\n\n");
             }
 
             richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_iWood, e.m_pState.m_iOre, e.m_pState.m_iPopulation));

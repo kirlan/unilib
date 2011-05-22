@@ -200,21 +200,24 @@ namespace Socium
             m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
             m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
 
-            int iTotalLevel = 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000);
-            int iBalance = Rnd.Get(201);
+            //int iTotalLevel = 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000);
+            //int iBalance = Rnd.Get(201);
 
-            if (iBalance > 100)
-            {
-                m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
-                //m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
-                m_iTechLevel = (200 - iBalance) * m_iMagicLimit / iBalance;
-            }
-            else
-            {
-                m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
-                //m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
-                m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
-            }
+            //if (iBalance > 100)
+            //{
+            //    m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
+            //    //m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
+            //    m_iTechLevel = (200 - iBalance) * m_iMagicLimit / iBalance;
+            //}
+            //else
+            //{
+            //    m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
+            //    //m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
+            //    m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
+            //}
+
+            m_iTechLevel = Math.Min(m_iMaxTechLevel, m_iMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
+            m_iMagicLimit = Math.Min(m_iMaxMagicLevel, m_iMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
         }
 
         private void AddRaces()
@@ -478,18 +481,60 @@ namespace Socium
         /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
         /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
-        public World(LocationsGrid<LocationX> cLocations, int iContinents, bool bGreatOcean, int iLands, int iProvinces, int iStates, int iLandMasses, int iOcean, int iEquator, int iPole, int iRacesCount)
+        /// <param name="iRacesCount">Количество различных рас, населяющих мир.</param>
+        /// <param name="iMinTechLevel">Минимальный возможный в этом мире уровень технического развития.</param>
+        /// <param name="iMaxTechLevel">Максимальный возможный в этом мире уровень технического развития.</param>
+        /// <param name="iMinMagicLevel">Минимальный возможный в этом мире уровень владения магией.</param>
+        /// <param name="iMaxMagicLevel">Максимальный возможный в этом мире уровень владения магией.</param>
+        /// <param name="iInvasionProbability">Вероятность вторжения из более развитого мира (0-100%).</param>
+        public World(LocationsGrid<LocationX> cLocations, 
+                     int iContinents, 
+                     bool bGreatOcean, 
+                     int iLands, 
+                     int iProvinces, 
+                     int iStates, 
+                     int iLandMasses, 
+                     int iOcean, 
+                     int iEquator, 
+                     int iPole, 
+                     int iRacesCount,
+                     int iMinTechLevel,
+                     int iMaxTechLevel,
+                     int iMinMagicLevel,
+                     int iMaxMagicLevel,
+                     int iInvasionProbability,
+                     int iInvadersMaxTechLevel,
+                     int iInvadersMaxMagicLevel)
             : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole)
         {
-            Create(iProvinces, iStates, iRacesCount);
+            Create(iProvinces, iStates, iRacesCount, iMinTechLevel, iMaxTechLevel, iMinMagicLevel, iMaxMagicLevel, iInvasionProbability, iInvadersMaxTechLevel, iInvadersMaxMagicLevel);
         }
 
-        private void Create(int iProvinces, int iStates, int iRacesCount)
+        public int m_iMinTechLevel;
+        public int m_iMaxTechLevel;
+        public int m_iMinMagicLevel;
+        public int m_iMaxMagicLevel;
+        public int m_iInvasionProbability;
+        public int m_iInvadersMaxTechLevel;
+        public int m_iInvadersMaxMagicLevel;
+
+        private void Create(int iProvinces, int iStates, int iRacesCount, int iMinTechLevel, int iMaxTechLevel, int iMinMagicLevel, int iMaxMagicLevel, int iInvasionProbability, int iInvadersMaxTechLevel, int iInvadersMaxMagicLevel)
         {
             Language.ResetUsedLists();
 
             m_iProvincesCount = iProvinces;
             m_iStatesCount = iStates;
+
+            m_iMinTechLevel = iMinTechLevel;
+            m_iMaxTechLevel = iMaxTechLevel;
+
+            m_iMinMagicLevel = iMinMagicLevel;
+            m_iMaxMagicLevel = iMaxMagicLevel;
+
+            m_iInvasionProbability = iInvasionProbability;
+
+            m_iInvadersMaxTechLevel = iInvadersMaxTechLevel;
+            m_iInvadersMaxMagicLevel = iInvadersMaxMagicLevel;
 
             PopulateWorld(iRacesCount, true);
 
@@ -1194,7 +1239,7 @@ namespace Socium
             {
                 if (!pState.Forbidden)
                 {
-                    pState.BuildCapital(m_aProvinces.Length / (2*m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast);
+                    pState.BuildCapital(m_aProvinces.Length / (2*m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iMinTechLevel, m_iMaxTechLevel);
                     if(!bFast)
                         pState.BuildRoads(3, fCycleShift);
                 }
