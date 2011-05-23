@@ -99,12 +99,6 @@ namespace MapDrawEngine
         private const int QUADRANTS_COUNT = 8;
 
         /// <summary>
-        /// Контуры конкретных континентов - для определения, над каким из них находится мышь.
-        /// В масштабе 1:100 для ускорения.
-        /// </summary>
-        private Dictionary<ContinentX, GraphicsPath> m_cContinentBorders = new Dictionary<ContinentX, GraphicsPath>();
-
-        /// <summary>
         /// Контуры конкретных географических регионов - для определения, над каким из них находится мышь.
         /// В масштабе 1:100 для ускорения.
         /// </summary>
@@ -742,7 +736,6 @@ namespace MapDrawEngine
             DateTime pTime1 = DateTime.Now;
 
             //расчистим рабочее место
-            m_cContinentBorders.Clear();
             m_cAreaBorders.Clear();
             m_cProvinceBorders.Clear();
             m_cLandMassBorders.Clear();
@@ -794,8 +787,11 @@ namespace MapDrawEngine
                     //добавим вычисленный простой контур к общему рисунку контура тектонической плиты
                     pPath.AddPolygon(aPts);
                     //добавим вычисленный простой контур к рисунку контура тектонической плиты в тех квадрантах, через которые он проходит.
-                    foreach(MapQuadrant pQuad in aQuads)
-                        pQuad.m_cLayers[MapLayer.LandMasses].AddPolygon(aPts);
+                    foreach (MapQuadrant pQuad in aQuads)
+                    {
+                        pQuad.m_cLayers[MapLayer.LandMasses].StartFigure();
+                        pQuad.m_cLayers[MapLayer.LandMasses].AddLines(aPts);
+                    }
                 }
                 //запомним общий рисунок контура тектонической плиты - чтобы потом определять вхождение указателя мыши в него.
                 m_cLandMassBorders[pLandMass] = pPath;
@@ -813,7 +809,8 @@ namespace MapDrawEngine
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
-                            pQuad.m_cLayers[MapLayer.Lands].AddPolygon(aPts);
+                            pQuad.m_cLayers[MapLayer.Lands].StartFigure();
+                            pQuad.m_cLayers[MapLayer.Lands].AddLines(aPts);
 
                             if (!pQuad.m_cModes[MapMode.Humidity].ContainsKey(pBrush))
                                 pQuad.m_cModes[MapMode.Humidity][pBrush] = new GraphicsPath();
@@ -831,7 +828,10 @@ namespace MapDrawEngine
                         {
                             pPath.AddPolygon(aPts);
                             foreach (MapQuadrant pQuad in aQuads)
-                                pQuad.m_cLayers[MapLayer.Locations].AddPolygon(aPts);
+                            {
+                                pQuad.m_cLayers[MapLayer.Locations].StartFigure();
+                                pQuad.m_cLayers[MapLayer.Locations].AddLines(aPts);
+                            }
                         }
                         m_cLocationBorders[pLoc] = pPath;
                         //добавим информацию о метке на карте
@@ -845,14 +845,12 @@ namespace MapDrawEngine
             foreach (ContinentX pContinent in m_pWorld.m_aContinents)
             {
                 aPoints = BuildPath(pContinent.m_cFirstLines, true, out aQuads);
-                pPath = new GraphicsPath();
                 foreach (var aPts in aPoints)
-                {
-                    pPath.AddPolygon(aPts);
                     foreach (MapQuadrant pQuad in aQuads)
-                        pQuad.m_cLayers[MapLayer.Continents].AddPolygon(aPts);
-                }
-                m_cContinentBorders[pContinent] = pPath;
+                    {
+                        pQuad.m_cLayers[MapLayer.Continents].StartFigure();
+                        pQuad.m_cLayers[MapLayer.Continents].AddLines(aPts);
+                    }
 
                 //вычислим контуры государств
                 foreach (State pState in pContinent.m_cStates)
@@ -870,7 +868,8 @@ namespace MapDrawEngine
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
-                            pQuad.m_cLayers[MapLayer.States].AddPolygon(aPts);
+                            pQuad.m_cLayers[MapLayer.States].StartFigure();
+                            pQuad.m_cLayers[MapLayer.States].AddLines(aPts);
 
                             if (!pQuad.m_cModes[MapMode.TechLevel].ContainsKey(pTechBrush))
                                 pQuad.m_cModes[MapMode.TechLevel][pTechBrush] = new GraphicsPath();
@@ -933,7 +932,10 @@ namespace MapDrawEngine
                     foreach (MapQuadrant pQuad in aQuads)
                     {
                         if (!pProvince.m_pCenter.IsWater)
-                            pQuad.m_cLayers[MapLayer.Provincies].AddPolygon(aPts);
+                        {
+                            pPath.StartFigure();
+                            pQuad.m_cLayers[MapLayer.Provincies].AddLines(aPts);
+                        }
 
                         if (!pQuad.m_cModes[MapMode.Nations].ContainsKey(pBrush))
                             pQuad.m_cModes[MapMode.Nations][pBrush] = new GraphicsPath();
@@ -967,9 +969,6 @@ namespace MapDrawEngine
             //для ускорения выполнения функции GraphicsPath::IsVisible(x,y)
             Matrix pScaleMatrix = new Matrix();
             pScaleMatrix.Scale(0.01f, 0.01f);
-
-            foreach (var pPair in m_cContinentBorders)
-                pPair.Value.Transform(pScaleMatrix);
 
             foreach (var pPair in m_cAreaBorders)
                 pPair.Value.Transform(pScaleMatrix);
@@ -1876,15 +1875,15 @@ namespace MapDrawEngine
             m_pFocusedLocation = null;
 
             bool bContinent = false;
-            foreach (ContinentX pContinent in m_pWorld.m_aContinents)
+            foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
             {
-                GraphicsPath pContinentPath = m_cContinentBorders[pContinent];
+                GraphicsPath pLandMassPath = m_cLandMassBorders[pLandMass];
 
-                if (pContinentPath.IsVisible(iX, iY))
+                if (pLandMassPath.IsVisible(iX, iY) && !pLandMass.IsWater)
                 {
-                    m_pFocusedContinent = pContinent;
+                    m_pFocusedContinent = pLandMass.Owner as ContinentX;
 
-                    foreach (State pState in pContinent.m_cStates)
+                    foreach (State pState in m_pFocusedContinent.m_cStates)
                     {
                         GraphicsPath pStatePath = m_cStateBorders[pState];
 
