@@ -48,11 +48,9 @@
             this.PartialMap = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.RacesCount = new System.Windows.Forms.HScrollBar();
-            this.ProvinciesCount = new System.Windows.Forms.HScrollBar();
             this.StatesCount = new System.Windows.Forms.HScrollBar();
             this.button6 = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
@@ -79,7 +77,6 @@
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -93,6 +90,9 @@
             this.comboBox6 = new System.Windows.Forms.ComboBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.label23 = new System.Windows.Forms.Label();
+            this.listBox4 = new System.Windows.Forms.ListBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.label20 = new System.Windows.Forms.Label();
             this.listBox3 = new System.Windows.Forms.ListBox();
@@ -106,9 +106,7 @@
             this.comboBox9 = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.comboBox8 = new System.Windows.Forms.ComboBox();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.label23 = new System.Windows.Forms.Label();
-            this.listBox4 = new System.Windows.Forms.ListBox();
+            this.comboBox10 = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ContinentsCount)).BeginInit();
@@ -122,12 +120,12 @@
             this.groupBox5.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabControl2.SuspendLayout();
+            this.tabPage6.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox9.SuspendLayout();
-            this.tabPage6.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -335,16 +333,14 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.RacesCount);
-            this.groupBox3.Controls.Add(this.ProvinciesCount);
             this.groupBox3.Controls.Add(this.StatesCount);
             this.groupBox3.Controls.Add(this.button6);
             this.groupBox3.Controls.Add(this.label15);
-            this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.button4);
             this.groupBox3.Controls.Add(this.label12);
             this.groupBox3.Location = new System.Drawing.Point(19, 279);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(434, 73);
+            this.groupBox3.Size = new System.Drawing.Size(434, 46);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Political system:";
@@ -362,27 +358,14 @@
             this.RacesCount.Value = 24;
             this.RacesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
-            // ProvinciesCount
-            // 
-            this.ProvinciesCount.LargeChange = 5;
-            this.ProvinciesCount.Location = new System.Drawing.Point(323, 48);
-            this.ProvinciesCount.Maximum = 250;
-            this.ProvinciesCount.Minimum = 50;
-            this.ProvinciesCount.Name = "ProvinciesCount";
-            this.ProvinciesCount.Size = new System.Drawing.Size(102, 16);
-            this.ProvinciesCount.TabIndex = 25;
-            this.toolTip1.SetToolTip(this.ProvinciesCount, "100");
-            this.ProvinciesCount.Value = 100;
-            this.ProvinciesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
             // StatesCount
             // 
             this.StatesCount.LargeChange = 5;
-            this.StatesCount.Location = new System.Drawing.Point(83, 48);
+            this.StatesCount.Location = new System.Drawing.Point(293, 21);
             this.StatesCount.Maximum = 25;
             this.StatesCount.Minimum = 5;
             this.StatesCount.Name = "StatesCount";
-            this.StatesCount.Size = new System.Drawing.Size(102, 16);
+            this.StatesCount.Size = new System.Drawing.Size(89, 16);
             this.StatesCount.TabIndex = 24;
             this.toolTip1.SetToolTip(this.StatesCount, "20");
             this.StatesCount.Value = 20;
@@ -391,7 +374,7 @@
             // button6
             // 
             this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button6.Location = new System.Drawing.Point(185, 46);
+            this.button6.Location = new System.Drawing.Point(382, 19);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(34, 20);
             this.button6.TabIndex = 23;
@@ -402,7 +385,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 48);
+            this.label15.Location = new System.Drawing.Point(220, 22);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(70, 13);
             this.label15.TabIndex = 21;
@@ -410,17 +393,6 @@
             this.toolTip1.SetToolTip(this.label15, "How many different states (kingdoms, clans, republics etc.) will be there.\r\nThat\'" +
                     "s not a precise parameter, becouse real count couldn\'t be less then \r\ntotal coun" +
                     "t of continents and islands on map.");
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(225, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 13);
-            this.label2.TabIndex = 18;
-            this.label2.Text = "Provincies count:";
-            this.toolTip1.SetToolTip(this.label2, "Province is part of state, consists from a central settlement and  adjacent  land" +
-                    "s.\r\nEach state contains at least 1 province.\r\n");
             // 
             // button4
             // 
@@ -456,9 +428,9 @@
             // 
             // button8
             // 
-            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button8.Location = new System.Drawing.Point(155, 645);
+            this.button8.Location = new System.Drawing.Point(155, 616);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(162, 31);
             this.button8.TabIndex = 8;
@@ -468,13 +440,13 @@
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.button5, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.button7, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(12, 605);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(12, 579);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -704,15 +676,6 @@
             this.label11.TabIndex = 31;
             this.label11.Text = "Probability for every race to be an invasion from more advanced world:";
             // 
-            // hScrollBar1
-            // 
-            this.hScrollBar1.Location = new System.Drawing.Point(323, 16);
-            this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(102, 16);
-            this.hScrollBar1.TabIndex = 32;
-            this.hScrollBar1.Value = 5;
-            this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
             // comboBox4
             // 
             this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -751,10 +714,10 @@
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.listBox1);
             this.tabPage1.Controls.Add(this.groupBox6);
-            this.tabPage1.Location = new System.Drawing.Point(4, 27);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(440, 230);
+            this.tabPage1.Size = new System.Drawing.Size(440, 235);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "World maps";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -786,10 +749,10 @@
             this.tabPage2.Controls.Add(this.label19);
             this.tabPage2.Controls.Add(this.listBox2);
             this.tabPage2.Controls.Add(this.groupBox5);
-            this.tabPage2.Location = new System.Drawing.Point(4, 27);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(440, 230);
+            this.tabPage2.Size = new System.Drawing.Size(440, 235);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Adventure region maps";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -847,32 +810,68 @@
             this.tabPage3.Controls.Add(this.groupBox4);
             this.tabPage3.Controls.Add(this.groupBox2);
             this.tabPage3.Controls.Add(this.groupBox1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 27);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(440, 230);
+            this.tabPage3.Size = new System.Drawing.Size(440, 235);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Custom map";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabControl2
             // 
-            this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Controls.Add(this.tabPage6);
+            this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Controls.Add(this.tabPage5);
-            this.tabControl2.Location = new System.Drawing.Point(12, 358);
+            this.tabControl2.Location = new System.Drawing.Point(12, 331);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
             this.tabControl2.Size = new System.Drawing.Size(448, 130);
             this.tabControl2.TabIndex = 16;
             // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.label23);
+            this.tabPage6.Controls.Add(this.listBox4);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Size = new System.Drawing.Size(440, 104);
+            this.tabPage6.TabIndex = 2;
+            this.tabPage6.Text = "Fictional society presets";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // label23
+            // 
+            this.label23.Location = new System.Drawing.Point(175, 6);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(255, 92);
+            this.label23.TabIndex = 13;
+            this.label23.Text = "label23";
+            // 
+            // listBox4
+            // 
+            this.listBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.listBox4.FormattingEnabled = true;
+            this.listBox4.IntegralHeight = false;
+            this.listBox4.Items.AddRange(new object[] {
+            "Historical - antiquity",
+            "Historical - medieval",
+            "Historical - renessance",
+            "Fantasy - low magic"});
+            this.listBox4.Location = new System.Drawing.Point(3, 6);
+            this.listBox4.Name = "listBox4";
+            this.listBox4.ScrollAlwaysVisible = true;
+            this.listBox4.Size = new System.Drawing.Size(151, 92);
+            this.listBox4.TabIndex = 12;
+            this.listBox4.SelectedIndexChanged += new System.EventHandler(this.listBox4_SelectedIndexChanged);
+            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.label20);
             this.tabPage4.Controls.Add(this.listBox3);
-            this.tabPage4.Location = new System.Drawing.Point(4, 27);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(440, 99);
+            this.tabPage4.Size = new System.Drawing.Size(440, 104);
             this.tabPage4.TabIndex = 0;
             this.tabPage4.Text = "Historical society presets";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -906,10 +905,10 @@
             // 
             this.tabPage5.Controls.Add(this.groupBox8);
             this.tabPage5.Controls.Add(this.groupBox7);
-            this.tabPage5.Location = new System.Drawing.Point(4, 27);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(440, 99);
+            this.tabPage5.Size = new System.Drawing.Size(440, 104);
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Custom society pattern";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -959,13 +958,13 @@
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.comboBox10);
             this.groupBox9.Controls.Add(this.label18);
             this.groupBox9.Controls.Add(this.comboBox9);
             this.groupBox9.Controls.Add(this.label17);
             this.groupBox9.Controls.Add(this.comboBox8);
             this.groupBox9.Controls.Add(this.label11);
-            this.groupBox9.Controls.Add(this.hScrollBar1);
-            this.groupBox9.Location = new System.Drawing.Point(19, 494);
+            this.groupBox9.Location = new System.Drawing.Point(19, 467);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(434, 106);
             this.groupBox9.TabIndex = 33;
@@ -1010,48 +1009,27 @@
             this.comboBox8.TabIndex = 33;
             this.comboBox8.SelectedIndexChanged += new System.EventHandler(this.comboBox8_SelectedIndexChanged);
             // 
-            // tabPage6
+            // comboBox10
             // 
-            this.tabPage6.Controls.Add(this.label23);
-            this.tabPage6.Controls.Add(this.listBox4);
-            this.tabPage6.Location = new System.Drawing.Point(4, 27);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Size = new System.Drawing.Size(440, 99);
-            this.tabPage6.TabIndex = 2;
-            this.tabPage6.Text = "Fictional society presets";
-            this.tabPage6.UseVisualStyleBackColor = true;
-            // 
-            // label23
-            // 
-            this.label23.Location = new System.Drawing.Point(175, 6);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(255, 92);
-            this.label23.TabIndex = 13;
-            this.label23.Text = "label23";
-            // 
-            // listBox4
-            // 
-            this.listBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.listBox4.FormattingEnabled = true;
-            this.listBox4.IntegralHeight = false;
-            this.listBox4.Items.AddRange(new object[] {
-            "Historical - antiquity",
-            "Historical - medieval",
-            "Historical - renessance",
-            "Fantasy - low magic"});
-            this.listBox4.Location = new System.Drawing.Point(3, 6);
-            this.listBox4.Name = "listBox4";
-            this.listBox4.ScrollAlwaysVisible = true;
-            this.listBox4.Size = new System.Drawing.Size(151, 92);
-            this.listBox4.TabIndex = 12;
-            this.listBox4.SelectedIndexChanged += new System.EventHandler(this.listBox4_SelectedIndexChanged);
+            this.comboBox10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox10.FormattingEnabled = true;
+            this.comboBox10.Items.AddRange(new object[] {
+            "none",
+            "very rare (~1%)",
+            "rare (~5%)",
+            "often (~20%)",
+            "all (100%)"});
+            this.comboBox10.Location = new System.Drawing.Point(320, 16);
+            this.comboBox10.Name = "comboBox10";
+            this.comboBox10.Size = new System.Drawing.Size(105, 21);
+            this.comboBox10.TabIndex = 37;
             // 
             // GenerationForm
             // 
             this.AcceptButton = this.button8;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(472, 683);
+            this.ClientSize = new System.Drawing.Size(472, 656);
             this.Controls.Add(this.groupBox9);
             this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.tabControl1);
@@ -1082,6 +1060,7 @@
             this.groupBox5.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
+            this.tabPage6.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
@@ -1090,7 +1069,6 @@
             this.groupBox7.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
-            this.tabPage6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1107,7 +1085,6 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button button7;
@@ -1130,7 +1107,6 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.HScrollBar StatesCount;
-        private System.Windows.Forms.HScrollBar ProvinciesCount;
         private System.Windows.Forms.HScrollBar RacesCount;
         private System.Windows.Forms.HScrollBar WaterPercent;
         private System.Windows.Forms.HScrollBar LandMassesCount;
@@ -1141,7 +1117,6 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.ComboBox comboBox5;
         private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.HScrollBar hScrollBar1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox comboBox3;
@@ -1176,5 +1151,6 @@
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.ListBox listBox4;
+        private System.Windows.Forms.ComboBox comboBox10;
     }
 }

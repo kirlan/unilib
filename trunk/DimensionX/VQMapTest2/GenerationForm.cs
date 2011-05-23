@@ -108,6 +108,8 @@ namespace VQMapTest2
             listBox4.Items.AddRange(m_aFictionalSocietyPresets);
             if (listBox4.Items.Count > 0)
                 listBox4.SelectedIndex = 0;
+
+            comboBox10.SelectedIndex = 0;
         }
 
         private void RndEquator_Click(object sender, EventArgs e)
@@ -135,11 +137,6 @@ namespace VQMapTest2
         private void RndStates_Click(object sender, EventArgs e)
         {
             StatesCount.Value = StatesCount.Minimum + Rnd.Get((int)StatesCount.Maximum - (int)StatesCount.Minimum);
-        }
-
-        private void RndProvincies_Click(object sender, EventArgs e)
-        {
-            ProvinciesCount.Value = ProvinciesCount.Minimum + Rnd.Get((int)ProvinciesCount.Maximum - (int)ProvinciesCount.Minimum);
         }
 
         private void RndContinents_Click(object sender, EventArgs e)
@@ -185,7 +182,23 @@ namespace VQMapTest2
                 m_cLastUsedLocations = m_cLocations;
             }
 
-            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, (int)ProvinciesCount.Value, (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, (int)hScrollBar1.Value, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
+            int iInvasionProb = 0;
+            switch (comboBox10.SelectedIndex)
+            {
+                case 1:
+                    iInvasionProb = 1;
+                    break;
+                case 2:
+                    iInvasionProb = 5;
+                    break;
+                case 3:
+                    iInvasionProb = 20;
+                    break;
+                case 4:
+                    iInvasionProb = 100;
+                    break;
+            }
+            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, Math.Min((int)StatesCount.Value * 5, 300), (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, iInvasionProb, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
             
             Cursor = Cursors.Arrow;
             groupBox1.Enabled = true;
@@ -263,28 +276,6 @@ namespace VQMapTest2
 
             RacesCount.Maximum = Math.Min(40, iNotOcean / 10) + RacesCount.LargeChange - 1;
             RacesCount.Minimum = Math.Min(6, iNotOcean / 20);
-
-            if (ProvinciesCount.Minimum > Math.Min(100, iNotOcean / 20))
-                ProvinciesCount.Minimum = Math.Min(100, iNotOcean / 20);
-
-            if (ProvinciesCount.Maximum < Math.Min(500, iNotOcean / 10))
-                ProvinciesCount.Maximum = Math.Min(500, iNotOcean / 10);
-
-            if (ProvinciesCount.Value > Math.Min(500, iNotOcean / 10))
-                ProvinciesCount.Value = Math.Min(500, iNotOcean / 10);
-
-            if (ProvinciesCount.Value < Math.Min(100, iNotOcean / 20))
-                ProvinciesCount.Value = Math.Min(100, iNotOcean / 20);
-
-            ProvinciesCount.Maximum = Math.Min(500, iNotOcean / 10) + ProvinciesCount.LargeChange - 1;
-            ProvinciesCount.Minimum = Math.Min(100, iNotOcean / 20);
-            //if (ProvinciesCount.Maximum < 250)
-            //    ProvinciesCount.Value = ProvinciesCount.Maximum;
-            //else
-            //    if (ProvinciesCount.Minimum > 250)
-            //        ProvinciesCount.Value = ProvinciesCount.Minimum;
-            //    else
-            //        ProvinciesCount.Value = 250;
 
             if (StatesCount.Minimum > Math.Min(5, iNotOcean / 40))
                 StatesCount.Minimum = Math.Min(5, iNotOcean / 40);
