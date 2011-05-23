@@ -85,6 +85,7 @@ namespace LandscapeGeneration
             }
 
             m_sDescription = sDescription;
+            m_bLoaded = true;
         }
 
         /// <summary>
@@ -120,6 +121,7 @@ namespace LandscapeGeneration
                 }
 
                 m_sDescription = sDescription;
+                m_bLoaded = true;
             }
             else
                 throw new ArgumentException(string.Format("Grid type '{0}' is not implemented yet!", eGridType));
@@ -486,6 +488,7 @@ namespace LandscapeGeneration
             using (BinaryWriter binWriter =
                 new BinaryWriter(File.Open(sFilename, FileMode.Create)))
             {
+                m_sFilename = sFilename;
                 binWriter.Write(s_sHeader);
                 binWriter.Write(s_iVersion);
                 binWriter.Write(m_sDescription);
