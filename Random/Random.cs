@@ -55,6 +55,24 @@ namespace Random
         }
 
         /// <summary>
+        /// Returns exponentially random element of given enum.
+        /// First elements of enum have a much higher chances to be choosen.
+        /// </summary>
+        /// <param name="enumType">Enum type (by typeof(EnumName))</param>
+        /// <returns></returns>
+        public static object GetExp(Type enumType, int iPow)
+        {
+            Array pArray = Enum.GetValues(enumType);
+
+            int i = Get(100);
+            double m = Math.Pow(i, iPow);
+            double n = Math.Pow(100, iPow);
+            int iChance = (int)(m * pArray.Length / n);
+
+            return pArray.GetValue(iChance);
+        }
+
+        /// <summary>
         /// Returns random element from given char collection
         /// </summary>
         /// <param name="cColl"></param>

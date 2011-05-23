@@ -197,8 +197,8 @@ namespace Socium
 
         private void SetWorldLevels()
         {
-            m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
-            m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+            m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.GetExp(typeof(MagicAbilityPrevalence), 4);
+            m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.GetExp(typeof(MagicAbilityDistribution), 4);
 
             //int iTotalLevel = 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000);
             //int iBalance = Rnd.Get(201);
