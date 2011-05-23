@@ -41,8 +41,10 @@ namespace VQMapTest2
             new SocietyPreset("Antique mythology", "A world of antique mythology - just a usual antique world, but with a bit of magic...", 0, 1, 1, 2),
             new SocietyPreset("Fantasy - low magic", "A medieval world with a bit of magic - like Knights of the Round Table, Lord of the Rings, etc.", 0, 2, 1, 3),
             new SocietyPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 0, 2, 4, 5),
+            new SocietyPreset("Superheroes", "A modern world with a bit of magic (aka supernatural abilities) - like Superman, Fantastic Four, Spiderman, etc.", 4, 5, 1, 3),
+            new SocietyPreset("Urban fantasy", "A modern world with a lot of magic - vampires, werewolfs, voodoo, secret societies, etc.", 4, 5, 4, 5),
             new SocietyPreset("Cyberpunk", "Nearest future world without magic - mega-corporations, industrial espionage, advanced technologies etc.", 4, 6, 0, 0),
-            new SocietyPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - space travels, energy weapons, etc.", 6, 7, 0, 3),
+            new SocietyPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - space travels, energy weapons, etc.", 6, 7, 1, 3),
         };
 
         private string m_sWorkingDir = "";

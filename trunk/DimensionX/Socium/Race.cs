@@ -95,13 +95,13 @@ namespace Socium
             m_pCustoms = new Customs();
 
             if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+                m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.GetExp(typeof(MagicAbilityPrevalence), 4);
             else
                 if (iOldLevel == 0)
                     m_eMagicAbilityPrevalence = pWorld.m_eMagicAbilityPrevalence;
 
             if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+                m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.GetExp(typeof(MagicAbilityDistribution), 4);
             else
                 if (iOldLevel == 0)
                     m_eMagicAbilityDistribution = pWorld.m_eMagicAbilityDistribution;
