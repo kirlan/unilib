@@ -32,19 +32,23 @@ namespace VQMapTest2
             new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 300, 15, 90, 50, 100),
         };
 
-        SocietyPreset[] m_aSocietyPresets = new SocietyPreset[] 
+        SocietyPreset[] m_aHistoricalSocietyPresets = new SocietyPreset[] 
         { 
-            new SocietyPreset("Historical - antiquity", "An antique world without magic - like Ancient Greece, Rome, Egypt, Assyria, etc.", 0, 1, 0, 0),
-            new SocietyPreset("Historical - medieval", "A medieval world without magic - castles, knights, tournaments, etc.", 0, 2, 0, 0),
-            new SocietyPreset("Historical - renaissance", "A renaissance world without magic - musketeers, geographic exploration, etc.", 1, 3, 0, 0),
-            new SocietyPreset("Historical - modern", "A modern world without magic - railroads, aviation, world wars, etc.", 4, 5, 0, 0),
+            new SocietyPreset("Antiquity", "An antique world without magic - like Ancient Greece, Rome, Egypt, Assyria, etc.", 0, 1, 0, 0),
+            new SocietyPreset("Medieval", "A medieval world without magic - castles, knights, tournaments, etc.", 0, 2, 0, 0),
+            new SocietyPreset("Renaissance", "A renaissance world without magic - musketeers, geographic exploration, etc.", 1, 3, 0, 0),
+            new SocietyPreset("Modern", "A modern world without magic - railroads, aviation, world wars, etc.", 4, 5, 0, 0),
+        };
+
+        SocietyPreset[] m_aFictionalSocietyPresets = new SocietyPreset[] 
+        { 
             new SocietyPreset("Antique mythology", "A world of antique mythology - just a usual antique world, but with a bit of magic...", 0, 1, 1, 2),
             new SocietyPreset("Fantasy - low magic", "A medieval world with a bit of magic - like Knights of the Round Table, Lord of the Rings, etc.", 0, 2, 1, 3),
             new SocietyPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 0, 2, 4, 5),
             new SocietyPreset("Superheroes", "A modern world with a bit of magic (aka supernatural abilities) - like Superman, Fantastic Four, Spiderman, etc.", 4, 5, 1, 3),
             new SocietyPreset("Urban fantasy", "A modern world with a lot of magic - vampires, werewolfs, voodoo, secret societies, etc.", 4, 5, 4, 5),
-            new SocietyPreset("Cyberpunk", "Nearest future world without magic - mega-corporations, industrial espionage, advanced technologies etc.", 4, 6, 0, 0),
-            new SocietyPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - space travels, energy weapons, etc.", 6, 7, 1, 3),
+            new SocietyPreset("Cyberpunk", "Nearest future world without magic - advanced technologies, mega-corporations, industrial espionage, etc.", 4, 6, 0, 0),
+            new SocietyPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - like Star Wars, Star Trek, etc.", 6, 7, 1, 3),
         };
 
         private string m_sWorkingDir = "";
@@ -96,9 +100,14 @@ namespace VQMapTest2
                 listBox2.SelectedIndex = 0;
 
             listBox3.Items.Clear();
-            listBox3.Items.AddRange(m_aSocietyPresets);
+            listBox3.Items.AddRange(m_aHistoricalSocietyPresets);
             if (listBox3.Items.Count > 0)
                 listBox3.SelectedIndex = 0;
+
+            listBox4.Items.Clear();
+            listBox4.Items.AddRange(m_aFictionalSocietyPresets);
+            if (listBox4.Items.Count > 0)
+                listBox4.SelectedIndex = 0;
         }
 
         private void RndEquator_Click(object sender, EventArgs e)
@@ -679,6 +688,21 @@ namespace VQMapTest2
                 comboBox6_SelectedIndexChanged(sender, e);
             if (tabControl1.SelectedIndex == 2)
                 comboBox1_SelectedIndexChanged(sender, e);
+        }
+
+        private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox4.SelectedIndex != -1)
+            {
+                SocietyPreset pPreset = listBox4.SelectedItem as SocietyPreset;
+                label23.Text = pPreset.m_sDescription;
+
+                comboBox2.SelectedIndex = pPreset.m_iMinTechLevel;
+                comboBox3.SelectedIndex = pPreset.m_iMaxTechLevel - pPreset.m_iMinTechLevel;
+
+                comboBox4.SelectedIndex = pPreset.m_iMinMagicLevel;
+                comboBox5.SelectedIndex = pPreset.m_iMaxMagicLevel - pPreset.m_iMinMagicLevel;
+            }
         }
     }
 }

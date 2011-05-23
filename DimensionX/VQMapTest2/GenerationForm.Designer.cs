@@ -106,6 +106,9 @@
             this.comboBox9 = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.comboBox8 = new System.Windows.Forms.ComboBox();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.label23 = new System.Windows.Forms.Label();
+            this.listBox4 = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ContinentsCount)).BeginInit();
@@ -124,6 +127,7 @@
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox9.SuspendLayout();
+            this.tabPage6.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -747,10 +751,10 @@
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.listBox1);
             this.tabPage1.Controls.Add(this.groupBox6);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Location = new System.Drawing.Point(4, 27);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(440, 235);
+            this.tabPage1.Size = new System.Drawing.Size(440, 230);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "World maps";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -782,10 +786,10 @@
             this.tabPage2.Controls.Add(this.label19);
             this.tabPage2.Controls.Add(this.listBox2);
             this.tabPage2.Controls.Add(this.groupBox5);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 27);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(440, 235);
+            this.tabPage2.Size = new System.Drawing.Size(440, 230);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Adventure region maps";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -843,9 +847,9 @@
             this.tabPage3.Controls.Add(this.groupBox4);
             this.tabPage3.Controls.Add(this.groupBox2);
             this.tabPage3.Controls.Add(this.groupBox1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Location = new System.Drawing.Point(4, 27);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(440, 235);
+            this.tabPage3.Size = new System.Drawing.Size(440, 230);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Custom map";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -853,6 +857,7 @@
             // tabControl2
             // 
             this.tabControl2.Controls.Add(this.tabPage4);
+            this.tabControl2.Controls.Add(this.tabPage6);
             this.tabControl2.Controls.Add(this.tabPage5);
             this.tabControl2.Location = new System.Drawing.Point(12, 358);
             this.tabControl2.Name = "tabControl2";
@@ -864,12 +869,12 @@
             // 
             this.tabPage4.Controls.Add(this.label20);
             this.tabPage4.Controls.Add(this.listBox3);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Location = new System.Drawing.Point(4, 27);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(440, 104);
+            this.tabPage4.Size = new System.Drawing.Size(440, 99);
             this.tabPage4.TabIndex = 0;
-            this.tabPage4.Text = "Society presets";
+            this.tabPage4.Text = "Historical society presets";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // label20
@@ -901,10 +906,10 @@
             // 
             this.tabPage5.Controls.Add(this.groupBox8);
             this.tabPage5.Controls.Add(this.groupBox7);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Location = new System.Drawing.Point(4, 27);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(440, 104);
+            this.tabPage5.Size = new System.Drawing.Size(440, 99);
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Custom society pattern";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1005,6 +1010,42 @@
             this.comboBox8.TabIndex = 33;
             this.comboBox8.SelectedIndexChanged += new System.EventHandler(this.comboBox8_SelectedIndexChanged);
             // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.label23);
+            this.tabPage6.Controls.Add(this.listBox4);
+            this.tabPage6.Location = new System.Drawing.Point(4, 27);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Size = new System.Drawing.Size(440, 99);
+            this.tabPage6.TabIndex = 2;
+            this.tabPage6.Text = "Fictional society presets";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // label23
+            // 
+            this.label23.Location = new System.Drawing.Point(175, 6);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(255, 92);
+            this.label23.TabIndex = 13;
+            this.label23.Text = "label23";
+            // 
+            // listBox4
+            // 
+            this.listBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.listBox4.FormattingEnabled = true;
+            this.listBox4.IntegralHeight = false;
+            this.listBox4.Items.AddRange(new object[] {
+            "Historical - antiquity",
+            "Historical - medieval",
+            "Historical - renessance",
+            "Fantasy - low magic"});
+            this.listBox4.Location = new System.Drawing.Point(3, 6);
+            this.listBox4.Name = "listBox4";
+            this.listBox4.ScrollAlwaysVisible = true;
+            this.listBox4.Size = new System.Drawing.Size(151, 92);
+            this.listBox4.TabIndex = 12;
+            this.listBox4.SelectedIndexChanged += new System.EventHandler(this.listBox4_SelectedIndexChanged);
+            // 
             // GenerationForm
             // 
             this.AcceptButton = this.button8;
@@ -1049,6 +1090,7 @@
             this.groupBox7.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1131,5 +1173,8 @@
         private System.Windows.Forms.ComboBox comboBox9;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.ComboBox comboBox8;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.ListBox listBox4;
     }
 }
