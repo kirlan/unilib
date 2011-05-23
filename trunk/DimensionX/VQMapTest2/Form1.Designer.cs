@@ -105,10 +105,10 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox1.Location = new System.Drawing.Point(863, 28);
+            this.groupBox1.Location = new System.Drawing.Point(962, 28);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(48, 139);
+            this.groupBox1.Size = new System.Drawing.Size(51, 139);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Scale";
@@ -135,55 +135,59 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(42, 120);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(45, 120);
             this.tableLayoutPanel2.TabIndex = 4;
             // 
             // radioButton1
             // 
-            this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.radioButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.radioButton1.Location = new System.Drawing.Point(3, 3);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(36, 17);
+            this.radioButton1.Size = new System.Drawing.Size(39, 24);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "x1";
+            this.radioButton1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
             // radioButton2
             // 
-            this.radioButton2.AutoSize = true;
+            this.radioButton2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radioButton2.Location = new System.Drawing.Point(3, 33);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(36, 17);
+            this.radioButton2.Size = new System.Drawing.Size(39, 24);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.Text = "x4";
+            this.radioButton2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
             // radioButton3
             // 
-            this.radioButton3.AutoSize = true;
+            this.radioButton3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.radioButton3.Location = new System.Drawing.Point(3, 63);
             this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(33, 16);
+            this.radioButton3.Size = new System.Drawing.Size(39, 24);
             this.radioButton3.TabIndex = 2;
             this.radioButton3.Text = "x8";
+            this.radioButton3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
             // radioButton4
             // 
-            this.radioButton4.AutoSize = true;
+            this.radioButton4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radioButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.radioButton4.Location = new System.Drawing.Point(3, 93);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(35, 13);
+            this.radioButton4.Size = new System.Drawing.Size(39, 24);
             this.radioButton4.TabIndex = 3;
             this.radioButton4.Text = "x16";
+            this.radioButton4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton4.UseVisualStyleBackColor = true;
             this.radioButton4.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
@@ -209,9 +213,9 @@
             this.groupBox4.Controls.Add(this.button1);
             this.groupBox4.Controls.Add(this.tabControl2);
             this.groupBox4.Controls.Add(this.comboBox1);
-            this.groupBox4.Location = new System.Drawing.Point(654, 226);
+            this.groupBox4.Location = new System.Drawing.Point(756, 226);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(257, 302);
+            this.groupBox4.Size = new System.Drawing.Size(257, 509);
             this.groupBox4.TabIndex = 12;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "States:";
@@ -236,7 +240,7 @@
             this.tabControl2.Location = new System.Drawing.Point(9, 46);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(239, 250);
+            this.tabControl2.Size = new System.Drawing.Size(239, 457);
             this.tabControl2.TabIndex = 22;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
@@ -247,7 +251,7 @@
             this.tabPage7.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(231, 219);
+            this.tabPage7.Size = new System.Drawing.Size(231, 426);
             this.tabPage7.TabIndex = 0;
             this.tabPage7.Text = "General Info";
             this.tabPage7.UseVisualStyleBackColor = true;
@@ -258,7 +262,7 @@
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox1.Location = new System.Drawing.Point(3, 3);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(225, 213);
+            this.richTextBox1.Size = new System.Drawing.Size(225, 420);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             this.richTextBox1.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.richTextBox1_LinkClicked);
@@ -304,7 +308,7 @@
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(450, 500);
+            this.tabControl1.Size = new System.Drawing.Size(450, 707);
             this.tabControl1.TabIndex = 13;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.MapModeChanged);
             // 
@@ -313,7 +317,7 @@
             this.tabPage1.Location = new System.Drawing.Point(469, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(0, 492);
+            this.tabPage1.Size = new System.Drawing.Size(0, 699);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Land types";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -377,7 +381,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(664, 172);
+            this.label7.Location = new System.Drawing.Point(766, 172);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(35, 13);
             this.label7.TabIndex = 14;
@@ -387,7 +391,7 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(664, 191);
+            this.label8.Location = new System.Drawing.Point(766, 191);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(35, 13);
             this.label8.TabIndex = 15;
@@ -403,7 +407,7 @@
             this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.label1.Location = new System.Drawing.Point(27, 32);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(618, 493);
+            this.label1.Size = new System.Drawing.Size(720, 700);
             this.label1.TabIndex = 17;
             this.label1.Text = "World is\'n built yet...";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -412,7 +416,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(664, 204);
+            this.label2.Location = new System.Drawing.Point(766, 204);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 18;
@@ -428,7 +432,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.menuStrip1.Size = new System.Drawing.Size(914, 26);
+            this.menuStrip1.Size = new System.Drawing.Size(1016, 26);
             this.menuStrip1.TabIndex = 19;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -691,9 +695,9 @@
             // 
             this.miniMapDraw1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.miniMapDraw1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.miniMapDraw1.Location = new System.Drawing.Point(654, 28);
+            this.miniMapDraw1.Location = new System.Drawing.Point(756, 28);
             this.miniMapDraw1.Name = "miniMapDraw1";
-            this.miniMapDraw1.Size = new System.Drawing.Size(206, 139);
+            this.miniMapDraw1.Size = new System.Drawing.Size(203, 139);
             this.miniMapDraw1.TabIndex = 21;
             // 
             // mapDraw1
@@ -715,14 +719,14 @@
             this.mapDraw1.ShowProvincies = true;
             this.mapDraw1.ShowRoads = true;
             this.mapDraw1.ShowStates = true;
-            this.mapDraw1.Size = new System.Drawing.Size(624, 496);
+            this.mapDraw1.Size = new System.Drawing.Size(726, 703);
             this.mapDraw1.TabIndex = 20;
             this.mapDraw1.SelectedStateChanged += new System.EventHandler<MapDrawEngine.MapDraw.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(914, 532);
+            this.ClientSize = new System.Drawing.Size(1016, 739);
             this.Controls.Add(this.miniMapDraw1);
             this.Controls.Add(this.mapDraw1);
             this.Controls.Add(this.label2);
@@ -737,13 +741,11 @@
             this.Location = new System.Drawing.Point(100, 100);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Dimension X Worlds Builder";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage7.ResumeLayout(false);
