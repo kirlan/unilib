@@ -933,7 +933,7 @@ namespace MapDrawEngine
                     {
                         if (!pProvince.m_pCenter.IsWater)
                         {
-                            pPath.StartFigure();
+                            pQuad.m_cLayers[MapLayer.Provincies].StartFigure();
                             pQuad.m_cLayers[MapLayer.Provincies].AddLines(aPts);
                         }
 
@@ -1437,8 +1437,9 @@ namespace MapDrawEngine
                 fK = (float)m_pWorld.m_cGrid.RY / m_pWorld.m_cGrid.RX;
 
             //ширина и высота карты мира в экранных координатах
-            //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 500 пикселей
-            m_iScaledMapWidth = (int)(980 * m_fScaleMultiplier);
+            //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 980 пикселей
+            m_iScaledMapWidth = (int)(720 * m_fScaleMultiplier);
+            //m_iScaledMapWidth = (int)(980 * m_fScaleMultiplier);
             m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
 
             //создадим холст такого же размера, как и окно рисования, но не больше 
