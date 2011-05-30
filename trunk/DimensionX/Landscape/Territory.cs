@@ -38,6 +38,9 @@ namespace LandscapeGeneration
             set { m_pOwner = value; }
         }
 
+        /// <summary>
+        /// Границы с другими такими же объектами
+        /// </summary>
         public Dictionary<object, List<Line>> BorderWith
         {
             get { return m_cBorderWith; }
@@ -76,10 +79,34 @@ namespace LandscapeGeneration
             {
                 if (pInner.Owner == null && !pInner.Forbidden)
                 {
-                    cBorderLength[pInner] = 0;
+                    float fWholeLength = 1;
                     Line[] aBorderLine = m_cBorder[pInner].ToArray();
                     foreach (Line pLine in aBorderLine)
-                        cBorderLength[pInner] += pLine.m_fLength;
+                        fWholeLength += pLine.m_fLength;
+
+                    //граница этой земли с окружающими землями
+                    float fTotalLength = 0;
+                    foreach (var pLinkTerr in pInner.BorderWith)
+                    {
+                        if ((pLinkTerr.Key as ITerritory).Forbidden)
+                            continue;
+
+                        Line[] cLines = pLinkTerr.Value.ToArray();
+                        foreach (Line pLine in cLines)
+                            fTotalLength += pLine.m_fLength;
+                    }
+
+                    fWholeLength /= fTotalLength;
+
+                    if (fWholeLength < 0.25f)
+                        fWholeLength /= 10;
+                    if (fWholeLength > 0.5f)
+                        fWholeLength *= 10; 
+                    
+                    cBorderLength[pInner] = fWholeLength;// 0;
+                    //Line[] aBorderLine = m_cBorder[pInner].ToArray();
+                    //foreach (Line pLine in aBorderLine)
+                    //    cBorderLength[pInner] += pLine.m_fLength;
                 }
             }
 

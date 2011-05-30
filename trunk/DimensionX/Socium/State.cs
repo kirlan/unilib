@@ -187,7 +187,7 @@ namespace Socium
             // 2 - можно строить городки, обычные дороги и морские маршруты средней дальности
             new LifeLevel(2, 2, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.Fort}),
             // 3 - большие города, имперские дороги, неограниченные морские маршруты
-            new LifeLevel(3, 3, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
+            new LifeLevel(3, 3, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, /*SettlementSize.City, */SettlementSize.Fort}),
             // 4 - большие города, имперские дороги, неограниченные морские маршруты, доступ к воздушному сообщению только в столице
             new LifeLevel(3, 3, 1, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
             // 5 - большие города, имперские дороги, неограниченные морские маршруты, доступ к воздушному сообщению только в столице и центрах провинций
@@ -1066,6 +1066,16 @@ namespace Socium
             foreach (Province pProvince in m_cContents)
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
+                    bool bHaveOne = false;
+                    foreach(LocationX pLoc in pLand.m_cContents)
+                        if(pLoc.m_pSettlement != null)
+                        {
+                            bHaveOne = true;
+                            break;
+                        }
+                    if (bHaveOne)
+                        continue;
+
                     int iSettlementsCount = (int)(pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize]);
                     if (iSettlementsCount == 0)
                     {
@@ -1073,8 +1083,9 @@ namespace Socium
                         if (Rnd.OneChanceFrom(iSettlementChance))
                             iSettlementsCount = 1;
                     }
+                    else
+                        iSettlementsCount = 1;
 
-                    //bool bHaveOne = false;
                     for (int i = 0; i < iSettlementsCount; i++)
                     {
                         //if (bHaveOne && !Rnd.OneChanceFrom(3))

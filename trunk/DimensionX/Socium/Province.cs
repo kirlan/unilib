@@ -96,8 +96,8 @@ namespace Socium
                 
                 if(pLand.m_pProvince == null && !pLand.IsWater)
                 {
-                    if (m_pCenter.Type.m_iMovementCost > pLand.Type.m_iMovementCost)
-                        continue;
+                    //if (m_pCenter.Type.m_iMovementCost > pLand.Type.m_iMovementCost)
+                    //    continue;
 
                     //граница провинции с этой землёй
                     float fWholeLength = 1;
@@ -118,12 +118,17 @@ namespace Socium
 
                     fWholeLength /= fTotalLength;
 
-                    if (fWholeLength < 0.25f && m_cContents.Count > 1)
-                        continue;
+                    if (fWholeLength < 0.25f)
+                        fWholeLength /= 10;
+                    if (fWholeLength > 0.5f)
+                        fWholeLength *= 10;
+                    //if (fWholeLength < 0.25f && m_cContents.Count > 1)
+                    //    continue;
 
                     //fWholeLength /= (float)pLand.Type.m_iMovementCost * pLand.Type.m_iMovementCost;
-                    if (m_pCenter.Type != pLand.Type)
-                        fWholeLength /= 100;
+                    //if (m_pCenter.Type != pLand.Type)
+                    //    fWholeLength /= 100;
+                    fWholeLength /= Math.Max(pLand.Type.m_iMovementCost, m_pCenter.Type.m_iMovementCost) / Math.Min(pLand.Type.m_iMovementCost, m_pCenter.Type.m_iMovementCost);
 
                     foreach (LandTypeInfoX pType in m_pRace.m_cPrefferedLands)
                         if (pType == pLand.Type)
@@ -131,7 +136,7 @@ namespace Socium
 
                     foreach (LandTypeInfoX pType in m_pRace.m_cHatedLands)
                         if (pType == pLand.Type)
-                            fWholeLength /= 10;// (float)pLand.Type.m_iMovementCost;//2;
+                            fWholeLength /= 100;// (float)pLand.Type.m_iMovementCost;//2;
 
                     //if(m_pCenter.Type != pLand.Type)
                     //    fWholeLength /= (float)Math.Max(pLand.Type.m_iMovementCost, m_pCenter.Type.m_iMovementCost)*10;//2;

@@ -31,7 +31,7 @@ namespace LandscapeGeneration
     public class LandTypes<LTI>
         where LTI: LandTypeInfo, new()
     {
-        private enum LandType
+        public enum LandType
         {
             Sea,
             Mountains,
@@ -45,9 +45,9 @@ namespace LandscapeGeneration
             Jungle
         }
 
-        private Dictionary<LandType, LTI> m_pLandTypes = new Dictionary<LandType, LTI>();
+        public Dictionary<LandType, LTI> m_pLandTypes = new Dictionary<LandType, LTI>();
 
-        private static LandTypes<LTI> m_pInstance = new LandTypes<LTI>();
+        public static LandTypes<LTI> m_pInstance = new LandTypes<LTI>();
 
         private LandTypes()
         {
