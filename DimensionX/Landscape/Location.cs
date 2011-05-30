@@ -91,6 +91,9 @@ namespace LandscapeGeneration
 
         #region ITerritory Members
 
+        /// <summary>
+        /// Границы с другими такими же объектами
+        /// </summary>
         public Dictionary<object, List<Line>> BorderWith
         {
             get { return m_cBorderWith; }

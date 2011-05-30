@@ -539,6 +539,8 @@ namespace Socium
             m_iInvadersMaxTechLevel = iInvadersMaxTechLevel;
             m_iInvadersMaxMagicLevel = iInvadersMaxMagicLevel;
 
+            CalculatePossibleProvinciesCenters();
+
             PopulateWorld(iRacesCount, true);
 
             int iAge = Rnd.Get(4);//4 - снижено для отладки
@@ -550,6 +552,94 @@ namespace Socium
 
             Reset();
             PopulateWorld(iRacesCount, false);
+        }
+
+        private Dictionary<ContinentX, Dictionary<LandX, int>> m_cProvinceCenters = new Dictionary<ContinentX,Dictionary<LandX,int>>();
+
+        private void CalculatePossibleProvinciesCenters()
+        {
+            Dictionary<LandX, int> cProcessed = new Dictionary<LandX, int>();
+
+            foreach (ContinentX pConti in m_aContinents)
+            {
+                m_cProvinceCenters[pConti] = new Dictionary<LandX, int>();
+                int iMaxCost = 0;
+                foreach (var pLM in pConti.m_cContents)
+                    foreach (var pLand in pLM.m_cContents)
+                        if (!pLand.IsWater && pLand.Type.m_iMovementCost > iMaxCost)
+                            iMaxCost = pLand.Type.m_iMovementCost;
+
+                foreach (var pLM in pConti.m_cContents)
+                    foreach (var pLand in pLM.m_cContents)
+                        if (!pLand.IsWater && pLand.Type.m_iMovementCost == iMaxCost)
+                        {
+                            cProcessed[pLand] = 0;
+                            
+                            bool bHaveFree = false;
+                            foreach (var pTerr2 in pLand.BorderWith)
+                            {
+                                if ((pTerr2.Key as ITerritory).Forbidden)
+                                    continue;
+
+                                LandX pLinked2 = pTerr2.Key as LandX;
+                                if (!pLinked2.IsWater)
+                                {
+                                    bHaveFree = true;
+                                    break;
+                                }
+                            }
+                            if (!bHaveFree)
+                            {
+                                m_cProvinceCenters[pConti][pLand] = pLand.Type.m_iMovementCost * pLand.m_cContents.Count;
+                            }
+                        }
+            }
+
+            Dictionary<LandX, int> cProcessedNew = new Dictionary<LandX,int>();
+
+            do
+            {
+                cProcessedNew.Clear();
+
+                foreach (var pLand in cProcessed)
+                    foreach (var pTerr in pLand.Key.BorderWith)
+                    {
+                        if ((pTerr.Key as ITerritory).Forbidden)
+                            continue;
+
+                        LandX pLinked = pTerr.Key as LandX;
+                        if (pLinked.IsWater || cProcessed.ContainsKey(pLinked))
+                            continue;
+
+                        int iValue = 0;
+                        cProcessedNew.TryGetValue(pLinked, out iValue);
+                        cProcessedNew[pLinked] = Math.Max(iValue, pLand.Value + pLinked.Type.m_iMovementCost*pLinked.m_cContents.Count);
+
+                        bool bHaveFree = false;
+                        foreach (var pTerr2 in pLinked.BorderWith)
+                        {
+                            if ((pTerr2.Key as ITerritory).Forbidden)
+                                continue;
+
+                            LandX pLinked2 = pTerr2.Key as LandX;
+                            if (!pLinked2.IsWater &&
+                                !cProcessed.ContainsKey(pLinked2) &&
+                                !cProcessedNew.ContainsKey(pLinked2))
+                            {
+                                bHaveFree = true;
+                                break;
+                            }
+                        }
+                        if (!bHaveFree)
+                        {
+                            m_cProvinceCenters[pLinked.Continent][pLinked] = cProcessedNew[pLinked];
+                        }
+                    }
+
+                foreach (var pLand in cProcessedNew)
+                    cProcessed[pLand.Key] = pLand.Value;
+            }
+            while (cProcessedNew.Count > 0);
         }
 
         private void PopulateWorld(int iRacesCount, bool bFast)
@@ -600,30 +690,46 @@ namespace Socium
 
                     cProvinces.Add(pProvince);
                 }
+
+            Dictionary<LandX, int> cTotal = new Dictionary<LandX, int>();
             
             //Позаботимся о том, чтобы на каждом континенте была хотя бы одна провинция
             foreach (ContinentX pConti in m_aContinents)
             {
+                foreach (var pLnd in m_cProvinceCenters[pConti])
+                    cTotal[pLnd.Key] = pLnd.Value;
+
                 if (cUsed.Contains(pConti))
                     continue;
 
                 LandX pSeed = null;
                 do
                 {
-                    int iIndex = Rnd.Get(pConti.m_cAreas.Count);
-                    if (!pConti.m_cAreas[iIndex].IsWater)
+                    int iIndex = Rnd.ChooseOne(m_cProvinceCenters[pConti].Values, 2);
+                    foreach (LandX pLand in m_cProvinceCenters[pConti].Keys)
                     {
-                        int iIndex2 = Rnd.Get(pConti.m_cAreas[iIndex].m_cContents.Count);
-                        pSeed = pConti.m_cAreas[iIndex].m_cContents[iIndex2];
-
-                        bool bBorder = false;
-                        foreach (LocationX pLoc in pSeed.m_cContents)
-                            if (pLoc.m_bBorder)
-                                bBorder = true;
-
-                        if (bBorder && !Rnd.OneChanceFrom(25))
-                            pSeed = null;
+                        if (iIndex <= 0 && pLand.m_pProvince == null)
+                        {
+                            pSeed = pLand;
+                            break;
+                        }
+                        iIndex--;
                     }
+
+                    //int iIndex = Rnd.Get(pConti.m_cAreas.Count);
+                    //if (!pConti.m_cAreas[iIndex].IsWater)
+                    //{
+                    //    int iIndex2 = Rnd.Get(pConti.m_cAreas[iIndex].m_cContents.Count);
+                    //    pSeed = pConti.m_cAreas[iIndex].m_cContents[iIndex2];
+
+                    //    bool bBorder = false;
+                    //    foreach (LocationX pLoc in pSeed.m_cContents)
+                    //        if (pLoc.m_bBorder)
+                    //            bBorder = true;
+
+                    //    if (bBorder && !Rnd.OneChanceFrom(25))
+                    //        pSeed = null;
+                    //}
                 }
                 while (pSeed == null);
 
@@ -642,33 +748,54 @@ namespace Socium
                 int iCounter = 0;
                 do
                 {
-                    int iIndex = Rnd.Get(m_aLands.Length);
-                    pSeed = m_aLands[iIndex];
-
-                    if (pSeed.Forbidden ||
-                        pSeed.m_pProvince != null ||
-                        pSeed.IsWater ||
-                        pSeed.Owner == null ||
-                        (pSeed.Owner as LandMass<LandX>).IsWater)
+                    int iIndex = Rnd.ChooseOne(cTotal.Values, 2);
+                    foreach (LandX pLand in cTotal.Keys)
                     {
-                        pSeed = null;
-                    }
-                    else
-                    {
-                        bool bBorder = false;
-                        foreach (LocationX pLoc in pSeed.m_cContents)
-                            if (pLoc.m_bBorder)
-                                bBorder = true;
-
-                        if (bBorder)
-                            pSeed = null;
+                        if (iIndex <= 0 && pLand.m_pProvince == null)
+                        {
+                            pSeed = pLand;
+                            break;
+                        }
+                        iIndex--;
                     }
                     if (pSeed == null)
                         iCounter++;
                     else
                         iCounter = 0;
                 }
-                while (pSeed == null && iCounter < m_aLands.Length*2);
+                while (pSeed == null && iCounter < m_aLands.Length * 2);
+                
+                //LandX pSeed = null;
+                //int iCounter = 0;
+                //do
+                //{
+                //    int iIndex = Rnd.Get(m_aLands.Length);
+                //    pSeed = m_aLands[iIndex];
+
+                //    if (pSeed.Forbidden ||
+                //        pSeed.m_pProvince != null ||
+                //        pSeed.IsWater ||
+                //        pSeed.Owner == null ||
+                //        (pSeed.Owner as LandMass<LandX>).IsWater)
+                //    {
+                //        pSeed = null;
+                //    }
+                //    else
+                //    {
+                //        bool bBorder = false;
+                //        foreach (LocationX pLoc in pSeed.m_cContents)
+                //            if (pLoc.m_bBorder)
+                //                bBorder = true;
+
+                //        if (bBorder)
+                //            pSeed = null;
+                //    }
+                //    if (pSeed == null)
+                //        iCounter++;
+                //    else
+                //        iCounter = 0;
+                //}
+                //while (pSeed == null && iCounter < m_aLands.Length*2);
 
                 if (pSeed == null)
                     break;
@@ -692,6 +819,20 @@ namespace Socium
                         continue;
 
                     if (!pProvince.Grow(iMaxProvinceSize))
+                        cFinished.Add(pProvince);
+                }
+            }
+            while (cFinished.Count < cProvinces.Count);
+
+            cFinished.Clear();
+            do
+            {
+                foreach (Province pProvince in cProvinces)
+                {
+                    if (cFinished.Contains(pProvince))
+                        continue;
+
+                    if (!pProvince.Grow(m_aLands.Length))
                         cFinished.Add(pProvince);
                 }
             }
