@@ -26,9 +26,9 @@ namespace VQMapTest2
 
         MapPreset[] m_aPartialMaps = new MapPreset[] 
         {
-            new MapPreset("Coast", "Traditional adventure map of big coastral region, like Europe, Middlearth, Hyperborea or Faerun. This is a part of a one big continent from arctic to tropics, with a long coastral line.", false, false, 50, 45, 1, 50, 95, 95),
-            new MapPreset("Mediterranean", "Mediterranean-like region - there are parts of 3 big continents, divided by a sea. Continents extends from arctic to tropics.", false, false, 50, 45, 3, 50, 95, 95),
-            new MapPreset("Atlantis", "One big continent in middle latitudes, surrounded by ocean.", false, true, 50, 45, 1, 50, 120, 130),
+            new MapPreset("Coast", "Traditional adventure map of big coastral region, like Europe, Middlearth, Hyperborea or Faerun. This is a part of a one big continent from arctic to tropics, with a long coastral line.", false, false, 15, 45, 1, 50, 95, 95),
+            new MapPreset("Mediterranean", "Mediterranean-like region - there are parts of 3 big continents, divided by a sea. Continents extends from arctic to tropics.", false, false, 15, 45, 3, 50, 95, 95),
+            new MapPreset("Atlantis", "One big continent in middle latitudes, surrounded by ocean.", false, true, 15, 45, 1, 50, 120, 130),
             new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 300, 15, 90, 50, 100),
         };
 
@@ -44,9 +44,10 @@ namespace VQMapTest2
         { 
             new SocietyPreset("Antique mythology", "A world of antique mythology - just a usual antique world, but with a bit of magic...", 0, 1, 1, 2),
             new SocietyPreset("Fantasy - low magic", "A medieval world with a bit of magic - like Knights of the Round Table, Lord of the Rings, etc.", 0, 2, 1, 3),
-            new SocietyPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 0, 2, 4, 5),
+            new SocietyPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 0, 2, 2, 4),
+            new SocietyPreset("Technomagic", "A renaissance world with a lot of magic - like Arcanum, Final Fantasy, etc.", 1, 3, 2, 4),
             new SocietyPreset("Superheroes", "A modern world with a bit of magic (aka supernatural abilities) - like Superman, Fantastic Four, Spiderman, etc.", 4, 5, 1, 3),
-            new SocietyPreset("Urban fantasy", "A modern world with a lot of magic - vampires, werewolfs, voodoo, secret societies, etc.", 4, 5, 4, 5),
+            new SocietyPreset("Urban fantasy", "A modern world with a lot of magic - vampires, werewolfs, voodoo, secret societies, etc.", 4, 5, 2, 4),
             new SocietyPreset("Cyberpunk", "Nearest future world without magic - advanced technologies, mega-corporations, industrial espionage, etc.", 4, 6, 0, 0),
             new SocietyPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - like Star Wars, Star Trek, etc.", 6, 7, 1, 3),
         };
@@ -198,7 +199,7 @@ namespace VQMapTest2
                     iInvasionProb = 100;
                     break;
             }
-            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, Math.Min((int)StatesCount.Value * 5, 300), (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, iInvasionProb, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
+            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, Math.Max(10, Math.Min((int)StatesCount.Value * 3, 300)), (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, iInvasionProb, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
             
             Cursor = Cursors.Arrow;
             groupBox1.Enabled = true;
@@ -236,7 +237,7 @@ namespace VQMapTest2
             LandsCount.Maximum = iLocationsCount / 2 + LandsCount.LargeChange - 1;
             LandsCount.Minimum = Math.Min(600, iLocationsCount / 4);
 
-            LandsCount.Value = (LandsCount.Minimum + LandsCount.Maximum) / 2;
+            //LandsCount.Value = (LandsCount.Minimum + LandsCount.Maximum) / 2;
             //if (LandsCount.Maximum < 6000)
             //    LandsCount.Value = LandsCount.Maximum;
             //else
@@ -277,8 +278,8 @@ namespace VQMapTest2
             RacesCount.Maximum = Math.Min(40, iNotOcean / 10) + RacesCount.LargeChange - 1;
             RacesCount.Minimum = Math.Min(6, iNotOcean / 20);
 
-            if (StatesCount.Minimum > Math.Min(5, iNotOcean / 40))
-                StatesCount.Minimum = Math.Min(5, iNotOcean / 40);
+            if (StatesCount.Minimum > Math.Min(1, iNotOcean / 40))
+                StatesCount.Minimum = Math.Min(1, iNotOcean / 40);
 
             if (StatesCount.Maximum < Math.Min(100, iNotOcean / 20))
                 StatesCount.Maximum = Math.Min(100, iNotOcean / 20);
@@ -286,11 +287,11 @@ namespace VQMapTest2
             if (StatesCount.Value > Math.Min(100, iNotOcean / 20))
                 StatesCount.Value = Math.Min(100, iNotOcean / 20);
 
-            if (StatesCount.Value < Math.Min(5, iNotOcean / 40))
-                StatesCount.Value = Math.Min(5, iNotOcean / 40);
+            if (StatesCount.Value < Math.Min(1, iNotOcean / 40))
+                StatesCount.Value = Math.Min(1, iNotOcean / 40);
 
             StatesCount.Maximum = Math.Min(100, iNotOcean / 20) + StatesCount.LargeChange-1;
-            StatesCount.Minimum = Math.Min(5, iNotOcean / 40);
+            StatesCount.Minimum = Math.Min(1, iNotOcean / 40);
             //if (StatesCount.Maximum < 100)
             //    StatesCount.Value = StatesCount.Maximum;
             //else

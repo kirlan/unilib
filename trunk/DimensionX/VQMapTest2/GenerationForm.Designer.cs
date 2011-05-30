@@ -102,11 +102,11 @@
             this.label22 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.comboBox10 = new System.Windows.Forms.ComboBox();
             this.label18 = new System.Windows.Forms.Label();
             this.comboBox9 = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.comboBox8 = new System.Windows.Forms.ComboBox();
-            this.comboBox10 = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ContinentsCount)).BeginInit();
@@ -354,8 +354,8 @@
             this.RacesCount.Name = "RacesCount";
             this.RacesCount.Size = new System.Drawing.Size(102, 16);
             this.RacesCount.TabIndex = 26;
-            this.toolTip1.SetToolTip(this.RacesCount, "24");
-            this.RacesCount.Value = 24;
+            this.toolTip1.SetToolTip(this.RacesCount, "6");
+            this.RacesCount.Value = 6;
             this.RacesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
             // StatesCount
@@ -363,12 +363,12 @@
             this.StatesCount.LargeChange = 5;
             this.StatesCount.Location = new System.Drawing.Point(293, 21);
             this.StatesCount.Maximum = 25;
-            this.StatesCount.Minimum = 5;
+            this.StatesCount.Minimum = 1;
             this.StatesCount.Name = "StatesCount";
             this.StatesCount.Size = new System.Drawing.Size(89, 16);
             this.StatesCount.TabIndex = 24;
-            this.toolTip1.SetToolTip(this.StatesCount, "20");
-            this.StatesCount.Value = 20;
+            this.toolTip1.SetToolTip(this.StatesCount, "8");
+            this.StatesCount.Value = 8;
             this.StatesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
             // button6
@@ -714,10 +714,10 @@
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.listBox1);
             this.tabPage1.Controls.Add(this.groupBox6);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Location = new System.Drawing.Point(4, 27);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(440, 235);
+            this.tabPage1.Size = new System.Drawing.Size(440, 230);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "World maps";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -749,10 +749,10 @@
             this.tabPage2.Controls.Add(this.label19);
             this.tabPage2.Controls.Add(this.listBox2);
             this.tabPage2.Controls.Add(this.groupBox5);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 27);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(440, 235);
+            this.tabPage2.Size = new System.Drawing.Size(440, 230);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Adventure region maps";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -810,9 +810,9 @@
             this.tabPage3.Controls.Add(this.groupBox4);
             this.tabPage3.Controls.Add(this.groupBox2);
             this.tabPage3.Controls.Add(this.groupBox1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Location = new System.Drawing.Point(4, 27);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(440, 235);
+            this.tabPage3.Size = new System.Drawing.Size(440, 230);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Custom map";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -832,9 +832,9 @@
             // 
             this.tabPage6.Controls.Add(this.label23);
             this.tabPage6.Controls.Add(this.listBox4);
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Location = new System.Drawing.Point(4, 27);
             this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Size = new System.Drawing.Size(440, 104);
+            this.tabPage6.Size = new System.Drawing.Size(440, 99);
             this.tabPage6.TabIndex = 2;
             this.tabPage6.Text = "Fictional society presets";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -868,10 +868,10 @@
             // 
             this.tabPage4.Controls.Add(this.label20);
             this.tabPage4.Controls.Add(this.listBox3);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Location = new System.Drawing.Point(4, 27);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(440, 104);
+            this.tabPage4.Size = new System.Drawing.Size(440, 99);
             this.tabPage4.TabIndex = 0;
             this.tabPage4.Text = "Historical society presets";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -905,10 +905,10 @@
             // 
             this.tabPage5.Controls.Add(this.groupBox8);
             this.tabPage5.Controls.Add(this.groupBox7);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Location = new System.Drawing.Point(4, 27);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(440, 104);
+            this.tabPage5.Size = new System.Drawing.Size(440, 99);
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Custom society pattern";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -971,6 +971,21 @@
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Invasion";
             // 
+            // comboBox10
+            // 
+            this.comboBox10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox10.FormattingEnabled = true;
+            this.comboBox10.Items.AddRange(new object[] {
+            "none",
+            "very rare (~1%)",
+            "rare (~5%)",
+            "often (~20%)",
+            "all (100%)"});
+            this.comboBox10.Location = new System.Drawing.Point(320, 16);
+            this.comboBox10.Name = "comboBox10";
+            this.comboBox10.Size = new System.Drawing.Size(105, 21);
+            this.comboBox10.TabIndex = 37;
+            // 
             // label18
             // 
             this.label18.AutoSize = true;
@@ -1008,21 +1023,6 @@
             this.comboBox8.Size = new System.Drawing.Size(123, 21);
             this.comboBox8.TabIndex = 33;
             this.comboBox8.SelectedIndexChanged += new System.EventHandler(this.comboBox8_SelectedIndexChanged);
-            // 
-            // comboBox10
-            // 
-            this.comboBox10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox10.FormattingEnabled = true;
-            this.comboBox10.Items.AddRange(new object[] {
-            "none",
-            "very rare (~1%)",
-            "rare (~5%)",
-            "often (~20%)",
-            "all (100%)"});
-            this.comboBox10.Location = new System.Drawing.Point(320, 16);
-            this.comboBox10.Name = "comboBox10";
-            this.comboBox10.Size = new System.Drawing.Size(105, 21);
-            this.comboBox10.TabIndex = 37;
             // 
             // GenerationForm
             // 
