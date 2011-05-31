@@ -40,11 +40,11 @@ namespace Socium
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
             new Race("indian ", 1, Language.Hindu, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga}),
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Desert}),
             new Race("asian ", 1, Language.Asian, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("indean ", 1, Language.Aztec, 
+            new Race("aztec ", 1, Language.Aztec, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra}),
             new Race("greek ", 1, Language.Greek, 
@@ -55,10 +55,16 @@ namespace Socium
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Taiga}),
             new Race("northern ", 1, Language.Northman, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Savanna}),
-            //new Race("highlander ", 1, Language.Highlander, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest}),
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna}),
+            new Race("chukchee ", 1, Language.Eskimoid, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains}),
+            new Race("eskimo ", 1, Language.Eskimoid, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains}),
+            new Race("highlander ", 1, Language.Highlander, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest}),
             new Race("black ", 1, Language.African, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle/*, LandTypes<LandTypeInfoX>.Desert*/, LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Taiga}),
@@ -539,7 +545,7 @@ namespace Socium
             m_iInvadersMaxTechLevel = iInvadersMaxTechLevel;
             m_iInvadersMaxMagicLevel = iInvadersMaxMagicLevel;
 
-            CalculatePossibleProvinciesCenters();
+            //CalculatePossibleProvinciesCenters();
 
             PopulateWorld(iRacesCount, true);
 
@@ -696,8 +702,8 @@ namespace Socium
             //Позаботимся о том, чтобы на каждом континенте была хотя бы одна провинция
             foreach (ContinentX pConti in m_aContinents)
             {
-                foreach (var pLnd in m_cProvinceCenters[pConti])
-                    cTotal[pLnd.Key] = pLnd.Value;
+                //foreach (var pLnd in m_cProvinceCenters[pConti])
+                //    cTotal[pLnd.Key] = pLnd.Value;
 
                 if (cUsed.Contains(pConti))
                     continue;
@@ -705,31 +711,31 @@ namespace Socium
                 LandX pSeed = null;
                 do
                 {
-                    int iIndex = Rnd.ChooseOne(m_cProvinceCenters[pConti].Values, 2);
-                    foreach (LandX pLand in m_cProvinceCenters[pConti].Keys)
-                    {
-                        if (iIndex <= 0 && pLand.m_pProvince == null)
-                        {
-                            pSeed = pLand;
-                            break;
-                        }
-                        iIndex--;
-                    }
-
-                    //int iIndex = Rnd.Get(pConti.m_cAreas.Count);
-                    //if (!pConti.m_cAreas[iIndex].IsWater)
+                    //int iIndex = Rnd.ChooseOne(m_cProvinceCenters[pConti].Values, 2);
+                    //foreach (LandX pLand in m_cProvinceCenters[pConti].Keys)
                     //{
-                    //    int iIndex2 = Rnd.Get(pConti.m_cAreas[iIndex].m_cContents.Count);
-                    //    pSeed = pConti.m_cAreas[iIndex].m_cContents[iIndex2];
-
-                    //    bool bBorder = false;
-                    //    foreach (LocationX pLoc in pSeed.m_cContents)
-                    //        if (pLoc.m_bBorder)
-                    //            bBorder = true;
-
-                    //    if (bBorder && !Rnd.OneChanceFrom(25))
-                    //        pSeed = null;
+                    //    if (iIndex <= 0 && pLand.m_pProvince == null)
+                    //    {
+                    //        pSeed = pLand;
+                    //        break;
+                    //    }
+                    //    iIndex--;
                     //}
+
+                    int iIndex = Rnd.Get(pConti.m_cAreas.Count);
+                    if (!pConti.m_cAreas[iIndex].IsWater)
+                    {
+                        int iIndex2 = Rnd.Get(pConti.m_cAreas[iIndex].m_cContents.Count);
+                        pSeed = pConti.m_cAreas[iIndex].m_cContents[iIndex2];
+
+                        bool bBorder = false;
+                        foreach (LocationX pLoc in pSeed.m_cContents)
+                            if (pLoc.m_bBorder)
+                                bBorder = true;
+
+                        if (bBorder && !Rnd.OneChanceFrom(25))
+                            pSeed = null;
+                    }
                 }
                 while (pSeed == null);
 
@@ -744,19 +750,51 @@ namespace Socium
 
             while (cProvinces.Count < m_iProvincesCount)
             {
+                //LandX pSeed = null;
+                //int iCounter = 0;
+                //do
+                //{
+                //    int iIndex = Rnd.ChooseOne(cTotal.Values, 2);
+                //    foreach (LandX pLand in cTotal.Keys)
+                //    {
+                //        if (iIndex <= 0 && pLand.m_pProvince == null)
+                //        {
+                //            pSeed = pLand;
+                //            break;
+                //        }
+                //        iIndex--;
+                //    }
+                //    if (pSeed == null)
+                //        iCounter++;
+                //    else
+                //        iCounter = 0;
+                //}
+                //while (pSeed == null && iCounter < m_aLands.Length * 2);
+
                 LandX pSeed = null;
                 int iCounter = 0;
                 do
                 {
-                    int iIndex = Rnd.ChooseOne(cTotal.Values, 2);
-                    foreach (LandX pLand in cTotal.Keys)
+                    int iIndex = Rnd.Get(m_aLands.Length);
+                    pSeed = m_aLands[iIndex];
+
+                    if (pSeed.Forbidden ||
+                        pSeed.m_pProvince != null ||
+                        pSeed.IsWater ||
+                        pSeed.Owner == null ||
+                        (pSeed.Owner as LandMass<LandX>).IsWater)
                     {
-                        if (iIndex <= 0 && pLand.m_pProvince == null)
-                        {
-                            pSeed = pLand;
-                            break;
-                        }
-                        iIndex--;
+                        pSeed = null;
+                    }
+                    else
+                    {
+                        bool bBorder = false;
+                        foreach (LocationX pLoc in pSeed.m_cContents)
+                            if (pLoc.m_bBorder)
+                                bBorder = true;
+
+                        if (bBorder)
+                            pSeed = null;
                     }
                     if (pSeed == null)
                         iCounter++;
@@ -764,38 +802,6 @@ namespace Socium
                         iCounter = 0;
                 }
                 while (pSeed == null && iCounter < m_aLands.Length * 2);
-                
-                //LandX pSeed = null;
-                //int iCounter = 0;
-                //do
-                //{
-                //    int iIndex = Rnd.Get(m_aLands.Length);
-                //    pSeed = m_aLands[iIndex];
-
-                //    if (pSeed.Forbidden ||
-                //        pSeed.m_pProvince != null ||
-                //        pSeed.IsWater ||
-                //        pSeed.Owner == null ||
-                //        (pSeed.Owner as LandMass<LandX>).IsWater)
-                //    {
-                //        pSeed = null;
-                //    }
-                //    else
-                //    {
-                //        bool bBorder = false;
-                //        foreach (LocationX pLoc in pSeed.m_cContents)
-                //            if (pLoc.m_bBorder)
-                //                bBorder = true;
-
-                //        if (bBorder)
-                //            pSeed = null;
-                //    }
-                //    if (pSeed == null)
-                //        iCounter++;
-                //    else
-                //        iCounter = 0;
-                //}
-                //while (pSeed == null && iCounter < m_aLands.Length*2);
 
                 if (pSeed == null)
                     break;
@@ -824,6 +830,7 @@ namespace Socium
             }
             while (cFinished.Count < cProvinces.Count);
 
+            bool bAlreadyFinished = true;
             cFinished.Clear();
             do
             {
@@ -832,22 +839,32 @@ namespace Socium
                     if (cFinished.Contains(pProvince))
                         continue;
 
-                    if (!pProvince.Grow(m_aLands.Length))
+                    if (!pProvince.ForcedGrow())
                         cFinished.Add(pProvince);
                 }
-            }
-            while (cFinished.Count < cProvinces.Count);
 
-            foreach (LandX pLand in m_aLands)
-            {
-                if (!pLand.Forbidden && !pLand.IsWater && pLand.m_pProvince == null)
+                bAlreadyFinished = true;
+                foreach (LandX pLand in m_aLands)
                 {
-                    Province pProvince = new Province();
-                    pProvince.Start(pLand);
-                    cProvinces.Add(pProvince);
-                    while (pProvince.Grow(iMaxProvinceSize)) { };
+                    if (!pLand.Forbidden && !pLand.IsWater && pLand.m_pProvince == null)
+                    {
+                        bAlreadyFinished = false;
+                        break;
+                    }
                 }
             }
+            while (!bAlreadyFinished);
+
+            //foreach (LandX pLand in m_aLands)
+            //{
+            //    if (!pLand.Forbidden && !pLand.IsWater && pLand.m_pProvince == null)
+            //    {
+            //        Province pProvince = new Province();
+            //        pProvince.Start(pLand);
+            //        cProvinces.Add(pProvince);
+            //        while (pProvince.Grow(iMaxProvinceSize)) { };
+            //    }
+            //}
 
             m_aProvinces = cProvinces.ToArray();
 
@@ -876,88 +893,6 @@ namespace Socium
                     cStates.Add(pState);
                 }
             
-            //Позаботимся о том, чтобы каждая раса имела хотя бы одно государство
-            /*
-            foreach (Race pRace in m_cLocalRaces)
-            {
-                bool bHomeless = true;
-                foreach (State pState in m_cStates)
-                    if (pState.m_pRace == pRace)
-                    {
-                        bHomeless = false;
-        
-                        ContinentX pConti = pState.Owner as ContinentX;
-                        if (!cUsed.Contains(pConti))
-                            cUsed.Add(pConti);
-                    }
-
-                if (!bHomeless)
-                    continue;
-
-                Dictionary<Province, float> cChances = new Dictionary<Province, float>();
-                foreach (Province pProvince in m_cProvinces)
-                {
-                    if (pProvince.Forbidden ||
-                        pProvince.Owner != null ||
-                        //pLand.Type == LandType.Sea ||
-                        pProvince.m_pRace != pRace ||
-                        pProvince.m_pCenter.IsWater)
-                        continue;
-
-                    bool bBorder = false;
-                    foreach (LandX pLand in pProvince.m_cContents)
-                        foreach (LocationX pLoc in pLand.m_cContents)
-                            if (pLoc.m_bBorder)
-                                bBorder = true;
-
-                    if (bBorder)
-                        continue;
-
-                    cChances[pProvince] = 1.0f;// / pRace.m_iRank;
-
-                    foreach (LandTypeInfoX pType in pRace.m_cPrefferedLands)
-                        if (pProvince.m_pCenter.Type == pType)
-                            cChances[pProvince] *= 100;
-
-                    foreach (LandTypeInfoX pType in pRace.m_cHatedLands)
-                        if (pProvince.m_pCenter.Type == pType)
-                            cChances[pProvince] /= 100;
-                }
-
-                int iChance = Rnd.ChooseOne(cChances.Values, 2);
-                Province pMethropoly = null;
-                foreach (Province pProvince in cChances.Keys)
-                {
-                    iChance--;
-                    if (iChance < 0)
-                    {
-                        pMethropoly = pProvince;
-                        break;
-                    }
-                }
-
-                if (pMethropoly != null && pMethropoly.m_pCenter.Area != null)
-                {
-                    (pMethropoly.m_pCenter.Area as AreaX).m_pRace = pRace;
-                    (pMethropoly.m_pCenter.Area as AreaX).m_sName = NameGenerator.GetEthnicName(pRace.m_eLanguage);
-                    foreach (LandX pLand in (pMethropoly.m_pCenter.Area as AreaX).m_cContents)
-                    {
-                        pLand.m_sName = (pMethropoly.m_pCenter.Area as AreaX).m_sName;
-                        pLand.m_pRace = (pMethropoly.m_pCenter.Area as AreaX).m_pRace;
-                    }
-
-                    State pState = new State();
-                    pState.Start(pMethropoly);
-                    m_cStates.Add(pState);
-
-                    if (!m_cLocalRaces.Contains(pState.m_pRace))
-                        throw new Exception();
-
-                    cUsed.Add(pMethropoly.m_pCenter.Continent);
-                }
-            }
-             */
-
             //Позаботимся о том, чтобы на каждом континенте было хотя бы одно государство
             foreach (ContinentX pConti in m_aContinents)
             {
@@ -1499,6 +1434,7 @@ namespace Socium
                         foreach (LandX pLand in pProvince.m_cContents)
                         {
                             pLand.m_pProvince = null;
+                            pLand.m_iProvincePresence = 0;
                             foreach (LocationX pLoc in pLand.m_cContents)
                             {
                                 if (pLoc.m_pSettlement != null)

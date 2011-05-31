@@ -17,6 +17,12 @@ namespace Socium
 
         public Race m_pRace;
 
+        /// <summary>
+        /// Военное присутсвие сил провинции в данной земле.
+        /// Нужно только для формирования карты провинций.
+        /// </summary>
+        public int m_iProvincePresence = 0;
+
         public ContinentX Continent
         {
             get
