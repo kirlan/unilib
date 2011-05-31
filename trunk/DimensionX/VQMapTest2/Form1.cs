@@ -85,9 +85,9 @@ namespace VQMapTest2
             if (radioButton2.Checked)
                 fScale = 2.0f;
             if (radioButton3.Checked)
-                fScale = 4.0f;
-            if (radioButton4.Checked)
                 fScale = 8.0f;
+            if (radioButton4.Checked)
+                fScale = 32.0f;
 
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
@@ -117,11 +117,11 @@ namespace VQMapTest2
             if (radioButton1.Checked)
                 mapDraw1.ScaleMultiplier = 1;
             if (radioButton2.Checked)
-                mapDraw1.ScaleMultiplier = 4;
+                mapDraw1.ScaleMultiplier = 2;
             if (radioButton3.Checked)
                 mapDraw1.ScaleMultiplier = 8;
             if (radioButton4.Checked)
-                mapDraw1.ScaleMultiplier = 16;
+                mapDraw1.ScaleMultiplier = 32;
 
             comboBox1.Focus();
         }
