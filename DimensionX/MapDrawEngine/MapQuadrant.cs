@@ -166,6 +166,9 @@ namespace MapDrawEngine
             //    throw new Exception();
 
             gr.DrawPath(pPen, pPath);
+
+            if (eLayer == MapLayer.Provincies)
+                gr.DrawPath(MapDraw.s_pBlack3DotPen, pPath);
         }
 
         /// <summary>
