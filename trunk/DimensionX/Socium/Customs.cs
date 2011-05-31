@@ -301,7 +301,7 @@ namespace Socium
             if (m_eSexuality == Sexuality.Lecherous)
             {
                 sResult += "\n   ";
-                sResult += "lechery";
+                sResult += "sexuality";
             }
 
             if (m_eSexRelations == SexRelations.Heterosexual)
@@ -318,7 +318,7 @@ namespace Socium
             if (m_eMagicPosition == MagicPosition.Magic_is_feared)
             {
                 sResult += "\n   ";
-                sResult += "magic rejection";
+                sResult += "magic denial";
             }
             if (m_eMagicPosition == MagicPosition.Magic_is_praised)
             {
@@ -334,7 +334,7 @@ namespace Socium
             if (m_eFamilySize == FamilySize.Polyamory)
             {
                 sResult += "\n   ";
-                sResult += "polyamory";
+                sResult += "wedlock denial";
             }
 
             return "Praises: " + sResult + "\n";
