@@ -73,6 +73,177 @@ namespace Socium
 
             m_cContents.Add(pSeed);
             pSeed.m_pProvince = this;
+            pSeed.m_iProvincePresence = 1;
+
+            m_cGrowCosts.Clear();
+        }
+
+        private int GetGrowCost(LandX pLand)
+        {
+            if (pLand.IsWater)
+                return -1;
+
+            float fCost = pLand.Type.m_iMovementCost;
+
+            //if (pLand.m_pProvince != this)
+            //{
+            //    //граница провинции с этой землёй
+            //    float fProvinceBorderLength = 0;
+            //    foreach (Line pLine in m_cBorder[pLand])
+            //        fProvinceBorderLength += pLine.m_fLength;
+
+            //    //граница этой земли с окружающими землями
+            //    float fLinkedLandsBorderLength = 0;
+            //    foreach (var pLinkTerr in pLand.BorderWith)
+            //    {
+            //        if ((pLinkTerr.Key as ITerritory).Forbidden)
+            //            continue;
+
+            //        Line[] cLines = pLinkTerr.Value.ToArray();
+            //        foreach (Line pLine in cLines)
+            //            fLinkedLandsBorderLength += pLine.m_fLength;
+            //    }
+
+            //    fCost *= fLinkedLandsBorderLength / fProvinceBorderLength;
+
+            //    //если общая граница провинции с землёй меньше общей длины границы земли в 4 раза или больше, то это - очень плохой вариант.
+            //    //стоимость расширения в эту землю - выше.
+            //    if (fCost > 4)
+            //        fCost *= 10;
+            //    //если общая граница провинции с землёй меньше общей длины границы земли в 2 раза или меньше, то это - очень хороший вариант.
+            //    //стоимость расширения в эту землю - ниже.
+            //    if (fCost < 2)
+            //        fCost /= 10;
+            //}
+
+            foreach (LandTypeInfoX pType in m_pRace.m_cPrefferedLands)
+                if (pType == pLand.Type)
+                    fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            foreach (LandTypeInfoX pType in m_pRace.m_cHatedLands)
+                if (pType == pLand.Type)
+                    fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            if (pLand.m_pRace != m_pRace)
+                fCost *= 2;
+
+            if (fCost < 1)
+                fCost = 1;
+
+            return (int)fCost;
+        }
+
+        private Dictionary<LandX, int> m_cGrowCosts = new Dictionary<LandX, int>();
+
+        private LandX GrowPresence(LandX pLand, int iValue)
+        {
+            pLand.m_iProvincePresence += iValue;
+
+            int iOwnCost = 0;
+            if (!m_cGrowCosts.TryGetValue(pLand, out iOwnCost))
+            {
+                iOwnCost = GetGrowCost(pLand);
+                m_cGrowCosts[pLand] = iOwnCost;
+            }
+
+            // 400 - удвоенная максимальная возможная стоимость захвата земли (10*10*2)
+            //if (pLand.m_iProvinceForce > 400)
+            //    return null;
+
+            if (pLand.m_iProvincePresence > iOwnCost)
+            {
+                int iBestValue = int.MaxValue;
+                int iBestCost = 0;
+                LandX pBestLand = null;
+
+                foreach (var pLinkTerr in pLand.BorderWith)
+                {
+                    if ((pLinkTerr.Key as ITerritory).Forbidden)
+                        continue;
+
+                    LandX pLinkedLand = pLinkTerr.Key as LandX;
+
+                    if (pLinkedLand.IsWater || (pLinkedLand.m_pProvince != this && pLinkedLand.m_iProvincePresence > 0))
+                        continue;
+
+                    int iCost = 0;
+                    if (!m_cGrowCosts.TryGetValue(pLinkedLand, out iCost))
+                    {
+                        iCost = GetGrowCost(pLinkedLand);
+                        m_cGrowCosts[pLinkedLand] = iCost;
+                    }
+
+                    if (iCost == -1)
+                        continue;
+
+                    if (pLinkedLand.m_iProvincePresence + iCost < iBestValue ||
+                        (pLinkedLand.m_iProvincePresence + iCost == iBestValue &&
+                         Rnd.OneChanceFrom(pLand.BorderWith.Count)))
+                    {
+                        iBestValue = pLinkedLand.m_iProvincePresence + iCost;
+                        iBestCost = iCost;
+                        pBestLand = pLinkedLand;
+                    }
+                }
+
+                if (pBestLand != null && pBestLand.m_iProvincePresence + iBestCost < pLand.m_iProvincePresence - iBestCost)
+                {
+                    pLand.m_iProvincePresence -= iBestCost;
+                    if (pBestLand.m_pProvince == null)
+                    {
+                        pBestLand.m_iProvincePresence += iBestCost;
+                        return pBestLand;
+                    }
+                    else
+                    {
+                        return GrowPresence(pBestLand, iBestCost);
+                    }
+                }
+                else
+                    return null;
+            }
+            else
+                return null;
+        }
+
+        public bool ForcedGrow()
+        {
+            object[] aBorder = new List<object>(m_cBorder.Keys).ToArray();
+
+            bool bGrown = false;
+
+            foreach (ITerritory pTerr in aBorder)
+            {
+                if (pTerr.Forbidden)
+                    continue;
+
+                LandX pLand = pTerr as LandX;
+
+                if (pLand.m_pProvince == null && !pLand.IsWater)
+                {
+                    m_cContents.Add(pLand);
+                    pLand.m_pProvince = this;
+
+                    m_cBorder[pLand].Clear();
+                    m_cBorder.Remove(pLand);
+
+                    foreach (var pAddonLinkedLand in pLand.BorderWith)
+                    {
+                        if (!(pAddonLinkedLand.Key as ITerritory).Forbidden && m_cContents.Contains(pAddonLinkedLand.Key as LandX))
+                            continue;
+
+                        if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
+                            m_cBorder[pAddonLinkedLand.Key] = new List<Line>();
+                        Line[] cLines = pAddonLinkedLand.Value.ToArray();
+                        foreach (Line pLine in cLines)
+                            m_cBorder[pAddonLinkedLand.Key].Add(new Line(pLine));
+                    }
+
+                    bGrown = true;
+                }
+            }
+
+            return bGrown;
         }
 
         /// <summary>
@@ -82,9 +253,39 @@ namespace Socium
         /// <returns></returns>
         public bool Grow(int iMaxProvinceSize)
         {
-            if (m_cContents.Count > iMaxProvinceSize)
+            //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
+            if (m_cContents.Count > iMaxProvinceSize || m_pCenter.m_iProvincePresence > 20 * Math.Sqrt(iMaxProvinceSize / Math.PI))
+            {
+                //GrowForce(m_pCenter, 1);
                 return false;
+            }
 
+            LandX pAddon = GrowPresence(m_pCenter, 1);
+            if (pAddon != null)
+            {
+                m_cContents.Add(pAddon);
+                pAddon.m_pProvince = this;
+
+                m_cBorder[pAddon].Clear();
+                m_cBorder.Remove(pAddon);
+
+                foreach (var pAddonLinkedLand in pAddon.BorderWith)
+                {
+                    if (!(pAddonLinkedLand.Key as ITerritory).Forbidden && m_cContents.Contains(pAddonLinkedLand.Key as LandX))
+                        continue;
+
+                    if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
+                        m_cBorder[pAddonLinkedLand.Key] = new List<Line>();
+                    Line[] cLines = pAddonLinkedLand.Value.ToArray();
+                    foreach (Line pLine in cLines)
+                        m_cBorder[pAddonLinkedLand.Key].Add(new Line(pLine));
+                }
+            }
+
+            return true;
+
+            //======================================================================================================
+            /*
             Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
 
             foreach (ITerritory pTerr in m_cBorder.Keys)
@@ -234,6 +435,7 @@ namespace Socium
             //ChainBorder();
 
             return true;
+            */
         }
 
         /// <summary>
