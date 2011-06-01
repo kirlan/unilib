@@ -199,7 +199,7 @@ namespace VQMapTest2
                     iInvasionProb = 100;
                     break;
             }
-            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, Math.Max(10, Math.Min((int)StatesCount.Value * 3, 300)), (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, iInvasionProb, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
+            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, Math.Max(10, Math.Min((int)StatesCount.Value * 7, 300)), (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, iInvasionProb, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
             
             Cursor = Cursors.Arrow;
             groupBox1.Enabled = true;
