@@ -329,8 +329,9 @@ namespace VQMapTest2
 
             listBox1.Items.Clear();
 
-            foreach (LocationX pLoc in e.m_pState.m_cSettlements)
-                listBox1.Items.Add(pLoc);
+            foreach(Province pProvince in e.m_pState.m_cContents)
+                foreach (LocationX pLoc in pProvince.m_cSettlements)
+                    listBox1.Items.Add(pLoc);
 
             comboBox1.Focus();
             //worldMap1.SetPan(e.m_iX - worldMap1.ClientRectangle.Width / 2, e.m_iY - worldMap1.ClientRectangle.Height / 2);
