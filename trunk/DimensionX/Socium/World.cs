@@ -545,8 +545,6 @@ namespace Socium
             m_iInvadersMaxTechLevel = iInvadersMaxTechLevel;
             m_iInvadersMaxMagicLevel = iInvadersMaxMagicLevel;
 
-            //CalculatePossibleProvinciesCenters();
-
             PopulateWorld(iRacesCount, true);
 
             int iAge = Rnd.Get(4);//4 - снижено для отладки
@@ -560,94 +558,6 @@ namespace Socium
             PopulateWorld(iRacesCount, false);
         }
 
-        private Dictionary<ContinentX, Dictionary<LandX, int>> m_cProvinceCenters = new Dictionary<ContinentX,Dictionary<LandX,int>>();
-
-        private void CalculatePossibleProvinciesCenters()
-        {
-            Dictionary<LandX, int> cProcessed = new Dictionary<LandX, int>();
-
-            foreach (ContinentX pConti in m_aContinents)
-            {
-                m_cProvinceCenters[pConti] = new Dictionary<LandX, int>();
-                int iMaxCost = 0;
-                foreach (var pLM in pConti.m_cContents)
-                    foreach (var pLand in pLM.m_cContents)
-                        if (!pLand.IsWater && pLand.Type.m_iMovementCost > iMaxCost)
-                            iMaxCost = pLand.Type.m_iMovementCost;
-
-                foreach (var pLM in pConti.m_cContents)
-                    foreach (var pLand in pLM.m_cContents)
-                        if (!pLand.IsWater && pLand.Type.m_iMovementCost == iMaxCost)
-                        {
-                            cProcessed[pLand] = 0;
-                            
-                            bool bHaveFree = false;
-                            foreach (var pTerr2 in pLand.BorderWith)
-                            {
-                                if ((pTerr2.Key as ITerritory).Forbidden)
-                                    continue;
-
-                                LandX pLinked2 = pTerr2.Key as LandX;
-                                if (!pLinked2.IsWater)
-                                {
-                                    bHaveFree = true;
-                                    break;
-                                }
-                            }
-                            if (!bHaveFree)
-                            {
-                                m_cProvinceCenters[pConti][pLand] = pLand.Type.m_iMovementCost * pLand.m_cContents.Count;
-                            }
-                        }
-            }
-
-            Dictionary<LandX, int> cProcessedNew = new Dictionary<LandX,int>();
-
-            do
-            {
-                cProcessedNew.Clear();
-
-                foreach (var pLand in cProcessed)
-                    foreach (var pTerr in pLand.Key.BorderWith)
-                    {
-                        if ((pTerr.Key as ITerritory).Forbidden)
-                            continue;
-
-                        LandX pLinked = pTerr.Key as LandX;
-                        if (pLinked.IsWater || cProcessed.ContainsKey(pLinked))
-                            continue;
-
-                        int iValue = 0;
-                        cProcessedNew.TryGetValue(pLinked, out iValue);
-                        cProcessedNew[pLinked] = Math.Max(iValue, pLand.Value + pLinked.Type.m_iMovementCost*pLinked.m_cContents.Count);
-
-                        bool bHaveFree = false;
-                        foreach (var pTerr2 in pLinked.BorderWith)
-                        {
-                            if ((pTerr2.Key as ITerritory).Forbidden)
-                                continue;
-
-                            LandX pLinked2 = pTerr2.Key as LandX;
-                            if (!pLinked2.IsWater &&
-                                !cProcessed.ContainsKey(pLinked2) &&
-                                !cProcessedNew.ContainsKey(pLinked2))
-                            {
-                                bHaveFree = true;
-                                break;
-                            }
-                        }
-                        if (!bHaveFree)
-                        {
-                            m_cProvinceCenters[pLinked.Continent][pLinked] = cProcessedNew[pLinked];
-                        }
-                    }
-
-                foreach (var pLand in cProcessedNew)
-                    cProcessed[pLand.Key] = pLand.Value;
-            }
-            while (cProcessedNew.Count > 0);
-        }
-
         private void PopulateWorld(int iRacesCount, bool bFast)
         {
             SetWorldLevels();
@@ -657,9 +567,10 @@ namespace Socium
             PopulateAreas();
 
             BuildProvinces();
-            BuildStates();
 
             BuildCities(m_cGrid.CycleShift, bFast);
+
+            BuildStates(m_cGrid.CycleShift, bFast);
 
             foreach (ContinentX pConti in m_aContinents)
             {
@@ -872,7 +783,7 @@ namespace Socium
                 pProvince.Finish(m_cGrid.CycleShift);
         }
 
-        private void BuildStates()
+        private void BuildStates(float fCycleShift, bool bFast)
         {
             List<ContinentX> cUsed = new List<ContinentX>();
 
@@ -967,12 +878,13 @@ namespace Socium
                     throw new Exception();
             }
 
+            int iMaxStateSize = m_aProvinces.Length / cStates.Count;
             bool bContinue = false;
             do
             {
                 bContinue = false;
                 foreach (State pState in cStates)
-                    if (pState.Grow())
+                    if (pState.Grow(iMaxStateSize))
                         bContinue = true;
             }
             while (bContinue);
@@ -984,7 +896,7 @@ namespace Socium
                     State pState = new State();
                     pState.Start(pProvince);
                     cStates.Add(pState);
-                    while (pState.Grow()) { }
+                    while (pState.Grow(iMaxStateSize)) { }
                 }
             }
 
@@ -992,6 +904,7 @@ namespace Socium
 
             foreach (State pState in m_aStates)
             {
+                pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iMinTechLevel, m_iMaxTechLevel);
                 pState.Finish(m_cGrid.CycleShift);
 
                 ContinentX pConti = null;
@@ -1008,6 +921,22 @@ namespace Socium
 
                 pState.Owner = pConti;
                 pConti.m_cStates.Add(pState);
+            }
+
+            Dictionary<State, Dictionary<State, int>> cHostility = new Dictionary<State, Dictionary<State, int>>();
+
+            foreach (State pState in m_aStates)
+            {
+                if (!pState.Forbidden)
+                {
+                    pState.BuildForts(cHostility, bFast);
+
+                    //if (!bFast)
+                    //{
+                    //    foreach(Province pProvince in pState.m_cContents)
+                    //        pProvince.BuildRoads(2, fCycleShift);
+                    //}
+                }
             }
         }
 
@@ -1068,21 +997,20 @@ namespace Socium
 
         private void BuildInterstateRoads(float fCycleShift)
         {
-            foreach (State pState in m_aStates)
+            foreach (Province pProvince in m_aProvinces)
             {
-                if (!pState.Forbidden)
+                if (!pProvince.Forbidden)
                 {
-                    foreach (State pBorderState in pState.m_aBorderWith)
-                    //foreach (State pBorderState in m_cStates)
+                    foreach (Province pLinkedProvince in pProvince.m_aBorderWith)
                     {
-                        if (!pBorderState.Forbidden && pBorderState != pState)
+                        if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince)
                         {
                             float fMinLength = float.MaxValue;
                             LocationX pBestTown1 = null;
                             LocationX pBestTown2 = null;
-                            foreach (LocationX pTown in pState.m_cSettlements)
+                            foreach (LocationX pTown in pProvince.m_cSettlements)
                             {
-                                foreach (LocationX pOtherTown in pBorderState.m_cSettlements)
+                                foreach (LocationX pOtherTown in pLinkedProvince.m_cSettlements)
                                 {
                                     if (pTown != pOtherTown && !pTown.m_cHaveRoadTo.ContainsKey(pOtherTown))
                                     {
@@ -1098,7 +1026,7 @@ namespace Socium
                                     }
                                 }
                             }
-                            if (pBestTown1 != null && State.InfrastructureLevels[pState.m_iInfrastructureLevel].m_iMaxGroundRoad > 0 && State.InfrastructureLevels[pBorderState.m_iInfrastructureLevel].m_iMaxGroundRoad > 0)
+                            if (pBestTown1 != null && State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_iMaxGroundRoad > 0 && State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_iMaxGroundRoad > 0)
                             {
                                 int iMaxRoadLevel = 1;
                                 foreach(var pRoad in pBestTown1.m_cRoads)
@@ -1130,11 +1058,11 @@ namespace Socium
                 pLandMass.m_bHarbor = false;
 
             List<LocationX> cHarbors = new List<LocationX>();
-            foreach (State pState in m_aStates)
+            foreach (Province pProvince in m_aProvinces)
             {
-                if (!pState.Forbidden)
+                if (!pProvince.Forbidden)
                 {
-                    foreach (LocationX pTown in pState.m_cSettlements)
+                    foreach (LocationX pTown in pProvince.m_cSettlements)
                     {
                         pTown.m_bHarbor = false;
 
@@ -1177,8 +1105,8 @@ namespace Socium
                 //pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Town)
                 //continue;
 
-                State pState = (pHarbor.Owner as LandX).m_pProvince.Owner as State;
-                int iMaxNavalPath = State.InfrastructureLevels[pState.m_iInfrastructureLevel].m_iMaxNavalPath;
+                Province pProvince = (pHarbor.Owner as LandX).m_pProvince;
+                int iMaxNavalPath = State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_iMaxNavalPath;
                 if (iMaxNavalPath == 0)
                     continue;
 
@@ -1294,18 +1222,18 @@ namespace Socium
 
                 if ((pHarbor1.Owner as LandX).m_pProvince.Owner != (pHarbor2.Owner as LandX).m_pProvince.Owner)
                 {
-                    State pState1 = (pHarbor1.Owner as LandX).m_pProvince.Owner as State;
-                    State pState2 = (pHarbor2.Owner as LandX).m_pProvince.Owner as State;
+                    Province pProvince1 = (pHarbor1.Owner as LandX).m_pProvince;
+                    Province pProvince2 = (pHarbor2.Owner as LandX).m_pProvince;
 
-                    List<object> pState1Neighbours = new List<object>(pState1.m_aBorderWith);
-                    if (!pState1Neighbours.Contains(pState2))
-                        pState1Neighbours.Add(pState2);
-                    pState1.m_aBorderWith = pState1Neighbours.ToArray();
+                    List<object> pProvince1Neighbours = new List<object>(pProvince1.m_aBorderWith);
+                    if (!pProvince1Neighbours.Contains(pProvince2))
+                        pProvince1Neighbours.Add(pProvince2);
+                    pProvince1.m_aBorderWith = pProvince1Neighbours.ToArray();
 
-                    List<object> pState2Neighbours = new List<object>(pState2.m_aBorderWith);
-                    if (!pState2Neighbours.Contains(pState1))
-                        pState2Neighbours.Add(pState1);
-                    pState2.m_aBorderWith = pState2Neighbours.ToArray();
+                    List<object> pProvince2Neighbours = new List<object>(pProvince2.m_aBorderWith);
+                    if (!pProvince2Neighbours.Contains(pProvince1))
+                        pProvince2Neighbours.Add(pProvince1);
+                    pProvince2.m_aBorderWith = pProvince2Neighbours.ToArray();
                 }
             }
 
@@ -1314,49 +1242,38 @@ namespace Socium
 
         private void BuildCities(float fCycleShift, bool bFast)
         {
-            foreach (State pState in m_aStates)
+            foreach (Province pProvince in m_aProvinces)
             {
-                if (!pState.Forbidden)
+                if (!pProvince.Forbidden)
                 {
-                    pState.BuildCapital(m_aProvinces.Length / (2*m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iMinTechLevel, m_iMaxTechLevel);
-                    if(!bFast)
-                        pState.BuildRoads(3, fCycleShift);
-                }
-            }
+                    pProvince.BuildCapital(bFast, m_iMinTechLevel, m_iMaxTechLevel);
 
-            Dictionary<State, Dictionary<State, int>> cHostility = new Dictionary<State, Dictionary<State, int>>();
-
-            foreach (State pState in m_aStates)
-            {
-                if (!pState.Forbidden)
-                {
-                    pState.BuildSettlements(SettlementSize.City, bFast);
+                    pProvince.BuildSettlements(SettlementSize.City, bFast);
                     if (!bFast)
-                        pState.BuildRoads(3, fCycleShift);
+                        pProvince.BuildRoads(3, fCycleShift);
 
-                    pState.BuildSettlements(SettlementSize.Town, bFast);
-                    pState.BuildForts(cHostility, bFast);
+                    pProvince.BuildSettlements(SettlementSize.Town, bFast);
 
                     if (!bFast)
-                        pState.BuildRoads(2, fCycleShift);
+                        pProvince.BuildRoads(2, fCycleShift);
                 }
             }
 
             if (!bFast)
                 BuildInterstateRoads(fCycleShift);
 
-            foreach (State pState in m_aStates)
+            foreach (Province pProvince in m_aProvinces)
             {
-                if (!pState.Forbidden)
+                if (!pProvince.Forbidden)
                 {
-                    pState.BuildSettlements(SettlementSize.Village, bFast);
+                    pProvince.BuildSettlements(SettlementSize.Village, bFast);
 
                     if (!bFast)
-                        pState.BuildRoads(1, fCycleShift);
+                        pProvince.BuildRoads(1, fCycleShift);
 
-                    pState.BuildSettlements(SettlementSize.Hamlet, bFast);
+                    pProvince.BuildSettlements(SettlementSize.Hamlet, bFast);
 
-                    pState.BuildLairs(m_aLands.Length / 125);
+                    pProvince.BuildLairs(m_aLands.Length / 125);
                 }
             }
 
@@ -1440,58 +1357,57 @@ namespace Socium
                                 if (pLoc.m_pSettlement != null)
                                 {
                                     if (pLoc.m_pSettlement.m_iRuinsAge > 0)
+                                    {
                                         if (!Rnd.OneChanceFrom((int)pLand.MovementCost))
                                         {
                                             pLoc.m_pSettlement.m_iRuinsAge++;
-                                            pLoc.m_bHarbor = false;
                                         }
                                         else
                                         {
                                             pLoc.m_pSettlement = null;
-                                            pLoc.m_bHarbor = false;
-                                            if (pState.m_cSettlements.Contains(pLoc))
-                                                pState.m_cSettlements.Remove(pLoc);
+                                            if (pProvince.m_cSettlements.Contains(pLoc))
+                                                pProvince.m_cSettlements.Remove(pLoc);
                                         }
+                                    }
+                                    else
+                                    {
+                                        switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                                        {
+                                            case SettlementSize.Village:
+                                                break;
+                                            case SettlementSize.Town:
+                                                if (Rnd.OneChanceFrom(1 + (int)(24 / pLoc.GetMovementCost())))
+                                                    pLoc.m_pSettlement.m_iRuinsAge++;
+                                                break;
+                                            case SettlementSize.City:
+                                                if (Rnd.OneChanceFrom(1 + (int)(12 / pLoc.GetMovementCost())))
+                                                    pLoc.m_pSettlement.m_iRuinsAge++;
+                                                break;
+                                            case SettlementSize.Capital:
+                                                if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
+                                                    pLoc.m_pSettlement.m_iRuinsAge++;
+                                                break;
+                                            case SettlementSize.Fort:
+                                                if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
+                                                    pLoc.m_pSettlement.m_iRuinsAge++;
+                                                break;
+                                        }
+
+                                        if (pLoc == pState.m_pMethropoly.m_pAdministrativeCenter &&
+                                            pLoc.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
+                                            pLoc.m_pSettlement.m_iRuinsAge = 1;
+
+                                        if (pLoc.m_pSettlement.m_iRuinsAge == 0)
+                                            pLoc.m_pSettlement = null;
+                                    }
                                 }
 
+                                pLoc.m_bHarbor = false;
                                 pLoc.m_pBuilding = null;
                             }
                         }
+                        pProvince.m_cSettlements.Clear();
                     }
-
-                    foreach (LocationX pSett in pState.m_cSettlements)
-                    {
-                        switch (pSett.m_pSettlement.m_pInfo.m_eSize)
-                        { 
-                            case SettlementSize.Village:
-                                break;
-                            case SettlementSize.Town:
-                                if (Rnd.OneChanceFrom(1 + (int)(24 / pSett.GetMovementCost())))
-                                    pSett.m_pSettlement.m_iRuinsAge++;
-                                break;
-                            case SettlementSize.City:
-                                if (Rnd.OneChanceFrom(1 + (int)(12 / pSett.GetMovementCost())))
-                                    pSett.m_pSettlement.m_iRuinsAge++;
-                                break;
-                            case SettlementSize.Capital:
-                                if (Rnd.OneChanceFrom(1 + (int)(6 / pSett.GetMovementCost())))
-                                    pSett.m_pSettlement.m_iRuinsAge++;
-                                break;
-                            case SettlementSize.Fort:
-                                if (Rnd.OneChanceFrom(1 + (int)(6 / pSett.GetMovementCost())))
-                                    pSett.m_pSettlement.m_iRuinsAge++;
-                                break;
-                        }
-
-                        if (pSett == pState.m_pCapital && pSett.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
-                            pSett.m_pSettlement.m_iRuinsAge = 1;
-
-                        if (pSett.m_pSettlement.m_iRuinsAge == 0)
-                            pSett.m_pSettlement = null;
-
-                        pSett.m_bHarbor = false;
-                    }
-                    pState.m_cSettlements.Clear();
 
                     if (!m_aLocalRaces.Contains(pState.m_pRace) || Rnd.OneChanceFrom(2))
                         cEraseState.Add(pState);

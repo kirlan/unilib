@@ -5,6 +5,7 @@ using System.Text;
 using LandscapeGeneration;
 using Random;
 using NameGen;
+using LandscapeGeneration.PathFind;
 
 namespace Socium
 {
@@ -50,6 +51,53 @@ namespace Socium
         public LandX m_pCenter;
 
         public LocationX m_pAdministrativeCenter = null;
+
+        /// <summary>
+        /// 1 - Бронзовый век. В ходу бронзовые кирасы и кожаные доспехи, бронзовое холодное оружие, из стрелкового оружия – луки и дротики.
+        /// 2 - Железный век. Стальное холодное оружие, кольчуги, рыцарские доспехи. Из стрелкового оружия - луки и арбалеты.
+        /// 3 - Эпоха пороха. Примитивное однозарядное огнестрельное оружие, лёгкие сабли и шпаги, облегчённая броня (кирасы, кожаные куртки).
+        /// 4 - Индустриальная эра. Нарезное огнестрельное оружие, примитивная бронетехника и авиация, химическое оружие массового поражения.
+        /// 5 - Атомная эра. Автоматическое огнестрельное оружие, бронежилеты, развитая бронетехника и авиация, ядерные ракеты и бомбы.
+        /// 6 - Энергетическая эра. Силовые поля, лучевое оружие.
+        /// 7 - Квантовая эра. Ограниченная телепортация, материализация, дезинтеграция.
+        /// 8 - Переход. Полная и неограниченная власть человека над пространственно-временным континуумом.
+        /// </summary>
+        public int m_iTechLevel = 0;
+        /// <summary>
+        /// 1 - Мистика. Ритуальная магия, требующая длительной предварительной подготовки. Используя психотропные вещества, гипноз и йогические практики, мистики могут общаться с миром духов, получая из него информацию или заключая сделки с его обитателями.
+        /// 2 - Псионика. Познание окружающего мира силой собственной мысли. Эмпатия, телепатия, ясновиденье, дальновиденье.
+        /// 3 - Сверхспособности. Управление материальными объектами без физического контакта: телекинез, пирокинез, левитация и т.д.... Как правило, один отдельно взятый персонаж может развить у себя только одну-две сверхспособности.
+        /// 4 - Традиционная фэнтезийная магия. То же самое, что и на предыдущем уровне, но гораздо доступнее. Один маг может владеть десятками заклинаний на разные случаи жизни.
+        /// 5 - Джинны. Способность произвольно менять облик, массу и физические свойства собственного тела. Использование магии без заклинаний - просто усилием мысли.
+        /// 6 - Титаны. Уровень личного могущества, обычно приписываемый языческим богам. Телепортация, материализация, управление течением времени.
+        /// 7 - Трансцендентность. Отсутствие привязки к физическом телу. Разум способен существовать  в нематериальной форме, при этом сохраняя все свои возможности воспринимать окружающую среду и воздействать на неё.
+        /// 8 - Единое. Границы между индивидуальностями стираются, фактически всё сообщество является единым разумным существом, неизмеримо более могущественным, чем составляющие его отдельные личности сами по себе.
+        /// </summary>
+        public int m_iMagicLimit = 0;
+        /// <summary>
+        /// Доступный жителям уровень жизни.
+        /// Зависит от технического и магического развития, определяет доступные формы государственного правления
+        /// </summary>
+        public int m_iInfrastructureLevel = 0;
+
+        public Culture m_pCulture = null;
+        public Customs m_pCustoms = null;
+
+        /// <summary>
+        /// Как часто встрачаются носители магических способностей
+        /// </summary>
+        public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.rare;
+        /// <summary>
+        /// Процент реально крутых магов среди всех носителей магических способностей
+        /// </summary>
+        public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
+
+        public int m_iFood = 0;
+        public int m_iOre = 0;
+        public int m_iWood = 0;
+        public int m_iPopulation = 0;
+
+        public List<LocationX> m_cSettlements = new List<LocationX>();
 
         public Province(bool bForbidden)
         {
@@ -145,10 +193,6 @@ namespace Socium
                 iOwnCost = GetGrowCost(pLand);
                 m_cGrowCosts[pLand] = iOwnCost;
             }
-
-            // 400 - удвоенная максимальная возможная стоимость захвата земли (10*10*2)
-            //if (pLand.m_iProvinceForce > 400)
-            //    return null;
 
             if (pLand.m_iProvincePresence > iOwnCost)
             {
@@ -283,159 +327,6 @@ namespace Socium
             }
 
             return true;
-
-            //======================================================================================================
-            /*
-            Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
-
-            foreach (ITerritory pTerr in m_cBorder.Keys)
-            {
-                if (pTerr.Forbidden)
-                    continue;
-                
-                LandX pLand = pTerr as LandX;
-                
-                if(pLand.m_pProvince == null && !pLand.IsWater)
-                {
-                    //if (m_pCenter.Type.m_iMovementCost > pLand.Type.m_iMovementCost)
-                    //    continue;
-
-                    //граница провинции с этой землёй
-                    float fWholeLength = 1;
-                    foreach (Line pLine in m_cBorder[pLand])
-                        fWholeLength += pLine.m_fLength;
-
-                    //граница этой земли с окружающими землями
-                    float fTotalLength = 0;
-                    foreach (var pLinkTerr in pLand.BorderWith)
-                    {
-                        if ((pLinkTerr.Key as ITerritory).Forbidden)
-                            continue;
-
-                        Line[] cLines = pLinkTerr.Value.ToArray();
-                        foreach (Line pLine in cLines)
-                            fTotalLength += pLine.m_fLength;
-                    }
-
-                    fWholeLength /= fTotalLength;
-
-                    if (fWholeLength < 0.25f)
-                        fWholeLength /= 10;
-                    if (fWholeLength > 0.5f)
-                        fWholeLength *= 10;
-                    //if (fWholeLength < 0.25f && m_cContents.Count > 1)
-                    //    continue;
-
-                    //fWholeLength /= (float)pLand.Type.m_iMovementCost * pLand.Type.m_iMovementCost;
-                    //if (m_pCenter.Type != pLand.Type)
-                    //    fWholeLength /= 100;
-                    fWholeLength /= Math.Max(pLand.Type.m_iMovementCost, m_pCenter.Type.m_iMovementCost) / Math.Min(pLand.Type.m_iMovementCost, m_pCenter.Type.m_iMovementCost);
-
-                    foreach (LandTypeInfoX pType in m_pRace.m_cPrefferedLands)
-                        if (pType == pLand.Type)
-                            fWholeLength *= 10;// (float)pLand.Type.m_iMovementCost;//2;
-
-                    foreach (LandTypeInfoX pType in m_pRace.m_cHatedLands)
-                        if (pType == pLand.Type)
-                            fWholeLength /= 100;// (float)pLand.Type.m_iMovementCost;//2;
-
-                    //if(m_pCenter.Type != pLand.Type)
-                    //    fWholeLength /= (float)Math.Max(pLand.Type.m_iMovementCost, m_pCenter.Type.m_iMovementCost)*10;//2;
-
-                    cBorderLength[pLand] = fWholeLength;
-                }
-            }
-
-            if (cBorderLength.Count == 0)
-                return false;
-
-            //foreach (ITerritory pTerr in m_cBorder.Keys)
-            //{
-            //    if (pTerr.Forbidden)
-            //        continue;
-
-            //    LandX pLand = pTerr as LandX;
-
-            //    if (!cBorderLength.ContainsKey(pLand))
-            //        continue;
-
-            //    float fTotalLength = 0;
-            //    foreach (ITerritory pLinkTerr in pLand.BorderWith.Keys)
-            //    {
-            //        if (pLinkTerr.Forbidden)
-            //            continue;
-
-            //        LandX pLink = pLinkTerr as LandX;
-            //        foreach (Line pLine in pLand.BorderWith[pLink])
-            //            fTotalLength += pLine.m_fLength;
-            //    }
-
-            //    cBorderLength[pLand] /= fTotalLength;
-            //}
-
-            LandX pAddon = null;
-
-            int iChoice = Rnd.ChooseOne(cBorderLength.Values, 5);
-            foreach (LandX pLand in cBorderLength.Keys)
-            {
-                iChoice--;
-                if (iChoice < 0)
-                {
-                    pAddon = pLand;
-                    break;
-                }
-            }
-
-            if (pAddon == null)
-                return false;
-            
-            //float fTotalLength = 0;
-            //foreach (ITerritory pLinkTerr in pAddon.BorderWith.Keys)
-            //{
-            //    if (pLinkTerr.Forbidden)
-            //        continue;
-
-            //    LandX pLink = pLinkTerr as LandX;
-            //    foreach (Line pLine in pAddon.BorderWith[pLink])
-            //        fTotalLength += pLine.m_fLength;
-            //}
-
-            //if (!Rnd.ChooseOne(cBorderLength[pAddon], fTotalLength - cBorderLength[pAddon]) || Rnd.OneChanceFrom(100))
-            //    return true;
-
-            if (Rnd.ChooseOne(m_cContents.Count, 10) || Rnd.OneChanceFrom(100))
-                return true;
-
-            //if (!Rnd.OneChanceFrom(1 + m_iPower * m_iPower))
-            //if (Rnd.OneChanceFrom(1 + pAddon.Type.m_iMovementCost * pAddon.Type.m_iMovementCost))
-            //    return true;
-
-            //foreach (LandTypeInfoX pType in m_pRace.m_cHatedLands)
-            //    if (pType == pAddon.Type && !Rnd.OneChanceFrom(5))
-            //        return true;
-
-            m_cContents.Add(pAddon);
-            pAddon.m_pProvince = this;
-
-            m_cBorder[pAddon].Clear();
-            m_cBorder.Remove(pAddon);
-
-            foreach (var pLand in pAddon.BorderWith)
-            {
-                if (!(pLand.Key as ITerritory).Forbidden && m_cContents.Contains(pLand.Key as LandX))
-                    continue;
-
-                if (!m_cBorder.ContainsKey(pLand.Key))
-                    m_cBorder[pLand.Key] = new List<Line>();
-                Line[] cLines = pLand.Value.ToArray();
-                foreach (Line pLine in cLines)
-                    m_cBorder[pLand.Key].Add(new Line(pLine));
-            }
-
-            //ChainBorder();
-
-            return true;
-            */
         }
 
         /// <summary>
@@ -491,7 +382,313 @@ namespace Socium
                 pLand.m_pRace = m_pRace;
         }
 
-        public LocationX BuildAdministrativeCenter(SettlementInfo pCenter, bool bFast)
+        public void BuildLairs(int iScale)
+        {
+            foreach (LandX pLand in m_cContents)
+                pLand.BuildLair();
+        }
+
+        public void BuildSettlements(SettlementSize eSize, bool bFast)
+        {
+            if (!State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(eSize))
+                return;
+
+            int iMinCount = m_cContents.Count / 3;
+            switch (eSize)
+            {
+                case SettlementSize.City:
+                    iMinCount = m_cContents.Count / 9;
+                    break;
+                case SettlementSize.Town:
+                    iMinCount = m_cContents.Count / 6;
+                    break;
+            }
+
+            Dictionary<LandX, float> cLandsChances = new Dictionary<LandX, float>();
+            foreach (LandX pLand in m_cContents)
+                cLandsChances[pLand] = (float)pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize];
+
+            for (int i = 0; i < iMinCount; i++)
+            {
+                int iChance = Rnd.ChooseOne(cLandsChances.Values, 1);
+
+                foreach (LandX pLand in cLandsChances.Keys)
+                {
+                    iChance--;
+                    if (iChance < 0)
+                    {
+                        LocationX pSettlement = pLand.BuildSettlement(Settlement.Info[eSize], false, bFast);
+                        if (pSettlement != null)
+                        {
+                            m_cSettlements.Add(pSettlement);
+                            //bHaveOne = true;
+                        }
+                        cLandsChances[pLand] = 0;
+                        break;
+                    }
+                }
+            }
+
+            foreach (LandX pLand in m_cContents)
+            {
+                bool bHaveOne = false;
+                foreach (LocationX pLoc in pLand.m_cContents)
+                    if (pLoc.m_pSettlement != null)
+                    {
+                        bHaveOne = true;
+                        break;
+                    }
+                if (bHaveOne)
+                    continue;
+
+                int iSettlementsCount = (int)(pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize]);
+                if (iSettlementsCount == 0)
+                {
+                    int iSettlementChance = (int)(1 / (pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize]));
+                    if (Rnd.OneChanceFrom(iSettlementChance))
+                        iSettlementsCount = 1;
+                }
+                else
+                    iSettlementsCount = 1;
+
+                for (int i = 0; i < iSettlementsCount; i++)
+                {
+                    //if (bHaveOne && !Rnd.OneChanceFrom(3))
+                    //    continue;
+
+                    LocationX pSettlement = pLand.BuildSettlement(Settlement.Info[eSize], false, bFast);
+                    if (pSettlement != null)
+                    {
+                        m_cSettlements.Add(pSettlement);
+                        //bHaveOne = true;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Присоединяет в общую транспортную сеть ещё не присоединённые города государства.
+        /// </summary>
+        /// <param name="iRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
+        public void BuildRoads(int iRoadLevel, float fCycleShift)
+        {
+            if (iRoadLevel > State.InfrastructureLevels[m_iInfrastructureLevel].m_iMaxGroundRoad)
+                iRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_iMaxGroundRoad;
+
+            if (iRoadLevel == 0)
+                return;
+
+            foreach (LandX pLand in m_cContents)
+                foreach (LocationX pLoc in pLand.m_cContents)
+                    foreach (TransportationNode pLinked in pLoc.m_cLinks.Keys)
+                    {
+                        if (pLinked is LocationX)
+                        {
+                            LandX pLinkedOwner = (pLinked as LocationX).Owner as LandX;
+                            if (pLinkedOwner.m_pProvince != this)
+                                pLoc.m_cLinks[pLinked].m_bClosed = true;
+                        }
+                        else
+                            pLoc.m_cLinks[pLinked].m_bClosed = true;
+                    }
+
+            List<LocationX> cConnected = new List<LocationX>();
+            cConnected.Add(m_pAdministrativeCenter);
+
+            LocationX[] aSettlements = m_cSettlements.ToArray();
+
+            foreach (LocationX pTown in aSettlements)
+            {
+                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[2].Count > 0 || pTown.m_cRoads[3].Count > 1))
+                    cConnected.Add(pTown);
+            }
+
+            while (cConnected.Count < aSettlements.Length)
+            {
+                //Road pBestRoad = null;
+                LocationX pBestTown1 = null;
+                LocationX pBestTown2 = null;
+                float fMinLength = float.MaxValue;
+
+                foreach (LocationX pTown in aSettlements)
+                {
+                    if (cConnected.Contains(pTown))
+                        continue;
+
+                    foreach (LocationX pOtherTown in cConnected)
+                    {
+                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+
+                        if (fDist < fMinLength &&
+                            (fMinLength == float.MaxValue ||
+                             Rnd.OneChanceFrom(2)))
+                        {
+                            fMinLength = fDist;
+                            //pBestRoad = pRoad;
+
+                            pBestTown1 = pTown;
+                            pBestTown2 = pOtherTown;
+                        }
+                    }
+                }
+                if (pBestTown2 != null)
+                {
+                    World.BuildRoad(pBestTown1, pBestTown2, iRoadLevel, fCycleShift);
+
+                    fMinLength = float.MaxValue;
+                    LocationX pBestTown3 = null;
+                    foreach (LocationX pOtherTown in cConnected)
+                    {
+                        float fDist = pBestTown1.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
+
+                        if (pOtherTown != pBestTown2 &&
+                            fDist < fMinLength &&
+                            (fMinLength == float.MaxValue ||
+                             Rnd.OneChanceFrom(2)))
+                        {
+                            fMinLength = fDist;
+                            //pBestRoad = pRoad;
+
+                            pBestTown3 = pOtherTown;
+                        }
+                    }
+
+                    if (pBestTown3 != null)
+                        World.BuildRoad(pBestTown1, pBestTown3, iRoadLevel, fCycleShift);
+
+                    cConnected.Add(pBestTown1);
+                }
+            }
+
+            foreach (LandX pLand in m_cContents)
+                foreach (LocationX pLoc in pLand.m_cContents)
+                    foreach (TransportationNode pLink in pLoc.m_cLinks.Keys)
+                        pLoc.m_cLinks[pLink].m_bClosed = false;
+        }
+
+        public LocationX BuildCapital(bool bFast, int iMinTech, int iMaxTech)
+        {
+            m_iTechLevel = m_pRace.m_iTechLevel;
+            //m_iMagicLimit = m_pRace.m_iMagicLimit;
+
+            //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
+            //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
+            m_pCulture = new Culture(m_pRace.m_pCulture);
+            m_pCustoms = new Customs(m_pRace.m_pCustoms);
+
+            //if (Rnd.OneChanceFrom(3))
+            //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+            //if (Rnd.OneChanceFrom(3))
+            //    m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+
+            int iAverageMagicLimit = 0;
+
+            m_iFood = 0;
+            m_iWood = 0;
+            m_iOre = 0;
+            m_iPopulation = 0;
+
+            foreach (LandX pLand in m_cContents)
+            {
+                int iCoast = 0;
+                int iBorder = 0;
+                foreach (LocationX pLoc in pLand.m_cContents)
+                {
+                    foreach (LocationX pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Owner != pLoc.Owner)
+                            iBorder++;
+                        if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                            iCoast++;
+                    }
+                }
+
+                m_iFood += (int)(pLand.m_cContents.Count * pLand.Type.m_fFood) + iCoast * 3;
+                m_iWood += (int)(pLand.m_cContents.Count * pLand.Type.m_fWood);
+                m_iOre += (int)(pLand.m_cContents.Count * pLand.Type.m_fOre);
+
+                m_iPopulation += pLand.m_cContents.Count;
+                iAverageMagicLimit += m_pRace.m_iMagicLimit * pLand.m_cContents.Count;
+            }
+
+            iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
+
+            if (m_iWood < m_iPopulation / 2 && m_iOre < m_iPopulation / 2)
+                m_iTechLevel -= 2;
+            else if (m_iWood + m_iOre < m_iPopulation)
+                m_iTechLevel--;
+            else if (m_iWood > m_iPopulation && m_iOre > m_iPopulation && Rnd.OneChanceFrom(4))
+                m_iTechLevel++;
+
+            if (m_iTechLevel < iMinTech)
+                m_iTechLevel = iMinTech;
+            if (m_iTechLevel > iMaxTech)
+                m_iTechLevel = iMaxTech;
+
+            int iOldLevel = m_pRace.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
+            int iNewLevel = m_iTechLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
+            if (iNewLevel > iOldLevel)
+                for (int i = 0; i < iNewLevel - iOldLevel; i++)
+                {
+                    m_pCulture.Evolve();
+                    m_pCustoms.Evolve();
+                }
+            else
+                for (int i = 0; i < iOldLevel - iNewLevel; i++)
+                {
+                    m_pCulture.Degrade();
+                    m_pCustoms.Degrade();
+                }
+
+            m_iInfrastructureLevel = 4 + (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
+
+            if (m_iTechLevel == 0 && iAverageMagicLimit == 0)
+                m_iInfrastructureLevel = 0;
+
+            if (m_iFood < m_iPopulation || Rnd.OneChanceFrom(10))
+                m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);
+            if (m_iFood > m_iPopulation * 2 && Rnd.OneChanceFrom(10))
+                m_iInfrastructureLevel++;
+
+            if (m_iInfrastructureLevel < (m_iTechLevel + 1) / 2)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)
+                m_iInfrastructureLevel = (m_iTechLevel + 1) / 2;//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2;
+            if (m_iInfrastructureLevel > m_iTechLevel + 1)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1))
+                m_iInfrastructureLevel = m_iTechLevel + 1;// Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1);
+            if (m_iInfrastructureLevel > 8)
+                m_iInfrastructureLevel = 8;
+
+            if (m_iTechLevel > m_iInfrastructureLevel * 2)
+                m_iTechLevel = m_iInfrastructureLevel * 2;
+            if (m_iTechLevel > iMaxTech)
+                m_iTechLevel = iMaxTech;
+
+            SettlementInfo pSettlementInfo = Settlement.Info[SettlementSize.Hamlet];
+
+            if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Capital))
+                pSettlementInfo = Settlement.Info[SettlementSize.Capital];
+            else
+                if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.City))
+                    pSettlementInfo = Settlement.Info[SettlementSize.City];
+                else
+                    if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Town))
+                        pSettlementInfo = Settlement.Info[SettlementSize.Town];
+                    else
+                        if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Village))
+                            pSettlementInfo = Settlement.Info[SettlementSize.Village];
+
+            BuildAdministrativeCenter(pSettlementInfo, bFast);
+            if (m_pAdministrativeCenter != null)
+                m_cSettlements.Add(m_pAdministrativeCenter);
+            else
+                throw new Exception("Can't build capital!");
+
+            if (m_pCenter.Area != null)
+                m_sName = m_pRace.m_pLanguage.RandomCountryName();
+
+            return m_pAdministrativeCenter;
+        }
+
+        private LocationX BuildAdministrativeCenter(SettlementInfo pCenter, bool bFast)
         {
             Dictionary<LandX, float> cLandsChances = new Dictionary<LandX, float>();
 
@@ -549,9 +746,9 @@ namespace Socium
             }
 
             //Грязный хак: низкокультурные сообщества не могут быть многонациональными
-            State pState = Owner as State;
-            if (pState.m_iInfrastructureLevel < 2)
-                m_pRace = pState.m_pRace;
+            //State pState = Owner as State;
+            //if (pState.m_iInfrastructureLevel < 2)
+            //    m_pRace = pState.m_pRace;
 
             return m_pAdministrativeCenter;
         }
