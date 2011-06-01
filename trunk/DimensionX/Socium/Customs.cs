@@ -301,18 +301,18 @@ namespace Socium
             if (m_eSexuality == Sexuality.Lecherous)
             {
                 sResult += "\n   ";
-                sResult += "sexuality";
+                sResult += "unlimited sexuality";
             }
 
             if (m_eSexRelations == SexRelations.Heterosexual)
             {
                 sResult += "\n   ";
-                sResult += "heterosexuality";
+                sResult += "stright sex relations";
             }
             if (m_eSexRelations == SexRelations.Homosexual)
             {
                 sResult += "\n   ";
-                sResult += "homosexuality";
+                sResult += "same sex relations";
             }
 
             if (m_eMagicPosition == MagicPosition.Magic_is_feared)
@@ -340,6 +340,13 @@ namespace Socium
             return "Praises: " + sResult + "\n";
         }
 
+        /// <summary>
+        /// Вычисляет враждебность друг сообществ на основании их обычаев.
+        /// Возвращает значение от 6 (полные противоположности) до -6 (полное совпадение).
+        /// </summary>
+        /// <param name="pOpponent">обычаи другого сообщества</param>
+        /// <param name="sReasons">мотивация враждебности</param>
+        /// <returns></returns>
         public int GetDifference(Customs pOpponent, ref string sReasons)
         {
             int iHostility = 0;
