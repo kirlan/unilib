@@ -196,7 +196,7 @@ namespace Socium
 
             if (pLand.m_iProvincePresence > iOwnCost)
             {
-                int iBestValue = int.MaxValue;
+                float fBestValue = float.MaxValue;
                 int iBestCost = 0;
                 LandX pBestLand = null;
 
@@ -220,11 +220,50 @@ namespace Socium
                     if (iCost == -1)
                         continue;
 
-                    if (pLinkedLand.m_iProvincePresence + iCost < iBestValue ||
-                        (pLinkedLand.m_iProvincePresence + iCost == iBestValue &&
+                    float fCostModified = iCost;
+
+                    if (pLinkedLand.m_pProvince == null)
+                    {
+                        //общая граница провинции и новой земли
+                        float fCommonLength = 1;
+                        Line[] aBorderLine = m_cBorder[pLinkedLand].ToArray();
+                        foreach (Line pLine in aBorderLine)
+                            fCommonLength += pLine.m_fLength;
+
+                        //граница новой земли с окружающими землями
+                        float fTotalLength = 0;
+                        foreach (var pLinkTerr2 in pLinkedLand.BorderWith)
+                        {
+                            if ((pLinkTerr2.Key as ITerritory).Forbidden)
+                                continue;
+
+                            Line[] cLines = pLinkTerr2.Value.ToArray();
+                            foreach (Line pLine in cLines)
+                                fTotalLength += pLine.m_fLength;
+                        }
+
+                        //fCommonLength /= fTotalLength;
+
+                        //if (fCommonLength < 0.25f)
+                        //    fCommonLength /= 10;
+                        //if (fCommonLength > 0.5f)
+                        //    fCommonLength *= 10;
+
+                        fCostModified = iCost * fTotalLength / fCommonLength;
+
+                        if (fCommonLength < fTotalLength / 4)
+                            fCostModified *= 10;
+                        if (fCommonLength > fTotalLength / 2)
+                            fCostModified /= 10;
+
+                        fCostModified = Math.Max(1, fCostModified);
+                    }
+
+                    if (pLinkedLand.m_iProvincePresence + fCostModified < fBestValue ||
+                        (pLinkedLand.m_iProvincePresence + fCostModified == fBestValue &&
                          Rnd.OneChanceFrom(pLand.BorderWith.Count)))
                     {
-                        iBestValue = pLinkedLand.m_iProvincePresence + iCost;
+                        fBestValue = pLinkedLand.m_iProvincePresence + fCostModified;
                         iBestCost = iCost;
                         pBestLand = pLinkedLand;
                     }

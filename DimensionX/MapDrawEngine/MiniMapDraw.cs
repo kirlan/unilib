@@ -145,13 +145,13 @@ namespace MapDrawEngine
 
                 //если карта зациклена по горизонтали, нужно строить отражения и 
                 //контур пересекает нулевой меридиан, то строим отражение!
-                if (m_pMasterMap.m_pWorld.m_cGrid.m_bCycled && bCross)
+                if (m_pMasterMap.m_pWorld.m_pGrid.m_bCycled && bCross)
                 {
                     //определяем, на западе или на востоке будем строить отражение
                     if (pFirstLine.m_pPoint1.X > 0)
-                        cPath.Add(BuildBorder(pFirstLine, -m_pMasterMap.m_pWorld.m_cGrid.RX * 2, out bCross));
+                        cPath.Add(BuildBorder(pFirstLine, -m_pMasterMap.m_pWorld.m_pGrid.RX * 2, out bCross));
                     else
-                        cPath.Add(BuildBorder(pFirstLine, m_pMasterMap.m_pWorld.m_cGrid.RX * 2, out bCross));
+                        cPath.Add(BuildBorder(pFirstLine, m_pMasterMap.m_pWorld.m_pGrid.RX * 2, out bCross));
                 }
             }
 
@@ -178,17 +178,17 @@ namespace MapDrawEngine
             {
                 //пересекает-ли линия нулевой меридиан?
                 float fDX = fShift;
-                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pMasterMap.m_pWorld.m_cGrid.RX)
+                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pMasterMap.m_pWorld.m_pGrid.RX)
                 {
                     //определимся, где у нас была предыдущая часть контура - на западе или на востоке?
                     //в зависимости от этого вычислим смещение для оставшейся части контура, чтобы 
                     //не было разрыва
-                    fDX += fLastPointX < fShift ? -m_pMasterMap.m_pWorld.m_cGrid.RX * 2 : m_pMasterMap.m_pWorld.m_cGrid.RX * 2;
+                    fDX += fLastPointX < fShift ? -m_pMasterMap.m_pWorld.m_pGrid.RX * 2 : m_pMasterMap.m_pWorld.m_pGrid.RX * 2;
                     bCross = true;
                 }
 
-                if (pLine.m_pPoint2.X > m_pMasterMap.m_pWorld.m_cGrid.RX ||
-                    pLine.m_pPoint2.X < -m_pMasterMap.m_pWorld.m_cGrid.RX)
+                if (pLine.m_pPoint2.X > m_pMasterMap.m_pWorld.m_pGrid.RX ||
+                    pLine.m_pPoint2.X < -m_pMasterMap.m_pWorld.m_pGrid.RX)
                     bCross = true;
 
                 cBorder.Add(ShiftPoint(pLine.m_pPoint2, fDX));
@@ -211,7 +211,7 @@ namespace MapDrawEngine
         /// <returns>смещённая точка</returns>
         private PointF ShiftPoint(IPointF pPoint, float fDX)
         {
-            return new PointF(m_pMasterMap.m_pWorld.m_cGrid.RX + pPoint.X + fDX, m_pMasterMap.m_pWorld.m_cGrid.RY + pPoint.Y);
+            return new PointF(m_pMasterMap.m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pMasterMap.m_pWorld.m_pGrid.RY + pPoint.Y);
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace MapDrawEngine
             //соотношение высоты и ширины координатной сетки мира
             float fK = 1;
             if (m_pMasterMap != null && m_pMasterMap.m_pWorld != null)
-                fK = (float)m_pMasterMap.m_pWorld.m_cGrid.RY / m_pMasterMap.m_pWorld.m_cGrid.RX;
+                fK = (float)m_pMasterMap.m_pWorld.m_pGrid.RY / m_pMasterMap.m_pWorld.m_pGrid.RX;
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела такую же ширину, как окно рисования
@@ -263,7 +263,7 @@ namespace MapDrawEngine
 
             //коэффициент для перевода координат из абсолютной системы координат в экранную
             if (m_pMasterMap.m_pWorld != null)
-                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pMasterMap.m_pWorld.m_cGrid.RX * 2);
+                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pMasterMap.m_pWorld.m_pGrid.RX * 2);
 
             //если холст уже окна рисования, вычислим смещение для центрирования холста
             m_iShiftX = (ClientRectangle.Width - m_pCanvas.Width) / 2;
@@ -289,7 +289,7 @@ namespace MapDrawEngine
             gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Sea.m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
-            if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null || m_pMasterMap.m_pWorld.m_cGrid.m_aLocations.Length == 0)
+            if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null || m_pMasterMap.m_pWorld.m_pGrid.m_aLocations.Length == 0)
                 return;
 
             //рисуем контуры континентов
@@ -402,7 +402,7 @@ namespace MapDrawEngine
             if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null)
                 return;
 
-            if (m_pMasterMap.m_pWorld.m_cGrid.m_bCycled)
+            if (m_pMasterMap.m_pWorld.m_pGrid.m_bCycled)
                 m_pDrawFrame.X = iX;
             else
                 m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width));

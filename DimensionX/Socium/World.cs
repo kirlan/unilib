@@ -276,6 +276,7 @@ namespace Socium
             //Распределим расы по наиболее подходящим им тектоническим плитам (чтобы все расы хоть где-то да жили)
             foreach (Race pRace in m_aLocalRaces)
             {
+                //убедимся, что эта раса ещё нигде не живёт
                 bool bHomeless = true;
                 foreach (ContinentX pConti in m_aContinents)
                 {
@@ -312,6 +313,14 @@ namespace Socium
                     foreach (LandTypeInfoX pType in pRace.m_cHatedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] /= 1000;
+
+                    int iPop = 0;
+                    foreach (List<Race> pList in pLand.Continent.m_cLocalRaces.Values)
+                    {
+                        iPop += pList.Count;
+                    }
+                    if (iPop > 0) 
+                        cLandChances[pLand] = (float)Math.Pow(cLandChances[pLand], 1.0 / (1 + pLand.Continent.m_cLocalRaces.Count));
                 }
 
                 int iChance = Rnd.ChooseOne(cLandChances.Values, 2);
@@ -359,7 +368,7 @@ namespace Socium
                 {
                     iPop += pList.Count;
                 }
-                if (iPop > 1)
+                if (iPop > 0)
                     continue;
 
                 foreach (LandMass<LandX> pLandMass in pConti.m_cContents)
@@ -568,9 +577,9 @@ namespace Socium
 
             BuildProvinces();
 
-            BuildCities(m_cGrid.CycleShift, bFast);
+            BuildCities(m_pGrid.CycleShift, bFast);
 
-            BuildStates(m_cGrid.CycleShift, bFast);
+            BuildStates(m_pGrid.CycleShift, bFast);
 
             foreach (ContinentX pConti in m_aContinents)
             {
@@ -780,7 +789,7 @@ namespace Socium
             m_aProvinces = cProvinces.ToArray();
 
             foreach (Province pProvince in m_aProvinces)
-                pProvince.Finish(m_cGrid.CycleShift);
+                pProvince.Finish(m_pGrid.CycleShift);
         }
 
         private void BuildStates(float fCycleShift, bool bFast)
@@ -905,7 +914,7 @@ namespace Socium
             foreach (State pState in m_aStates)
             {
                 pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iMinTechLevel, m_iMaxTechLevel);
-                pState.Finish(m_cGrid.CycleShift);
+                pState.Finish(m_pGrid.CycleShift);
 
                 ContinentX pConti = null;
                 foreach (Province pProvince in pState.m_cContents)
@@ -1110,7 +1119,7 @@ namespace Socium
                 if (iMaxNavalPath == 0)
                     continue;
 
-                int iMaxLength = m_cGrid.RX * 10;
+                int iMaxLength = m_pGrid.RX * 10;
                 if (iMaxNavalPath == 1)
                     iMaxLength /= 10;
                 if (iMaxNavalPath == 2)
@@ -1162,7 +1171,7 @@ namespace Socium
                 if (pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village)
                 {
                     iPathLevel = 1;
-                    iMaxLength = m_cGrid.RX * 10 / 10;
+                    iMaxLength = m_pGrid.RX * 10 / 10;
                 }
                 if (pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Town)
                     iPathLevel = 2;
@@ -1365,6 +1374,8 @@ namespace Socium
                                         else
                                         {
                                             pLoc.m_pSettlement = null;
+                                            foreach (var pLink in pLoc.m_cLinks)
+                                                pLink.Value.m_bRuins = false;
                                             if (pProvince.m_cSettlements.Contains(pLoc))
                                                 pProvince.m_cSettlements.Remove(pLoc);
                                         }
@@ -1399,6 +1410,10 @@ namespace Socium
 
                                         if (pLoc.m_pSettlement.m_iRuinsAge == 0)
                                             pLoc.m_pSettlement = null;
+                                        else
+                                            foreach (var pLink in pLoc.m_cLinks)
+                                                pLink.Value.m_bRuins = true;
+
                                     }
                                 }
 
@@ -1434,7 +1449,7 @@ namespace Socium
             foreach (TransportationLink pRoad in m_cLMTransportGrid)
                 pRoad.ClearRoad();
 
-            foreach (LocationX pLoc in m_cGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pGrid.m_aLocations)
             {
                 pLoc.m_cRoads.Clear();
                 pLoc.m_cRoads[1] = new List<Road>();
@@ -1565,6 +1580,9 @@ namespace Socium
         /// <param name="pRoad">дорога</param>
         public static void RenewRoad(Road pOldRoad)
         {
+            LocationX pTown1 = pOldRoad.Locations[0];
+            LocationX pTown2 = pOldRoad.Locations[pOldRoad.Locations.Length - 1];
+
             //разобьем найденный путь на участки от одного населённого пункта до другого
             List<Road> cRoadsChain = new List<Road>();
             Road pNewRoad = null;
@@ -1576,7 +1594,11 @@ namespace Socium
                 {
                     pNewRoad.BuidTo(pNode);
 
-                    if (pNode.m_pSettlement != null && pNode.m_pSettlement.m_iRuinsAge == 0)
+                    if (pNode.m_pSettlement != null &&
+                        pNode.m_pSettlement.m_iRuinsAge == 0 &&
+                        (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
+                        pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
+                        pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
                     {
                         cRoadsChain.Add(pNewRoad);
                         pNewRoad = new Road(pNode, pOldRoad.m_iLevel);
@@ -1623,7 +1645,11 @@ namespace Socium
                     {
                         pNewRoad.BuidTo(pNode);
 
-                        if (pNode.m_pSettlement != null && pNode.m_pSettlement.m_iRuinsAge == 0)
+                        if (pNode.m_pSettlement != null && 
+                            pNode.m_pSettlement.m_iRuinsAge == 0 &&
+                            (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
+                            pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
+                            pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
                         {
                             cRoadsChain.Add(pNewRoad);
                             pNewRoad = new Road(pNode, iRoadLevel);

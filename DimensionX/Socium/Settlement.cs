@@ -11,10 +11,10 @@ namespace Socium
     {
         Hamlet,
         Village,
+        Fort,
         Town,
         City,
-        Capital,
-        Fort
+        Capital
     }
 
     public class SettlementInfo

@@ -80,7 +80,8 @@ namespace Socium
         {
             foreach (Mentality eMentality in Mentalities)
             {
-                m_cMentalityValues[eMentality] = (Rnd.Get(2.0f) + 19 * pAncestorCulture.m_cMentalityValues[eMentality]) / 20;
+                int iDistance = 1 + Rnd.Get(20);
+                m_cMentalityValues[eMentality] = (Rnd.Get(2.0f) + iDistance * pAncestorCulture.m_cMentalityValues[eMentality]) / (iDistance + 1);
             }
         }
 
@@ -88,6 +89,7 @@ namespace Socium
         {
             foreach (Mentality eMentality in Mentalities)
             {
+                //ментальные качества у нас отрицательные, поэтому для того, чтобы эволюционировать, их значения нужно снизить.
                 float fFutureValue = (float)Math.Pow(Rnd.Get(1.0f), 2);// (float)Math.Pow(Rnd.Get(2.0f), 2) / 2.0f;
                 if (fFutureValue < m_cMentalityValues[eMentality])
                     m_cMentalityValues[eMentality] = (fFutureValue + 9 * m_cMentalityValues[eMentality]) / 10;
@@ -98,6 +100,7 @@ namespace Socium
         {
             foreach (Mentality eMentality in Mentalities)
             {
+                //ментальные качества у нас отрицательные, поэтому для того, чтобы деградировать, их значения нужно поднять.
                 float fFutureValue = 2.0f - (float)Math.Pow(Rnd.Get(1.0f), 2);
                 if (fFutureValue > m_cMentalityValues[eMentality])
                     m_cMentalityValues[eMentality] = (fFutureValue + 9 * m_cMentalityValues[eMentality]) / 10;

@@ -122,7 +122,7 @@ namespace Socium
             new StateInfo("Republic", 16,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Statehouse", "President", "President", 16)), 
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Town hall", "Governor", "Governor", 14)), 
-                "Minister", "Ministress", false, 3, 6, null),
+                "Minister", "Minister", false, 3, 6, null),
             //new StateInfo("Republic", 16,
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Dictator", "Dictator", 16)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Governor", "Governor", 14)), 
@@ -294,8 +294,9 @@ namespace Socium
 
                     float fCultureDifference = m_pMethropoly.m_pCulture.GetDifference(pProvince.m_pCulture) * 5;
 
-                    string sReasons = "";
-                    int iCustomsDifference = m_pMethropoly.m_pCustoms.GetDifference(pProvince.m_pCustoms, ref sReasons);
+                    string sPosReasons = "";
+                    string sNegReasons = "";
+                    int iCustomsDifference = m_pMethropoly.m_pCustoms.GetDifference(pProvince.m_pCustoms, ref sPosReasons, ref sNegReasons);
 
                     int iRelation = (int)(fCultureDifference - iCustomsDifference);
 
@@ -735,7 +736,10 @@ namespace Socium
         {
             int iHostility = 0;
 
-            sReasons = "";
+            string sPositiveReasons = "";
+            string sNegativeReasons = "";
+
+            //sReasons = "";
 
             //float fContact = 0;
             //float fBorder = 0;
@@ -756,55 +760,59 @@ namespace Socium
             if (m_pRace != pOpponent.m_pRace)
             {
                 iHostility++;
-                sReasons += pOpponent.m_pRace.m_sName.Trim() + " \t(-1)\n";
+                sNegativeReasons += " (-1) " + pOpponent.m_pRace.m_sName.Trim() + "\n";
 
                 if (m_pRace.m_pLanguage != pOpponent.m_pRace.m_pLanguage)
                 {
                     iHostility++;
-                    sReasons += "Different language \t(-1)\n";
+                    sNegativeReasons += " (-1) Different language\n";
                 }
             }
             else
             {
                 iHostility--;
-                sReasons += pOpponent.m_pRace.m_sName.Trim() + " \t(+1)\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_pRace.m_sName.Trim() + "\n";
             }
 
-            iHostility += m_pCustoms.GetDifference(pOpponent.m_pCustoms, ref sReasons);
+            iHostility += m_pCustoms.GetDifference(pOpponent.m_pCustoms, ref sPositiveReasons, ref sNegativeReasons);
 
             if (m_iFood < m_iPopulation && pOpponent.m_iFood > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
-                sReasons += "Envy for food \t(-1)\n";
+                sNegativeReasons += " (-1) Envy for food\n";
             }
             if (m_iWood < m_iPopulation && pOpponent.m_iWood > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
-                sReasons += "Envy for wood \t(-1)\n";
+                sNegativeReasons += " (-1) Envy for wood\n";
             }
             if (m_iOre < m_iPopulation && pOpponent.m_iOre > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
-                sReasons += "Envy for ore \t(-1)\n";
+                sNegativeReasons += " (-1) Envy for ore\n";
             }
 
-            if (Math.Abs(pOpponent.m_iControl - m_iControl) - 1 != 0)
+            int iControlDifference = Math.Abs(pOpponent.m_iControl - m_iControl);
+            if (iControlDifference != 1)
             {
-                iHostility += Math.Abs(pOpponent.m_iControl - m_iControl) - 1;
-                sReasons += string.Format("{0} \t({1:+#;-#})\n", State.GetControlString(pOpponent.m_iControl), 1 - Math.Abs(pOpponent.m_iControl - m_iControl));
+                iHostility += iControlDifference - 1;
+                if (iControlDifference > 1)
+                    sNegativeReasons += string.Format(" (-{1}) {0}\n", State.GetControlString(pOpponent.m_iControl), iControlDifference - 1);
+                else
+                    sPositiveReasons += string.Format(" (-{1}) {0}\n", State.GetControlString(pOpponent.m_iControl), 1);
             }
 
             if (pOpponent.m_iInfrastructureLevel > m_iInfrastructureLevel)
             {
-                iHostility ++;//= pOpponent.m_iLifeLevel - m_iLifeLevel;
-                sReasons += string.Format("Envy for civilization \t(-{0})\n", 1);//pOpponent.m_iLifeLevel - m_iLifeLevel);
+                iHostility++;//= pOpponent.m_iLifeLevel - m_iLifeLevel;
+                sNegativeReasons += string.Format(" (-{0}) Envy for civilization\n", 1);//pOpponent.m_iLifeLevel - m_iLifeLevel);
             }
             else
             {
                 if (pOpponent.m_iInfrastructureLevel < m_iInfrastructureLevel)
                 {
-                    iHostility ++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
-                    sReasons += string.Format("Scorn for savagery \t(-{0})\n", 1);//m_iLifeLevel - pOpponent.m_iLifeLevel);
+                    iHostility++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
+                    sNegativeReasons += string.Format(" (-{0}) Scorn for savagery\n", 1);//m_iLifeLevel - pOpponent.m_iLifeLevel);
                 }
             }
 
@@ -812,26 +820,28 @@ namespace Socium
             if (iCultureDifference > 0.75)
             {
                 iHostility -= 2;
-                sReasons += "Very close culture \t(+2)\n";
+                sPositiveReasons += " (+2) Very close culture\n";
             }
             else
                 if (iCultureDifference > 0.5)
                 {
                     iHostility--;
-                    sReasons += "Close culture \t(+1)\n";
+                    sPositiveReasons += " (+1) Close culture\n";
                 }
                 else
                     if (iCultureDifference < -0.5)
                     {
                         iHostility += 2;
-                        sReasons += "Very different culture \t(-2)\n";
+                        sNegativeReasons += " (-2) Very different culture\n";
                     }
                     else
                         if (iCultureDifference < 0)
                         {
                             iHostility++;
-                            sReasons += "Different culture \t(-1)\n";
+                            sNegativeReasons += " (-1) Different culture\n";
                         }
+
+            sReasons = "Good:\n" + sPositiveReasons + "Bad:\n" + sNegativeReasons + "----\n";
 
             if (iHostility > 0)
             {
