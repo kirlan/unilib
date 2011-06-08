@@ -799,7 +799,7 @@ namespace Socium
                 if (iControlDifference > 1)
                     sNegativeReasons += string.Format(" (-{1}) {0}\n", State.GetControlString(pOpponent.m_iControl), iControlDifference - 1);
                 else
-                    sPositiveReasons += string.Format(" (-{1}) {0}\n", State.GetControlString(pOpponent.m_iControl), 1);
+                    sPositiveReasons += string.Format(" (+{1}) {0}\n", State.GetControlString(pOpponent.m_iControl), 1);
             }
 
             if (pOpponent.m_iInfrastructureLevel > m_iInfrastructureLevel)
