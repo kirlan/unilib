@@ -81,7 +81,7 @@ namespace Socium
         {
             m_eGenderPriority = m_pAncestorCustoms.m_eGenderPriority;
 
-            if (Rnd.OneChanceFrom(3))
+            if (Rnd.OneChanceFrom(2))
             {
                 if (m_eGenderPriority == GenderPriority.Genders_equality)
                     m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
@@ -91,7 +91,7 @@ namespace Socium
 
             m_eMindBodyPriority = m_pAncestorCustoms.m_eMindBodyPriority;
 
-            if (Rnd.OneChanceFrom(3))
+            if (Rnd.OneChanceFrom(2))
             {
                 if (m_eMindBodyPriority == MindBodyPriority.Balanced_body_and_mind)
                     m_eMindBodyPriority = Rnd.OneChanceFrom(3) ? MindBodyPriority.Thinkers : MindBodyPriority.Brutes;
@@ -101,7 +101,7 @@ namespace Socium
 
             m_eSexuality = m_pAncestorCustoms.m_eSexuality;
 
-            if (Rnd.OneChanceFrom(3))
+            if (Rnd.OneChanceFrom(2))
             {
                 if (m_eSexuality == Sexuality.Moderate_sexuality)
                     m_eSexuality = Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
@@ -111,7 +111,7 @@ namespace Socium
 
             m_eSexRelations = m_pAncestorCustoms.m_eSexRelations;
 
-            if (Rnd.OneChanceFrom(3))
+            if (Rnd.OneChanceFrom(2))
             {
                 if (m_eSexRelations == SexRelations.Bisexual)
                     m_eSexRelations = Rnd.OneChanceFrom(3) ? SexRelations.Homosexual : SexRelations.Heterosexual;
@@ -121,7 +121,7 @@ namespace Socium
 
             m_eMagicPosition = m_pAncestorCustoms.m_eMagicPosition;
 
-            if (Rnd.OneChanceFrom(3))
+            if (Rnd.OneChanceFrom(2))
             {
                 if (m_eMagicPosition == MagicPosition.Magic_is_allowed)
                     m_eMagicPosition = Rnd.OneChanceFrom(3) ? MagicPosition.Magic_is_praised : MagicPosition.Magic_is_feared;
@@ -131,7 +131,7 @@ namespace Socium
 
             m_eFamilySize = m_pAncestorCustoms.m_eFamilySize;
 
-            if (Rnd.OneChanceFrom(3))
+            if (Rnd.OneChanceFrom(2))
             {
                 if (m_eFamilySize == FamilySize.Polygamy)
                     m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
@@ -347,87 +347,117 @@ namespace Socium
         /// <param name="pOpponent">обычаи другого сообщества</param>
         /// <param name="sReasons">мотивация враждебности</param>
         /// <returns></returns>
-        public int GetDifference(Customs pOpponent, ref string sReasons)
+        public int GetDifference(Customs pOpponent, ref string sPositiveReasons, ref string sNegativeReasons)
         {
             int iHostility = 0;
 
             if (m_eGenderPriority == pOpponent.m_eGenderPriority)
             {
                 iHostility--;
-                sReasons += pOpponent.m_eGenderPriority.ToString().Replace('_', ' ') + " \t(+1)\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eGenderPriority.ToString().Replace('_', ' ') + "\n";
             }
             else
                 if (m_eGenderPriority != GenderPriority.Genders_equality &&
                     pOpponent.m_eGenderPriority != GenderPriority.Genders_equality)
                 {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eGenderPriority.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
                     iHostility++;
-                    sReasons += pOpponent.m_eGenderPriority.ToString().Replace('_', ' ') + " \t(-1)\n";
+                    sNegativeReasons += " (-1) " + pOpponent.m_eGenderPriority.ToString().Replace('_', ' ') + "\n";
                 }
 
             if (m_eMindBodyPriority == pOpponent.m_eMindBodyPriority)
             {
                 iHostility--;
-                sReasons += pOpponent.m_eMindBodyPriority.ToString().Replace('_', ' ') + " \t(+1)\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eMindBodyPriority.ToString().Replace('_', ' ') + "\n";
             }
             else
                 if (m_eMindBodyPriority != MindBodyPriority.Balanced_body_and_mind &&
                     pOpponent.m_eMindBodyPriority != MindBodyPriority.Balanced_body_and_mind)
                 {
-                    iHostility++;
-                    sReasons += pOpponent.m_eMindBodyPriority.ToString().Replace('_', ' ') + " \t(-1)\n";
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eMindBodyPriority.ToString().Replace('_', ' ') + "\n";
                 }
+                else
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) " + pOpponent.m_eMindBodyPriority.ToString().Replace('_', ' ') + "\n";
+                }
+
 
             if (m_eSexuality == pOpponent.m_eSexuality)
             {
                 iHostility--;
-                sReasons += pOpponent.m_eSexuality.ToString().Replace('_', ' ') + " \t(+1)\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eSexuality.ToString().Replace('_', ' ') + "\n";
             }
             else
                 if (m_eSexuality != Sexuality.Moderate_sexuality &&
                     pOpponent.m_eSexuality != Sexuality.Moderate_sexuality)
                 {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eSexuality.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
                     iHostility++;
-                    sReasons += pOpponent.m_eSexuality.ToString().Replace('_', ' ') + " \t(-1)\n";
+                    sNegativeReasons += " (-1) " + pOpponent.m_eSexuality.ToString().Replace('_', ' ') + "\n";
                 }
 
             if (m_eSexRelations == pOpponent.m_eSexRelations)
             {
                 iHostility--;
-                sReasons += pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + " \t(+1)\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + "\n";
             }
             else
                 if (m_eSexRelations != SexRelations.Bisexual &&
                     pOpponent.m_eSexRelations != SexRelations.Bisexual)
                 {
-                    iHostility++;
-                    sReasons += pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + " \t(-1)\n";
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + "\n";
                 }
-
+                else
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) " + pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + "\n";
+                }
 
             if (m_eMagicPosition == pOpponent.m_eMagicPosition)
             {
                 iHostility--;
-                sReasons += pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + " \t(+1)\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + "\n";
             }
             else
                 if (m_eMagicPosition != MagicPosition.Magic_is_allowed &&
                     pOpponent.m_eMagicPosition != MagicPosition.Magic_is_allowed)
                 {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
                     iHostility++;
-                    sReasons += pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + " \t(-1)\n";
+                    sNegativeReasons += " (-1) " + pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + "\n";
                 }
 
             if (m_eFamilySize == pOpponent.m_eFamilySize)
             {
                 iHostility--;
-                sReasons += pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + " \t(+1)\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + "\n";
             }
             else
                 if (m_eFamilySize != FamilySize.Polygamy &&
                     pOpponent.m_eFamilySize != FamilySize.Polygamy)
                 {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
                     iHostility++;
-                    sReasons += pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + " \t(-1)\n";
+                    sNegativeReasons += " (-1) " + pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + "\n";
                 }
 
             return iHostility;

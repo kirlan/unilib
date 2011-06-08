@@ -98,6 +98,8 @@ namespace LandscapeGeneration
 
                     fWholeLength /= fTotalLength;
 
+                    if (fWholeLength < 0.15f && m_cContents.Count > 1)
+                        continue;
                     if (fWholeLength < 0.25f)
                         fWholeLength /= 10;
                     if (fWholeLength > 0.5f)

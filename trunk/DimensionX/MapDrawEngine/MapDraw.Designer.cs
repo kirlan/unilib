@@ -48,7 +48,6 @@
             this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseDoubleClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseDown);
             this.MouseLeave += new System.EventHandler(this.MapDraw_MouseLeave);
-            this.MouseHover += new System.EventHandler(this.MapDraw_MouseHover);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MapDraw_MouseUp);
             this.Resize += new System.EventHandler(this.MapDraw_Resize);

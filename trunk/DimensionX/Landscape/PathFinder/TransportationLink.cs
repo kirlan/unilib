@@ -62,7 +62,14 @@ namespace LandscapeGeneration.PathFind
             get
             {
                 //return m_bEmbark ? m_fBaseCost * m_fMoveCostModifer * 10 : m_fBaseCost * m_fMoveCostModifer;
-                return m_bEmbark ? (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_iRoadLevel + 1)) : (float)Math.Pow(m_fBaseCost, 1.0 / (m_iRoadLevel + 1));
+                float fCost = (float)Math.Pow(m_fBaseCost, 1.0 / (m_iRoadLevel + 1));
+                if(m_bEmbark)
+                    fCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_iRoadLevel + 1));
+
+                if (m_bRuins)
+                    fCost *= 10;
+
+                return fCost;
             }
         }
 
@@ -74,6 +81,8 @@ namespace LandscapeGeneration.PathFind
         public bool m_bSea = false;
 
         public bool m_bEmbark = false;
+
+        public bool m_bRuins = false;
 
         public PointF[] m_aPoints = new PointF[3];
 

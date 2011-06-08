@@ -16,7 +16,7 @@ namespace LandscapeGeneration
         where CONT:Continent<AREA, LAND, LTI>, new()
         where LTI:LandTypeInfo, new()
     {
-        public LocationsGrid<LOC> m_cGrid = null;
+        public LocationsGrid<LOC> m_pGrid = null;
 
         public LAND[] m_aLands = null;
 
@@ -76,11 +76,11 @@ namespace LandscapeGeneration
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
         public Landscape(LocationsGrid<LOC> cLocations, int iContinents, bool bGreatOcean, int iLands, int iLandMasses, int iOcean, int iEquator, int iPole)
         {
-            m_cGrid = cLocations;
+            m_pGrid = cLocations;
 
-            m_cGrid.Load();
+            m_pGrid.Load();
 
-            if (iLands > m_cGrid.m_iLocationsCount)
+            if (iLands > m_pGrid.m_iLocationsCount)
                 throw new ArgumentException("Lands count can't be greater then locations count!");
             if (iLandMasses > iLands)
                 throw new ArgumentException("Land masses count can't be greater then lands count!");
@@ -95,8 +95,8 @@ namespace LandscapeGeneration
 
             PresetLandTypesInfo();
 
-            m_iEquator = 2 * m_cGrid.RY * iEquator / 100 - m_cGrid.RY;
-            m_iPole = 2 * m_cGrid.RY * iPole / 100;
+            m_iEquator = 2 * m_pGrid.RY * iEquator / 100 - m_pGrid.RY;
+            m_iPole = 2 * m_pGrid.RY * iPole / 100;
 
             ShapeWorld();
         }
@@ -124,13 +124,13 @@ namespace LandscapeGeneration
                 int iIndex;
                 do
                 {
-                    iIndex = Rnd.Get(m_cGrid.m_aLocations.Length);
+                    iIndex = Rnd.Get(m_pGrid.m_aLocations.Length);
                 }
-                while (m_cGrid.m_aLocations[iIndex].Forbidden || 
-                       m_cGrid.m_aLocations[iIndex].Owner != null);
+                while (m_pGrid.m_aLocations[iIndex].Forbidden || 
+                       m_pGrid.m_aLocations[iIndex].Owner != null);
                 
                 LAND pLand = new LAND();
-                pLand.Start(m_cGrid.m_aLocations[iIndex]);
+                pLand.Start(m_pGrid.m_aLocations[iIndex]);
                 cLands.Add(pLand);
             }
             m_aLands = cLands.ToArray();
@@ -145,8 +145,21 @@ namespace LandscapeGeneration
             }
             while (bContinue);
 
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (!pLoc.Forbidden && pLoc.Owner == null)
+                {
+                    LAND pLand = new LAND();
+                    pLand.Start(pLoc);
+                    cLands.Add(pLand);
+                    while (pLand.Grow() != null) { }
+                }
+            }
+
+            m_aLands = cLands.ToArray();
+
             foreach (LAND pLand in m_aLands)
-                pLand.Finish(m_cGrid.CycleShift);
+                pLand.Finish(m_pGrid.CycleShift);
         }
 
         private void BuildLandMasses()
@@ -178,8 +191,21 @@ namespace LandscapeGeneration
             }
             while (bContinue);
 
+            foreach (LAND pLand in m_aLands)
+            {
+                if (!pLand.Forbidden && pLand.Owner == null)
+                {
+                    LandMass<LAND> pLandMass = new LandMass<LAND>();
+                    pLandMass.Start(pLand);
+                    cLandMasses.Add(pLandMass);
+                    while (pLandMass.Grow() != null) { }
+                }
+            }
+
+            m_aLandMasses = cLandMasses.ToArray();
+
             foreach (LandMass<LAND> pLandMass in m_aLandMasses)
-                pLandMass.Finish(m_cGrid.CycleShift);
+                pLandMass.Finish(m_pGrid.CycleShift);
         }
 
         private void BuildOceans()
@@ -307,7 +333,7 @@ namespace LandscapeGeneration
             m_aContinents = cContinents.ToArray();
 
             foreach (CONT pCont in m_aContinents)
-                pCont.Finish(m_cGrid.CycleShift);
+                pCont.Finish(m_pGrid.CycleShift);
 
             foreach (LandMass<LAND> pLandMass in m_aLandMasses)
                 if (pLandMass.Owner == null)
@@ -548,7 +574,7 @@ namespace LandscapeGeneration
 
             //Gathering areas of the same land type
             foreach (CONT pContinent in m_aContinents)
-                pContinent.BuildAreas(m_cGrid.CycleShift, m_iLandsCount / 100);
+                pContinent.BuildAreas(m_pGrid.CycleShift, m_iLandsCount / 100);
         }
 
         public List<TransportationLink> m_cTransportGrid = new List<TransportationLink>();
@@ -568,11 +594,11 @@ namespace LandscapeGeneration
                 {
                     TransportationLink pLink = null;
                     if (pNode1 is Location && pNode2 is Location)
-                        pLink = new TransportationLink(pNode1 as Location, pNode2 as Location, m_cGrid.CycleShift);
+                        pLink = new TransportationLink(pNode1 as Location, pNode2 as Location, m_pGrid.CycleShift);
                     if (pNode1 is ILand && pNode2 is ILand)
-                        pLink = new TransportationLink(pNode1 as ILand, pNode2 as ILand, m_cGrid.CycleShift);
+                        pLink = new TransportationLink(pNode1 as ILand, pNode2 as ILand, m_pGrid.CycleShift);
                     if (pNode1 is ILandMass && pNode2 is ILandMass)
-                        pLink = new TransportationLink(pNode1 as ILandMass, pNode2 as ILandMass, m_cGrid.CycleShift);
+                        pLink = new TransportationLink(pNode1 as ILandMass, pNode2 as ILandMass, m_pGrid.CycleShift);
 
                     if (pLink == null)
                         throw new Exception("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
@@ -639,7 +665,7 @@ namespace LandscapeGeneration
 
         private void BuildTransportGrid()
         {
-            foreach (LOC pLoc in m_cGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)// || pLoc.m_bBorder)
                     continue;
