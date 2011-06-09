@@ -47,7 +47,9 @@ namespace LandscapeGeneration
             if (m_cContents.Count > m_iMaxSize && Rnd.OneChanceFrom(m_cContents.Count - m_iMaxSize))
                 return false;
 
-            List<LAND> cBorder = new List<LAND>();
+            //List<LAND> cBorder = new List<LAND>();
+
+            Dictionary<LAND, float> cBorderLength = new Dictionary<LAND, float>();
 
             object[] aBorderLands = new List<object>(m_cBorder.Keys).ToArray();
             foreach (ITerritory pTerr in aBorderLands)
@@ -58,14 +60,62 @@ namespace LandscapeGeneration
                 LAND pLand = pTerr as LAND;
 
                 if (pLand.Area == null && pLand.Type == m_pType)
-                    cBorder.Add(pLand);
+                {
+                    bool bHavePotential = false;
+
+                    float fWholeLength = 1;
+                    Line[] aBorderLine = m_cBorder[pLand].ToArray();
+                    foreach (Line pLine in aBorderLine)
+                        fWholeLength += pLine.m_fLength;
+
+                    //граница этой земли с окружающими землями
+                    float fTotalLength = 0;
+                    foreach (var pLinkTerr in pLand.BorderWith)
+                    {
+                        if ((pLinkTerr.Key as ITerritory).Forbidden)
+                            continue;
+
+                        Line[] cLines = pLinkTerr.Value.ToArray();
+                        foreach (Line pLine in cLines)
+                            fTotalLength += pLine.m_fLength;
+
+                        if ((pLinkTerr.Key as LAND).Type == m_pType &&
+                            (pLinkTerr.Key as LAND).Area == null)
+                            bHavePotential = true;
+                    }
+
+                    fWholeLength /= fTotalLength;
+
+                    if (fWholeLength < 0.25f && m_cContents.Count > 1 && bHavePotential)
+                        continue;
+                    if (fWholeLength < 0.35f)
+                        fWholeLength /= 10;
+                    if (fWholeLength > 0.5f)
+                        fWholeLength *= 10; 
+                    
+                    cBorderLength[pLand] = fWholeLength;
+                }
             }
 
-            if (cBorder.Count == 0)
+            if (cBorderLength.Count == 0)
                 return false;
 
-            int iChoice = Rnd.Get(cBorder.Count);
-            LAND pAddon = cBorder[iChoice];
+            LAND pAddon = null;
+
+            int iChoice = Rnd.ChooseOne(cBorderLength.Values, 2);
+            LAND[] aBorderLength = new List<LAND>(cBorderLength.Keys).ToArray();
+            foreach (LAND pInner in aBorderLength)
+            {
+                iChoice--;
+                if (iChoice < 0)
+                {
+                    pAddon = pInner;
+                    break;
+                }
+            }
+
+            if (pAddon == null)
+                return false;
 
             m_cContents.Add(pAddon);
             pAddon.Area = this;
@@ -73,16 +123,16 @@ namespace LandscapeGeneration
             m_cBorder[pAddon].Clear();
             m_cBorder.Remove(pAddon);
 
-            foreach (var pLand in pAddon.BorderWith)
+            foreach (var pBorderLand in pAddon.BorderWith)
             {
-                if (m_cContents.Contains(pLand.Key))
+                if (m_cContents.Contains(pBorderLand.Key))
                     continue;
 
-                if (!m_cBorder.ContainsKey(pLand.Key))
-                    m_cBorder[pLand.Key] = new List<Line>();
-                Line[] cLines = pLand.Value.ToArray();
+                if (!m_cBorder.ContainsKey(pBorderLand.Key))
+                    m_cBorder[pBorderLand.Key] = new List<Line>();
+                Line[] cLines = pBorderLand.Value.ToArray();
                 foreach (Line pLine in cLines)
-                    m_cBorder[pLand.Key].Add(new Line(pLine));
+                    m_cBorder[pBorderLand.Key].Add(new Line(pLine));
             }
 
             //ChainBorder();

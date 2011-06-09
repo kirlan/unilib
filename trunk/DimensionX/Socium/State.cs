@@ -304,7 +304,7 @@ namespace Socium
                         iRelation--;
                         //fWholeLength /= 2;
 
-                    if (m_pMethropoly.m_pRace.m_pLanguage != pProvince.m_pRace.m_pLanguage)
+                    if (m_pMethropoly.m_pRace.m_pTemplate.m_pLanguage != pProvince.m_pRace.m_pTemplate.m_pLanguage)
                         //iRelation--;
                         continue;
                         //fWholeLength /= 2;
@@ -652,7 +652,7 @@ namespace Socium
                 if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
                     m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
                     (pInfo.m_cLanguages.Count == 0 ||
-                     pInfo.m_cLanguages.Contains(m_pRace.m_pLanguage)))
+                     pInfo.m_cLanguages.Contains(m_pRace.m_pTemplate.m_pLanguage)))
                     cInfos.Add(pInfo);
             }
 
@@ -711,7 +711,7 @@ namespace Socium
             }
 
             if (m_pMethropoly.m_pCenter.Area != null)
-                m_sName = m_pRace.m_pLanguage.RandomCountryName();
+                m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomCountryName();
 
             return m_pMethropoly.m_pAdministrativeCenter;
         }
@@ -760,9 +760,9 @@ namespace Socium
             if (m_pRace != pOpponent.m_pRace)
             {
                 iHostility++;
-                sNegativeReasons += " (-1) " + pOpponent.m_pRace.m_sName.Trim() + "\n";
+                sNegativeReasons += " (-1) " + pOpponent.m_pRace.ToString() + "\n";
 
-                if (m_pRace.m_pLanguage != pOpponent.m_pRace.m_pLanguage)
+                if (m_pRace.m_pTemplate.m_pLanguage != pOpponent.m_pRace.m_pTemplate.m_pLanguage)
                 {
                     iHostility++;
                     sNegativeReasons += " (-1) Different language\n";
@@ -771,7 +771,7 @@ namespace Socium
             else
             {
                 iHostility--;
-                sPositiveReasons += " (+1) " + pOpponent.m_pRace.m_sName.Trim() + "\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_pRace.ToString() + "\n";
             }
 
             iHostility += m_pCustoms.GetDifference(pOpponent.m_pCustoms, ref sPositiveReasons, ref sNegativeReasons);
@@ -1089,7 +1089,7 @@ namespace Socium
 
         public override string ToString()
         {
-            return string.Format("{2}(C{1}T{3}M{5}) - {0} {4}", m_sName, m_iInfrastructureLevel, m_pRace.m_sName, m_iTechLevel, m_pInfo.m_sName, m_iMagicLimit);
+            return string.Format("{2} (C{1}T{3}M{5}) - {0} {4}", m_sName, m_iInfrastructureLevel, m_pRace, m_iTechLevel, m_pInfo.m_sName, m_iMagicLimit);
         }
 
         public override float GetMovementCost()

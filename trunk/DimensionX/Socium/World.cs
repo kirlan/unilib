@@ -28,165 +28,6 @@ namespace Socium
 
     public class World : Landscape<LocationX, LandX, AreaX, ContinentX, LandTypeInfoX>
     {
-        #region Races
-        public static Race[] m_cAllRaces =
-        {
-        //rank 1 - usual people
-            new Race("european ", 1, Language.European, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("slavic ", 1, Language.Slavic, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("indian ", 1, Language.Hindu, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Desert}),
-            new Race("asian ", 1, Language.Asian, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("aztec ", 1, Language.Aztec, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("greek ", 1, Language.Greek, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains/*, LandTypes<LandTypeInfoX>.Savanna*/}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Taiga}),
-            new Race("arabian ", 1, Language.Arabian, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert/*, LandTypes<LandTypeInfoX>.Savanna*/}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Taiga}),
-            new Race("northern ", 1, Language.Northman, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna}),
-            new Race("chukchee ", 1, Language.Eskimoid, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains}),
-            new Race("eskimo ", 1, Language.Eskimoid, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains}),
-            new Race("highlander ", 1, Language.Highlander, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest}),
-            new Race("black ", 1, Language.African, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle/*, LandTypes<LandTypeInfoX>.Desert*/, LandTypes<LandTypeInfoX>.Savanna}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Taiga}),
-        //rank 10 - common non-humans
-            new Race("orc ", 10, Language.Orkish, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, /*LandTypes<LandTypeInfoX>.Mountains, */LandTypes<LandTypeInfoX>.Savanna}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new Race("goblin ", 10, Language.Orkish, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, /*LandTypes<LandTypeInfoX>.Mountains, */LandTypes<LandTypeInfoX>.Savanna}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new Race("centaur ", 10, Language.Greek, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest}),
-            new Race("ogre ", 10, Language.Orkish, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle}),
-            new Race("halfling ", 10, Language.European, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Mountains}),
-            new Race("minotaur ", 10, Language.Greek, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("elven ", 10, Language.Elven, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("dwarven ", 10, Language.Dwarwen, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("vampire ", 10, Language.European, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-        //rank 20 - not so common non-humans
-            new Race("cobold ", 20, Language.Dwarwen, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("gnoll ", 20, Language.Orkish, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Swamp}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert}),
-            new Race("satyr ", "nimph ", 20, Language.Greek, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert}),
-            new Race("werewolf ", 20, Language.European, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new Race("jaguar people ", 20, Language.African, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("yeti ", 20, Language.Eskimoid, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Tundra}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle}),
-            //new Race("littlefolk ", 20, Language.Elven, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest}, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Plains}),
-            new Race("lizard ", 20, Language.Aztec, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Mountains}),
-            new Race("reptile ", 20, Language.Aztec, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Taiga}),
-            new Race("half-elf ", 20, Language.Elven, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Savanna}),
-            new Race("half-orc ", 20, Language.Orkish, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}),
-        //rank 30 - exotic non-humans
-            new Race("wererat ", 30, Language.Asian, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new Race("werebear ", 30, Language.Slavic, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            //new Race("half-dragon ", 30, Language.Drow, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Desert}, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Taiga}),
-            //new Race("half-dwarf ", 30, NameGenerator.Language.Dwarf, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Plains}, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp}),
-            //new Race("half-faery ", 30, NameGenerator.Language.Elf1, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains}, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Swamp}),
-            //new Race("golem ", 30, NameGenerator.Language.Aztec, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, }, 
-            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}),
-            new Race("naga ", 30, Language.Greek, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Taiga}),
-            new Race("harpy ", 30, Language.Greek, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Swamp}),
-            new Race("faery ", 30, Language.Elven, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Mountains}),
-            new Race("pixie ", 30, Language.Elven, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Mountains}),
-            new Race("drow ", 30, Language.Drow, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}),
-        //rank 40 - powerful mythic creatures
-            new Race("rakshasa ", "rakshasi ", 40, Language.Hindu, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga}),
-            new Race("asura ", 40, Language.Hindu, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Taiga}),
-            new Race("weredragon ", 40, Language.Drow, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Taiga}),
-        //rank 50 - complete aliens
-            new Race("insectoid ", 50, Language.African, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}),
-            new Race("arachnid ", 50, Language.Drow, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra}),
-            new Race("illithid ", 50, Language.Aztec, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Desert}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}),
-        };
-#endregion
-
         public int m_iTechLevel;
         public int m_iMagicLimit;
 
@@ -237,33 +78,46 @@ namespace Socium
         {
             List<Race> cRaces = new List<Race>();
 
+            int iDyingRaces = 0;
             //Все расы, оставшиеся с прошлых исторических циклов, адаптируем к новым условиям.
             if(m_aLocalRaces != null)
                 foreach (Race pRace in m_aLocalRaces)
                 {
                     pRace.Accommodate(this);
                     cRaces.Add(pRace);
+
+                    if (pRace.m_bDying)
+                        iDyingRaces++;
                 }
 
             //Рассчитываем шансы новых рас попасть в новый мир - учитывая, его параметры
-            Dictionary<Race, float> cRaceChances = new Dictionary<Race, float>();
-            foreach (Race pRace in World.m_cAllRaces)
-                cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : 100.0f / pRace.m_iRank;
+            Dictionary<RaceTemplate, float> cRaceChances = new Dictionary<RaceTemplate, float>();
+            foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
+            {
+                bool bAlreadyHave = false;
+                if(m_aLocalRaces != null)
+                    foreach (Race pRace in m_aLocalRaces)
+                        if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
+                            bAlreadyHave = true;
+                
+                cRaceChances[pRaceTemplate] = bAlreadyHave ? 0 : 100.0f / pRaceTemplate.m_iRank;
+            }
             //cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : Math.Max(1, 10 + m_iMagicLimit * 10 - pRace.m_iRank);// : 100.0f / pRace.m_iRank;
 
             //Добавляем необходимое количесто новых рас.
-            while (cRaces.Count < iDiversity)
+            while (cRaces.Count - iDyingRaces < iDiversity)
             {
                 int iChance = Rnd.ChooseOne(cRaceChances.Values, 1);
-                foreach (Race pRace in cRaceChances.Keys)
+                foreach (RaceTemplate pRaceTemplate in cRaceChances.Keys)
                 {
                     iChance--;
                     if (iChance < 0)
                     {
+                        Race pRace = new Race(pRaceTemplate);
                         pRace.Accommodate(this);
 
                         cRaces.Add(pRace);
-                        cRaceChances[pRace] = 0;
+                        cRaceChances[pRaceTemplate] = 0;
                         break;
                     }
                 }
@@ -290,12 +144,15 @@ namespace Socium
                         break;
                 }
 
+                //если уже где-то живёт - пропускаем её
                 if (!bHomeless)
                     continue;
 
+                //рассчитаем вероятности для всех земель стать прародиной этой расы
                 Dictionary<LandX, float> cLandChances = new Dictionary<LandX, float>();
                 foreach (LandX pLand in m_aLands)
                 {
+                    //отсеиваем уже занятые и непригодные для заселения земли
                     if (pLand.Forbidden ||
                         pLand.m_pProvince != null ||
                         pLand.m_pRace != null ||
@@ -306,21 +163,28 @@ namespace Socium
 
                     cLandChances[pLand] = 1.0f;// / pRace.m_iRank;
 
-                    foreach (LandTypeInfoX pType in pRace.m_cPrefferedLands)
+                    //рассчитываем шансы, исходя из предпочтений и антипатий расы
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cPrefferedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] *= 100;
 
-                    foreach (LandTypeInfoX pType in pRace.m_cHatedLands)
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cHatedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] /= 1000;
 
-                    int iPop = 0;
-                    foreach (List<Race> pList in pLand.Continent.m_cLocalRaces.Values)
+                    if (!pRace.m_bHegemon)
                     {
-                        iPop += pList.Count;
+                        //смотрим, сколько ещё других рас уже живут на этом же континенте
+                        int iPop = 0;
+                        foreach (var pRaces in pLand.Continent.m_cLocalRaces)
+                        {
+                            foreach (var pRce in pRaces.Value)
+                                if (!pRce.m_bDying)
+                                    iPop++;
+                        }
+                        if (iPop > 0)
+                            cLandChances[pLand] = (float)Math.Pow(cLandChances[pLand], 1.0 / (1 + iPop));
                     }
-                    if (iPop > 0) 
-                        cLandChances[pLand] = (float)Math.Pow(cLandChances[pLand], 1.0 / (1 + pLand.Continent.m_cLocalRaces.Count));
                 }
 
                 int iChance = Rnd.ChooseOne(cLandChances.Values, 2);
@@ -338,7 +202,7 @@ namespace Socium
                 if (pCradle != null && pCradle.Area != null)
                 {
                     (pCradle.Area as AreaX).m_pRace = pRace;
-                    (pCradle.Area as AreaX).m_sName = pRace.m_pLanguage.RandomCountryName();
+                    (pCradle.Area as AreaX).m_sName = pRace.m_pTemplate.m_pLanguage.RandomCountryName();
                     foreach (LandX pLand in (pCradle.Area as AreaX).m_cContents)
                     {
                         pLand.m_sName = (pCradle.Area as AreaX).m_sName;
@@ -351,88 +215,76 @@ namespace Socium
                         if (!pCradle.Continent.m_cLocalRaces.ContainsKey(pLandMass))
                             pCradle.Continent.m_cLocalRaces[pLandMass] = new List<Race>();
                         
-                        if(pCradle.Continent.m_cLocalRaces[pLandMass].Contains(pRace))
-                            pCradle.Continent.m_cLocalRaces[pLandMass].Add(pRace);
-                        else
-                            pCradle.Continent.m_cLocalRaces[pLandMass].Add(pRace);
+                        pCradle.Continent.m_cLocalRaces[pLandMass].Add(pRace);
                     }
                 }
             }
 
-            //Позаботимся о том, чтобы на каждой тектонической плите жила бы хоть одна раса
+            //Позаботимся о том, чтобы на каждом континенте жила бы хоть одна раса
             foreach (ContinentX pConti in m_aContinents)
             {
-                //Не нужно населять КАЖДУЮ плиту, достаточно чтобы хотя бы одна плита на континенте была населена.
+                //если континент уже обитаем, пропускаем его
                 int iPop = 0;
-                foreach (List<Race> pList in pConti.m_cLocalRaces.Values)
+                foreach (var pRaces in pConti.m_cLocalRaces)
                 {
-                    iPop += pList.Count;
+                    foreach (var pRce in pRaces.Value)
+                        if (!pRce.m_bDying)
+                            iPop++;
                 }
+
                 if (iPop > 0)
                     continue;
 
-                foreach (LandMass<LandX> pLandMass in pConti.m_cContents)
+                LandMass<LandX> pLandMass = pConti.m_cContents[Rnd.Get(pConti.m_cContents.Count)];
+
+                pConti.m_cLocalRaces[pLandMass] = new List<Race>();
+
+                Dictionary<LandTypeInfoX, int> cLandTypesCount = new Dictionary<LandTypeInfoX, int>();
+                foreach (LandX pLand in pLandMass.m_cContents)
                 {
-                    if (pConti.m_cLocalRaces.ContainsKey(pLandMass) && pConti.m_cLocalRaces[pLandMass].Count > 0)
+                    if (pLand.IsWater)
                         continue;
 
-                    pConti.m_cLocalRaces[pLandMass] = new List<Race>();
+                    if (!cLandTypesCount.ContainsKey(pLand.Type))
+                        cLandTypesCount[pLand.Type] = 0;
 
-                    int iLocalsCount = 1 + Rnd.Get(2);
+                    cLandTypesCount[pLand.Type] += pLand.m_cContents.Count;
+                }
 
-                    while (pConti.m_cLocalRaces[pLandMass].Count < iLocalsCount)
+                Dictionary<Race, float> cRaceChances = new Dictionary<Race, float>();
+                foreach (Race pRace in m_aLocalRaces)
+                {
+                    if (pRace.m_bDying)
+                        continue;
+
+                    cRaceChances[pRace] = 1.0f / pRace.m_pTemplate.m_iRank;
+
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cPrefferedLands)
+                        if (cLandTypesCount.ContainsKey(pType))
+                            cRaceChances[pRace] *= cLandTypesCount[pType];
+
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cHatedLands)
+                        if (cLandTypesCount.ContainsKey(pType))
+                            cRaceChances[pRace] /= cLandTypesCount[pType];
+                }
+
+                int iChance = Rnd.ChooseOne(cRaceChances.Values, 2);
+                Race pChoosenRace = null;
+                foreach (Race pRace in cRaceChances.Keys)
+                {
+                    iChance--;
+                    if (iChance < 0)
                     {
-                        Dictionary<LandTypeInfoX, int> cLandTypesCount = new Dictionary<LandTypeInfoX, int>();
-                        foreach (LandX pLand in pLandMass.m_cContents)
-                        {
-                            if (pLand.IsWater)
-                                continue;
-
-                            if (!cLandTypesCount.ContainsKey(pLand.Type))
-                                cLandTypesCount[pLand.Type] = 0;
-
-                            cLandTypesCount[pLand.Type] += pLand.m_cContents.Count;
-                        }
-
-                        Dictionary<Race, float> cRaceChances = new Dictionary<Race, float>();
-                        foreach (Race pRace in m_aLocalRaces)
-                        {
-                            if (pConti.m_cLocalRaces[pLandMass].Contains(pRace))
-                                continue;
-
-                            cRaceChances[pRace] = 1.0f / pRace.m_iRank;
-
-                            foreach (LandTypeInfoX pType in pRace.m_cPrefferedLands)
-                                if (cLandTypesCount.ContainsKey(pType))
-                                    cRaceChances[pRace] *= cLandTypesCount[pType];
-
-                            foreach (LandTypeInfoX pType in pRace.m_cHatedLands)
-                                if (cLandTypesCount.ContainsKey(pType))
-                                    cRaceChances[pRace] /= cLandTypesCount[pType];
-                        }
-
-                        int iChance = Rnd.ChooseOne(cRaceChances.Values, 2);
-                        Race pChoosenRace = null;
-                        foreach (Race pRace in cRaceChances.Keys)
-                        {
-                            iChance--;
-                            if (iChance < 0)
-                            {
-                                pChoosenRace = pRace;
-                                break;
-                            }
-                        }
-
-                        if (pChoosenRace != null)
-                        {
-                            if (pConti.m_cLocalRaces[pLandMass].Contains(pChoosenRace))
-                                pConti.m_cLocalRaces[pLandMass].Add(pChoosenRace);
-                            else
-                                pConti.m_cLocalRaces[pLandMass].Add(pChoosenRace);
-                            if (pConti.m_cContents.Count == 1)
-                                pConti.m_sName = pChoosenRace.m_pLanguage.RandomCountryName();
-                        }
+                        pChoosenRace = pRace;
+                        break;
                     }
+                }
+
+                if (pChoosenRace != null)
+                {
+                    pConti.m_cLocalRaces[pLandMass].Add(pChoosenRace);
+                    if (pConti.m_cContents.Count == 1)
+                        pConti.m_sName = pChoosenRace.m_pTemplate.m_pLanguage.RandomCountryName();
                 }
             }
         }
@@ -441,17 +293,26 @@ namespace Socium
         {
             foreach (ContinentX pConti in m_aContinents)
             {
+                List<Race> cHegemonRaces = new List<Race>();
+                //список рас, способных свободно расселяться по континенту
                 List<Race> cAvailableContinentRaces = new List<Race>();
                 foreach (LandMass<LandX> pLandMass in pConti.m_cLocalRaces.Keys)
                 {
                     foreach (Race pRace in pConti.m_cLocalRaces[pLandMass])
-                        if (!cAvailableContinentRaces.Contains(pRace))
+                    {
+                        if (!pRace.m_bDying && !cAvailableContinentRaces.Contains(pRace))
                             cAvailableContinentRaces.Add(pRace);
+                        if (pRace.m_bHegemon && !cHegemonRaces.Contains(pRace))
+                            cHegemonRaces.Add(pRace);
+                    }
                 }
 
+                List<Race> cSettledDyingRaces = new List<Race>();
+                //переберём все пригодные для заселения и незаселённые территории
                 foreach (AreaX pArea in pConti.m_cAreas)
                     if (!pArea.IsWater && pArea.m_pRace == null)
                     {
+                        //составим список тектонических плит, к которым принадлежит рассматриваемая территория
                         List<LandMass<LandX>> cLandMasses = new List<LandMass<LandX>>();
                         foreach (LandX pLand in pArea.m_cContents)
                         {
@@ -463,23 +324,46 @@ namespace Socium
                             }
                         }
 
+                        //составим список рас, которые могут претендовать на эту территорию
                         List<Race> cAvailableRaces = new List<Race>();
+                        List<Race> cDyingRaces = new List<Race>();
                         foreach (LandMass<LandX> pLandMass in cLandMasses)
                         {
                             if (!pConti.m_cLocalRaces.ContainsKey(pLandMass))
                                 continue;
 
                             foreach (Race pRace in pConti.m_cLocalRaces[pLandMass])
-                                if (!cAvailableRaces.Contains(pRace))
+                                if (!pRace.m_bDying)
                                 {
-                                    cAvailableRaces.Add(pRace);
-                                    if (!m_aLocalRaces.Contains(pRace))
-                                        throw new Exception();
+                                    if (!cAvailableRaces.Contains(pRace))
+                                    {
+                                        cAvailableRaces.Add(pRace);
+                                        if (!m_aLocalRaces.Contains(pRace))
+                                            throw new Exception();
+                                    }
+                                }
+                                else
+                                {
+                                    if (!cSettledDyingRaces.Contains(pRace) && !cDyingRaces.Contains(pRace))
+                                    {
+                                        cDyingRaces.Add(pRace);
+                                        if (!m_aLocalRaces.Contains(pRace))
+                                            throw new Exception();
+                                    }
                                 }
                         }
 
+                        //если эта территория принадлежит одной или нескольким плитам-колыбелям, населяем её соответствующими расами,
+                        //иначе берём список рас по континенту в целом
                         if (cAvailableRaces.Count > 0)
+                        {
+                            cAvailableRaces.AddRange(cDyingRaces);
+                            cAvailableRaces.AddRange(cHegemonRaces);
                             pArea.SetRace(cAvailableRaces);
+                            
+                            if (cDyingRaces.Contains(pArea.m_pRace))
+                                cSettledDyingRaces.Add(pArea.m_pRace);
+                        }
                         else
                             pArea.SetRace(cAvailableContinentRaces);
                     }
@@ -1294,42 +1178,59 @@ namespace Socium
         {
             List<Race> cEraseRace = new List<Race>();
             foreach (Race pRace in m_aLocalRaces)
-                if (!Rnd.OneChanceFrom(3))
-                    cEraseRace.Add(pRace);
+            {
+                if (pRace.m_bDying)
+                {
+                    if (Rnd.OneChanceFrom(2))
+                        cEraseRace.Add(pRace);
+                }
+                else
+                {
+                    if (!Rnd.OneChanceFrom(5))
+                    {
+                        pRace.m_bDying = true;
+                        pRace.m_bHegemon = false;
+                    }
+                    else
+                        pRace.m_bHegemon = Rnd.OneChanceFrom(m_aLocalRaces.Length);
+                }
+            }
 
             List<Race> cRaces = new List<Race>(m_aLocalRaces);
 
             foreach (Race pRace in cEraseRace)
-            {
                 cRaces.Remove(pRace);
 
-                foreach (ContinentX pConti in m_aContinents)
+            foreach (ContinentX pConti in m_aContinents)
+            {
+                foreach (var pLandMass in pConti.m_cLocalRaces)
                 {
-                    foreach (LandMass<LandX> pLandMass in pConti.m_cLocalRaces.Keys)
+                    foreach (Race pRace in cEraseRace)
+                        if (pLandMass.Value.Contains(pRace))
+                            pLandMass.Value.Remove(pRace);
+
+                    //foreach (Race pRce in pLandMass.Value)
+                    //    if (pRce == pRace)
+                    //    {
+                    //        if (pLandMass.Value.Contains(pRace))
+                    //            pLandMass.Value.Remove(pRace);
+                    //        throw new Exception();
+                    //    }
+                }
+
+                foreach (AreaX pArea in pConti.m_cAreas)
+                {
+                    if (pArea.m_pRace == null)
+                        continue;
+
+                    if (cEraseRace.Contains(pArea.m_pRace) || pArea.m_pRace.m_bDying)
+                        pArea.m_pRace = null;
+
+                    foreach (LandX pLand in pArea.m_cContents)
                     {
-                        if (pConti.m_cLocalRaces[pLandMass].Contains(pRace))
-                            pConti.m_cLocalRaces[pLandMass].Remove(pRace);
-
-                        foreach (Race pRce in pConti.m_cLocalRaces[pLandMass])
-                            if (pRce == pRace)
-                            {
-                                if (pConti.m_cLocalRaces[pLandMass].Contains(pRace))
-                                    pConti.m_cLocalRaces[pLandMass].Remove(pRace);
-                                throw new Exception();
-                            }
-                    }
-
-                    foreach (AreaX pArea in pConti.m_cAreas)
-                    {
-                        if (pArea.m_pRace == pRace)
-                            pArea.m_pRace = null;
-
-                        foreach (LandX pLand in pArea.m_cContents)
-                        {
-                            if (pLand.m_pRace == pRace)
-                                pLand.m_pRace = pArea.m_pRace;
-                        }
-                    }
+                        if (cEraseRace.Contains(pLand.m_pRace) || pLand.m_pRace.m_bDying)
+                            pLand.m_pRace = pArea.m_pRace;
+                    } 
                 }
             }
 

@@ -117,7 +117,7 @@ namespace Socium
             m_pCenter = pSeed;
             m_pRace = pSeed.m_pRace;
 
-            m_sName = m_pRace.m_pLanguage.RandomCountryName();
+            m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomCountryName();
 
             m_cContents.Add(pSeed);
             pSeed.m_pProvince = this;
@@ -164,16 +164,22 @@ namespace Socium
             //        fCost /= 10;
             //}
 
-            foreach (LandTypeInfoX pType in m_pRace.m_cPrefferedLands)
+            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_cPrefferedLands)
                 if (pType == pLand.Type)
                     fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            foreach (LandTypeInfoX pType in m_pRace.m_cHatedLands)
+            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_cHatedLands)
                 if (pType == pLand.Type)
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
             if (pLand.m_pRace != m_pRace)
                 fCost *= 2;
+
+            if (m_pRace.m_bDying)
+                fCost *= 15;
+
+            if (m_pRace.m_bHegemon)
+                fCost /= 2;
 
             if (fCost < 1)
                 fCost = 1;
@@ -722,7 +728,7 @@ namespace Socium
                 throw new Exception("Can't build capital!");
 
             if (m_pCenter.Area != null)
-                m_sName = m_pRace.m_pLanguage.RandomCountryName();
+                m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomCountryName();
 
             return m_pAdministrativeCenter;
         }
