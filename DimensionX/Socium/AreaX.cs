@@ -21,16 +21,23 @@ namespace Socium
             {
                 cChances[pRace] = 1.0f;// / pRace.m_iRank;
 
-                foreach (LandTypeInfoX pType in pRace.m_cPrefferedLands)
-                    if (m_pType == pType)
-                        cChances[pRace] *= 100;
+                if (pRace.m_bDying)
+                    cChances[pRace] /= 10 / m_pType.m_iMovementCost;
+                    //cChances[pRace] /= 10000 / (m_pType.m_iMovementCost * m_pType.m_iMovementCost);
 
-                foreach (LandTypeInfoX pType in pRace.m_cHatedLands)
+                if (pRace.m_bHegemon)
+                    cChances[pRace] *= 10;
+
+                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cPrefferedLands)
+                    if (m_pType == pType)
+                        cChances[pRace] *= 10;
+
+                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cHatedLands)
                     if (m_pType == pType)
                         cChances[pRace] /= 100;
             }
 
-            int iChance = Rnd.ChooseOne(cChances.Values, 2);
+            int iChance = Rnd.ChooseOne(cChances.Values, 3);
             foreach (Race pRace in cChances.Keys)
             {
                 iChance--;
@@ -41,7 +48,7 @@ namespace Socium
                 }
             }
 
-            m_sName = m_pRace.m_pLanguage.RandomCountryName();
+            m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomCountryName();
 
             foreach (LandX pLand in m_cContents)
             {
@@ -55,7 +62,7 @@ namespace Socium
             if (m_pRace == null)
                 return "unpopulated";
             else
-                return m_pRace.m_sName;
+                return m_pRace.m_pTemplate.m_sName.Trim();
         }
 
         public override string ToString()

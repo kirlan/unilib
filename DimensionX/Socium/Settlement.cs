@@ -88,9 +88,9 @@ namespace Socium
             else
             {
                 if (pInfo.m_eSize == SettlementSize.Hamlet || pInfo.m_eSize == SettlementSize.Village)
-                    m_sName = m_pRace.m_pLanguage.RandomVillageName();
+                    m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomVillageName();
                 else
-                    m_sName = m_pRace.m_pLanguage.RandomTownName();
+                    m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomTownName();
             }
 
             m_iTechLevel = iTech;
@@ -117,11 +117,11 @@ namespace Socium
                 case 0:
                     return string.Format("{0} {1}", m_pInfo.m_sName, m_sName);
                 case 1:
-                    return string.Format("ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName);
+                    return string.Format("ruins of {0} {1}", m_pRace.m_pTemplate.m_sName.Trim(), m_pInfo.m_sName);
                 case 2:
-                    return string.Format("ancient ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName);
+                    return string.Format("ancient ruins of {0} {1}", m_pRace.m_pTemplate.m_sName.Trim(), m_pInfo.m_sName);
                 default:
-                    return string.Format("forgotten ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName);
+                    return string.Format("forgotten ruins of {0} {1}", m_pRace.m_pTemplate.m_sName.Trim(), m_pInfo.m_sName);
             }
         }
     }

@@ -41,7 +41,7 @@ namespace MapDrawEngine.Signs
             gr.FillEllipse(brush, xx + iDX - rr, yy + iDY - rr, rr * 2, rr * 2);
             gr.DrawEllipse(Pens.Black, xx + iDX - rr, yy + iDY - rr, rr * 2, rr * 2);
 
-            if (fScaleMultiplier > 4)
+            if (fScaleMultiplier > 8)
                 gr.DrawString(name, s_pFont, Brushes.Black, xx + iDX + rr, yy + iDY);
         }
 

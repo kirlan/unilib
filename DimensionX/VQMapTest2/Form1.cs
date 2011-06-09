@@ -230,7 +230,7 @@ namespace VQMapTest2
 
             richTextBox1.AppendText(string.Format("Social order : {0} {1} [C{2}]\n\n", State.GetControlString(e.m_pState.m_iControl), e.m_pState.m_pInfo.m_sName, e.m_pState.m_iInfrastructureLevel));
 
-            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", e.m_pState.m_pRace.m_iTechLevel, e.m_pState.m_pRace.m_iMagicLimit, e.m_pState.m_pRace.m_sName));
+            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", e.m_pState.m_pRace.m_iTechLevel, e.m_pState.m_pRace.m_iMagicLimit, e.m_pState.m_pRace));
 
             richTextBox1.AppendText(string.Format("Culture:\n"));
             foreach (Culture.Mentality eMentality in Culture.Mentalities)
