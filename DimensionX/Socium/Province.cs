@@ -173,10 +173,12 @@ namespace Socium
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
             if (pLand.m_pRace != m_pRace)
-                fCost *= 2;
-
-            if (m_pRace.m_bDying)
-                fCost *= 15;
+            {
+                if (m_pRace.m_bDying)
+                    fCost *= 5000;
+                else
+                    fCost *= 2;
+            }
 
             if (m_pRace.m_bHegemon)
                 fCost /= 2;
@@ -301,6 +303,9 @@ namespace Socium
 
             bool bGrown = false;
 
+            if (m_pRace.m_bDying)
+                return bGrown;
+
             foreach (ITerritory pTerr in aBorder)
             {
                 if (pTerr.Forbidden)
@@ -343,7 +348,7 @@ namespace Socium
         public bool Grow(int iMaxProvinceSize)
         {
             //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
-            if (m_cContents.Count > iMaxProvinceSize || m_pCenter.m_iProvincePresence > 20 * Math.Sqrt(iMaxProvinceSize / Math.PI))
+            if (m_cContents.Count >= iMaxProvinceSize || m_pCenter.m_iProvincePresence > 200 * Math.Sqrt(iMaxProvinceSize / Math.PI))
             {
                 //GrowForce(m_pCenter, 1);
                 return false;
@@ -420,7 +425,7 @@ namespace Socium
                 }
             }
 
-            if (pMaxRace != null)
+            if (pMaxRace != null && !m_pRace.m_bDying)
                 m_pRace = pMaxRace;
 
             foreach (LandX pLand in m_cContents)
@@ -687,6 +692,9 @@ namespace Socium
 
             m_iInfrastructureLevel = 4 + (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
 
+            if (m_cContents.Count == 1)
+                m_iInfrastructureLevel /= 2;
+
             if (m_iTechLevel == 0 && iAverageMagicLimit == 0)
                 m_iInfrastructureLevel = 0;
 
@@ -800,7 +808,10 @@ namespace Socium
 
         public override string ToString()
         {
-            return "province " + m_sName + " (" + m_pAdministrativeCenter.ToString() + ")";
+            //if (m_pAdministrativeCenter != null)
+                return string.Format("province {0} ({2}, {1})", m_sName, m_pAdministrativeCenter == null ? "-" : m_pAdministrativeCenter.ToString(), m_pRace);
+            //else
+            //    return "province " + m_sName + " [" + m_pRace.ToString() + "]";
         }
 
         public override float GetMovementCost()
