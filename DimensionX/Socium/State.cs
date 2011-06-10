@@ -435,13 +435,8 @@ namespace Socium
             float fMagesCount = 0;
             float[] aDistribution = new float[10];
 
-            bool bOneRace = true;
-
             foreach (Province pProvince in m_cContents)
             {
-                if (pProvince.m_pRace != m_pRace)
-                    bOneRace = false;
-
                 if (pProvince.m_pRace.m_iMagicLimit > m_iMagicLimit)
                     m_iMagicLimit = pProvince.m_pRace.m_iMagicLimit;
 
