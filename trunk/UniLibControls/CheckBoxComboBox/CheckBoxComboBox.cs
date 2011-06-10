@@ -101,6 +101,15 @@ namespace PresentationControls
         #region PUBLIC PROPERTIES
         private string m_sDelimeter = ", ";
 
+        private bool m_bCanBeEmpty = true;
+
+        [Browsable(true)]
+        public bool CanBeEmpty
+        {
+            get { return m_bCanBeEmpty; }
+            set { m_bCanBeEmpty = value; }
+        }
+
         [Browsable(true)]
         public string Delimeter
         {
@@ -223,6 +232,34 @@ namespace PresentationControls
             EventHandler handler = CheckBoxCheckedChanged;
             if (handler != null)
                 handler(sender, e);
+
+            if (!m_bCanBeEmpty)
+            {
+                int StartIndex = DropDownStyle == ComboBoxStyle.DropDownList && DataSource == null ? 1 : 0;
+                int iCheckedItemsCount = 0;
+                int iCheckedItemIndex = -1;
+                for (int Index = StartIndex; Index <= _CheckBoxComboBoxListControl.Items.Count - 1; Index++)
+                {
+                    CheckBoxComboBoxItem Item = _CheckBoxComboBoxListControl.Items[Index];
+                    if (Item.Checked)
+                    {
+                        iCheckedItemsCount++;
+                        iCheckedItemIndex = Index;
+                    }
+                } 
+                for (int Index = StartIndex; Index <= _CheckBoxComboBoxListControl.Items.Count - 1; Index++)
+                {
+                    CheckBoxComboBoxItem Item = _CheckBoxComboBoxListControl.Items[Index];
+                    if (iCheckedItemsCount == 1)
+                    {
+                        if (Item.Checked)
+                            Item.Enabled = false;
+                    }
+                    else
+                        Item.Enabled = true;
+                }
+
+            }
         }
 
         /// <summary>
