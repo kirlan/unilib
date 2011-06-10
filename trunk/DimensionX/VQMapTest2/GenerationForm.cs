@@ -32,22 +32,18 @@ namespace VQMapTest2
             new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 300, 15, 90, 50, 100),
         };
 
-        SocietyPreset[] m_aHistoricalSocietyPresets = new SocietyPreset[] 
+        SocietyPreset[] m_aSocietyPresets = new SocietyPreset[] 
         { 
-            new SocietyPreset("Antiquity", "An antique world without magic - like Ancient Greece, Rome, Egypt, Assyria, etc.", 0, 1, 0, 0),
-            new SocietyPreset("Medieval", "A medieval world without magic - castles, knights, tournaments, etc.", 0, 2, 0, 0),
-            new SocietyPreset("Renaissance", "A renaissance world without magic - musketeers, geographic exploration, etc.", 1, 3, 0, 0),
-            new SocietyPreset("Modern", "A modern world without magic - railroads, aviation, world wars, etc.", 4, 5, 0, 0),
-        };
-
-        SocietyPreset[] m_aFictionalSocietyPresets = new SocietyPreset[] 
-        { 
+            new SocietyPreset("Historical - antiquity", "An antique world without magic - like Ancient Greece, Rome, Egypt, Assyria, etc.", 0, 1, 0, 0),
+            new SocietyPreset("Historical - medieval", "A medieval world without magic - castles, knights, tournaments, etc.", 0, 2, 0, 0),
+            new SocietyPreset("Historical - renaissance", "A renaissance world without magic - musketeers, geographic exploration, etc.", 1, 3, 0, 0),
+            new SocietyPreset("Historical - modern", "A modern world without magic - railroads, aviation, world wars, etc.", 4, 5, 0, 0),
             new SocietyPreset("Antique mythology", "A world of antique mythology - just a usual antique world, but with a bit of magic...", 0, 1, 1, 2),
-            new SocietyPreset("Fantasy - low magic", "A medieval world with a bit of magic - like Knights of the Round Table, Lord of the Rings, etc.", 0, 2, 1, 3),
-            new SocietyPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 0, 2, 2, 4),
+            new SocietyPreset("Fantasy - low magic", "A medieval world with a bit of magic - like Knights of the Round Table, Lord of the Rings, etc.", 1, 2, 1, 3),
+            new SocietyPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 1, 2, 2, 4),
             new SocietyPreset("Technomagic", "A renaissance world with a lot of magic - like Arcanum, Final Fantasy, etc.", 1, 3, 2, 4),
             new SocietyPreset("Superheroes", "A modern world with a bit of magic (aka supernatural abilities) - like Superman, Fantastic Four, Spiderman, etc.", 4, 5, 1, 3),
-            new SocietyPreset("Urban fantasy", "A modern world with a lot of magic - vampires, werewolfs, voodoo, secret societies, etc.", 4, 5, 2, 4),
+            //new SocietyPreset("Urban fantasy", "A modern world with a lot of magic - vampires, werewolfs, voodoo, secret societies, etc.", 4, 5, 2, 4),
             new SocietyPreset("Cyberpunk", "Nearest future world without magic - advanced technologies, mega-corporations, industrial espionage, etc.", 4, 6, 0, 0),
             new SocietyPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - like Star Wars, Star Trek, etc.", 6, 7, 1, 3),
         };
@@ -81,7 +77,13 @@ namespace VQMapTest2
                 comboBox3.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
 
                 comboBox4.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
-                comboBox5.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+                comboBox5.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i)); 
+                
+                comboBox16.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+                comboBox15.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+
+                comboBox14.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+                comboBox13.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
             }
 
             comboBox2.SelectedIndex = 0;
@@ -90,25 +92,40 @@ namespace VQMapTest2
             comboBox3.SelectedIndex = 8;
             comboBox5.SelectedIndex = 8;
 
+            comboBox16.SelectedIndex = 0;
+            comboBox14.SelectedIndex = 0;
+
+            comboBox15.SelectedIndex = 8;
+            comboBox13.SelectedIndex = 8;
+
             listBox1.Items.Clear();
-            listBox1.Items.AddRange(m_aWorldMaps);
-            if (listBox1.Items.Count > 0)
-                listBox1.SelectedIndex = 0;
 
-            listBox2.Items.Clear();
-            listBox2.Items.AddRange(m_aPartialMaps);
-            if (listBox2.Items.Count > 0)
-                listBox2.SelectedIndex = 0;
+            comboBox6.Items.Clear();
+            comboBox6.Items.AddRange(m_aSocietyPresets);
+            if (comboBox6.Items.Count > 0)
+                comboBox6.SelectedIndex = 0;
 
-            listBox3.Items.Clear();
-            listBox3.Items.AddRange(m_aHistoricalSocietyPresets);
-            if (listBox3.Items.Count > 0)
-                listBox3.SelectedIndex = 0;
+            comboBox11.Items.Clear();
+            comboBox11.Items.AddRange(m_aSocietyPresets);
+            if (comboBox11.Items.Count > 0)
+                comboBox11.SelectedIndex = 0;
 
-            listBox4.Items.Clear();
-            listBox4.Items.AddRange(m_aFictionalSocietyPresets);
-            if (listBox4.Items.Count > 0)
-                listBox4.SelectedIndex = 0;
+            comboBox12.Items.Clear();
+            comboBox12.Items.AddRange(m_aSocietyPresets);
+            if (comboBox12.Items.Count > 0)
+                comboBox12.SelectedIndex = 0;
+
+            checkBoxComboBox1.Items.Clear();
+            foreach (RaceGroup eGroup in Enum.GetValues(typeof(RaceGroup)))
+            {
+                checkBoxComboBox1.Items.Add(eGroup);
+                checkBoxComboBox2.Items.Add(eGroup);
+                checkBoxComboBox3.Items.Add(eGroup);
+
+                checkBoxComboBox1.CheckBoxItems[eGroup.ToString()].Checked = true;
+                checkBoxComboBox2.CheckBoxItems[eGroup.ToString()].Checked = true;
+                checkBoxComboBox3.CheckBoxItems[eGroup.ToString()].Checked = true;
+            }
 
             comboBox10.SelectedIndex = 0;
         }
@@ -159,7 +176,7 @@ namespace VQMapTest2
             //RndProvincies_Click(sender, e);
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void StartGeneration_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
             groupBox1.Enabled = false;
@@ -199,7 +216,41 @@ namespace VQMapTest2
                     iInvasionProb = 100;
                     break;
             }
-            m_pWorld = new World(m_cLastUsedLocations, (int)ContinentsCount.Value, !PartialMap.Checked, (int)LandsCount.Value, Math.Max(10, Math.Min((int)StatesCount.Value * 7, 300)), (int)StatesCount.Value, (int)LandMassesCount.Value, (int)WaterPercent.Value, (int)Equator.Value, (int)Pole.Value, (int)RacesCount.Value, comboBox2.SelectedIndex, m_iTechLevelLimit, comboBox4.SelectedIndex, m_iMagicLimit, iInvasionProb, m_iInvadersTechLevelLimit, m_iInvadersMagicLimit);
+
+            List<RaceGroup> cGroups = new List<RaceGroup>();
+            List<RaceGroup> cAncientGroups = new List<RaceGroup>();
+            foreach (RaceGroup eGroup in Enum.GetValues(typeof(RaceGroup)))
+            {
+                if (checkBoxComboBox1.CheckBoxItems[eGroup.ToString()].Checked)
+                    cAncientGroups.Add(eGroup);
+                if (checkBoxComboBox2.CheckBoxItems[eGroup.ToString()].Checked)
+                    cGroups.Add(eGroup);
+            }
+
+            m_pWorld = new World(m_cLastUsedLocations, 
+                (int)ContinentsCount.Value, 
+                !PartialMap.Checked, 
+                (int)LandsCount.Value,
+                Math.Max(10, Math.Min((int)StatesCount.Value * 7, 300)), 
+                (int)StatesCount.Value,
+                (int)LandMassesCount.Value, 
+                (int)WaterPercent.Value, 
+                (int)Equator.Value, 
+                (int)Pole.Value, 
+                (int)RacesCount.Value, 
+                comboBox2.SelectedIndex, 
+                m_iTechLevelLimit, 
+                comboBox4.SelectedIndex, 
+                m_iMagicLimit, 
+                cGroups.ToArray(),
+                comboBox16.SelectedIndex,
+                m_iAncientTechLevelLimit,
+                comboBox14.SelectedIndex,
+                m_iAncientMagicLimit,
+                cAncientGroups.ToArray(),
+                iInvasionProb, 
+                m_iInvadersTechLevelLimit, 
+                m_iInvadersMagicLimit);
             
             Cursor = Cursors.Arrow;
             groupBox1.Enabled = true;
@@ -593,17 +644,6 @@ namespace VQMapTest2
             comboBox9.SelectedIndex = Math.Max(0, m_iInvadersMagicLimit - comboBox4.SelectedIndex);
         }
 
-        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBox2.SelectedIndex != -1)
-            {
-                MapPreset pPreset = listBox2.SelectedItem as MapPreset;
-                label19.Text = pPreset.m_sDescription;
-
-                ApplyPreset(pPreset);
-            }
-        }
-
         private void comboBox7_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox7.SelectedIndex == -1)
@@ -617,29 +657,23 @@ namespace VQMapTest2
             tableLayoutPanel2.Enabled = true;
             button8.Enabled = true;
 
+            if (listBox1.Items.Contains(m_aWorldMaps[0]) != m_cLocations.m_bCycled)
+            {
+                listBox1.Items.Clear();
+
+                if (m_cLocations.m_bCycled)
+                    listBox1.Items.AddRange(m_aWorldMaps);
+                else
+                    listBox1.Items.AddRange(m_aPartialMaps);
+
+                if (listBox1.Items.Count > 0)
+                    listBox1.SelectedIndex = 0;
+            }
+            
             CalculateLimits(m_cLocations.m_iLocationsCount);
 
             if (comboBox1.Items.Contains(comboBox7.SelectedItem))
                 comboBox1.SelectedItem = comboBox7.SelectedItem;
-        }
-
-        private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBox6.SelectedIndex == -1)
-                return;
-
-            m_cLocations = (LocationsGrid<LocationX>)comboBox6.SelectedItem;
-
-            groupBox2.Enabled = true;
-            groupBox3.Enabled = true;
-            groupBox4.Enabled = true;
-            tableLayoutPanel2.Enabled = true;
-            button8.Enabled = true;
-
-            CalculateLimits(m_cLocations.m_iLocationsCount);
-
-            if (comboBox1.Items.Contains(comboBox6.SelectedItem))
-                comboBox1.SelectedItem = comboBox6.SelectedItem;
         }
 
         private int m_iInvadersTechLevelLimit = 8;
@@ -657,37 +691,20 @@ namespace VQMapTest2
                 m_iInvadersMagicLimit = comboBox4.SelectedIndex + comboBox9.SelectedIndex;
         }
 
-        private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBox3.SelectedIndex != -1)
-            {
-                SocietyPreset pPreset = listBox3.SelectedItem as SocietyPreset;
-                label20.Text = pPreset.m_sDescription;
-
-                comboBox2.SelectedIndex = pPreset.m_iMinTechLevel;
-                comboBox3.SelectedIndex = pPreset.m_iMaxTechLevel - pPreset.m_iMinTechLevel;
-
-                comboBox4.SelectedIndex = pPreset.m_iMinMagicLevel;
-                comboBox5.SelectedIndex = pPreset.m_iMaxMagicLevel - pPreset.m_iMinMagicLevel;
-            }
-        }
-
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex == 0)
                 comboBox7_SelectedIndexChanged(sender, e);
             if (tabControl1.SelectedIndex == 1)
-                comboBox6_SelectedIndexChanged(sender, e);
-            if (tabControl1.SelectedIndex == 2)
                 comboBox1_SelectedIndexChanged(sender, e);
         }
 
-        private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox11_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBox4.SelectedIndex != -1)
+            if (comboBox11.SelectedIndex != -1)
             {
-                SocietyPreset pPreset = listBox4.SelectedItem as SocietyPreset;
-                label23.Text = pPreset.m_sDescription;
+                SocietyPreset pPreset = comboBox11.SelectedItem as SocietyPreset;
+                label25.Text = pPreset.m_sDescription;
 
                 comboBox2.SelectedIndex = pPreset.m_iMinTechLevel;
                 comboBox3.SelectedIndex = pPreset.m_iMaxTechLevel - pPreset.m_iMinTechLevel;
@@ -696,5 +713,74 @@ namespace VQMapTest2
                 comboBox5.SelectedIndex = pPreset.m_iMaxMagicLevel - pPreset.m_iMinMagicLevel;
             }
         }
+
+        private void comboBox6_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            if (comboBox6.SelectedIndex != -1)
+            {
+                SocietyPreset pPreset = comboBox6.SelectedItem as SocietyPreset;
+                label20.Text = pPreset.m_sDescription;
+
+                comboBox16.SelectedIndex = pPreset.m_iMinTechLevel;
+                comboBox15.SelectedIndex = pPreset.m_iMaxTechLevel - pPreset.m_iMinTechLevel;
+
+                comboBox14.SelectedIndex = pPreset.m_iMinMagicLevel;
+                comboBox13.SelectedIndex = pPreset.m_iMaxMagicLevel - pPreset.m_iMinMagicLevel;
+            }
+        }
+
+        private void comboBox12_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox12.SelectedIndex != -1)
+            {
+                SocietyPreset pPreset = comboBox12.SelectedItem as SocietyPreset;
+                label29.Text = pPreset.m_sDescription;
+
+                //comboBox2.SelectedIndex = pPreset.m_iMinTechLevel;
+                //comboBox3.SelectedIndex = pPreset.m_iMaxTechLevel - pPreset.m_iMinTechLevel;
+
+                //comboBox4.SelectedIndex = pPreset.m_iMinMagicLevel;
+                //comboBox5.SelectedIndex = pPreset.m_iMaxMagicLevel - pPreset.m_iMinMagicLevel;
+            }
+        }
+
+        private int m_iAncientTechLevelLimit = 8;
+
+        private void comboBox15_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox15.SelectedIndex != -1)
+                m_iAncientTechLevelLimit = comboBox16.SelectedIndex + comboBox15.SelectedIndex;
+        }
+
+        private int m_iAncientMagicLimit = 8;
+
+        private void comboBox13_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox13.SelectedIndex != -1)
+                m_iAncientMagicLimit = comboBox14.SelectedIndex + comboBox13.SelectedIndex;
+        }
+
+        private void comboBox16_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox15.Items.Clear();
+            for (int i = comboBox16.SelectedIndex; i < 9; i++)
+            {
+                comboBox15.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+            }
+
+            comboBox15.SelectedIndex = Math.Max(0, m_iAncientTechLevelLimit - comboBox16.SelectedIndex);
+        }
+
+        private void comboBox14_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox13.Items.Clear();
+            for (int i = comboBox14.SelectedIndex; i < 9; i++)
+            {
+                comboBox13.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+            }
+
+            comboBox13.SelectedIndex = Math.Max(0, m_iAncientMagicLimit - comboBox14.SelectedIndex);
+        }
+
     }
 }
