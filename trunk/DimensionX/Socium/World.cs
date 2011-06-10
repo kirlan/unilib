@@ -357,7 +357,7 @@ namespace Socium
                         //иначе берём список рас по континенту в целом
                         if (cAvailableRaces.Count > 0)
                         {
-                            cAvailableRaces.AddRange(cDyingRaces);
+                            //cAvailableRaces.AddRange(cDyingRaces);
                             cAvailableRaces.AddRange(cHegemonRaces);
                             pArea.SetRace(cAvailableRaces);
                             
@@ -501,31 +501,31 @@ namespace Socium
                     cProvinces.Add(pProvince);
                 }
 
-            Dictionary<LandX, int> cTotal = new Dictionary<LandX, int>();
-            
             //Позаботимся о том, чтобы на каждом континенте была хотя бы одна провинция
             foreach (ContinentX pConti in m_aContinents)
             {
-                //foreach (var pLnd in m_cProvinceCenters[pConti])
-                //    cTotal[pLnd.Key] = pLnd.Value;
+                int iUsed = 0;
 
-                if (cUsed.Contains(pConti))
+                //Для каждого анклава древней цивилизации создаём собственную провинцию
+                foreach (AreaX pArea in pConti.m_cAreas)
+                {
+                    if (pArea.m_pRace != null && pArea.m_pRace.m_bDying)
+                    {
+                        Province pLostProvince = new Province();
+                        pLostProvince.Start(pArea.m_cContents[Rnd.Get(pArea.m_cContents.Count)]);
+                        cProvinces.Add(pLostProvince);
+                        while (pLostProvince.Grow(pArea.m_cContents.Count)) { }
+
+                        iUsed++;
+                    }
+                }
+
+                if (cUsed.Contains(pConti) || pConti.m_cAreas.Count == iUsed)
                     continue;
 
                 LandX pSeed = null;
                 do
                 {
-                    //int iIndex = Rnd.ChooseOne(m_cProvinceCenters[pConti].Values, 2);
-                    //foreach (LandX pLand in m_cProvinceCenters[pConti].Keys)
-                    //{
-                    //    if (iIndex <= 0 && pLand.m_pProvince == null)
-                    //    {
-                    //        pSeed = pLand;
-                    //        break;
-                    //    }
-                    //    iIndex--;
-                    //}
-
                     int iIndex = Rnd.Get(pConti.m_cAreas.Count);
                     if (!pConti.m_cAreas[iIndex].IsWater)
                     {
@@ -537,7 +537,7 @@ namespace Socium
                             if (pLoc.m_bBorder)
                                 bBorder = true;
 
-                        if (bBorder && !Rnd.OneChanceFrom(25))
+                        if (pSeed.m_pRace.m_bDying || (bBorder && !Rnd.OneChanceFrom(25)))
                             pSeed = null;
                     }
                 }
@@ -549,32 +549,12 @@ namespace Socium
 
                 if (!m_aLocalRaces.Contains(pProvince.m_pRace))
                     throw new Exception();
+
                 cUsed.Add(pConti);
             }
 
             while (cProvinces.Count < m_iProvincesCount)
             {
-                //LandX pSeed = null;
-                //int iCounter = 0;
-                //do
-                //{
-                //    int iIndex = Rnd.ChooseOne(cTotal.Values, 2);
-                //    foreach (LandX pLand in cTotal.Keys)
-                //    {
-                //        if (iIndex <= 0 && pLand.m_pProvince == null)
-                //        {
-                //            pSeed = pLand;
-                //            break;
-                //        }
-                //        iIndex--;
-                //    }
-                //    if (pSeed == null)
-                //        iCounter++;
-                //    else
-                //        iCounter = 0;
-                //}
-                //while (pSeed == null && iCounter < m_aLands.Length * 2);
-
                 LandX pSeed = null;
                 int iCounter = 0;
                 do
@@ -586,7 +566,8 @@ namespace Socium
                         pSeed.m_pProvince != null ||
                         pSeed.IsWater ||
                         pSeed.Owner == null ||
-                        (pSeed.Owner as LandMass<LandX>).IsWater)
+                        (pSeed.Owner as LandMass<LandX>).IsWater ||
+                        (pSeed.m_pRace != null && pSeed.m_pRace.m_bDying))
                     {
                         pSeed = null;
                     }
@@ -635,6 +616,7 @@ namespace Socium
             while (cFinished.Count < cProvinces.Count);
 
             bool bAlreadyFinished = true;
+            int iCnt = 0;
             cFinished.Clear();
             do
             {
@@ -657,18 +639,18 @@ namespace Socium
                     }
                 }
             }
-            while (!bAlreadyFinished);
+            while (!bAlreadyFinished && iCnt++ < m_aLands.Length);
 
-            //foreach (LandX pLand in m_aLands)
-            //{
-            //    if (!pLand.Forbidden && !pLand.IsWater && pLand.m_pProvince == null)
-            //    {
-            //        Province pProvince = new Province();
-            //        pProvince.Start(pLand);
-            //        cProvinces.Add(pProvince);
-            //        while (pProvince.Grow(iMaxProvinceSize)) { };
-            //    }
-            //}
+            foreach (LandX pLand in m_aLands)
+            {
+                if (!pLand.Forbidden && !pLand.IsWater && pLand.m_pProvince == null)
+                {
+                    Province pProvince = new Province();
+                    pProvince.Start(pLand);
+                    cProvinces.Add(pProvince);
+                    while (pProvince.Grow(iMaxProvinceSize)) { };
+                }
+            }
 
             m_aProvinces = cProvinces.ToArray();
 
@@ -892,11 +874,11 @@ namespace Socium
         {
             foreach (Province pProvince in m_aProvinces)
             {
-                if (!pProvince.Forbidden)
+                if (!pProvince.Forbidden && !pProvince.m_pRace.m_bDying)
                 {
                     foreach (Province pLinkedProvince in pProvince.m_aBorderWith)
                     {
-                        if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince)
+                        if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince && !pLinkedProvince.m_pRace.m_bDying)
                         {
                             float fMinLength = float.MaxValue;
                             LocationX pBestTown1 = null;
@@ -953,7 +935,7 @@ namespace Socium
             List<LocationX> cHarbors = new List<LocationX>();
             foreach (Province pProvince in m_aProvinces)
             {
-                if (!pProvince.Forbidden)
+                if (!pProvince.Forbidden && !pProvince.m_pRace.m_bDying)
                 {
                     foreach (LocationX pTown in pProvince.m_cSettlements)
                     {
@@ -1181,7 +1163,7 @@ namespace Socium
             {
                 if (pRace.m_bDying)
                 {
-                    if (Rnd.OneChanceFrom(2))
+                    if (Rnd.OneChanceFrom(3))
                         cEraseRace.Add(pRace);
                 }
                 else
@@ -1223,7 +1205,8 @@ namespace Socium
                     if (pArea.m_pRace == null)
                         continue;
 
-                    if (cEraseRace.Contains(pArea.m_pRace) || pArea.m_pRace.m_bDying)
+                    if (cEraseRace.Contains(pArea.m_pRace) ||
+                        (pArea.m_pRace.m_bDying && !Rnd.OneChanceFrom(1000 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
                         pArea.m_pRace = null;
 
                     foreach (LandX pLand in pArea.m_cContents)
