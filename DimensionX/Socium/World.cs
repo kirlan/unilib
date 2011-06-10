@@ -44,7 +44,7 @@ namespace Socium
 
         public Race[] m_aLocalRaces = null;
 
-        private void SetWorldLevels()
+        private void SetWorldLevels(bool bLastRun)
         {
             m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.GetExp(typeof(MagicAbilityPrevalence), 4);
             m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.GetExp(typeof(MagicAbilityDistribution), 4);
@@ -65,16 +65,19 @@ namespace Socium
             //    m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
             //}
 
-            m_iTechLevel = Math.Min(m_iMaxTechLevel, m_iMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-            m_iMagicLimit = Math.Min(m_iMaxMagicLevel, m_iMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
+            if (bLastRun)
+            {
+                m_iTechLevel = Math.Min(m_iMaxTechLevel, m_iMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
+                m_iMagicLimit = Math.Min(m_iMaxMagicLevel, m_iMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
+            }
+            else
+            {
+                m_iTechLevel = Math.Min(m_iAncientsMaxTechLevel, m_iAncientsMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
+                m_iMagicLimit = Math.Min(m_iAncientsMaxMagicLevel, m_iAncientsMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
+            }
         }
 
-        private void AddRaces()
-        {
-            AddRaces(6 + Rnd.Get(4));
-        }
-
-        private void AddRaces(int iDiversity)
+        private void AddRaces(int iDiversity, bool bFinalRun)
         {
             List<Race> cRaces = new List<Race>();
 
@@ -83,7 +86,7 @@ namespace Socium
             if(m_aLocalRaces != null)
                 foreach (Race pRace in m_aLocalRaces)
                 {
-                    pRace.Accommodate(this);
+                    pRace.Accommodate(this, bFinalRun);
                     cRaces.Add(pRace);
 
                     if (pRace.m_bDying)
@@ -94,13 +97,30 @@ namespace Socium
             Dictionary<RaceTemplate, float> cRaceChances = new Dictionary<RaceTemplate, float>();
             foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
             {
+                bool bPossible = false;
+                if (bFinalRun)
+                {
+                    foreach (RaceGroup eGroup in m_aRaceGroups)
+                        if (eGroup == pRaceTemplate.m_eGroup)
+                            bPossible = true;
+                }
+                else
+                {
+                    foreach (RaceGroup eGroup in m_aAncientRaceGroups)
+                        if (eGroup == pRaceTemplate.m_eGroup)
+                            bPossible = true;
+                }
+
+                if (!bPossible)
+                    continue;
+
                 bool bAlreadyHave = false;
                 if(m_aLocalRaces != null)
                     foreach (Race pRace in m_aLocalRaces)
                         if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
                             bAlreadyHave = true;
                 
-                cRaceChances[pRaceTemplate] = bAlreadyHave ? 0 : 100.0f / pRaceTemplate.m_iRank;
+                cRaceChances[pRaceTemplate] = bAlreadyHave ? 0 : 100.0f;// / pRaceTemplate.m_iRank;
             }
             //cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : Math.Max(1, 10 + m_iMagicLimit * 10 - pRace.m_iRank);// : 100.0f / pRace.m_iRank;
 
@@ -114,7 +134,7 @@ namespace Socium
                     if (iChance < 0)
                     {
                         Race pRace = new Race(pRaceTemplate);
-                        pRace.Accommodate(this);
+                        pRace.Accommodate(this, bFinalRun);
 
                         cRaces.Add(pRace);
                         cRaceChances[pRaceTemplate] = 0;
@@ -257,7 +277,7 @@ namespace Socium
                     if (pRace.m_bDying)
                         continue;
 
-                    cRaceChances[pRace] = 1.0f / pRace.m_pTemplate.m_iRank;
+                    cRaceChances[pRace] = 1.0f;// / pRace.m_pTemplate.m_iRank;
 
                     foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cPrefferedLands)
                         if (cLandTypesCount.ContainsKey(pType))
@@ -403,24 +423,51 @@ namespace Socium
                      int iMinTechLevel,
                      int iMaxTechLevel,
                      int iMinMagicLevel,
-                     int iMaxMagicLevel,
+                     int iMaxMagicLevel, 
+                     RaceGroup[] aRaceGroups,
+                     int iAncientsMinTechLevel,
+                     int iAncientsMaxTechLevel,
+                     int iAncientsMinMagicLevel,
+                     int iAncientsMaxMagicLevel,
+                     RaceGroup[] aAncientRaceGroups,
                      int iInvasionProbability,
                      int iInvadersMaxTechLevel,
                      int iInvadersMaxMagicLevel)
             : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole)
         {
-            Create(iProvinces, iStates, iRacesCount, iMinTechLevel, iMaxTechLevel, iMinMagicLevel, iMaxMagicLevel, iInvasionProbability, iInvadersMaxTechLevel, iInvadersMaxMagicLevel);
+            Create(iProvinces, iStates, iRacesCount, iMinTechLevel, iMaxTechLevel, iMinMagicLevel, iMaxMagicLevel, aRaceGroups, iAncientsMinTechLevel, iAncientsMaxTechLevel, iAncientsMinMagicLevel, iAncientsMaxMagicLevel, aAncientRaceGroups, iInvasionProbability, iInvadersMaxTechLevel, iInvadersMaxMagicLevel);
         }
 
         public int m_iMinTechLevel;
         public int m_iMaxTechLevel;
         public int m_iMinMagicLevel;
         public int m_iMaxMagicLevel;
+        public int m_iAncientsMinTechLevel;
+        public int m_iAncientsMaxTechLevel;
+        public int m_iAncientsMinMagicLevel;
+        public int m_iAncientsMaxMagicLevel;
         public int m_iInvasionProbability;
         public int m_iInvadersMaxTechLevel;
         public int m_iInvadersMaxMagicLevel;
+        public RaceGroup[] m_aRaceGroups;
+        public RaceGroup[] m_aAncientRaceGroups;
 
-        private void Create(int iProvinces, int iStates, int iRacesCount, int iMinTechLevel, int iMaxTechLevel, int iMinMagicLevel, int iMaxMagicLevel, int iInvasionProbability, int iInvadersMaxTechLevel, int iInvadersMaxMagicLevel)
+        private void Create(int iProvinces, 
+                            int iStates, 
+                            int iRacesCount, 
+                            int iMinTechLevel, 
+                            int iMaxTechLevel, 
+                            int iMinMagicLevel, 
+                            int iMaxMagicLevel,
+                            RaceGroup[] aRaceGroups,
+                            int iAncientsMinTechLevel,
+                            int iAncientsMaxTechLevel,
+                            int iAncientsMinMagicLevel,
+                            int iAncientsMaxMagicLevel,
+                            RaceGroup[] aAncientRaceGroups, 
+                            int iInvasionProbability, 
+                            int iInvadersMaxTechLevel, 
+                            int iInvadersMaxMagicLevel)
         {
             Language.ResetUsedLists();
 
@@ -433,37 +480,46 @@ namespace Socium
             m_iMinMagicLevel = iMinMagicLevel;
             m_iMaxMagicLevel = iMaxMagicLevel;
 
+            m_iAncientsMinTechLevel = iAncientsMinTechLevel;
+            m_iAncientsMaxTechLevel = iAncientsMaxTechLevel;
+
+            m_iAncientsMinMagicLevel = iAncientsMinMagicLevel;
+            m_iAncientsMaxMagicLevel = iAncientsMaxMagicLevel;
+
+            m_aRaceGroups = aRaceGroups;
+            m_aAncientRaceGroups = aAncientRaceGroups;
+
             m_iInvasionProbability = iInvasionProbability;
 
             m_iInvadersMaxTechLevel = iInvadersMaxTechLevel;
             m_iInvadersMaxMagicLevel = iInvadersMaxMagicLevel;
 
-            PopulateWorld(iRacesCount, true);
+            PopulateWorld(iRacesCount, false);
 
             int iAge = Rnd.Get(4);//4 - снижено для отладки
             for (int i = 0; i < iAge; i++)
             {
-                Reset();
-                PopulateWorld(iRacesCount, true);
+                Reset(false);
+                PopulateWorld(iRacesCount, false);
             }
 
-            Reset();
-            PopulateWorld(iRacesCount, false);
+            Reset(true);
+            PopulateWorld(iRacesCount, true);
         }
 
-        private void PopulateWorld(int iRacesCount, bool bFast)
+        private void PopulateWorld(int iRacesCount, bool bFinalRun)
         {
-            SetWorldLevels();
+            SetWorldLevels(bFinalRun);
 
-            AddRaces(iRacesCount);
+            AddRaces(iRacesCount, bFinalRun);
             DistributeRacesToLandMasses();
             PopulateAreas();
 
             BuildProvinces();
 
-            BuildCities(m_pGrid.CycleShift, bFast);
+            BuildCities(m_pGrid.CycleShift, !bFinalRun);
 
-            BuildStates(m_pGrid.CycleShift, bFast);
+            BuildStates(m_pGrid.CycleShift, !bFinalRun);
 
             foreach (ContinentX pConti in m_aContinents)
             {
@@ -779,7 +835,10 @@ namespace Socium
 
             foreach (State pState in m_aStates)
             {
-                pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iMinTechLevel, m_iMaxTechLevel);
+                if (pState.m_pRace.m_bDying)
+                    pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iAncientsMinTechLevel, m_iAncientsMaxTechLevel);
+                else
+                    pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iMinTechLevel, m_iMaxTechLevel);
                 pState.Finish(m_pGrid.CycleShift);
 
                 ContinentX pConti = null;
@@ -878,7 +937,7 @@ namespace Socium
                 {
                     foreach (Province pLinkedProvince in pProvince.m_aBorderWith)
                     {
-                        if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince && !pLinkedProvince.m_pRace.m_bDying)
+                        if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince && (!pLinkedProvince.m_pRace.m_bDying || pLinkedProvince.m_iTechLevel > pProvince.m_iTechLevel))
                         {
                             float fMinLength = float.MaxValue;
                             LocationX pBestTown1 = null;
@@ -1121,7 +1180,10 @@ namespace Socium
             {
                 if (!pProvince.Forbidden)
                 {
-                    pProvince.BuildCapital(bFast, m_iMinTechLevel, m_iMaxTechLevel);
+                    if(pProvince.m_pRace.m_bDying)
+                        pProvince.BuildCapital(bFast, m_iAncientsMinTechLevel, m_iAncientsMaxTechLevel);
+                    else
+                        pProvince.BuildCapital(bFast, m_iMinTechLevel, m_iMaxTechLevel);
 
                     pProvince.BuildSettlements(SettlementSize.City, bFast);
                     if (!bFast)
@@ -1156,11 +1218,25 @@ namespace Socium
                 BuildSeaRoutes(fCycleShift);
         }
 
-        public void Reset()
+        public void Reset(bool bLastRun)
         {
             List<Race> cEraseRace = new List<Race>();
             foreach (Race pRace in m_aLocalRaces)
             {
+                bool bPossible = false;
+                if (bLastRun)
+                {
+                    foreach (RaceGroup eGroup in m_aRaceGroups)
+                        if (eGroup == pRace.m_pTemplate.m_eGroup)
+                            bPossible = true;
+                }
+                else
+                {
+                    foreach (RaceGroup eGroup in m_aAncientRaceGroups)
+                        if (eGroup == pRace.m_pTemplate.m_eGroup)
+                            bPossible = true;
+                }
+
                 if (pRace.m_bDying)
                 {
                     if (Rnd.OneChanceFrom(3))
@@ -1168,7 +1244,7 @@ namespace Socium
                 }
                 else
                 {
-                    if (!Rnd.OneChanceFrom(5))
+                    if (!bPossible || !Rnd.OneChanceFrom(5))
                     {
                         pRace.m_bDying = true;
                         pRace.m_bHegemon = false;
@@ -1213,7 +1289,7 @@ namespace Socium
                     {
                         if (cEraseRace.Contains(pLand.m_pRace) || pLand.m_pRace.m_bDying)
                             pLand.m_pRace = pArea.m_pRace;
-                    } 
+                    }
                 }
             }
 

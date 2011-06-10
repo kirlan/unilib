@@ -1069,6 +1069,9 @@ namespace Socium
 
         public int GetImportedTech()
         {
+            if (m_pRace.m_bDying)
+                return -1;
+
             int iMaxTech = m_iTechLevel;
             foreach (State pState in m_aBorderWith)
             {

@@ -8,8 +8,19 @@ using Socium.Languages;
 
 namespace Socium
 {
+    public enum RaceGroup
+    {
+        Humans,
+        Mithical,
+        Fantasy,
+        Supernatural,
+        Aliens
+    }
+
     public class RaceTemplate
-    { 
+    {
+        public RaceGroup m_eGroup;
+
         public string m_sName;
         public string m_sNameF;
         public int m_iRank;
@@ -18,12 +29,14 @@ namespace Socium
         public LandTypeInfoX[] m_cPrefferedLands;
         public LandTypeInfoX[] m_cHatedLands;
 
-        public RaceTemplate(string sName, int iRank, Language pLanguage, LandTypeInfoX[] cPrefferedLands, LandTypeInfoX[] cHatedLands)
-            :this(sName, sName, iRank, pLanguage, cPrefferedLands, cHatedLands)
+        public RaceTemplate(RaceGroup eGroup, string sName, int iRank, Language pLanguage, LandTypeInfoX[] cPrefferedLands, LandTypeInfoX[] cHatedLands)
+            :this(eGroup, sName, sName, iRank, pLanguage, cPrefferedLands, cHatedLands)
         { }
 
-        public RaceTemplate(string sNameM, string sNameF, int iRank, Language pLanguage, LandTypeInfoX[] cPrefferedLands, LandTypeInfoX[] cHatedLands)
+        public RaceTemplate(RaceGroup eGroup, string sNameM, string sNameF, int iRank, Language pLanguage, LandTypeInfoX[] cPrefferedLands, LandTypeInfoX[] cHatedLands)
         {
+            m_eGroup = eGroup;
+
             m_sName = sNameM;
             m_sNameF = sNameF;
             m_iRank = iRank;
@@ -46,109 +59,109 @@ namespace Socium
         public static RaceTemplate[] m_cTemplates =
         {
         //rank 1 - usual people
-            new RaceTemplate("european ", 1, Language.European, 
+            new RaceTemplate(RaceGroup.Humans, "european ", 1, Language.European, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("slavic ", 1, Language.Slavic, 
+            new RaceTemplate(RaceGroup.Humans, "slavic ", 1, Language.Slavic, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Forest}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("indian ", 1, Language.Hindu, 
+            new RaceTemplate(RaceGroup.Humans, "indian ", 1, Language.Hindu, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Desert}),
-            new RaceTemplate("asian ", 1, Language.Asian, 
+            new RaceTemplate(RaceGroup.Humans, "asian ", 1, Language.Asian, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("aztec ", 1, Language.Aztec, 
+            new RaceTemplate(RaceGroup.Humans, "aztec ", 1, Language.Aztec, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("greek ", 1, Language.Greek, 
+            new RaceTemplate(RaceGroup.Humans, "greek ", 1, Language.Greek, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains/*, LandTypes<LandTypeInfoX>.Savanna*/}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Taiga}),
-            new RaceTemplate("arabian ", 1, Language.Arabian, 
+            new RaceTemplate(RaceGroup.Humans, "arabian ", 1, Language.Arabian, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert/*, LandTypes<LandTypeInfoX>.Savanna*/}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Taiga}),
-            new RaceTemplate("northern ", 1, Language.Northman, 
+            new RaceTemplate(RaceGroup.Humans, "northern ", 1, Language.Northman, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna}),
-            new RaceTemplate("chukchee ", 1, Language.Eskimoid, 
+            new RaceTemplate(RaceGroup.Humans, "chukchee ", 1, Language.Eskimoid, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains}),
-            new RaceTemplate("eskimo ", 1, Language.Eskimoid, 
+            new RaceTemplate(RaceGroup.Humans, "eskimo ", 1, Language.Eskimoid, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains}),
-            new RaceTemplate("highlander ", 1, Language.Highlander, 
+            new RaceTemplate(RaceGroup.Humans, "highlander ", 1, Language.Highlander, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest}),
-            new RaceTemplate("black ", 1, Language.African, 
+            new RaceTemplate(RaceGroup.Humans, "black ", 1, Language.African, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle/*, LandTypes<LandTypeInfoX>.Desert*/, LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Taiga}),
         //rank 10 - common non-humans
-            new RaceTemplate("orc ", 10, Language.Orkish, 
+            new RaceTemplate(RaceGroup.Fantasy, "orc ", 10, Language.Orkish, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, /*LandTypes<LandTypeInfoX>.Mountains, */LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new RaceTemplate("goblin ", 10, Language.Orkish, 
+            new RaceTemplate(RaceGroup.Fantasy, "goblin ", 10, Language.Orkish, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, /*LandTypes<LandTypeInfoX>.Mountains, */LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new RaceTemplate("centaur ", 10, Language.Greek, 
+            new RaceTemplate(RaceGroup.Mithical, "centaur ", 10, Language.Greek, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest}),
-            new RaceTemplate("ogre ", 10, Language.Orkish, 
+            new RaceTemplate(RaceGroup.Fantasy, "ogre ", 10, Language.Orkish, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle}),
-            new RaceTemplate("halfling ", 10, Language.European, 
+            new RaceTemplate(RaceGroup.Fantasy, "halfling ", 10, Language.European, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Mountains}),
-            new RaceTemplate("minotaur ", 10, Language.Greek, 
+            new RaceTemplate(RaceGroup.Mithical, "minotaur ", 10, Language.Greek, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("elven ", 10, Language.Elven, 
+            new RaceTemplate(RaceGroup.Fantasy, "elven ", 10, Language.Elven, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("dwarven ", 10, Language.Dwarwen, 
+            new RaceTemplate(RaceGroup.Fantasy, "dwarven ", 10, Language.Dwarwen, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("vampire ", 10, Language.European, 
+            new RaceTemplate(RaceGroup.Supernatural, "vampire ", 10, Language.European, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra}),
         //rank 20 - not so common non-humans
-            new RaceTemplate("cobold ", 20, Language.Dwarwen, 
+            new RaceTemplate(RaceGroup.Fantasy, "cobold ", 20, Language.Dwarwen, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("gnoll ", 20, Language.Orkish, 
+            new RaceTemplate(RaceGroup.Fantasy, "gnoll ", 20, Language.Orkish, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Swamp}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert}),
-            new RaceTemplate("satyr ", "nimph ", 20, Language.Greek, 
+            new RaceTemplate(RaceGroup.Mithical, "satyr ", "nimph ", 20, Language.Greek, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert}),
-            new RaceTemplate("werewolf ", 20, Language.European, 
+            new RaceTemplate(RaceGroup.Supernatural, "werewolf ", 20, Language.European, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new RaceTemplate("jaguar people ", 20, Language.African, 
+            new RaceTemplate(RaceGroup.Supernatural, "jaguar people ", 20, Language.African, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Forest}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("yeti ", 20, Language.Eskimoid, 
+            new RaceTemplate(RaceGroup.Supernatural, "yeti ", 20, Language.Eskimoid, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Tundra}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle}),
             //new RaceTemplate("littlefolk ", 20, Language.Elven, 
             //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest}, 
             //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Plains}),
-            new RaceTemplate("lizard ", 20, Language.Aztec, 
+            new RaceTemplate(RaceGroup.Aliens, "lizard ", 20, Language.Aztec, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Mountains}),
-            new RaceTemplate("reptile ", 20, Language.Aztec, 
+            new RaceTemplate(RaceGroup.Aliens, "reptile ", 20, Language.Aztec, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Taiga}),
-            new RaceTemplate("half-elf ", 20, Language.Elven, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Savanna}),
-            new RaceTemplate("half-orc ", 20, Language.Orkish, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}),
+            //new RaceTemplate("half-elf ", 20, Language.Elven, 
+            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Forest}, 
+            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Savanna}),
+            //new RaceTemplate("half-orc ", 20, Language.Orkish, 
+            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest}, 
+            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}),
         //rank 30 - exotic non-humans
-            new RaceTemplate("wererat ", 30, Language.Asian, 
+            new RaceTemplate(RaceGroup.Fantasy, "ratling ", 30, Language.Asian, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
-            new RaceTemplate("werebear ", 30, Language.Slavic, 
+            new RaceTemplate(RaceGroup.Fantasy, "ursan ", 30, Language.Slavic, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert}),
             //new RaceTemplate("half-dragon ", 30, Language.Drow, 
@@ -163,39 +176,39 @@ namespace Socium
             //new RaceTemplate("golem ", 30, NameGenerator.Language.Aztec, 
             //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, }, 
             //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}),
-            new RaceTemplate("naga ", 30, Language.Greek, 
+            new RaceTemplate(RaceGroup.Mithical, "naga ", 30, Language.Greek, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Taiga}),
-            new RaceTemplate("harpy ", 30, Language.Greek, 
+            new RaceTemplate(RaceGroup.Mithical, "harpy ", 30, Language.Greek, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Swamp}),
-            new RaceTemplate("faery ", 30, Language.Elven, 
+            new RaceTemplate(RaceGroup.Mithical, "faery ", 30, Language.Elven, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Mountains}),
-            new RaceTemplate("pixie ", 30, Language.Elven, 
+            new RaceTemplate(RaceGroup.Mithical, "pixie ", 30, Language.Elven, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Mountains}),
-            new RaceTemplate("drow ", 30, Language.Drow, 
+            new RaceTemplate(RaceGroup.Fantasy, "drow ", 30, Language.Drow, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}),
         //rank 40 - powerful mythic creatures
-            new RaceTemplate("rakshasa ", "rakshasi ", 40, Language.Hindu, 
+            new RaceTemplate(RaceGroup.Mithical, "rakshasa ", "rakshasi ", 40, Language.Hindu, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga}),
-            new RaceTemplate("asura ", 40, Language.Hindu, 
+            new RaceTemplate(RaceGroup.Mithical, "asura ", 40, Language.Hindu, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Taiga}),
-            new RaceTemplate("weredragon ", 40, Language.Drow, 
+            new RaceTemplate(RaceGroup.Fantasy, "drakonid ", 40, Language.Drow, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Taiga}),
         //rank 50 - complete aliens
-            new RaceTemplate("insectoid ", 50, Language.African, 
+            new RaceTemplate(RaceGroup.Aliens, "insectoid ", 50, Language.African, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}),
-            new RaceTemplate("arachnid ", 50, Language.Drow, 
+            new RaceTemplate(RaceGroup.Aliens, "arachnid ", 50, Language.Drow, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Jungle}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Tundra}),
-            new RaceTemplate("illithid ", 50, Language.Aztec, 
+            new RaceTemplate(RaceGroup.Aliens, "illithid ", 50, Language.Aztec, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Desert}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Taiga, LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Savanna}),
         };
@@ -238,30 +251,28 @@ namespace Socium
         /// Согласовать параметры расы с параметрами мира.
         /// </summary>
         /// <param name="pWorld">мир</param>
-        public void Accommodate(World pWorld)
+        public void Accommodate(World pWorld, bool bLastRun)
         {
             int iOldLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
 
-            if (m_iMagicLimit <= pWorld.m_iMagicLimit)
-                m_iMagicLimit = pWorld.m_iMagicLimit;
-            else
-                m_iMagicLimit = (m_iMagicLimit + pWorld.m_iMagicLimit + 1)/2;
+            if (!m_bDying)
+            {
+                if (m_iMagicLimit <= pWorld.m_iMagicLimit)
+                    m_iMagicLimit = pWorld.m_iMagicLimit;
+                else
+                    m_iMagicLimit = (m_iMagicLimit + pWorld.m_iMagicLimit + 1) / 2;
 
-            if (m_iTechLevel <= pWorld.m_iTechLevel)
-                m_iTechLevel = pWorld.m_iTechLevel;
-            else
-                m_iTechLevel = (m_iTechLevel + pWorld.m_iTechLevel + 1)/2;
+                if (m_iTechLevel <= pWorld.m_iTechLevel && !m_bDying)
+                    m_iTechLevel = pWorld.m_iTechLevel;
+                else
+                    m_iTechLevel = (m_iTechLevel + pWorld.m_iTechLevel + 1) / 2;
+            }
 
             int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
             if (Rnd.OneChanceFrom(10))
                 m_iMagicLimit += iMagicLimit;
             else
                 m_iMagicLimit -= iMagicLimit;
-
-            if (m_iMagicLimit < pWorld.m_iMinMagicLevel)
-                m_iMagicLimit = pWorld.m_iMinMagicLevel;
-            if (m_iMagicLimit > pWorld.m_iMaxMagicLevel)
-                m_iMagicLimit = pWorld.m_iMaxMagicLevel;
 
             int iOldTechLevel = m_iTechLevel;
 
@@ -271,10 +282,30 @@ namespace Socium
             else
                 m_iTechLevel -= iTechLevel;
 
-            if (m_iTechLevel < pWorld.m_iMinTechLevel)
-                m_iTechLevel = pWorld.m_iMinTechLevel;
-            if (m_iTechLevel > pWorld.m_iMaxTechLevel)
-                m_iTechLevel = pWorld.m_iMaxTechLevel;
+            if (bLastRun && !m_bDying)
+            {
+                if (m_iMagicLimit < pWorld.m_iMinMagicLevel)
+                    m_iMagicLimit = pWorld.m_iMinMagicLevel;
+                if (m_iMagicLimit > pWorld.m_iMaxMagicLevel)
+                    m_iMagicLimit = pWorld.m_iMaxMagicLevel;
+
+                if (m_iTechLevel < pWorld.m_iMinTechLevel)
+                    m_iTechLevel = pWorld.m_iMinTechLevel;
+                if (m_iTechLevel > pWorld.m_iMaxTechLevel)
+                    m_iTechLevel = pWorld.m_iMaxTechLevel;
+            }
+            else
+            {
+                if (m_iMagicLimit < pWorld.m_iAncientsMinMagicLevel)
+                    m_iMagicLimit = pWorld.m_iAncientsMinMagicLevel;
+                if (m_iMagicLimit > pWorld.m_iAncientsMaxMagicLevel)
+                    m_iMagicLimit = pWorld.m_iAncientsMaxMagicLevel;
+
+                if (m_iTechLevel < pWorld.m_iAncientsMinTechLevel)
+                    m_iTechLevel = pWorld.m_iAncientsMinTechLevel;
+                if (m_iTechLevel > pWorld.m_iAncientsMaxTechLevel)
+                    m_iTechLevel = pWorld.m_iAncientsMaxTechLevel;
+            }
 
             //m_pCustoms = new Customs();
 
