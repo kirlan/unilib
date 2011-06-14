@@ -29,457 +29,44 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GenerationForm));
-            PresentationControls.CheckBoxProperties checkBoxProperties4 = new PresentationControls.CheckBoxProperties();
-            PresentationControls.CheckBoxProperties checkBoxProperties1 = new PresentationControls.CheckBoxProperties();
-            PresentationControls.CheckBoxProperties checkBoxProperties2 = new PresentationControls.CheckBoxProperties();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button10 = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.WaterPercent = new System.Windows.Forms.HScrollBar();
-            this.LandMassesCount = new System.Windows.Forms.HScrollBar();
-            this.LandsCount = new System.Windows.Forms.HScrollBar();
-            this.ContinentsRnd = new System.Windows.Forms.Button();
-            this.ContinentsCount = new System.Windows.Forms.NumericUpDown();
-            this.label16 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.PartialMap = new System.Windows.Forms.CheckBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.RacesCount = new System.Windows.Forms.HScrollBar();
-            this.StatesCount = new System.Windows.Forms.HScrollBar();
-            this.button6 = new System.Windows.Forms.Button();
-            this.label15 = new System.Windows.Forms.Label();
-            this.button4 = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.button5 = new System.Windows.Forms.Button();
+            this.StartGenerationButton = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label8 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.Equator = new System.Windows.Forms.HScrollBar();
-            this.Pole = new System.Windows.Forms.HScrollBar();
-            this.button11 = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.GridsManagerButton = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.checkBoxComboBox3 = new PresentationControls.CheckBoxComboBox();
-            this.label28 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.comboBox12 = new System.Windows.Forms.ComboBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.checkBoxComboBox2 = new PresentationControls.CheckBoxComboBox();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.comboBox11 = new System.Windows.Forms.ComboBox();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label27 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.checkBoxComboBox1 = new PresentationControls.CheckBoxComboBox();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.comboBox6 = new System.Windows.Forms.ComboBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.AgesView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.comboBox7 = new System.Windows.Forms.ComboBox();
+            this.GridsComboBox = new System.Windows.Forms.ComboBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.comboBox10 = new System.Windows.Forms.ComboBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.comboBox9 = new System.Windows.Forms.ComboBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.comboBox8 = new System.Windows.Forms.ComboBox();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
-            this.label32 = new System.Windows.Forms.Label();
-            this.comboBox13 = new System.Windows.Forms.ComboBox();
-            this.comboBox14 = new System.Windows.Forms.ComboBox();
-            this.label33 = new System.Windows.Forms.Label();
-            this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.label34 = new System.Windows.Forms.Label();
-            this.comboBox15 = new System.Windows.Forms.ComboBox();
-            this.comboBox16 = new System.Windows.Forms.ComboBox();
-            this.label35 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ContinentsCount)).BeginInit();
-            this.groupBox3.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            this.mapProperties1 = new VQMapTest2.MapProperties();
+            this.epochProperties1 = new VQMapTest2.EpochProperties();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.panel3.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.groupBox9.SuspendLayout();
-            this.groupBox8.SuspendLayout();
-            this.groupBox7.SuspendLayout();
-            this.groupBox10.SuspendLayout();
-            this.groupBox11.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // StartGenerationButton
             // 
-            this.groupBox1.Controls.Add(this.comboBox1);
-            this.groupBox1.Controls.Add(this.button10);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(434, 46);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Grid";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(9, 17);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(286, 21);
-            this.comboBox1.Sorted = true;
-            this.comboBox1.TabIndex = 3;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            // 
-            // button10
-            // 
-            this.button10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button10.Location = new System.Drawing.Point(301, 16);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(127, 23);
-            this.button10.TabIndex = 2;
-            this.button10.Text = "Show grids manager...";
-            this.toolTip1.SetToolTip(this.button10, "Build completely new grid to use it and - optional - save to file for future use." +
-        "");
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 20);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Lands count:";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(225, 20);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "LandMasses count:";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.WaterPercent);
-            this.groupBox2.Controls.Add(this.LandMassesCount);
-            this.groupBox2.Controls.Add(this.LandsCount);
-            this.groupBox2.Controls.Add(this.ContinentsRnd);
-            this.groupBox2.Controls.Add(this.ContinentsCount);
-            this.groupBox2.Controls.Add(this.label16);
-            this.groupBox2.Controls.Add(this.button3);
-            this.groupBox2.Controls.Add(this.label14);
-            this.groupBox2.Controls.Add(this.label13);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.PartialMap);
-            this.groupBox2.Location = new System.Drawing.Point(3, 55);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(434, 96);
-            this.groupBox2.TabIndex = 5;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Landscape";
-            // 
-            // WaterPercent
-            // 
-            this.WaterPercent.LargeChange = 5;
-            this.WaterPercent.Location = new System.Drawing.Point(96, 70);
-            this.WaterPercent.Maximum = 94;
-            this.WaterPercent.Minimum = 10;
-            this.WaterPercent.Name = "WaterPercent";
-            this.WaterPercent.Size = new System.Drawing.Size(89, 16);
-            this.WaterPercent.TabIndex = 29;
-            this.toolTip1.SetToolTip(this.WaterPercent, "66");
-            this.WaterPercent.Value = 66;
-            this.WaterPercent.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // LandMassesCount
-            // 
-            this.LandMassesCount.Location = new System.Drawing.Point(323, 20);
-            this.LandMassesCount.Maximum = 300;
-            this.LandMassesCount.Minimum = 30;
-            this.LandMassesCount.Name = "LandMassesCount";
-            this.LandMassesCount.Size = new System.Drawing.Size(102, 16);
-            this.LandMassesCount.TabIndex = 28;
-            this.toolTip1.SetToolTip(this.LandMassesCount, "150");
-            this.LandMassesCount.Value = 150;
-            this.LandMassesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // LandsCount
-            // 
-            this.LandsCount.LargeChange = 100;
-            this.LandsCount.Location = new System.Drawing.Point(83, 20);
-            this.LandsCount.Maximum = 4000;
-            this.LandsCount.Minimum = 1000;
-            this.LandsCount.Name = "LandsCount";
-            this.LandsCount.Size = new System.Drawing.Size(102, 16);
-            this.LandsCount.TabIndex = 27;
-            this.toolTip1.SetToolTip(this.LandsCount, "3000");
-            this.LandsCount.Value = 3000;
-            this.LandsCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // ContinentsRnd
-            // 
-            this.ContinentsRnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ContinentsRnd.Location = new System.Drawing.Point(151, 43);
-            this.ContinentsRnd.Margin = new System.Windows.Forms.Padding(0);
-            this.ContinentsRnd.Name = "ContinentsRnd";
-            this.ContinentsRnd.Size = new System.Drawing.Size(34, 20);
-            this.ContinentsRnd.TabIndex = 21;
-            this.ContinentsRnd.Text = "RND";
-            this.ContinentsRnd.UseVisualStyleBackColor = true;
-            this.ContinentsRnd.Click += new System.EventHandler(this.RndContinents_Click);
-            // 
-            // ContinentsCount
-            // 
-            this.ContinentsCount.Location = new System.Drawing.Point(102, 43);
-            this.ContinentsCount.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.ContinentsCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.ContinentsCount.Name = "ContinentsCount";
-            this.ContinentsCount.Size = new System.Drawing.Size(51, 20);
-            this.ContinentsCount.TabIndex = 18;
-            this.ContinentsCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.ContinentsCount, resources.GetString("ContinentsCount.ToolTip"));
-            this.ContinentsCount.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(6, 45);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(90, 13);
-            this.label16.TabIndex = 17;
-            this.label16.Text = "Continents count:";
-            // 
-            // button3
-            // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button3.Location = new System.Drawing.Point(185, 68);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(34, 20);
-            this.button3.TabIndex = 16;
-            this.button3.Text = "RND";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.RndWater_Click);
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(225, 70);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(114, 13);
-            this.label14.TabIndex = 15;
-            this.label14.Text = "(in % of total map area)";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 70);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(87, 13);
-            this.label13.TabIndex = 12;
-            this.label13.Text = "Water coverage:";
-            this.toolTip1.SetToolTip(this.label13, "Haw much of map will be oceans.\r\nThat\'s not a precise parameter, final result cou" +
-        "ld slightly differ from stated value.");
-            // 
-            // PartialMap
-            // 
-            this.PartialMap.AutoSize = true;
-            this.PartialMap.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.PartialMap.Location = new System.Drawing.Point(225, 44);
-            this.PartialMap.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.PartialMap.Name = "PartialMap";
-            this.PartialMap.Size = new System.Drawing.Size(191, 17);
-            this.PartialMap.TabIndex = 20;
-            this.PartialMap.Text = "Continents could touch map border";
-            this.PartialMap.UseVisualStyleBackColor = true;
-            this.PartialMap.CheckedChanged += new System.EventHandler(this.PartialMap_CheckedChanged);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.RacesCount);
-            this.groupBox3.Controls.Add(this.StatesCount);
-            this.groupBox3.Controls.Add(this.button6);
-            this.groupBox3.Controls.Add(this.label15);
-            this.groupBox3.Controls.Add(this.button4);
-            this.groupBox3.Controls.Add(this.label12);
-            this.groupBox3.Location = new System.Drawing.Point(3, 233);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(434, 46);
-            this.groupBox3.TabIndex = 6;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Political system:";
-            // 
-            // RacesCount
-            // 
-            this.RacesCount.LargeChange = 5;
-            this.RacesCount.Location = new System.Drawing.Point(83, 22);
-            this.RacesCount.Maximum = 40;
-            this.RacesCount.Minimum = 6;
-            this.RacesCount.Name = "RacesCount";
-            this.RacesCount.Size = new System.Drawing.Size(102, 16);
-            this.RacesCount.TabIndex = 26;
-            this.toolTip1.SetToolTip(this.RacesCount, "6");
-            this.RacesCount.Value = 6;
-            this.RacesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // StatesCount
-            // 
-            this.StatesCount.LargeChange = 5;
-            this.StatesCount.Location = new System.Drawing.Point(293, 21);
-            this.StatesCount.Maximum = 25;
-            this.StatesCount.Minimum = 1;
-            this.StatesCount.Name = "StatesCount";
-            this.StatesCount.Size = new System.Drawing.Size(89, 16);
-            this.StatesCount.TabIndex = 24;
-            this.toolTip1.SetToolTip(this.StatesCount, "8");
-            this.StatesCount.Value = 8;
-            this.StatesCount.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // button6
-            // 
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button6.Location = new System.Drawing.Point(382, 19);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(34, 20);
-            this.button6.TabIndex = 23;
-            this.button6.Text = "RND";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.RndStates_Click);
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(220, 22);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(70, 13);
-            this.label15.TabIndex = 21;
-            this.label15.Text = "States count:";
-            this.toolTip1.SetToolTip(this.label15, "How many different states (kingdoms, clans, republics etc.) will be there.\r\nThat\'" +
-        "s not a precise parameter, becouse real count couldn\'t be less then \r\ntotal coun" +
-        "t of continents and islands on map.");
-            // 
-            // button4
-            // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button4.Location = new System.Drawing.Point(185, 19);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(34, 20);
-            this.button4.TabIndex = 17;
-            this.button4.Text = "RND";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.RndRaces_Click);
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 22);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(71, 13);
-            this.label12.TabIndex = 0;
-            this.label12.Text = "Races count:";
-            this.toolTip1.SetToolTip(this.label12, "How many different races from built-in list lives in this world.");
-            // 
-            // button7
-            // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(75, 3);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(146, 23);
-            this.button7.TabIndex = 7;
-            this.button7.Text = "Randomize all!";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.RndAll_Click);
-            // 
-            // button8
-            // 
-            this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button8.Location = new System.Drawing.Point(378, 364);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(162, 31);
-            this.button8.TabIndex = 8;
-            this.button8.Text = "Start generation!";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.StartGeneration_Click);
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Controls.Add(this.button5, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.button7, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(235, 327);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(448, 31);
-            this.tableLayoutPanel2.TabIndex = 9;
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(227, 3);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(146, 23);
-            this.button5.TabIndex = 8;
-            this.button5.Text = "Restore defaults";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.StartGenerationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.StartGenerationButton.Location = new System.Drawing.Point(374, 399);
+            this.StartGenerationButton.Name = "StartGenerationButton";
+            this.StartGenerationButton.Size = new System.Drawing.Size(162, 31);
+            this.StartGenerationButton.TabIndex = 8;
+            this.StartGenerationButton.Text = "Start generation!";
+            this.StartGenerationButton.UseVisualStyleBackColor = true;
+            this.StartGenerationButton.Click += new System.EventHandler(this.StartGeneration_Click);
             // 
             // toolTip1
             // 
@@ -488,219 +75,24 @@
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
             // 
-            // label8
+            // GridsManagerButton
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 46);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(125, 13);
-            this.label8.TabIndex = 18;
-            this.label8.Text = "Pole to equator distance:";
-            this.toolTip1.SetToolTip(this.label8, "Determines a climate scheme.\r\nRegions, layed quite far from equator, will be thun" +
-        "dra or taiga.\r\n");
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 20);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(150, 13);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "Equator position from map top:";
-            this.toolTip1.SetToolTip(this.label6, "Determines a climate pattern.\r\nRegions along equator line will be junjles, savann" +
-        "as or deserts.\r\n");
-            // 
-            // Equator
-            // 
-            this.Equator.LargeChange = 5;
-            this.Equator.Location = new System.Drawing.Point(159, 20);
-            this.Equator.Maximum = 154;
-            this.Equator.Minimum = -50;
-            this.Equator.Name = "Equator";
-            this.Equator.Size = new System.Drawing.Size(102, 16);
-            this.Equator.TabIndex = 28;
-            this.toolTip1.SetToolTip(this.Equator, "50");
-            this.Equator.Value = 50;
-            this.Equator.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // Pole
-            // 
-            this.Pole.LargeChange = 5;
-            this.Pole.Location = new System.Drawing.Point(159, 46);
-            this.Pole.Maximum = 229;
-            this.Pole.Minimum = 10;
-            this.Pole.Name = "Pole";
-            this.Pole.Size = new System.Drawing.Size(102, 16);
-            this.Pole.TabIndex = 29;
-            this.toolTip1.SetToolTip(this.Pole, "45");
-            this.Pole.Value = 45;
-            this.Pole.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
-            // button11
-            // 
-            this.button11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button11.Location = new System.Drawing.Point(301, 16);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(127, 23);
-            this.button11.TabIndex = 2;
-            this.button11.Text = "Show grids manager...";
-            this.toolTip1.SetToolTip(this.button11, "Build completely new grid to use it and - optional - save to file for future use." +
-        "");
-            this.button11.UseVisualStyleBackColor = true;
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.Pole);
-            this.groupBox4.Controls.Add(this.Equator);
-            this.groupBox4.Controls.Add(this.button2);
-            this.groupBox4.Controls.Add(this.button1);
-            this.groupBox4.Controls.Add(this.label9);
-            this.groupBox4.Controls.Add(this.label8);
-            this.groupBox4.Controls.Add(this.label7);
-            this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Location = new System.Drawing.Point(3, 157);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(434, 74);
-            this.groupBox4.TabIndex = 10;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Climate";
-            // 
-            // button2
-            // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button2.Location = new System.Drawing.Point(261, 44);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(34, 20);
-            this.button2.TabIndex = 22;
-            this.button2.Text = "RND";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.RndPole_Click);
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(261, 18);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(34, 20);
-            this.button1.TabIndex = 21;
-            this.button1.Text = "RND";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.RndEquator_Click);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(301, 46);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(99, 13);
-            this.label9.TabIndex = 20;
-            this.label9.Text = "(in % of map height)";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(301, 20);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(99, 13);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "(in % of map height)";
+            this.GridsManagerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.GridsManagerButton.Location = new System.Drawing.Point(301, 16);
+            this.GridsManagerButton.Name = "GridsManagerButton";
+            this.GridsManagerButton.Size = new System.Drawing.Size(127, 23);
+            this.GridsManagerButton.TabIndex = 2;
+            this.GridsManagerButton.Text = "Show grids manager...";
+            this.toolTip1.SetToolTip(this.GridsManagerButton, "Build completely new grid to use it and - optional - save to file for future use." +
+                    "");
+            this.GridsManagerButton.UseVisualStyleBackColor = true;
+            this.GridsManagerButton.Click += new System.EventHandler(this.GridsManagerButton_Click);
             // 
             // folderBrowserDialog1
             // 
             this.folderBrowserDialog1.Description = "No working folder settings found. Please, select a folder to store World Builder " +
-    "data.";
+                "data.";
             this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            // 
-            // listBox1
-            // 
-            this.listBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.IntegralHeight = false;
-            this.listBox1.ItemHeight = 16;
-            this.listBox1.Items.AddRange(new object[] {
-            "Continents",
-            "Gondwana",
-            "Archipelago"});
-            this.listBox1.Location = new System.Drawing.Point(3, 55);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(151, 172);
-            this.listBox1.TabIndex = 9;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoEllipsis = true;
-            this.label1.Location = new System.Drawing.Point(172, 55);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(258, 172);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "label1";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 20);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(59, 13);
-            this.label4.TabIndex = 27;
-            this.label4.Text = "Base level:";
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(93, 17);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(123, 21);
-            this.comboBox2.TabIndex = 28;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
-            // 
-            // comboBox3
-            // 
-            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(302, 17);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(123, 21);
-            this.comboBox3.TabIndex = 29;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
-            // 
-            // label10
-            // 
-            this.label10.Location = new System.Drawing.Point(222, 12);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(80, 26);
-            this.label10.TabIndex = 30;
-            this.label10.Text = "Maximum possible level:";
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(6, 16);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(308, 32);
-            this.label11.TabIndex = 31;
-            this.label11.Text = "Probability for every race to be an invasion from more advanced world:";
-            // 
-            // comboBox4
-            // 
-            this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Location = new System.Drawing.Point(93, 17);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(123, 21);
-            this.comboBox4.TabIndex = 34;
-            this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.comboBox4_SelectedIndexChanged);
-            // 
-            // comboBox5
-            // 
-            this.comboBox5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Location = new System.Drawing.Point(302, 17);
-            this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(123, 21);
-            this.comboBox5.TabIndex = 36;
-            this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.comboBox5_SelectedIndexChanged);
             // 
             // tabControl1
             // 
@@ -709,516 +101,185 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(894, 312);
+            this.tabControl1.Size = new System.Drawing.Size(883, 23);
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
             this.tabControl1.TabIndex = 15;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.groupBox5);
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.listBox1);
-            this.tabPage1.Controls.Add(this.groupBox6);
-            this.tabPage1.Controls.Add(this.groupBox3);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(886, 286);
+            this.tabPage1.Size = new System.Drawing.Size(875, 0);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Simplified generation";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.panel3);
-            this.groupBox5.Controls.Add(this.panel2);
-            this.groupBox5.Controls.Add(this.panel1);
-            this.groupBox5.Location = new System.Drawing.Point(449, 3);
+            this.groupBox5.Controls.Add(this.AgesView);
+            this.groupBox5.Controls.Add(this.tableLayoutPanel1);
+            this.groupBox5.Controls.Add(this.epochProperties1);
+            this.groupBox5.Location = new System.Drawing.Point(456, 41);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(434, 277);
+            this.groupBox5.Size = new System.Drawing.Size(438, 352);
             this.groupBox5.TabIndex = 10;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Population";
+            this.groupBox5.Text = "History";
             // 
-            // panel3
+            // AgesView
             // 
-            this.panel3.Controls.Add(this.checkBoxComboBox3);
-            this.panel3.Controls.Add(this.label28);
-            this.panel3.Controls.Add(this.label29);
-            this.panel3.Controls.Add(this.comboBox12);
-            this.panel3.Controls.Add(this.label30);
-            this.panel3.Controls.Add(this.label31);
-            this.panel3.Location = new System.Drawing.Point(6, 177);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(422, 73);
-            this.panel3.TabIndex = 2;
+            this.AgesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
+            this.AgesView.Location = new System.Drawing.Point(6, 16);
+            this.AgesView.Name = "AgesView";
+            this.AgesView.Size = new System.Drawing.Size(425, 80);
+            this.AgesView.TabIndex = 3;
+            this.AgesView.UseCompatibleStateImageBehavior = false;
+            this.AgesView.View = System.Windows.Forms.View.Details;
             // 
-            // checkBoxComboBox3
+            // columnHeader1
             // 
-            this.checkBoxComboBox3.CanBeEmpty = false;
-            checkBoxProperties4.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxComboBox3.CheckBoxProperties = checkBoxProperties4;
-            this.checkBoxComboBox3.Delimeter = ", ";
-            this.checkBoxComboBox3.DisplayMemberSingleItem = "";
-            this.checkBoxComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.checkBoxComboBox3.FormattingEnabled = true;
-            this.checkBoxComboBox3.Location = new System.Drawing.Point(80, 43);
-            this.checkBoxComboBox3.Name = "checkBoxComboBox3";
-            this.checkBoxComboBox3.Size = new System.Drawing.Size(193, 21);
-            this.checkBoxComboBox3.TabIndex = 5;
+            this.columnHeader1.Text = "Age";
+            this.columnHeader1.Width = 110;
             // 
-            // label28
+            // columnHeader2
             // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(3, 46);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(58, 13);
-            this.label28.TabIndex = 4;
-            this.label28.Text = "Races set:";
+            this.columnHeader2.Text = "Progress";
+            this.columnHeader2.Width = 118;
             // 
-            // label29
+            // columnHeader3
             // 
-            this.label29.Location = new System.Drawing.Point(279, 16);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(140, 48);
-            this.label29.TabIndex = 3;
-            this.label29.Text = "label29";
+            this.columnHeader3.Text = "Races";
+            this.columnHeader3.Width = 114;
             // 
-            // comboBox12
+            // columnHeader4
             // 
-            this.comboBox12.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox12.FormattingEnabled = true;
-            this.comboBox12.Location = new System.Drawing.Point(80, 16);
-            this.comboBox12.Name = "comboBox12";
-            this.comboBox12.Size = new System.Drawing.Size(193, 21);
-            this.comboBox12.TabIndex = 2;
-            this.comboBox12.SelectedIndexChanged += new System.EventHandler(this.comboBox12_SelectedIndexChanged);
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(3, 19);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(71, 13);
-            this.label30.TabIndex = 1;
-            this.label30.Text = "Social preset:";
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label31.Location = new System.Drawing.Point(3, 2);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(60, 13);
-            this.label31.TabIndex = 0;
-            this.label31.Text = "Invaders:";
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.checkBoxComboBox2);
-            this.panel2.Controls.Add(this.label24);
-            this.panel2.Controls.Add(this.label25);
-            this.panel2.Controls.Add(this.comboBox11);
-            this.panel2.Controls.Add(this.label26);
-            this.panel2.Controls.Add(this.label27);
-            this.panel2.Location = new System.Drawing.Point(6, 98);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(422, 73);
-            this.panel2.TabIndex = 1;
-            // 
-            // checkBoxComboBox2
-            // 
-            this.checkBoxComboBox2.CanBeEmpty = false;
-            checkBoxProperties1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxComboBox2.CheckBoxProperties = checkBoxProperties1;
-            this.checkBoxComboBox2.Delimeter = ", ";
-            this.checkBoxComboBox2.DisplayMemberSingleItem = "";
-            this.checkBoxComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.checkBoxComboBox2.FormattingEnabled = true;
-            this.checkBoxComboBox2.Location = new System.Drawing.Point(80, 43);
-            this.checkBoxComboBox2.Name = "checkBoxComboBox2";
-            this.checkBoxComboBox2.Size = new System.Drawing.Size(193, 21);
-            this.checkBoxComboBox2.TabIndex = 5;
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(3, 46);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(58, 13);
-            this.label24.TabIndex = 4;
-            this.label24.Text = "Races set:";
-            // 
-            // label25
-            // 
-            this.label25.Location = new System.Drawing.Point(279, 16);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(140, 48);
-            this.label25.TabIndex = 3;
-            this.label25.Text = "label25";
-            // 
-            // comboBox11
-            // 
-            this.comboBox11.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox11.FormattingEnabled = true;
-            this.comboBox11.Location = new System.Drawing.Point(80, 16);
-            this.comboBox11.Name = "comboBox11";
-            this.comboBox11.Size = new System.Drawing.Size(193, 21);
-            this.comboBox11.TabIndex = 2;
-            this.comboBox11.SelectedIndexChanged += new System.EventHandler(this.comboBox11_SelectedIndexChanged);
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(3, 19);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(71, 13);
-            this.label26.TabIndex = 1;
-            this.label26.Text = "Social preset:";
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label27.Location = new System.Drawing.Point(3, 2);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(48, 13);
-            this.label27.TabIndex = 0;
-            this.label27.Text = "Native:";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.checkBoxComboBox1);
-            this.panel1.Controls.Add(this.label23);
-            this.panel1.Controls.Add(this.label20);
-            this.panel1.Controls.Add(this.comboBox6);
-            this.panel1.Controls.Add(this.label19);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Location = new System.Drawing.Point(6, 19);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(422, 73);
-            this.panel1.TabIndex = 0;
-            // 
-            // checkBoxComboBox1
-            // 
-            this.checkBoxComboBox1.CanBeEmpty = false;
-            checkBoxProperties2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxComboBox1.CheckBoxProperties = checkBoxProperties2;
-            this.checkBoxComboBox1.Delimeter = ", ";
-            this.checkBoxComboBox1.DisplayMemberSingleItem = "";
-            this.checkBoxComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.checkBoxComboBox1.FormattingEnabled = true;
-            this.checkBoxComboBox1.Location = new System.Drawing.Point(80, 43);
-            this.checkBoxComboBox1.Name = "checkBoxComboBox1";
-            this.checkBoxComboBox1.Size = new System.Drawing.Size(193, 21);
-            this.checkBoxComboBox1.TabIndex = 5;
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(3, 46);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(58, 13);
-            this.label23.TabIndex = 4;
-            this.label23.Text = "Races set:";
-            // 
-            // label20
-            // 
-            this.label20.Location = new System.Drawing.Point(279, 16);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(140, 48);
-            this.label20.TabIndex = 3;
-            this.label20.Text = "label20";
-            // 
-            // comboBox6
-            // 
-            this.comboBox6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox6.FormattingEnabled = true;
-            this.comboBox6.Location = new System.Drawing.Point(80, 16);
-            this.comboBox6.Name = "comboBox6";
-            this.comboBox6.Size = new System.Drawing.Size(193, 21);
-            this.comboBox6.TabIndex = 2;
-            this.comboBox6.SelectedIndexChanged += new System.EventHandler(this.comboBox6_SelectedIndexChanged_1);
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(3, 19);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(71, 13);
-            this.label19.TabIndex = 1;
-            this.label19.Text = "Social preset:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(3, 2);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Ancient:";
+            this.columnHeader4.Text = "Length";
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.comboBox7);
-            this.groupBox6.Controls.Add(this.button11);
-            this.groupBox6.Location = new System.Drawing.Point(3, 3);
+            this.groupBox6.Controls.Add(this.GridsComboBox);
+            this.groupBox6.Controls.Add(this.GridsManagerButton);
+            this.groupBox6.Location = new System.Drawing.Point(16, 40);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(434, 46);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Grid";
             // 
-            // comboBox7
+            // GridsComboBox
             // 
-            this.comboBox7.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox7.FormattingEnabled = true;
-            this.comboBox7.Location = new System.Drawing.Point(9, 17);
-            this.comboBox7.Name = "comboBox7";
-            this.comboBox7.Size = new System.Drawing.Size(286, 21);
-            this.comboBox7.Sorted = true;
-            this.comboBox7.TabIndex = 3;
-            this.comboBox7.SelectedIndexChanged += new System.EventHandler(this.comboBox7_SelectedIndexChanged);
+            this.GridsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GridsComboBox.FormattingEnabled = true;
+            this.GridsComboBox.Location = new System.Drawing.Point(9, 17);
+            this.GridsComboBox.Name = "GridsComboBox";
+            this.GridsComboBox.Size = new System.Drawing.Size(286, 21);
+            this.GridsComboBox.Sorted = true;
+            this.GridsComboBox.TabIndex = 3;
+            this.GridsComboBox.SelectedIndexChanged += new System.EventHandler(this.GridsComboBox_SelectedIndexChanged);
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.groupBox10);
-            this.tabPage3.Controls.Add(this.groupBox11);
-            this.tabPage3.Controls.Add(this.groupBox9);
-            this.tabPage3.Controls.Add(this.groupBox8);
-            this.tabPage3.Controls.Add(this.groupBox7);
-            this.tabPage3.Controls.Add(this.groupBox4);
-            this.tabPage3.Controls.Add(this.groupBox2);
-            this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(886, 286);
+            this.tabPage3.Size = new System.Drawing.Size(886, 320);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Advanced generation";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // groupBox9
+            // mapProperties1
             // 
-            this.groupBox9.Controls.Add(this.comboBox10);
-            this.groupBox9.Controls.Add(this.label18);
-            this.groupBox9.Controls.Add(this.comboBox9);
-            this.groupBox9.Controls.Add(this.label17);
-            this.groupBox9.Controls.Add(this.comboBox8);
-            this.groupBox9.Controls.Add(this.label11);
-            this.groupBox9.Location = new System.Drawing.Point(443, 175);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(434, 106);
-            this.groupBox9.TabIndex = 33;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Invasion";
+            this.mapProperties1.AdvancedMode = false;
+            this.mapProperties1.BackColor = System.Drawing.Color.White;
+            this.mapProperties1.Location = new System.Drawing.Point(12, 92);
+            this.mapProperties1.LocationsGrid = null;
+            this.mapProperties1.Name = "mapProperties1";
+            this.mapProperties1.Size = new System.Drawing.Size(441, 229);
+            this.mapProperties1.TabIndex = 16;
             // 
-            // comboBox10
+            // epochProperties1
             // 
-            this.comboBox10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox10.FormattingEnabled = true;
-            this.comboBox10.Items.AddRange(new object[] {
-            "none",
-            "very rare (~1%)",
-            "rare (~5%)",
-            "often (~20%)",
-            "all (100%)"});
-            this.comboBox10.Location = new System.Drawing.Point(320, 16);
-            this.comboBox10.Name = "comboBox10";
-            this.comboBox10.Size = new System.Drawing.Size(105, 21);
-            this.comboBox10.TabIndex = 37;
+            this.epochProperties1.AdvancedMode = false;
+            this.epochProperties1.BackColor = System.Drawing.Color.White;
+            this.epochProperties1.Location = new System.Drawing.Point(5, 131);
+            this.epochProperties1.Name = "epochProperties1";
+            this.epochProperties1.Size = new System.Drawing.Size(425, 215);
+            this.epochProperties1.TabIndex = 4;
             // 
-            // label18
+            // tableLayoutPanel1
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 81);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(196, 13);
-            this.label18.TabIndex = 36;
-            this.label18.Text = "Maximum possible invaders\' magic level:";
+            this.tableLayoutPanel1.ColumnCount = 5;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.button2, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.button3, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.button4, 3, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(6, 95);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(426, 30);
+            this.tableLayoutPanel1.TabIndex = 5;
             // 
-            // comboBox9
+            // button1
             // 
-            this.comboBox9.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox9.FormattingEnabled = true;
-            this.comboBox9.Location = new System.Drawing.Point(302, 78);
-            this.comboBox9.Name = "comboBox9";
-            this.comboBox9.Size = new System.Drawing.Size(123, 21);
-            this.comboBox9.TabIndex = 35;
-            this.comboBox9.SelectedIndexChanged += new System.EventHandler(this.comboBox9_SelectedIndexChanged);
+            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.Location = new System.Drawing.Point(3, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(100, 24);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Add new age";
+            this.button1.UseVisualStyleBackColor = true;
             // 
-            // label17
+            // button2
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 54);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(220, 13);
-            this.label17.TabIndex = 34;
-            this.label17.Text = "Maximum possible invaders\' technology level:";
+            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button2.Location = new System.Drawing.Point(109, 3);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(100, 24);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "Remove age";
+            this.button2.UseVisualStyleBackColor = true;
             // 
-            // comboBox8
+            // button3
             // 
-            this.comboBox8.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox8.FormattingEnabled = true;
-            this.comboBox8.Location = new System.Drawing.Point(302, 51);
-            this.comboBox8.Name = "comboBox8";
-            this.comboBox8.Size = new System.Drawing.Size(123, 21);
-            this.comboBox8.TabIndex = 33;
-            this.comboBox8.SelectedIndexChanged += new System.EventHandler(this.comboBox8_SelectedIndexChanged);
+            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button3.Location = new System.Drawing.Point(215, 3);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(100, 24);
+            this.button3.TabIndex = 2;
+            this.button3.Text = "Move earlier";
+            this.button3.UseVisualStyleBackColor = true;
             // 
-            // groupBox8
+            // button4
             // 
-            this.groupBox8.Controls.Add(this.label21);
-            this.groupBox8.Controls.Add(this.comboBox5);
-            this.groupBox8.Controls.Add(this.comboBox4);
-            this.groupBox8.Controls.Add(this.label22);
-            this.groupBox8.Location = new System.Drawing.Point(443, 47);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(434, 46);
-            this.groupBox8.TabIndex = 38;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Magic";
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 20);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(59, 13);
-            this.label21.TabIndex = 27;
-            this.label21.Text = "Base level:";
-            // 
-            // label22
-            // 
-            this.label22.Location = new System.Drawing.Point(222, 12);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(80, 26);
-            this.label22.TabIndex = 30;
-            this.label22.Text = "Maximum possible level:";
-            // 
-            // groupBox7
-            // 
-            this.groupBox7.Controls.Add(this.label4);
-            this.groupBox7.Controls.Add(this.comboBox3);
-            this.groupBox7.Controls.Add(this.comboBox2);
-            this.groupBox7.Controls.Add(this.label10);
-            this.groupBox7.Location = new System.Drawing.Point(443, 3);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(434, 46);
-            this.groupBox7.TabIndex = 37;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Technology";
-            // 
-            // groupBox10
-            // 
-            this.groupBox10.Controls.Add(this.label32);
-            this.groupBox10.Controls.Add(this.comboBox13);
-            this.groupBox10.Controls.Add(this.comboBox14);
-            this.groupBox10.Controls.Add(this.label33);
-            this.groupBox10.Location = new System.Drawing.Point(443, 139);
-            this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(434, 46);
-            this.groupBox10.TabIndex = 40;
-            this.groupBox10.TabStop = false;
-            this.groupBox10.Text = "Ancient Magic";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(6, 20);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(59, 13);
-            this.label32.TabIndex = 27;
-            this.label32.Text = "Base level:";
-            // 
-            // comboBox13
-            // 
-            this.comboBox13.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox13.FormattingEnabled = true;
-            this.comboBox13.Location = new System.Drawing.Point(302, 17);
-            this.comboBox13.Name = "comboBox13";
-            this.comboBox13.Size = new System.Drawing.Size(123, 21);
-            this.comboBox13.TabIndex = 36;
-            this.comboBox13.SelectedIndexChanged += new System.EventHandler(this.comboBox13_SelectedIndexChanged);
-            // 
-            // comboBox14
-            // 
-            this.comboBox14.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox14.FormattingEnabled = true;
-            this.comboBox14.Location = new System.Drawing.Point(93, 17);
-            this.comboBox14.Name = "comboBox14";
-            this.comboBox14.Size = new System.Drawing.Size(123, 21);
-            this.comboBox14.TabIndex = 34;
-            this.comboBox14.SelectedIndexChanged += new System.EventHandler(this.comboBox14_SelectedIndexChanged);
-            // 
-            // label33
-            // 
-            this.label33.Location = new System.Drawing.Point(222, 12);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(80, 26);
-            this.label33.TabIndex = 30;
-            this.label33.Text = "Maximum possible level:";
-            // 
-            // groupBox11
-            // 
-            this.groupBox11.Controls.Add(this.label34);
-            this.groupBox11.Controls.Add(this.comboBox15);
-            this.groupBox11.Controls.Add(this.comboBox16);
-            this.groupBox11.Controls.Add(this.label35);
-            this.groupBox11.Location = new System.Drawing.Point(443, 95);
-            this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(434, 46);
-            this.groupBox11.TabIndex = 39;
-            this.groupBox11.TabStop = false;
-            this.groupBox11.Text = "Ancient Technology";
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(6, 20);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(59, 13);
-            this.label34.TabIndex = 27;
-            this.label34.Text = "Base level:";
-            // 
-            // comboBox15
-            // 
-            this.comboBox15.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox15.FormattingEnabled = true;
-            this.comboBox15.Location = new System.Drawing.Point(302, 17);
-            this.comboBox15.Name = "comboBox15";
-            this.comboBox15.Size = new System.Drawing.Size(123, 21);
-            this.comboBox15.TabIndex = 29;
-            this.comboBox15.SelectedIndexChanged += new System.EventHandler(this.comboBox15_SelectedIndexChanged);
-            // 
-            // comboBox16
-            // 
-            this.comboBox16.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox16.FormattingEnabled = true;
-            this.comboBox16.Location = new System.Drawing.Point(93, 17);
-            this.comboBox16.Name = "comboBox16";
-            this.comboBox16.Size = new System.Drawing.Size(123, 21);
-            this.comboBox16.TabIndex = 28;
-            this.comboBox16.SelectedIndexChanged += new System.EventHandler(this.comboBox16_SelectedIndexChanged);
-            // 
-            // label35
-            // 
-            this.label35.Location = new System.Drawing.Point(222, 12);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(80, 26);
-            this.label35.TabIndex = 30;
-            this.label35.Text = "Maximum possible level:";
+            this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button4.Location = new System.Drawing.Point(321, 3);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(100, 24);
+            this.button4.TabIndex = 3;
+            this.button4.Text = "Move later";
+            this.button4.UseVisualStyleBackColor = true;
             // 
             // GenerationForm
             // 
-            this.AcceptButton = this.button8;
+            this.AcceptButton = this.StartGenerationButton;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(918, 407);
+            this.ClientSize = new System.Drawing.Size(906, 442);
+            this.Controls.Add(this.mapProperties1);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.tableLayoutPanel2);
-            this.Controls.Add(this.button8);
+            this.Controls.Add(this.groupBox6);
+            this.Controls.Add(this.StartGenerationButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -1227,136 +288,37 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Building World";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GenerationForm_FormClosing);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ContinentsCount)).EndInit();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
-            this.groupBox10.ResumeLayout(false);
-            this.groupBox10.PerformLayout();
-            this.groupBox11.ResumeLayout(false);
-            this.groupBox11.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.CheckBox PartialMap;
-        private System.Windows.Forms.NumericUpDown ContinentsCount;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Button ContinentsRnd;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button StartGenerationButton;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.HScrollBar StatesCount;
-        private System.Windows.Forms.HScrollBar RacesCount;
-        private System.Windows.Forms.HScrollBar WaterPercent;
-        private System.Windows.Forms.HScrollBar LandMassesCount;
-        private System.Windows.Forms.HScrollBar LandsCount;
-        private System.Windows.Forms.HScrollBar Pole;
-        private System.Windows.Forms.HScrollBar Equator;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.ComboBox comboBox5;
-        private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.ComboBox comboBox7;
-        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.ComboBox GridsComboBox;
+        private System.Windows.Forms.Button GridsManagerButton;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.GroupBox groupBox9;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.ComboBox comboBox9;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.ComboBox comboBox8;
-        private System.Windows.Forms.ComboBox comboBox10;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Panel panel3;
-        private PresentationControls.CheckBoxComboBox checkBoxComboBox3;
-        private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.ComboBox comboBox12;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.Panel panel2;
-        private PresentationControls.CheckBoxComboBox checkBoxComboBox2;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.ComboBox comboBox11;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.Panel panel1;
-        private PresentationControls.CheckBoxComboBox checkBoxComboBox1;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.ComboBox comboBox6;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.GroupBox groupBox10;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.ComboBox comboBox13;
-        private System.Windows.Forms.ComboBox comboBox14;
-        private System.Windows.Forms.Label label33;
-        private System.Windows.Forms.GroupBox groupBox11;
-        private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.ComboBox comboBox15;
-        private System.Windows.Forms.ComboBox comboBox16;
-        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.ListView AgesView;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private EpochProperties epochProperties1;
+        private MapProperties mapProperties1;
     }
 }

@@ -561,7 +561,7 @@ namespace Socium
 
         public StateInfo m_pInfo = null;
 
-        public LocationX BuildCapital(int iMinSize, int iMaxSize, bool bFast, int iMinTech, int iMaxTech)
+        public LocationX BuildCapital(int iMinSize, int iMaxSize, bool bFast)
         {
             m_iTechLevel = 0;
             m_iInfrastructureLevel = 0;
@@ -637,8 +637,6 @@ namespace Socium
 
             if (m_iTechLevel > m_iInfrastructureLevel * 2)
                 m_iTechLevel = m_iInfrastructureLevel * 2;
-            if (m_iTechLevel > iMaxTech)
-                m_iTechLevel = iMaxTech;
 
             List<StateInfo> cInfos = new List<StateInfo>();
 

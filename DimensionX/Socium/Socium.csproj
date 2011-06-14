@@ -47,6 +47,7 @@
     <Compile Include="ContinentX.cs" />
     <Compile Include="Culture.cs" />
     <Compile Include="Customs.cs" />
+    <Compile Include="Epoch.cs" />
     <Compile Include="LandTypeInfoX.cs" />
     <Compile Include="LandX.cs" />
     <Compile Include="Languages\African.cs" />

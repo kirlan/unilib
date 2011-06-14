@@ -164,11 +164,11 @@ namespace Socium
             //        fCost /= 10;
             //}
 
-            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_cPrefferedLands)
+            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_aPrefferedLands)
                 if (pType == pLand.Type)
                     fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_cHatedLands)
+            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_aHatedLands)
                 if (pType == pLand.Type)
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
@@ -616,7 +616,7 @@ namespace Socium
                         pLoc.m_cLinks[pLink].m_bClosed = false;
         }
 
-        public LocationX BuildCapital(bool bFast, int iMinTech, int iMaxTech)
+        public LocationX BuildCapital(bool bFast)
         {
             m_iTechLevel = m_pRace.m_iTechLevel;
             //m_iMagicLimit = m_pRace.m_iMagicLimit;
@@ -670,10 +670,10 @@ namespace Socium
             else if (m_iWood > m_iPopulation && m_iOre > m_iPopulation && Rnd.OneChanceFrom(4))
                 m_iTechLevel++;
 
-            if (m_iTechLevel < iMinTech)
-                m_iTechLevel = iMinTech;
-            if (m_iTechLevel > iMaxTech)
-                m_iTechLevel = iMaxTech;
+            if (m_iTechLevel < m_pRace.m_pEpoch.m_iMinTechLevel)
+                m_iTechLevel = m_pRace.m_pEpoch.m_iMinTechLevel;
+            if (m_iTechLevel > m_pRace.m_pEpoch.m_iMaxTechLevel)
+                m_iTechLevel = m_pRace.m_pEpoch.m_iMaxTechLevel;
 
             int iOldLevel = m_pRace.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
             int iNewLevel = m_iTechLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
@@ -712,8 +712,8 @@ namespace Socium
 
             if (m_iTechLevel > m_iInfrastructureLevel * 2)
                 m_iTechLevel = m_iInfrastructureLevel * 2;
-            if (m_iTechLevel > iMaxTech)
-                m_iTechLevel = iMaxTech;
+            if (m_iTechLevel > m_pRace.m_pEpoch.m_iMaxTechLevel)
+                m_iTechLevel = m_pRace.m_pEpoch.m_iMaxTechLevel;
 
             SettlementInfo pSettlementInfo = Settlement.Info[SettlementSize.Hamlet];
 
