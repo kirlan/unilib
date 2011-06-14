@@ -44,7 +44,7 @@ namespace Socium
 
         public Race[] m_aLocalRaces = null;
 
-        private void SetWorldLevels(bool bLastRun)
+        private void SetWorldLevels(Epoch pEpoch)
         {
             m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.GetExp(typeof(MagicAbilityPrevalence), 4);
             m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.GetExp(typeof(MagicAbilityDistribution), 4);
@@ -65,19 +65,11 @@ namespace Socium
             //    m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
             //}
 
-            if (bLastRun)
-            {
-                m_iTechLevel = Math.Min(m_iMaxTechLevel, m_iMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-                m_iMagicLimit = Math.Min(m_iMaxMagicLevel, m_iMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
-            }
-            else
-            {
-                m_iTechLevel = Math.Min(m_iAncientsMaxTechLevel, m_iAncientsMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-                m_iMagicLimit = Math.Min(m_iAncientsMaxMagicLevel, m_iAncientsMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
-            }
+            m_iTechLevel = Math.Min(pEpoch.m_iMaxTechLevel, pEpoch.m_iMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
+            m_iMagicLimit = Math.Min(pEpoch.m_iMaxMagicLevel, pEpoch.m_iMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
         }
 
-        private void AddRaces(int iDiversity, bool bFinalRun)
+        private void AddRaces(int iDiversity, Epoch pEpoch)
         {
             List<Race> cRaces = new List<Race>();
 
@@ -86,7 +78,7 @@ namespace Socium
             if(m_aLocalRaces != null)
                 foreach (Race pRace in m_aLocalRaces)
                 {
-                    pRace.Accommodate(this, bFinalRun);
+                    pRace.Accommodate(this, pEpoch);
                     cRaces.Add(pRace);
 
                     if (pRace.m_bDying)
@@ -97,21 +89,7 @@ namespace Socium
             Dictionary<RaceTemplate, float> cRaceChances = new Dictionary<RaceTemplate, float>();
             foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
             {
-                bool bPossible = false;
-                if (bFinalRun)
-                {
-                    foreach (RaceGroup eGroup in m_aRaceGroups)
-                        if (eGroup == pRaceTemplate.m_eGroup)
-                            bPossible = true;
-                }
-                else
-                {
-                    foreach (RaceGroup eGroup in m_aAncientRaceGroups)
-                        if (eGroup == pRaceTemplate.m_eGroup)
-                            bPossible = true;
-                }
-
-                if (!bPossible)
+                if (!pEpoch.m_cRaceTemplates.Contains(pRaceTemplate))
                     continue;
 
                 bool bAlreadyHave = false;
@@ -133,8 +111,8 @@ namespace Socium
                     iChance--;
                     if (iChance < 0)
                     {
-                        Race pRace = new Race(pRaceTemplate);
-                        pRace.Accommodate(this, bFinalRun);
+                        Race pRace = new Race(pRaceTemplate, pEpoch);
+                        pRace.Accommodate(this, pEpoch);
 
                         cRaces.Add(pRace);
                         cRaceChances[pRaceTemplate] = 0;
@@ -184,11 +162,11 @@ namespace Socium
                     cLandChances[pLand] = 1.0f;// / pRace.m_iRank;
 
                     //рассчитываем шансы, исходя из предпочтений и антипатий расы
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cPrefferedLands)
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aPrefferedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] *= 100;
 
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cHatedLands)
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aHatedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] /= 1000;
 
@@ -279,11 +257,11 @@ namespace Socium
 
                     cRaceChances[pRace] = 1.0f;// / pRace.m_pTemplate.m_iRank;
 
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cPrefferedLands)
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aPrefferedLands)
                         if (cLandTypesCount.ContainsKey(pType))
                             cRaceChances[pRace] *= cLandTypesCount[pType];
 
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cHatedLands)
+                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aHatedLands)
                         if (cLandTypesCount.ContainsKey(pType))
                             cRaceChances[pRace] /= cLandTypesCount[pType];
                 }
@@ -420,106 +398,54 @@ namespace Socium
                      int iEquator, 
                      int iPole, 
                      int iRacesCount,
-                     int iMinTechLevel,
-                     int iMaxTechLevel,
-                     int iMinMagicLevel,
-                     int iMaxMagicLevel, 
-                     RaceGroup[] aRaceGroups,
-                     int iAncientsMinTechLevel,
-                     int iAncientsMaxTechLevel,
-                     int iAncientsMinMagicLevel,
-                     int iAncientsMaxMagicLevel,
-                     RaceGroup[] aAncientRaceGroups,
-                     int iInvasionProbability,
-                     int iInvadersMaxTechLevel,
-                     int iInvadersMaxMagicLevel)
+                     Epoch[] aEpoches)
             : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole)
         {
-            Create(iProvinces, iStates, iRacesCount, iMinTechLevel, iMaxTechLevel, iMinMagicLevel, iMaxMagicLevel, aRaceGroups, iAncientsMinTechLevel, iAncientsMaxTechLevel, iAncientsMinMagicLevel, iAncientsMaxMagicLevel, aAncientRaceGroups, iInvasionProbability, iInvadersMaxTechLevel, iInvadersMaxMagicLevel);
+            Create(iProvinces, iStates, iRacesCount, aEpoches);
         }
 
-        public int m_iMinTechLevel;
-        public int m_iMaxTechLevel;
-        public int m_iMinMagicLevel;
-        public int m_iMaxMagicLevel;
-        public int m_iAncientsMinTechLevel;
-        public int m_iAncientsMaxTechLevel;
-        public int m_iAncientsMinMagicLevel;
-        public int m_iAncientsMaxMagicLevel;
-        public int m_iInvasionProbability;
-        public int m_iInvadersMaxTechLevel;
-        public int m_iInvadersMaxMagicLevel;
-        public RaceGroup[] m_aRaceGroups;
-        public RaceGroup[] m_aAncientRaceGroups;
+        Epoch[] m_aEpoches;
 
         private void Create(int iProvinces, 
                             int iStates, 
-                            int iRacesCount, 
-                            int iMinTechLevel, 
-                            int iMaxTechLevel, 
-                            int iMinMagicLevel, 
-                            int iMaxMagicLevel,
-                            RaceGroup[] aRaceGroups,
-                            int iAncientsMinTechLevel,
-                            int iAncientsMaxTechLevel,
-                            int iAncientsMinMagicLevel,
-                            int iAncientsMaxMagicLevel,
-                            RaceGroup[] aAncientRaceGroups, 
-                            int iInvasionProbability, 
-                            int iInvadersMaxTechLevel, 
-                            int iInvadersMaxMagicLevel)
+                            int iRacesCount,
+                            Epoch[] aEpoches)
         {
             Language.ResetUsedLists();
+            Epoch.s_cUsedNames.Clear();
 
             m_iProvincesCount = iProvinces;
             m_iStatesCount = iStates;
 
-            m_iMinTechLevel = iMinTechLevel;
-            m_iMaxTechLevel = iMaxTechLevel;
+            m_aEpoches = aEpoches;
 
-            m_iMinMagicLevel = iMinMagicLevel;
-            m_iMaxMagicLevel = iMaxMagicLevel;
-
-            m_iAncientsMinTechLevel = iAncientsMinTechLevel;
-            m_iAncientsMaxTechLevel = iAncientsMaxTechLevel;
-
-            m_iAncientsMinMagicLevel = iAncientsMinMagicLevel;
-            m_iAncientsMaxMagicLevel = iAncientsMaxMagicLevel;
-
-            m_aRaceGroups = aRaceGroups;
-            m_aAncientRaceGroups = aAncientRaceGroups;
-
-            m_iInvasionProbability = iInvasionProbability;
-
-            m_iInvadersMaxTechLevel = iInvadersMaxTechLevel;
-            m_iInvadersMaxMagicLevel = iInvadersMaxMagicLevel;
-
-            PopulateWorld(iRacesCount, false);
-
-            int iAge = Rnd.Get(4);//4 - снижено для отладки
-            for (int i = 0; i < iAge; i++)
+            foreach (Epoch pEpoch in m_aEpoches)
             {
-                Reset(false);
-                PopulateWorld(iRacesCount, false);
-            }
+                Reset(pEpoch);
 
-            Reset(true);
-            PopulateWorld(iRacesCount, true);
+                for (int i = 0; i < pEpoch.m_iLength - 1; i++)
+                {
+                    PopulateWorld(iRacesCount, pEpoch, false);
+                    Reset(pEpoch);
+                }
+
+                PopulateWorld(iRacesCount, pEpoch, true);
+            }
         }
 
-        private void PopulateWorld(int iRacesCount, bool bFinalRun)
+        private void PopulateWorld(int iRacesCount, Epoch pEpoch, bool bFinalize)
         {
-            SetWorldLevels(bFinalRun);
+            SetWorldLevels(pEpoch);
 
-            AddRaces(iRacesCount, bFinalRun);
+            AddRaces(iRacesCount, pEpoch);
             DistributeRacesToLandMasses();
             PopulateAreas();
 
             BuildProvinces();
 
-            BuildCities(m_pGrid.CycleShift, !bFinalRun);
+            BuildCities(m_pGrid.CycleShift, !bFinalize);
 
-            BuildStates(m_pGrid.CycleShift, !bFinalRun);
+            BuildStates(m_pGrid.CycleShift, !bFinalize);
 
             foreach (ContinentX pConti in m_aContinents)
             {
@@ -835,10 +761,7 @@ namespace Socium
 
             foreach (State pState in m_aStates)
             {
-                if (pState.m_pRace.m_bDying)
-                    pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iAncientsMinTechLevel, m_iAncientsMaxTechLevel);
-                else
-                    pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast, m_iMinTechLevel, m_iMaxTechLevel);
+                pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast);
                 pState.Finish(m_pGrid.CycleShift);
 
                 ContinentX pConti = null;
@@ -1180,10 +1103,7 @@ namespace Socium
             {
                 if (!pProvince.Forbidden)
                 {
-                    if(pProvince.m_pRace.m_bDying)
-                        pProvince.BuildCapital(bFast, m_iAncientsMinTechLevel, m_iAncientsMaxTechLevel);
-                    else
-                        pProvince.BuildCapital(bFast, m_iMinTechLevel, m_iMaxTechLevel);
+                    pProvince.BuildCapital(bFast);
 
                     pProvince.BuildSettlements(SettlementSize.City, bFast);
                     if (!bFast)
@@ -1218,25 +1138,40 @@ namespace Socium
                 BuildSeaRoutes(fCycleShift);
         }
 
-        public void Reset(bool bLastRun)
+        public void Reset(Epoch pNewEpoch)
         {
+            //Ассимилируем коренное население
+            foreach (Province pProvince in m_aProvinces)
+            {
+                foreach (LandX pLand in pProvince.m_cContents)
+                {
+                    if (pLand.m_pRace != pProvince.m_pRace)
+                    { 
+                        bool bHated = false;
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pRace.m_pTemplate.m_aHatedLands)
+                            if (pLand.Type == pLTI)
+                                bHated = true;
+
+                        if (bHated)
+                            continue;
+
+                        bool bPreferred = false;
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pRace.m_pTemplate.m_aPrefferedLands)
+                            if (pLand.Type == pLTI)
+                                bPreferred = true;
+
+                        if (bPreferred || Rnd.OneChanceFrom(2))
+                        {
+                            pLand.m_pRace = pProvince.m_pRace;
+                            (pLand.Area as AreaX).m_pRace = pProvince.m_pRace;
+                        }
+                    }
+                }
+            }
+
             List<Race> cEraseRace = new List<Race>();
             foreach (Race pRace in m_aLocalRaces)
             {
-                bool bPossible = false;
-                if (bLastRun)
-                {
-                    foreach (RaceGroup eGroup in m_aRaceGroups)
-                        if (eGroup == pRace.m_pTemplate.m_eGroup)
-                            bPossible = true;
-                }
-                else
-                {
-                    foreach (RaceGroup eGroup in m_aAncientRaceGroups)
-                        if (eGroup == pRace.m_pTemplate.m_eGroup)
-                            bPossible = true;
-                }
-
                 if (pRace.m_bDying)
                 {
                     if (Rnd.OneChanceFrom(3))
@@ -1244,7 +1179,7 @@ namespace Socium
                 }
                 else
                 {
-                    if (!bPossible || !Rnd.OneChanceFrom(5))
+                    if (!pNewEpoch.m_cRaceTemplates.Contains(pRace.m_pTemplate) || !Rnd.OneChanceFrom(5))
                     {
                         pRace.m_bDying = true;
                         pRace.m_bHegemon = false;

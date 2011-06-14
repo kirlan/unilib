@@ -28,11 +28,11 @@ namespace Socium
                 if (pRace.m_bHegemon)
                     cChances[pRace] *= 10;
 
-                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cPrefferedLands)
+                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aPrefferedLands)
                     if (m_pType == pType)
                         cChances[pRace] *= 10;
 
-                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_cHatedLands)
+                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aHatedLands)
                     if (m_pType == pType)
                         cChances[pRace] /= 100;
             }
