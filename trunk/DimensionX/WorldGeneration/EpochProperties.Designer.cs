@@ -1,4 +1,4 @@
-﻿namespace VQMapTest2
+﻿namespace WorldGeneration
 {
     partial class EpochProperties
     {
@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            PresentationControls.CheckBoxProperties checkBoxProperties3 = new PresentationControls.CheckBoxProperties();
             PresentationControls.CheckBoxProperties checkBoxProperties1 = new PresentationControls.CheckBoxProperties();
-            PresentationControls.CheckBoxProperties checkBoxProperties2 = new PresentationControls.CheckBoxProperties();
             this.PresetsPanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -40,9 +40,9 @@
             this.NativesSocialPreset = new System.Windows.Forms.ComboBox();
             this.NativesRacesSet = new PresentationControls.CheckBoxComboBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.RacesCount = new System.Windows.Forms.HScrollBar();
+            this.NativesRacesCount = new System.Windows.Forms.HScrollBar();
             this.button4 = new System.Windows.Forms.Button();
-            this.RacesCountNumber = new System.Windows.Forms.TextBox();
+            this.NativesRacesCountNumber = new System.Windows.Forms.TextBox();
             this.NativesPresetDescription = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -53,8 +53,8 @@
             this.InvadersRacesSet = new PresentationControls.CheckBoxComboBox();
             this.InvadersSocialPreset = new System.Windows.Forms.ComboBox();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.InvadersRacesCount = new System.Windows.Forms.HScrollBar();
+            this.InvadersRacesCountNumber = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.InvadersPresetDescription = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
@@ -67,18 +67,18 @@
             this.panel7 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.hScrollBar2 = new System.Windows.Forms.HScrollBar();
+            this.RacesCount = new System.Windows.Forms.HScrollBar();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.RacesCountNumber = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.comboBox5 = new System.Windows.Forms.ComboBox();
+            this.MaxMagicBox = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
+            this.BaseMagicBox = new System.Windows.Forms.ComboBox();
             this.label21 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.BaseTechBox = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.MaxTechBox = new System.Windows.Forms.ComboBox();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -210,40 +210,43 @@
             // NativesRacesSet
             // 
             this.NativesRacesSet.CanBeEmpty = false;
-            checkBoxProperties1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.NativesRacesSet.CheckBoxProperties = checkBoxProperties1;
+            checkBoxProperties3.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.NativesRacesSet.CheckBoxProperties = checkBoxProperties3;
             this.NativesRacesSet.Delimeter = ", ";
             this.NativesRacesSet.DisplayMemberSingleItem = "";
             this.NativesRacesSet.Dock = System.Windows.Forms.DockStyle.Fill;
             this.NativesRacesSet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.NativesRacesSet.EmptyString = "Custom";
             this.NativesRacesSet.FormattingEnabled = true;
             this.NativesRacesSet.Location = new System.Drawing.Point(83, 30);
             this.NativesRacesSet.Name = "NativesRacesSet";
             this.NativesRacesSet.Size = new System.Drawing.Size(186, 21);
             this.NativesRacesSet.TabIndex = 57;
+            this.NativesRacesSet.CheckBoxCheckedChanged += new System.EventHandler(this.NativesRacesSet_CheckBoxCheckedChanged);
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.RacesCount);
+            this.panel3.Controls.Add(this.NativesRacesCount);
             this.panel3.Controls.Add(this.button4);
-            this.panel3.Controls.Add(this.RacesCountNumber);
+            this.panel3.Controls.Add(this.NativesRacesCountNumber);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(83, 57);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(186, 21);
             this.panel3.TabIndex = 58;
             // 
-            // RacesCount
+            // NativesRacesCount
             // 
-            this.RacesCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RacesCount.LargeChange = 5;
-            this.RacesCount.Location = new System.Drawing.Point(37, 0);
-            this.RacesCount.Maximum = 40;
-            this.RacesCount.Minimum = 6;
-            this.RacesCount.Name = "RacesCount";
-            this.RacesCount.Size = new System.Drawing.Size(115, 21);
-            this.RacesCount.TabIndex = 59;
-            this.RacesCount.Value = 6;
+            this.NativesRacesCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NativesRacesCount.LargeChange = 5;
+            this.NativesRacesCount.Location = new System.Drawing.Point(37, 0);
+            this.NativesRacesCount.Maximum = 40;
+            this.NativesRacesCount.Minimum = 6;
+            this.NativesRacesCount.Name = "NativesRacesCount";
+            this.NativesRacesCount.Size = new System.Drawing.Size(115, 21);
+            this.NativesRacesCount.TabIndex = 59;
+            this.NativesRacesCount.Value = 6;
+            this.NativesRacesCount.ValueChanged += new System.EventHandler(this.NativesRacesCount_ValueChanged);
             // 
             // button4
             // 
@@ -255,15 +258,16 @@
             this.button4.TabIndex = 58;
             this.button4.Text = "RND";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // RacesCountNumber
+            // NativesRacesCountNumber
             // 
-            this.RacesCountNumber.Dock = System.Windows.Forms.DockStyle.Left;
-            this.RacesCountNumber.Enabled = false;
-            this.RacesCountNumber.Location = new System.Drawing.Point(0, 0);
-            this.RacesCountNumber.Name = "RacesCountNumber";
-            this.RacesCountNumber.Size = new System.Drawing.Size(37, 20);
-            this.RacesCountNumber.TabIndex = 60;
+            this.NativesRacesCountNumber.Dock = System.Windows.Forms.DockStyle.Left;
+            this.NativesRacesCountNumber.Enabled = false;
+            this.NativesRacesCountNumber.Location = new System.Drawing.Point(0, 0);
+            this.NativesRacesCountNumber.Name = "NativesRacesCountNumber";
+            this.NativesRacesCountNumber.Size = new System.Drawing.Size(37, 20);
+            this.NativesRacesCountNumber.TabIndex = 60;
             // 
             // NativesPresetDescription
             // 
@@ -350,17 +354,19 @@
             // InvadersRacesSet
             // 
             this.InvadersRacesSet.CanBeEmpty = false;
-            checkBoxProperties2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.InvadersRacesSet.CheckBoxProperties = checkBoxProperties2;
+            checkBoxProperties1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.InvadersRacesSet.CheckBoxProperties = checkBoxProperties1;
             this.InvadersRacesSet.Delimeter = ", ";
             this.InvadersRacesSet.DisplayMemberSingleItem = "";
             this.InvadersRacesSet.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InvadersRacesSet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.InvadersRacesSet.EmptyString = "Custom";
             this.InvadersRacesSet.FormattingEnabled = true;
             this.InvadersRacesSet.Location = new System.Drawing.Point(83, 30);
             this.InvadersRacesSet.Name = "InvadersRacesSet";
             this.InvadersRacesSet.Size = new System.Drawing.Size(186, 21);
             this.InvadersRacesSet.TabIndex = 56;
+            this.InvadersRacesSet.CheckBoxCheckedChanged += new System.EventHandler(this.InvadersRacesSet_CheckBoxCheckedChanged);
             // 
             // InvadersSocialPreset
             // 
@@ -375,8 +381,8 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.hScrollBar1);
-            this.panel4.Controls.Add(this.textBox1);
+            this.panel4.Controls.Add(this.InvadersRacesCount);
+            this.panel4.Controls.Add(this.InvadersRacesCountNumber);
             this.panel4.Controls.Add(this.button5);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(83, 57);
@@ -384,26 +390,26 @@
             this.panel4.Size = new System.Drawing.Size(186, 21);
             this.panel4.TabIndex = 62;
             // 
-            // hScrollBar1
+            // InvadersRacesCount
             // 
-            this.hScrollBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.hScrollBar1.LargeChange = 5;
-            this.hScrollBar1.Location = new System.Drawing.Point(37, 0);
-            this.hScrollBar1.Maximum = 40;
-            this.hScrollBar1.Minimum = 6;
-            this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(115, 21);
-            this.hScrollBar1.TabIndex = 63;
-            this.hScrollBar1.Value = 6;
+            this.InvadersRacesCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InvadersRacesCount.LargeChange = 5;
+            this.InvadersRacesCount.Location = new System.Drawing.Point(37, 0);
+            this.InvadersRacesCount.Maximum = 40;
+            this.InvadersRacesCount.Name = "InvadersRacesCount";
+            this.InvadersRacesCount.Size = new System.Drawing.Size(115, 21);
+            this.InvadersRacesCount.TabIndex = 63;
+            this.InvadersRacesCount.Value = 6;
+            this.InvadersRacesCount.ValueChanged += new System.EventHandler(this.InvadersRacesCount_ValueChanged);
             // 
-            // textBox1
+            // InvadersRacesCountNumber
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(0, 0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(37, 20);
-            this.textBox1.TabIndex = 64;
+            this.InvadersRacesCountNumber.Dock = System.Windows.Forms.DockStyle.Left;
+            this.InvadersRacesCountNumber.Enabled = false;
+            this.InvadersRacesCountNumber.Location = new System.Drawing.Point(0, 0);
+            this.InvadersRacesCountNumber.Name = "InvadersRacesCountNumber";
+            this.InvadersRacesCountNumber.Size = new System.Drawing.Size(37, 20);
+            this.InvadersRacesCountNumber.TabIndex = 64;
             // 
             // button5
             // 
@@ -415,6 +421,7 @@
             this.button5.TabIndex = 62;
             this.button5.Text = "RND";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // InvadersPresetDescription
             // 
@@ -497,11 +504,11 @@
             this.AdvancedPanel.Controls.Add(this.panel7);
             this.AdvancedPanel.Controls.Add(this.tabControl1);
             this.AdvancedPanel.Controls.Add(this.panel6);
-            this.AdvancedPanel.Location = new System.Drawing.Point(137, 355);
+            this.AdvancedPanel.Location = new System.Drawing.Point(37, 14);
             this.AdvancedPanel.Name = "AdvancedPanel";
             this.AdvancedPanel.Size = new System.Drawing.Size(422, 214);
             this.AdvancedPanel.TabIndex = 1;
-            this.AdvancedPanel.VisibleChanged += new System.EventHandler(this.AdvancedPanel_VisibleChanged);
+            this.AdvancedPanel.VisibleChanged += new System.EventHandler(this.RedrawPanels);
             // 
             // panel7
             // 
@@ -523,14 +530,14 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.Controls.Add(this.panel8, 1, 4);
             this.tableLayoutPanel4.Controls.Add(this.label8, 0, 4);
-            this.tableLayoutPanel4.Controls.Add(this.comboBox5, 1, 3);
+            this.tableLayoutPanel4.Controls.Add(this.MaxMagicBox, 1, 3);
             this.tableLayoutPanel4.Controls.Add(this.label7, 0, 2);
             this.tableLayoutPanel4.Controls.Add(this.label22, 0, 3);
-            this.tableLayoutPanel4.Controls.Add(this.comboBox4, 1, 2);
+            this.tableLayoutPanel4.Controls.Add(this.BaseMagicBox, 1, 2);
             this.tableLayoutPanel4.Controls.Add(this.label21, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.comboBox2, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.BaseTechBox, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label10, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.comboBox3, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.MaxTechBox, 1, 1);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(133, 16);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -546,26 +553,27 @@
             // 
             // panel8
             // 
-            this.panel8.Controls.Add(this.hScrollBar2);
+            this.panel8.Controls.Add(this.RacesCount);
             this.panel8.Controls.Add(this.button1);
-            this.panel8.Controls.Add(this.textBox4);
+            this.panel8.Controls.Add(this.RacesCountNumber);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel8.Location = new System.Drawing.Point(103, 127);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(180, 25);
             this.panel8.TabIndex = 59;
             // 
-            // hScrollBar2
+            // RacesCount
             // 
-            this.hScrollBar2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.hScrollBar2.LargeChange = 5;
-            this.hScrollBar2.Location = new System.Drawing.Point(37, 0);
-            this.hScrollBar2.Maximum = 40;
-            this.hScrollBar2.Minimum = 6;
-            this.hScrollBar2.Name = "hScrollBar2";
-            this.hScrollBar2.Size = new System.Drawing.Size(109, 25);
-            this.hScrollBar2.TabIndex = 59;
-            this.hScrollBar2.Value = 6;
+            this.RacesCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RacesCount.LargeChange = 5;
+            this.RacesCount.Location = new System.Drawing.Point(37, 0);
+            this.RacesCount.Maximum = 40;
+            this.RacesCount.Minimum = 6;
+            this.RacesCount.Name = "RacesCount";
+            this.RacesCount.Size = new System.Drawing.Size(109, 25);
+            this.RacesCount.TabIndex = 59;
+            this.RacesCount.Value = 6;
+            this.RacesCount.ValueChanged += new System.EventHandler(this.RacesCount_ValueChanged);
             // 
             // button1
             // 
@@ -577,15 +585,16 @@
             this.button1.TabIndex = 58;
             this.button1.Text = "RND";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox4
+            // RacesCountNumber
             // 
-            this.textBox4.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBox4.Enabled = false;
-            this.textBox4.Location = new System.Drawing.Point(0, 0);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(37, 20);
-            this.textBox4.TabIndex = 60;
+            this.RacesCountNumber.Dock = System.Windows.Forms.DockStyle.Left;
+            this.RacesCountNumber.Enabled = false;
+            this.RacesCountNumber.Location = new System.Drawing.Point(0, 0);
+            this.RacesCountNumber.Name = "RacesCountNumber";
+            this.RacesCountNumber.Size = new System.Drawing.Size(37, 20);
+            this.RacesCountNumber.TabIndex = 60;
             // 
             // label8
             // 
@@ -597,16 +606,16 @@
             this.label8.Text = "Races count:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // comboBox5
+            // MaxMagicBox
             // 
-            this.comboBox5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Location = new System.Drawing.Point(103, 96);
-            this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(180, 21);
-            this.comboBox5.TabIndex = 44;
-            this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.comboBox5_SelectedIndexChanged);
+            this.MaxMagicBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MaxMagicBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.MaxMagicBox.FormattingEnabled = true;
+            this.MaxMagicBox.Location = new System.Drawing.Point(103, 96);
+            this.MaxMagicBox.Name = "MaxMagicBox";
+            this.MaxMagicBox.Size = new System.Drawing.Size(180, 21);
+            this.MaxMagicBox.TabIndex = 44;
+            this.MaxMagicBox.SelectedIndexChanged += new System.EventHandler(this.MaxMagicBox_SelectedIndexChanged);
             // 
             // label7
             // 
@@ -617,7 +626,6 @@
             this.label7.TabIndex = 38;
             this.label7.Text = "Base magic level:";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // label22
             // 
@@ -629,16 +637,16 @@
             this.label22.Text = "Maximum possible magic level:";
             this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // comboBox4
+            // BaseMagicBox
             // 
-            this.comboBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Location = new System.Drawing.Point(103, 65);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(180, 21);
-            this.comboBox4.TabIndex = 43;
-            this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.comboBox4_SelectedIndexChanged);
+            this.BaseMagicBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BaseMagicBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.BaseMagicBox.FormattingEnabled = true;
+            this.BaseMagicBox.Location = new System.Drawing.Point(103, 65);
+            this.BaseMagicBox.Name = "BaseMagicBox";
+            this.BaseMagicBox.Size = new System.Drawing.Size(180, 21);
+            this.BaseMagicBox.TabIndex = 43;
+            this.BaseMagicBox.SelectedIndexChanged += new System.EventHandler(this.BaseMagicBox_SelectedIndexChanged);
             // 
             // label21
             // 
@@ -650,16 +658,16 @@
             this.label21.Text = "Base tech level:";
             this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // comboBox2
+            // BaseTechBox
             // 
-            this.comboBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(103, 3);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(180, 21);
-            this.comboBox2.TabIndex = 39;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.BaseTechBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BaseTechBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.BaseTechBox.FormattingEnabled = true;
+            this.BaseTechBox.Location = new System.Drawing.Point(103, 3);
+            this.BaseTechBox.Name = "BaseTechBox";
+            this.BaseTechBox.Size = new System.Drawing.Size(180, 21);
+            this.BaseTechBox.TabIndex = 39;
+            this.BaseTechBox.SelectedIndexChanged += new System.EventHandler(this.BaseTechBox_SelectedIndexChanged);
             // 
             // label10
             // 
@@ -672,16 +680,16 @@
             this.label10.Text = "Maximum possible tech level:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // comboBox3
+            // MaxTechBox
             // 
-            this.comboBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(103, 34);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(180, 21);
-            this.comboBox3.TabIndex = 40;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.MaxTechBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MaxTechBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.MaxTechBox.FormattingEnabled = true;
+            this.MaxTechBox.Location = new System.Drawing.Point(103, 34);
+            this.MaxTechBox.Name = "MaxTechBox";
+            this.MaxTechBox.Size = new System.Drawing.Size(180, 21);
+            this.MaxTechBox.TabIndex = 40;
+            this.MaxTechBox.SelectedIndexChanged += new System.EventHandler(this.MaxTechBox_SelectedIndexChanged);
             // 
             // checkedListBox1
             // 
@@ -690,9 +698,9 @@
             this.checkedListBox1.FormattingEnabled = true;
             this.checkedListBox1.Location = new System.Drawing.Point(3, 16);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.checkedListBox1.Size = new System.Drawing.Size(130, 155);
             this.checkedListBox1.TabIndex = 1;
+            this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox1_ItemCheck);
             // 
             // label6
             // 
@@ -799,10 +807,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.PresetsPanel);
             this.Controls.Add(this.AdvancedPanel);
+            this.Controls.Add(this.PresetsPanel);
             this.Name = "EpochProperties";
-            this.Size = new System.Drawing.Size(806, 572);
+            this.Size = new System.Drawing.Size(466, 282);
             this.Resize += new System.EventHandler(this.EpochProperties_Resize);
             this.PresetsPanel.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -845,9 +853,9 @@
         private System.Windows.Forms.ComboBox NativesSocialPreset;
         private PresentationControls.CheckBoxComboBox NativesRacesSet;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.HScrollBar RacesCount;
+        private System.Windows.Forms.HScrollBar NativesRacesCount;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.TextBox RacesCountNumber;
+        private System.Windows.Forms.TextBox NativesRacesCountNumber;
         private System.Windows.Forms.Label NativesPresetDescription;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Panel panel2;
@@ -858,8 +866,8 @@
         private PresentationControls.CheckBoxComboBox InvadersRacesSet;
         private System.Windows.Forms.ComboBox InvadersSocialPreset;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.HScrollBar hScrollBar1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.HScrollBar InvadersRacesCount;
+        private System.Windows.Forms.TextBox InvadersRacesCountNumber;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label InvadersPresetDescription;
         private System.Windows.Forms.Label label31;
@@ -881,17 +889,17 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ComboBox comboBox5;
-        private System.Windows.Forms.ComboBox comboBox4;
+        private System.Windows.Forms.ComboBox MaxMagicBox;
+        private System.Windows.Forms.ComboBox BaseMagicBox;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox MaxTechBox;
+        private System.Windows.Forms.ComboBox BaseTechBox;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Panel panel8;
-        private System.Windows.Forms.HScrollBar hScrollBar2;
+        private System.Windows.Forms.HScrollBar RacesCount;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox RacesCountNumber;
         private System.Windows.Forms.Label label8;
     }
 }

@@ -11,6 +11,7 @@ using LandscapeGeneration.PathFind;
 using LandscapeGeneration;
 using Socium;
 using MapDrawEngine;
+using WorldGeneration;
 
 namespace VQMapTest2
 {

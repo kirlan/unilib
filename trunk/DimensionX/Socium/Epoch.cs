@@ -39,12 +39,12 @@ namespace Socium
 
         public string m_sName;
 
-        public int m_iMinTechLevel;
-        public int m_iMaxTechLevel;
-        public int m_iMinMagicLevel;
-        public int m_iMaxMagicLevel;
+        public int m_iNativesMinTechLevel;
+        public int m_iNativesMaxTechLevel;
+        public int m_iNativesMinMagicLevel;
+        public int m_iNativesMaxMagicLevel;
 
-        public List<RaceTemplate> m_cRaceTemplates;
+        public List<RaceTemplate> m_cNativesRaceTemplates;
 
         public int m_iInvadersMinTechLevel;
         public int m_iInvadersMaxTechLevel;
@@ -60,11 +60,11 @@ namespace Socium
 
         public Epoch()
         {
-            m_iMinTechLevel = 0;
-            m_iMaxTechLevel = 8;
+            m_iNativesMinTechLevel = 0;
+            m_iNativesMaxTechLevel = 8;
 
-            m_iMinMagicLevel = 0;
-            m_iMaxMagicLevel = 8;
+            m_iNativesMinMagicLevel = 0;
+            m_iNativesMaxMagicLevel = 8;
 
 
             m_iInvadersMinTechLevel = 0;
@@ -73,7 +73,7 @@ namespace Socium
             m_iInvadersMinMagicLevel = 0;
             m_iInvadersMaxMagicLevel = 8;
 
-            m_cRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
+            m_cNativesRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
             m_cInvadersRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
 
             m_iNativesCount = 10;

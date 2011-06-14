@@ -69,7 +69,7 @@ namespace LandscapeGeneration
         {
             return GetLandsString();
 
-            return (m_bOcean ? "ocean": "land") + " " + m_cContents.Count.ToString(); 
+            //return (m_bOcean ? "ocean": "land") + " " + m_cContents.Count.ToString(); 
         }
 
         public override float GetMovementCost()

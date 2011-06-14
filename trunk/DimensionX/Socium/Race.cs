@@ -275,15 +275,15 @@ namespace Socium
 
             if (!m_bDying)
             {
-                if (m_iMagicLimit < pEpoch.m_iMinMagicLevel)
-                    m_iMagicLimit = pEpoch.m_iMinMagicLevel;
-                if (m_iMagicLimit > pEpoch.m_iMaxMagicLevel)
-                    m_iMagicLimit = pEpoch.m_iMaxMagicLevel;
+                if (m_iMagicLimit < pEpoch.m_iNativesMinMagicLevel)
+                    m_iMagicLimit = pEpoch.m_iNativesMinMagicLevel;
+                if (m_iMagicLimit > pEpoch.m_iNativesMaxMagicLevel)
+                    m_iMagicLimit = pEpoch.m_iNativesMaxMagicLevel;
 
-                if (m_iTechLevel < pEpoch.m_iMinTechLevel)
-                    m_iTechLevel = pEpoch.m_iMinTechLevel;
-                if (m_iTechLevel > pEpoch.m_iMaxTechLevel)
-                    m_iTechLevel = pEpoch.m_iMaxTechLevel;
+                if (m_iTechLevel < pEpoch.m_iNativesMinTechLevel)
+                    m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
+                if (m_iTechLevel > pEpoch.m_iNativesMaxTechLevel)
+                    m_iTechLevel = pEpoch.m_iNativesMaxTechLevel;
             }
             else
             {

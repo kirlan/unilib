@@ -1,4 +1,4 @@
-﻿namespace VQMapTest2
+﻿namespace WorldGeneration
 {
     partial class GridBuildingForm
     {

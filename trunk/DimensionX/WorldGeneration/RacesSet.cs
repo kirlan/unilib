@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VQMapTest2
+namespace WorldGeneration
 {
     public class RacesSet
     {

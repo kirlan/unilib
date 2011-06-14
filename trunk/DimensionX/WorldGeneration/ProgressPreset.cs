@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VQMapTest2
+namespace WorldGeneration
 {
-    class SocietyPreset
+    class ProgressPreset
     {
         public string m_sName;
 
@@ -21,7 +21,7 @@ namespace VQMapTest2
         public int m_iMinMagicLevel;
         public int m_iMaxMagicLevel;
 
-        public SocietyPreset(string sName, string sDescription, int iMinTechLevel, int iMaxTechLevel, int iMinMagicLevel, int iMaxMagicLevel)
+        public ProgressPreset(string sName, string sDescription, int iMinTechLevel, int iMaxTechLevel, int iMinMagicLevel, int iMaxMagicLevel)
         {
             m_sName = sName;
             m_sDescription = sDescription;
