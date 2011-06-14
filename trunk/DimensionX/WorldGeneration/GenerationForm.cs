@@ -187,17 +187,7 @@ namespace WorldGeneration
             //CalculateLimits(m_cLocations.m_iLocationsCount);
 
             if (AgesView.Items.Count == 0)
-            {
-                EpochWrapper pEpoch = new EpochWrapper();
-                ListViewItem pItem = AgesView.Items.Add(pEpoch.Name);
-                pItem.SubItems.Add(pEpoch.NativesPresetString);
-                pItem.SubItems.Add(pEpoch.NativesRacesString);
-                pItem.SubItems.Add(pEpoch.Length.ToString());
-
-                pItem.Tag = pEpoch;
-
-                pItem.Selected = true;
-            }
+                AddNewAge_Click(sender, e);
         }
 
         private void AgesView_SelectedIndexChanged(object sender, EventArgs e)
@@ -231,9 +221,16 @@ namespace WorldGeneration
             epochProperties1.AdvancedMode = checkBox1.Checked;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void AddNewAge_Click(object sender, EventArgs e)
         {
             EpochWrapper pEpoch = new EpochWrapper();
+
+            pEpoch.NativesPreset = ProgressPreset.s_aSocietyPresets[1];
+            pEpoch.InvadersPreset = ProgressPreset.s_aSocietyPresets[ProgressPreset.s_aSocietyPresets.Length-1];
+
+            pEpoch.NativesRacesSets = new RacesSet[] { RacesSet.s_aSets[0], RacesSet.s_aSets[1], RacesSet.s_aSets[2], RacesSet.s_aSets[3] };
+            pEpoch.InvadersRacesSets = new RacesSet[] { RacesSet.s_aSets[RacesSet.s_aSets.Length - 2], RacesSet.s_aSets[RacesSet.s_aSets.Length - 1] };
+
             ListViewItem pItem = AgesView.Items.Add(pEpoch.Name);
             pItem.SubItems.Add(pEpoch.NativesPresetString);
             pItem.SubItems.Add(pEpoch.NativesRacesString);

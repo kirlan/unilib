@@ -298,10 +298,10 @@ namespace Socium
                     string sNegReasons = "";
                     int iCustomsDifference = m_pMethropoly.m_pCustoms.GetDifference(pProvince.m_pCustoms, ref sPosReasons, ref sNegReasons);
 
-                    int iRelation = (int)(fCultureDifference - iCustomsDifference);
+                    int iHostility = (int)(fCultureDifference + iCustomsDifference);
 
                     if (m_pMethropoly.m_pRace != pProvince.m_pRace)
-                        iRelation--;
+                        iHostility++;
                         //fWholeLength /= 2;
 
                     if (m_pMethropoly.m_pRace.m_pTemplate.m_pLanguage != pProvince.m_pRace.m_pTemplate.m_pLanguage)
@@ -310,11 +310,11 @@ namespace Socium
                         //fWholeLength /= 2;
                     
                     //положительное отношение
-                    if (iRelation > 1)
-                        fWholeLength *= iRelation;
+                    if (iHostility < -1)
+                        fWholeLength *= iHostility;
 
                     //отрицательное отношение
-                    if (iRelation < 0)
+                    if (iHostility > 0)
                         continue;
                         //fWholeLength /= iCustomsDifference - fCultureDifference;
 
@@ -378,6 +378,8 @@ namespace Socium
         {
             ChainBorder(fCycleShift);
 
+            m_cBorderWith.Clear();
+
             foreach (ITerritory pProvince in m_cBorder.Keys)
             {
                 State pState;
@@ -390,7 +392,6 @@ namespace Socium
                     m_cBorderWith[pState] = new List<Line>();
                 m_cBorderWith[pState].AddRange(m_cBorder[pProvince]);
             }
-            FillBorderWithKeys();
 
             Dictionary<Race, int> cRacesCount = new Dictionary<Race, int>();
 
@@ -416,6 +417,14 @@ namespace Socium
                     iMaxPop = cRacesCount[pProvince.m_pRace];
                     pMaxRace = pProvince.m_pRace;
                 }
+
+                foreach (LocationX pLoc in pProvince.m_cSettlements)
+                    foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
+                    { 
+                        State pState = (pOtherLoc.Owner as LandX).m_pProvince.Owner as State;
+                        if(pState != this && !m_cBorderWith.ContainsKey(pState))
+                            m_cBorderWith[pState] = new List<Line>();
+                    }
             }
 
             if (pMaxRace != null)
@@ -426,6 +435,8 @@ namespace Socium
                 foreach (LandX pLand in m_pMethropoly.m_cContents)
                     pLand.m_pRace = m_pRace;
             }
+
+            FillBorderWithKeys();
         }
 
         public void CalculateMagic()
@@ -810,25 +821,25 @@ namespace Socium
             }
 
             float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture);
-            if (iCultureDifference > 0.75)
+            if (iCultureDifference < -0.75)
             {
                 iHostility -= 2;
                 sPositiveReasons += " (+2) Very close culture\n";
             }
             else
-                if (iCultureDifference > 0.5)
+                if (iCultureDifference < 0.5)
                 {
                     iHostility--;
                     sPositiveReasons += " (+1) Close culture\n";
                 }
                 else
-                    if (iCultureDifference < -0.5)
+                    if (iCultureDifference > 0.5)
                     {
                         iHostility += 2;
                         sNegativeReasons += " (-2) Very different culture\n";
                     }
                     else
-                        if (iCultureDifference < 0)
+                        if (iCultureDifference > 0)
                         {
                             iHostility++;
                             sNegativeReasons += " (-1) Different culture\n";
