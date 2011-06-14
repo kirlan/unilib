@@ -69,7 +69,7 @@ namespace Socium
             m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
         }
 
-        private void AddRaces(int iDiversity, Epoch pEpoch)
+        private void AddRaces(Epoch pEpoch)
         {
             List<Race> cRaces = new List<Race>();
 
@@ -103,7 +103,7 @@ namespace Socium
             //cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : Math.Max(1, 10 + m_iMagicLimit * 10 - pRace.m_iRank);// : 100.0f / pRace.m_iRank;
 
             //Добавляем необходимое количесто новых рас.
-            while (cRaces.Count - iDyingRaces < iDiversity)
+            while (cRaces.Count - iDyingRaces < pEpoch.m_iNativesCount)
             {
                 int iChance = Rnd.ChooseOne(cRaceChances.Values, 1);
                 foreach (RaceTemplate pRaceTemplate in cRaceChances.Keys)
@@ -117,6 +117,44 @@ namespace Socium
                         cRaces.Add(pRace);
                         cRaceChances[pRaceTemplate] = 0;
                         break;
+                    }
+                }
+            }
+
+            if (pEpoch.m_iInvadersCount > 0)
+            {
+                //Рассчитываем шансы новых рас попасть в новый мир - учитывая, его параметры
+                Dictionary<RaceTemplate, float> cInvadersRaceChances = new Dictionary<RaceTemplate, float>();
+                foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
+                {
+                    if (!pEpoch.m_cInvadersRaceTemplates.Contains(pRaceTemplate))
+                        continue;
+
+                    bool bAlreadyHave = false;
+                    if (m_aLocalRaces != null)
+                        foreach (Race pRace in m_aLocalRaces)
+                            if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
+                                bAlreadyHave = true;
+
+                    cInvadersRaceChances[pRaceTemplate] = bAlreadyHave ? 10 : 100;// / pRaceTemplate.m_iRank;
+                }
+
+                for (int i = 0; i < pEpoch.m_iInvadersCount; i++)
+                {
+                    int iChance = Rnd.ChooseOne(cInvadersRaceChances.Values, 1);
+                    foreach (RaceTemplate pRaceTemplate in cInvadersRaceChances.Keys)
+                    {
+                        iChance--;
+                        if (iChance < 0)
+                        {
+                            Race pRace = new Race(pRaceTemplate, pEpoch);
+                            pRace.m_bInvader = true;
+                            pRace.Accommodate(this, pEpoch);
+
+                            cRaces.Add(pRace);
+                            cRaceChances[pRaceTemplate] = 0;
+                            break;
+                        }
                     }
                 }
             }
@@ -423,19 +461,19 @@ namespace Socium
 
                 for (int i = 0; i < pEpoch.m_iLength - 1; i++)
                 {
-                    PopulateWorld(pEpoch.m_iNativesCount, pEpoch, false);
+                    PopulateWorld(pEpoch, false);
                     Reset(pEpoch);
                 }
 
-                PopulateWorld(pEpoch.m_iNativesCount, pEpoch, true);
+                PopulateWorld(pEpoch, true);
             }
         }
 
-        private void PopulateWorld(int iRacesCount, Epoch pEpoch, bool bFinalize)
+        private void PopulateWorld(Epoch pEpoch, bool bFinalize)
         {
             SetWorldLevels(pEpoch);
 
-            AddRaces(iRacesCount, pEpoch);
+            AddRaces(pEpoch);
             DistributeRacesToLandMasses();
             PopulateAreas();
 

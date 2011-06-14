@@ -320,7 +320,7 @@ namespace WorldGeneration
                 if (m_pEpoch.NativesPreset != null)
                     NativesPresetDescription.Text = m_pEpoch.NativesPreset.m_sDescription;
                 else
-                    NativesPresetDescription.Text = "Custom preset. Use advanced mode to set real values.";
+                    NativesPresetDescription.Text = "Custom preset. Use advanced mode to set real values or choose any other progress preset.";
             }
 
             FireUpdate();
@@ -337,7 +337,7 @@ namespace WorldGeneration
                 if (m_pEpoch.InvadersPreset != null)
                     InvadersPresetDescription.Text = m_pEpoch.InvadersPreset.m_sDescription;
                 else
-                    InvadersPresetDescription.Text = "Custom preset. Use advanced mode to set real values.";
+                    InvadersPresetDescription.Text = "Custom preset. Use advanced mode to set real values or choose any other progress preset.";
             }
 
             FireUpdate();
@@ -387,6 +387,9 @@ namespace WorldGeneration
             m_pEpoch.InvadersCount = InvadersRacesCount.Value;
             InvadersRacesCountNumber.Text = m_pEpoch.InvadersCount.ToString();
 
+            InvadersRacesSet.Enabled = m_pEpoch.InvadersCount > 0;
+            InvadersSocialPreset.Enabled = m_pEpoch.InvadersCount > 0;
+
             FireUpdate();
         }
 
@@ -416,6 +419,12 @@ namespace WorldGeneration
                 m_pEpoch.InvadersCount = RacesCount.Value;
 
             RacesCountNumber.Text = RacesCount.Value.ToString();
+
+            BaseTechBox.Enabled = RacesCount.Value > 0;
+            MaxTechBox.Enabled = RacesCount.Value > 0;
+            BaseMagicBox.Enabled = RacesCount.Value > 0;
+            MaxMagicBox.Enabled = RacesCount.Value > 0;
+            checkedListBox1.Enabled = RacesCount.Value > 0;
 
             FireUpdate();
         }

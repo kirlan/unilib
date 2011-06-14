@@ -670,10 +670,20 @@ namespace Socium
             else if (m_iWood > m_iPopulation && m_iOre > m_iPopulation && Rnd.OneChanceFrom(4))
                 m_iTechLevel++;
 
-            if (m_iTechLevel < m_pRace.m_pEpoch.m_iNativesMinTechLevel)
-                m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMinTechLevel;
-            if (m_iTechLevel > m_pRace.m_pEpoch.m_iNativesMaxTechLevel)
-                m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMaxTechLevel;
+            if (m_pRace.m_bInvader)
+            {
+                if (m_iTechLevel < m_pRace.m_pEpoch.m_iInvadersMinTechLevel)
+                    m_iTechLevel = m_pRace.m_pEpoch.m_iInvadersMinTechLevel;
+                if (m_iTechLevel > m_pRace.m_pEpoch.m_iInvadersMaxTechLevel)
+                    m_iTechLevel = m_pRace.m_pEpoch.m_iInvadersMaxTechLevel;
+            }
+            else
+            {
+                if (m_iTechLevel < m_pRace.m_pEpoch.m_iNativesMinTechLevel)
+                    m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMinTechLevel;
+                if (m_iTechLevel > m_pRace.m_pEpoch.m_iNativesMaxTechLevel)
+                    m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMaxTechLevel;
+            }
 
             int iOldLevel = m_pRace.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
             int iNewLevel = m_iTechLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
@@ -712,8 +722,16 @@ namespace Socium
 
             if (m_iTechLevel > m_iInfrastructureLevel * 2)
                 m_iTechLevel = m_iInfrastructureLevel * 2;
-            if (m_iTechLevel > m_pRace.m_pEpoch.m_iNativesMaxTechLevel)
-                m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMaxTechLevel;
+            if (m_pRace.m_bInvader)
+            {
+                if (m_iTechLevel > m_pRace.m_pEpoch.m_iInvadersMaxTechLevel)
+                    m_iTechLevel = m_pRace.m_pEpoch.m_iInvadersMaxTechLevel;
+            }
+            else
+            {
+                if (m_iTechLevel > m_pRace.m_pEpoch.m_iNativesMaxTechLevel)
+                    m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMaxTechLevel;
+            }
 
             SettlementInfo pSettlementInfo = Settlement.Info[SettlementSize.Hamlet];
 
