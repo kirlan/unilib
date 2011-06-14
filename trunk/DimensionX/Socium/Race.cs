@@ -214,6 +214,7 @@ namespace Socium
 
         public bool m_bDying = false;
         public bool m_bHegemon = false;
+        public bool m_bInvader = false;
 
         public Epoch m_pEpoch = null;
 
@@ -246,73 +247,7 @@ namespace Socium
         {
             int iOldLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
 
-            if (!m_bDying)
-            {
-                if (m_iMagicLimit <= pWorld.m_iMagicLimit)
-                    m_iMagicLimit = pWorld.m_iMagicLimit;
-                else
-                    m_iMagicLimit = (m_iMagicLimit + pWorld.m_iMagicLimit + 1) / 2;
-
-                if (m_iTechLevel <= pWorld.m_iTechLevel && !m_bDying)
-                    m_iTechLevel = pWorld.m_iTechLevel;
-                else
-                    m_iTechLevel = (m_iTechLevel + pWorld.m_iTechLevel + 1) / 2;
-            }
-
-            int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
-            if (Rnd.OneChanceFrom(10))
-                m_iMagicLimit += iMagicLimit;
-            else
-                m_iMagicLimit -= iMagicLimit;
-
-            int iOldTechLevel = m_iTechLevel;
-
-            int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
-            if (Rnd.OneChanceFrom(10))
-                m_iTechLevel += iTechLevel;
-            else
-                m_iTechLevel -= iTechLevel;
-
-            if (!m_bDying)
-            {
-                if (m_iMagicLimit < pEpoch.m_iNativesMinMagicLevel)
-                    m_iMagicLimit = pEpoch.m_iNativesMinMagicLevel;
-                if (m_iMagicLimit > pEpoch.m_iNativesMaxMagicLevel)
-                    m_iMagicLimit = pEpoch.m_iNativesMaxMagicLevel;
-
-                if (m_iTechLevel < pEpoch.m_iNativesMinTechLevel)
-                    m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
-                if (m_iTechLevel > pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = pEpoch.m_iNativesMaxTechLevel;
-            }
-            else
-            {
-                if (m_iMagicLimit < 0)
-                    m_iMagicLimit = 0;
-                if (m_iMagicLimit > 8)
-                    m_iMagicLimit = 8;
-
-                if (m_iTechLevel < 0)
-                    m_iTechLevel = 0;
-                if (m_iTechLevel > 8)
-                    m_iTechLevel = 8;
-            }
-
-            //m_pCustoms = new Customs();
-
-            if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.GetExp(typeof(MagicAbilityPrevalence), 4);
-            else
-                if (iOldLevel == 0)
-                    m_eMagicAbilityPrevalence = pWorld.m_eMagicAbilityPrevalence;
-
-            if (Rnd.OneChanceFrom(3))
-                m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.GetExp(typeof(MagicAbilityDistribution), 4);
-            else
-                if (iOldLevel == 0)
-                    m_eMagicAbilityDistribution = pWorld.m_eMagicAbilityDistribution;
-
-            if (iOldLevel == 0 && Rnd.Chances(pEpoch.m_iInvadersCount, 100))
+            if (m_bInvader)
             {
                 //int iBalance = Rnd.Get(201);
 
@@ -328,9 +263,77 @@ namespace Socium
                 //} 
                 m_iTechLevel = Math.Min(pEpoch.m_iInvadersMaxTechLevel, pEpoch.m_iInvadersMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
                 m_iMagicLimit = Math.Min(pEpoch.m_iInvadersMaxMagicLevel, pEpoch.m_iInvadersMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
-                
+
                 m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
                 m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
+            }
+            else
+            {
+                if (!m_bDying)
+                {
+                    if (m_iMagicLimit <= pWorld.m_iMagicLimit)
+                        m_iMagicLimit = pWorld.m_iMagicLimit;
+                    else
+                        m_iMagicLimit = (m_iMagicLimit + pWorld.m_iMagicLimit + 1) / 2;
+
+                    if (m_iTechLevel <= pWorld.m_iTechLevel && !m_bDying)
+                        m_iTechLevel = pWorld.m_iTechLevel;
+                    else
+                        m_iTechLevel = (m_iTechLevel + pWorld.m_iTechLevel + 1) / 2;
+                }
+
+                int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
+                if (Rnd.OneChanceFrom(10))
+                    m_iMagicLimit += iMagicLimit;
+                else
+                    m_iMagicLimit -= iMagicLimit;
+
+                int iOldTechLevel = m_iTechLevel;
+
+                int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
+                if (Rnd.OneChanceFrom(10))
+                    m_iTechLevel += iTechLevel;
+                else
+                    m_iTechLevel -= iTechLevel;
+
+                if (!m_bDying)
+                {
+                    if (m_iMagicLimit < pEpoch.m_iNativesMinMagicLevel)
+                        m_iMagicLimit = pEpoch.m_iNativesMinMagicLevel;
+                    if (m_iMagicLimit > pEpoch.m_iNativesMaxMagicLevel)
+                        m_iMagicLimit = pEpoch.m_iNativesMaxMagicLevel;
+
+                    if (m_iTechLevel < pEpoch.m_iNativesMinTechLevel)
+                        m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
+                    if (m_iTechLevel > pEpoch.m_iNativesMaxTechLevel)
+                        m_iTechLevel = pEpoch.m_iNativesMaxTechLevel;
+                }
+                else
+                {
+                    if (m_iMagicLimit < 0)
+                        m_iMagicLimit = 0;
+                    if (m_iMagicLimit > 8)
+                        m_iMagicLimit = 8;
+
+                    if (m_iTechLevel < 0)
+                        m_iTechLevel = 0;
+                    if (m_iTechLevel > 8)
+                        m_iTechLevel = 8;
+                }
+
+                //m_pCustoms = new Customs();
+
+                if (Rnd.OneChanceFrom(3))
+                    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.GetExp(typeof(MagicAbilityPrevalence), 4);
+                else
+                    if (iOldLevel == 0)
+                        m_eMagicAbilityPrevalence = pWorld.m_eMagicAbilityPrevalence;
+
+                if (Rnd.OneChanceFrom(3))
+                    m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.GetExp(typeof(MagicAbilityDistribution), 4);
+                else
+                    if (iOldLevel == 0)
+                        m_eMagicAbilityDistribution = pWorld.m_eMagicAbilityDistribution;
             }
 
             int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
