@@ -60,27 +60,27 @@ namespace Socium
 
         public Epoch()
         {
-            m_iNativesMinTechLevel = 0;
-            m_iNativesMaxTechLevel = 8;
+            m_iNativesMinTechLevel = 1;
+            m_iNativesMaxTechLevel = 3;
 
-            m_iNativesMinMagicLevel = 0;
-            m_iNativesMaxMagicLevel = 8;
+            m_iNativesMinMagicLevel = 1;
+            m_iNativesMaxMagicLevel = 3;
 
 
-            m_iInvadersMinTechLevel = 0;
+            m_iInvadersMinTechLevel = 5;
             m_iInvadersMaxTechLevel = 8;
 
-            m_iInvadersMinMagicLevel = 0;
+            m_iInvadersMinMagicLevel = 5;
             m_iInvadersMaxMagicLevel = 8;
 
             m_cNativesRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
             m_cInvadersRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
 
-            m_iNativesCount = 10;
+            m_iNativesCount = 12;
 
             m_iInvadersCount = 0;
 
-            m_iLength = 1;
+            m_iLength = 3;
 
             do
             {

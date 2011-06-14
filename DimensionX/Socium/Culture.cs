@@ -108,7 +108,7 @@ namespace Socium
         }
 
         /// <summary>
-        /// Различие между культурами от -1 (полная противоположность) до +1 (полное совпадение)
+        /// Различие между культурами от +1 (полная противоположность) до -1 (полное совпадение)
         /// </summary>
         /// <param name="different">другая культура</param>
         /// <returns>скалярное произведение нормализованных векторов культуры / (количество моральных качеств)</returns>
@@ -121,7 +121,7 @@ namespace Socium
                 culture1.Set((int)prop, m_cMentalityValues[prop] - 1.0f);
                 culture2.Set((int)prop, different.m_cMentalityValues[prop] - 1.0f);
             }
-            return (float)(culture1 * culture2) / Mentalities.Length;
+            return -(float)(culture1 * culture2) / Mentalities.Length;
         }
 
         private class MentalityString

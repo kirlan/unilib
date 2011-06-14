@@ -344,6 +344,16 @@ namespace Socium
         /// Вычисляет враждебность друг сообществ на основании их обычаев.
         /// Возвращает значение от 6 (полные противоположности) до -6 (полное совпадение).
         /// </summary>
+        public int GetDifference(Customs pOpponent)
+        {
+            string s1 = "", s2 = "";
+            return GetDifference(pOpponent, ref s1, ref s2);
+        }
+
+        /// <summary>
+        /// Вычисляет враждебность друг сообществ на основании их обычаев.
+        /// Возвращает значение от 6 (полные противоположности) до -6 (полное совпадение).
+        /// </summary>
         /// <param name="pOpponent">обычаи другого сообщества</param>
         /// <param name="sReasons">мотивация враждебности</param>
         /// <returns></returns>

@@ -1173,6 +1173,9 @@ namespace MapDrawEngine
 
                 cBorder.Add(ShiftPoint(pLine.m_pPoint2, fDX));
 
+                if (cBorder.Count > 1000)
+                    break;
+
                 //X-координата последней добавленной точки с учётом вычисленного смещения
                 fLastPointX = pLine.m_pPoint2.X + fDX;
 

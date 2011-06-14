@@ -121,43 +121,51 @@ namespace Socium
                 }
             }
 
-            if (pEpoch.m_iInvadersCount > 0)
+            m_aLocalRaces = cRaces.ToArray();
+        }
+
+        private void AddInvadersRaces(Epoch pEpoch)
+        {
+            if (pEpoch.m_iInvadersCount == 0)
+                return;
+
+            List<Race> cRaces = new List<Race>(m_aLocalRaces);
+
+            //Рассчитываем шансы новых рас попасть в новый мир - учитывая, его параметры
+            Dictionary<RaceTemplate, float> cInvadersRaceChances = new Dictionary<RaceTemplate, float>();
+            foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
             {
-                //Рассчитываем шансы новых рас попасть в новый мир - учитывая, его параметры
-                Dictionary<RaceTemplate, float> cInvadersRaceChances = new Dictionary<RaceTemplate, float>();
-                foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
+                if (!pEpoch.m_cInvadersRaceTemplates.Contains(pRaceTemplate))
+                    continue;
+
+                bool bAlreadyHave = false;
+                if (m_aLocalRaces != null)
+                    foreach (Race pRace in m_aLocalRaces)
+                        if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
+                            bAlreadyHave = true;
+
+                cInvadersRaceChances[pRaceTemplate] = bAlreadyHave ? 10 : 100;// / pRaceTemplate.m_iRank;
+            }
+
+            for (int i = 0; i < pEpoch.m_iInvadersCount; i++)
+            {
+                int iChance = Rnd.ChooseOne(cInvadersRaceChances.Values, 1);
+                foreach (RaceTemplate pRaceTemplate in cInvadersRaceChances.Keys)
                 {
-                    if (!pEpoch.m_cInvadersRaceTemplates.Contains(pRaceTemplate))
-                        continue;
-
-                    bool bAlreadyHave = false;
-                    if (m_aLocalRaces != null)
-                        foreach (Race pRace in m_aLocalRaces)
-                            if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
-                                bAlreadyHave = true;
-
-                    cInvadersRaceChances[pRaceTemplate] = bAlreadyHave ? 10 : 100;// / pRaceTemplate.m_iRank;
-                }
-
-                for (int i = 0; i < pEpoch.m_iInvadersCount; i++)
-                {
-                    int iChance = Rnd.ChooseOne(cInvadersRaceChances.Values, 1);
-                    foreach (RaceTemplate pRaceTemplate in cInvadersRaceChances.Keys)
+                    iChance--;
+                    if (iChance < 0)
                     {
-                        iChance--;
-                        if (iChance < 0)
-                        {
-                            Race pRace = new Race(pRaceTemplate, pEpoch);
-                            pRace.m_bInvader = true;
-                            pRace.Accommodate(this, pEpoch);
+                        Race pRace = new Race(pRaceTemplate, pEpoch);
+                        pRace.m_bInvader = true;
+                        pRace.Accommodate(this, pEpoch);
 
-                            cRaces.Add(pRace);
-                            cRaceChances[pRaceTemplate] = 0;
-                            break;
-                        }
+                        cRaces.Add(pRace);
+                        cInvadersRaceChances[pRaceTemplate] = 0;
+                        break;
                     }
                 }
             }
+
             m_aLocalRaces = cRaces.ToArray();
         }
 
@@ -180,8 +188,8 @@ namespace Socium
                         break;
                 }
 
-                //если уже где-то живёт - пропускаем её
-                if (!bHomeless)
+                //если уже где-то живёт и не гегемон - пропускаем её
+                if (!bHomeless && !pRace.m_bHegemon)
                     continue;
 
                 //рассчитаем вероятности для всех земель стать прародиной этой расы
@@ -208,9 +216,11 @@ namespace Socium
                         if (pLand.Type == pType)
                             cLandChances[pLand] /= 1000;
 
-                    if (!pRace.m_bHegemon)
+                    //смотрим, сколько ещё других рас уже живут на этом же континенте и 
+                    //снижаем привлекательность земли в зависимости от их количества.
+                    //гегемоны и вторженцы игнорируют эту проверку.
+                    if (!pRace.m_bHegemon && !pRace.m_bInvader)
                     {
-                        //смотрим, сколько ещё других рас уже живут на этом же континенте
                         int iPop = 0;
                         foreach (var pRaces in pLand.Continent.m_cLocalRaces)
                         {
@@ -474,6 +484,8 @@ namespace Socium
             SetWorldLevels(pEpoch);
 
             AddRaces(pEpoch);
+            if (bFinalize)
+                AddInvadersRaces(pEpoch);
             DistributeRacesToLandMasses();
             PopulateAreas();
 
@@ -892,12 +904,18 @@ namespace Socium
         {
             foreach (Province pProvince in m_aProvinces)
             {
-                if (!pProvince.Forbidden && !pProvince.m_pRace.m_bDying)
+                if (!pProvince.Forbidden)// && !pProvince.m_pRace.m_bDying)
                 {
                     foreach (Province pLinkedProvince in pProvince.m_aBorderWith)
                     {
-                        if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince && (!pLinkedProvince.m_pRace.m_bDying || pLinkedProvince.m_iTechLevel > pProvince.m_iTechLevel))
+                        if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince)// && (!pLinkedProvince.m_pRace.m_bDying || pLinkedProvince.m_iTechLevel > pProvince.m_iTechLevel))
                         {
+                            float fDiff = pProvince.m_pCulture.GetDifference(pLinkedProvince.m_pCulture)*2;
+                            fDiff += pProvince.m_pCustoms.GetDifference(pLinkedProvince.m_pCustoms);
+
+                            if (fDiff > 1)
+                                continue;
+
                             float fMinLength = float.MaxValue;
                             LocationX pBestTown1 = null;
                             LocationX pBestTown2 = null;
@@ -1185,7 +1203,7 @@ namespace Socium
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
                     if (pLand.m_pRace != pProvince.m_pRace)
-                    { 
+                    {
                         bool bHated = false;
                         foreach (LandTypeInfoX pLTI in pProvince.m_pRace.m_pTemplate.m_aHatedLands)
                             if (pLand.Type == pLTI)
@@ -1205,18 +1223,26 @@ namespace Socium
                             (pLand.Area as AreaX).m_pRace = pProvince.m_pRace;
                         }
                     }
+                    else
+                    {
+                        bool bHated = false;
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pRace.m_pTemplate.m_aHatedLands)
+                            if (pLand.Type == pLTI)
+                                bHated = true;
+
+                        if (bHated && Rnd.OneChanceFrom(2))
+                        {
+                            pLand.m_pRace = null;
+                            (pLand.Area as AreaX).m_pRace = null;
+                        }
+                    }
                 }
             }
 
             List<Race> cEraseRace = new List<Race>();
             foreach (Race pRace in m_aLocalRaces)
             {
-                if (pRace.m_bDying)
-                {
-                    if (Rnd.OneChanceFrom(50))
-                        cEraseRace.Add(pRace);
-                }
-                else
+                if (!pRace.m_bDying)
                 {
                     if (pRace.m_pEpoch != pNewEpoch)
                     {
@@ -1259,7 +1285,7 @@ namespace Socium
                         continue;
 
                     if (cEraseRace.Contains(pArea.m_pRace) ||
-                        (pArea.m_pRace.m_bDying && !Rnd.OneChanceFrom(500 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
+                        (pArea.m_pRace.m_bDying && !Rnd.OneChanceFrom(100 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
                         pArea.m_pRace = null;
 
                     foreach (LandX pLand in pArea.m_cContents)

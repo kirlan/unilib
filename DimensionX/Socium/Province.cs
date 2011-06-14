@@ -700,7 +700,7 @@ namespace Socium
                     m_pCustoms.Degrade();
                 }
 
-            m_iInfrastructureLevel = 4 + (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
+            m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
 
             if (m_cContents.Count == 1)
                 m_iInfrastructureLevel /= 2;

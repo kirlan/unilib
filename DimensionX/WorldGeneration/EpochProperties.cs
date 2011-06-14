@@ -13,22 +13,6 @@ namespace WorldGeneration
 {
     public partial class EpochProperties : UserControl
     {
-        static ProgressPreset[] m_aSocietyPresets = new ProgressPreset[] 
-        { 
-            new ProgressPreset("Historical - antiquity", "An antique world without magic - like Ancient Greece, Rome, Egypt, Assyria, etc.", 0, 1, 0, 0),
-            new ProgressPreset("Historical - medieval", "A medieval world without magic - castles, knights, tournaments, etc.", 0, 2, 0, 0),
-            new ProgressPreset("Historical - renaissance", "A renaissance world without magic - musketeers, geographic exploration, etc.", 1, 3, 0, 0),
-            new ProgressPreset("Historical - modern", "A modern world without magic - railroads, aviation, world wars, etc.", 4, 5, 0, 0),
-            new ProgressPreset("Antique mythology", "A world of antique mythology - just a usual antique world, but with a bit of magic...", 0, 1, 1, 2),
-            new ProgressPreset("Fantasy - low magic", "A medieval world with a bit of magic - like Knights of the Round Table, Lord of the Rings, etc.", 1, 2, 1, 3),
-            new ProgressPreset("Fantasy - high magic", "A medieval world with a lot of magic - like Dragonlance, Wheel of Time, etc.", 1, 2, 2, 4),
-            new ProgressPreset("Technomagic", "A renaissance world with a lot of magic - like Arcanum, Final Fantasy, etc.", 1, 3, 2, 4),
-            new ProgressPreset("Superheroes", "A modern world with a bit of magic (aka supernatural abilities) - like Superman, Fantastic Four, Spiderman, etc.", 4, 5, 1, 3),
-            //new SocietyPreset("Urban fantasy", "A modern world with a lot of magic - vampires, werewolfs, voodoo, secret societies, etc.", 4, 5, 2, 4),
-            new ProgressPreset("Cyberpunk", "Nearest future world without magic - advanced technologies, mega-corporations, industrial espionage, etc.", 4, 6, 0, 0),
-            new ProgressPreset("Space opera", "Far future world with a bit of magic (aka psi-abilities) - like Star Wars, Star Trek, etc.", 6, 7, 1, 3),
-        }; 
-        
         private EpochWrapper m_pEpoch = null;
 
         public EpochWrapper Epoch
@@ -99,13 +83,13 @@ namespace WorldGeneration
             MaxMagicBox.SelectedIndex = 8;
 
             NativesSocialPreset.Items.Clear();
-            NativesSocialPreset.Items.AddRange(m_aSocietyPresets);
+            NativesSocialPreset.Items.AddRange(ProgressPreset.s_aSocietyPresets);
             NativesSocialPreset.Items.Add("Custom");
             if (NativesSocialPreset.Items.Count > 0)
                 NativesSocialPreset.SelectedIndex = 0;
 
             InvadersSocialPreset.Items.Clear();
-            InvadersSocialPreset.Items.AddRange(m_aSocietyPresets);
+            InvadersSocialPreset.Items.AddRange(ProgressPreset.s_aSocietyPresets);
             InvadersSocialPreset.Items.Add("Custom");
             if (InvadersSocialPreset.Items.Count > 0)
                 InvadersSocialPreset.SelectedIndex = 0;
