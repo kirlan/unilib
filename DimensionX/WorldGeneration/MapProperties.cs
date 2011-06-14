@@ -10,7 +10,7 @@ using LandscapeGeneration;
 using Socium;
 using Random;
 
-namespace VQMapTest2
+namespace WorldGeneration
 {
     public partial class MapProperties : UserControl
     {
@@ -39,6 +39,11 @@ namespace VQMapTest2
             set 
             {
                 m_cLocationsGrid = value;
+
+                Enabled = m_cLocationsGrid != null;
+
+                if (m_cLocationsGrid == null)
+                    return;
 
                 if (MapPresets.Items.Contains(m_aWorldMaps[0]) != m_cLocationsGrid.m_bCycled)
                 {
@@ -74,19 +79,19 @@ namespace VQMapTest2
         {
             InitializeComponent();
 
-            PresetsPanel.Enabled = false;
             PresetsPanel.Top = 0;
             PresetsPanel.Left = 0;
             PresetsPanel.Width = ClientRectangle.Width;
             PresetsPanel.Height = ClientRectangle.Height;
             PresetsPanel.Visible = true;
 
-            AdvancedPanel.Enabled = false;
             AdvancedPanel.Top = 0;
             AdvancedPanel.Left = 0;
             AdvancedPanel.Width = ClientRectangle.Width;
             AdvancedPanel.Height = ClientRectangle.Height;
             AdvancedPanel.Visible = false;
+
+            Enabled = false;
         }
 
         private void CalculateLimits(int iLocationsCount)
@@ -206,7 +211,7 @@ namespace VQMapTest2
             PoleBar.Value = pPreset.m_iPoleDistance;
 
             //считаем количество государств на отображаемом участке карты из рассчёта что на полной карте имеем 60 государств (т.е. на четвертинке карты, такой как средиземье или хайбория, будет 15 государств...)
-            StatesCountBar.Value = Math.Min(StatesCountBar.Maximum, Math.Min(StatesCountBar.Minimum, 1500 / (PoleBar.Value * PoleBar.Value)));
+            StatesCountBar.Value = Math.Min(StatesCountBar.Maximum, Math.Max(StatesCountBar.Minimum, 150000 / (PoleBar.Value * PoleBar.Value)));
         }
 
         public int LandsCount

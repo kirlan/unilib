@@ -1,4 +1,4 @@
-﻿namespace VQMapTest2
+﻿namespace WorldGeneration
 {
     partial class MapProperties
     {
@@ -87,6 +87,7 @@
             this.PresetsPanel.Controls.Add(this.MapPresets);
             this.PresetsPanel.Location = new System.Drawing.Point(47, 47);
             this.PresetsPanel.Name = "PresetsPanel";
+            this.PresetsPanel.Padding = new System.Windows.Forms.Padding(11, 5, 5, 5);
             this.PresetsPanel.Size = new System.Drawing.Size(200, 100);
             this.PresetsPanel.TabIndex = 0;
             this.PresetsPanel.Resize += new System.EventHandler(this.PresetsPanel_Resize);
@@ -95,10 +96,10 @@
             // 
             this.MapPresetDescription.AutoEllipsis = true;
             this.MapPresetDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MapPresetDescription.Location = new System.Drawing.Point(110, 0);
+            this.MapPresetDescription.Location = new System.Drawing.Point(121, 5);
             this.MapPresetDescription.Name = "MapPresetDescription";
             this.MapPresetDescription.Padding = new System.Windows.Forms.Padding(5);
-            this.MapPresetDescription.Size = new System.Drawing.Size(90, 100);
+            this.MapPresetDescription.Size = new System.Drawing.Size(74, 90);
             this.MapPresetDescription.TabIndex = 10;
             this.MapPresetDescription.Text = "label1";
             // 
@@ -113,10 +114,10 @@
             "Continents",
             "Gondwana",
             "Archipelago"});
-            this.MapPresets.Location = new System.Drawing.Point(0, 0);
+            this.MapPresets.Location = new System.Drawing.Point(11, 5);
             this.MapPresets.Name = "MapPresets";
             this.MapPresets.ScrollAlwaysVisible = true;
-            this.MapPresets.Size = new System.Drawing.Size(110, 100);
+            this.MapPresets.Size = new System.Drawing.Size(110, 90);
             this.MapPresets.TabIndex = 11;
             this.MapPresets.SelectedIndexChanged += new System.EventHandler(this.MapPresets_SelectedIndexChanged);
             // 

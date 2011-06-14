@@ -93,6 +93,9 @@ namespace PresentationControls
                 if (Item.Checked)
                     ListText += string.IsNullOrEmpty(ListText) ? Item.Text : String.Format("{1}{0}", Item.Text, m_sDelimeter);
             }
+
+            if (ListText.Length == 0)
+                ListText = EmptyString;
             return ListText;
         }
 
@@ -100,6 +103,7 @@ namespace PresentationControls
 
         #region PUBLIC PROPERTIES
         private string m_sDelimeter = ", ";
+        private string m_sEmptyString = "none";
 
         private bool m_bCanBeEmpty = true;
 
@@ -111,10 +115,24 @@ namespace PresentationControls
         }
 
         [Browsable(true)]
+        public string EmptyString
+        {
+            get { return m_sEmptyString; }
+            set
+            {
+                if (m_sEmptyString != value)
+                {
+                    m_sEmptyString = value;
+                    //OnCheckBoxCheckedChanged(this, new EventArgs());
+                }
+            }
+        }
+
+        [Browsable(true)]
         public string Delimeter
         {
             get { return m_sDelimeter; }
-            set 
+            set
             {
                 if (m_sDelimeter != value)
                 {

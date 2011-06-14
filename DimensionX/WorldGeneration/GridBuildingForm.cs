@@ -10,7 +10,7 @@ using LandscapeGeneration;
 using System.IO;
 using Socium;
 
-namespace VQMapTest2
+namespace WorldGeneration
 {
     public partial class GridBuildingForm : Form
     {

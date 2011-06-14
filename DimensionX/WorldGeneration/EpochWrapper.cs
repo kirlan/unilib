@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Socium;
 
-namespace VQMapTest2
+namespace WorldGeneration
 {
     public class EpochWrapper
     {
@@ -30,77 +30,84 @@ namespace VQMapTest2
             set { m_pEpoch.m_iLength = value; }
         }
 
-        private SocietyPreset m_pNativesPreset = null;
+        private ProgressPreset m_pNativesPreset = null;
 
-        internal SocietyPreset NativesPreset
+        internal ProgressPreset NativesPreset
         {
             get { return m_pNativesPreset; }
             set
             {
                 m_pNativesPreset = value;
 
-                m_pEpoch.m_iMinTechLevel = m_pNativesPreset.m_iMinTechLevel;
-                m_pEpoch.m_iMaxTechLevel = m_pNativesPreset.m_iMaxTechLevel;
-                m_pEpoch.m_iMinMagicLevel = m_pNativesPreset.m_iMinMagicLevel;
-                m_pEpoch.m_iMaxMagicLevel = m_pNativesPreset.m_iMaxMagicLevel;
+                if (m_pNativesPreset != null)
+                {
+                    m_pEpoch.m_iNativesMinTechLevel = m_pNativesPreset.m_iMinTechLevel;
+                    m_pEpoch.m_iNativesMaxTechLevel = m_pNativesPreset.m_iMaxTechLevel;
+                    m_pEpoch.m_iNativesMinMagicLevel = m_pNativesPreset.m_iMinMagicLevel;
+                    m_pEpoch.m_iNativesMaxMagicLevel = m_pNativesPreset.m_iMaxMagicLevel;
+                }
             }
         }
 
-        public int MinTechLevel
+        public int NativesMinTechLevel
         {
+            get { return m_pEpoch.m_iNativesMinTechLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iMinTechLevel = value;
+                    m_pEpoch.m_iNativesMinTechLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMinTechLevel)
                     {
-                        m_pEpoch.m_iMinTechLevel = value;
+                        m_pEpoch.m_iNativesMinTechLevel = value;
                         m_pNativesPreset = null;
                     }
             }
         }
 
-        public int MaxTechLevel
+        public int NativesMaxTechLevel
         {
+            get { return m_pEpoch.m_iNativesMaxTechLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iMaxTechLevel = value;
+                    m_pEpoch.m_iNativesMaxTechLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMaxTechLevel)
                     {
-                        m_pEpoch.m_iMaxTechLevel = value;
+                        m_pEpoch.m_iNativesMaxTechLevel = value;
                         m_pNativesPreset = null;
                     }
             }
         }
 
-        public int MinMagicLevel
+        public int NativesMinMagicLevel
         {
+            get { return m_pEpoch.m_iNativesMinMagicLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iMinMagicLevel = value;
+                    m_pEpoch.m_iNativesMinMagicLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMinMagicLevel)
                     {
-                        m_pEpoch.m_iMinMagicLevel = value;
+                        m_pEpoch.m_iNativesMinMagicLevel = value;
                         m_pNativesPreset = null;
                     }
             }
         }
 
-        public int MaxMagicLevel
+        public int NativesMaxMagicLevel
         {
+            get { return m_pEpoch.m_iNativesMaxMagicLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iMaxMagicLevel = value;
+                    m_pEpoch.m_iNativesMaxMagicLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMaxMagicLevel)
                     {
-                        m_pEpoch.m_iMaxMagicLevel = value;
+                        m_pEpoch.m_iNativesMaxMagicLevel = value;
                         m_pNativesPreset = null;
                     }
             }
@@ -113,28 +120,32 @@ namespace VQMapTest2
                 if (m_pNativesPreset != null)
                     return m_pNativesPreset.m_sName;
                 else
-                    return string.Format("T[{0}-{1}]M[{2}-{3}]", m_pEpoch.m_iMinTechLevel, m_pEpoch.m_iMaxTechLevel, m_pEpoch.m_iMinMagicLevel, m_pEpoch.m_iMaxMagicLevel);
+                    return string.Format("Custom (T[{0}-{1}]M[{2}-{3}])", m_pEpoch.m_iNativesMinTechLevel, m_pEpoch.m_iNativesMaxTechLevel, m_pEpoch.m_iNativesMinMagicLevel, m_pEpoch.m_iNativesMaxMagicLevel);
             }
         }
 
-        private SocietyPreset m_pInvadersPreset = null;
+        private ProgressPreset m_pInvadersPreset = null;
 
-        internal SocietyPreset InvadersPreset
+        internal ProgressPreset InvadersPreset
         {
             get { return m_pInvadersPreset; }
             set
             {
                 m_pInvadersPreset = value;
 
-                m_pEpoch.m_iInvadersMinTechLevel = m_pInvadersPreset.m_iMinTechLevel;
-                m_pEpoch.m_iInvadersMaxTechLevel = m_pInvadersPreset.m_iMaxTechLevel;
-                m_pEpoch.m_iInvadersMinMagicLevel = m_pInvadersPreset.m_iMinMagicLevel;
-                m_pEpoch.m_iInvadersMaxMagicLevel = m_pInvadersPreset.m_iMaxMagicLevel;
+                if (m_pInvadersPreset != null)
+                {
+                    m_pEpoch.m_iInvadersMinTechLevel = m_pInvadersPreset.m_iMinTechLevel;
+                    m_pEpoch.m_iInvadersMaxTechLevel = m_pInvadersPreset.m_iMaxTechLevel;
+                    m_pEpoch.m_iInvadersMinMagicLevel = m_pInvadersPreset.m_iMinMagicLevel;
+                    m_pEpoch.m_iInvadersMaxMagicLevel = m_pInvadersPreset.m_iMaxMagicLevel;
+                }
             }
         }
 
         public int InvadersMinTechLevel
         {
+            get { return m_pEpoch.m_iInvadersMinTechLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
@@ -150,6 +161,7 @@ namespace VQMapTest2
 
         public int InvadersMaxTechLevel
         {
+            get { return m_pEpoch.m_iInvadersMaxTechLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
@@ -165,6 +177,7 @@ namespace VQMapTest2
 
         public int InvadersMinMagicLevel
         {
+            get { return m_pEpoch.m_iInvadersMinMagicLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
@@ -180,6 +193,7 @@ namespace VQMapTest2
 
         public int InvadersMaxMagicLevel
         {
+            get { return m_pEpoch.m_iInvadersMaxMagicLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
@@ -193,19 +207,19 @@ namespace VQMapTest2
             }
         }
 
-        private RacesSet[] m_aRacesSets = { };
+        private RacesSet[] m_aNativesRacesSets = { };
 
         public RacesSet[] NativesRacesSets
         {
-            get { return m_aRacesSets; }
+            get { return m_aNativesRacesSets; }
             set
             {
-                m_aRacesSets = value;
+                m_aNativesRacesSets = value;
                 List<RaceTemplate> cRaces = new List<RaceTemplate>();
                 foreach (RaceTemplate pTemplate in Race.m_cTemplates)
                 {
                     bool bPresent = false;
-                    foreach (RacesSet pSet in m_aRacesSets)
+                    foreach (RacesSet pSet in m_aNativesRacesSets)
                     {
                         foreach (string sName in pSet.m_aRaces)
                             if (pTemplate.m_sName == sName)
@@ -222,20 +236,57 @@ namespace VQMapTest2
                         cRaces.Add(pTemplate);
                 }
 
-                m_pEpoch.m_cRaceTemplates.Clear();
-                m_pEpoch.m_cRaceTemplates.AddRange(cRaces);
+                m_pEpoch.m_cNativesRaceTemplates.Clear();
+                m_pEpoch.m_cNativesRaceTemplates.AddRange(cRaces);
             }
         }
 
         public List<RaceTemplate> NativesRaces
         {
-            get { return new List<RaceTemplate>(m_pEpoch.m_cRaceTemplates); }
+            get { return new List<RaceTemplate>(m_pEpoch.m_cNativesRaceTemplates); }
             set
             {
-                m_aRacesSets = new RacesSet[] { };
-                m_pEpoch.m_cRaceTemplates.Clear();
-                m_pEpoch.m_cRaceTemplates.AddRange(value);
+                m_aNativesRacesSets = new RacesSet[] { };
+                m_pEpoch.m_cNativesRaceTemplates.Clear();
+                m_pEpoch.m_cNativesRaceTemplates.AddRange(value);
             }
+        }
+
+        public string NativesRacesString
+        {
+            get 
+            {
+                string sResult = "";
+
+                if (m_aNativesRacesSets.Length > 0)
+                {
+                    foreach (RacesSet pSet in m_aNativesRacesSets)
+                    {
+                        if (sResult.Length > 0)
+                            sResult += ", ";
+
+                        sResult += pSet.m_sName;
+                    }
+                }
+                else
+                {
+                    foreach (RaceTemplate pTemplate in m_pEpoch.m_cNativesRaceTemplates)
+                    {
+                        if (sResult.Length > 0)
+                            sResult += ", ";
+
+                        sResult += pTemplate.m_sName;
+                    }
+                }
+
+                return sResult;
+            }
+        }
+
+        public int NativesCount
+        {
+            get { return m_pEpoch.m_iNativesCount; }
+            set { m_pEpoch.m_iNativesCount = value; }
         }
 
         private RacesSet[] m_aInvadersRacesSets = { };
@@ -281,6 +332,43 @@ namespace VQMapTest2
                 m_pEpoch.m_cInvadersRaceTemplates.Clear();
                 m_pEpoch.m_cInvadersRaceTemplates.AddRange(value);
             }
+        }
+
+        public string InvadersRacesString
+        {
+            get
+            {
+                string sResult = "";
+
+                if (m_aInvadersRacesSets.Length > 0)
+                {
+                    foreach (RacesSet pSet in m_aInvadersRacesSets)
+                    {
+                        if (sResult.Length > 0)
+                            sResult += ", ";
+
+                        sResult += pSet.m_sName;
+                    }
+                }
+                else
+                {
+                    foreach (RaceTemplate pTemplate in m_pEpoch.m_cInvadersRaceTemplates)
+                    {
+                        if (sResult.Length > 0)
+                            sResult += ", ";
+
+                        sResult += pTemplate.m_sName;
+                    }
+                }
+
+                return sResult;
+            }
+        }
+        
+        public int InvadersCount
+        {
+            get { return m_pEpoch.m_iInvadersCount; }
+            set { m_pEpoch.m_iInvadersCount = value; }
         }
     }
 }

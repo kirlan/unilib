@@ -65,8 +65,8 @@ namespace Socium
             //    m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
             //}
 
-            m_iTechLevel = Math.Min(pEpoch.m_iMaxTechLevel, pEpoch.m_iMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-            m_iMagicLimit = Math.Min(pEpoch.m_iMaxMagicLevel, pEpoch.m_iMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
+            m_iTechLevel = Math.Min(pEpoch.m_iNativesMaxTechLevel, pEpoch.m_iNativesMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
+            m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
         }
 
         private void AddRaces(int iDiversity, Epoch pEpoch)
@@ -89,7 +89,7 @@ namespace Socium
             Dictionary<RaceTemplate, float> cRaceChances = new Dictionary<RaceTemplate, float>();
             foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
             {
-                if (!pEpoch.m_cRaceTemplates.Contains(pRaceTemplate))
+                if (!pEpoch.m_cNativesRaceTemplates.Contains(pRaceTemplate))
                     continue;
 
                 bool bAlreadyHave = false;
@@ -397,18 +397,16 @@ namespace Socium
                      int iOcean, 
                      int iEquator, 
                      int iPole, 
-                     int iRacesCount,
                      Epoch[] aEpoches)
             : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole)
         {
-            Create(iProvinces, iStates, iRacesCount, aEpoches);
+            Create(iProvinces, iStates, aEpoches);
         }
 
         Epoch[] m_aEpoches;
 
         private void Create(int iProvinces, 
                             int iStates, 
-                            int iRacesCount,
                             Epoch[] aEpoches)
         {
             Language.ResetUsedLists();
@@ -425,11 +423,11 @@ namespace Socium
 
                 for (int i = 0; i < pEpoch.m_iLength - 1; i++)
                 {
-                    PopulateWorld(iRacesCount, pEpoch, false);
+                    PopulateWorld(pEpoch.m_iNativesCount, pEpoch, false);
                     Reset(pEpoch);
                 }
 
-                PopulateWorld(iRacesCount, pEpoch, true);
+                PopulateWorld(pEpoch.m_iNativesCount, pEpoch, true);
             }
         }
 
@@ -1140,6 +1138,9 @@ namespace Socium
 
         public void Reset(Epoch pNewEpoch)
         {
+            if (m_aLocalRaces == null || m_aLocalRaces.Length == 0)
+                return;
+
             //Ассимилируем коренное население
             foreach (Province pProvince in m_aProvinces)
             {
@@ -1174,18 +1175,21 @@ namespace Socium
             {
                 if (pRace.m_bDying)
                 {
-                    if (Rnd.OneChanceFrom(3))
+                    if (Rnd.OneChanceFrom(50))
                         cEraseRace.Add(pRace);
                 }
                 else
                 {
-                    if (!pNewEpoch.m_cRaceTemplates.Contains(pRace.m_pTemplate) || !Rnd.OneChanceFrom(5))
+                    if (pRace.m_pEpoch != pNewEpoch)
                     {
                         pRace.m_bDying = true;
                         pRace.m_bHegemon = false;
                     }
                     else
-                        pRace.m_bHegemon = Rnd.OneChanceFrom(m_aLocalRaces.Length);
+                        if (Rnd.OneChanceFrom(3))
+                            cEraseRace.Add(pRace);
+                        else
+                            pRace.m_bHegemon = Rnd.OneChanceFrom(m_aLocalRaces.Length);
                 }
             }
 
@@ -1217,7 +1221,7 @@ namespace Socium
                         continue;
 
                     if (cEraseRace.Contains(pArea.m_pRace) ||
-                        (pArea.m_pRace.m_bDying && !Rnd.OneChanceFrom(1000 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
+                        (pArea.m_pRace.m_bDying && !Rnd.OneChanceFrom(500 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
                         pArea.m_pRace = null;
 
                     foreach (LandX pLand in pArea.m_cContents)

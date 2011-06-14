@@ -92,6 +92,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VQMapTest2", "DimensionX\VQ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapDrawEngine", "DimensionX\MapDrawEngine\MapDrawEngine.csproj", "{D4EC0262-98BF-46D0-B90C-FAFAC13DED50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldGeneration", "DimensionX\WorldGeneration\WorldGeneration.csproj", "{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -328,7 +330,6 @@ Global
 		{22301DBC-8D98-46CF-8B67-11588ED22068}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{22301DBC-8D98-46CF-8B67-11588ED22068}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22301DBC-8D98-46CF-8B67-11588ED22068}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{22301DBC-8D98-46CF-8B67-11588ED22068}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{22301DBC-8D98-46CF-8B67-11588ED22068}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{22301DBC-8D98-46CF-8B67-11588ED22068}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22301DBC-8D98-46CF-8B67-11588ED22068}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -457,6 +458,16 @@ Global
 		{D4EC0262-98BF-46D0-B90C-FAFAC13DED50}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D4EC0262-98BF-46D0-B90C-FAFAC13DED50}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D4EC0262-98BF-46D0-B90C-FAFAC13DED50}.Release|x86.ActiveCfg = Release|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -470,5 +481,6 @@ Global
 		{358A8F33-4C83-42EC-B661-AC20467178C5} = {BCC138E5-DC84-48D9-BB60-071292ED0956}
 		{C3C6054B-7C5B-48C5-BA79-21688369B735} = {BCC138E5-DC84-48D9-BB60-071292ED0956}
 		{D4EC0262-98BF-46D0-B90C-FAFAC13DED50} = {BCC138E5-DC84-48D9-BB60-071292ED0956}
+		{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37} = {BCC138E5-DC84-48D9-BB60-071292ED0956}
 	EndGlobalSection
 EndGlobal
