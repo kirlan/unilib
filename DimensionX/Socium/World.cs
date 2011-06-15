@@ -910,10 +910,8 @@ namespace Socium
                     {
                         if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince)// && (!pLinkedProvince.m_pRace.m_bDying || pLinkedProvince.m_iTechLevel > pProvince.m_iTechLevel))
                         {
-                            float fDiff = pProvince.m_pCulture.GetDifference(pLinkedProvince.m_pCulture)*2;
-                            fDiff += pProvince.m_pCustoms.GetDifference(pLinkedProvince.m_pCustoms);
-
-                            if (fDiff > 1)
+                            int iHostility = pProvince.CalcHostility(pLinkedProvince);
+                            if (iHostility > 2)
                                 continue;
 
                             float fMinLength = float.MaxValue;
