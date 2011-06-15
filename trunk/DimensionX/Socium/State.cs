@@ -292,26 +292,16 @@ namespace Socium
                     if (fWholeLength < 0.15f)
                         continue;
 
-                    float fCultureDifference = m_pMethropoly.m_pCulture.GetDifference(pProvince.m_pCulture) * 5;
-
-                    string sPosReasons = "";
-                    string sNegReasons = "";
-                    int iCustomsDifference = m_pMethropoly.m_pCustoms.GetDifference(pProvince.m_pCustoms, ref sPosReasons, ref sNegReasons);
-
-                    int iHostility = (int)(fCultureDifference + iCustomsDifference);
-
-                    if (m_pMethropoly.m_pRace != pProvince.m_pRace)
-                        iHostility++;
-                        //fWholeLength /= 2;
-
                     if (m_pMethropoly.m_pRace.m_pTemplate.m_pLanguage != pProvince.m_pRace.m_pTemplate.m_pLanguage)
                         //iRelation--;
                         continue;
                         //fWholeLength /= 2;
-                    
+
+                    int iHostility = m_pMethropoly.CalcHostility(pProvince);
+
                     //положительное отношение
                     if (iHostility < -1)
-                        fWholeLength *= iHostility;
+                        fWholeLength *= -iHostility;
 
                     //отрицательное отношение
                     if (iHostility > 0)
@@ -827,7 +817,7 @@ namespace Socium
                 sPositiveReasons += " (+2) Very close culture\n";
             }
             else
-                if (iCultureDifference < 0.5)
+                if (iCultureDifference < -0.5)
                 {
                     iHostility--;
                     sPositiveReasons += " (+1) Close culture\n";

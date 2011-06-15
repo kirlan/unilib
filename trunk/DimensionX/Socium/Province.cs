@@ -836,5 +836,77 @@ namespace Socium
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Негативное отношение к другому государству.
+        /// </summary>
+        /// <param name="pOpponent"></param>
+        /// <returns></returns>
+        public int CalcHostility(Province pOpponent)
+        {
+            int iHostility = 0;
+
+            if (m_pRace != pOpponent.m_pRace)
+            {
+                iHostility++;
+
+                if (m_pRace.m_pTemplate.m_pLanguage != pOpponent.m_pRace.m_pTemplate.m_pLanguage)
+                    iHostility++;
+            }
+            else
+                iHostility--;
+
+            iHostility += m_pCustoms.GetDifference(pOpponent.m_pCustoms);
+
+            //if (m_iFood < m_iPopulation && pOpponent.m_iFood > pOpponent.m_iPopulation * 2)
+            //    iHostility++;
+            //if (m_iWood < m_iPopulation && pOpponent.m_iWood > pOpponent.m_iPopulation * 2)
+            //    iHostility++;
+            //if (m_iOre < m_iPopulation && pOpponent.m_iOre > pOpponent.m_iPopulation * 2)
+            //    iHostility++;
+
+            if (pOpponent.m_iInfrastructureLevel > m_iInfrastructureLevel)
+                iHostility++;//= pOpponent.m_iLifeLevel - m_iLifeLevel;
+            else
+                if (pOpponent.m_iInfrastructureLevel < m_iInfrastructureLevel)
+                    iHostility++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
+
+            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture);
+            if (iCultureDifference < -0.75)
+                iHostility -= 2;
+            else
+                if (iCultureDifference < -0.5)
+                    iHostility--;
+                else
+                    if (iCultureDifference > 0.5)
+                        iHostility += 2;
+                    else
+                        if (iCultureDifference > 0)
+                            iHostility++;
+
+            if (iHostility > 0)
+            {
+                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism] * iHostility + 0.25);
+
+                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression] * iHostility + 0.25);
+
+                if (iHostility == 0)
+                    iHostility = 1;
+            }
+            else
+            {
+                if (iHostility < 0)
+                {
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism]) * iHostility - 0.25);
+
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression]) * iHostility - 0.25);
+
+                    if (iHostility == 0)
+                        iHostility = -1;
+                }
+            }
+
+            return iHostility;
+        }
     }
 }
