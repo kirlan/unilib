@@ -15,6 +15,9 @@ namespace Socium
 
         public BuildingStandAlone m_pBuilding = null;
 
+        /// <summary>
+        /// Список дорог по типам. Ключи: 1 - просёлок, 2- обычная, 3 - трасса
+        /// </summary>
         public Dictionary<int, List<Road>> m_cRoads = new Dictionary<int,List<Road>>();
 
         public Dictionary<LocationX, Road> m_cHaveRoadTo = new Dictionary<LocationX,Road>();
