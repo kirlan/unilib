@@ -11,6 +11,11 @@ namespace Socium
 {
     public class Province : BorderBuilder<LandX>, ITerritory
     {
+        /// <summary>
+        /// ТОЛКО ДЛЯ ОТЛАДКИ!!!!
+        /// </summary>
+        public Dictionary<Province, string> m_cConnectionString = new Dictionary<Province,string>();
+
         public string m_sName;
 
         private bool m_bForbidden = false;

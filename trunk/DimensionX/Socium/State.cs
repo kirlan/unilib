@@ -251,16 +251,19 @@ namespace Socium
         }
 
         /// <summary>
-        /// Присоединяет к стране сопредельную нечейную провинцию.
-        /// Чем длиннее общая граница с землёй - тем выше вероятность того, что выбрана будет именно она.
+        /// Присоединяет к стране сопредельную ничейную провинцию.
+        /// Чем большая часть периметра ничейной провинции является общей с государством - тем выше вероятность того, что выбрана будет именно она.
+        /// Так же на вероятность влияют взаимоотношения населяющих провинции народов и общность языка.
+        /// Возвращает false, если больше расти некуда, иначе true.
         /// </summary>
         /// <returns></returns>
         public bool Grow(int iMaxStateSize)
         {
+            //если государство уже достаточно большое - сваливаем.
             if (m_cContents.Count > iMaxStateSize)
                 return false;
 
-            Dictionary<Province, float> cBorderLength = new Dictionary<Province, float>();
+            Dictionary<Province, float> cChances = new Dictionary<Province, float>();
 
             foreach (ITerritory pTerr in m_cBorder.Keys)
             {
@@ -271,12 +274,29 @@ namespace Socium
 
                 if (pProvince != null && pProvince.Owner == null && !pProvince.m_pCenter.IsWater)
                 {
-                    float fWholeLength = 0;
+                    int iHostility = m_pMethropoly.CalcHostility(pProvince);
+
+                    //враждебное отношение - такую провинция не присоединяем ни при каких условиях.
+                    if (iHostility > 0)
+                        continue;
+
+                    //bool bHaveRoad = false;
+                    //foreach (var pLinkedProvince in pProvince.m_cConnectionString)
+                    //    if (pLinkedProvince.Value == "ok")
+                    //    {
+                    //        bHaveRoad = true;
+                    //        break;
+                    //    }
+
+                    //if(!bHaveRoad)
+                    //    iHostility = m_pMethropoly.CalcHostility(pProvince);
+
+                    float fSharedPerimeter = 0;
                     foreach (Line pLine in m_cBorder[pProvince])
-                        fWholeLength += pLine.m_fLength;
+                        fSharedPerimeter += pLine.m_fLength;
 
                     //граница этой земли с окружающими землями
-                    float fTotalLength = 0;
+                    float fWholePerimeter = 0;
                     foreach (var pLinkTerr in pProvince.BorderWith)
                     {
                         if ((pLinkTerr.Key as ITerritory).Forbidden)
@@ -284,38 +304,34 @@ namespace Socium
 
                         Line[] cLines = pLinkTerr.Value.ToArray();
                         foreach (Line pLine in cLines)
-                            fTotalLength += pLine.m_fLength;
+                            fWholePerimeter += pLine.m_fLength;
                     }
 
-                    fWholeLength /= fTotalLength;
+                    fSharedPerimeter /= fWholePerimeter;
 
-                    if (fWholeLength < 0.15f)
+                    if (fSharedPerimeter < 0.15f)
                         continue;
 
                     if (m_pMethropoly.m_pRace.m_pTemplate.m_pLanguage != pProvince.m_pRace.m_pTemplate.m_pLanguage)
-                        //iRelation--;
                         continue;
                         //fWholeLength /= 2;
 
-                    int iHostility = m_pMethropoly.CalcHostility(pProvince);
-
-                    //положительное отношение
+                    //дружественное отношение - для этой провинции шансы выше.
                     if (iHostility < -1)
-                        fWholeLength *= -iHostility;
+                        fSharedPerimeter *= -iHostility;
 
-                    //отрицательное отношение
-                    if (iHostility > 0)
-                        continue;
-                        //fWholeLength /= iCustomsDifference - fCultureDifference;
-
-                    cBorderLength[pProvince] = fWholeLength;
+                    cChances[pProvince] = fSharedPerimeter;
                 }
             }
 
             Province pAddon = null;
 
-            int iChoice = Rnd.ChooseOne(cBorderLength.Values, 2);
-            foreach (Province pProvince in cBorderLength.Keys)
+            int iChoice = Rnd.ChooseOne(cChances.Values, 2);
+
+            if (iChoice < 0)
+                return false;
+
+            foreach (Province pProvince in cChances.Keys)
             {
                 iChoice--;
                 if (iChoice < 0)
@@ -930,31 +946,56 @@ namespace Socium
                 {
                     float fTreat = 0;
                     float fBorder = 0;
-                    foreach (var pTerr in pLand.BorderWith)
+
+                    int iMaxHostility = 0;
+                    State pMainEnemy = null;
+
+                    foreach (var pLinkedTerr in pLand.BorderWith)
                     {
-                        if((pTerr.Key as ITerritory).Forbidden)
+                        if((pLinkedTerr.Key as ITerritory).Forbidden)
                             continue;
 
-                        LandX pLink = pTerr.Key as LandX;
-                        Line[] cLines = pTerr.Value.ToArray();
+                        LandX pLinkedLand = pLinkedTerr.Key as LandX;
+
+                        if (pLinkedLand.m_pProvince != null && pLinkedLand.m_pProvince.Owner == this)
+                            continue;
+
+                        int iHostility = 0;
+                        if (pLinkedLand.m_pProvince != null)
+                        {
+                            State pLinkedState = pLinkedLand.m_pProvince.Owner as State;
+
+                            Dictionary<State, int> cLinkedStateHostility;
+                            if (!cHostility.TryGetValue(pLinkedState, out cLinkedStateHostility))
+                            {
+                                cLinkedStateHostility = new Dictionary<State, int>();
+                                cHostility[pLinkedState] = cLinkedStateHostility;
+                            }
+
+                            if (!cLinkedStateHostility.TryGetValue(this, out iHostility))
+                            {
+                                iHostility = pLinkedState.CalcHostility(this);
+                                cLinkedStateHostility[this] = iHostility;
+                            }
+
+                            if (iHostility <= 0)
+                                continue;
+
+                            if (iHostility > iMaxHostility)
+                            {
+                                iMaxHostility = iHostility;
+                                pMainEnemy = pLinkedState;
+                            }
+                        }
+
+                        Line[] cLines = pLinkedTerr.Value.ToArray();
                         foreach (Line pLine in cLines)
                         {
-                            fBorder += pLine.m_fLength / pLink.MovementCost;
-                            if (pLink.m_pProvince == null)
-                                fTreat += pLine.m_fLength / pLink.MovementCost;
+                            fBorder += pLine.m_fLength / pLinkedLand.MovementCost;
+                            if (pLinkedLand.m_pProvince == null)
+                                fTreat += pLine.m_fLength / pLinkedLand.MovementCost;
                             else
-                            {
-                                if (!cHostility.ContainsKey(pLink.m_pProvince.Owner as State))
-                                    cHostility[pLink.m_pProvince.Owner as State] = new Dictionary<State, int>();
-
-                                if(!cHostility[pLink.m_pProvince.Owner as State].ContainsKey(this))
-                                    cHostility[pLink.m_pProvince.Owner as State][this] = (pLink.m_pProvince.Owner as State).CalcHostility(this);
-
-                                int iHostility = cHostility[pLink.m_pProvince.Owner as State][this];
-
-                                if (pLink.m_pProvince.Owner != this && iHostility > 0)
-                                    fTreat += pLine.m_fLength * (float)Math.Sqrt(iHostility) / pLink.MovementCost;
-                            }
+                                fTreat += pLine.m_fLength * (float)Math.Sqrt(iHostility) / pLinkedLand.MovementCost;
                         }
                     }
 
@@ -964,7 +1005,7 @@ namespace Socium
                     if (Rnd.ChooseOne(fTreat, fBorder - fTreat))
                         //if (m_iSize > 1 || Rnd.OneChanceFrom(2))
                         {
-                            LocationX pFort = pLand.BuildFort(bFast);
+                            LocationX pFort = pLand.BuildFort(pMainEnemy, bFast);
                             if (pFort != null)
                             {
                                 pLand.m_pProvince.m_cSettlements.Add(pFort);
@@ -1092,6 +1133,168 @@ namespace Socium
         public override float GetMovementCost()
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Достраиваем необходимые дороги между центрами провинций, так же вкючаем в дорожную сеть форты
+        /// </summary>
+        /// <param name="fCycleShift"></param>
+        internal void FixRoads(float fCycleShift)
+        {
+            int iRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_iMaxGroundRoad;
+
+            if (iRoadLevel == 0)
+                return;
+
+            //Закрываем границы, чтобы нельзя было "срезать" путь по чужой территории
+            foreach (Province pProvince in m_cContents)
+                foreach (LandX pLand in pProvince.m_cContents)
+                    foreach (LocationX pLoc in pLand.m_cContents)
+                        foreach (var pLinked in pLoc.m_cLinks)
+                        {
+                            if (pLinked.Key is LocationX)
+                            {
+                                LandX pLinkedOwner = (pLinked.Key as LocationX).Owner as LandX;
+                                if (pLinkedOwner.m_pProvince == null || pLinkedOwner.m_pProvince.Owner != this || pLinked.Value.m_bSea)
+                                    pLoc.m_cLinks[pLinked.Key].m_bClosed = true;
+                            }
+                            else
+                                pLoc.m_cLinks[pLinked.Key].m_bClosed = true;
+                        }
+
+            //Сначала соеденим все центры провинций
+            List<LocationX> cConnected = new List<LocationX>();
+            cConnected.Add(m_pMethropoly.m_pAdministrativeCenter);
+
+            while (cConnected.Count < m_cContents.Count)
+            {
+                //Road pBestRoad = null;
+                LocationX pBestTown1 = null;
+                LocationX pBestTown2 = null;
+                float fMinLength = float.MaxValue;
+
+                foreach (Province pProvince in m_cContents)
+                {
+                    LocationX pTown = pProvince.m_pAdministrativeCenter;
+
+                    if (cConnected.Contains(pTown))
+                        continue;
+
+                    foreach (LocationX pOtherTown in cConnected)
+                    {
+                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+
+                        if (fDist < fMinLength &&
+                            (fMinLength == float.MaxValue ||
+                             Rnd.OneChanceFrom(2)))
+                        {
+                            fMinLength = fDist;
+                            //pBestRoad = pRoad;
+
+                            pBestTown1 = pTown;
+                            pBestTown2 = pOtherTown;
+                        }
+                    }
+                }
+                if (pBestTown2 != null)
+                {
+                    World.BuildRoad(pBestTown1, pBestTown2, iRoadLevel, fCycleShift);
+
+                    fMinLength = float.MaxValue;
+                    LocationX pBestTown3 = null;
+                    foreach (LocationX pOtherTown in cConnected)
+                    {
+                        float fDist = pBestTown1.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
+
+                        if (pOtherTown != pBestTown2 &&
+                            fDist < fMinLength &&
+                            (fMinLength == float.MaxValue ||
+                             Rnd.OneChanceFrom(2)))
+                        {
+                            fMinLength = fDist;
+                            //pBestRoad = pRoad;
+
+                            pBestTown3 = pOtherTown;
+                        }
+                    }
+
+                    if (pBestTown3 != null)
+                        World.BuildRoad(pBestTown1, pBestTown3, iRoadLevel, fCycleShift);
+
+                    cConnected.Add(pBestTown1);
+                }
+            }
+
+            //теперь займёмся фортами
+            cConnected.Clear();
+            cConnected.Add(m_pMethropoly.m_pAdministrativeCenter);
+
+            List<LocationX> cSettlements = new List<LocationX>();
+            foreach (Province pProvince in m_cContents)
+                cSettlements.AddRange(pProvince.m_cSettlements);
+            LocationX[] aSettlements = cSettlements.ToArray();
+
+            List<LocationX> cForts = new List<LocationX>();
+            foreach (LocationX pTown in aSettlements)
+            {
+                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[2].Count > 0 || pTown.m_cRoads[3].Count > 0))
+                    cConnected.Add(pTown);
+                else
+                    if (pTown.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Fort)
+                        cForts.Add(pTown);
+            }
+            LocationX[] aForts = cForts.ToArray();
+
+            foreach (LocationX pFort in aForts)
+            {
+                LocationX pBestTown = null;
+                float fMinLength = float.MaxValue;
+
+                foreach (LocationX pOtherTown in cConnected)
+                {
+                    float fDist = pFort.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+
+                    if (fDist < fMinLength &&
+                        (fMinLength == float.MaxValue ||
+                            Rnd.OneChanceFrom(2)))
+                    {
+                        fMinLength = fDist;
+                        pBestTown = pOtherTown;
+                    }
+                }
+                if (pBestTown != null)
+                {
+                    World.BuildRoad(pFort, pBestTown, Math.Min(2, iRoadLevel), fCycleShift);
+
+                    fMinLength = float.MaxValue;
+                    LocationX pBestTown2 = null;
+                    foreach (LocationX pOtherTown in cConnected)
+                    {
+                        float fDist = pFort.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
+
+                        if (pOtherTown != pBestTown &&
+                            fDist < fMinLength &&
+                            (fMinLength == float.MaxValue ||
+                             Rnd.OneChanceFrom(2)))
+                        {
+                            fMinLength = fDist;
+                            pBestTown2 = pOtherTown;
+                        }
+                    }
+
+                    if (pBestTown2 != null)
+                        World.BuildRoad(pFort, pBestTown2, Math.Min(2, iRoadLevel), fCycleShift);
+
+                    cConnected.Add(pFort);
+                }
+            }
+
+            //открываем закрытые в начале функции границы
+            foreach (Province pProvince in m_cContents)
+                foreach (LandX pLand in pProvince.m_cContents)
+                    foreach (LocationX pLoc in pLand.m_cContents)
+                        foreach (TransportationNode pLink in pLoc.m_cLinks.Keys)
+                            pLoc.m_cLinks[pLink].m_bClosed = false;
         }
     }
 }

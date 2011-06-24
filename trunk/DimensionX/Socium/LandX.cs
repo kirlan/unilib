@@ -116,7 +116,10 @@ namespace Socium
                         bCoast = true;
                 }
 
-                int iChances = (bBorder ? ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 1) : ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 10));
+                int iRoadsCount = 0;
+                foreach(var pRoads in pLoc.m_cRoads)
+                    iRoadsCount += pRoads.Value.Count;
+                int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : ((bCoast || iRoadsCount > 0) ? 50 : 10));
 
                 if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)
                     iChances = 0;
@@ -148,7 +151,10 @@ namespace Socium
                                 bCoast = true;
                         }
 
-                        int iChances = (bBorder ? ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 1) : ((bCoast || pLoc.m_cRoads.Count > 0) ? 50 : 10));
+                        int iRoadsCount = 0;
+                        foreach (var pRoads in pLoc.m_cRoads)
+                            iRoadsCount += pRoads.Value.Count;
+                        int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : ((bCoast || iRoadsCount > 0) ? 50 : 10));
 
                         if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)
                             iChances = 1;
@@ -221,31 +227,40 @@ namespace Socium
             return string.Format("{0} {1} ({2}, {3}) (H:{4}%)", m_sName, Type.m_sName, m_cContents.Count, sRace, Humidity);
         }
 
-        internal LocationX BuildFort(bool bFast)
+        internal LocationX BuildFort(State pEnemy, bool bFast)
         {
-            //Теперь в этой земле выберем локацию, желательно на границе с другой землёй или на побережье.
+            //сначала составим список претендентов из числа незанятых локаций, лежащих непосредственно на границе с супостатом (или на берегу, если супостат не определён).
             List<int> cChances = new List<int>();
             bool bNoChances = true;
             foreach (LocationX pLoc in m_cContents)
             {
-                //bool bCoast = false;
+                bool bCoast = false;
                 bool bBorder = false;
                 foreach (Location pLink in pLoc.m_aBorderWith)
                 {
                     if (pLink.Owner != null)
                     {
                         LandX pLandLink = pLink.Owner as LandX;
-                        if (pLandLink.m_pProvince == null || pLandLink.m_pProvince.Owner != m_pProvince.Owner)
+                        if (pLandLink.m_pProvince != null && pLandLink.m_pProvince.Owner == pEnemy)
                             bBorder = true;
                     }
-                    //if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
-                    //    bCoast = true;
+                    if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                        bCoast = true;
                 }
 
-                int iChances = bBorder ? 100 : 1;
+                int iChances = 100;
 
-                if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)// && pLoc.Type != RegionType.Field)
+                if (pEnemy != null && !bBorder)
                     iChances = 0;
+
+                if (pEnemy == null && !bCoast)
+                    iChances = 0;
+
+                if (pLoc.m_pSettlement != null)
+                    iChances = 0;
+
+                if (pLoc.m_pBuilding != null)
+                    iChances = pLoc.m_pBuilding.m_eType == BuildingType.Farm || pLoc.m_pBuilding.m_eType == BuildingType.HuntingFields ? 1 : 0;
 
                 if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
                     iChances = 0;
@@ -256,12 +271,37 @@ namespace Socium
                 cChances.Add(iChances);
             }
 
+            //если список претендентов пуст - снизим критерии. теперь сгодится любая незанятая локация
             if (bNoChances)
-                return null;
+            {
+                //cChances.Clear();
+                //foreach (LocationX pLoc in m_cContents)
+                //{
+                //    int iChances = 100;
+
+                //    if (pLoc.m_pSettlement != null)
+                //        iChances = 0;
+
+                //    if (pLoc.m_pBuilding != null)
+                //        iChances = pLoc.m_pBuilding.m_eType == BuildingType.Farm || pLoc.m_pBuilding.m_eType == BuildingType.HuntingFields ? 1 : 0;
+
+                //    if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
+                //        iChances = 0;
+
+                //    if (iChances > 0)
+                //        bNoChances = false;
+
+                //    cChances.Add(iChances);
+                //}
+
+                ////в самом деле, совершенно нет места!
+                //if (bNoChances)
+                    return null;
+            }
 
             int iFort = Rnd.ChooseOne(cChances, 2);
-            //Построим город в выбранной локации.
-            //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
+            //Построим форт в выбранной локации.
+            //Все локации на 1 шаг вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
 
             if (m_cContents[iFort].m_pSettlement == null && m_cContents[iFort].m_pBuilding == null)
             {
@@ -272,9 +312,8 @@ namespace Socium
                         pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 
                 List<Road> cRoads = new List<Road>();
-                cRoads.AddRange(m_cContents[iFort].m_cRoads[1]);
-                cRoads.AddRange(m_cContents[iFort].m_cRoads[2]);
-                cRoads.AddRange(m_cContents[iFort].m_cRoads[3]);
+                foreach (var pRoads in m_cContents[iFort].m_cRoads)
+                    cRoads.AddRange(pRoads.Value);
 
                 Road[] aRoads = cRoads.ToArray();
                 foreach (Road pRoad in aRoads)

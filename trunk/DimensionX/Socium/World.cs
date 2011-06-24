@@ -748,6 +748,7 @@ namespace Socium
                 cUsed.Add(pConti);
             }
 
+            //догоняем количество государств до заданного числа
             while(cStates.Count < m_iStatesCount)
             {
                 Province pSeed = null;
@@ -783,6 +784,7 @@ namespace Socium
                     throw new Exception();
             }
 
+            //приращиваем территории всех государств до заданного лимита
             int iMaxStateSize = m_aProvinces.Length / cStates.Count;
             bool bContinue = false;
             do
@@ -794,6 +796,7 @@ namespace Socium
             }
             while (bContinue);
 
+            //если остались незанятые провинции - стартуем там дополнительные государства и приращиваем их территории до заданного лимита
             foreach(Province pProvince in m_aProvinces)
             {
                 if (!pProvince.Forbidden && pProvince.Owner == null)
@@ -807,6 +810,7 @@ namespace Socium
 
             m_aStates = cStates.ToArray();
 
+            //строим столицы, налаживаем дипломатические связи и распределяем по континентам
             foreach (State pState in m_aStates)
             {
                 pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast);
@@ -828,13 +832,16 @@ namespace Socium
                 pConti.m_cStates.Add(pState);
             }
 
+            //строим форты на границах враждующих государств и фиксим дороги
             Dictionary<State, Dictionary<State, int>> cHostility = new Dictionary<State, Dictionary<State, int>>();
-
             foreach (State pState in m_aStates)
             {
                 if (!pState.Forbidden)
                 {
                     pState.BuildForts(cHostility, bFast);
+
+                    if (!bFast)
+                        pState.FixRoads(fCycleShift);
 
                     //if (!bFast)
                     //{
@@ -903,16 +910,25 @@ namespace Socium
         private void BuildInterstateRoads(float fCycleShift)
         {
             foreach (Province pProvince in m_aProvinces)
+                pProvince.m_cConnectionString.Clear();
+
+            foreach (Province pProvince in m_aProvinces)
             {
                 if (!pProvince.Forbidden)// && !pProvince.m_pRace.m_bDying)
                 {
                     foreach (Province pLinkedProvince in pProvince.m_aBorderWith)
                     {
+                        //pProvince.m_cConnectionString[pLinkedProvince] = "null";
+
                         if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince)// && (!pLinkedProvince.m_pRace.m_bDying || pLinkedProvince.m_iTechLevel > pProvince.m_iTechLevel))
                         {
                             int iHostility = pProvince.CalcHostility(pLinkedProvince);
                             if (iHostility > 2)
+                            {
+                                pProvince.m_cConnectionString[pLinkedProvince] = string.Format("no road due to high hostility ({0})", iHostility);
+                                pLinkedProvince.m_cConnectionString[pProvince] = string.Format("no road due to high hostility ({0})", iHostility);
                                 continue;
+                            }
 
                             float fMinLength = float.MaxValue;
                             LocationX pBestTown1 = null;
@@ -938,10 +954,10 @@ namespace Socium
                             if (pBestTown1 != null && State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_iMaxGroundRoad > 0 && State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_iMaxGroundRoad > 0)
                             {
                                 int iMaxRoadLevel = 1;
-                                foreach(var pRoad in pBestTown1.m_cRoads)
-                                    if(pRoad.Value.Count > 0 && pRoad.Key > iMaxRoadLevel)
+                                foreach (var pRoad in pBestTown1.m_cRoads)
+                                    if (pRoad.Value.Count > 0 && pRoad.Key > iMaxRoadLevel)
                                         iMaxRoadLevel = pRoad.Key;
-                                foreach(var pRoad in pBestTown2.m_cRoads)
+                                foreach (var pRoad in pBestTown2.m_cRoads)
                                     if (pRoad.Value.Count > 0 && pRoad.Key > iMaxRoadLevel)
                                         iMaxRoadLevel = pRoad.Key;
                                 //int iRoadLevel = 2;
@@ -951,6 +967,13 @@ namespace Socium
                                 //    iRoadLevel = 3;
 
                                 BuildRoad(pBestTown1, pBestTown2, iMaxRoadLevel, fCycleShift);
+                                pProvince.m_cConnectionString[pLinkedProvince] = "ok";
+                                pLinkedProvince.m_cConnectionString[pProvince] = "ok";
+                            }
+                            else
+                            {
+                                pProvince.m_cConnectionString[pLinkedProvince] = "no road due to low infrastructure level or inaccessibility";
+                                pLinkedProvince.m_cConnectionString[pProvince] = "no road due to low infrastructure level or inaccessibility";
                             }
                         }
                     }
@@ -1138,11 +1161,13 @@ namespace Socium
                     if (!pProvince1Neighbours.Contains(pProvince2))
                         pProvince1Neighbours.Add(pProvince2);
                     pProvince1.m_aBorderWith = pProvince1Neighbours.ToArray();
+                    pProvince1.m_cConnectionString[pProvince2] = "ok";
 
                     List<object> pProvince2Neighbours = new List<object>(pProvince2.m_aBorderWith);
                     if (!pProvince2Neighbours.Contains(pProvince1))
                         pProvince2Neighbours.Add(pProvince1);
                     pProvince2.m_aBorderWith = pProvince2Neighbours.ToArray();
+                    pProvince2.m_cConnectionString[pProvince1] = "ok";
                 }
             }
 
