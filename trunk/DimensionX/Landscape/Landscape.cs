@@ -775,17 +775,17 @@ namespace LandscapeGeneration
 
             ShortestPath pBestPath = new ShortestPath(pStart, pFinish, fCycleShift, m_iPassword, bNavalOnly);
 
-            List<TransportationNode> cSucceedPath = new List<TransportationNode>();
-            if (pBestPath.m_aNodes.Length == 0)
-            {
-                foreach (TransportationNode pNode in pLandsPath.m_aNodes)
-                {
-                    if (!pBestPath.visited.Contains(pNode))
-                        break;
-                    cSucceedPath.Add(pNode);
-                }
-                //pBestPath.m_cPath = cSucceedPath.ToArray();
-            }
+            //List<TransportationNode> cSucceedPath = new List<TransportationNode>();
+            //if (pBestPath.m_aNodes.Length == 0)
+            //{
+            //    foreach (TransportationNode pNode in pLandsPath.m_aNodes)
+            //    {
+            //        if (!pBestPath.visited.Contains(pNode))
+            //            break;
+            //        cSucceedPath.Add(pNode);
+            //    }
+            //    //pBestPath.m_cPath = cSucceedPath.ToArray();
+            //}
 
             return pBestPath;
         }

@@ -164,6 +164,13 @@ namespace LandscapeGeneration
 
         public Line m_pFirstLine = null;
 
+        private float m_fPerimeter = 0;
+
+        public float PerimeterLength
+        {
+            get { return m_fPerimeter; }
+        }
+
         /// <summary>
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
         /// </summary>
@@ -176,8 +183,14 @@ namespace LandscapeGeneration
 
             Line pCurrentLine = m_pFirstLine;
             List<Line> cTotalBorder = new List<Line>();
+
+            m_fPerimeter = 0;
             foreach (var cLines in m_cBorderWith)
+            {
                 cTotalBorder.AddRange(cLines.Value);
+                foreach (Line pLine in cLines.Value)
+                    m_fPerimeter += pLine.m_fLength;
+            }
 
             Line[] aTotalBorder = cTotalBorder.ToArray();
 

@@ -44,11 +44,24 @@ namespace Socium
             get { return m_cBorderWith; }
         }
 
+
         public object[] m_aBorderWith = null;
+
+        private float m_fPerimeter = 0;
+
+        public float PerimeterLength
+        {
+            get { return m_fPerimeter; }
+        }
 
         internal void FillBorderWithKeys()
         {
             m_aBorderWith = new List<object>(m_cBorderWith.Keys).ToArray();
+
+            m_fPerimeter = 0;
+            foreach (var pBorder in m_cBorderWith)
+                foreach (Line pLine in pBorder.Value)
+                    m_fPerimeter += pLine.m_fLength;
         }
 
         public Race m_pRace = null;
@@ -129,6 +142,8 @@ namespace Socium
             pSeed.m_iProvincePresence = 1;
 
             m_cGrowCosts.Clear();
+
+            m_bFullyGrown = false;
         }
 
         private int GetGrowCost(LandX pLand)
@@ -238,22 +253,10 @@ namespace Socium
                     if (pLinkedLand.m_pProvince == null)
                     {
                         //общая граница провинции и новой земли
-                        float fCommonLength = 1;
+                        float fSharedPerimeter = 1;
                         Line[] aBorderLine = m_cBorder[pLinkedLand].ToArray();
                         foreach (Line pLine in aBorderLine)
-                            fCommonLength += pLine.m_fLength;
-
-                        //граница новой земли с окружающими землями
-                        float fTotalLength = 0;
-                        foreach (var pLinkTerr2 in pLinkedLand.BorderWith)
-                        {
-                            if ((pLinkTerr2.Key as ITerritory).Forbidden)
-                                continue;
-
-                            Line[] cLines = pLinkTerr2.Value.ToArray();
-                            foreach (Line pLine in cLines)
-                                fTotalLength += pLine.m_fLength;
-                        }
+                            fSharedPerimeter += pLine.m_fLength;
 
                         //fCommonLength /= fTotalLength;
 
@@ -262,11 +265,11 @@ namespace Socium
                         //if (fCommonLength > 0.5f)
                         //    fCommonLength *= 10;
 
-                        fCostModified = iCost * fTotalLength / fCommonLength;
+                        fCostModified = iCost * pLinkedLand.PerimeterLength / fSharedPerimeter;
 
-                        if (fCommonLength < fTotalLength / 4)
+                        if (fSharedPerimeter < pLinkedLand.PerimeterLength / 4)
                             fCostModified *= 10;
-                        if (fCommonLength > fTotalLength / 2)
+                        if (fSharedPerimeter > pLinkedLand.PerimeterLength / 2)
                             fCostModified /= 10;
 
                         fCostModified = Math.Max(1, fCostModified);
@@ -306,10 +309,10 @@ namespace Socium
         {
             object[] aBorder = new List<object>(m_cBorder.Keys).ToArray();
 
-            bool bGrown = false;
+            m_bFullyGrown = true;
 
             if (m_pRace.m_bDying)
-                return bGrown;
+                return !m_bFullyGrown;
 
             foreach (ITerritory pTerr in aBorder)
             {
@@ -338,12 +341,14 @@ namespace Socium
                             m_cBorder[pAddonLinkedLand.Key].Add(new Line(pLine));
                     }
 
-                    bGrown = true;
+                    m_bFullyGrown = false;
                 }
             }
 
-            return bGrown;
+            return !m_bFullyGrown;
         }
+
+        public bool m_bFullyGrown = false;
 
         /// <summary>
         /// Присоединяет к провинции сопредельную нечейную землю.
@@ -352,10 +357,12 @@ namespace Socium
         /// <returns></returns>
         public bool Grow(int iMaxProvinceSize)
         {
+            m_bFullyGrown = false;
             //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
             if (m_cContents.Count >= iMaxProvinceSize || m_pCenter.m_iProvincePresence > 200 * Math.Sqrt(iMaxProvinceSize / Math.PI))
             {
                 //GrowForce(m_pCenter, 1);
+                m_bFullyGrown = true;
                 return false;
             }
 

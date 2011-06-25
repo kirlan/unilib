@@ -12,7 +12,7 @@ namespace LandscapeGeneration.PathFind
 
         public float m_fLength = 0;
 
-        public HashSet<TransportationNode> visited = new HashSet<TransportationNode>();
+        //public HashSet<TransportationNode> visited = new HashSet<TransportationNode>();
 
         Path<TransportationNode> FindPath(
             TransportationNode start,
@@ -39,34 +39,37 @@ namespace LandscapeGeneration.PathFind
                 
                 closed.Add(path.LastStep);
 
-                foreach (TransportationNode pLinked in path.LastStep.m_cLinks.Keys)
+                foreach (var pLinked in path.LastStep.m_cLinks)
                 {
+                    TransportationNode pLinkedNode = pLinked.Key;
+
                     //ограничиваем доступную территорию только теми нодами, которые ходят в уже найденный путь на более высоком уровне
-                    if (iPassword != -1 && pLinked.m_iPassword != iPassword)
+                    if (iPassword != -1 && pLinkedNode.m_iPassword != iPassword)
                         continue;
 
                     //грузиться на корабли и высаживаться с них можно только в портах
-                    if (path.LastStep.m_cLinks[pLinked].m_bEmbark && !pLinked.m_bHarbor && !path.LastStep.m_bHarbor)
+                    if (pLinked.Value.m_bEmbark && !pLinkedNode.m_bHarbor && !path.LastStep.m_bHarbor)
                         continue;
 
                     //ограничиваем доступную территорию по государственному признаку
-                    if (path.LastStep.m_cLinks[pLinked].m_bClosed)
+                    if (pLinked.Value.m_bClosed)
                         continue;
 
-                    if (bNavalOnly && !path.LastStep.m_cLinks[pLinked].m_bSea && !path.LastStep.m_cLinks[pLinked].m_bEmbark)
+                    if (bNavalOnly && !pLinked.Value.m_bSea && !pLinked.Value.m_bEmbark)
                         continue;
 
-                    if ((pLinked as ITerritory).Owner != null && !visited.Contains((pLinked as ITerritory).Owner as TransportationNode))
-                        visited.Add((pLinked as ITerritory).Owner as TransportationNode);
+                    //TransportationNode pLinkedNodeOwner = (pLinkedNode as ITerritory).Owner as TransportationNode;
+                    //if (pLinkedNodeOwner != null && !visited.Contains(pLinkedNodeOwner))
+                    //    visited.Add(pLinkedNodeOwner);
 
-                    var newPath = path.AddStep(pLinked, path.LastStep.m_cLinks[pLinked].MovementCost);
+                    var newPath = path.AddStep(pLinkedNode, pLinked.Value.MovementCost);
 
-                    float fStrightDistance = pLinked.DistanceTo(destination, fCycleShift);// (float)Math.Sqrt((destination.X - pLink.X) * (destination.X - pLink.X) + (destination.Y - pLink.Y) * (destination.Y - pLink.Y));
+                    float fStrightDistance = pLinkedNode.DistanceTo(destination, fCycleShift);// (float)Math.Sqrt((destination.X - pLink.X) * (destination.X - pLink.X) + (destination.Y - pLink.Y) * (destination.Y - pLink.Y));
 
                     //if (pLink.m_pLocation.m_bRoad)// && !bInternal)
                     //    fStrightDistance /= 2;
 
-                    queue.Enqueue(newPath.TotalCost + fStrightDistance * pLinked.GetMovementCost(), newPath);
+                    queue.Enqueue(newPath.TotalCost + fStrightDistance * pLinkedNode.GetMovementCost(), newPath);
                 }
             }
             return null;

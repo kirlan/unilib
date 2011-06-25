@@ -228,9 +228,21 @@ namespace Socium
 
         public object[] m_aBorderWith = null;
 
+        private float m_fPerimeter = 0;
+
+        public float PerimeterLength
+        {
+            get { return m_fPerimeter; }
+        }
+
         internal void FillBorderWithKeys()
         {
             m_aBorderWith = new List<object>(m_cBorderWith.Keys).ToArray();
+
+            m_fPerimeter = 0;
+            foreach (var pBorder in m_cBorderWith)
+                foreach (Line pLine in pBorder.Value)
+                    m_fPerimeter += pLine.m_fLength;
         }
 
         public Province m_pMethropoly = null;
@@ -295,19 +307,7 @@ namespace Socium
                     foreach (Line pLine in m_cBorder[pProvince])
                         fSharedPerimeter += pLine.m_fLength;
 
-                    //граница этой земли с окружающими землями
-                    float fWholePerimeter = 0;
-                    foreach (var pLinkTerr in pProvince.BorderWith)
-                    {
-                        if ((pLinkTerr.Key as ITerritory).Forbidden)
-                            continue;
-
-                        Line[] cLines = pLinkTerr.Value.ToArray();
-                        foreach (Line pLine in cLines)
-                            fWholePerimeter += pLine.m_fLength;
-                    }
-
-                    fSharedPerimeter /= fWholePerimeter;
+                    fSharedPerimeter /= pProvince.PerimeterLength;
 
                     if (fSharedPerimeter < 0.15f)
                         continue;

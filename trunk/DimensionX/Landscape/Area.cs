@@ -68,23 +68,17 @@ namespace LandscapeGeneration
                     foreach (Line pLine in aBorderLine)
                         fWholeLength += pLine.m_fLength;
 
-                    //граница этой земли с окружающими землями
-                    float fTotalLength = 0;
                     foreach (var pLinkTerr in pLand.BorderWith)
                     {
                         if ((pLinkTerr.Key as ITerritory).Forbidden)
                             continue;
-
-                        Line[] cLines = pLinkTerr.Value.ToArray();
-                        foreach (Line pLine in cLines)
-                            fTotalLength += pLine.m_fLength;
 
                         if ((pLinkTerr.Key as LAND).Type == m_pType &&
                             (pLinkTerr.Key as LAND).Area == null)
                             bHavePotential = true;
                     }
 
-                    fWholeLength /= fTotalLength;
+                    fWholeLength /= pLand.PerimeterLength;
 
                     if (fWholeLength < 0.25f && m_cContents.Count > 1 && bHavePotential)
                         continue;

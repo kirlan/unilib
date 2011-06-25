@@ -20,6 +20,9 @@ namespace LandscapeGeneration
 
         public List<INNER> m_cContents = new List<INNER>();
 
+        /// <summary>
+        /// Границы с другими такими же объектами
+        /// </summary>
         private Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
 
         private object m_pOwner = null;
@@ -48,9 +51,24 @@ namespace LandscapeGeneration
 
         public object[] m_aBorderWith = null;
 
+        /// <summary>
+        /// Суммарная длина всех линий в BorderWith
+        /// </summary>
+        private float m_fPerimeter = 0;
+
+        public float PerimeterLength
+        {
+            get { return m_fPerimeter; }
+        }
+
         internal void FillBorderWithKeys()
         {
             m_aBorderWith = new List<object>(m_cBorderWith.Keys).ToArray();
+
+            m_fPerimeter = 0;
+            foreach (var pBorder in m_cBorderWith)
+                foreach (Line pLine in pBorder.Value)
+                    m_fPerimeter += pLine.m_fLength;
         }
 
         public override void Start(INNER pSeed)
@@ -73,30 +91,17 @@ namespace LandscapeGeneration
         {
             Dictionary<ITerritory, float> cBorderLength = new Dictionary<ITerritory, float>();
 
-            object[] aBorder = new List<object>(m_cBorder.Keys).ToArray();
-
-            foreach (ITerritory pInner in aBorder)
+            foreach (var pInner in m_cBorder)
             {
-                if (pInner.Owner == null && !pInner.Forbidden)
+                ITerritory pInnerTerritory = pInner.Key as ITerritory;
+                if (pInnerTerritory.Owner == null && !pInnerTerritory.Forbidden)
                 {
                     float fWholeLength = 1;
-                    Line[] aBorderLine = m_cBorder[pInner].ToArray();
+                    Line[] aBorderLine = pInner.Value.ToArray();
                     foreach (Line pLine in aBorderLine)
                         fWholeLength += pLine.m_fLength;
 
-                    //граница этой земли с окружающими землями
-                    float fTotalLength = 0;
-                    foreach (var pLinkTerr in pInner.BorderWith)
-                    {
-                        if ((pLinkTerr.Key as ITerritory).Forbidden)
-                            continue;
-
-                        Line[] cLines = pLinkTerr.Value.ToArray();
-                        foreach (Line pLine in cLines)
-                            fTotalLength += pLine.m_fLength;
-                    }
-
-                    fWholeLength /= fTotalLength;
+                    fWholeLength /= pInnerTerritory.PerimeterLength;
 
                     if (fWholeLength < 0.15f && m_cContents.Count > 1)
                         continue;
@@ -105,7 +110,7 @@ namespace LandscapeGeneration
                     if (fWholeLength > 0.5f)
                         fWholeLength *= 10; 
                     
-                    cBorderLength[pInner] = fWholeLength;// 0;
+                    cBorderLength[pInnerTerritory] = fWholeLength;// 0;
                     //Line[] aBorderLine = m_cBorder[pInner].ToArray();
                     //foreach (Line pLine in aBorderLine)
                     //    cBorderLength[pInner] += pLine.m_fLength;
@@ -115,13 +120,12 @@ namespace LandscapeGeneration
             ITerritory pAddon = null;
 
             int iChoice = Rnd.ChooseOne(cBorderLength.Values, 2);
-            ITerritory[] aBorderLength = new List<ITerritory>(cBorderLength.Keys).ToArray();
-            foreach (ITerritory pInner in aBorderLength)
+            foreach (var pInner in cBorderLength)
             {
                 iChoice--;
                 if (iChoice < 0)
                 {
-                    pAddon = pInner;
+                    pAddon = pInner.Key;
                     break;
                 }
             }
