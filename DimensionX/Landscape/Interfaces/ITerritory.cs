@@ -10,5 +10,6 @@ namespace LandscapeGeneration
         Dictionary<object, List<Line>> BorderWith { get; }
         bool Forbidden { get; }
         object Owner { get; set; }
+        float PerimeterLength { get; }
     }
 }

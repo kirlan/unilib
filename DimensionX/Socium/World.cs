@@ -636,7 +636,7 @@ namespace Socium
             {
                 foreach (Province pProvince in cProvinces)
                 {
-                    if (cFinished.Contains(pProvince))
+                    if (pProvince.m_bFullyGrown)
                         continue;
 
                     if (!pProvince.Grow(iMaxProvinceSize))
@@ -647,29 +647,32 @@ namespace Socium
 
             bool bAlreadyFinished = true;
             int iCnt = 0;
-            cFinished.Clear();
+            foreach (Province pProvince in cProvinces)
+                pProvince.m_bFullyGrown = false;
+
             do
             {
-                foreach (Province pProvince in cProvinces)
-                {
-                    if (cFinished.Contains(pProvince))
-                        continue;
-
-                    if (!pProvince.ForcedGrow())
-                        cFinished.Add(pProvince);
-                }
-
                 bAlreadyFinished = true;
                 foreach (LandX pLand in m_aLands)
-                {
                     if (!pLand.Forbidden && !pLand.IsWater && pLand.m_pProvince == null)
                     {
                         bAlreadyFinished = false;
                         break;
                     }
+
+                if (bAlreadyFinished)
+                    break;
+
+                foreach (Province pProvince in cProvinces)
+                {
+                    if (pProvince.m_bFullyGrown)
+                        continue;
+
+                    if (!pProvince.ForcedGrow())
+                        cFinished.Add(pProvince);
                 }
             }
-            while (!bAlreadyFinished && iCnt++ < m_aLands.Length);
+            while (iCnt++ < m_aLands.Length);
 
             foreach (LandX pLand in m_aLands)
             {
@@ -842,12 +845,6 @@ namespace Socium
 
                     if (!bFast)
                         pState.FixRoads(fCycleShift);
-
-                    //if (!bFast)
-                    //{
-                    //    foreach(Province pProvince in pState.m_cContents)
-                    //        pProvince.BuildRoads(2, fCycleShift);
-                    //}
                 }
             }
         }
