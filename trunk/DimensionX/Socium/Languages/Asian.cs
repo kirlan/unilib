@@ -9,6 +9,8 @@ namespace Socium.Languages
 {
     class Asian: Language
     {
+        private Confluxer m_pNations;
+
         private Confluxer m_pFemale;
 
         private Confluxer m_pMale;
@@ -16,6 +18,9 @@ namespace Socium.Languages
         public Asian()
             :base(NameGenerator.Language.NONE)
         {
+            string sNation = "han canton shandong hunanese xiang hakka kejia gan jiangxi min nan hoklo hainan teochew chaozhou dong bei zhong xinghua wu ningbo wenzhou tanka ngai fuzhou hui dungan bamar achang zaiwa yi lisu hani akha lahu jino cong naxi monpa tamang tani adi nishi tani ao lotha chin mizo karbi magar qiang pumi mishmi lhoba drung nung tujia bai";
+            m_pNations = new Confluxer(sNation, 2);
+
             string sFemale = "akazome akiko ayame chika chizu cho fuji hamako hana hanazono hiromusi hisae hisayo imako inoe ishi izuko jun kagami kame-hime kameko kaneko kawa kawanomu keiko kenshi kiku kimiko kogin kogo komachi kozakura kumiko kusuriko machi mariko masago masako masuko matsukaze midori mineko miwa miyako miyoko mura nari ochobo oki onshi reiko renshi rin ruri sachi sadako sakura seki sen-hime senshi setsuko shikibu shina shizue shizuyo siki sugi taka takara tamako teika tokiwa tokuko tomoe towika tsukinoyo umeko umeno wakana yasuko yoshiko yukinoyo yukio";
             m_pFemale = new Confluxer(sFemale, 2);
 
@@ -24,6 +29,11 @@ namespace Socium.Languages
         }
 
         #region ILanguage Members
+
+        protected override string GetNationName()
+        {
+            return m_pNations.Generate();
+        }
 
         protected override string GetCountryName()
         {
