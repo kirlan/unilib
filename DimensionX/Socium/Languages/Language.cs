@@ -217,6 +217,21 @@ namespace Socium.Languages
             UsedNames.Clear();
         }
 
+        public string RandomNationName()
+        {
+            string sName;
+            int iCounter = 0;
+            do
+            {
+                sName = GetNationName();
+                iCounter++;
+            }
+            while (UsedNames.Contains(sName) && iCounter < 10);
+
+            UsedNames.Add(sName);
+            return sName;
+        }
+
         public string RandomCountryName()
         { 
             string sName;
@@ -275,6 +290,11 @@ namespace Socium.Languages
 
             UsedNames.Add(sName);
             return sName;
+        }
+
+        protected virtual string GetNationName()
+        {
+            return NameGenerator.GetEthnicName(m_eLanguage);
         }
 
         protected virtual string GetCountryName()

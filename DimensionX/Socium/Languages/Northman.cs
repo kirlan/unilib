@@ -8,6 +8,8 @@ namespace Socium.Languages
 {
     class Northman: Language
     {
+        private Confluxer m_pNations;
+
         private Confluxer m_pFemale;
 
         private Confluxer m_pMale;
@@ -15,6 +17,9 @@ namespace Socium.Languages
         public Northman()
             :base(NameGenerator.Language.Viking)
         {
+            string sNation = "vandal goth norn swaeden aleman saxon scott teuton flemen anglen thuran toxan vagoth jotun vaenir alfar aesir asgar vaethir skand danan veled vened skald astur asur norman vesen";
+            m_pNations = new Confluxer(sNation, 3);
+
             string sFemale = "alfdis arnora asgerd asleif asta astrid bera bergljot bergthora dotta freydis gjaflaug grima grimhild groa gudrid gudrun gunnhild gyda halldis hallfrid hallgerd hallveig helga herdis hild hildigunn hlif hrefna hrodny ingibjorg ingigerd ingirid ingunn jorunn katla ragna ragnhild rannveig saeunn sigrid svala thjodhild thora thorbjorg thordis thorfinna thorgerd thorgunna thorhalla thorhild thorkatla thorunn thurid thyra unn valgerd vigdis";
             m_pFemale = new Confluxer(sFemale, 2);
 
@@ -23,6 +28,11 @@ namespace Socium.Languages
         }
 
         #region ILanguage Members
+        
+        protected override string GetNationName()
+        {
+            return m_pNations.Generate();
+        }
 
         public override string RandomFemaleName()
         {
