@@ -17,7 +17,7 @@ namespace Socium.Languages
             m_pFamily = new Confluxer(sFamily, 2);
         }
     
-        protected virtual string GetFamily()
+        protected override string GetFamily()
         {
             return m_pFamily.Generate();
         }

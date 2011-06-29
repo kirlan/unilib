@@ -201,7 +201,7 @@ namespace Socium
                 }
 
                 //если уже где-то живёт и не гегемон - пропускаем её
-                if (!bHomeless && !pRace.m_bHegemon)
+                if (!bHomeless)// && !pRace.m_bHegemon)
                     continue;
 
                 //рассчитаем вероятности для всех земель стать прародиной этой расы
@@ -379,7 +379,7 @@ namespace Socium
                     }
                 }
 
-                List<Race> cSettledDyingRaces = new List<Race>();
+                //List<Race> cSettledDyingRaces = new List<Race>();
                 //переберём все пригодные для заселения и незаселённые территории
                 foreach (AreaX pArea in pConti.m_cAreas)
                     if (!pArea.IsWater && pArea.m_pRace == null)
@@ -397,32 +397,19 @@ namespace Socium
                         }
 
                         //составим список рас, которые могут претендовать на эту территорию
-                        List<Race> cAvailableRaces = new List<Race>();
-                        List<Race> cDyingRaces = new List<Race>();
-                        foreach (LandMass<LandX> pLandMass in cLandMasses)
-                        {
-                            if (!pConti.m_cLocalRaces.ContainsKey(pLandMass))
-                                continue;
+                        List<Race> cAvailableRaces = GetAvailableRaces(cLandMasses);
 
-                            foreach (Race pRace in pConti.m_cLocalRaces[pLandMass])
-                                if (!pRace.m_bDying)
-                                {
-                                    if (!cAvailableRaces.Contains(pRace))
-                                    {
-                                        cAvailableRaces.Add(pRace);
-                                        if (!m_aLocalRaces.Contains(pRace))
-                                            throw new Exception();
-                                    }
-                                }
-                                else
-                                {
-                                    if (!cSettledDyingRaces.Contains(pRace) && !cDyingRaces.Contains(pRace))
-                                    {
-                                        cDyingRaces.Add(pRace);
-                                        if (!m_aLocalRaces.Contains(pRace))
-                                            throw new Exception();
-                                    }
-                                }
+                        while (cAvailableRaces.Count == 0)
+                        {
+                            List<LandMass<LandX>> cLandMasses2 = new List<LandMass<LandX>>(cLandMasses);
+
+                            foreach (LandMass<LandX> pLandMass in cLandMasses)
+                                foreach (LandMass<LandX> pLinkedLandMass in pLandMass.m_aBorderWith)
+                                    if (!pLinkedLandMass.IsWater && !cLandMasses2.Contains(pLinkedLandMass))
+                                        cLandMasses2.Add(pLinkedLandMass);
+
+                            cLandMasses = cLandMasses2;
+                            cAvailableRaces = GetAvailableRaces(cLandMasses);
                         }
 
                         //если эта территория принадлежит одной или нескольким плитам-колыбелям, населяем её соответствующими расами,
@@ -430,16 +417,51 @@ namespace Socium
                         if (cAvailableRaces.Count > 0)
                         {
                             //cAvailableRaces.AddRange(cDyingRaces);
-                            cAvailableRaces.AddRange(cHegemonRaces);
+                            //cAvailableRaces.AddRange(cHegemonRaces);
                             pArea.SetRace(cAvailableRaces);
                             
-                            if (cDyingRaces.Contains(pArea.m_pRace))
-                                cSettledDyingRaces.Add(pArea.m_pRace);
+                            //if (cDyingRaces.Contains(pArea.m_pRace))
+                            //    cSettledDyingRaces.Add(pArea.m_pRace);
                         }
                         else
                             pArea.SetRace(cAvailableContinentRaces);
                     }
             }
+        }
+
+        private List<Race> GetAvailableRaces(List<LandMass<LandX>> cLandMasses)
+        {
+            List<Race> cAvailableRaces = new List<Race>();
+            //List<Race> cDyingRaces = new List<Race>();
+            foreach (LandMass<LandX> pLandMass in cLandMasses)
+            {
+                ContinentX pConti = pLandMass.Owner as ContinentX;
+
+                if (!pConti.m_cLocalRaces.ContainsKey(pLandMass))
+                    continue;
+
+                foreach (Race pRace in pConti.m_cLocalRaces[pLandMass])
+                    if (!pRace.m_bDying)
+                    {
+                        if (!cAvailableRaces.Contains(pRace))
+                        {
+                            cAvailableRaces.Add(pRace);
+                            if (!m_aLocalRaces.Contains(pRace))
+                                throw new Exception();
+                        }
+                    }
+                //else
+                //{
+                //    if (!cSettledDyingRaces.Contains(pRace) && !cDyingRaces.Contains(pRace))
+                //    {
+                //        cDyingRaces.Add(pRace);
+                //        if (!m_aLocalRaces.Contains(pRace))
+                //            throw new Exception();
+                //    }
+                //}
+            }
+
+            return cAvailableRaces;
         }
 
         /// <summary>
@@ -1248,6 +1270,7 @@ namespace Socium
             {
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
+                    //если коренное население не является доминирующим, есть вероятность, что доминирующая раса вытеснит коренную.
                     if (pLand.m_pRace != pProvince.m_pRace)
                     {
                         bool bHated = false;
@@ -1269,6 +1292,7 @@ namespace Socium
                             (pLand.Area as AreaX).m_pRace = pProvince.m_pRace;
                         }
                     }
+                    //иначе, если коренная раса и доминирующая совпадают, но земля не самая подходящая - есть вероятность того, что её покинут.
                     else
                     {
                         bool bHated = false;
@@ -1299,7 +1323,7 @@ namespace Socium
                         //if (Rnd.OneChanceFrom(3))
                         //    cEraseRace.Add(pRace);
                         //else
-                            pRace.m_bHegemon = Rnd.OneChanceFrom(m_aLocalRaces.Length);
+                            pRace.m_bHegemon = pRace.m_bHegemon || Rnd.OneChanceFrom(m_aLocalRaces.Length);
                 }
                 else
                     if (Rnd.OneChanceFrom(3))
