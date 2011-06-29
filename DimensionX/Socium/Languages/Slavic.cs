@@ -25,6 +25,9 @@ namespace Socium.Languages
         public Slavic()
             :base(NameGenerator.Language.NONE)
         {
+            string sNation = "polak bulgarian drevilan polian krivich kosak slavian sloven slovak murom perm litov liakh croat khorutan pomor dregov polochan severian vened skolot belor bosniak morav goryun kamchadal polekh polan vistulan pomak carantanian gamayun alkanost perun vel";
+            m_pNations = new Confluxer(sNation, 2); 
+            
             string sCountries = "Alimia Alepia Amuria Arania Artania Batania Belarusia Bolgaria Borania Bosnia Bulgaria Burania Chania Chehia Chonia Gorelia Goria Grunia Gvidonia Ikaria Ilonia Itonia Izboria Izhovia Izovia Hania Hazaria Horvatia Horutania Kania Karantia Karelia Kuavia Malia Moravia Moria Moskovia Mouravia Nevia Nosia Novia Olgia Onegia Orelia Orenia Ostogia Panonia Patonia Polonia Putovia Radonia Rogozia Rostovia Runia Rusa Ruta Rusia Serbia Slavia Slovakia Slovenia Syberia Ukrainia Ulusia Uralia";
             m_pCountries = new Confluxer(sCountries, 2);
 
@@ -42,9 +45,6 @@ namespace Socium.Languages
 
             string sMale = "Beloslav Berimir Berislav Blagoslav Bogdan Boleslav Borimir Borislav Bratislav Bronislav Bryacheslav Budimir Velimir Velislav Vladimir Vladislav Vsevolod Vseslav Vyacheslav Gorislav Gostemil Gostomisl Gradimir Gradislav Granislav Dobromil Dobromir Dobromisl Dragomir Zvenislav Zlatomir Izyaslav Istislav Ladislav Lubomir Lubomisl Mechislav Milorad Miloslav Miroslav Mstislav Nevzor Ostromir Peresvet Putimir Putislav Radimir Radislav Ratibor Rodislav Rostislav Svetovid Svetozar Svyatogor Svyatopolk Svyatoslav Stanimir Stanislav Sudimir Sudislav Tverdimir Tverdislav Tihomir Yaromir Yaropolk Yaroslav";
             m_pMale = new Confluxer(sMale, 2);
-
-            string sNation = "polak bulgarian drevilan polian krivich kosak slavian sloven slovak murom perm litov liakh croat khorutan pomor dregov polochan severian vened skolot belor bosniak morav goryun kamchadal polekh polan vistulan pomak carantanian gamayun alkanost perun vel";
-            m_pNations = new Confluxer(sNation, 2);
         }
 
         #region ILanguage Members

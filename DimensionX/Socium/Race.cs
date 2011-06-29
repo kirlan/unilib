@@ -70,12 +70,12 @@ namespace Socium
             new RaceTemplate("northern", 1, Language.Northman, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Taiga}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna}),
-            new RaceTemplate("chukchee", 1, Language.Eskimoid, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Swamp}),
-            new RaceTemplate("eskimo", 1, Language.Eskimoid, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
-                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Swamp}),
+            //new RaceTemplate("chukchee", 1, Language.Eskimoid, 
+            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra}, 
+            //    new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Savanna, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Swamp}),
+            new RaceTemplate("mongol", 1, Language.Eskimoid, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Tundra, LandTypes<LandTypeInfoX>.Plains}, 
+                new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Mountains, LandTypes<LandTypeInfoX>.Forest, LandTypes<LandTypeInfoX>.Swamp, LandTypes<LandTypeInfoX>.Taiga}),
             new RaceTemplate("highlander", 1, Language.Highlander, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Mountains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains, LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Forest}),
@@ -218,9 +218,13 @@ namespace Socium
 
         public Epoch m_pEpoch = null;
 
+        public string m_sName = "";
+
         public Race(RaceTemplate pTemplate, Epoch pEpoch)
         {
             m_pTemplate = pTemplate;
+
+            m_sName = m_pTemplate.m_pLanguage.RandomNationName();
 
             m_pEpoch = pEpoch;
 
@@ -231,12 +235,12 @@ namespace Socium
         public override string ToString()
         {
             if (m_bDying)
-                return string.Format("ancient {0}", m_pTemplate);
+                return string.Format("ancient {0} ({1})", m_sName, m_pTemplate).ToLower();
             else
                 if(m_bHegemon)
-                    return string.Format("great {0}", m_pTemplate);
+                    return string.Format("great {0} ({1})", m_sName, m_pTemplate).ToLower();
                 else
-                    return m_pTemplate.ToString();
+                    return string.Format("{0} ({1})", m_sName, m_pTemplate).ToLower();
         }
 
         /// <summary>

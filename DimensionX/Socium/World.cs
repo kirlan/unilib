@@ -86,39 +86,36 @@ namespace Socium
                 }
 
             //Рассчитываем шансы новых рас попасть в новый мир - учитывая, его параметры
-            Dictionary<RaceTemplate, float> cRaceChances = new Dictionary<RaceTemplate, float>();
-            foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
-            {
-                if (!pEpoch.m_cNativesRaceTemplates.Contains(pRaceTemplate))
-                    continue;
-
-                bool bAlreadyHave = false;
-                if(m_aLocalRaces != null)
-                    foreach (Race pRace in m_aLocalRaces)
-                        if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
-                            bAlreadyHave = true;
+            //Dictionary<RaceTemplate, float> cRaceChances = new Dictionary<RaceTemplate, float>();
+            //foreach (RaceTemplate pRaceTemplate in pEpoch.m_cNativesRaceTemplates)
+            //{
+            //    bool bAlreadyHave = false;
+            //    if(m_aLocalRaces != null)
+            //        foreach (Race pRace in m_aLocalRaces)
+            //            if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
+            //                bAlreadyHave = true;
                 
-                cRaceChances[pRaceTemplate] = bAlreadyHave ? 0 : 100.0f;// / pRaceTemplate.m_iRank;
-            }
+            //    cRaceChances[pRaceTemplate] = bAlreadyHave ? 0 : 100.0f;// / pRaceTemplate.m_iRank;
+            //}
             //cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : Math.Max(1, 10 + m_iMagicLimit * 10 - pRace.m_iRank);// : 100.0f / pRace.m_iRank;
 
             //Добавляем необходимое количесто новых рас.
             while (cRaces.Count - iDyingRaces < pEpoch.m_iNativesCount)
             {
-                int iChance = Rnd.ChooseOne(cRaceChances.Values, 1);
-                foreach (RaceTemplate pRaceTemplate in cRaceChances.Keys)
-                {
-                    iChance--;
-                    if (iChance < 0)
-                    {
-                        Race pRace = new Race(pRaceTemplate, pEpoch);
+                int iChance = Rnd.Get(pEpoch.m_cNativesRaceTemplates.Count);//Rnd.ChooseOne(cRaceChances.Values, 1);
+                //foreach (RaceTemplate pRaceTemplate in cRaceChances.Keys)
+                //{
+                    //iChance--;
+                    //if (iChance < 0)
+                    //{
+                        Race pRace = new Race(pEpoch.m_cNativesRaceTemplates[iChance], pEpoch);//new Race(pRaceTemplate, pEpoch);
                         pRace.Accommodate(this, pEpoch);
 
                         cRaces.Add(pRace);
-                        cRaceChances[pRaceTemplate] = 0;
-                        break;
-                    }
-                }
+                        //cRaceChances[pRaceTemplate] = 0;
+                        //break;
+                    //}
+                //}
             }
 
             m_aLocalRaces = cRaces.ToArray();
@@ -171,6 +168,21 @@ namespace Socium
 
         private void DistributeRacesToLandMasses()
         {
+            //Dictionary<Language, List<Race>> cLanguages = new Dictionary<Language, List<Race>>();
+
+            ////разобъём расы по языковым группам
+            //foreach (Race pRace in m_aLocalRaces)
+            //{
+            //    List<Race> cRaces;
+            //    if (!cLanguages.TryGetValue(pRace.m_pTemplate.m_pLanguage, out cRaces))
+            //    {
+            //        cRaces = new List<Race>();
+            //        cLanguages[pRace.m_pTemplate.m_pLanguage] = cRaces;
+            //    }
+            //    cRaces.Add(pRace);
+            //}
+
+
             //Распределим расы по наиболее подходящим им тектоническим плитам (чтобы все расы хоть где-то да жили)
             foreach (Race pRace in m_aLocalRaces)
             {
@@ -216,20 +228,34 @@ namespace Socium
                         if (pLand.Type == pType)
                             cLandChances[pLand] /= 1000;
 
-                    //смотрим, сколько ещё других рас уже живут на этом же континенте и 
-                    //снижаем привлекательность земли в зависимости от их количества.
-                    //гегемоны и вторженцы игнорируют эту проверку.
-                    if (!pRace.m_bHegemon && !pRace.m_bInvader)
+                    //смотрим, сколько ещё других рас уже живут на этом же континенте и говорят ли они на нашем языке
+                    int iPop = 0;
+                    bool bSameLanguage = false;
+                    foreach (var pRaces in pLand.Continent.m_cLocalRaces)
                     {
-                        int iPop = 0;
-                        foreach (var pRaces in pLand.Continent.m_cLocalRaces)
+                        foreach (var pRce in pRaces.Value)
                         {
-                            foreach (var pRce in pRaces.Value)
-                                if (!pRce.m_bDying)
-                                    iPop++;
+                            if (!pRce.m_bDying)
+                                iPop++;
+                            
+                            if (pRce.m_pTemplate.m_pLanguage == pRace.m_pTemplate.m_pLanguage)
+                                bSameLanguage = true;
                         }
-                        if (iPop > 0)
+                    }
+ 
+                    if (iPop > 0)
+                    {
+                        //снижаем привлекательность земли в зависимости от количества конкурентов.
+                        //гегемоны и вторженцы игнорируют эту проверку.
+                        if (!pRace.m_bHegemon && !pRace.m_bInvader && !bSameLanguage)
                             cLandChances[pLand] = (float)Math.Pow(cLandChances[pLand], 1.0 / (1 + iPop));
+
+                        //смотрим, на каких языках говорят другие уже живущие здесь расы
+                        //и снижаем либо повышаем привлекательность земли в зависимости от совпдения языка
+                        if (bSameLanguage)
+                            cLandChances[pLand] *= 100;
+                        else
+                            cLandChances[pLand] /= 100;
                     }
                 }
 
@@ -1270,11 +1296,14 @@ namespace Socium
                         pRace.m_bHegemon = false;
                     }
                     else
-                        if (Rnd.OneChanceFrom(3))
-                            cEraseRace.Add(pRace);
-                        else
+                        //if (Rnd.OneChanceFrom(3))
+                        //    cEraseRace.Add(pRace);
+                        //else
                             pRace.m_bHegemon = Rnd.OneChanceFrom(m_aLocalRaces.Length);
                 }
+                else
+                    if (Rnd.OneChanceFrom(3))
+                        cEraseRace.Add(pRace);
             }
 
             List<Race> cRaces = new List<Race>(m_aLocalRaces);

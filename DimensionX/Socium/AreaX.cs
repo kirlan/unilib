@@ -62,7 +62,7 @@ namespace Socium
             if (m_pRace == null)
                 return "unpopulated";
             else
-                return m_pRace.m_pTemplate.m_sName.Trim();
+                return m_pRace.m_sName;
         }
 
         public override string ToString()
