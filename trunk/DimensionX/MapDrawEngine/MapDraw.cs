@@ -13,6 +13,7 @@ using LandscapeGeneration;
 using LandscapeGeneration.PathFind;
 using MapDrawEngine.Signs;
 using Random;
+using Socium.Languages;
 
 namespace MapDrawEngine
 {
@@ -757,20 +758,53 @@ namespace MapDrawEngine
             if (m_pWorld.m_aLocalRaces.Length > m_aRaceColorsTemplate.Length)
                 throw new Exception("Can't draw more then " + m_aRaceColorsTemplate.Length.ToString() + " races!");
 
+            Dictionary<Language, int> cLanguages = new Dictionary<Language, int>();
+            Dictionary<Language, int> cLanguageCounter = new Dictionary<Language, int>();
+            Dictionary<Language, int> cLanguageIndex = new Dictionary<Language, int>();
+            int iCount = 0;
             foreach (Race pRace in m_pWorld.m_aLocalRaces)
             {
-                int iIndex;
-                do
+                int ik = 0;
+                if (!cLanguages.TryGetValue(pRace.m_pTemplate.m_pLanguage, out ik))
                 {
-                    iIndex = Rnd.Get(m_aRaceColorsTemplate.Length);
+                    cLanguageCounter[pRace.m_pTemplate.m_pLanguage] = 1;
+                    cLanguageIndex[pRace.m_pTemplate.m_pLanguage] = iCount++;
                 }
-                while (cUsedColors.Contains(iIndex));
-
-                cUsedColors.Add(iIndex);
-                m_cRaceColorsID[pRace] = new SolidBrush(m_aRaceColorsTemplate[iIndex]);
-                m_cAncientRaceColorsID[pRace] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, m_aRaceColorsTemplate[iIndex]);
-                m_cHegemonRaceColorsID[pRace] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, m_aRaceColorsTemplate[iIndex]);
+                cLanguages[pRace.m_pTemplate.m_pLanguage] = ik+1;
             }
+
+            //Dictionary<Language, Dictionary<Race, KColor>> cColors = new Dictionary<Language, Dictionary<Race, KColor>>();
+            foreach (Race pRace in m_pWorld.m_aLocalRaces)
+            {
+                KColor color = new KColor();
+                color.Hue = 360 * cLanguageIndex[pRace.m_pTemplate.m_pLanguage] / cLanguages.Count;
+                float fK = ((float)cLanguageCounter[pRace.m_pTemplate.m_pLanguage]) / cLanguages[pRace.m_pTemplate.m_pLanguage];
+                float fF = fK * Rnd.Get(1f);
+                color.Lightness = 0.2 + 0.7 * fK;
+                color.Saturation = 0.2 + 0.7 * fK;
+                //if (!cColors.ContainsKey(pRace.m_pTemplate.m_pLanguage))
+                //    cColors[pRace.m_pTemplate.m_pLanguage] = new Dictionary<Race, KColor>();
+                //cColors[pRace.m_pTemplate.m_pLanguage][pRace] = color;
+                m_cRaceColorsID[pRace] = new SolidBrush(color.RGB);
+                m_cAncientRaceColorsID[pRace] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, color.RGB);
+                m_cHegemonRaceColorsID[pRace] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, color.RGB);
+                cLanguageCounter[pRace.m_pTemplate.m_pLanguage]++;
+            }
+
+            //foreach (Race pRace in m_pWorld.m_aLocalRaces)
+            //{
+            //    int iIndex;
+            //    do
+            //    {
+            //        iIndex = Rnd.Get(m_aRaceColorsTemplate.Length);
+            //    }
+            //    while (cUsedColors.Contains(iIndex));
+
+            //    cUsedColors.Add(iIndex);
+            //    m_cRaceColorsID[pRace] = new SolidBrush(m_aRaceColorsTemplate[iIndex]);
+            //    m_cAncientRaceColorsID[pRace] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, m_aRaceColorsTemplate[iIndex]);
+            //    m_cHegemonRaceColorsID[pRace] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, m_aRaceColorsTemplate[iIndex]);
+            //}
 
             //левый верхний угол зоны отображения - в ноль!
             m_pDrawFrame.X = 0;
