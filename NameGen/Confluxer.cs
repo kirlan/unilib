@@ -125,7 +125,13 @@ namespace NameGen
                 if (!m_cDictionary.ContainsKey(pVoxel.m_sNext))
                     break;
 
-                Voxel pNextVoxel = m_cDictionary[pVoxel.m_sNext][Rnd.Get(m_cDictionary[pVoxel.m_sNext].Count)];
+                Voxel pNextVoxel;
+                do
+                {
+                    pNextVoxel = m_cDictionary[pVoxel.m_sNext][Rnd.Get(m_cDictionary[pVoxel.m_sNext].Count)];
+                }
+                while (pNextVoxel.m_sPair == pVoxel.m_sPair);
+
                 sWord += pNextVoxel.m_sPair;
                 
                 pVoxel = pNextVoxel;
