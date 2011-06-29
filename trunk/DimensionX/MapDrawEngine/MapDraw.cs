@@ -634,9 +634,9 @@ namespace MapDrawEngine
         /// <summary>
         /// Привязка цветов для конкретных рас
         /// </summary>
-        private Dictionary<RaceTemplate, Brush> m_cRaceColorsID = new Dictionary<RaceTemplate, Brush>();
-        private Dictionary<RaceTemplate, Brush> m_cAncientRaceColorsID = new Dictionary<RaceTemplate, Brush>();
-        private Dictionary<RaceTemplate, Brush> m_cHegemonRaceColorsID = new Dictionary<RaceTemplate, Brush>();
+        private Dictionary<Race, Brush> m_cRaceColorsID = new Dictionary<Race, Brush>();
+        private Dictionary<Race, Brush> m_cAncientRaceColorsID = new Dictionary<Race, Brush>();
+        private Dictionary<Race, Brush> m_cHegemonRaceColorsID = new Dictionary<Race, Brush>();
 
         /// <summary>
         /// Заготовка цветов для рас
@@ -722,7 +722,6 @@ namespace MapDrawEngine
             Color.FromArgb(120, 240, 240),
             Color.FromArgb(180, 240, 240),
             Color.FromArgb(240, 240, 240),
-
         };
 
         #endregion
@@ -752,24 +751,25 @@ namespace MapDrawEngine
 
             ClearPath();
 
-            //если расам ещё не назначены цвета - назначим их
-            if (m_cRaceColorsID.Count == 0)
-            {
-                List<int> cUsedColors = new List<int>();
-                foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
-                {
-                    int iIndex;
-                    do
-                    {
-                        iIndex = Rnd.Get(m_aRaceColorsTemplate.Length);
-                    }
-                    while (cUsedColors.Contains(iIndex));
+            m_cRaceColorsID.Clear();
+            List<int> cUsedColors = new List<int>();
 
-                    cUsedColors.Add(iIndex);
-                    m_cRaceColorsID[pRaceTemplate] = new SolidBrush(m_aRaceColorsTemplate[iIndex]);
-                    m_cAncientRaceColorsID[pRaceTemplate] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, m_aRaceColorsTemplate[iIndex]);
-                    m_cHegemonRaceColorsID[pRaceTemplate] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, m_aRaceColorsTemplate[iIndex]);
+            if (m_pWorld.m_aLocalRaces.Length > m_aRaceColorsTemplate.Length)
+                throw new Exception("Can't draw more then " + m_aRaceColorsTemplate.Length.ToString() + " races!");
+
+            foreach (Race pRace in m_pWorld.m_aLocalRaces)
+            {
+                int iIndex;
+                do
+                {
+                    iIndex = Rnd.Get(m_aRaceColorsTemplate.Length);
                 }
+                while (cUsedColors.Contains(iIndex));
+
+                cUsedColors.Add(iIndex);
+                m_cRaceColorsID[pRace] = new SolidBrush(m_aRaceColorsTemplate[iIndex]);
+                m_cAncientRaceColorsID[pRace] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, m_aRaceColorsTemplate[iIndex]);
+                m_cHegemonRaceColorsID[pRace] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, m_aRaceColorsTemplate[iIndex]);
             }
 
             //левый верхний угол зоны отображения - в ноль!
@@ -907,11 +907,11 @@ namespace MapDrawEngine
                             if (pArea.m_pRace != null)
                             {
                                 //сохраним информацию о контуре региона и для этнографической карты
-                                Brush pBrush = m_cRaceColorsID[pArea.m_pRace.m_pTemplate];
+                                Brush pBrush = m_cRaceColorsID[pArea.m_pRace];
                                 if (pArea.m_pRace.m_bDying)
-                                    pBrush = m_cAncientRaceColorsID[pArea.m_pRace.m_pTemplate];
+                                    pBrush = m_cAncientRaceColorsID[pArea.m_pRace];
                                 if (pArea.m_pRace.m_bHegemon)
-                                    pBrush = m_cHegemonRaceColorsID[pArea.m_pRace.m_pTemplate];
+                                    pBrush = m_cHegemonRaceColorsID[pArea.m_pRace];
 
                                 if (!pQuad.m_cModes[MapMode.Natives].ContainsKey(pBrush))
                                     pQuad.m_cModes[MapMode.Natives][pBrush] = new GraphicsPath();
@@ -933,11 +933,11 @@ namespace MapDrawEngine
                     pPath.AddPolygon(aPts);
 
                     //сохраним информацию о контуре провинции для этнографической карты
-                    Brush pBrush = m_cRaceColorsID[pProvince.m_pRace.m_pTemplate];
+                    Brush pBrush = m_cRaceColorsID[pProvince.m_pRace];
                     if (pProvince.m_pRace.m_bDying)
-                        pBrush = m_cAncientRaceColorsID[pProvince.m_pRace.m_pTemplate];
+                        pBrush = m_cAncientRaceColorsID[pProvince.m_pRace];
                     if (pProvince.m_pRace.m_bHegemon)
-                        pBrush = m_cHegemonRaceColorsID[pProvince.m_pRace.m_pTemplate];
+                        pBrush = m_cHegemonRaceColorsID[pProvince.m_pRace];
 
                     Brush pPsiBrush = m_cPsiLevel[pProvince.m_pRace.m_iMagicLimit][pProvince.m_pRace.m_eMagicAbilityPrevalence];
                     

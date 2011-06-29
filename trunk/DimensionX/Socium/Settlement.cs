@@ -117,11 +117,11 @@ namespace Socium
                 case 0:
                     return string.Format("{0} {1}", m_pInfo.m_sName, m_sName);
                 case 1:
-                    return string.Format("ruins of {0} {1}", m_pRace.m_pTemplate.m_sName.Trim(), m_pInfo.m_sName);
+                    return string.Format("ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName).ToLower();
                 case 2:
-                    return string.Format("ancient ruins of {0} {1}", m_pRace.m_pTemplate.m_sName.Trim(), m_pInfo.m_sName);
+                    return string.Format("ancient ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName).ToLower();
                 default:
-                    return string.Format("forgotten ruins of {0} {1}", m_pRace.m_pTemplate.m_sName.Trim(), m_pInfo.m_sName);
+                    return string.Format("forgotten ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName).ToLower();
             }
         }
     }

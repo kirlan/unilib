@@ -147,7 +147,7 @@
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Controls.Add(this.label26, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.label24, 0, 1);
@@ -171,7 +171,7 @@
             this.label26.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label26.Location = new System.Drawing.Point(3, 0);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(74, 27);
+            this.label26.Size = new System.Drawing.Size(76, 27);
             this.label26.TabIndex = 49;
             this.label26.Text = "Progress:";
             this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -181,7 +181,7 @@
             this.label24.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label24.Location = new System.Drawing.Point(3, 27);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(74, 27);
+            this.label24.Size = new System.Drawing.Size(76, 27);
             this.label24.TabIndex = 55;
             this.label24.Text = "Races set:";
             this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -191,9 +191,9 @@
             this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label12.Location = new System.Drawing.Point(3, 54);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(74, 27);
+            this.label12.Size = new System.Drawing.Size(76, 27);
             this.label12.TabIndex = 47;
-            this.label12.Text = "Races count:";
+            this.label12.Text = "Nations count:";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // NativesSocialPreset
@@ -201,9 +201,9 @@
             this.NativesSocialPreset.Dock = System.Windows.Forms.DockStyle.Fill;
             this.NativesSocialPreset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.NativesSocialPreset.FormattingEnabled = true;
-            this.NativesSocialPreset.Location = new System.Drawing.Point(83, 3);
+            this.NativesSocialPreset.Location = new System.Drawing.Point(85, 3);
             this.NativesSocialPreset.Name = "NativesSocialPreset";
-            this.NativesSocialPreset.Size = new System.Drawing.Size(186, 21);
+            this.NativesSocialPreset.Size = new System.Drawing.Size(184, 21);
             this.NativesSocialPreset.TabIndex = 51;
             this.NativesSocialPreset.SelectedIndexChanged += new System.EventHandler(this.NativesSocialPreset_SelectedIndexChanged);
             // 
@@ -218,9 +218,9 @@
             this.NativesRacesSet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.NativesRacesSet.EmptyString = "Custom";
             this.NativesRacesSet.FormattingEnabled = true;
-            this.NativesRacesSet.Location = new System.Drawing.Point(83, 30);
+            this.NativesRacesSet.Location = new System.Drawing.Point(85, 30);
             this.NativesRacesSet.Name = "NativesRacesSet";
-            this.NativesRacesSet.Size = new System.Drawing.Size(186, 21);
+            this.NativesRacesSet.Size = new System.Drawing.Size(184, 21);
             this.NativesRacesSet.TabIndex = 57;
             this.NativesRacesSet.CheckBoxCheckedChanged += new System.EventHandler(this.NativesRacesSet_CheckBoxCheckedChanged);
             // 
@@ -230,9 +230,9 @@
             this.panel3.Controls.Add(this.button4);
             this.panel3.Controls.Add(this.NativesRacesCountNumber);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(83, 57);
+            this.panel3.Location = new System.Drawing.Point(85, 57);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(186, 21);
+            this.panel3.Size = new System.Drawing.Size(184, 21);
             this.panel3.TabIndex = 58;
             // 
             // NativesRacesCount
@@ -240,19 +240,19 @@
             this.NativesRacesCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.NativesRacesCount.LargeChange = 5;
             this.NativesRacesCount.Location = new System.Drawing.Point(37, 0);
-            this.NativesRacesCount.Maximum = 40;
+            this.NativesRacesCount.Maximum = 64;
             this.NativesRacesCount.Minimum = 6;
             this.NativesRacesCount.Name = "NativesRacesCount";
-            this.NativesRacesCount.Size = new System.Drawing.Size(115, 21);
+            this.NativesRacesCount.Size = new System.Drawing.Size(113, 21);
             this.NativesRacesCount.TabIndex = 59;
-            this.NativesRacesCount.Value = 6;
+            this.NativesRacesCount.Value = 60;
             this.NativesRacesCount.ValueChanged += new System.EventHandler(this.NativesRacesCount_ValueChanged);
             // 
             // button4
             // 
             this.button4.Dock = System.Windows.Forms.DockStyle.Right;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button4.Location = new System.Drawing.Point(152, 0);
+            this.button4.Location = new System.Drawing.Point(150, 0);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(34, 21);
             this.button4.TabIndex = 58;
@@ -302,7 +302,7 @@
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Controls.Add(this.label30, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.label28, 0, 1);
@@ -326,7 +326,7 @@
             this.label30.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label30.Location = new System.Drawing.Point(3, 0);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(74, 27);
+            this.label30.Size = new System.Drawing.Size(76, 27);
             this.label30.TabIndex = 48;
             this.label30.Text = "Progress:";
             this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -336,7 +336,7 @@
             this.label28.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label28.Location = new System.Drawing.Point(3, 27);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(74, 27);
+            this.label28.Size = new System.Drawing.Size(76, 27);
             this.label28.TabIndex = 54;
             this.label28.Text = "Races set:";
             this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -346,9 +346,9 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 54);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 27);
+            this.label1.Size = new System.Drawing.Size(76, 27);
             this.label1.TabIndex = 61;
-            this.label1.Text = "Races count:";
+            this.label1.Text = "Nations count:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // InvadersRacesSet
@@ -362,9 +362,9 @@
             this.InvadersRacesSet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.InvadersRacesSet.EmptyString = "Custom";
             this.InvadersRacesSet.FormattingEnabled = true;
-            this.InvadersRacesSet.Location = new System.Drawing.Point(83, 30);
+            this.InvadersRacesSet.Location = new System.Drawing.Point(85, 30);
             this.InvadersRacesSet.Name = "InvadersRacesSet";
-            this.InvadersRacesSet.Size = new System.Drawing.Size(186, 21);
+            this.InvadersRacesSet.Size = new System.Drawing.Size(184, 21);
             this.InvadersRacesSet.TabIndex = 56;
             this.InvadersRacesSet.CheckBoxCheckedChanged += new System.EventHandler(this.InvadersRacesSet_CheckBoxCheckedChanged);
             // 
@@ -373,9 +373,9 @@
             this.InvadersSocialPreset.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InvadersSocialPreset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.InvadersSocialPreset.FormattingEnabled = true;
-            this.InvadersSocialPreset.Location = new System.Drawing.Point(83, 3);
+            this.InvadersSocialPreset.Location = new System.Drawing.Point(85, 3);
             this.InvadersSocialPreset.Name = "InvadersSocialPreset";
-            this.InvadersSocialPreset.Size = new System.Drawing.Size(186, 21);
+            this.InvadersSocialPreset.Size = new System.Drawing.Size(184, 21);
             this.InvadersSocialPreset.TabIndex = 50;
             this.InvadersSocialPreset.SelectedIndexChanged += new System.EventHandler(this.InvadersSocialPreset_SelectedIndexChanged);
             // 
@@ -385,9 +385,9 @@
             this.panel4.Controls.Add(this.InvadersRacesCountNumber);
             this.panel4.Controls.Add(this.button5);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel4.Location = new System.Drawing.Point(83, 57);
+            this.panel4.Location = new System.Drawing.Point(85, 57);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(186, 21);
+            this.panel4.Size = new System.Drawing.Size(184, 21);
             this.panel4.TabIndex = 62;
             // 
             // InvadersRacesCount
@@ -395,11 +395,11 @@
             this.InvadersRacesCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InvadersRacesCount.LargeChange = 5;
             this.InvadersRacesCount.Location = new System.Drawing.Point(37, 0);
-            this.InvadersRacesCount.Maximum = 40;
+            this.InvadersRacesCount.Maximum = 64;
             this.InvadersRacesCount.Name = "InvadersRacesCount";
-            this.InvadersRacesCount.Size = new System.Drawing.Size(115, 21);
+            this.InvadersRacesCount.Size = new System.Drawing.Size(113, 21);
             this.InvadersRacesCount.TabIndex = 63;
-            this.InvadersRacesCount.Value = 6;
+            this.InvadersRacesCount.Value = 60;
             this.InvadersRacesCount.ValueChanged += new System.EventHandler(this.InvadersRacesCount_ValueChanged);
             // 
             // InvadersRacesCountNumber
@@ -415,7 +415,7 @@
             // 
             this.button5.Dock = System.Windows.Forms.DockStyle.Right;
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button5.Location = new System.Drawing.Point(152, 0);
+            this.button5.Location = new System.Drawing.Point(150, 0);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(34, 21);
             this.button5.TabIndex = 62;
@@ -567,12 +567,12 @@
             this.RacesCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RacesCount.LargeChange = 5;
             this.RacesCount.Location = new System.Drawing.Point(37, 0);
-            this.RacesCount.Maximum = 40;
+            this.RacesCount.Maximum = 64;
             this.RacesCount.Minimum = 6;
             this.RacesCount.Name = "RacesCount";
             this.RacesCount.Size = new System.Drawing.Size(109, 25);
             this.RacesCount.TabIndex = 59;
-            this.RacesCount.Value = 6;
+            this.RacesCount.Value = 60;
             this.RacesCount.ValueChanged += new System.EventHandler(this.RacesCount_ValueChanged);
             // 
             // button1
@@ -603,7 +603,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(94, 31);
             this.label8.TabIndex = 48;
-            this.label8.Text = "Races count:";
+            this.label8.Text = "Nations count:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MaxMagicBox

@@ -80,64 +80,52 @@ namespace Socium
         public Customs(Customs m_pAncestorCustoms)
         {
             m_eGenderPriority = m_pAncestorCustoms.m_eGenderPriority;
-
-            if (Rnd.OneChanceFrom(2))
-            {
-                if (m_eGenderPriority == GenderPriority.Genders_equality)
-                    m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
-                else
-                    m_eGenderPriority = GenderPriority.Genders_equality;
-            }
-
             m_eMindBodyPriority = m_pAncestorCustoms.m_eMindBodyPriority;
-
-            if (Rnd.OneChanceFrom(2))
-            {
-                if (m_eMindBodyPriority == MindBodyPriority.Balanced_body_and_mind)
-                    m_eMindBodyPriority = Rnd.OneChanceFrom(3) ? MindBodyPriority.Thinkers : MindBodyPriority.Brutes;
-                else
-                    m_eMindBodyPriority = MindBodyPriority.Balanced_body_and_mind;
-            }
-
             m_eSexuality = m_pAncestorCustoms.m_eSexuality;
-
-            if (Rnd.OneChanceFrom(2))
-            {
-                if (m_eSexuality == Sexuality.Moderate_sexuality)
-                    m_eSexuality = Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
-                else
-                    m_eSexuality = Sexuality.Moderate_sexuality;
-            }
-
             m_eSexRelations = m_pAncestorCustoms.m_eSexRelations;
-
-            if (Rnd.OneChanceFrom(2))
-            {
-                if (m_eSexRelations == SexRelations.Bisexual)
-                    m_eSexRelations = Rnd.OneChanceFrom(3) ? SexRelations.Homosexual : SexRelations.Heterosexual;
-                else
-                    m_eSexRelations = SexRelations.Bisexual;
-            }
-
             m_eMagicPosition = m_pAncestorCustoms.m_eMagicPosition;
-
-            if (Rnd.OneChanceFrom(2))
-            {
-                if (m_eMagicPosition == MagicPosition.Magic_is_allowed)
-                    m_eMagicPosition = Rnd.OneChanceFrom(3) ? MagicPosition.Magic_is_praised : MagicPosition.Magic_is_feared;
-                else
-                    m_eMagicPosition = MagicPosition.Magic_is_allowed;
-            }
-
             m_eFamilySize = m_pAncestorCustoms.m_eFamilySize;
-
-            if (Rnd.OneChanceFrom(2))
+            
+            int iChoice = Rnd.Get(12);
+            switch (iChoice)
             {
-                if (m_eFamilySize == FamilySize.Polygamy)
-                    m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
-                else
-                    m_eFamilySize = FamilySize.Polygamy;
-            }
+                case 0:
+                    if (m_eGenderPriority == GenderPriority.Genders_equality)
+                        m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
+                    else
+                        m_eGenderPriority = GenderPriority.Genders_equality;
+                    break;
+                case 1:
+                    if (m_eMindBodyPriority == MindBodyPriority.Balanced_body_and_mind)
+                        m_eMindBodyPriority = Rnd.OneChanceFrom(3) ? MindBodyPriority.Thinkers : MindBodyPriority.Brutes;
+                    else
+                        m_eMindBodyPriority = MindBodyPriority.Balanced_body_and_mind;
+                    break;
+                case 2:
+                    if (m_eSexuality == Sexuality.Moderate_sexuality)
+                        m_eSexuality = Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
+                    else
+                        m_eSexuality = Sexuality.Moderate_sexuality;
+                    break;
+                case 3:
+                    if (m_eSexRelations == SexRelations.Bisexual)
+                        m_eSexRelations = Rnd.OneChanceFrom(3) ? SexRelations.Homosexual : SexRelations.Heterosexual;
+                    else
+                        m_eSexRelations = SexRelations.Bisexual;
+                    break;
+                case 4:
+                    if (m_eMagicPosition == MagicPosition.Magic_is_allowed)
+                        m_eMagicPosition = Rnd.OneChanceFrom(3) ? MagicPosition.Magic_is_praised : MagicPosition.Magic_is_feared;
+                    else
+                        m_eMagicPosition = MagicPosition.Magic_is_allowed;
+                    break;
+                case 5:
+                    if (m_eFamilySize == FamilySize.Polygamy)
+                        m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
+                    else
+                        m_eFamilySize = FamilySize.Polygamy;
+                    break;
+            }            
         }
 
         public void Evolve()

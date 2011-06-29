@@ -12,8 +12,8 @@ namespace Socium.Languages
 
         public European()
             : base(NameGenerator.Language.European)
-        { 
-            string sNation = "italian faliscan latinish brython british french breton dalmatish corsican iberish spanish galician portugalean ligurish venetish catalan burgundishgerman franconish cimbrish austrish bavarish octish albion belgish beron cantabrish hobitish arnorish gondor elenian";
+        {
+            string sNation = "italian faliscan latinish brython british french breton dalmatish corsican iberish spanish galician ligurish venetish catalan german cimbrish austrish bavarish octish albion belgish beron hobitish arnorish gondor elenian";
             m_pNations = new Confluxer(sNation, 2);
         }
 

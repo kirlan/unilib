@@ -76,7 +76,7 @@ namespace Socium
             m_cNativesRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
             m_cInvadersRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
 
-            m_iNativesCount = 12;
+            m_iNativesCount = 60;
 
             m_iInvadersCount = 0;
 
