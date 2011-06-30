@@ -668,7 +668,7 @@ namespace Socium
                     }
                 }
 
-                m_iFood += (int)(pLand.m_cContents.Count * pLand.Type.m_fFood) + iCoast * 3;
+                m_iFood += (int)(pLand.m_cContents.Count * pLand.Type.m_fFood) + iCoast;// *3;
                 m_iWood += (int)(pLand.m_cContents.Count * pLand.Type.m_fWood);
                 m_iOre += (int)(pLand.m_cContents.Count * pLand.Type.m_fOre);
 

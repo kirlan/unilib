@@ -613,9 +613,11 @@ namespace Socium
                     }
                 }
 
+                //если на континенте есть хоть одна провинция - дальше делать нечего
                 if (cUsed.Contains(pConti) || pConti.m_cAreas.Count == iUsed)
                     continue;
 
+                //иначе ищем подходящее место дня новой провинции
                 LandX pSeed = null;
                 do
                 {
@@ -636,6 +638,7 @@ namespace Socium
                 }
                 while (pSeed == null);
 
+                //создаём новую провинцию в найденном месте
                 Province pProvince = new Province();
                 pProvince.Start(pSeed);
                 cProvinces.Add(pProvince);
@@ -646,8 +649,10 @@ namespace Socium
                 cUsed.Add(pConti);
             }
 
+            //теперь догоним общее число провинций до заданного
             while (cProvinces.Count < m_iProvincesCount)
             {
+                //ищем подходящее место дня новой провинции
                 LandX pSeed = null;
                 int iCounter = 0;
                 do
@@ -679,11 +684,12 @@ namespace Socium
                     else
                         iCounter = 0;
                 }
-                while (pSeed == null && iCounter < m_aLands.Length * 2);
+                while (pSeed == null && iCounter < m_aLands.Length * 2);//ищем подходящее место дня новой провинции
 
                 if (pSeed == null)
                     break;
 
+                //создаём новую провинцию в найденном месте
                 Province pProvince = new Province();
                 pProvince.Start(pSeed);
                 cProvinces.Add(pProvince);
@@ -692,8 +698,8 @@ namespace Socium
                     throw new Exception();
             }
 
+            //наращиваем территорию всем созданным провинциям до вычисленного максимума
             int iMaxProvinceSize = (m_aLands.Length * (100 - m_iOceansPercentage) / 100) / m_iProvincesCount;
-
             do
             {
                 foreach (Province pProvince in cProvinces)
@@ -707,6 +713,8 @@ namespace Socium
             }
             while (cFinished.Count < cProvinces.Count);
 
+            //убедимся, что провинции заняли весь континент.
+            //если остались ничейные земли - будем принудительно наращивать все провинции, пока пустых мест не останется.
             bool bAlreadyFinished = true;
             int iCnt = 0;
             foreach (Province pProvince in cProvinces)
@@ -736,6 +744,7 @@ namespace Socium
             }
             while (iCnt++ < m_aLands.Length);
 
+            //если всё равно остались пыстые земли (это возможно, т.к. провинции вымирающих рас принудительно не приращиваются), создадим там новые провинции
             foreach (LandX pLand in m_aLands)
             {
                 if (!pLand.Forbidden && !pLand.IsWater && pLand.m_pProvince == null)
