@@ -127,6 +127,9 @@ namespace Socium
 
         public override void Start(LandX pSeed)
         {
+            if (pSeed.m_pProvince != null)
+                throw new Exception("That land already belongs to province!!!");
+
             m_cBorderWith.Clear();
             m_cContents.Clear();
 
@@ -235,7 +238,7 @@ namespace Socium
 
                     LandX pLinkedLand = pLinkTerr.Key as LandX;
 
-                    if (pLinkedLand.IsWater || (pLinkedLand.m_pProvince != this && pLinkedLand.m_iProvincePresence > 0))
+                    if (pLinkedLand.IsWater || (pLinkedLand.m_pProvince != this && pLinkedLand.m_pProvince != null))
                         continue;
 
                     int iCost = 0;

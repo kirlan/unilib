@@ -513,6 +513,7 @@ namespace Socium
 
             m_aEpoches = aEpoches;
 
+            int iCounter = m_aEpoches.Length;
             foreach (Epoch pEpoch in m_aEpoches)
             {
                 Reset(pEpoch);
@@ -523,7 +524,9 @@ namespace Socium
                     Reset(pEpoch);
                 }
 
-                PopulateWorld(pEpoch, true);
+                iCounter--;
+
+                PopulateWorld(pEpoch, iCounter == 0);
             }
         }
 
@@ -578,7 +581,8 @@ namespace Socium
 
                     cProvinces.Add(pProvince);
                 }
-
+            
+            List<Province> cFinished = new List<Province>();
             //Позаботимся о том, чтобы на каждом континенте была хотя бы одна провинция
             foreach (ContinentX pConti in m_aContinents)
             {
@@ -589,11 +593,22 @@ namespace Socium
                 {
                     if (pArea.m_pRace != null && pArea.m_pRace.m_bDying)
                     {
-                        Province pLostProvince = new Province();
-                        pLostProvince.Start(pArea.m_cContents[Rnd.Get(pArea.m_cContents.Count)]);
-                        cProvinces.Add(pLostProvince);
-                        while (pLostProvince.Grow(pArea.m_cContents.Count)) { }
+                        int iCounter = 0;
+                        LandX pCradle = null;
+                        do
+                        {
+                            pCradle = pArea.m_cContents[Rnd.Get(pArea.m_cContents.Count)];
+                        }
+                        while (pCradle.m_pProvince != null && iCounter++ < pArea.m_cContents.Count);
 
+                        if (pCradle.m_pProvince == null)
+                        {
+                            Province pLostProvince = new Province();
+                            pLostProvince.Start(pCradle);
+                            cProvinces.Add(pLostProvince);
+                            while (pLostProvince.Grow(pArea.m_cContents.Count)) { }
+                            cFinished.Add(pLostProvince);
+                        }
                         iUsed++;
                     }
                 }
@@ -679,7 +694,6 @@ namespace Socium
 
             int iMaxProvinceSize = (m_aLands.Length * (100 - m_iOceansPercentage) / 100) / m_iProvincesCount;
 
-            List<Province> cFinished = new List<Province>();
             do
             {
                 foreach (Province pProvince in cProvinces)
@@ -1309,7 +1323,7 @@ namespace Socium
                 }
             }
 
-            List<Race> cEraseRace = new List<Race>();
+            //List<Race> cEraseRace = new List<Race>();
             foreach (Race pRace in m_aLocalRaces)
             {
                 if (!pRace.m_bDying)
@@ -1325,51 +1339,52 @@ namespace Socium
                         //else
                             pRace.m_bHegemon = pRace.m_bHegemon || Rnd.OneChanceFrom(m_aLocalRaces.Length);
                 }
-                else
-                    if (Rnd.OneChanceFrom(3))
-                        cEraseRace.Add(pRace);
+                //else
+                //    if (Rnd.OneChanceFrom(10))
+                //        cEraseRace.Add(pRace);
             }
 
-            List<Race> cRaces = new List<Race>(m_aLocalRaces);
+            //List<Race> cRaces = new List<Race>(m_aLocalRaces);
 
-            foreach (Race pRace in cEraseRace)
-                cRaces.Remove(pRace);
+            //foreach (Race pRace in cEraseRace)
+            //    cRaces.Remove(pRace);
 
             foreach (ContinentX pConti in m_aContinents)
             {
-                foreach (var pLandMass in pConti.m_cLocalRaces)
-                {
-                    foreach (Race pRace in cEraseRace)
-                        if (pLandMass.Value.Contains(pRace))
-                            pLandMass.Value.Remove(pRace);
+                //foreach (var pLandMass in pConti.m_cLocalRaces)
+                //{
+                //    foreach (Race pRace in cEraseRace)
+                //        if (pLandMass.Value.Contains(pRace))
+                //            pLandMass.Value.Remove(pRace);
 
-                    //foreach (Race pRce in pLandMass.Value)
-                    //    if (pRce == pRace)
-                    //    {
-                    //        if (pLandMass.Value.Contains(pRace))
-                    //            pLandMass.Value.Remove(pRace);
-                    //        throw new Exception();
-                    //    }
-                }
+                //    //foreach (Race pRce in pLandMass.Value)
+                //    //    if (pRce == pRace)
+                //    //    {
+                //    //        if (pLandMass.Value.Contains(pRace))
+                //    //            pLandMass.Value.Remove(pRace);
+                //    //        throw new Exception();
+                //    //    }
+                //}
 
                 foreach (AreaX pArea in pConti.m_cAreas)
                 {
                     if (pArea.m_pRace == null)
                         continue;
 
-                    if (cEraseRace.Contains(pArea.m_pRace) ||
+                    if (//cEraseRace.Contains(pArea.m_pRace) ||
                         (pArea.m_pRace.m_bDying && !Rnd.OneChanceFrom(100 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
                         pArea.m_pRace = null;
 
                     foreach (LandX pLand in pArea.m_cContents)
                     {
-                        if (cEraseRace.Contains(pLand.m_pRace) || pLand.m_pRace.m_bDying)
+                        if (//cEraseRace.Contains(pLand.m_pRace) || 
+                            pLand.m_pRace.m_bDying)
                             pLand.m_pRace = pArea.m_pRace;
                     }
                 }
             }
 
-            m_aLocalRaces = cRaces.ToArray();
+            //m_aLocalRaces = cRaces.ToArray();
 
             //foreach (ContinentX pConti in m_cContinents)
             //{
@@ -1386,98 +1401,125 @@ namespace Socium
             //}
 
             List<State> cEraseState = new List<State>();
+            //все государства
             foreach (State pState in m_aStates)
             {
-                if (!pState.Forbidden)
+                if (pState.Forbidden)
+                    continue;
+
+                //все провинции в каждом государстве
+                foreach (Province pProvince in pState.m_cContents)
                 {
-                    foreach (Province pProvince in pState.m_cContents)
+                    //ни одна провинция не принадлежит ни какому государству
+                    pProvince.Owner = null;
+                    //все земли в каждой провинции
+                    foreach (LandX pLand in pProvince.m_cContents)
                     {
-                        pProvince.Owner = null;
-                        foreach (LandX pLand in pProvince.m_cContents)
+                        //ни одна земля не принадлежит никакой провинции
+                        pLand.m_pProvince = null;
+                        pLand.m_iProvincePresence = 0;
+                        //все локации в каждой земле
+                        foreach (LocationX pLoc in pLand.m_cContents)
                         {
-                            pLand.m_pProvince = null;
-                            pLand.m_iProvincePresence = 0;
-                            foreach (LocationX pLoc in pLand.m_cContents)
+                            //если есть поселение
+                            if (pLoc.m_pSettlement != null)
                             {
-                                if (pLoc.m_pSettlement != null)
+                                //если это уже руины
+                                if (pLoc.m_pSettlement.m_iRuinsAge > 0)
                                 {
-                                    if (pLoc.m_pSettlement.m_iRuinsAge > 0)
+                                    //в зависимости от проходимости местности
+                                    if (!Rnd.OneChanceFrom((int)pLand.MovementCost))
                                     {
-                                        if (!Rnd.OneChanceFrom((int)pLand.MovementCost))
-                                        {
-                                            pLoc.m_pSettlement.m_iRuinsAge++;
-                                        }
-                                        else
-                                        {
-                                            pLoc.m_pSettlement = null;
-                                            foreach (var pLink in pLoc.m_cLinks)
-                                                pLink.Value.m_bRuins = false;
-                                            if (pProvince.m_cSettlements.Contains(pLoc))
-                                                pProvince.m_cSettlements.Remove(pLoc);
-                                        }
+                                        //либо наращиваем возраст руин - в труднодоступных местах
+                                        pLoc.m_pSettlement.m_iRuinsAge++;
                                     }
                                     else
                                     {
-                                        switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
-                                        {
-                                            case SettlementSize.Village:
-                                                break;
-                                            case SettlementSize.Town:
-                                                if (Rnd.OneChanceFrom(1 + (int)(24 / pLoc.GetMovementCost())))
-                                                    pLoc.m_pSettlement.m_iRuinsAge++;
-                                                break;
-                                            case SettlementSize.City:
-                                                if (Rnd.OneChanceFrom(1 + (int)(12 / pLoc.GetMovementCost())))
-                                                    pLoc.m_pSettlement.m_iRuinsAge++;
-                                                break;
-                                            case SettlementSize.Capital:
-                                                if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
-                                                    pLoc.m_pSettlement.m_iRuinsAge++;
-                                                break;
-                                            case SettlementSize.Fort:
-                                                if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
-                                                    pLoc.m_pSettlement.m_iRuinsAge++;
-                                                break;
-                                        }
-
-                                        if (pLoc == pState.m_pMethropoly.m_pAdministrativeCenter &&
-                                            pLoc.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
-                                            pLoc.m_pSettlement.m_iRuinsAge = 1;
-
-                                        if (pLoc.m_pSettlement.m_iRuinsAge == 0)
-                                            pLoc.m_pSettlement = null;
-                                        else
-                                            foreach (var pLink in pLoc.m_cLinks)
-                                                pLink.Value.m_bRuins = true;
-
+                                        //либо окончательно уничтожаем все следы цивилизации - в легкодоступных местах
+                                        pLoc.m_pSettlement = null;
+                                        //снимаем флаг "руины" со всех путей, ведущих в эту локацию
+                                        foreach (var pLink in pLoc.m_cLinks)
+                                            pLink.Value.m_bRuins = false;
+                                        //и убираем локацию из списка поселений в провинции
+                                        //if (pProvince.m_cSettlements.Contains(pLoc))
+                                        //    pProvince.m_cSettlements.Remove(pLoc);
                                     }
                                 }
+                                //иначе, т.е. если это ещё не руины
+                                else
+                                {
+                                    //в зависимости от размера поселения и проходимости местности даём ему шанс стать руинами
+                                    switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                                    {
+                                        case SettlementSize.Village:
+                                            break;
+                                        case SettlementSize.Town:
+                                            if (Rnd.OneChanceFrom(1 + (int)(24 / pLoc.GetMovementCost())))
+                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                            break;
+                                        case SettlementSize.City:
+                                            if (Rnd.OneChanceFrom(1 + (int)(12 / pLoc.GetMovementCost())))
+                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                            break;
+                                        case SettlementSize.Capital:
+                                            if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
+                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                            break;
+                                        case SettlementSize.Fort:
+                                            if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
+                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                            break;
+                                    }
 
-                                pLoc.m_bHarbor = false;
-                                pLoc.m_pBuilding = null;
+                                    //административные центры всегда становятся руинами - если только они крупнее деревни
+                                    if (pLoc == pState.m_pMethropoly.m_pAdministrativeCenter &&
+                                        pLoc.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
+                                        pLoc.m_pSettlement.m_iRuinsAge = 1;
+
+                                    //если поселение не превратилось в руины - значит оно полностью погибло и не оставило никаких следов
+                                    if (pLoc.m_pSettlement.m_iRuinsAge == 0)
+                                        pLoc.m_pSettlement = null;
+                                    else
+                                        //если же оно таки стало руинами - помечаем соответсвенно все пути ведущие в эту локацию, чтобы дороги обходили её стороной
+                                        foreach (var pLink in pLoc.m_cLinks)
+                                            pLink.Value.m_bRuins = true;
+
+                                }
                             }
-                        }
-                        pProvince.m_cSettlements.Clear();
-                    }
 
-                    if (!m_aLocalRaces.Contains(pState.m_pRace) || Rnd.OneChanceFrom(2))
-                        cEraseState.Add(pState);
-                }
-            }
+                            //так же снимаем пометку "порт" и сносим все отдельно стоящие строения
+                            pLoc.m_bHarbor = false;
+                            pLoc.m_pBuilding = null;
+                        }//все локации в каждой земле
+                    }//все земли в каждой провинции
+                        
+                    //очищаем список поселений в провинции
+                    pProvince.m_cSettlements.Clear();
+                }//все провинции в каждом государстве
 
+                //некоторые государства вообще исчезают с лица земли
+                if (!m_aLocalRaces.Contains(pState.m_pRace) || Rnd.OneChanceFrom(2))
+                    cEraseState.Add(pState);
+
+            }//все государства
+
+            //удаляем из общего списка государства, которые не выжили
             List<State> cStates = new List<State>(m_aStates);
             foreach (State pState in cEraseState)
                 cStates.Remove(pState);
             m_aStates = cStates.ToArray();
 
+            //оставляем провинции - центры выживших государств, остальные удаляем из общего списка
             List<Province> cProvinces = new List<Province>();
             foreach (State pState in m_aStates)
                 cProvinces.Add(pState.m_pMethropoly);
             m_aProvinces = cProvinces.ToArray();
 
+            //очищаем поконтинентные списки государств
             foreach (ContinentX pConti in m_aContinents)
                 pConti.m_cStates.Clear();
 
+            //уничтожаем все дороги
             foreach (TransportationLink pRoad in m_cTransportGrid)
                 pRoad.ClearRoad();
             foreach (TransportationLink pRoad in m_cLandsTransportGrid)
@@ -1485,8 +1527,10 @@ namespace Socium
             foreach (TransportationLink pRoad in m_cLMTransportGrid)
                 pRoad.ClearRoad();
 
+            //все локации в мире
             foreach (LocationX pLoc in m_pGrid.m_aLocations)
             {
+                //очищаем информацию о дорогах, проходивших через локацию
                 pLoc.m_cRoads.Clear();
                 pLoc.m_cRoads[1] = new List<Road>();
                 pLoc.m_cRoads[2] = new List<Road>();
@@ -1494,6 +1538,7 @@ namespace Socium
                 pLoc.m_cHaveRoadTo.Clear();
                 pLoc.m_cHaveSeaRouteTo.Clear();
 
+                //удаляем все пути с суши на море (выходить в море можно только в портах, а раз портов нет, то и путей нет)
                 if (pLoc.Owner != null && !(pLoc.Owner as LandX).IsWater)
                 {
                     List<TransportationNode> cErase = new List<TransportationNode>();

@@ -253,10 +253,15 @@ namespace Socium
 
         public override void Start(Province pSeed)
         {
+            if (pSeed.Owner != null)
+                throw new Exception("This province already belongs to state!!!");
+
             m_cBorderWith.Clear();
             m_cContents.Clear();
 
             base.Start(pSeed);
+
+            //TestChain();
 
             m_pMethropoly = pSeed;
 
@@ -359,26 +364,73 @@ namespace Socium
             m_cContents.Add(pAddon);
             pAddon.Owner = this;
 
+            //List<Line> cListLine = m_cBorder[pAddon];
             m_cBorder[pAddon].Clear();
             m_cBorder.Remove(pAddon);
 
+            //List<Line> cNewBorder = new List<Line>();
+            //List<Line> cFalseBorder = new List<Line>();
             foreach (var pLand in pAddon.BorderWith)
             {
                 ITerritory pL = pLand.Key as ITerritory;
 
                 if (!pL.Forbidden && m_cContents.Contains(pL))
+                {
+                    //foreach (Line pLine in pLand.Value)
+                    //    cFalseBorder.Add(new Line(pLine));
                     continue;
+                }
 
                 if (!m_cBorder.ContainsKey(pL))
                     m_cBorder[pL] = new List<Line>();
                 Line[] cLines = pLand.Value.ToArray();
                 foreach (Line pLine in cLines)
+                {
                     m_cBorder[pL].Add(new Line(pLine));
+                    //cNewBorder.Add(new Line(pLine));
+                }
             }
 
-            //ChainBorder();
+            //TestChain();
+
+            //if (cListLine.Count != cFalseBorder.Count && cFalseBorder.Count > 0)
+            //{
+            //    Line[] aListLine = SortLines(cListLine);
+            //    Line[] aListLine2 = SortLines(cNewBorder);
+            //    Line[] aListLine3 = SortLines(cFalseBorder);
+            //}
 
             return true;
+        }
+
+        private Line[] SortLines(List<Line> cListLine)
+        {
+            Line[] aListLine = new Line[cListLine.Count];
+            int iIndex = -1;
+            do
+            {
+                foreach (Line pLine in cListLine)
+                {
+                    if (iIndex < 0)
+                    {
+                        bool bPrevious = false;
+                        foreach (Line pLine2 in cListLine)
+                            if (pLine2.m_pPoint2.Y == pLine.m_pPoint1.Y)
+                                bPrevious = true;
+
+                        if (!bPrevious)
+                            aListLine[++iIndex] = pLine;
+                    }
+                    else
+                    {
+                        if (pLine.m_pPoint1.Y == aListLine[iIndex].m_pPoint2.Y)
+                            aListLine[++iIndex] = pLine;
+                    }
+                }
+            }
+            while (iIndex < cListLine.Count - 1);
+
+            return aListLine;
         }
 
         /// <summary>
