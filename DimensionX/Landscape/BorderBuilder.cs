@@ -27,6 +27,45 @@ namespace LandscapeGeneration
         }
         public List<Line> m_cFirstLines = new List<Line>();
 
+        public bool TestChain()
+        {
+            List<Line> cTotalBorder = new List<Line>();
+            foreach (var cLines in m_cBorder)
+                cTotalBorder.AddRange(cLines.Value);
+        
+            Line[] aTotalBorder = cTotalBorder.ToArray();
+            int iTotalCount = aTotalBorder.Length;
+
+            for (int i = 0; i < iTotalCount; i++)
+            {
+                bool bGot1 = false;
+                bool bGot2 = false; 
+                
+                Line pCurrentLine = aTotalBorder[i];
+                for (int j = 0; j < iTotalCount; j++)
+                {
+                    if (i == j)
+                        continue;
+
+                    Line pLine = aTotalBorder[j];
+                    if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
+                                pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY)
+                        bGot1 = true;
+                    if (pLine.m_pPoint2 == pCurrentLine.m_pPoint1 ||
+                                pLine.m_pPoint2.m_fY == pCurrentLine.m_pPoint1.m_fY)
+                        bGot2 = true;
+
+                    if (bGot1 && bGot2)
+                        break;
+                }
+
+                if (!bGot1 || !bGot2)
+                    return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
         /// </summary>
