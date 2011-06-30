@@ -755,8 +755,8 @@ namespace MapDrawEngine
             m_cRaceColorsID.Clear();
             List<int> cUsedColors = new List<int>();
 
-            if (m_pWorld.m_aLocalRaces.Length > m_aRaceColorsTemplate.Length)
-                throw new Exception("Can't draw more then " + m_aRaceColorsTemplate.Length.ToString() + " races!");
+            //if (m_pWorld.m_aLocalRaces.Length > m_aRaceColorsTemplate.Length)
+            //    throw new Exception("Can't draw more then " + m_aRaceColorsTemplate.Length.ToString() + " races!");
 
             Dictionary<Language, int> cLanguages = new Dictionary<Language, int>();
             Dictionary<Language, int> cLanguageCounter = new Dictionary<Language, int>();
