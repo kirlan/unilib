@@ -34,11 +34,11 @@ namespace Socium
         Homosexual
     }
 
-    public enum MagicPosition
-    { 
-        Magic_is_praised,
-        Magic_is_allowed,
-        Magic_is_feared
+    public enum Devotion
+    {
+        Piety,
+        Agnosticism,
+        Atheism
     }
 
     public enum FamilySize
@@ -58,7 +58,7 @@ namespace Socium
 
         public SexRelations m_eSexRelations = SexRelations.Heterosexual;
 
-        public MagicPosition m_eMagicPosition = MagicPosition.Magic_is_allowed;
+        public Devotion m_eReligion = Devotion.Agnosticism;
 
         public FamilySize m_eFamilySize = FamilySize.Monogamy;
 
@@ -72,7 +72,7 @@ namespace Socium
 
             m_eSexRelations = Rnd.OneChanceFrom(3) ? SexRelations.Homosexual : SexRelations.Heterosexual;
 
-            m_eMagicPosition = Rnd.OneChanceFrom(3) ? MagicPosition.Magic_is_praised : MagicPosition.Magic_is_feared;
+            m_eReligion = Rnd.OneChanceFrom(3) ? Devotion.Atheism : Devotion.Piety;
 
             m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
         }
@@ -83,7 +83,7 @@ namespace Socium
             m_eMindBodyPriority = m_pAncestorCustoms.m_eMindBodyPriority;
             m_eSexuality = m_pAncestorCustoms.m_eSexuality;
             m_eSexRelations = m_pAncestorCustoms.m_eSexRelations;
-            m_eMagicPosition = m_pAncestorCustoms.m_eMagicPosition;
+            m_eReligion = m_pAncestorCustoms.m_eReligion;
             m_eFamilySize = m_pAncestorCustoms.m_eFamilySize;
             
             int iChoice = Rnd.Get(12);
@@ -114,10 +114,10 @@ namespace Socium
                         m_eSexRelations = SexRelations.Bisexual;
                     break;
                 case 4:
-                    if (m_eMagicPosition == MagicPosition.Magic_is_allowed)
-                        m_eMagicPosition = Rnd.OneChanceFrom(3) ? MagicPosition.Magic_is_praised : MagicPosition.Magic_is_feared;
+                    if (m_eReligion == Devotion.Agnosticism)
+                        m_eReligion = Rnd.OneChanceFrom(3) ? Devotion.Atheism : Devotion.Piety;
                     else
-                        m_eMagicPosition = MagicPosition.Magic_is_allowed;
+                        m_eReligion = Devotion.Agnosticism;
                     break;
                 case 5:
                     if (m_eFamilySize == FamilySize.Polygamy)
@@ -147,7 +147,7 @@ namespace Socium
                     m_eSexRelations = SexRelations.Bisexual;
                     break;
                 case 4:
-                    m_eMagicPosition = MagicPosition.Magic_is_allowed;
+                    m_eReligion = Devotion.Agnosticism;
                     break;
                 case 5:
                     m_eFamilySize = FamilySize.Polygamy;
@@ -174,7 +174,7 @@ namespace Socium
                     m_eSexRelations = Rnd.OneChanceFrom(3) ? SexRelations.Homosexual : SexRelations.Heterosexual;
                     break;
                 case 4:
-                    m_eMagicPosition = Rnd.OneChanceFrom(3) ? MagicPosition.Magic_is_praised : MagicPosition.Magic_is_feared;
+                    m_eReligion = Rnd.OneChanceFrom(3) ? Devotion.Atheism : Devotion.Piety;
                     break;
                 case 5:
                     m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
@@ -303,15 +303,15 @@ namespace Socium
                 sResult += "same sex relations";
             }
 
-            if (m_eMagicPosition == MagicPosition.Magic_is_feared)
+            if (m_eReligion == Devotion.Atheism)
             {
                 sResult += "\n   ";
-                sResult += "magic denial";
+                sResult += "atheism";
             }
-            if (m_eMagicPosition == MagicPosition.Magic_is_praised)
+            if (m_eReligion == Devotion.Piety)
             {
                 sResult += "\n   ";
-                sResult += "magic";
+                sResult += "piety";
             }
 
             if (m_eFamilySize == FamilySize.Monogamy)
@@ -422,22 +422,22 @@ namespace Socium
                     sNegativeReasons += " (-1) " + pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + "\n";
                 }
 
-            if (m_eMagicPosition == pOpponent.m_eMagicPosition)
+            if (m_eReligion == pOpponent.m_eReligion)
             {
                 iHostility--;
-                sPositiveReasons += " (+1) " + pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + "\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eReligion.ToString().Replace('_', ' ') + "\n";
             }
             else
-                if (m_eMagicPosition != MagicPosition.Magic_is_allowed &&
-                    pOpponent.m_eMagicPosition != MagicPosition.Magic_is_allowed)
+                if (m_eReligion != Devotion.Agnosticism &&
+                    pOpponent.m_eReligion != Devotion.Agnosticism)
                 {
                     iHostility += 2;
-                    sNegativeReasons += " (-2) " + pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons += " (-2) " + pOpponent.m_eReligion.ToString().Replace('_', ' ') + "\n";
                 }
                 else
                 {
                     iHostility++;
-                    sNegativeReasons += " (-1) " + pOpponent.m_eMagicPosition.ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons += " (-1) " + pOpponent.m_eReligion.ToString().Replace('_', ' ') + "\n";
                 }
 
             if (m_eFamilySize == pOpponent.m_eFamilySize)

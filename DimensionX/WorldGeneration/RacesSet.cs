@@ -16,9 +16,9 @@ namespace WorldGeneration
             new RacesSet("mithology (west europe)", new string[] {"faery", "pixie"}),
             new RacesSet("mithology (east europe)", new string[] {"centaur", "minotaur", "satyr", "harpy"}),
             new RacesSet("mithology (middle east)", new string[] {"naga", "rakshasa", "asura", "djinn"}),
-            new RacesSet("mithology (gothic)", new string[] {"vampire", "werewolf"}),
             new RacesSet("fantasy (classic)", new string[] {"orc", "elven", "dwarven"}),
             new RacesSet("fantasy (extended)", new string[] {"goblin", "ogre", "halfling", "cobold", "gnoll", "drow", "drakonid"}),
+            new RacesSet("fantasy (gothic)", new string[] {"vampire", "werewolf"}),
             new RacesSet("anthropomorphous animals", new string[] {"feline", "lizard", "reptile", "ratling", "ursan"}),
             new RacesSet("complete aliens", new string[] {"insectoid", "arachnid", "illithid"}),
         };
