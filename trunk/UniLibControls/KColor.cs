@@ -218,5 +218,9 @@ namespace nsUniLibControls
 	        return (byte)(m1*255);
         }
 
+        public override string ToString()
+        {
+            return string.Format("{0}-{1}-{2} [{3}-{4}-{5}]", m_iRed, m_iGreen, m_iBlue, m_fHue, m_fLightness, m_fSaturation);
+        }
     }
 }
