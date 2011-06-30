@@ -241,7 +241,7 @@
             this.NativesRacesCount.LargeChange = 5;
             this.NativesRacesCount.Location = new System.Drawing.Point(37, 0);
             this.NativesRacesCount.Maximum = 64;
-            this.NativesRacesCount.Minimum = 6;
+            this.NativesRacesCount.Minimum = 1;
             this.NativesRacesCount.Name = "NativesRacesCount";
             this.NativesRacesCount.Size = new System.Drawing.Size(113, 21);
             this.NativesRacesCount.TabIndex = 59;
@@ -568,7 +568,7 @@
             this.RacesCount.LargeChange = 5;
             this.RacesCount.Location = new System.Drawing.Point(37, 0);
             this.RacesCount.Maximum = 64;
-            this.RacesCount.Minimum = 6;
+            this.RacesCount.Minimum = 1;
             this.RacesCount.Name = "RacesCount";
             this.RacesCount.Size = new System.Drawing.Size(109, 25);
             this.RacesCount.TabIndex = 59;
@@ -807,8 +807,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.AdvancedPanel);
             this.Controls.Add(this.PresetsPanel);
+            this.Controls.Add(this.AdvancedPanel);
             this.Name = "EpochProperties";
             this.Size = new System.Drawing.Size(466, 282);
             this.Resize += new System.EventHandler(this.EpochProperties_Resize);

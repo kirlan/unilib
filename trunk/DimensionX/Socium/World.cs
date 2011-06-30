@@ -404,9 +404,14 @@ namespace Socium
                             List<LandMass<LandX>> cLandMasses2 = new List<LandMass<LandX>>(cLandMasses);
 
                             foreach (LandMass<LandX> pLandMass in cLandMasses)
-                                foreach (LandMass<LandX> pLinkedLandMass in pLandMass.m_aBorderWith)
+                                foreach (ITerritory pLinkedLM in pLandMass.m_aBorderWith)
+                                {
+                                    if(pLinkedLM.Forbidden)
+                                        continue;
+                                    LandMass<LandX> pLinkedLandMass = pLinkedLM as LandMass<LandX>;
                                     if (!pLinkedLandMass.IsWater && !cLandMasses2.Contains(pLinkedLandMass))
                                         cLandMasses2.Add(pLinkedLandMass);
+                                }
 
                             cLandMasses = cLandMasses2;
                             cAvailableRaces = GetAvailableRaces(cLandMasses);

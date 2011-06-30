@@ -565,7 +565,7 @@ namespace LandscapeGeneration
                         continue;
                     }
 
-                    if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)) || Rnd.OneChanceFrom(3))
+                    if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))// || Rnd.OneChanceFrom(2))
                         pLand.Type = LandTypes<LTI>.Plains;
                     else
                         pLand.Type = LandTypes<LTI>.Forest;

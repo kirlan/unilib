@@ -295,11 +295,14 @@ namespace Socium
 
                 if (pProvince != null && pProvince.Owner == null && !pProvince.m_pCenter.IsWater)
                 {
-                    int iHostility = m_pMethropoly.CalcHostility(pProvince);
+                    if (m_pMethropoly.m_pRace.m_pTemplate.m_pLanguage != pProvince.m_pRace.m_pTemplate.m_pLanguage)
+                        continue;
+
+                    //int iHostility = m_pMethropoly.CalcHostility(pProvince);
 
                     //враждебное отношение - такую провинция не присоединяем ни при каких условиях.
-                    if (iHostility > 0)
-                        continue;
+                    //if (iHostility > 2)
+                    //    continue;
 
                     //bool bHaveRoad = false;
                     //foreach (var pLinkedProvince in pProvince.m_cConnectionString)
@@ -321,13 +324,11 @@ namespace Socium
                     if (fSharedPerimeter < 0.15f)
                         continue;
 
-                    if (m_pMethropoly.m_pRace.m_pTemplate.m_pLanguage != pProvince.m_pRace.m_pTemplate.m_pLanguage)
-                        continue;
-                        //fWholeLength /= 2;
-
                     //дружественное отношение - для этой провинции шансы выше.
-                    if (iHostility < -1)
-                        fSharedPerimeter *= -iHostility;
+                    //if (iHostility < -1)
+                    //    fSharedPerimeter *= -iHostility;
+                    if (m_pMethropoly.m_pRace == pProvince.m_pRace)
+                        fSharedPerimeter *= 2;
 
                     cChances[pProvince] = fSharedPerimeter;
                 }
