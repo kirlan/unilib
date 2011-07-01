@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using NameGen;
 using Random;
+using Socium.Nations;
 
-namespace Socium
+namespace Socium.Settlements
 {
     public enum SettlementSize
     {
@@ -70,27 +71,27 @@ namespace Socium
         /// Возраст руин. Если 0, значит ещё не руины.
         /// </summary>
         public int m_iRuinsAge = 0;
-        private Race m_pRace;
+        private Nation m_pNation;
 
         public int m_iTechLevel;
         public int m_iMagicLimit;
 
         public List<Building> m_cBuildings = new List<Building>();
 
-        public Settlement(SettlementInfo pInfo, Race pRace, int iTech, int iMagic, bool bCapital, bool bFast)
+        public Settlement(SettlementInfo pInfo, Nation pNation, int iTech, int iMagic, bool bCapital, bool bFast)
         {
             // TODO: Complete member initialization
             m_pInfo = pInfo;
-            m_pRace = pRace;
+            m_pNation = pNation;
 
             if (bFast)
                 m_sName = "Noname";
             else
             {
                 if (pInfo.m_eSize == SettlementSize.Hamlet || pInfo.m_eSize == SettlementSize.Village)
-                    m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomVillageName();
+                    m_sName = m_pNation.m_pRace.m_pLanguage.RandomVillageName();
                 else
-                    m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomTownName();
+                    m_sName = m_pNation.m_pRace.m_pLanguage.RandomTownName();
             }
 
             m_iTechLevel = iTech;
@@ -117,11 +118,11 @@ namespace Socium
                 case 0:
                     return string.Format("{0} {1}", m_pInfo.m_sName, m_sName);
                 case 1:
-                    return string.Format("ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName).ToLower();
+                    return string.Format("ruins of {0} {1}", m_pNation.m_sName, m_pInfo.m_sName).ToLower();
                 case 2:
-                    return string.Format("ancient ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName).ToLower();
+                    return string.Format("ancient ruins of {0} {1}", m_pNation.m_sName, m_pInfo.m_sName).ToLower();
                 default:
-                    return string.Format("forgotten ruins of {0} {1}", m_pRace.m_sName, m_pInfo.m_sName).ToLower();
+                    return string.Format("forgotten ruins of {0} {1}", m_pNation.m_sName, m_pInfo.m_sName).ToLower();
             }
         }
     }

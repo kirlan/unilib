@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Random;
 
-namespace Socium
+namespace Socium.Settlements
 {
     public class BuildingInfo
     {

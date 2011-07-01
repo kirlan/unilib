@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Socium;
+using Socium.Nations;
 
 namespace WorldGeneration
 {
@@ -215,14 +216,14 @@ namespace WorldGeneration
             set
             {
                 m_aNativesRacesSets = value;
-                List<RaceTemplate> cRaces = new List<RaceTemplate>();
-                foreach (RaceTemplate pTemplate in Race.m_cTemplates)
+                List<Race> cRaces = new List<Race>();
+                foreach (Race pRace in Race.m_cAllRaces)
                 {
                     bool bPresent = false;
                     foreach (RacesSet pSet in m_aNativesRacesSets)
                     {
                         foreach (string sName in pSet.m_aRaces)
-                            if (pTemplate.m_sName == sName)
+                            if (pRace.m_sName == sName)
                             {
                                 bPresent = true;
                                 break;
@@ -233,22 +234,22 @@ namespace WorldGeneration
                     }
 
                     if (bPresent)
-                        cRaces.Add(pTemplate);
+                        cRaces.Add(pRace);
                 }
 
-                m_pEpoch.m_cNativesRaceTemplates.Clear();
-                m_pEpoch.m_cNativesRaceTemplates.AddRange(cRaces);
+                m_pEpoch.m_cNatives.Clear();
+                m_pEpoch.m_cNatives.AddRange(cRaces);
             }
         }
 
-        public List<RaceTemplate> NativesRaces
+        public List<Race> NativesRaces
         {
-            get { return new List<RaceTemplate>(m_pEpoch.m_cNativesRaceTemplates); }
+            get { return new List<Race>(m_pEpoch.m_cNatives); }
             set
             {
                 m_aNativesRacesSets = new RacesSet[] { };
-                m_pEpoch.m_cNativesRaceTemplates.Clear();
-                m_pEpoch.m_cNativesRaceTemplates.AddRange(value);
+                m_pEpoch.m_cNatives.Clear();
+                m_pEpoch.m_cNatives.AddRange(value);
             }
         }
 
@@ -270,12 +271,12 @@ namespace WorldGeneration
                 }
                 else
                 {
-                    foreach (RaceTemplate pTemplate in m_pEpoch.m_cNativesRaceTemplates)
+                    foreach (Race pRace in m_pEpoch.m_cNatives)
                     {
                         if (sResult.Length > 0)
                             sResult += ", ";
 
-                        sResult += pTemplate.m_sName;
+                        sResult += pRace.m_sName;
                     }
                 }
 
@@ -297,14 +298,14 @@ namespace WorldGeneration
             set
             {
                 m_aInvadersRacesSets = value;
-                List<RaceTemplate> cRaces = new List<RaceTemplate>();
-                foreach (RaceTemplate pTemplate in Race.m_cTemplates)
+                List<Race> cRaces = new List<Race>();
+                foreach (Race pRace in Race.m_cAllRaces)
                 {
                     bool bPresent = false;
                     foreach (RacesSet pSet in m_aInvadersRacesSets)
                     {
                         foreach (string sName in pSet.m_aRaces)
-                            if (pTemplate.m_sName == sName)
+                            if (pRace.m_sName == sName)
                             {
                                 bPresent = true;
                                 break;
@@ -315,22 +316,22 @@ namespace WorldGeneration
                     }
 
                     if (bPresent)
-                        cRaces.Add(pTemplate);
+                        cRaces.Add(pRace);
                 }
 
-                m_pEpoch.m_cInvadersRaceTemplates.Clear();
-                m_pEpoch.m_cInvadersRaceTemplates.AddRange(cRaces);
+                m_pEpoch.m_cInvaders.Clear();
+                m_pEpoch.m_cInvaders.AddRange(cRaces);
             }
         }
 
-        public List<RaceTemplate> InvadersRaces
+        public List<Race> InvadersRaces
         {
-            get { return new List<RaceTemplate>(m_pEpoch.m_cInvadersRaceTemplates); }
+            get { return new List<Race>(m_pEpoch.m_cInvaders); }
             set
             {
                 m_aInvadersRacesSets = new RacesSet[] { };
-                m_pEpoch.m_cInvadersRaceTemplates.Clear();
-                m_pEpoch.m_cInvadersRaceTemplates.AddRange(value);
+                m_pEpoch.m_cInvaders.Clear();
+                m_pEpoch.m_cInvaders.AddRange(value);
             }
         }
 
@@ -352,12 +353,12 @@ namespace WorldGeneration
                 }
                 else
                 {
-                    foreach (RaceTemplate pTemplate in m_pEpoch.m_cInvadersRaceTemplates)
+                    foreach (Race pRace in m_pEpoch.m_cInvaders)
                     {
                         if (sResult.Length > 0)
                             sResult += ", ";
 
-                        sResult += pTemplate.m_sName;
+                        sResult += pRace.m_sName;
                     }
                 }
 

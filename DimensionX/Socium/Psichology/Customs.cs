@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Random;
 
-namespace Socium
+namespace Socium.Psichology
 {
     public enum GenderPriority
     {

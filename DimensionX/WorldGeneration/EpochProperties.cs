@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Socium;
 using Random;
+using Socium.Nations;
 
 namespace WorldGeneration
 {
@@ -64,8 +65,8 @@ namespace WorldGeneration
             AdvancedPanel.Visible = false;
 
             checkedListBox1.Items.Clear();
-            foreach (RaceTemplate pTemplate in Race.m_cTemplates)
-                checkedListBox1.Items.Add(pTemplate);
+            foreach (Race pRace in Race.m_cAllRaces)
+                checkedListBox1.Items.Add(pRace);
 
             for (int i = 0; i < 9; i++)
             {
@@ -418,11 +419,11 @@ namespace WorldGeneration
             if (m_pEpoch == null || m_bInitMode)
                 return;
 
-            List<RaceTemplate> cRaces = new List<RaceTemplate>();
+            List<Race> cRaces = new List<Race>();
 
-            foreach (RaceTemplate pTemplate in checkedListBox1.CheckedItems)
-                if(e.Index != checkedListBox1.Items.IndexOf(pTemplate) || e.NewValue == CheckState.Checked)
-                    cRaces.Add(pTemplate);
+            foreach (Race pRace in checkedListBox1.CheckedItems)
+                if(e.Index != checkedListBox1.Items.IndexOf(pRace) || e.NewValue == CheckState.Checked)
+                    cRaces.Add(pRace);
 
             if (tabControl1.SelectedIndex == 0)
                 m_pEpoch.NativesRaces = cRaces;

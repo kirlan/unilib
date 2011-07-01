@@ -5,7 +5,7 @@ using System.Text;
 using Random;
 using BenTools.Mathematics;
 
-namespace Socium
+namespace Socium.Psichology
 {
     public class Culture
     {

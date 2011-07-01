@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using LandscapeGeneration;
 using System.Drawing;
+using Socium.Settlements;
 
 namespace Socium
 {
