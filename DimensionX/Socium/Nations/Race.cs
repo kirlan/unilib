@@ -344,19 +344,19 @@ namespace Socium.Nations
                         m_eMagicAbilityDistribution = pWorld.m_eMagicAbilityDistribution;
             }
 
-            int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
-            if (iNewLevel > iOldLevel)
-                for (int i = 0; i < iNewLevel - iOldLevel; i++)
-                {
-                    m_pCulture.Evolve();
-                    m_pCustoms.Evolve();
-                }
-            else
-                for (int i = 0; i < iOldLevel - iNewLevel; i++)
-                {
-                    m_pCulture.Degrade();
-                    m_pCustoms.Degrade();
-                }
+            //int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
+            //if (iNewLevel > iOldLevel)
+            //    for (int i = 0; i < iNewLevel * iNewLevel - iOldLevel * iOldLevel; i++)
+            //    {
+            //        m_pCulture.Evolve();
+            //        m_pCustoms.Evolve();
+            //    }
+            //else
+            //    for (int i = 0; i < iOldLevel - iNewLevel; i++)
+            //    {
+            //        m_pCulture.Degrade();
+            //        m_pCustoms.Degrade();
+            //    }
         }
     }
 }

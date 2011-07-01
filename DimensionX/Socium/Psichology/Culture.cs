@@ -20,13 +20,13 @@ namespace Socium.Psichology
             /// </summary>
             Fanaticism, //Fanaticism,
             /// <summary>
-            /// Сладострастие - жажда плотских удовольсвий, интерес к сексу, превалирующий над другими факторами при формировании отношения к другому индивиду
+            /// Набожность - насколько человек признаёт над собой власть высших сил
             /// </summary>
-            Voluptuousness, //Voluptuousness,
+            Piety, //Voluptuousness,
             /// <summary>
             /// Вероломство - склонность к обману и мошенничеству
             /// </summary>
-            Guile, //Guile,
+            Treachery, //Guile,
             /// <summary>
             /// Эгоизм, забота только о собственном благе, в противоположность заботе о благе своего общества
             /// </summary>
@@ -44,11 +44,11 @@ namespace Socium.Psichology
 
         public static Array Mentalities = Enum.GetValues(typeof(Mentality));
 
-        private Dictionary<Mentality, float> m_cMentalityValues = new Dictionary<Mentality, float>();
+        private Dictionary<Mentality, float[]> m_cMentalityValues = new Dictionary<Mentality, float[]>();
         /// <summary>
         /// Моральные качества - в диапазоне 0..2
         /// </summary>
-        public Dictionary<Mentality, float> MentalityValues
+        public Dictionary<Mentality, float[]> MentalityValues
         {
             get { return m_cMentalityValues; }
         }
@@ -57,7 +57,22 @@ namespace Socium.Psichology
         {
             foreach (Mentality prop in Mentalities)
             {
-                m_cMentalityValues[prop] = 2.0f - (float)Math.Pow(Rnd.Get(1.0f), 2);
+                m_cMentalityValues[prop] = new float[9];
+                float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
+                float fSum = 0;
+                for (int i = 0; i < 9; i++)
+                {
+                    aDerivative[i] = 0.1f + Rnd.Get(0.88f);
+                    fSum += aDerivative[i];
+                }
+
+                float fCurrent = 2;
+                for (int i = 0; i < 9; i++)
+                {
+                    fCurrent -= aDerivative[i] * 2 / fSum; 
+                    m_cMentalityValues[prop][i] = fCurrent;
+                }
+                    //2.0f - (float)Math.Pow(Rnd.Get(0.5f), 4);
             }
         }
 
@@ -65,7 +80,9 @@ namespace Socium.Psichology
         {
             foreach (Mentality prop in Mentalities)
             {
-                m_cMentalityValues[prop] = Math.Min(2.0f, Math.Max(0, fValue));
+                m_cMentalityValues[prop] = new float[9];
+                for (int i = 0; i < 9; i++) 
+                    m_cMentalityValues[prop][i] = Math.Min(2.0f, Math.Max(0, fValue));
             }
         }
 
@@ -80,57 +97,77 @@ namespace Socium.Psichology
         {
             foreach (Mentality eMentality in Mentalities)
             {
-                int iDistance = 1 + Rnd.Get(20);
-                m_cMentalityValues[eMentality] = (Rnd.Get(2.0f) + iDistance * pAncestorCulture.m_cMentalityValues[eMentality]) / (iDistance + 1);
+                m_cMentalityValues[eMentality] = new float[9];
+                float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
+                float fSum = 2;
+                for (int i = 0; i < 9; i++)
+                {
+                    aDerivative[i] = fSum - pAncestorCulture.m_cMentalityValues[eMentality][i];
+                    fSum -= aDerivative[i];
+                }
+                //aDerivative[9] = fSum;
+                fSum = 0;
+                for (int i = 0; i < 9; i++)
+                {
+                    aDerivative[i] = (4*aDerivative[i] + 0.22f + Rnd.Get(0.44f))/5;
+                    fSum += aDerivative[i];
+                }
+
+                float fCurrent = 2;
+                for (int i = 0; i < 9; i++)
+                {
+                    fCurrent -= aDerivative[i] * 2 / fSum; 
+                    m_cMentalityValues[eMentality][i] = fCurrent;
+                }
             }
         }
 
-        public void Evolve()
-        {
-            foreach (Mentality eMentality in Mentalities)
-            {
-                //ментальные качества у нас отрицательные, поэтому для того, чтобы эволюционировать, их значения нужно снизить.
-                float fFutureValue = (float)Math.Pow(Rnd.Get(1.0f), 2);// (float)Math.Pow(Rnd.Get(2.0f), 2) / 2.0f;
-                if (fFutureValue < m_cMentalityValues[eMentality])
-                    m_cMentalityValues[eMentality] = (fFutureValue + 9 * m_cMentalityValues[eMentality]) / 10;
-            }
-        }
+        //public void Evolve()
+        //{
+        //    foreach (Mentality eMentality in Mentalities)
+        //    {
+        //        //ментальные качества у нас отрицательные, поэтому для того, чтобы эволюционировать, их значения нужно снизить.
+        //        float fFutureValue = (float)Math.Pow(Rnd.Get(1.18f), 4);// (float)Math.Pow(Rnd.Get(2.0f), 2) / 2.0f;
+        //        if (fFutureValue < m_cMentalityValues[eMentality])
+        //            m_cMentalityValues[eMentality] = (fFutureValue + 12 * m_cMentalityValues[eMentality]) / 13;
+        //    }
+        //}
 
-        public void Degrade()
-        {
-            foreach (Mentality eMentality in Mentalities)
-            {
-                //ментальные качества у нас отрицательные, поэтому для того, чтобы деградировать, их значения нужно поднять.
-                float fFutureValue = 2.0f - (float)Math.Pow(Rnd.Get(1.0f), 2);
-                if (fFutureValue > m_cMentalityValues[eMentality])
-                    m_cMentalityValues[eMentality] = (fFutureValue + 9 * m_cMentalityValues[eMentality]) / 10;
-            }
-        }
+        //public void Degrade()
+        //{
+        //    foreach (Mentality eMentality in Mentalities)
+        //    {
+        //        //ментальные качества у нас отрицательные, поэтому для того, чтобы деградировать, их значения нужно поднять.
+        //        float fFutureValue = 2.0f - (float)Math.Pow(Rnd.Get(1.18f), 4);
+        //        if (fFutureValue > m_cMentalityValues[eMentality])
+        //            m_cMentalityValues[eMentality] = (fFutureValue + 24 * m_cMentalityValues[eMentality]) / 25;
+        //    }
+        //}
 
         /// <summary>
         /// Различие между культурами от +1 (полная противоположность) до -1 (полное совпадение)
         /// </summary>
         /// <param name="different">другая культура</param>
         /// <returns>скалярное произведение нормализованных векторов культуры / (количество моральных качеств)</returns>
-        public float GetDifference(Culture different)
+        public float GetDifference(Culture different, int iOwnLevel, int iOpponentLevel)
         {
             BTVector culture1 = new BTVector(Mentalities.Length);
             BTVector culture2 = new BTVector(Mentalities.Length);
             foreach (Mentality prop in Mentalities)
             {
-                culture1.Set((int)prop, m_cMentalityValues[prop] - 1.0f);
-                culture2.Set((int)prop, different.m_cMentalityValues[prop] - 1.0f);
+                culture1.Set((int)prop, m_cMentalityValues[prop][iOwnLevel] - 1.0f);
+                culture2.Set((int)prop, different.m_cMentalityValues[prop][iOpponentLevel] - 1.0f);
             }
             return -(float)(culture1 * culture2) / Mentalities.Length;
         }
 
-        private class MentalityString
+        private class MentalityCluster
         {
             public float m_fMinValue;
             public float m_fMaxValue;
             public string m_sString;
 
-            public MentalityString(float fMin, float fMax, string sName)
+            public MentalityCluster(float fMin, float fMax, string sName)
             {
                 m_fMinValue = fMin;
                 m_fMaxValue = fMax;
@@ -142,98 +179,75 @@ namespace Socium.Psichology
         /// НЕ ИСПОЛЬЗОВАТЬ!
         /// Обращаться к свойству MoraleStrings.
         /// </summary>
-        private static Dictionary<Mentality, MentalityString[]> s_cMentalityStrings = null;
+        private static Dictionary<Mentality, MentalityCluster[]> s_cMentalityClusters = null;
 
-        private static Dictionary<Mentality, MentalityString[]> MentalityStrings
+        private static Dictionary<Mentality, MentalityCluster[]> MentalityClusters
         {
             get
             {
-                if (s_cMentalityStrings == null)
+                if (s_cMentalityClusters == null)
                 {
-                    s_cMentalityStrings = new Dictionary<Mentality, MentalityString[]>();
-                    s_cMentalityStrings[Mentality.Agression] = new MentalityString[] 
-                        {   new MentalityString(0.0f, 0.2f, "absolutely pacifistic"),
-                            new MentalityString(0.2f, 0.4f, "pacifistic"),
-                            new MentalityString(0.4f, 0.6f, "very peaceful"),
-                            new MentalityString(0.6f, 0.8f, "quite peaceful"),
-                            new MentalityString(0.8f, 1.0f, "peaceful"),
-                            new MentalityString(1.0f, 1.2f, "not so peaceful"),
-                            new MentalityString(1.2f, 1.4f, "agressive"),
-                            new MentalityString(1.4f, 1.6f, "quite agressive"),
-                            new MentalityString(1.6f, 1.8f, "very agressive"),
-                            new MentalityString(1.8f, 2.0f, "extremely agressive"),
+                    s_cMentalityClusters = new Dictionary<Mentality, MentalityCluster[]>();
+                    s_cMentalityClusters[Mentality.Agression] = new MentalityCluster[] 
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) completely pacifistic"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) quite amiable"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) peaceful"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) unfriendly"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) agressive"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) extremely agressive"),
+
                         };
-                    s_cMentalityStrings[Mentality.Selfishness] = new MentalityString[] 
-                        {   new MentalityString(0.0f, 0.2f, "absolutely altruistic"),
-                            new MentalityString(0.2f, 0.4f, "very altruistic"),
-                            new MentalityString(0.4f, 0.6f, "quite altruistic"),
-                            new MentalityString(0.6f, 0.8f, "altruistic"),
-                            new MentalityString(0.8f, 1.0f, "not so selfish"),
-                            new MentalityString(1.0f, 1.2f, "selfish"),
-                            new MentalityString(1.2f, 1.4f, "quite selfish"),
-                            new MentalityString(1.4f, 1.6f, "very selfish"),
-                            new MentalityString(1.6f, 1.8f, "extremely selfish"),
-                            new MentalityString(1.8f, 2.0f, "absolutely egomaniacal"),
+                    s_cMentalityClusters[Mentality.Selfishness] = new MentalityCluster[] 
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) completely selfless"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) quite selfless"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) not so egoistic"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) egoistic"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) very selfish"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) completely selfish"),
                         };
-                    s_cMentalityStrings[Mentality.Exploitation] = new MentalityString[] 
-                        {   new MentalityString(0.0f, 0.2f, "full communism"),
-                            new MentalityString(0.2f, 0.4f, "socialism"),
-                            new MentalityString(0.4f, 0.6f, "all workers are shareholders"),
-                            new MentalityString(0.6f, 0.8f, "uses freelancers"),
-                            new MentalityString(0.8f, 1.0f, "uses contract workers"),
-                            new MentalityString(1.0f, 1.2f, "uses paid workers"),
-                            new MentalityString(1.2f, 1.4f, "uses serfs"),
-                            new MentalityString(1.4f, 1.6f, "treats slaves as second-class citizens"),
-                            new MentalityString(1.6f, 1.8f, "treats slaves as valuable property"),
-                            new MentalityString(1.8f, 2.0f, "treats slaves as talking livestock"),
+                    s_cMentalityClusters[Mentality.Exploitation] = new MentalityCluster[] 
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) communism"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) corporations"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) paid workers"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) serfdom"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) slavery"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) jungle law"),
                         };
-                    s_cMentalityStrings[Mentality.Fanaticism] = new MentalityString[] 
-                        {   new MentalityString(0.0f, 0.2f, "absolutely open-minded"),
-                            new MentalityString(0.2f, 0.4f, "very open-minded"),
-                            new MentalityString(0.4f, 0.6f, "quite open-minded"),
-                            new MentalityString(0.6f, 0.8f, "moderately open-minded"),
-                            new MentalityString(0.8f, 1.0f, "not so open-minded"),
-                            new MentalityString(1.0f, 1.2f, "narrow-minded"),
-                            new MentalityString(1.2f, 1.4f, "quite narrow-minded"),
-                            new MentalityString(1.4f, 1.6f, "very narrow-minded"),
-                            new MentalityString(1.6f, 1.8f, "extremely narrow-minded"),
-                            new MentalityString(1.8f, 2.0f, "absolute fanatics"),
+                    s_cMentalityClusters[Mentality.Fanaticism] = new MentalityCluster[] 
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) fully tolerant"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) liberal"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) open-minded"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) narrow-minded"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) fanatical"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) closed community"),
                         };
-                    s_cMentalityStrings[Mentality.Voluptuousness] = new MentalityString[] 
-                        {   new MentalityString(0.0f, 0.2f, "enlightened"),
-                            new MentalityString(0.2f, 0.4f, "ascets"),
-                            new MentalityString(0.4f, 0.6f, "adepts of inner grow"),
-                            new MentalityString(0.6f, 0.8f, "philosophers"),
-                            new MentalityString(0.8f, 1.0f, "thinkers"),
-                            new MentalityString(1.0f, 1.2f, "bourgeois"),
-                            new MentalityString(1.2f, 1.4f, "hedonists"),
-                            new MentalityString(1.4f, 1.6f, "delight seekers"),
-                            new MentalityString(1.6f, 1.8f, "obsessed by carnal desires"),
-                            new MentalityString(1.8f, 2.0f, "slaves of own desires"),
+                    s_cMentalityClusters[Mentality.Piety] = new MentalityCluster[] 
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) ateists"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) agnostics"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) formal believers"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) pragmatic believers"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) divine servants"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) divine toys"),
                         };
-                    s_cMentalityStrings[Mentality.Guile] = new MentalityString[] 
-                        {   new MentalityString(0.0f, 0.2f, "absolutely honest"),
-                            new MentalityString(0.2f, 0.4f, "very honest"),
-                            new MentalityString(0.4f, 0.6f, "quite honest"),
-                            new MentalityString(0.6f, 0.8f, "honest"),
-                            new MentalityString(0.8f, 1.0f, "not so honest"),
-                            new MentalityString(1.0f, 1.2f, "treacherous"),
-                            new MentalityString(1.2f, 1.4f, "quite treacherous"),
-                            new MentalityString(1.4f, 1.6f, "very treacherous"),
-                            new MentalityString(1.6f, 1.8f, "extremely treacherous"),
-                            new MentalityString(1.8f, 2.0f, "absolute scoundrels"),
+                    s_cMentalityClusters[Mentality.Treachery] = new MentalityCluster[] 
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) absolutely honest"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) honest"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) lawful"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) sly"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) treacherous"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) absolute scoundrels"),
                         };
                 }
-                return s_cMentalityStrings;
+                return s_cMentalityClusters;
             }
         }
 
-        public string GetMentalityString(Mentality eMentality)
+        public string GetMentalityString(Mentality eMentality, int iLevel)
         {
-            foreach (MentalityString pString in MentalityStrings[eMentality])
+            foreach (MentalityCluster pString in MentalityClusters[eMentality])
             {
-                if (m_cMentalityValues[eMentality] >= pString.m_fMinValue && 
-                    m_cMentalityValues[eMentality] <= pString.m_fMaxValue)
+                if (m_cMentalityValues[eMentality][iLevel] >= pString.m_fMinValue && 
+                    m_cMentalityValues[eMentality][iLevel] <= pString.m_fMaxValue)
                     return pString.m_sString;
             }
             return "error";
