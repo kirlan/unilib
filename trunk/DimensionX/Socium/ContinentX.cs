@@ -5,6 +5,7 @@ using System.Text;
 using Random;
 using NameGen;
 using LandscapeGeneration;
+using Socium.Nations;
 
 namespace Socium
 {
@@ -26,6 +27,6 @@ namespace Socium
             return m_sName;
         }
 
-        public Dictionary<LandMass<LandX>, List<Race>> m_cLocalRaces = new Dictionary<LandMass<LandX>,List<Race>>();
+        public Dictionary<LandMass<LandX>, List<Nation>> m_cLocalNations = new Dictionary<LandMass<LandX>,List<Nation>>();
     }
 }

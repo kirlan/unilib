@@ -9,6 +9,8 @@ using LandscapeGeneration;
 using LandscapeGeneration.PathFind;
 using Socium.Languages;
 using System.Diagnostics;
+using Socium.Nations;
+using Socium.Settlements;
 
 namespace Socium
 {
@@ -42,7 +44,7 @@ namespace Socium
 
         private int m_iStatesCount = 30;
 
-        public Race[] m_aLocalRaces = null;
+        public Nation[] m_aLocalNations = null;
 
         private void SetWorldLevels(Epoch pEpoch)
         {
@@ -71,17 +73,17 @@ namespace Socium
 
         private void AddRaces(Epoch pEpoch)
         {
-            List<Race> cRaces = new List<Race>();
+            List<Nation> cNations = new List<Nation>();
 
             int iDyingRaces = 0;
             //Все расы, оставшиеся с прошлых исторических циклов, адаптируем к новым условиям.
-            if(m_aLocalRaces != null)
-                foreach (Race pRace in m_aLocalRaces)
+            if(m_aLocalNations != null)
+                foreach (Nation pNation in m_aLocalNations)
                 {
-                    pRace.Accommodate(this, pEpoch);
-                    cRaces.Add(pRace);
+                    pNation.Accommodate(this, pEpoch);
+                    cNations.Add(pNation);
 
-                    if (pRace.m_bDying)
+                    if (pNation.m_bDying)
                         iDyingRaces++;
                 }
 
@@ -100,25 +102,25 @@ namespace Socium
             //cRaceChances[pRace] = (m_aLocalRaces != null && m_aLocalRaces.Contains(pRace)) ? 0 : Math.Max(1, 10 + m_iMagicLimit * 10 - pRace.m_iRank);// : 100.0f / pRace.m_iRank;
 
             //Добавляем необходимое количесто новых рас.
-            while (cRaces.Count - iDyingRaces < pEpoch.m_iNativesCount)
+            while (cNations.Count - iDyingRaces < pEpoch.m_iNativesCount)
             {
-                int iChance = Rnd.Get(pEpoch.m_cNativesRaceTemplates.Count);//Rnd.ChooseOne(cRaceChances.Values, 1);
+                int iChance = Rnd.Get(pEpoch.m_cNatives.Count);//Rnd.ChooseOne(cRaceChances.Values, 1);
                 //foreach (RaceTemplate pRaceTemplate in cRaceChances.Keys)
                 //{
                     //iChance--;
                     //if (iChance < 0)
                     //{
-                        Race pRace = new Race(pEpoch.m_cNativesRaceTemplates[iChance], pEpoch);//new Race(pRaceTemplate, pEpoch);
-                        pRace.Accommodate(this, pEpoch);
+                        Nation pNation = new Nation(pEpoch.m_cNatives[iChance], pEpoch);//new Race(pRaceTemplate, pEpoch);
+                        pNation.Accommodate(this, pEpoch);
 
-                        cRaces.Add(pRace);
+                        cNations.Add(pNation);
                         //cRaceChances[pRaceTemplate] = 0;
                         //break;
                     //}
                 //}
             }
 
-            m_aLocalRaces = cRaces.ToArray();
+            m_aLocalNations = cNations.ToArray();
         }
 
         private void AddInvadersRaces(Epoch pEpoch)
@@ -126,44 +128,44 @@ namespace Socium
             if (pEpoch.m_iInvadersCount == 0)
                 return;
 
-            List<Race> cRaces = new List<Race>(m_aLocalRaces);
+            List<Nation> cNations = new List<Nation>(m_aLocalNations);
 
             //Рассчитываем шансы новых рас попасть в новый мир - учитывая, его параметры
-            Dictionary<RaceTemplate, float> cInvadersRaceChances = new Dictionary<RaceTemplate, float>();
-            foreach (RaceTemplate pRaceTemplate in Race.m_cTemplates)
+            Dictionary<Race, float> cInvadersRaceChances = new Dictionary<Race, float>();
+            foreach (Race pRace in Race.m_cAllRaces)
             {
-                if (!pEpoch.m_cInvadersRaceTemplates.Contains(pRaceTemplate))
+                if (!pEpoch.m_cInvaders.Contains(pRace))
                     continue;
 
                 bool bAlreadyHave = false;
-                if (m_aLocalRaces != null)
-                    foreach (Race pRace in m_aLocalRaces)
-                        if (pRace.m_pTemplate == pRaceTemplate && !pRace.m_bDying)
+                if (m_aLocalNations != null)
+                    foreach (Nation pNation in m_aLocalNations)
+                        if (pNation.m_pRace == pRace && !pNation.m_bDying)
                             bAlreadyHave = true;
 
-                cInvadersRaceChances[pRaceTemplate] = bAlreadyHave ? 10 : 100;// / pRaceTemplate.m_iRank;
+                cInvadersRaceChances[pRace] = bAlreadyHave ? 10 : 100;// / pRaceTemplate.m_iRank;
             }
 
             for (int i = 0; i < pEpoch.m_iInvadersCount; i++)
             {
                 int iChance = Rnd.ChooseOne(cInvadersRaceChances.Values, 1);
-                foreach (RaceTemplate pRaceTemplate in cInvadersRaceChances.Keys)
+                foreach (Race pRaceTemplate in cInvadersRaceChances.Keys)
                 {
                     iChance--;
                     if (iChance < 0)
                     {
-                        Race pRace = new Race(pRaceTemplate, pEpoch);
-                        pRace.m_bInvader = true;
-                        pRace.Accommodate(this, pEpoch);
+                        Nation pNation = new Nation(pRaceTemplate, pEpoch);
+                        pNation.m_bInvader = true;
+                        pNation.Accommodate(this, pEpoch);
 
-                        cRaces.Add(pRace);
+                        cNations.Add(pNation);
                         cInvadersRaceChances[pRaceTemplate] = 0;
                         break;
                     }
                 }
             }
 
-            m_aLocalRaces = cRaces.ToArray();
+            m_aLocalNations = cNations.ToArray();
         }
 
         private void DistributeRacesToLandMasses()
@@ -184,14 +186,14 @@ namespace Socium
 
 
             //Распределим расы по наиболее подходящим им тектоническим плитам (чтобы все расы хоть где-то да жили)
-            foreach (Race pRace in m_aLocalRaces)
+            foreach (Nation pNation in m_aLocalNations)
             {
                 //убедимся, что эта раса ещё нигде не живёт
                 bool bHomeless = true;
                 foreach (ContinentX pConti in m_aContinents)
                 {
                     foreach (LandMass<LandX> pLandMass in pConti.m_cContents)
-                        if (pConti.m_cLocalRaces.ContainsKey(pLandMass) && pConti.m_cLocalRaces[pLandMass].Contains(pRace))
+                        if (pConti.m_cLocalNations.ContainsKey(pLandMass) && pConti.m_cLocalNations[pLandMass].Contains(pNation))
                         {
                             bHomeless = false;
                             break;
@@ -211,7 +213,7 @@ namespace Socium
                     //отсеиваем уже занятые и непригодные для заселения земли
                     if (pLand.Forbidden ||
                         pLand.m_pProvince != null ||
-                        pLand.m_pRace != null ||
+                        pLand.m_pNation != null ||
                         pLand.IsWater ||
                         pLand.Owner == null ||
                         (pLand.Owner as LandMass<LandX>).IsWater)
@@ -220,25 +222,25 @@ namespace Socium
                     cLandChances[pLand] = 1.0f;// / pRace.m_iRank;
 
                     //рассчитываем шансы, исходя из предпочтений и антипатий расы
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aPrefferedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aPrefferedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] *= 100;
 
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aHatedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aHatedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] /= 1000;
 
                     //смотрим, сколько ещё других рас уже живут на этом же континенте и говорят ли они на нашем языке
                     int iPop = 0;
                     bool bSameLanguage = false;
-                    foreach (var pRaces in pLand.Continent.m_cLocalRaces)
+                    foreach (var pRaces in pLand.Continent.m_cLocalNations)
                     {
                         foreach (var pRce in pRaces.Value)
                         {
                             if (!pRce.m_bDying)
                                 iPop++;
                             
-                            if (pRce.m_pTemplate.m_pLanguage == pRace.m_pTemplate.m_pLanguage)
+                            if (pRce.m_pRace.m_pLanguage == pNation.m_pRace.m_pLanguage)
                                 bSameLanguage = true;
                         }
                     }
@@ -247,7 +249,7 @@ namespace Socium
                     {
                         //снижаем привлекательность земли в зависимости от количества конкурентов.
                         //гегемоны и вторженцы игнорируют эту проверку.
-                        if (!pRace.m_bHegemon && !pRace.m_bInvader && !bSameLanguage)
+                        if (!pNation.m_bHegemon && !pNation.m_bInvader && !bSameLanguage)
                             cLandChances[pLand] = (float)Math.Pow(cLandChances[pLand], 1.0 / (1 + iPop));
 
                         //смотрим, на каких языках говорят другие уже живущие здесь расы
@@ -273,21 +275,21 @@ namespace Socium
 
                 if (pCradle != null && pCradle.Area != null)
                 {
-                    (pCradle.Area as AreaX).m_pRace = pRace;
-                    (pCradle.Area as AreaX).m_sName = pRace.m_pTemplate.m_pLanguage.RandomCountryName();
+                    (pCradle.Area as AreaX).m_pNation = pNation;
+                    (pCradle.Area as AreaX).m_sName = pNation.m_pRace.m_pLanguage.RandomCountryName();
                     foreach (LandX pLand in (pCradle.Area as AreaX).m_cContents)
                     {
                         pLand.m_sName = (pCradle.Area as AreaX).m_sName;
-                        pLand.m_pRace = (pCradle.Area as AreaX).m_pRace;
+                        pLand.m_pNation = (pCradle.Area as AreaX).m_pNation;
                     }
 
                     LandMass<LandX> pLandMass = pCradle.Owner as LandMass<LandX>;
                     if (pLandMass != null)
                     {
-                        if (!pCradle.Continent.m_cLocalRaces.ContainsKey(pLandMass))
-                            pCradle.Continent.m_cLocalRaces[pLandMass] = new List<Race>();
+                        if (!pCradle.Continent.m_cLocalNations.ContainsKey(pLandMass))
+                            pCradle.Continent.m_cLocalNations[pLandMass] = new List<Nation>();
                         
-                        pCradle.Continent.m_cLocalRaces[pLandMass].Add(pRace);
+                        pCradle.Continent.m_cLocalNations[pLandMass].Add(pNation);
                     }
                 }
             }
@@ -297,7 +299,7 @@ namespace Socium
             {
                 //если континент уже обитаем, пропускаем его
                 int iPop = 0;
-                foreach (var pRaces in pConti.m_cLocalRaces)
+                foreach (var pRaces in pConti.m_cLocalNations)
                 {
                     foreach (var pRce in pRaces.Value)
                         if (!pRce.m_bDying)
@@ -309,7 +311,7 @@ namespace Socium
 
                 LandMass<LandX> pLandMass = pConti.m_cContents[Rnd.Get(pConti.m_cContents.Count)];
 
-                pConti.m_cLocalRaces[pLandMass] = new List<Race>();
+                pConti.m_cLocalNations[pLandMass] = new List<Nation>();
 
                 Dictionary<LandTypeInfoX, int> cLandTypesCount = new Dictionary<LandTypeInfoX, int>();
                 foreach (LandX pLand in pLandMass.m_cContents)
@@ -323,40 +325,40 @@ namespace Socium
                     cLandTypesCount[pLand.Type] += pLand.m_cContents.Count;
                 }
 
-                Dictionary<Race, float> cRaceChances = new Dictionary<Race, float>();
-                foreach (Race pRace in m_aLocalRaces)
+                Dictionary<Nation, float> cNationChances = new Dictionary<Nation, float>();
+                foreach (Nation pNation in m_aLocalNations)
                 {
-                    if (pRace.m_bDying)
+                    if (pNation.m_bDying)
                         continue;
 
-                    cRaceChances[pRace] = 1.0f;// / pRace.m_pTemplate.m_iRank;
+                    cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
 
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aPrefferedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aPrefferedLands)
                         if (cLandTypesCount.ContainsKey(pType))
-                            cRaceChances[pRace] *= cLandTypesCount[pType];
+                            cNationChances[pNation] *= cLandTypesCount[pType];
 
-                    foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aHatedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aHatedLands)
                         if (cLandTypesCount.ContainsKey(pType))
-                            cRaceChances[pRace] /= cLandTypesCount[pType];
+                            cNationChances[pNation] /= cLandTypesCount[pType];
                 }
 
-                int iChance = Rnd.ChooseOne(cRaceChances.Values, 2);
-                Race pChoosenRace = null;
-                foreach (Race pRace in cRaceChances.Keys)
+                int iChance = Rnd.ChooseOne(cNationChances.Values, 2);
+                Nation pChoosenNation = null;
+                foreach (Nation pNation in cNationChances.Keys)
                 {
                     iChance--;
                     if (iChance < 0)
                     {
-                        pChoosenRace = pRace;
+                        pChoosenNation = pNation;
                         break;
                     }
                 }
 
-                if (pChoosenRace != null)
+                if (pChoosenNation != null)
                 {
-                    pConti.m_cLocalRaces[pLandMass].Add(pChoosenRace);
+                    pConti.m_cLocalNations[pLandMass].Add(pChoosenNation);
                     if (pConti.m_cContents.Count == 1)
-                        pConti.m_sName = pChoosenRace.m_pTemplate.m_pLanguage.RandomCountryName();
+                        pConti.m_sName = pChoosenNation.m_pRace.m_pLanguage.RandomCountryName();
                 }
             }
         }
@@ -365,24 +367,24 @@ namespace Socium
         {
             foreach (ContinentX pConti in m_aContinents)
             {
-                List<Race> cHegemonRaces = new List<Race>();
+                List<Nation> cHegemonNations = new List<Nation>();
                 //список рас, способных свободно расселяться по континенту
-                List<Race> cAvailableContinentRaces = new List<Race>();
-                foreach (LandMass<LandX> pLandMass in pConti.m_cLocalRaces.Keys)
+                List<Nation> cAvailableContinentNations = new List<Nation>();
+                foreach (LandMass<LandX> pLandMass in pConti.m_cLocalNations.Keys)
                 {
-                    foreach (Race pRace in pConti.m_cLocalRaces[pLandMass])
+                    foreach (Nation pNation in pConti.m_cLocalNations[pLandMass])
                     {
-                        if (!pRace.m_bDying && !cAvailableContinentRaces.Contains(pRace))
-                            cAvailableContinentRaces.Add(pRace);
-                        if (pRace.m_bHegemon && !cHegemonRaces.Contains(pRace))
-                            cHegemonRaces.Add(pRace);
+                        if (!pNation.m_bDying && !cAvailableContinentNations.Contains(pNation))
+                            cAvailableContinentNations.Add(pNation);
+                        if (pNation.m_bHegemon && !cHegemonNations.Contains(pNation))
+                            cHegemonNations.Add(pNation);
                     }
                 }
 
                 //List<Race> cSettledDyingRaces = new List<Race>();
                 //переберём все пригодные для заселения и незаселённые территории
                 foreach (AreaX pArea in pConti.m_cAreas)
-                    if (!pArea.IsWater && pArea.m_pRace == null)
+                    if (!pArea.IsWater && pArea.m_pNation == null)
                     {
                         //составим список тектонических плит, к которым принадлежит рассматриваемая территория
                         List<LandMass<LandX>> cLandMasses = new List<LandMass<LandX>>();
@@ -397,9 +399,9 @@ namespace Socium
                         }
 
                         //составим список рас, которые могут претендовать на эту территорию
-                        List<Race> cAvailableRaces = GetAvailableRaces(cLandMasses);
+                        List<Nation> cAvailableNations = GetAvailableNations(cLandMasses);
 
-                        while (cAvailableRaces.Count == 0)
+                        while (cAvailableNations.Count == 0)
                         {
                             List<LandMass<LandX>> cLandMasses2 = new List<LandMass<LandX>>(cLandMasses);
 
@@ -414,44 +416,44 @@ namespace Socium
                                 }
 
                             cLandMasses = cLandMasses2;
-                            cAvailableRaces = GetAvailableRaces(cLandMasses);
+                            cAvailableNations = GetAvailableNations(cLandMasses);
                         }
 
                         //если эта территория принадлежит одной или нескольким плитам-колыбелям, населяем её соответствующими расами,
                         //иначе берём список рас по континенту в целом
-                        if (cAvailableRaces.Count > 0)
+                        if (cAvailableNations.Count > 0)
                         {
                             //cAvailableRaces.AddRange(cDyingRaces);
                             //cAvailableRaces.AddRange(cHegemonRaces);
-                            pArea.SetRace(cAvailableRaces);
+                            pArea.SetRace(cAvailableNations);
                             
                             //if (cDyingRaces.Contains(pArea.m_pRace))
                             //    cSettledDyingRaces.Add(pArea.m_pRace);
                         }
                         else
-                            pArea.SetRace(cAvailableContinentRaces);
+                            pArea.SetRace(cAvailableContinentNations);
                     }
             }
         }
 
-        private List<Race> GetAvailableRaces(List<LandMass<LandX>> cLandMasses)
+        private List<Nation> GetAvailableNations(List<LandMass<LandX>> cLandMasses)
         {
-            List<Race> cAvailableRaces = new List<Race>();
+            List<Nation> cAvailableNations = new List<Nation>();
             //List<Race> cDyingRaces = new List<Race>();
             foreach (LandMass<LandX> pLandMass in cLandMasses)
             {
                 ContinentX pConti = pLandMass.Owner as ContinentX;
 
-                if (!pConti.m_cLocalRaces.ContainsKey(pLandMass))
+                if (!pConti.m_cLocalNations.ContainsKey(pLandMass))
                     continue;
 
-                foreach (Race pRace in pConti.m_cLocalRaces[pLandMass])
-                    if (!pRace.m_bDying)
+                foreach (Nation pNation in pConti.m_cLocalNations[pLandMass])
+                    if (!pNation.m_bDying)
                     {
-                        if (!cAvailableRaces.Contains(pRace))
+                        if (!cAvailableNations.Contains(pNation))
                         {
-                            cAvailableRaces.Add(pRace);
-                            if (!m_aLocalRaces.Contains(pRace))
+                            cAvailableNations.Add(pNation);
+                            if (!m_aLocalNations.Contains(pNation))
                                 throw new Exception();
                         }
                     }
@@ -466,7 +468,7 @@ namespace Socium
                 //}
             }
 
-            return cAvailableRaces;
+            return cAvailableNations;
         }
 
         /// <summary>
@@ -581,7 +583,7 @@ namespace Socium
                         cUsed.Add(pProvince.m_pCenter.Continent);
 
                     pProvince.Start(pProvince.m_pCenter);
-                    if (!m_aLocalRaces.Contains(pProvince.m_pRace))
+                    if (!m_aLocalNations.Contains(pProvince.m_pNation))
                         throw new Exception();
 
                     cProvinces.Add(pProvince);
@@ -596,7 +598,7 @@ namespace Socium
                 //Для каждого анклава древней цивилизации создаём собственную провинцию
                 foreach (AreaX pArea in pConti.m_cAreas)
                 {
-                    if (pArea.m_pRace != null && pArea.m_pRace.m_bDying)
+                    if (pArea.m_pNation != null && pArea.m_pNation.m_bDying)
                     {
                         int iCounter = 0;
                         LandX pCradle = null;
@@ -637,7 +639,7 @@ namespace Socium
                             if (pLoc.m_bBorder)
                                 bBorder = true;
 
-                        if (pSeed.m_pRace.m_bDying || (bBorder && !Rnd.OneChanceFrom(25)))
+                        if (pSeed.m_pNation.m_bDying || (bBorder && !Rnd.OneChanceFrom(25)))
                             pSeed = null;
                     }
                 }
@@ -648,7 +650,7 @@ namespace Socium
                 pProvince.Start(pSeed);
                 cProvinces.Add(pProvince);
 
-                if (!m_aLocalRaces.Contains(pProvince.m_pRace))
+                if (!m_aLocalNations.Contains(pProvince.m_pNation))
                     throw new Exception();
 
                 cUsed.Add(pConti);
@@ -670,7 +672,7 @@ namespace Socium
                         pSeed.IsWater ||
                         pSeed.Owner == null ||
                         (pSeed.Owner as LandMass<LandX>).IsWater ||
-                        (pSeed.m_pRace != null && pSeed.m_pRace.m_bDying))
+                        (pSeed.m_pNation != null && pSeed.m_pNation.m_bDying))
                     {
                         pSeed = null;
                     }
@@ -699,7 +701,7 @@ namespace Socium
                 pProvince.Start(pSeed);
                 cProvinces.Add(pProvince);
 
-                if (!m_aLocalRaces.Contains(pProvince.m_pRace))
+                if (!m_aLocalNations.Contains(pProvince.m_pNation))
                     throw new Exception();
             }
 
@@ -778,7 +780,7 @@ namespace Socium
                 foreach (State pState in m_aStates)
                 {
                     pState.Start(pState.m_pMethropoly);
-                    if(!m_aLocalRaces.Contains(pState.m_pRace))
+                    if(!m_aLocalNations.Contains(pState.m_pNation))
                         throw new Exception();
             
                     ContinentX pConti = pState.Owner as ContinentX;
@@ -822,7 +824,7 @@ namespace Socium
                 pState.Start(pSeed);
                 cStates.Add(pState);
 
-                if (!m_aLocalRaces.Contains(pState.m_pRace))
+                if (!m_aLocalNations.Contains(pState.m_pNation))
                     throw new Exception();
                 cUsed.Add(pConti);
             }
@@ -859,7 +861,7 @@ namespace Socium
                 State pState = new State();
                 pState.Start(pSeed);
                 cStates.Add(pState);
-                if (!m_aLocalRaces.Contains(pState.m_pRace))
+                if (!m_aLocalNations.Contains(pState.m_pNation))
                     throw new Exception();
             }
 
@@ -1065,7 +1067,7 @@ namespace Socium
             List<LocationX> cHarbors = new List<LocationX>();
             foreach (Province pProvince in m_aProvinces)
             {
-                if (!pProvince.Forbidden && !pProvince.m_pRace.m_bDying)
+                if (!pProvince.Forbidden && !pProvince.m_pNation.m_bDying)
                 {
                     foreach (LocationX pTown in pProvince.m_cSettlements)
                     {
@@ -1290,7 +1292,7 @@ namespace Socium
 
         public void Reset(Epoch pNewEpoch)
         {
-            if (m_aLocalRaces == null || m_aLocalRaces.Length == 0)
+            if (m_aLocalNations == null || m_aLocalNations.Length == 0)
                 return;
 
             //Ассимилируем коренное население
@@ -1299,10 +1301,10 @@ namespace Socium
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
                     //если коренное население не является доминирующим, есть вероятность, что доминирующая раса вытеснит коренную.
-                    if (pLand.m_pRace != pProvince.m_pRace)
+                    if (pLand.m_pNation != pProvince.m_pNation)
                     {
                         bool bHated = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pRace.m_pTemplate.m_aHatedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_pRace.m_aHatedLands)
                             if (pLand.Type == pLTI)
                                 bHated = true;
 
@@ -1310,48 +1312,48 @@ namespace Socium
                             continue;
 
                         bool bPreferred = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pRace.m_pTemplate.m_aPrefferedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_pRace.m_aPrefferedLands)
                             if (pLand.Type == pLTI)
                                 bPreferred = true;
 
                         if (bPreferred || Rnd.OneChanceFrom(2))
                         {
-                            pLand.m_pRace = pProvince.m_pRace;
-                            (pLand.Area as AreaX).m_pRace = pProvince.m_pRace;
+                            pLand.m_pNation = pProvince.m_pNation;
+                            (pLand.Area as AreaX).m_pNation = pProvince.m_pNation;
                         }
                     }
                     //иначе, если коренная раса и доминирующая совпадают, но земля не самая подходящая - есть вероятность того, что её покинут.
                     else
                     {
                         bool bHated = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pRace.m_pTemplate.m_aHatedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_pRace.m_aHatedLands)
                             if (pLand.Type == pLTI)
                                 bHated = true;
 
                         if (bHated && Rnd.OneChanceFrom(2))
                         {
-                            pLand.m_pRace = null;
-                            (pLand.Area as AreaX).m_pRace = null;
+                            pLand.m_pNation = null;
+                            (pLand.Area as AreaX).m_pNation = null;
                         }
                     }
                 }
             }
 
             //List<Race> cEraseRace = new List<Race>();
-            foreach (Race pRace in m_aLocalRaces)
+            foreach (Nation pNation in m_aLocalNations)
             {
-                if (!pRace.m_bDying)
+                if (!pNation.m_bDying)
                 {
-                    if (pRace.m_pEpoch != pNewEpoch)
+                    if (pNation.m_pEpoch != pNewEpoch)
                     {
-                        pRace.m_bDying = true;
-                        pRace.m_bHegemon = false;
+                        pNation.m_bDying = true;
+                        pNation.m_bHegemon = false;
                     }
                     else
                         //if (Rnd.OneChanceFrom(3))
                         //    cEraseRace.Add(pRace);
                         //else
-                            pRace.m_bHegemon = pRace.m_bHegemon || Rnd.OneChanceFrom(m_aLocalRaces.Length);
+                            pNation.m_bHegemon = pNation.m_bHegemon || Rnd.OneChanceFrom(m_aLocalNations.Length);
                 }
                 //else
                 //    if (Rnd.OneChanceFrom(10))
@@ -1382,18 +1384,18 @@ namespace Socium
 
                 foreach (AreaX pArea in pConti.m_cAreas)
                 {
-                    if (pArea.m_pRace == null)
+                    if (pArea.m_pNation == null)
                         continue;
 
                     if (//cEraseRace.Contains(pArea.m_pRace) ||
-                        (pArea.m_pRace.m_bDying && !Rnd.OneChanceFrom(100 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
-                        pArea.m_pRace = null;
+                        (pArea.m_pNation.m_bDying && !Rnd.OneChanceFrom(100 / (pArea.m_pType.m_iMovementCost * pArea.m_pType.m_iMovementCost))))
+                        pArea.m_pNation = null;
 
                     foreach (LandX pLand in pArea.m_cContents)
                     {
                         if (//cEraseRace.Contains(pLand.m_pRace) || 
-                            pLand.m_pRace.m_bDying)
-                            pLand.m_pRace = pArea.m_pRace;
+                            pLand.m_pNation.m_bDying)
+                            pLand.m_pNation = pArea.m_pNation;
                     }
                 }
             }
@@ -1512,7 +1514,7 @@ namespace Socium
                 }//все провинции в каждом государстве
 
                 //некоторые государства вообще исчезают с лица земли
-                if (!m_aLocalRaces.Contains(pState.m_pRace) || Rnd.OneChanceFrom(2))
+                if (!m_aLocalNations.Contains(pState.m_pNation) || Rnd.OneChanceFrom(2))
                     cEraseState.Add(pState);
 
             }//все государства

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Random;
+using Socium.Nations;
 
 namespace Socium
 {
@@ -44,14 +45,14 @@ namespace Socium
         public int m_iNativesMinMagicLevel;
         public int m_iNativesMaxMagicLevel;
 
-        public List<RaceTemplate> m_cNativesRaceTemplates;
+        public List<Race> m_cNatives;
 
         public int m_iInvadersMinTechLevel;
         public int m_iInvadersMaxTechLevel;
         public int m_iInvadersMinMagicLevel;
         public int m_iInvadersMaxMagicLevel;
 
-        public List<RaceTemplate> m_cInvadersRaceTemplates;
+        public List<Race> m_cInvaders;
 
         public int m_iNativesCount;
         public int m_iInvadersCount;
@@ -73,8 +74,8 @@ namespace Socium
             m_iInvadersMinMagicLevel = 5;
             m_iInvadersMaxMagicLevel = 8;
 
-            m_cNativesRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
-            m_cInvadersRaceTemplates = new List<RaceTemplate>(Race.m_cTemplates);
+            m_cNatives = new List<Race>(Race.m_cAllRaces);
+            m_cInvaders = new List<Race>(Race.m_cAllRaces);
 
             m_iNativesCount = 60;
 

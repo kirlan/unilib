@@ -14,6 +14,8 @@ using LandscapeGeneration.PathFind;
 using MapDrawEngine.Signs;
 using Random;
 using Socium.Languages;
+using Socium.Nations;
+using Socium.Settlements;
 
 namespace MapDrawEngine
 {
@@ -635,9 +637,9 @@ namespace MapDrawEngine
         /// <summary>
         /// Привязка цветов для конкретных рас
         /// </summary>
-        private Dictionary<Race, Brush> m_cRaceColorsID = new Dictionary<Race, Brush>();
-        private Dictionary<Race, Brush> m_cAncientRaceColorsID = new Dictionary<Race, Brush>();
-        private Dictionary<Race, Brush> m_cHegemonRaceColorsID = new Dictionary<Race, Brush>();
+        private Dictionary<Nation, Brush> m_cNationColorsID = new Dictionary<Nation, Brush>();
+        private Dictionary<Nation, Brush> m_cAncientNationColorsID = new Dictionary<Nation, Brush>();
+        private Dictionary<Nation, Brush> m_cHegemonNationColorsID = new Dictionary<Nation, Brush>();
 
         /// <summary>
         /// Заготовка цветов для рас
@@ -752,7 +754,7 @@ namespace MapDrawEngine
 
             ClearPath();
 
-            m_cRaceColorsID.Clear();
+            m_cNationColorsID.Clear();
             List<int> cUsedColors = new List<int>();
 
             //if (m_pWorld.m_aLocalRaces.Length > m_aRaceColorsTemplate.Length)
@@ -762,33 +764,33 @@ namespace MapDrawEngine
             Dictionary<Language, int> cLanguageCounter = new Dictionary<Language, int>();
             Dictionary<Language, int> cLanguageIndex = new Dictionary<Language, int>();
             int iCount = 0;
-            foreach (Race pRace in m_pWorld.m_aLocalRaces)
+            foreach (Nation pNation in m_pWorld.m_aLocalNations)
             {
                 int ik = 0;
-                if (!cLanguages.TryGetValue(pRace.m_pTemplate.m_pLanguage, out ik))
+                if (!cLanguages.TryGetValue(pNation.m_pRace.m_pLanguage, out ik))
                 {
-                    cLanguageCounter[pRace.m_pTemplate.m_pLanguage] = 1;
-                    cLanguageIndex[pRace.m_pTemplate.m_pLanguage] = iCount++;
+                    cLanguageCounter[pNation.m_pRace.m_pLanguage] = 1;
+                    cLanguageIndex[pNation.m_pRace.m_pLanguage] = iCount++;
                 }
-                cLanguages[pRace.m_pTemplate.m_pLanguage] = ik+1;
+                cLanguages[pNation.m_pRace.m_pLanguage] = ik + 1;
             }
 
             //Dictionary<Language, Dictionary<Race, KColor>> cColors = new Dictionary<Language, Dictionary<Race, KColor>>();
-            foreach (Race pRace in m_pWorld.m_aLocalRaces)
+            foreach (Nation pNation in m_pWorld.m_aLocalNations)
             {
                 KColor color = new KColor();
-                color.Hue = 360 * cLanguageIndex[pRace.m_pTemplate.m_pLanguage] / cLanguages.Count;
-                float fK = ((float)cLanguageCounter[pRace.m_pTemplate.m_pLanguage]) / cLanguages[pRace.m_pTemplate.m_pLanguage];
+                color.Hue = 360 * cLanguageIndex[pNation.m_pRace.m_pLanguage] / cLanguages.Count;
+                float fK = ((float)cLanguageCounter[pNation.m_pRace.m_pLanguage]) / cLanguages[pNation.m_pRace.m_pLanguage];
                 float fF = fK * Rnd.Get(1f);
                 color.Lightness = 0.2 + 0.7 * fK;
                 color.Saturation = 0.2 + 0.7 * fK;
                 //if (!cColors.ContainsKey(pRace.m_pTemplate.m_pLanguage))
                 //    cColors[pRace.m_pTemplate.m_pLanguage] = new Dictionary<Race, KColor>();
                 //cColors[pRace.m_pTemplate.m_pLanguage][pRace] = color;
-                m_cRaceColorsID[pRace] = new SolidBrush(color.RGB);
-                m_cAncientRaceColorsID[pRace] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, color.RGB);
-                m_cHegemonRaceColorsID[pRace] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, color.RGB);
-                cLanguageCounter[pRace.m_pTemplate.m_pLanguage]++;
+                m_cNationColorsID[pNation] = new SolidBrush(color.RGB);
+                m_cAncientNationColorsID[pNation] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, color.RGB);
+                m_cHegemonNationColorsID[pNation] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, color.RGB);
+                cLanguageCounter[pNation.m_pRace.m_pLanguage]++;
             }
 
             //foreach (Race pRace in m_pWorld.m_aLocalRaces)
@@ -938,14 +940,14 @@ namespace MapDrawEngine
                             pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush].AddPolygon(aPts);
 
                             //если регион обитаем
-                            if (pArea.m_pRace != null)
+                            if (pArea.m_pNation != null)
                             {
                                 //сохраним информацию о контуре региона и для этнографической карты
-                                Brush pBrush = m_cRaceColorsID[pArea.m_pRace];
-                                if (pArea.m_pRace.m_bDying)
-                                    pBrush = m_cAncientRaceColorsID[pArea.m_pRace];
-                                if (pArea.m_pRace.m_bHegemon)
-                                    pBrush = m_cHegemonRaceColorsID[pArea.m_pRace];
+                                Brush pBrush = m_cNationColorsID[pArea.m_pNation];
+                                if (pArea.m_pNation.m_bDying)
+                                    pBrush = m_cAncientNationColorsID[pArea.m_pNation];
+                                if (pArea.m_pNation.m_bHegemon)
+                                    pBrush = m_cHegemonNationColorsID[pArea.m_pNation];
 
                                 if (!pQuad.m_cModes[MapMode.Natives].ContainsKey(pBrush))
                                     pQuad.m_cModes[MapMode.Natives][pBrush] = new GraphicsPath();
@@ -967,13 +969,13 @@ namespace MapDrawEngine
                     pPath.AddPolygon(aPts);
 
                     //сохраним информацию о контуре провинции для этнографической карты
-                    Brush pBrush = m_cRaceColorsID[pProvince.m_pRace];
-                    if (pProvince.m_pRace.m_bDying)
-                        pBrush = m_cAncientRaceColorsID[pProvince.m_pRace];
-                    if (pProvince.m_pRace.m_bHegemon)
-                        pBrush = m_cHegemonRaceColorsID[pProvince.m_pRace];
+                    Brush pBrush = m_cNationColorsID[pProvince.m_pNation];
+                    if (pProvince.m_pNation.m_bDying)
+                        pBrush = m_cAncientNationColorsID[pProvince.m_pNation];
+                    if (pProvince.m_pNation.m_bHegemon)
+                        pBrush = m_cHegemonNationColorsID[pProvince.m_pNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pRace.m_iMagicLimit][pProvince.m_pRace.m_eMagicAbilityPrevalence];
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pNation.m_iMagicLimit][pProvince.m_pNation.m_eMagicAbilityPrevalence];
                     
                     foreach (MapQuadrant pQuad in aQuads)
                     {
@@ -2012,7 +2014,7 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip += "\n   - ";
 
-                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pInfo.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pRace);
+                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pInfo.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pNation);
             }
 
             if (bContinent && m_pFocusedProvince != null)
@@ -2020,7 +2022,7 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip += "\n     - ";
 
-                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pRace);
+                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pNation);
             }
 
             if (m_pFocusedLocation != null)

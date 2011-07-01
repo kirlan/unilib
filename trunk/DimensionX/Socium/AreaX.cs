@@ -5,64 +5,65 @@ using System.Text;
 using Random;
 using NameGen;
 using LandscapeGeneration;
+using Socium.Nations;
 
 namespace Socium
 {
     public class AreaX: Area<LandX, LandTypeInfoX>
     {
-        public Race m_pRace = null;
+        public Nation m_pNation = null;
 
         public string m_sName;
 
-        public void SetRace(List<Race> cPossibleRaces)
+        public void SetRace(List<Nation> cPossibleNations)
         {
-            Dictionary<Race, float> cChances = new Dictionary<Race, float>();
-            foreach (Race pRace in cPossibleRaces)
+            Dictionary<Nation, float> cChances = new Dictionary<Nation, float>();
+            foreach (Nation pNation in cPossibleNations)
             {
-                cChances[pRace] = 1.0f;// / pRace.m_iRank;
+                cChances[pNation] = 1.0f;// / pRace.m_iRank;
 
-                if (pRace.m_bDying)
-                    cChances[pRace] /= 10 / m_pType.m_iMovementCost;
+                if (pNation.m_bDying)
+                    cChances[pNation] /= 10 / m_pType.m_iMovementCost;
                     //cChances[pRace] /= 10000 / (m_pType.m_iMovementCost * m_pType.m_iMovementCost);
 
-                if (pRace.m_bHegemon)
-                    cChances[pRace] *= 10;
+                if (pNation.m_bHegemon)
+                    cChances[pNation] *= 10;
 
-                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aPrefferedLands)
+                foreach (LandTypeInfoX pType in pNation.m_pRace.m_aPrefferedLands)
                     if (m_pType == pType)
-                        cChances[pRace] *= 10;
+                        cChances[pNation] *= 10;
 
-                foreach (LandTypeInfoX pType in pRace.m_pTemplate.m_aHatedLands)
+                foreach (LandTypeInfoX pType in pNation.m_pRace.m_aHatedLands)
                     if (m_pType == pType)
-                        cChances[pRace] /= 100;
+                        cChances[pNation] /= 100;
             }
 
             int iChance = Rnd.ChooseOne(cChances.Values, 3);
-            foreach (Race pRace in cChances.Keys)
+            foreach (Nation pNation in cChances.Keys)
             {
                 iChance--;
                 if (iChance < 0)
                 {
-                    m_pRace = pRace;
+                    m_pNation = pNation;
                     break;
                 }
             }
 
-            m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomCountryName();
+            m_sName = m_pNation.m_pRace.m_pLanguage.RandomCountryName();
 
             foreach (LandX pLand in m_cContents)
             {
                 pLand.m_sName = m_sName;
-                pLand.m_pRace = m_pRace;
+                pLand.m_pNation = m_pNation;
             }
         }
 
         public string GetNativeRaceString()
         {
-            if (m_pRace == null)
+            if (m_pNation == null)
                 return "unpopulated";
             else
-                return m_pRace.m_sName;
+                return m_pNation.m_sName;
         }
 
         public override string ToString()

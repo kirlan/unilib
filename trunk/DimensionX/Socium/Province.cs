@@ -6,6 +6,9 @@ using LandscapeGeneration;
 using Random;
 using NameGen;
 using LandscapeGeneration.PathFind;
+using Socium.Settlements;
+using Socium.Nations;
+using Socium.Psichology;
 
 namespace Socium
 {
@@ -64,7 +67,7 @@ namespace Socium
                     m_fPerimeter += pLine.m_fLength;
         }
 
-        public Race m_pRace = null;
+        public Nation m_pNation = null;
 
         public LandX m_pCenter;
 
@@ -136,9 +139,9 @@ namespace Socium
             base.Start(pSeed);
 
             m_pCenter = pSeed;
-            m_pRace = pSeed.m_pRace;
+            m_pNation = pSeed.m_pNation;
 
-            m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomCountryName();
+            m_sName = m_pNation.m_pRace.m_pLanguage.RandomCountryName();
 
             m_cContents.Add(pSeed);
             pSeed.m_pProvince = this;
@@ -187,23 +190,23 @@ namespace Socium
             //        fCost /= 10;
             //}
 
-            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_aPrefferedLands)
+            foreach (LandTypeInfoX pType in m_pNation.m_pRace.m_aPrefferedLands)
                 if (pType == pLand.Type)
                     fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            foreach (LandTypeInfoX pType in m_pRace.m_pTemplate.m_aHatedLands)
+            foreach (LandTypeInfoX pType in m_pNation.m_pRace.m_aHatedLands)
                 if (pType == pLand.Type)
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            if (pLand.m_pRace != m_pRace)
+            if (pLand.m_pNation != m_pNation)
             {
-                if (m_pRace.m_bDying)
+                if (m_pNation.m_bDying)
                     fCost *= 5000;
                 else
                     fCost *= 2;
             }
 
-            if (m_pRace.m_bHegemon)
+            if (m_pNation.m_bHegemon)
                 fCost /= 2;
 
             if (fCost < 1)
@@ -314,7 +317,7 @@ namespace Socium
 
             m_bFullyGrown = true;
 
-            if (m_pRace.m_bDying)
+            if (m_pNation.m_bDying)
                 return !m_bFullyGrown;
 
             foreach (ITerritory pTerr in aBorder)
@@ -415,10 +418,10 @@ namespace Socium
             }
             FillBorderWithKeys();
 
-            Dictionary<Race, int> cRacesCount = new Dictionary<Race, int>();
+            Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
 
             int iMaxPop = 0;
-            Race pMaxRace = null;
+            Nation pMaxNation = null;
 
             foreach (LandX pLand in m_cContents)
             {
@@ -430,21 +433,21 @@ namespace Socium
                 if (bRestricted)
                     continue;
 
-                if (!cRacesCount.ContainsKey(pLand.m_pRace))
-                    cRacesCount[pLand.m_pRace] = 0;
-                cRacesCount[pLand.m_pRace] += pLand.m_cContents.Count;
-                if (cRacesCount[pLand.m_pRace] > iMaxPop)
+                if (!cNationsCount.ContainsKey(pLand.m_pNation))
+                    cNationsCount[pLand.m_pNation] = 0;
+                cNationsCount[pLand.m_pNation] += pLand.m_cContents.Count;
+                if (cNationsCount[pLand.m_pNation] > iMaxPop)
                 {
-                    iMaxPop = cRacesCount[pLand.m_pRace];
-                    pMaxRace = pLand.m_pRace;
+                    iMaxPop = cNationsCount[pLand.m_pNation];
+                    pMaxNation = pLand.m_pNation;
                 }
             }
 
-            if (pMaxRace != null && !m_pRace.m_bDying)
-                m_pRace = pMaxRace;
+            if (pMaxNation != null && !m_pNation.m_bDying)
+                m_pNation = pMaxNation;
 
             foreach (LandX pLand in m_cContents)
-                pLand.m_pRace = m_pRace;
+                pLand.m_pNation = m_pNation;
         }
 
         public void BuildLairs(int iScale)
@@ -633,13 +636,13 @@ namespace Socium
 
         public LocationX BuildCapital(bool bFast)
         {
-            m_iTechLevel = m_pRace.m_iTechLevel;
+            m_iTechLevel = m_pNation.m_iTechLevel;
             //m_iMagicLimit = m_pRace.m_iMagicLimit;
 
             //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
             //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
-            m_pCulture = new Culture(m_pRace.m_pCulture);
-            m_pCustoms = new Customs(m_pRace.m_pCustoms);
+            m_pCulture = new Culture(m_pNation.m_pCulture);
+            m_pCustoms = new Customs(m_pNation.m_pCustoms);
 
             //if (Rnd.OneChanceFrom(3))
             //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
@@ -673,7 +676,7 @@ namespace Socium
                 m_iOre += (int)(pLand.m_cContents.Count * pLand.Type.m_fOre);
 
                 m_iPopulation += pLand.m_cContents.Count;
-                iAverageMagicLimit += m_pRace.m_iMagicLimit * pLand.m_cContents.Count;
+                iAverageMagicLimit += m_pNation.m_iMagicLimit * pLand.m_cContents.Count;
             }
 
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
@@ -685,22 +688,22 @@ namespace Socium
             else if (m_iWood > m_iPopulation && m_iOre > m_iPopulation && Rnd.OneChanceFrom(4))
                 m_iTechLevel++;
 
-            if (m_pRace.m_bInvader)
+            if (m_pNation.m_bInvader)
             {
-                if (m_iTechLevel < m_pRace.m_pEpoch.m_iInvadersMinTechLevel)
-                    m_iTechLevel = m_pRace.m_pEpoch.m_iInvadersMinTechLevel;
-                if (m_iTechLevel > m_pRace.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pRace.m_pEpoch.m_iInvadersMaxTechLevel;
+                if (m_iTechLevel < m_pNation.m_pEpoch.m_iInvadersMinTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iInvadersMinTechLevel;
+                if (m_iTechLevel > m_pNation.m_pEpoch.m_iInvadersMaxTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iInvadersMaxTechLevel;
             }
             else
             {
-                if (m_iTechLevel < m_pRace.m_pEpoch.m_iNativesMinTechLevel)
-                    m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMinTechLevel;
-                if (m_iTechLevel > m_pRace.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMaxTechLevel;
+                if (m_iTechLevel < m_pNation.m_pEpoch.m_iNativesMinTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMinTechLevel;
+                if (m_iTechLevel > m_pNation.m_pEpoch.m_iNativesMaxTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMaxTechLevel;
             }
 
-            int iOldLevel = m_pRace.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
+            int iOldLevel = m_pNation.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
             int iNewLevel = m_iTechLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
             if (iNewLevel > iOldLevel)
                 for (int i = 0; i < iNewLevel - iOldLevel; i++)
@@ -737,15 +740,15 @@ namespace Socium
 
             if (m_iTechLevel > m_iInfrastructureLevel * 2)
                 m_iTechLevel = m_iInfrastructureLevel * 2;
-            if (m_pRace.m_bInvader)
+            if (m_pNation.m_bInvader)
             {
-                if (m_iTechLevel > m_pRace.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pRace.m_pEpoch.m_iInvadersMaxTechLevel;
+                if (m_iTechLevel > m_pNation.m_pEpoch.m_iInvadersMaxTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iInvadersMaxTechLevel;
             }
             else
             {
-                if (m_iTechLevel > m_pRace.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pRace.m_pEpoch.m_iNativesMaxTechLevel;
+                if (m_iTechLevel > m_pNation.m_pEpoch.m_iNativesMaxTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMaxTechLevel;
             }
 
             SettlementInfo pSettlementInfo = Settlement.Info[SettlementSize.Hamlet];
@@ -769,7 +772,7 @@ namespace Socium
                 throw new Exception("Can't build capital!");
 
             if (m_pCenter.Area != null)
-                m_sName = m_pRace.m_pTemplate.m_pLanguage.RandomCountryName();
+                m_sName = m_pNation.m_pRace.m_pLanguage.RandomCountryName();
 
             return m_pAdministrativeCenter;
         }
@@ -842,7 +845,7 @@ namespace Socium
         public override string ToString()
         {
             //if (m_pAdministrativeCenter != null)
-                return string.Format("province {0} ({2}, {1})", m_sName, m_pAdministrativeCenter == null ? "-" : m_pAdministrativeCenter.ToString(), m_pRace);
+                return string.Format("province {0} ({2}, {1})", m_sName, m_pAdministrativeCenter == null ? "-" : m_pAdministrativeCenter.ToString(), m_pNation);
             //else
             //    return "province " + m_sName + " [" + m_pRace.ToString() + "]";
         }
@@ -861,11 +864,11 @@ namespace Socium
         {
             int iHostility = 0;
 
-            if (m_pRace != pOpponent.m_pRace)
+            if (m_pNation != pOpponent.m_pNation)
             {
                 iHostility++;
 
-                if (m_pRace.m_pTemplate.m_pLanguage != pOpponent.m_pRace.m_pTemplate.m_pLanguage)
+                if (m_pNation.m_pRace.m_pLanguage != pOpponent.m_pNation.m_pRace.m_pLanguage)
                     iHostility++;
             }
             else

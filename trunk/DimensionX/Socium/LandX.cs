@@ -6,6 +6,8 @@ using System.Drawing;
 using Random;
 using NameGen;
 using LandscapeGeneration;
+using Socium.Settlements;
+using Socium.Nations;
 
 namespace Socium
 {
@@ -15,7 +17,7 @@ namespace Socium
 
         public string m_sName = "";
 
-        public Race m_pRace;
+        public Nation m_pNation;
 
         /// <summary>
         /// Военное присутсвие сил провинции в данной земле.
@@ -179,7 +181,7 @@ namespace Socium
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
 
-            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pRace, m_pProvince.m_iTechLevel, m_pProvince.m_pRace.m_iMagicLimit, bCapital, bFast);
+            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, m_pProvince.m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, bCapital, bFast);
             foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
                 if (pLoc.m_pBuilding == null)
                     pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
@@ -198,20 +200,20 @@ namespace Socium
 
         public string GetMajorRaceString()
         {
-            if (m_pRace == null)
+            if (m_pNation == null)
                 return "unpopulated";
             else
-                return m_pRace.ToString();
+                return m_pNation.ToString();
         }
 
         public string GetLesserRaceString()
         {
             if (Area != null)
             {
-                if ((Area as AreaX).m_pRace == null)
+                if ((Area as AreaX).m_pNation == null)
                     return "unpopulated";
                 else
-                    return (Area as AreaX).m_pRace.ToString();
+                    return (Area as AreaX).m_pNation.ToString();
             }
             return "unpopulated";
         }
@@ -305,7 +307,7 @@ namespace Socium
 
             if (m_cContents[iFort].m_pSettlement == null && m_cContents[iFort].m_pBuilding == null)
             {
-                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pRace, (m_pProvince.Owner as State).m_iTechLevel, m_pProvince.m_pRace.m_iMagicLimit, false, bFast);
+                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, (m_pProvince.Owner as State).m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, false, bFast);
 
                 foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
                     if (pLoc.m_pBuilding == null)
