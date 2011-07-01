@@ -674,21 +674,6 @@ namespace Socium
 
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
 
-            int iOldLevel = m_pMethropoly.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
-            int iNewLevel = m_iTechLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
-            if (iNewLevel > iOldLevel)
-                for (int i = 0; i < iNewLevel - iOldLevel; i++)
-                {
-                    m_pCulture.Evolve();
-                    m_pCustoms.Evolve();
-                }
-            else
-                for (int i = 0; i < iOldLevel - iNewLevel; i++)
-                {
-                    m_pCulture.Degrade();
-                    m_pCustoms.Degrade();
-                }
-
             //m_iInfrastructureLevel = 4 + (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
             //m_iGovernmentLevel = 1 + Math.Max(m_iTechLevel, m_iMagicLimit) / 2 + Rnd.Get(Math.Max(m_iTechLevel, m_iMagicLimit) / 2);
             //if (m_iTechLevel == 0)
@@ -735,6 +720,21 @@ namespace Socium
                         cInfos.Add(pInfo);
                 }
             }
+            
+            //int iOldLevel = m_pMethropoly.m_iInfrastructureLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
+            //int iNewLevel = m_iInfrastructureLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
+            //if (iNewLevel > iOldLevel)
+            //    for (int i = 0; i < iNewLevel * iNewLevel - iOldLevel * iOldLevel; i++)
+            //    {
+            //        m_pCulture.Evolve();
+            //        m_pCustoms.Evolve();
+            //    }
+            //else
+            //    for (int i = 0; i < iOldLevel - iNewLevel; i++)
+            //    {
+            //        m_pCulture.Degrade();
+            //        m_pCustoms.Degrade();
+            //    }
 
             m_pInfo = cInfos[Rnd.Get(cInfos.Count)];
             
@@ -743,21 +743,21 @@ namespace Socium
             //if (m_pCulture.Moral[Culture.Morale.Agression] > 1)
             //    m_iControl++;
 
-            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation] > 1.2)
+            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation][m_iTechLevel] > 1.33)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation] > 1.8)
+            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation][m_iTechLevel] > 1.66)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation] < 0.4)
+            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation][m_iTechLevel] < 0.33)
                 m_iControl--;
 
-            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism] > 1.2)
+            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] > 1.33)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism] > 1.8)
+            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] > 1.66)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism] < 0.4)
+            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] < 0.33)
                 m_iControl--;
 
-            if (m_pCulture.MentalityValues[Culture.Mentality.Selfishness] > 1.6)
+            if (m_pCulture.MentalityValues[Culture.Mentality.Selfishness][m_iTechLevel] > 1.66)
                 m_iControl--;
 
             if (m_iInfrastructureLevel == 0)
@@ -886,7 +886,7 @@ namespace Socium
                 }
             }
 
-            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture);
+            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, m_iInfrastructureLevel, pOpponent.m_iInfrastructureLevel);
             if (iCultureDifference < -0.75)
             {
                 iHostility -= 2;
@@ -915,11 +915,11 @@ namespace Socium
 
             if (iHostility > 0)
             {
-                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism] * iHostility + 0.25);
-                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism] * 100));
+                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] * iHostility + 0.25);
+                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] * 100));
 
-                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression] * iHostility + 0.25);
-                sReasons += string.Format("Agression \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression] * 100));
+                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel] * iHostility + 0.25);
+                sReasons += string.Format("Agression \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel] * 100));
 
                 if (iHostility == 0)
                     iHostility = 1;
@@ -928,11 +928,11 @@ namespace Socium
             {
                 if (iHostility < 0)
                 {
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism]) * iHostility - 0.25);
-                    sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism]) * 100));
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel]) * iHostility - 0.25);
+                    sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel]) * 100));
 
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression]) * iHostility - 0.25);
-                    sReasons += string.Format("Amiability \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression]) * 100));
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel]) * iHostility - 0.25);
+                    sReasons += string.Format("Amiability \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel]) * 100));
 
                     if (iHostility == 0)
                         iHostility = -1;

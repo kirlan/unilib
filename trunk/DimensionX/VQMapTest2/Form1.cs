@@ -242,34 +242,7 @@ namespace VQMapTest2
                 //richTextBox1.AppendText(string.Format("   {0}: \t", eMorale));
                 //if (eMorale.ToString().Length < 6)
                 //    richTextBox1.AppendText("\t");
-                if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.2)
-                    richTextBox1.AppendText("(+5) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                else
-                    if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.4)
-                        richTextBox1.AppendText("(+4) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                    else
-                        if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.6)
-                            richTextBox1.AppendText("(+3) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                        else
-                            if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 0.8)
-                                richTextBox1.AppendText("(+2) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                            else
-                                if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1)
-                                    richTextBox1.AppendText("(+1) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                                else
-                                    if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.2)
-                                        richTextBox1.AppendText("(-1) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                                    else
-                                        if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.4)
-                                            richTextBox1.AppendText("(-2) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                                        else
-                                            if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.6)
-                                                richTextBox1.AppendText("(-3) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                                            else
-                                                if (e.m_pState.m_pCulture.MentalityValues[eMentality] < 1.8)
-                                                    richTextBox1.AppendText("(-4) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
-                                                else
-                                                    richTextBox1.AppendText("(-5) " + e.m_pState.m_pCulture.GetMentalityString(eMentality));
+                richTextBox1.AppendText(e.m_pState.m_pCulture.GetMentalityString(eMentality, e.m_pState.m_iInfrastructureLevel));
                 //richTextBox1.AppendText(string.Format("{0:0.00}\n", e.State.m_pCulture.Moral[eMorale]));
                 richTextBox1.AppendText("\n");
             }
