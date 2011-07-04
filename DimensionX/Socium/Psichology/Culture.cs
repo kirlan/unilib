@@ -60,19 +60,42 @@ namespace Socium.Psichology
                 m_cMentalityValues[prop] = new float[9];
                 float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
                 float fSum = 0;
+                int iChance = Rnd.Get(6);
                 for (int i = 0; i < 9; i++)
                 {
-                    aDerivative[i] = 0.1f + Rnd.Get(0.88f);
+                    switch (iChance)
+                    {
+                        case 0:
+                            aDerivative[i] = 0.05f + Rnd.Get(0.35f);
+                            break;
+                        case 1:
+                            aDerivative[i] = 0.1f + Rnd.Get(0.25f);
+                            break;
+                        case 2:
+                            aDerivative[i] = 0.15f + Rnd.Get(0.15f);
+                            break;
+                        case 3:
+                            aDerivative[i] = 0.45f * i / 8 + Rnd.Get(0.03f);
+                            break;
+                        case 4:
+                            if(i<4)
+                                aDerivative[i] = 0.5f * i / 4 + Rnd.Get(0.03f);
+                            else
+                                aDerivative[i] = 0.5f - 0.5f * (i-4) / 4 + Rnd.Get(0.03f);
+                            break;
+                        case 5:
+                            aDerivative[i] = 0.7f * (float)Math.Pow((float)i / 8, 4) + Rnd.Get(0.01f);
+                            break;
+                    }
                     fSum += aDerivative[i];
                 }
 
                 float fCurrent = 2;
                 for (int i = 0; i < 9; i++)
                 {
-                    fCurrent -= aDerivative[i] * 2 / fSum; 
-                    m_cMentalityValues[prop][i] = fCurrent;
+                    fCurrent -= aDerivative[i];// *2 / fSum; 
+                    m_cMentalityValues[prop][i] = Math.Max(0, fCurrent);
                 }
-                    //2.0f - (float)Math.Pow(Rnd.Get(0.5f), 4);
             }
         }
 
@@ -109,15 +132,15 @@ namespace Socium.Psichology
                 fSum = 0;
                 for (int i = 0; i < 9; i++)
                 {
-                    aDerivative[i] = (4*aDerivative[i] + 0.22f + Rnd.Get(0.44f))/5;
+                    aDerivative[i] = (9*aDerivative[i] + 0.05f + Rnd.Get(0.4f))/10;
                     fSum += aDerivative[i];
                 }
 
                 float fCurrent = 2;
                 for (int i = 0; i < 9; i++)
                 {
-                    fCurrent -= aDerivative[i] * 2 / fSum; 
-                    m_cMentalityValues[eMentality][i] = fCurrent;
+                    fCurrent -= aDerivative[i];// *2 / fSum;
+                    m_cMentalityValues[eMentality][i] = Math.Max(0, fCurrent);
                 }
             }
         }
@@ -201,7 +224,7 @@ namespace Socium.Psichology
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) completely selfless"),
                             new MentalityCluster(0.33f, 0.66f, "(+2) quite selfless"),
                             new MentalityCluster(0.66f, 1.0f, "(+1) not so egoistic"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) egoistic"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) quite egoistic"),
                             new MentalityCluster(1.33f, 1.66f, "(-2) very selfish"),
                             new MentalityCluster(1.66f, 2.0f, "(-3) completely selfish"),
                         };
@@ -210,8 +233,8 @@ namespace Socium.Psichology
                             new MentalityCluster(0.33f, 0.66f, "(+2) corporations"),
                             new MentalityCluster(0.66f, 1.0f, "(+1) paid workers"),
                             new MentalityCluster(1.0f, 1.33f, "(-1) serfdom"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) slavery"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) jungle law"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) chattel slavery"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) debt bondage"),
                         };
                     s_cMentalityClusters[Mentality.Fanaticism] = new MentalityCluster[] 
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) fully tolerant"),
@@ -222,12 +245,12 @@ namespace Socium.Psichology
                             new MentalityCluster(1.66f, 2.0f, "(-3) closed community"),
                         };
                     s_cMentalityClusters[Mentality.Piety] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) ateists"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) agnostics"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) formal believers"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) pragmatic believers"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) divine servants"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) divine toys"),
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) full conscience freedom"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) just ethical code"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) just prayers"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) complex religious rites"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) animal sacrifices"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) human sacrifices"),
                         };
                     s_cMentalityClusters[Mentality.Treachery] = new MentalityCluster[] 
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) absolutely honest"),
@@ -235,7 +258,7 @@ namespace Socium.Psichology
                             new MentalityCluster(0.66f, 1.0f, "(+1) lawful"),
                             new MentalityCluster(1.0f, 1.33f, "(-1) sly"),
                             new MentalityCluster(1.33f, 1.66f, "(-2) treacherous"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) absolute scoundrels"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) completely corrupt"),
                         };
                 }
                 return s_cMentalityClusters;
@@ -250,7 +273,7 @@ namespace Socium.Psichology
                     m_cMentalityValues[eMentality][iLevel] <= pString.m_fMaxValue)
                     return pString.m_sString;
             }
-            return "error";
+            return "error (" + m_cMentalityValues[eMentality][iLevel].ToString() + ")";
         }
     }
 }

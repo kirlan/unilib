@@ -64,17 +64,17 @@ namespace Socium.Psichology
 
         public Customs()
         {
-            m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
+            m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Genders_equality : Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
 
-            m_eMindBodyPriority = Rnd.OneChanceFrom(3) ? MindBodyPriority.Thinkers : MindBodyPriority.Brutes;
+            m_eMindBodyPriority = Rnd.OneChanceFrom(3) ? MindBodyPriority.Balanced_body_and_mind : Rnd.OneChanceFrom(3) ? MindBodyPriority.Thinkers : MindBodyPriority.Brutes;
 
-            m_eSexuality = Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
+            m_eSexuality = Rnd.OneChanceFrom(3) ? Sexuality.Moderate_sexuality : Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
 
-            m_eSexRelations = Rnd.OneChanceFrom(3) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
+            m_eSexRelations = Rnd.OneChanceFrom(3) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(3) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
 
             //m_eReligion = Rnd.OneChanceFrom(3) ? Religion.Atheism : Religion.Piety;
 
-            m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
+            m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polygamy : Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
         }
 
         public Customs(Customs m_pAncestorCustoms)
@@ -128,59 +128,59 @@ namespace Socium.Psichology
             }            
         }
 
-        public void Evolve()
-        {
-            int iChoice = Rnd.Get(5);
+        //public void Evolve()
+        //{
+        //    int iChoice = Rnd.Get(5);
 
-            switch (iChoice)
-            {
-                case 0:
-                    m_eGenderPriority = GenderPriority.Genders_equality;
-                    break;
-                case 1:
-                    m_eMindBodyPriority = MindBodyPriority.Balanced_body_and_mind;
-                    break;
-                case 2:
-                    m_eSexuality = Sexuality.Moderate_sexuality;
-                    break;
-                case 3:
-                    m_eSexRelations = SexualOrientation.Bisexual;
-                    break;
-                case 4:
-                //    m_eReligion = Religion.Agnosticism;
-                //    break;
-                //case 5:
-                    m_eFamilySize = FamilySize.Polygamy;
-                    break;
-            }
-        }
+        //    switch (iChoice)
+        //    {
+        //        case 0:
+        //            m_eGenderPriority = GenderPriority.Genders_equality;
+        //            break;
+        //        case 1:
+        //            m_eMindBodyPriority = MindBodyPriority.Balanced_body_and_mind;
+        //            break;
+        //        case 2:
+        //            m_eSexuality = Sexuality.Moderate_sexuality;
+        //            break;
+        //        case 3:
+        //            m_eSexRelations = SexualOrientation.Bisexual;
+        //            break;
+        //        case 4:
+        //        //    m_eReligion = Religion.Agnosticism;
+        //        //    break;
+        //        //case 5:
+        //            m_eFamilySize = FamilySize.Polygamy;
+        //            break;
+        //    }
+        //}
 
-        public void Degrade()
-        {
-            int iChoice = Rnd.Get(5);
+        //public void Degrade()
+        //{
+        //    int iChoice = Rnd.Get(5);
 
-            switch (iChoice)
-            {
-                case 0:
-                    m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
-                    break;
-                case 1:
-                    m_eMindBodyPriority = Rnd.OneChanceFrom(3) ? MindBodyPriority.Thinkers : MindBodyPriority.Brutes;
-                    break;
-                case 2:
-                    m_eSexuality = Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
-                    break;
-                case 3:
-                    m_eSexRelations = Rnd.OneChanceFrom(3) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
-                    break;
-                case 4:
-                //    m_eReligion = Rnd.OneChanceFrom(3) ? Religion.Atheism : Religion.Piety;
-                //    break;
-                //case 5:
-                    m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
-                    break;
-            }
-        }
+        //    switch (iChoice)
+        //    {
+        //        case 0:
+        //            m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
+        //            break;
+        //        case 1:
+        //            m_eMindBodyPriority = Rnd.OneChanceFrom(3) ? MindBodyPriority.Thinkers : MindBodyPriority.Brutes;
+        //            break;
+        //        case 2:
+        //            m_eSexuality = Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
+        //            break;
+        //        case 3:
+        //            m_eSexRelations = Rnd.OneChanceFrom(3) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
+        //            break;
+        //        case 4:
+        //        //    m_eReligion = Rnd.OneChanceFrom(3) ? Religion.Atheism : Religion.Piety;
+        //        //    break;
+        //        //case 5:
+        //            m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polyamory : FamilySize.Monogamy;
+        //            break;
+        //    }
+        //}
 
         public string GetCustomsString()
         {
@@ -222,7 +222,7 @@ namespace Socium.Psichology
             if (m_eSexRelations == SexualOrientation.Heterosexual)
             {
                 sResult += "\n   ";
-                sResult += "stright sex relations";
+                sResult += "cross sex relations";
             }
             if (m_eSexRelations == SexualOrientation.Homosexual)
             {

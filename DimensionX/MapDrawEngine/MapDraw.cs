@@ -2023,6 +2023,12 @@ namespace MapDrawEngine
                     sToolTip += "\n     - ";
 
                 sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pNation);
+
+                //sToolTip += "\n          [";
+
+                //foreach(var pNation in m_pFocusedProvince.m_cNationsCount)
+                //sToolTip += string.Format("{0}: {1}, ", pNation.Key, pNation.Value);
+                //sToolTip += "]";
             }
 
             if (m_pFocusedLocation != null)
