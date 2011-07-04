@@ -19,13 +19,15 @@ namespace Socium
             m_pBrush = new SolidBrush(m_pColor);
         }
 
-        public float m_fFood;
+        public float m_fGrain;
+        public float m_fGame;
         public float m_fWood;
         public float m_fOre;
 
-        public void SetResources(float fFood, float fWood, float fOre)
+        public void SetResources(float fGrain, float fGame, float fWood, float fOre)
         {
-            m_fFood = fFood;
+            m_fGrain = fGrain;
+            m_fGame = fGame;
             m_fWood = fWood;
             m_fOre = fOre;
         }

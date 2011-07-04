@@ -113,7 +113,9 @@ namespace Socium
         /// </summary>
         public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
 
-        public int m_iFood = 0;
+        public int m_iFish = 0;
+        public int m_iGrain = 0;
+        public int m_iGame = 0;
         public int m_iOre = 0;
         public int m_iWood = 0;
         public int m_iPopulation = 0;
@@ -397,6 +399,12 @@ namespace Socium
             return true;
         }
 
+        public Dictionary<Nation, int> m_cNationsCount = new Dictionary<Nation, int>();
+
+        //public bool CheckNations()
+        //{ 
+        //}
+
         /// <summary>
         /// Заполняет словарь границ с другими провинциями.
         /// </summary>
@@ -418,10 +426,9 @@ namespace Socium
             }
             FillBorderWithKeys();
 
-            Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
-
             int iMaxPop = 0;
             Nation pMaxNation = null;
+            m_cNationsCount.Clear();
 
             foreach (LandX pLand in m_cContents)
             {
@@ -433,13 +440,13 @@ namespace Socium
                 if (bRestricted)
                     continue;
 
-                if (!cNationsCount.ContainsKey(pLand.m_pNation))
-                    cNationsCount[pLand.m_pNation] = 0;
-                cNationsCount[pLand.m_pNation] += pLand.m_cContents.Count;
-                if (cNationsCount[pLand.m_pNation] > iMaxPop)
+                int iCount = 0;
+                m_cNationsCount.TryGetValue((pLand.Area as AreaX).m_pNation, out iCount);
+                m_cNationsCount[(pLand.Area as AreaX).m_pNation] = iCount + pLand.m_cContents.Count;
+                if (m_cNationsCount[(pLand.Area as AreaX).m_pNation] > iMaxPop)
                 {
-                    iMaxPop = cNationsCount[pLand.m_pNation];
-                    pMaxNation = pLand.m_pNation;
+                    iMaxPop = m_cNationsCount[(pLand.Area as AreaX).m_pNation];
+                    pMaxNation = (pLand.Area as AreaX).m_pNation;
                 }
             }
 
@@ -651,7 +658,9 @@ namespace Socium
 
             int iAverageMagicLimit = 0;
 
-            m_iFood = 0;
+            m_iFish = 0;
+            m_iGrain = 0;
+            m_iGame = 0;
             m_iWood = 0;
             m_iOre = 0;
             m_iPopulation = 0;
@@ -671,7 +680,9 @@ namespace Socium
                     }
                 }
 
-                m_iFood += (int)(pLand.m_cContents.Count * pLand.Type.m_fFood) + iCoast;// *3;
+                m_iFish += (int)(iCoast*3/pLand.MovementCost);
+                m_iGrain += (int)(pLand.m_cContents.Count * pLand.Type.m_fGrain);
+                m_iGame += (int)(pLand.m_cContents.Count * pLand.Type.m_fGame);
                 m_iWood += (int)(pLand.m_cContents.Count * pLand.Type.m_fWood);
                 m_iOre += (int)(pLand.m_cContents.Count * pLand.Type.m_fOre);
 
@@ -711,9 +722,9 @@ namespace Socium
             if (m_iTechLevel == 0 && iAverageMagicLimit == 0)
                 m_iInfrastructureLevel = 0;
 
-            if (m_iFood < m_iPopulation || Rnd.OneChanceFrom(10))
+            if (m_iGrain + m_iFish + m_iGame < m_iPopulation || Rnd.OneChanceFrom(10))
                 m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);
-            if (m_iFood > m_iPopulation * 2 && Rnd.OneChanceFrom(10))
+            if (m_iGrain + m_iFish + m_iGame > m_iPopulation * 2 && Rnd.OneChanceFrom(10))
                 m_iInfrastructureLevel++;
 
             if (m_iInfrastructureLevel < (m_iTechLevel + 1) / 2)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)

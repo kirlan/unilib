@@ -218,6 +218,9 @@ namespace Socium
 
         public List<Province> m_cContents = new List<Province>();
 
+        /// <summary>
+        /// границы с другими государствами
+        /// </summary>
         private Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
 
         private object m_pOwner = null;
@@ -228,11 +231,17 @@ namespace Socium
             set { m_pOwner = value; }
         }
 
+        /// <summary>
+        /// границы с другими государствами
+        /// </summary>
         public Dictionary<object, List<Line>> BorderWith
         {
             get { return m_cBorderWith; }
         }
 
+        /// <summary>
+        /// соседние государствами (включая те, с которыми только морское сообщение)
+        /// </summary>
         public object[] m_aBorderWith = null;
 
         private float m_fPerimeter = 0;
@@ -272,6 +281,29 @@ namespace Socium
 
             m_cContents.Add(pSeed);
             pSeed.Owner = this;
+        }
+
+        public bool ForcedGrow()
+        {
+            object[] aBorder = new List<object>(m_cBorder.Keys).ToArray();
+
+            bool bFullyGrown = true;
+
+            foreach (ITerritory pTerr in aBorder)
+            {
+                if (pTerr.Forbidden)
+                    continue;
+
+                Province pProvince = pTerr as Province;
+
+                if (pProvince != null && pProvince.Owner == null && !pProvince.m_pCenter.IsWater)
+                {
+                    AddProvince(pProvince);
+                    bFullyGrown = false;
+                }
+            }
+
+            return !bFullyGrown;
         }
 
         /// <summary>
@@ -365,6 +397,13 @@ namespace Socium
             //    if (pType == pAddon.m_pCenter.Type && !Rnd.OneChanceFrom(5))
             //        return true;
 
+            AddProvince(pAddon);
+
+            return true;
+        }
+
+        private void AddProvince(Province pAddon)
+        {
             m_cContents.Add(pAddon);
             pAddon.Owner = this;
 
@@ -403,8 +442,6 @@ namespace Socium
             //    Line[] aListLine2 = SortLines(cNewBorder);
             //    Line[] aListLine3 = SortLines(cFalseBorder);
             //}
-
-            return true;
         }
 
         private Line[] SortLines(List<Line> cListLine)
@@ -446,6 +483,7 @@ namespace Socium
 
             m_cBorderWith.Clear();
 
+            //добавляем в общий список контуры границ с соседними государствами
             foreach (ITerritory pProvince in m_cBorder.Keys)
             {
                 State pState;
@@ -459,31 +497,10 @@ namespace Socium
                 m_cBorderWith[pState].AddRange(m_cBorder[pProvince]);
             }
 
-            Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
-
-            int iMaxPop = 0;
-            Nation pMaxNation = null;
-
+            //добавляем в общий список пустые массивы контуров границ для тех государств, с которыми у нас 
+            //морское сообщение
             foreach (Province pProvince in m_cContents)
             {
-                //bool bRestricted = true;
-                //foreach (LocationX pLoc in pProvince.m_cContents)
-                //    if (!pLoc.Forbidden && !pLoc.m_bBorder)
-                //        bRestricted = false;
-
-                //if (bRestricted)
-                //    continue;
-
-                int iCount = 0;
-                if (!cNationsCount.TryGetValue(pProvince.m_pNation, out iCount))
-                    cNationsCount[pProvince.m_pNation] = 0;
-                cNationsCount[pProvince.m_pNation] = iCount + pProvince.m_cContents.Count;
-                if (cNationsCount[pProvince.m_pNation] > iMaxPop)
-                {
-                    iMaxPop = cNationsCount[pProvince.m_pNation];
-                    pMaxNation = pProvince.m_pNation;
-                }
-
                 foreach (LocationX pLoc in pProvince.m_cSettlements)
                     foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
                     { 
@@ -491,15 +508,6 @@ namespace Socium
                         if(pState != this && !m_cBorderWith.ContainsKey(pState))
                             m_cBorderWith[pState] = new List<Line>();
                     }
-            }
-
-            if (pMaxNation != null)
-            {
-                m_pNation = pMaxNation;
-
-                m_pMethropoly.m_pNation = pMaxNation;
-                foreach (LandX pLand in m_pMethropoly.m_cContents)
-                    pLand.m_pNation = m_pNation;
             }
 
             FillBorderWithKeys();
@@ -652,9 +660,32 @@ namespace Socium
             m_iOre = 0;
             m_iPopulation = 0;
 
+            Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
+
+            int iMaxPop = 0;
+            Nation pMaxNation = null;
+
             foreach (Province pProvince in m_cContents)
             {
-                m_iFood += pProvince.m_iFood;
+                int iCount = 0;
+                if (!cNationsCount.TryGetValue(pProvince.m_pNation, out iCount))
+                    cNationsCount[pProvince.m_pNation] = 0;
+                cNationsCount[pProvince.m_pNation] = iCount + pProvince.m_cContents.Count;
+                if (cNationsCount[pProvince.m_pNation] > iMaxPop)
+                {
+                    iMaxPop = cNationsCount[pProvince.m_pNation];
+                    pMaxNation = pProvince.m_pNation;
+                }
+
+                foreach (LocationX pLoc in pProvince.m_cSettlements)
+                    foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
+                    {
+                        State pState = (pOtherLoc.Owner as LandX).m_pProvince.Owner as State;
+                        if (pState != this && !m_cBorderWith.ContainsKey(pState))
+                            m_cBorderWith[pState] = new List<Line>();
+                    } 
+                
+                m_iFood += pProvince.m_iGrain + pProvince.m_iFish + pProvince.m_iGame;
                 m_iWood += pProvince.m_iWood;
                 m_iOre += pProvince.m_iOre;
 
@@ -671,8 +702,28 @@ namespace Socium
                     iAverageMagicLimit += pProvince.m_pNation.m_iMagicLimit * pLand.m_cContents.Count;
                 }
             }
+            
+            if (pMaxNation != null)
+            {
+                m_pNation = pMaxNation;
 
+                m_pMethropoly.m_pNation = pMaxNation;
+                foreach (LandX pLand in m_pMethropoly.m_cContents)
+                    pLand.m_pNation = m_pNation;
+            } 
+            
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
+
+            if (m_pNation.m_bInvader)
+            {
+                if (m_iTechLevel > m_pNation.m_pEpoch.m_iInvadersMaxTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iInvadersMaxTechLevel;
+            }
+            else
+            {
+                if (m_iTechLevel > m_pNation.m_pEpoch.m_iNativesMaxTechLevel)
+                    m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMaxTechLevel;
+            }
 
             //m_iInfrastructureLevel = 4 + (int)(m_pCulture.GetDifference(Culture.IdealSociety) * 4);
             //m_iGovernmentLevel = 1 + Math.Max(m_iTechLevel, m_iMagicLimit) / 2 + Rnd.Get(Math.Max(m_iTechLevel, m_iMagicLimit) / 2);

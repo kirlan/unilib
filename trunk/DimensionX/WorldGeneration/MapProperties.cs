@@ -53,12 +53,12 @@ namespace WorldGeneration
                         MapPresets.Items.AddRange(m_aWorldMaps);
                     else
                         MapPresets.Items.AddRange(m_aPartialMaps);
-
-                    if (MapPresets.Items.Count > 0)
-                        MapPresets.SelectedIndex = 0;
                 }
 
                 CalculateLimits(m_cLocationsGrid.m_iLocationsCount);
+
+                if (MapPresets.Items.Count > 0)
+                    MapPresets.SelectedIndex = 0;
             }
         }
 
