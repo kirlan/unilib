@@ -714,7 +714,11 @@ namespace Socium
                     m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMaxTechLevel;
             }
 
-            m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety, m_iTechLevel, m_iTechLevel) * 4);
+            int iCulture = m_pNation.m_pEpoch.m_iNativesCultureLevel;
+            if (m_pNation.m_bInvader)
+                iCulture = m_pNation.m_pEpoch.m_iInvadersCultureLevel;
+
+            m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety, iCulture, iCulture) * 4);
 
             if (m_cContents.Count == 1)
                 m_iInfrastructureLevel /= 2;
@@ -900,7 +904,15 @@ namespace Socium
                 if (pOpponent.m_iInfrastructureLevel < m_iInfrastructureLevel)
                     iHostility++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
 
-            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, m_iInfrastructureLevel, pOpponent.m_iInfrastructureLevel);
+            int iCulture1 = m_pNation.m_pEpoch.m_iNativesCultureLevel;
+            if (m_pNation.m_bInvader)
+                iCulture1 = m_pNation.m_pEpoch.m_iInvadersCultureLevel;
+
+            int iCulture2 = pOpponent.m_pNation.m_pEpoch.m_iNativesCultureLevel;
+            if (pOpponent.m_pNation.m_bInvader)
+                iCulture2 = pOpponent.m_pNation.m_pEpoch.m_iInvadersCultureLevel; 
+            
+            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, iCulture1, iCulture2);
             if (iCultureDifference < -0.75)
                 iHostility -= 2;
             else
@@ -913,11 +925,14 @@ namespace Socium
                         if (iCultureDifference > 0)
                             iHostility++;
 
+            int iCulture = m_pNation.m_pEpoch.m_iNativesCultureLevel;
+            if (m_pNation.m_bInvader)
+                iCulture = m_pNation.m_pEpoch.m_iInvadersCultureLevel; 
+            
             if (iHostility > 0)
             {
-                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] * iHostility + 0.25);
-
-                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel] * iHostility + 0.25);
+                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture] * iHostility + 0.25);
+                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Agression][iCulture] * iHostility + 0.25);
 
                 if (iHostility == 0)
                     iHostility = 1;
@@ -926,9 +941,8 @@ namespace Socium
             {
                 if (iHostility < 0)
                 {
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel]) * iHostility - 0.25);
-
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel]) * iHostility - 0.25);
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture]) * iHostility - 0.25);
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][iCulture]) * iHostility - 0.25);
 
                     if (iHostility == 0)
                         iHostility = -1;

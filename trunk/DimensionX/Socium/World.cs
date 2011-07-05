@@ -939,32 +939,32 @@ namespace Socium
 
             //сглаживаем культурные различия соседних стран
             //высокоразвитые страны "подтягивают" более отсталые, но не наоборот
-            foreach (State pState in m_aStates)
-            {
-                int iCounter = 0;
-                Dictionary<Culture.Mentality, float[]> aSum = new Dictionary<Culture.Mentality, float[]>();
-                foreach (Culture.Mentality eMentality in Culture.Mentalities)
-                {
-                    aSum[eMentality] = new float[pState.m_pCulture.MentalityValues[eMentality].Length];
-                    for (int i = 0; i < aSum[eMentality].Length; i++)
-                        aSum[eMentality][i] = 0;
-                }
+            //foreach (State pState in m_aStates)
+            //{
+            //    int iCounter = 0;
+            //    Dictionary<Mentality, float[]> aSum = new Dictionary<Mentality, float[]>();
+            //    foreach (Mentality eMentality in Culture.Mentalities)
+            //    {
+            //        aSum[eMentality] = new float[pState.m_pCulture.MentalityValues[eMentality].Length];
+            //        for (int i = 0; i < aSum[eMentality].Length; i++)
+            //            aSum[eMentality][i] = 0;
+            //    }
 
-                foreach (State pLinkedState in pState.m_aBorderWith)
-                {
-                    if (pLinkedState.Forbidden)
-                        continue;
+            //    foreach (State pLinkedState in pState.m_aBorderWith)
+            //    {
+            //        if (pLinkedState.Forbidden)
+            //            continue;
 
-                    foreach (Culture.Mentality eMentality in Culture.Mentalities)
-                        for (int i = 0; i < aSum[eMentality].Length; i++)
-                            aSum[eMentality][i] += Math.Max(pLinkedState.m_pCulture.MentalityValues[eMentality][i], pState.m_pCulture.MentalityValues[eMentality][i]);
+            //        foreach (Mentality eMentality in Culture.Mentalities)
+            //            for (int i = 0; i < aSum[eMentality].Length; i++)
+            //                aSum[eMentality][i] += Math.Max(pLinkedState.m_pCulture.MentalityValues[eMentality][i], pState.m_pCulture.MentalityValues[eMentality][i]);
 
-                    iCounter++;
-                }
-                foreach (Culture.Mentality eMentality in Culture.Mentalities)
-                    for (int i = 0; i < aSum[eMentality].Length; i++)
-                        pState.m_pCulture.MentalityValues[eMentality][i] = (pState.m_pCulture.MentalityValues[eMentality][i] + aSum[eMentality][i]) / (iCounter + 1);
-            }
+            //        iCounter++;
+            //    }
+            //    foreach (Mentality eMentality in Culture.Mentalities)
+            //        for (int i = 0; i < aSum[eMentality].Length; i++)
+            //            pState.m_pCulture.MentalityValues[eMentality][i] = (pState.m_pCulture.MentalityValues[eMentality][i] + aSum[eMentality][i]) / (iCounter + 1);
+            //}
 
             //строим форты на границах враждующих государств и фиксим дороги
             Dictionary<State, Dictionary<State, int>> cHostility = new Dictionary<State, Dictionary<State, int>>();

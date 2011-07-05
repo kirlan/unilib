@@ -236,13 +236,17 @@ namespace VQMapTest2
             richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", e.m_pState.m_pNation.m_iTechLevel, e.m_pState.m_pNation.m_iMagicLimit, e.m_pState.m_pNation));
 
             richTextBox1.AppendText(string.Format("Culture:\n"));
-            foreach (Culture.Mentality eMentality in Culture.Mentalities)
+            foreach (Mentality eMentality in Culture.Mentalities)
             {
                 richTextBox1.AppendText("   ");
                 //richTextBox1.AppendText(string.Format("   {0}: \t", eMorale));
                 //if (eMorale.ToString().Length < 6)
                 //    richTextBox1.AppendText("\t");
-                richTextBox1.AppendText(e.m_pState.m_pCulture.GetMentalityString(eMentality, e.m_pState.m_iInfrastructureLevel));
+                if (e.m_pState.m_pNation.m_bInvader)
+                    richTextBox1.AppendText(e.m_pState.m_pCulture.GetMentalityString(eMentality, e.m_pState.m_pNation.m_pEpoch.m_iInvadersCultureLevel));
+                else
+                    richTextBox1.AppendText(e.m_pState.m_pCulture.GetMentalityString(eMentality, e.m_pState.m_pNation.m_pEpoch.m_iNativesCultureLevel));
+
                 //richTextBox1.AppendText(string.Format("{0:0.00}\n", e.State.m_pCulture.Moral[eMorale]));
                 richTextBox1.AppendText("\n");
             }

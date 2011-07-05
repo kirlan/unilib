@@ -75,6 +75,8 @@ namespace WorldGeneration
 
                 BaseMagicBox.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
                 MaxMagicBox.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+
+                CultureBox.Items.Add(string.Format("{0} [C{1}]", State.GetCultureString(i), i));
             }
 
             BaseTechBox.SelectedIndex = 0;
@@ -82,6 +84,8 @@ namespace WorldGeneration
 
             MaxTechBox.SelectedIndex = 8;
             MaxMagicBox.SelectedIndex = 8;
+
+            CultureBox.SelectedIndex = 2;
 
             NativesSocialPreset.Items.Clear();
             NativesSocialPreset.Items.AddRange(ProgressPreset.s_aSocietyPresets);
@@ -160,6 +164,7 @@ namespace WorldGeneration
                 MaxTechBox.SelectedIndex = m_pEpoch.NativesMaxTechLevel - m_pEpoch.NativesMinTechLevel;
                 BaseMagicBox.SelectedIndex = m_pEpoch.NativesMinMagicLevel;
                 MaxMagicBox.SelectedIndex = m_pEpoch.NativesMaxMagicLevel - m_pEpoch.NativesMinMagicLevel;
+                CultureBox.SelectedIndex = m_pEpoch.NativesCultureLevel;
 
                 RacesCount.Value = m_pEpoch.NativesCount;
                 RacesCount.Minimum = 1;
@@ -175,6 +180,7 @@ namespace WorldGeneration
                 MaxTechBox.SelectedIndex = m_pEpoch.InvadersMaxTechLevel - m_pEpoch.InvadersMinTechLevel;
                 BaseMagicBox.SelectedIndex = m_pEpoch.InvadersMinMagicLevel;
                 MaxMagicBox.SelectedIndex = m_pEpoch.InvadersMaxMagicLevel - m_pEpoch.InvadersMinMagicLevel;
+                CultureBox.SelectedIndex = m_pEpoch.InvadersCultureLevel;
 
                 RacesCount.Minimum = 0;
                 RacesCount.Value = m_pEpoch.InvadersCount;
@@ -409,6 +415,7 @@ namespace WorldGeneration
             MaxTechBox.Enabled = RacesCount.Value > 0;
             BaseMagicBox.Enabled = RacesCount.Value > 0;
             MaxMagicBox.Enabled = RacesCount.Value > 0;
+            CultureBox.Enabled = RacesCount.Value > 0;
             checkedListBox1.Enabled = RacesCount.Value > 0;
 
             FireUpdate();
@@ -441,6 +448,17 @@ namespace WorldGeneration
         {
             if (UpdateEvent != null)
                 UpdateEvent(this, new EventArgs());
+        }
+
+        private void CultureBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (m_pEpoch == null)
+                return;
+
+            if (tabControl1.SelectedIndex == 0)
+                m_pEpoch.NativesCultureLevel = CultureBox.SelectedIndex;
+            else
+                m_pEpoch.InvadersCultureLevel = CultureBox.SelectedIndex;
         }
     }
 }
