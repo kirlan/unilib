@@ -7,41 +7,41 @@ using BenTools.Mathematics;
 
 namespace Socium.Psichology
 {
+    public enum Mentality
+    {
+        /// <summary>
+        /// Агрессивность - нападать на врага или убегать от него
+        /// </summary>
+        Agression,
+        /// <summary>
+        /// Нетерпимость - какой уровень неприязни считать достаточным чтобы признать врагом
+        /// </summary>
+        Fanaticism, //Fanaticism,
+        /// <summary>
+        /// Набожность - насколько человек признаёт над собой власть высших сил
+        /// </summary>
+        Piety, //Voluptuousness,
+        /// <summary>
+        /// Вероломство - склонность к обману и мошенничеству
+        /// </summary>
+        Treachery, //Guile,
+        /// <summary>
+        /// Эгоизм, забота только о собственном благе, в противоположность заботе о благе своего общества
+        /// </summary>
+        Selfishness, //Selfishness,
+        // <summary>
+        // Высокомерие - важность социального статуса при общении и назначении должностей (статус определяется соответствием (или несоответствием) индивидуума определённым для данного общества критериям - половая принадлежность, возраст, богатство, внешность, интеллект, магические способности и пр.)
+        // (Отказался, т.к. это дублирует фанатизм)
+        // </summary>
+        //Segregation, //Arrogance,
+        /// <summary>
+        /// Эксплуатация - рапределение результатов труда между социальными слоями, крайняя форма - рабство, когда низший слой (рабы) - не получают почти ничего.
+        /// </summary>
+        Exploitation//Exploitation
+    };
+    
     public class Culture
     {
-        public enum Mentality
-        {
-            /// <summary>
-            /// Агрессивность - нападать на врага или убегать от него
-            /// </summary>
-            Agression,
-            /// <summary>
-            /// Нетерпимость - какой уровень неприязни считать достаточным чтобы признать врагом
-            /// </summary>
-            Fanaticism, //Fanaticism,
-            /// <summary>
-            /// Набожность - насколько человек признаёт над собой власть высших сил
-            /// </summary>
-            Piety, //Voluptuousness,
-            /// <summary>
-            /// Вероломство - склонность к обману и мошенничеству
-            /// </summary>
-            Treachery, //Guile,
-            /// <summary>
-            /// Эгоизм, забота только о собственном благе, в противоположность заботе о благе своего общества
-            /// </summary>
-            Selfishness, //Selfishness,
-            // <summary>
-            // Высокомерие - важность социального статуса при общении и назначении должностей (статус определяется соответствием (или несоответствием) индивидуума определённым для данного общества критериям - половая принадлежность, возраст, богатство, внешность, интеллект, магические способности и пр.)
-            // (Отказался, т.к. это дублирует фанатизм)
-            // </summary>
-            //Segregation, //Arrogance,
-            /// <summary>
-            /// Эксплуатация - рапределение результатов труда между социальными слоями, крайняя форма - рабство, когда низший слой (рабы) - не получают почти ничего.
-            /// </summary>
-            Exploitation//Exploitation
-        };
-
         public static Array Mentalities = Enum.GetValues(typeof(Mentality));
 
         private Dictionary<Mentality, float[]> m_cMentalityValues = new Dictionary<Mentality, float[]>();
@@ -53,39 +53,55 @@ namespace Socium.Psichology
             get { return m_cMentalityValues; }
         }
 
-        public Culture()
+        public Culture(CultureTemplate cTemplate)
         {
             foreach (Mentality prop in Mentalities)
             {
                 m_cMentalityValues[prop] = new float[9];
                 float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
                 float fSum = 0;
-                int iChance = Rnd.Get(6);
+
+
+                AdvancementRate eRate = cTemplate[prop];
+                if (eRate == AdvancementRate.Random)
+                {
+                    Array aRates = Enum.GetValues(typeof(AdvancementRate));
+                    eRate = (AdvancementRate)aRates.GetValue(Rnd.Get(aRates.Length - 1));
+                }
                 for (int i = 0; i < 9; i++)
                 {
-                    switch (iChance)
+                    switch (eRate)
                     {
-                        case 0:
+                        case AdvancementRate.UniformlyLoose:
                             aDerivative[i] = 0.05f + Rnd.Get(0.35f);
                             break;
-                        case 1:
+                        case AdvancementRate.UniformlyModerate:
                             aDerivative[i] = 0.1f + Rnd.Get(0.25f);
                             break;
-                        case 2:
+                        case AdvancementRate.UniformlyPrecise:
                             aDerivative[i] = 0.15f + Rnd.Get(0.15f);
                             break;
-                        case 3:
+                        case AdvancementRate.Delayed:
                             aDerivative[i] = 0.45f * i / 8 + Rnd.Get(0.03f);
                             break;
-                        case 4:
-                            if(i<4)
+                        case AdvancementRate.Rapid:
+                            aDerivative[i] = 0.45f - 0.45f * i / 8 + Rnd.Get(0.03f);
+                            break;
+                        case AdvancementRate.Leap:
+                            if (i < 4)
                                 aDerivative[i] = 0.5f * i / 4 + Rnd.Get(0.03f);
                             else
-                                aDerivative[i] = 0.5f - 0.5f * (i-4) / 4 + Rnd.Get(0.03f);
+                                aDerivative[i] = 0.5f - 0.5f * (i - 4) / 4 + Rnd.Get(0.03f);
                             break;
-                        case 5:
-                            aDerivative[i] = 0.7f * (float)Math.Pow((float)i / 8, 4) + Rnd.Get(0.01f);
+                        case AdvancementRate.Plateau:
+                            if (i < 4)
+                                aDerivative[i] = 0.5f - 0.5f * i / 4 + Rnd.Get(0.03f);
+                            else
+                                aDerivative[i] = 0.5f * (i - 4) / 4 + Rnd.Get(0.03f);
                             break;
+                        //case 5:
+                        //    aDerivative[i] = 0.7f * (float)Math.Pow((float)i / 8, 4) + Rnd.Get(0.01f);
+                        //    break;
                     }
                     fSum += aDerivative[i];
                 }
@@ -93,7 +109,7 @@ namespace Socium.Psichology
                 float fCurrent = 2;
                 for (int i = 0; i < 9; i++)
                 {
-                    fCurrent -= aDerivative[i];// *2 / fSum; 
+                    fCurrent -= aDerivative[i]*2 / fSum; 
                     m_cMentalityValues[prop][i] = Math.Max(0, fCurrent);
                 }
             }
@@ -139,7 +155,7 @@ namespace Socium.Psichology
                 float fCurrent = 2;
                 for (int i = 0; i < 9; i++)
                 {
-                    fCurrent -= aDerivative[i];// *2 / fSum;
+                    fCurrent -= aDerivative[i]*2 / fSum;
                     m_cMentalityValues[eMentality][i] = Math.Max(0, fCurrent);
                 }
             }
@@ -230,8 +246,8 @@ namespace Socium.Psichology
                         };
                     s_cMentalityClusters[Mentality.Exploitation] = new MentalityCluster[] 
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) communism"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) corporations"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) paid workers"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) advanced capitalism"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) early capitalism"),
                             new MentalityCluster(1.0f, 1.33f, "(-1) serfdom"),
                             new MentalityCluster(1.33f, 1.66f, "(-2) chattel slavery"),
                             new MentalityCluster(1.66f, 2.0f, "(-3) debt bondage"),
@@ -250,7 +266,7 @@ namespace Socium.Psichology
                             new MentalityCluster(0.66f, 1.0f, "(+1) just prayers"),
                             new MentalityCluster(1.0f, 1.33f, "(-1) complex religious rites"),
                             new MentalityCluster(1.33f, 1.66f, "(-2) animal sacrifices"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) human sacrifices"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) sapience sacrifices"),
                         };
                     s_cMentalityClusters[Mentality.Treachery] = new MentalityCluster[] 
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) absolutely honest"),

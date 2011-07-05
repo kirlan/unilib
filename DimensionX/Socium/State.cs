@@ -794,21 +794,25 @@ namespace Socium
             //if (m_pCulture.Moral[Culture.Morale.Agression] > 1)
             //    m_iControl++;
 
-            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation][m_iTechLevel] > 1.33)
+            int iCulture = m_pNation.m_pEpoch.m_iNativesCultureLevel;
+            if (m_pNation.m_bInvader)
+                iCulture = m_pNation.m_pEpoch.m_iInvadersCultureLevel;
+
+            if (m_pCulture.MentalityValues[Mentality.Exploitation][iCulture] > 1.33)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation][m_iTechLevel] > 1.66)
+            if (m_pCulture.MentalityValues[Mentality.Exploitation][iCulture] > 1.66)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Exploitation][m_iTechLevel] < 0.33)
+            if (m_pCulture.MentalityValues[Mentality.Exploitation][iCulture] < 0.33)
                 m_iControl--;
 
-            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] > 1.33)
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture] > 1.33)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] > 1.66)
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture] > 1.66)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] < 0.33)
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture] < 0.33)
                 m_iControl--;
 
-            if (m_pCulture.MentalityValues[Culture.Mentality.Selfishness][m_iTechLevel] > 1.66)
+            if (m_pCulture.MentalityValues[Mentality.Selfishness][iCulture] > 1.66)
                 m_iControl--;
 
             if (m_iInfrastructureLevel == 0)
@@ -936,8 +940,16 @@ namespace Socium
                     sNegativeReasons += string.Format(" (-{0}) Scorn for savagery\n", 1);//m_iLifeLevel - pOpponent.m_iLifeLevel);
                 }
             }
-
-            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, m_iInfrastructureLevel, pOpponent.m_iInfrastructureLevel);
+            
+            int iCulture1 = m_pNation.m_pEpoch.m_iNativesCultureLevel;
+            if (m_pNation.m_bInvader)
+                iCulture1 = m_pNation.m_pEpoch.m_iInvadersCultureLevel;
+            
+            int iCulture2 = pOpponent.m_pNation.m_pEpoch.m_iNativesCultureLevel;
+            if (pOpponent.m_pNation.m_bInvader)
+                iCulture2 = pOpponent.m_pNation.m_pEpoch.m_iInvadersCultureLevel;
+            
+            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, iCulture1, iCulture2);
             if (iCultureDifference < -0.75)
             {
                 iHostility -= 2;
@@ -966,11 +978,11 @@ namespace Socium
 
             if (iHostility > 0)
             {
-                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] * iHostility + 0.25);
-                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel] * 100));
+                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1] * iHostility + 0.25);
+                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1] * 100));
 
-                iHostility = (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel] * iHostility + 0.25);
-                sReasons += string.Format("Agression \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel] * 100));
+                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Agression][iCulture1] * iHostility + 0.25);
+                sReasons += string.Format("Agression \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Mentality.Agression][iCulture1] * 100));
 
                 if (iHostility == 0)
                     iHostility = 1;
@@ -979,11 +991,11 @@ namespace Socium
             {
                 if (iHostility < 0)
                 {
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel]) * iHostility - 0.25);
-                    sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Fanaticism][m_iTechLevel]) * 100));
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1]) * iHostility - 0.25);
+                    sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1]) * 100));
 
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel]) * iHostility - 0.25);
-                    sReasons += string.Format("Amiability \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Culture.Mentality.Agression][m_iTechLevel]) * 100));
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][iCulture1]) * iHostility - 0.25);
+                    sReasons += string.Format("Amiability \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][iCulture1]) * 100));
 
                     if (iHostility == 0)
                         iHostility = -1;
@@ -1195,6 +1207,40 @@ namespace Socium
             }
 
             return sMagic;
+        }
+
+        public static string GetCultureString(int iLevel)
+        {
+            string sCulture = "tribe";
+            switch (iLevel)
+            {
+                case 1:
+                    sCulture = "clan";
+                    break;
+                case 2:
+                    sCulture = "kingdom";
+                    break;
+                case 3:
+                    sCulture = "empire";//animal empower?
+                    break;
+                case 4:
+                    sCulture = "republic";//portals
+                    break;
+                case 5:
+                    sCulture = "federation";
+                    break;
+                case 6:
+                    sCulture = "socialism";//limited teleportation
+                    break;
+                case 7:
+                    sCulture = "communism";//unlimited teleportation
+                    break;
+                case 8:
+                    sCulture = "paradise";
+                    break;
+            }
+
+            return sCulture;
         }
 
         public static string GetControlString(int iControl)
