@@ -35,9 +35,9 @@ namespace Socium.Psichology
         // </summary>
         //Segregation, //Arrogance,
         /// <summary>
-        /// Эксплуатация - рапределение результатов труда между социальными слоями, крайняя форма - рабство, когда низший слой (рабы) - не получают почти ничего.
+        /// Грубость - склонность к простым удовольствиям, непонимание высокого искусства.
         /// </summary>
-        Exploitation//Exploitation
+        Rudeness//Exploitation
     };
     
     public class Culture
@@ -244,13 +244,13 @@ namespace Socium.Psichology
                             new MentalityCluster(1.33f, 1.66f, "(-2) very selfish"),
                             new MentalityCluster(1.66f, 2.0f, "(-3) completely selfish"),
                         };
-                    s_cMentalityClusters[Mentality.Exploitation] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) communism"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) advanced capitalism"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) early capitalism"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) serfdom"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) chattel slavery"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) debt bondage"),
+                    s_cMentalityClusters[Mentality.Rudeness] = new MentalityCluster[] 
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) creativity as a supreme value"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) true art"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) pop art"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) applied art"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) primitive pleasures"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) only natural needs satisfaction"),
                         };
                     s_cMentalityClusters[Mentality.Fanaticism] = new MentalityCluster[] 
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) fully tolerant"),

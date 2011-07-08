@@ -231,8 +231,10 @@ namespace VQMapTest2
 
             richTextBox1.Clear();
 
-            richTextBox1.AppendText(string.Format("Social order : {0} {1} [C{2}]\n\n", State.GetControlString(e.m_pState.m_iControl), e.m_pState.m_pInfo.m_sName, e.m_pState.m_iInfrastructureLevel));
+            richTextBox1.AppendText(string.Format("Social order : {0} {1} [C{2}]\n\n", State.GetControlString(e.m_pState.m_iControl), e.m_pState.m_pInfo.m_sName, e.m_pState.m_iCultureLevel));
 
+            richTextBox1.AppendText(string.Format("Economic system : {0}\n\n", State.GetEqualityString(e.m_pState.m_iSocialEquality))); 
+            
             richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", e.m_pState.m_pNation.m_iTechLevel, e.m_pState.m_pNation.m_iMagicLimit, e.m_pState.m_pNation));
 
             richTextBox1.AppendText(string.Format("Culture:\n"));
@@ -242,11 +244,7 @@ namespace VQMapTest2
                 //richTextBox1.AppendText(string.Format("   {0}: \t", eMorale));
                 //if (eMorale.ToString().Length < 6)
                 //    richTextBox1.AppendText("\t");
-                if (e.m_pState.m_pNation.m_bInvader)
-                    richTextBox1.AppendText(e.m_pState.m_pCulture.GetMentalityString(eMentality, e.m_pState.m_pNation.m_pEpoch.m_iInvadersCultureLevel));
-                else
-                    richTextBox1.AppendText(e.m_pState.m_pCulture.GetMentalityString(eMentality, e.m_pState.m_pNation.m_pEpoch.m_iNativesCultureLevel));
-
+                richTextBox1.AppendText(e.m_pState.m_pCulture.GetMentalityString(eMentality, e.m_pState.m_iCultureLevel));
                 //richTextBox1.AppendText(string.Format("{0:0.00}\n", e.State.m_pCulture.Moral[eMorale]));
                 richTextBox1.AppendText("\n");
             }

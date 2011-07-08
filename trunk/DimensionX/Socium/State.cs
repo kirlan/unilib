@@ -30,6 +30,8 @@ namespace Socium
 
         public bool m_bDinasty;
 
+        public bool m_bBig;
+
         public List<Language> m_cLanguages = new List<Language>();
 
         /// <summary>
@@ -45,7 +47,7 @@ namespace Socium
         /// <param name="iMinGovernmentLevel">Минимальный возможный уровень государственности</param>
         /// <param name="iMaxGovernmentLevel">Максимальный возможный уровень государственности</param>
         /// <param name="cLanguages">Языки, носители которых могут иметь государство такого типа</param>
-        public StateInfo(string sName, int iRank, SettlementInfo pStateCapital, SettlementInfo pProvinceCapital, string sHeirM, string sHeirF, bool bDinasty, int iMinGovernmentLevel, int iMaxGovernmentLevel, Language[] cLanguages)
+        public StateInfo(string sName, int iRank, SettlementInfo pStateCapital, SettlementInfo pProvinceCapital, string sHeirM, string sHeirF, bool bDinasty, int iMinGovernmentLevel, int iMaxGovernmentLevel, bool bBig, Language[] cLanguages)
         {
             m_sName = sName;
             m_iRank = iRank;
@@ -53,14 +55,16 @@ namespace Socium
             m_sHeirM = sHeirM;
             m_sHeirF = sHeirF;
             m_bDinasty = bDinasty;
-            
+
             m_pStateCapital = pStateCapital;
             m_pProvinceCapital = pProvinceCapital;
 
             m_iMinGovernmentLevel = iMinGovernmentLevel;
             m_iMaxGovernmentLevel = iMaxGovernmentLevel;
 
-            if(cLanguages != null)
+            m_bBig = bBig;
+
+            if (cLanguages != null)
                 m_cLanguages.AddRange(cLanguages);
         }
     }
@@ -70,66 +74,90 @@ namespace Socium
         #region States Info Array
         private static StateInfo[] s_aInfo = 
         {
-            new StateInfo("Tribes", 14,
+            new StateInfo("Land", 1,
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, 0, 1, new BuildingInfo("Elder's hut", "Patriarch", "Matriarch", 14)), 
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, 0, 1, new BuildingInfo("Elder's hut", "Elder", "Elder", 3)), 
-                "Warlord", "Princess", true, 0, 0, null),
-            new StateInfo("Clans", 15,
+                "Warlord", "Princess", true, 0, 0, false, null),            
+            new StateInfo("Lands", 1,
+                new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, 0, 1, new BuildingInfo("Elder's hut", "Patriarch", "Matriarch", 14)), 
+                new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, 0, 1, new BuildingInfo("Elder's hut", "Elder", "Elder", 3)), 
+                "Warlord", "Princess", true, 0, 0, true, null),
+            new StateInfo("Tribes", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, 0, 3, new BuildingInfo("Clans hall", "Patriarch", "Matriarch", 15)), 
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, 0, 3, new BuildingInfo("Village hall", "Elder", "Elder", 3)), 
-                "Warlord", "Princess", true, 1, 1, null),
-            new StateInfo("Kingdom", 16,
+                "Warlord", "Princess", true, 1, 1, false, null),
+            new StateInfo("Clans", 1,
+                new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, 0, 3, new BuildingInfo("Clans hall", "Patriarch", "Matriarch", 15)), 
+                new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, 0, 3, new BuildingInfo("Village hall", "Elder", "Elder", 3)), 
+                "Warlord", "Princess", true, 1, 1, true, null),
+            new StateInfo("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "King", "Queen", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Baron", "Baroness", 9)), 
-                "Prince", "Princess", true, 2, 6, new Language[] {Language.Dwarwen, Language.European, Language.Highlander, Language.Northman}),
-            new StateInfo("Kingdom", 16,
+                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Dwarwen, Language.European, Language.Highlander, Language.Northman}),
+            new StateInfo("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "King", "Queen", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Count", "Countess", 9)), 
-                "Prince", "Princess", true, 2, 6, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Highlander}),
-            new StateInfo("Kingdom", 16,
-                new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "King", "Queen", 16)), 
+                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Highlander}),
+            new StateInfo("Empire", 2,
+                new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Emperor", "Empress", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Duke", "Duchess", 9)), 
-                "Prince", "Princess", true, 2, 6, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Dwarwen}),
-            new StateInfo("Shogunate", 16,
+                "Prince", "Princess", true, 2, 8, true, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Dwarwen}),
+            new StateInfo("Shogunate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Shogun", "Midaidokoro", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Gensui", "Gensui", 9)), 
-                "Prince", "Hime", true, 2, 6, new Language[] {Language.Asian}),
-            new StateInfo("Kingdom", 16,
+                "Prince", "Hime", true, 2, 8, false, new Language[] {Language.Asian}),            
+            new StateInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Tenno", "Chugu", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Daimyo", "Lady", 9)), 
-                "Shinno", "Naishinno", true, 2, 6, new Language[] {Language.Asian}),
-            new StateInfo("Caliphate", 16,
+                "Shinno", "Naishinno", true, 2, 8, true, new Language[] {Language.Asian}),
+            new StateInfo("Caliphate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Caliph", "Calipha", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Emir", "Emira", 9)), 
-                "Prince", "Princess", true, 2, 6, new Language[] {Language.Arabian}),
-            new StateInfo("Sultanate", 16,
+                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Arabian}),
+            new StateInfo("Sultanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Sultan", "Sultana", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Shah", "Shahbanu", 9)), 
-                "Prince", "Princess", true, 2, 6, new Language[] {Language.Arabian, Language.African}),
-            new StateInfo("Khanate", 16,
+                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Arabian, Language.African}),            
+            new StateInfo("Empire", 2,
+                new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Emperor", "Empress", 16)), 
+                new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Emir", "Emira", 9)), 
+                "Prince", "Princess", true, 2, 8, true, new Language[] {Language.Arabian, Language.African}),
+            new StateInfo("Khanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Khan", "Khatun", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Bey", "Lady", 9)), 
-                "Prince", "Princess", true, 2, 6, new Language[] {Language.Orkish, Language.Eskimoid}),
-            new StateInfo("Tsardom", 16,
+                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Orkish, Language.Eskimoid}),
+            new StateInfo("Empire", 2,
+                new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Emperor", "Empress", 16)), 
+                new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Khan", "Khatun", 9)), 
+                "Prince", "Princess", true, 2, 8, true, new Language[] {Language.Orkish, Language.Eskimoid}),
+            new StateInfo("Tsardom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Tsar", "Tsaritsa", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Boyar", "Boyarynia", 9)), 
-                "Tsarevich", "Tsarevna", true, 2, 6, new Language[] {Language.Slavic, Language.Greek}),
-            new StateInfo("Raj", 16,
+                "Tsarevich", "Tsarevna", true, 2, 8, false, new Language[] {Language.Slavic, Language.Greek}),
+            new StateInfo("Empire", 2,
+                new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Emperor", "Empress", 16)), 
+                new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Boyar", "Boyarynia", 9)), 
+                "Tsarevich", "Tsarevna", true, 2, 8, true, new Language[] {Language.Slavic, Language.Greek}),
+            new StateInfo("Raj", 1,
+                new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Raja", "Rani", 16)), 
+                new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Thakur", "Thakurani", 9)), 
+                "Rajkumar", "Rajkumari", true, 2, 8, false, new Language[] {Language.Hindu}),            
+            new StateInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Maharaja", "Maharani", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Raja", "Rani", 9)), 
-                "Maharajkumar", "Maharajkumari", true, 2, 6, new Language[] {Language.Hindu}),
-            new StateInfo("Altepetl", 16,
+                "Maharajkumar", "Maharajkumari", true, 8, 6, true, new Language[] {Language.Hindu}),
+            new StateInfo("Altepetl", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Tlatoani", "Cihuatlatoani", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Teuctli", "Cihuatecutli", 9)), 
-                "Tlatocapilli", "Cihuapilli", true, 2, 6, new Language[] {Language.Aztec}),
-            //new StateInfo("Empire", 16,
-            //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Emperor", "Empress", 16)), 
-            //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Governor", "Governor", 14)), 
-            //    "Prince", "Princess", true, 2, 6, 2, 4),
-            new StateInfo("Republic", 16,
+                "Tlatocapilli", "Cihuapilli", true, 2, 8, false, new Language[] {Language.Aztec}),           
+            new StateInfo("Empire", 2,
+                new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Emperor", "Empress", 16)), 
+                new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Teuctli", "Cihuatecutli", 9)), 
+                "Tlatocapilli", "Cihuapilli", true, 2, 8, false, new Language[] {Language.Aztec}),
+            new StateInfo("Republic", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Statehouse", "President", "President", 16)), 
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Town hall", "Governor", "Governor", 14)), 
-                "Minister", "Minister", false, 3, 6, null),
+                "Minister", "Minister", false, 3, 7, false, null),
             //new StateInfo("Republic", 16,
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Dictator", "Dictator", 16)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Governor", "Governor", 14)), 
@@ -138,34 +166,38 @@ namespace Socium
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "General", "General", 16)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Colonel", "Colonel", 14)), 
             //    "Officer", "Officer", false, 2, 6, 3, 4),
-            new StateInfo("Federation", 17,
+            new StateInfo("Federation", 2,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Statehouse", "Chairman", "Chairman", 17)), 
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Town hall", "Mayor", "Mayor", 15)), 
-                "Deputy", "Deputy", false, 4, 7, null),
-            new StateInfo("League", 17,
+                "Deputy", "Deputy", false, 4, 7, false, null),
+            new StateInfo("League", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Palace", "Speaker", "Speaker", 17)), 
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Governor", "Governor", 15)), 
-                "Counsellor", "Counsellor", false, 4, 6, null),
-            new StateInfo("Union", 17,
+                "Counsellor", "Counsellor", false, 4, 7, true, null),
+            new StateInfo("Union", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Statehouse", "Chairman", "Chairman", 17)), 
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Town hall", "Mayor", "Mayor", 15)), 
-                "Deputy", "Deputy", false, 5, 7, null),
-            new StateInfo("Alliance", 17,
+                "Deputy", "Deputy", false, 5, 7, true, null),
+            new StateInfo("Alliance", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Palace", "Ruler", "Ruler", 17)), 
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Town hall", "Mayor", "Mayor", 15)), 
-                "Minister", "Ministress", false, 5, 7, null),
-            new StateInfo("Realm", 17,
-                new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Citadel", "God-King", "Goddess-Queen", 17)), 
-                new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Father", "Mother", 15)), 
-                "Brother", "Sister", false, 5, 8, null),
-            new StateInfo("Commonwealth", 17,
+                "Minister", "Ministress", false, 5, 7, true, null),
+            //new StateInfo("Realm", 17,
+            //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Citadel", "God-King", "Goddess-Queen", 17)), 
+            //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Father", "Mother", 15)), 
+            //    "Brother", "Sister", false, 5, 8, null),
+            new StateInfo("Commonwealth", 1,
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 16, 2, 5, new BuildingInfo("Town hall", "Speaker", "Speaker", 17)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 15, 2, 5, new BuildingInfo("Town hall", "Manager", "Manager", 15)), 
-                "Advisor", "Advisor", false, 7, 8, null),
-            new StateInfo("Society", 17,
+                "Advisor", "Advisor", false, 7, 8, false, null),
+            new StateInfo("Society", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 16, 0, 3, new BuildingInfo("Village hall", "", "", 17)), 
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 15, 0, 3, new BuildingInfo("Village hall", "", "", 15)), 
-                "", "", false, 7, 8, null),
+                "", "", false, 7, 8, false, null),
+            new StateInfo("Collective", 2,
+                new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 16, 0, 3, new BuildingInfo("Village hall", "", "", 17)), 
+                new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 15, 0, 3, new BuildingInfo("Village hall", "", "", 15)), 
+                "", "", false, 7, 8, true, null),
         };
         #endregion
 
@@ -626,6 +658,16 @@ namespace Socium
         /// 4 - Все граждане, кроме правящей верхушки, попадают под презумпцию виновности.
         /// </summary>
         public int m_iControl = 0;
+        /// <summary>
+        /// Уровень социального (не)равенства.
+        /// 0 - рабство
+        /// 1 - крепостное право
+        /// 2 - капитализм
+        /// 3 - социализм
+        /// 4 - коммунизм
+        /// </summary>
+        public int m_iSocialEquality = 0;
+        public int m_iCultureLevel = 0;
 
         public Culture m_pCulture = null;
         public Customs m_pCustoms = null;
@@ -665,6 +707,8 @@ namespace Socium
             int iMaxPop = 0;
             Nation pMaxNation = null;
 
+            m_iInfrastructureLevel = 0;
+            //float fInfrastructureLevel = 0;
             foreach (Province pProvince in m_cContents)
             {
                 int iCount = 0;
@@ -696,6 +740,8 @@ namespace Socium
 
                 if (pProvince.m_iInfrastructureLevel > m_iInfrastructureLevel)
                     m_iInfrastructureLevel = pProvince.m_iInfrastructureLevel;
+                //m_iInfrastructureLevel += pProvince.m_iInfrastructureLevel;
+                //fInfrastructureLevel += 1.0f/(pProvince.m_iInfrastructureLevel+1);
 
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
@@ -713,6 +759,11 @@ namespace Socium
             } 
             
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
+            //m_iInfrastructureLevel /= m_cContents.Count;
+            //m_iInfrastructureLevel = (int)(m_cContents.Count / fInfrastructureLevel + 0.1) - 1;
+
+            if (m_cContents.Count == 1 && m_iInfrastructureLevel > 4)
+                m_iInfrastructureLevel /= 2;
 
             if (m_pNation.m_bInvader)
             {
@@ -758,8 +809,10 @@ namespace Socium
                 if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
                     m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
                     (pInfo.m_cLanguages.Count == 0 ||
-                     pInfo.m_cLanguages.Contains(m_pNation.m_pRace.m_pLanguage)))
-                    cInfos.Add(pInfo);
+                     pInfo.m_cLanguages.Contains(m_pNation.m_pRace.m_pLanguage)) &&
+                    (m_iPopulation > iMaxSize * 80) == pInfo.m_bBig)
+                    for (int i = 0; i < pInfo.m_iRank; i++ )
+                        cInfos.Add(pInfo);
             }
 
             if (cInfos.Count == 0)
@@ -767,8 +820,10 @@ namespace Socium
                 foreach (StateInfo pInfo in s_aInfo)
                 {
                     if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
-                        m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel)
-                        cInfos.Add(pInfo);
+                        m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
+                        (m_iPopulation > iMaxSize * 80) == pInfo.m_bBig)
+                        for (int i = 0; i < pInfo.m_iRank; i++)
+                            cInfos.Add(pInfo);
                 }
             }
             
@@ -788,31 +843,101 @@ namespace Socium
             //    }
 
             m_pInfo = cInfos[Rnd.Get(cInfos.Count)];
-            
+
+            m_iCultureLevel = (m_iInfrastructureLevel + m_pInfo.m_iMinGovernmentLevel) / 2;
+
             m_iControl = 2;
+
+            m_iSocialEquality = 2;
 
             //if (m_pCulture.Moral[Culture.Morale.Agression] > 1)
             //    m_iControl++;
 
-            int iCulture = m_pNation.m_pEpoch.m_iNativesCultureLevel;
-            if (m_pNation.m_bInvader)
-                iCulture = m_pNation.m_pEpoch.m_iInvadersCultureLevel;
+            if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] > 1.66)
+                m_iSocialEquality--;
+            //if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] > 1.33)
+            //    m_iSocialEquality--;
+            //if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] > 1)
+            //    m_iSocialEquality--;
 
-            if (m_pCulture.MentalityValues[Mentality.Exploitation][iCulture] > 1.33)
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] > 1.66)
+                m_iSocialEquality--;
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] > 1.33)
+                m_iSocialEquality--;
+            //if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iTechLevel] > 1)
+            //    m_iSocialEquality--;
+
+            if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] > 1.66)
+                m_iSocialEquality--;
+            if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] > 1.33)
+                m_iSocialEquality--;
+            //if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] > 1)
+            //    m_iSocialEquality--;
+
+            if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 1.66)
+                m_iSocialEquality--;
+            if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 1.33)
+                m_iSocialEquality--;
+            //if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 1)
+            //    m_iSocialEquality--;
+
+            if (m_pInfo.m_bDinasty)
+                m_iSocialEquality--; 
+            
+            if (m_iSocialEquality < 0)
+                m_iSocialEquality = 0;
+
+            if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] < 1)
+                m_iSocialEquality++;
+
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] < 1)
+                m_iSocialEquality++;
+
+            if (m_iSocialEquality > 0 && m_iFood < m_iPopulation)
+                m_iSocialEquality--;
+            if (m_iFood > m_iPopulation && m_iOre > m_iPopulation && m_iWood > m_iPopulation)
+                m_iSocialEquality++;
+
+            //в либеральном обществе (фанатизм < 2/3) не может быть рабства (0) или крепостного права (1), т.е. только 2 и выше
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] < 0.66)
+                m_iSocialEquality = Math.Max(2, m_iSocialEquality);
+            //в обществе абсолютных пацифистов (агрессивность < 1/3) не может быть даже капитализма (2), т.е. только 3 и выше
+            if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] < 0.33)
+                m_iSocialEquality = Math.Max(3, m_iSocialEquality);            
+            //в обществе абсолютного самоотречения (агрессивность < 1/3) не может быть капитализма (2) - только или социализм, или феодализм
+            if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] < 0.33)
+                if(m_pInfo.m_bDinasty)
+                    m_iSocialEquality = Math.Min(1, m_iSocialEquality);
+                else
+                    m_iSocialEquality = Math.Max(3, m_iSocialEquality);
+            //эгоизм и коммунизм не совместимы
+            if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] > 1)
+                m_iSocialEquality = Math.Min(3, m_iSocialEquality);           
+            //преступный склад ума и социализм не совместимы
+            if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 0.66)
+                m_iSocialEquality = Math.Min(2, m_iSocialEquality);
+            
+            //коммунизм возможен только в условиях изобилия ресурсов
+            if (m_iFood < m_iPopulation*2 || m_iOre < m_iPopulation*2 || m_iWood < m_iPopulation*2)
+                m_iSocialEquality = Math.Min(3, m_iSocialEquality);
+
+            //при всём уважении - какой нафиг социализм/коммунизм при наследственной власти???
+            if (m_pInfo.m_bDinasty)
+                m_iSocialEquality = Math.Min(2, m_iSocialEquality);
+
+            if (m_iSocialEquality > 4)
+                m_iSocialEquality = 4;
+
+            if (m_pInfo.m_bDinasty)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Mentality.Exploitation][iCulture] > 1.66)
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] > 1.33)
                 m_iControl++;
-            if (m_pCulture.MentalityValues[Mentality.Exploitation][iCulture] < 0.33)
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] > 1.66)
+                m_iControl++;
+            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] < 0.33)
                 m_iControl--;
 
-            if (m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture] > 1.33)
-                m_iControl++;
-            if (m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture] > 1.66)
-                m_iControl++;
-            if (m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture] < 0.33)
-                m_iControl--;
-
-            if (m_pCulture.MentalityValues[Mentality.Selfishness][iCulture] > 1.66)
+            if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] > 1.66)
                 m_iControl--;
 
             if (m_iInfrastructureLevel == 0)
@@ -927,29 +1052,31 @@ namespace Socium
                     sPositiveReasons += string.Format(" (+{1}) {0}\n", State.GetControlString(pOpponent.m_iControl), 1);
             }
 
-            if (pOpponent.m_iInfrastructureLevel > m_iInfrastructureLevel)
+            if (pOpponent.m_iInfrastructureLevel > m_iInfrastructureLevel+1)
             {
                 iHostility++;//= pOpponent.m_iLifeLevel - m_iLifeLevel;
                 sNegativeReasons += string.Format(" (-{0}) Envy for civilization\n", 1);//pOpponent.m_iLifeLevel - m_iLifeLevel);
             }
             else
             {
-                if (pOpponent.m_iInfrastructureLevel < m_iInfrastructureLevel)
+                if (pOpponent.m_iInfrastructureLevel < m_iInfrastructureLevel-1)
                 {
                     iHostility++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
                     sNegativeReasons += string.Format(" (-{0}) Scorn for savagery\n", 1);//m_iLifeLevel - pOpponent.m_iLifeLevel);
                 }
             }
-            
-            int iCulture1 = m_pNation.m_pEpoch.m_iNativesCultureLevel;
-            if (m_pNation.m_bInvader)
-                iCulture1 = m_pNation.m_pEpoch.m_iInvadersCultureLevel;
-            
-            int iCulture2 = pOpponent.m_pNation.m_pEpoch.m_iNativesCultureLevel;
-            if (pOpponent.m_pNation.m_bInvader)
-                iCulture2 = pOpponent.m_pNation.m_pEpoch.m_iInvadersCultureLevel;
-            
-            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, iCulture1, iCulture2);
+
+            int iEqualityDifference = Math.Abs(pOpponent.m_iSocialEquality - m_iSocialEquality);
+            if (iEqualityDifference != 1)
+            {
+                iHostility += iEqualityDifference - 1;
+                if (iEqualityDifference > 1)
+                    sNegativeReasons += string.Format(" (-{1}) {0}\n", State.GetEqualityString(pOpponent.m_iSocialEquality), iEqualityDifference - 1);
+                else
+                    sPositiveReasons += string.Format(" (+{1}) {0}\n", State.GetEqualityString(pOpponent.m_iSocialEquality), 1);
+            }
+
+            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, m_iCultureLevel, pOpponent.m_iCultureLevel);
             if (iCultureDifference < -0.75)
             {
                 iHostility -= 2;
@@ -978,11 +1105,11 @@ namespace Socium
 
             if (iHostility > 0)
             {
-                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1] * iHostility + 0.25);
-                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1] * 100));
+                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] * iHostility + 0.25);
+                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] * 100));
 
-                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Agression][iCulture1] * iHostility + 0.25);
-                sReasons += string.Format("Agression \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Mentality.Agression][iCulture1] * 100));
+                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] * iHostility + 0.25);
+                sReasons += string.Format("Agression \t(x{0}%)\n", (int)(m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] * 100));
 
                 if (iHostility == 0)
                     iHostility = 1;
@@ -991,11 +1118,11 @@ namespace Socium
             {
                 if (iHostility < 0)
                 {
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1]) * iHostility - 0.25);
-                    sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][iCulture1]) * 100));
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel]) * iHostility - 0.25);
+                    sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel]) * 100));
 
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][iCulture1]) * iHostility - 0.25);
-                    sReasons += string.Format("Amiability \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][iCulture1]) * 100));
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel]) * iHostility - 0.25);
+                    sReasons += string.Format("Amiability \t(x{0}%)\n", (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel]) * 100));
 
                     if (iHostility == 0)
                         iHostility = -1;
@@ -1209,40 +1336,6 @@ namespace Socium
             return sMagic;
         }
 
-        public static string GetCultureString(int iLevel)
-        {
-            string sCulture = "tribe";
-            switch (iLevel)
-            {
-                case 1:
-                    sCulture = "clan";
-                    break;
-                case 2:
-                    sCulture = "kingdom";
-                    break;
-                case 3:
-                    sCulture = "empire";//animal empower?
-                    break;
-                case 4:
-                    sCulture = "republic";//portals
-                    break;
-                case 5:
-                    sCulture = "federation";
-                    break;
-                case 6:
-                    sCulture = "socialism";//limited teleportation
-                    break;
-                case 7:
-                    sCulture = "communism";//unlimited teleportation
-                    break;
-                case 8:
-                    sCulture = "paradise";
-                    break;
-            }
-
-            return sCulture;
-        }
-
         public static string GetControlString(int iControl)
         {
             string sControl = "Anarchic";
@@ -1262,6 +1355,27 @@ namespace Socium
                     break;
             }
             return sControl;
+        }
+
+        public static string GetEqualityString(int iEquality)
+        {
+            string sEquality = "Slavery";
+            switch (iEquality)
+            {
+                case 1:
+                    sEquality = "Serfdom";
+                    break;
+                case 2:
+                    sEquality = "Capitalism";
+                    break;
+                case 3:
+                    sEquality = "Socialism";
+                    break;
+                case 4:
+                    sEquality = "Communism";
+                    break;
+            }
+            return sEquality;
         }
 
         public int GetImportedTech()
@@ -1284,7 +1398,7 @@ namespace Socium
 
         public override string ToString()
         {
-            return string.Format("{2} (C{1}T{3}M{5}) - {0} {4}", m_sName, m_iInfrastructureLevel, m_pNation, m_iTechLevel, m_pInfo.m_sName, m_iMagicLimit);
+            return string.Format("{2} (C{1}T{3}M{5}) - {0} {4}", m_sName, m_iCultureLevel, m_pNation, m_iTechLevel, m_pInfo.m_sName, m_iMagicLimit);
         }
 
         public override float GetMovementCost()

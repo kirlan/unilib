@@ -46,7 +46,6 @@ namespace WorldGeneration
                     m_pEpoch.m_iNativesMaxTechLevel = m_pNativesPreset.m_iMaxTechLevel;
                     m_pEpoch.m_iNativesMinMagicLevel = m_pNativesPreset.m_iMinMagicLevel;
                     m_pEpoch.m_iNativesMaxMagicLevel = m_pNativesPreset.m_iMaxMagicLevel;
-                    m_pEpoch.m_iNativesCultureLevel = m_pNativesPreset.m_iCultureLevel;
                 }
             }
         }
@@ -115,22 +114,6 @@ namespace WorldGeneration
             }
         }
 
-        public int NativesCultureLevel
-        {
-            get { return m_pEpoch.m_iNativesCultureLevel; }
-            set
-            {
-                if (m_pNativesPreset == null)
-                    m_pEpoch.m_iNativesCultureLevel = value;
-                else
-                    if (value != m_pNativesPreset.m_iCultureLevel)
-                    {
-                        m_pEpoch.m_iNativesCultureLevel = value;
-                        m_pNativesPreset = null;
-                    }
-            }
-        }
-
         public string NativesPresetString
         {
             get
@@ -157,7 +140,6 @@ namespace WorldGeneration
                     m_pEpoch.m_iInvadersMaxTechLevel = m_pInvadersPreset.m_iMaxTechLevel;
                     m_pEpoch.m_iInvadersMinMagicLevel = m_pInvadersPreset.m_iMinMagicLevel;
                     m_pEpoch.m_iInvadersMaxMagicLevel = m_pInvadersPreset.m_iMaxMagicLevel;
-                    m_pEpoch.m_iInvadersCultureLevel = m_pInvadersPreset.m_iCultureLevel;
                 }
             }
         }
@@ -221,22 +203,6 @@ namespace WorldGeneration
                     if (value != m_pInvadersPreset.m_iMaxMagicLevel)
                     {
                         m_pEpoch.m_iInvadersMaxMagicLevel = value;
-                        m_pInvadersPreset = null;
-                    }
-            }
-        }
-
-        public int InvadersCultureLevel
-        {
-            get { return m_pEpoch.m_iInvadersCultureLevel; }
-            set
-            {
-                if (m_pInvadersPreset == null)
-                    m_pEpoch.m_iInvadersCultureLevel = value;
-                else
-                    if (value != m_pInvadersPreset.m_iCultureLevel)
-                    {
-                        m_pEpoch.m_iInvadersCultureLevel = value;
                         m_pInvadersPreset = null;
                     }
             }

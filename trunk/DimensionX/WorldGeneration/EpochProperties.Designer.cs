@@ -89,8 +89,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.CultureBox = new System.Windows.Forms.ComboBox();
             this.PresetsPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -530,8 +528,8 @@
             this.tableLayoutPanel4.ColumnCount = 2;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Controls.Add(this.panel8, 1, 5);
-            this.tableLayoutPanel4.Controls.Add(this.label8, 0, 5);
+            this.tableLayoutPanel4.Controls.Add(this.panel8, 1, 4);
+            this.tableLayoutPanel4.Controls.Add(this.label8, 0, 4);
             this.tableLayoutPanel4.Controls.Add(this.MaxMagicBox, 1, 3);
             this.tableLayoutPanel4.Controls.Add(this.label7, 0, 2);
             this.tableLayoutPanel4.Controls.Add(this.label22, 0, 3);
@@ -540,18 +538,15 @@
             this.tableLayoutPanel4.Controls.Add(this.BaseTechBox, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label10, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.MaxTechBox, 1, 1);
-            this.tableLayoutPanel4.Controls.Add(this.label9, 0, 4);
-            this.tableLayoutPanel4.Controls.Add(this.CultureBox, 1, 4);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(133, 16);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 7;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tableLayoutPanel4.RowCount = 6;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel4.Size = new System.Drawing.Size(286, 155);
             this.tableLayoutPanel4.TabIndex = 2;
@@ -562,9 +557,9 @@
             this.panel8.Controls.Add(this.button1);
             this.panel8.Controls.Add(this.RacesCountNumber);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel8.Location = new System.Drawing.Point(103, 128);
+            this.panel8.Location = new System.Drawing.Point(103, 127);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(180, 19);
+            this.panel8.Size = new System.Drawing.Size(180, 25);
             this.panel8.TabIndex = 59;
             // 
             // RacesCount
@@ -575,7 +570,7 @@
             this.RacesCount.Maximum = 64;
             this.RacesCount.Minimum = 1;
             this.RacesCount.Name = "RacesCount";
-            this.RacesCount.Size = new System.Drawing.Size(109, 19);
+            this.RacesCount.Size = new System.Drawing.Size(109, 25);
             this.RacesCount.TabIndex = 59;
             this.RacesCount.Value = 60;
             this.RacesCount.ValueChanged += new System.EventHandler(this.RacesCount_ValueChanged);
@@ -586,7 +581,7 @@
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button1.Location = new System.Drawing.Point(146, 0);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(34, 19);
+            this.button1.Size = new System.Drawing.Size(34, 25);
             this.button1.TabIndex = 58;
             this.button1.Text = "RND";
             this.button1.UseVisualStyleBackColor = true;
@@ -604,9 +599,9 @@
             // label8
             // 
             this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label8.Location = new System.Drawing.Point(3, 125);
+            this.label8.Location = new System.Drawing.Point(3, 124);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(94, 25);
+            this.label8.Size = new System.Drawing.Size(94, 31);
             this.label8.TabIndex = 48;
             this.label8.Text = "Nations count:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -616,7 +611,7 @@
             this.MaxMagicBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MaxMagicBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.MaxMagicBox.FormattingEnabled = true;
-            this.MaxMagicBox.Location = new System.Drawing.Point(103, 78);
+            this.MaxMagicBox.Location = new System.Drawing.Point(103, 96);
             this.MaxMagicBox.Name = "MaxMagicBox";
             this.MaxMagicBox.Size = new System.Drawing.Size(180, 21);
             this.MaxMagicBox.TabIndex = 44;
@@ -625,9 +620,9 @@
             // label7
             // 
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Location = new System.Drawing.Point(3, 50);
+            this.label7.Location = new System.Drawing.Point(3, 62);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(94, 25);
+            this.label7.Size = new System.Drawing.Size(94, 31);
             this.label7.TabIndex = 38;
             this.label7.Text = "Base magic level:";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -635,9 +630,9 @@
             // label22
             // 
             this.label22.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label22.Location = new System.Drawing.Point(3, 75);
+            this.label22.Location = new System.Drawing.Point(3, 93);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(94, 25);
+            this.label22.Size = new System.Drawing.Size(94, 31);
             this.label22.TabIndex = 42;
             this.label22.Text = "Maximum possible magic level:";
             this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -647,7 +642,7 @@
             this.BaseMagicBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.BaseMagicBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.BaseMagicBox.FormattingEnabled = true;
-            this.BaseMagicBox.Location = new System.Drawing.Point(103, 53);
+            this.BaseMagicBox.Location = new System.Drawing.Point(103, 65);
             this.BaseMagicBox.Name = "BaseMagicBox";
             this.BaseMagicBox.Size = new System.Drawing.Size(180, 21);
             this.BaseMagicBox.TabIndex = 43;
@@ -658,7 +653,7 @@
             this.label21.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label21.Location = new System.Drawing.Point(3, 0);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(94, 25);
+            this.label21.Size = new System.Drawing.Size(94, 31);
             this.label21.TabIndex = 37;
             this.label21.Text = "Base tech level:";
             this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -678,9 +673,9 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label10.Location = new System.Drawing.Point(3, 25);
+            this.label10.Location = new System.Drawing.Point(3, 31);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(94, 25);
+            this.label10.Size = new System.Drawing.Size(94, 31);
             this.label10.TabIndex = 41;
             this.label10.Text = "Maximum possible tech level:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -690,7 +685,7 @@
             this.MaxTechBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MaxTechBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.MaxTechBox.FormattingEnabled = true;
-            this.MaxTechBox.Location = new System.Drawing.Point(103, 28);
+            this.MaxTechBox.Location = new System.Drawing.Point(103, 34);
             this.MaxTechBox.Name = "MaxTechBox";
             this.MaxTechBox.Size = new System.Drawing.Size(180, 21);
             this.MaxTechBox.TabIndex = 40;
@@ -807,27 +802,6 @@
             this.label5.Text = "Age name:";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label9
-            // 
-            this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label9.Location = new System.Drawing.Point(3, 100);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(94, 25);
-            this.label9.TabIndex = 60;
-            this.label9.Text = "Average culture level:";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // CultureBox
-            // 
-            this.CultureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CultureBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CultureBox.FormattingEnabled = true;
-            this.CultureBox.Location = new System.Drawing.Point(103, 103);
-            this.CultureBox.Name = "CultureBox";
-            this.CultureBox.Size = new System.Drawing.Size(180, 21);
-            this.CultureBox.TabIndex = 61;
-            this.CultureBox.SelectedIndexChanged += new System.EventHandler(this.CultureBox_SelectedIndexChanged);
-            // 
             // EpochProperties
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -927,7 +901,5 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox RacesCountNumber;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.ComboBox CultureBox;
     }
 }

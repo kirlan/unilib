@@ -519,7 +519,7 @@ namespace MapDrawEngine
 
             for (int i = 0; i <= 8; i++)
                 for (int j = 0; j <= 4; j++)
-                    m_aCivLevel[i, j] = GetCivLevelColor(i, j);
+                    m_aCivLevel[i, j] = GetCultureColor(i, j);
         }
 
         #region Функции для работы с цветами
@@ -594,16 +594,16 @@ namespace MapDrawEngine
         /// <summary>
         /// Вычисляет цвет для отображения заданного уровня развития цивилизации в общем
         /// </summary>
-        /// <param name="iInfrastructureLevel">уровень цивилизованности</param>
+        /// <param name="iCultureLevel">уровень цивилизованности</param>
         /// <param name="iControl">уровень правительственного контроля</param>
         /// <returns>цвет</returns>
-        private Brush GetCivLevelColor(int iInfrastructureLevel, int iControl)
+        private Brush GetCultureColor(int iCultureLevel, int iControl)
         {
             KColor background = new KColor();
             background.RGB = Color.Red;
             //color1.Saturation = (double)iBaseTechLevel / 8;
             //background.Lightness = 0.9-(double)iInfrastructureLevel / 12;
-            background.Hue += iInfrastructureLevel * 16;
+            background.Hue += iCultureLevel * 16;
 
             KColor foreground = new KColor();
             foreground.RGB = Color.Gray;
@@ -904,7 +904,7 @@ namespace MapDrawEngine
                         //определим, каким цветом эта земля должна закрашиваться на карте технологий
                         int iImported = pState.GetImportedTech();
                         Brush pTechBrush = m_aTechLevel[pState.m_iTechLevel, iImported == -1 ? pState.m_iTechLevel : iImported];
-                        Brush pCivBrush = m_aCivLevel[pState.m_iInfrastructureLevel, pState.m_iControl];
+                        Brush pCivBrush = m_aCivLevel[pState.m_iCultureLevel, pState.m_iControl];
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
