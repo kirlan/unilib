@@ -45,16 +45,14 @@ namespace Socium
         public int m_iNativesMaxTechLevel;
         public int m_iNativesMinMagicLevel;
         public int m_iNativesMaxMagicLevel;
-        public int m_iNativesCultureLevel;
-
+        
         public List<Race> m_cNatives;
 
         public int m_iInvadersMinTechLevel;
         public int m_iInvadersMaxTechLevel;
         public int m_iInvadersMinMagicLevel;
         public int m_iInvadersMaxMagicLevel;
-        public int m_iInvadersCultureLevel;
-
+        
         public List<Race> m_cInvaders;
 
         public int m_iNativesCount;
@@ -70,16 +68,14 @@ namespace Socium
             m_iNativesMinMagicLevel = 1;
             m_iNativesMaxMagicLevel = 3;
 
-            m_iNativesCultureLevel = 2;
-
+            
             m_iInvadersMinTechLevel = 5;
             m_iInvadersMaxTechLevel = 8;
 
             m_iInvadersMinMagicLevel = 5;
             m_iInvadersMaxMagicLevel = 8;
 
-            m_iInvadersCultureLevel = 2;
-
+            
             m_cNatives = new List<Race>(Race.m_cAllRaces);
             m_cInvaders = new List<Race>(Race.m_cAllRaces);
 

@@ -939,32 +939,23 @@ namespace Socium
 
             //сглаживаем культурные различия соседних стран
             //высокоразвитые страны "подтягивают" более отсталые, но не наоборот
-            //foreach (State pState in m_aStates)
-            //{
-            //    int iCounter = 0;
-            //    Dictionary<Mentality, float[]> aSum = new Dictionary<Mentality, float[]>();
-            //    foreach (Mentality eMentality in Culture.Mentalities)
-            //    {
-            //        aSum[eMentality] = new float[pState.m_pCulture.MentalityValues[eMentality].Length];
-            //        for (int i = 0; i < aSum[eMentality].Length; i++)
-            //            aSum[eMentality][i] = 0;
-            //    }
+            foreach (State pState in m_aStates)
+            {
+                int iCounter = 0;
+                int iSum = 0;
 
-            //    foreach (State pLinkedState in pState.m_aBorderWith)
-            //    {
-            //        if (pLinkedState.Forbidden)
-            //            continue;
+                foreach (State pLinkedState in pState.m_aBorderWith)
+                {
+                    if (pLinkedState.Forbidden)
+                        continue;
 
-            //        foreach (Mentality eMentality in Culture.Mentalities)
-            //            for (int i = 0; i < aSum[eMentality].Length; i++)
-            //                aSum[eMentality][i] += Math.Max(pLinkedState.m_pCulture.MentalityValues[eMentality][i], pState.m_pCulture.MentalityValues[eMentality][i]);
+                    iSum += Math.Max(pLinkedState.m_iSocialEquality, pState.m_iSocialEquality);
 
-            //        iCounter++;
-            //    }
-            //    foreach (Mentality eMentality in Culture.Mentalities)
-            //        for (int i = 0; i < aSum[eMentality].Length; i++)
-            //            pState.m_pCulture.MentalityValues[eMentality][i] = (pState.m_pCulture.MentalityValues[eMentality][i] + aSum[eMentality][i]) / (iCounter + 1);
-            //}
+                    iCounter++;
+                }
+
+                pState.m_iSocialEquality = (pState.m_iSocialEquality + iSum) / (iCounter + 1);
+            }
 
             //строим форты на границах враждующих государств и фиксим дороги
             Dictionary<State, Dictionary<State, int>> cHostility = new Dictionary<State, Dictionary<State, int>>();
@@ -989,22 +980,22 @@ namespace Socium
             LandTypes<LandTypeInfoX>.Sea.SetSettlementsDensity(0, 0, 0);
             LandTypes<LandTypeInfoX>.Sea.SetColor(Color.FromArgb(0x1e, 0x5e, 0x69));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
 
-            LandTypes<LandTypeInfoX>.Tundra.SetResources(0, 0.5f, 0, 0);
+            LandTypes<LandTypeInfoX>.Tundra.SetResources(0, 0.1f, 0, 0);
             LandTypes<LandTypeInfoX>.Tundra.SetStandAloneBuildingsProbability(1, 0, 10);
             LandTypes<LandTypeInfoX>.Tundra.SetSettlementsDensity(0.004f, 0.01f, 0.003f);
             LandTypes<LandTypeInfoX>.Tundra.SetColor(Color.FromArgb(0xc9, 0xff, 0xff));//(0xc9, 0xe0, 0xff);//PaleGreen;
             
-            LandTypes<LandTypeInfoX>.Plains.SetResources(4, 1, 0, 0);
+            LandTypes<LandTypeInfoX>.Plains.SetResources(3, 0, 0, 0);
             LandTypes<LandTypeInfoX>.Plains.SetStandAloneBuildingsProbability(1, 3, 30);
             LandTypes<LandTypeInfoX>.Plains.SetSettlementsDensity(0.01f, 0.026f, 0.1f);
             LandTypes<LandTypeInfoX>.Plains.SetColor(Color.FromArgb(0xd3, 0xfa, 0x5f));//(0xdc, 0xfa, 0x83);//LightGreen;
             
-            LandTypes<LandTypeInfoX>.Savanna.SetResources(1, 1, 0, 0);
+            LandTypes<LandTypeInfoX>.Savanna.SetResources(0.1f, 0.2f, 0, 0);
             LandTypes<LandTypeInfoX>.Savanna.SetStandAloneBuildingsProbability(1, 3, 20);
             LandTypes<LandTypeInfoX>.Savanna.SetSettlementsDensity(0.01f, 0.023f, 0.02f);
             LandTypes<LandTypeInfoX>.Savanna.SetColor(Color.FromArgb(0xf0, 0xff, 0x8a));//(0xbd, 0xb0, 0x6b);//PaleGreen;
             
-            LandTypes<LandTypeInfoX>.Desert.SetResources(0, 0.25f, 0, 0);
+            LandTypes<LandTypeInfoX>.Desert.SetResources(0, 0.1f, 0, 0);
             LandTypes<LandTypeInfoX>.Desert.SetStandAloneBuildingsProbability(1, 2, 30);
             LandTypes<LandTypeInfoX>.Desert.SetSettlementsDensity(0.006f, 0.01f, 0.003f);
             LandTypes<LandTypeInfoX>.Desert.SetColor(Color.FromArgb(0xfa, 0xdc, 0x36));//(0xf9, 0xfa, 0x8a);//LightYellow;
@@ -1024,12 +1015,12 @@ namespace Socium
             LandTypes<LandTypeInfoX>.Jungle.SetSettlementsDensity(0.008f, 0.006f, 0.006f);
             LandTypes<LandTypeInfoX>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
             
-            LandTypes<LandTypeInfoX>.Swamp.SetResources(0, 0.5f, 1, 0);
+            LandTypes<LandTypeInfoX>.Swamp.SetResources(0, 0.2f, 1, 0);
             LandTypes<LandTypeInfoX>.Swamp.SetStandAloneBuildingsProbability(10, 8, 0);
             LandTypes<LandTypeInfoX>.Swamp.SetSettlementsDensity(0.003f, 0.005f, 0.026f);
             LandTypes<LandTypeInfoX>.Swamp.SetColor(Color.FromArgb(0xa7, 0xbd, 0x6b));// DarkKhaki;
             
-            LandTypes<LandTypeInfoX>.Mountains.SetResources(0, 1, 0, 10);
+            LandTypes<LandTypeInfoX>.Mountains.SetResources(0, 0.5f, 0, 10);
             LandTypes<LandTypeInfoX>.Mountains.SetStandAloneBuildingsProbability(1, 1, 7);
             LandTypes<LandTypeInfoX>.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
             LandTypes<LandTypeInfoX>.Mountains.SetColor(Color.FromArgb(0xbd, 0x6d, 0x46));//Tan;

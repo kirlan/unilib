@@ -56,10 +56,8 @@
             // 
             // StartGenerationButton
             // 
-            this.StartGenerationButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.StartGenerationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.StartGenerationButton.Location = new System.Drawing.Point(374, 375);
+            this.StartGenerationButton.Location = new System.Drawing.Point(374, 362);
             this.StartGenerationButton.Name = "StartGenerationButton";
             this.StartGenerationButton.Size = new System.Drawing.Size(162, 31);
             this.StartGenerationButton.TabIndex = 8;
@@ -95,14 +93,12 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.AgesView);
             this.groupBox5.Controls.Add(this.tableLayoutPanel1);
             this.groupBox5.Controls.Add(this.epochProperties1);
             this.groupBox5.Location = new System.Drawing.Point(456, 4);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(438, 365);
+            this.groupBox5.Size = new System.Drawing.Size(438, 352);
             this.groupBox5.TabIndex = 10;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "History";
@@ -237,10 +233,9 @@
             // 
             // checkBox1
             // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.Location = new System.Drawing.Point(16, 383);
+            this.checkBox1.Location = new System.Drawing.Point(16, 370);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(118, 17);
             this.checkBox1.TabIndex = 17;
@@ -267,7 +262,7 @@
             this.epochProperties1.Epoch = null;
             this.epochProperties1.Location = new System.Drawing.Point(5, 131);
             this.epochProperties1.Name = "epochProperties1";
-            this.epochProperties1.Size = new System.Drawing.Size(425, 228);
+            this.epochProperties1.Size = new System.Drawing.Size(425, 215);
             this.epochProperties1.TabIndex = 4;
             this.epochProperties1.UpdateEvent += new WorldGeneration.EpochProperties.UpdateEventHandler(this.epochProperties1_UpdateEvent);
             // 
@@ -276,7 +271,7 @@
             this.AcceptButton = this.StartGenerationButton;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(906, 414);
+            this.ClientSize = new System.Drawing.Size(906, 401);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.mapProperties1);
             this.Controls.Add(this.groupBox5);

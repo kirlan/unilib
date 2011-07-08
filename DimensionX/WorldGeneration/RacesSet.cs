@@ -10,7 +10,7 @@ namespace WorldGeneration
         public static RacesSet[] s_aSets = 
         {
             new RacesSet("humans (west europe)", new string[] {"european", "northern", "highlander"}),
-            new RacesSet("humans (east europe)", new string[] {"european", "slavic", "greek"}),
+            new RacesSet("humans (east europe)", new string[] {"european", "slavic", "greek", "roman"}),
             new RacesSet("humans (middle east)", new string[] {"indian", "asian", "arabian", "black"}),
             new RacesSet("humans (new world)", new string[] {"aztec", "mongol"}),
             new RacesSet("mithology (west europe)", new string[] {"faery", "pixie"}),
