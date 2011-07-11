@@ -138,7 +138,7 @@ namespace Socium
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Khagan", "Great Khatun", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Khan", "Khatun", 9)), 
                 "Prince", "Princess", true, 2, 8, true, new Language[] {Language.Orkish, Language.Eskimoid}),
-            new StateInfo("Knyazhestvo", 1,
+            new StateInfo("Knyazdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Castle", "Knyaz", "Kniagina", 16)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Boyar", "Boyarynia", 9)), 
                 "Tsarevich", "Tsarevna", true, 2, 8, false, new Language[] {Language.Slavic}),
