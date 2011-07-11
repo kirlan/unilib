@@ -19,7 +19,7 @@ namespace Socium.Nations
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra},
                 new CultureTemplate(AdvancementRate.UniformlyPrecise, AdvancementRate.Leap, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise)),
-            new Race("roman", 1, Language.European, 
+            new Race("roman", 1, Language.Latin, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra},
                 new CultureTemplate(AdvancementRate.Plateau, AdvancementRate.Delayed, AdvancementRate.Plateau, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise)),
@@ -274,12 +274,12 @@ namespace Socium.Nations
 
         public override string ToString()
         {
-            if (m_bDying)
-                return string.Format("ancient {1} ({0})", m_sName, m_pRace).ToLower();
-            else
-                if(m_bHegemon)
-                    return string.Format("great {1} ({0})", m_sName, m_pRace).ToLower();
-                else
+            //if (m_bDying)
+            //    return string.Format("ancient {1} ({0})", m_sName, m_pRace).ToLower();
+            //else
+            //    if(m_bHegemon)
+            //        return string.Format("great {1} ({0})", m_sName, m_pRace).ToLower();
+            //    else
                     return string.Format("{1} ({0})", m_sName, m_pRace).ToLower();
         }
 

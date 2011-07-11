@@ -25,7 +25,8 @@ namespace Socium.Languages
             Greek,
             Highlander,
             Drow,
-            Hindu
+            Hindu,
+            Latin
         }
 
         private static Dictionary<Lang, Language> s_cLanguages = new Dictionary<Lang,Language>();
@@ -165,6 +166,17 @@ namespace Socium.Languages
                     s_cLanguages[Lang.Greek] = new Greek();
 
                 return s_cLanguages[Lang.Greek];
+            }
+        }
+
+        public static Language Latin
+        {
+            get
+            {
+                if (!s_cLanguages.ContainsKey(Lang.Latin))
+                    s_cLanguages[Lang.Latin] = new Latin();
+
+                return s_cLanguages[Lang.Latin];
             }
         }
 
