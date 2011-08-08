@@ -1,0 +1,366 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{31F51F50-C414-483D-A4AE-693CE4143D2D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SS30Editor</RootNamespace>
+    <AssemblyName>SS30Editor</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>http://localhost/SS30Editor/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActionEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ActionEditForm.Designer.cs">
+      <DependentUpon>ActionEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommandBuildRoomEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\CommandBuildRoomEditForm.Designer.cs">
+      <DependentUpon>CommandBuildRoomEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommandChangeSkillEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\CommandChangeSkillEditForm.Designer.cs">
+      <DependentUpon>CommandChangeSkillEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommandChangeStatEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\CommandChangeStatEditForm.Designer.cs">
+      <DependentUpon>CommandChangeStatEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommandItemEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\CommandItemEditForm.Designer.cs">
+      <DependentUpon>CommandItemEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommandOpenShopEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\CommandOpenShopEditForm.Designer.cs">
+      <DependentUpon>CommandOpenShopEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommodityEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\CommodityEditForm.Designer.cs">
+      <DependentUpon>CommodityEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommandStatusEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Commands\CommandStatusEditForm.Designer.cs">
+      <DependentUpon>CommandStatusEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConditionRndEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Conditions\ConditionRndEditForm.Designer.cs">
+      <DependentUpon>ConditionRndEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConditionSkillLevelEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Conditions\ConditionSkillLevelEditForm.Designer.cs">
+      <DependentUpon>ConditionSkillLevelEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConditionItemEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Conditions\ConditionItemEditForm.Designer.cs">
+      <DependentUpon>ConditionItemEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConditionPersonalAppealEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Conditions\ConditionPersonalAppealEditForm.Designer.cs">
+      <DependentUpon>ConditionPersonalAppealEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConditionSkillComparsionEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Conditions\ConditionSkillComparsionEditForm.Designer.cs">
+      <DependentUpon>ConditionSkillComparsionEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConditionStatEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Conditions\ConditionStatEditForm.Designer.cs">
+      <DependentUpon>ConditionStatEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReactionEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReactionEditForm.Designer.cs">
+      <DependentUpon>ReactionEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SexToyEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SexToyEditForm.Designer.cs">
+      <DependentUpon>SexToyEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UniformEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UniformEditForm.Designer.cs">
+      <DependentUpon>UniformEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GiftEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GiftEditForm.Designer.cs">
+      <DependentUpon>GiftEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeviceEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeviceEditForm.Designer.cs">
+      <DependentUpon>DeviceEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RoomEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RoomEditForm.Designer.cs">
+      <DependentUpon>RoomEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LeisureEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LeisureEditForm.Designer.cs">
+      <DependentUpon>LeisureEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FetishEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FetishEditForm.Designer.cs">
+      <DependentUpon>FetishEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ActionEditForm.resx">
+      <DependentUpon>ActionEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\CommandBuildRoomEditForm.resx">
+      <DependentUpon>CommandBuildRoomEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\CommandChangeSkillEditForm.resx">
+      <DependentUpon>CommandChangeSkillEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\CommandChangeStatEditForm.resx">
+      <DependentUpon>CommandChangeStatEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\CommandItemEditForm.resx">
+      <DependentUpon>CommandItemEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\CommandOpenShopEditForm.resx">
+      <DependentUpon>CommandOpenShopEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\CommodityEditForm.resx">
+      <DependentUpon>CommodityEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\CommandStatusEditForm.resx">
+      <DependentUpon>CommandStatusEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Conditions\ConditionRndEditForm.resx">
+      <DependentUpon>ConditionRndEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Conditions\ConditionSkillLevelEditForm.resx">
+      <DependentUpon>ConditionSkillLevelEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Conditions\ConditionItemEditForm.resx">
+      <DependentUpon>ConditionItemEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Conditions\ConditionPersonalAppealEditForm.resx">
+      <DependentUpon>ConditionPersonalAppealEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Conditions\ConditionSkillComparsionEditForm.resx">
+      <DependentUpon>ConditionSkillComparsionEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Conditions\ConditionStatEditForm.resx">
+      <DependentUpon>ConditionStatEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReactionEditForm.resx">
+      <DependentUpon>ReactionEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SexToyEditForm.resx">
+      <DependentUpon>SexToyEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UniformEditForm.resx">
+      <DependentUpon>UniformEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GiftEditForm.resx">
+      <DependentUpon>GiftEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeviceEditForm.resx">
+      <DependentUpon>DeviceEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RoomEditForm.resx">
+      <DependentUpon>RoomEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LeisureEditForm.resx">
+      <DependentUpon>LeisureEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FetishEditForm.resx">
+      <DependentUpon>FetishEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SkillEditForm.resx">
+      <DependentUpon>SkillEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SkillEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SkillEditForm.Designer.cs">
+      <DependentUpon>SkillEditForm.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SS30Conf\SS30Conf.csproj">
+      <Project>{8A6A15A9-A8F8-4036-B6BE-0394E6FF836C}</Project>
+      <Name>SS30Conf</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

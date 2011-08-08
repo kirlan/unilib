@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D4EC0262-98BF-46D0-B90C-FAFAC13DED50}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MapDrawEngine</RootNamespace>
+    <AssemblyName>MapDrawEngine</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MiniMapDraw.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MiniMapDraw.Designer.cs">
+      <DependentUpon>MiniMapDraw.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Signs\ILandMark.cs" />
+    <Compile Include="MapDraw.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MapDraw.Designer.cs">
+      <DependentUpon>MapDraw.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MapQuadrant.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Signs\SignCapital.cs" />
+    <Compile Include="Signs\SignCity.cs" />
+    <Compile Include="Signs\SignFort.cs" />
+    <Compile Include="Signs\SignHideout.cs" />
+    <Compile Include="Signs\SignLair.cs" />
+    <Compile Include="Signs\SignPeak.cs" />
+    <Compile Include="Signs\SignRuin.cs" />
+    <Compile Include="Signs\SignTown.cs" />
+    <Compile Include="Signs\SignVillage.cs" />
+    <Compile Include="Signs\SignVolkano.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Random\Random.csproj">
+      <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
+      <Name>Random</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UniLibControls\UniLibControls.csproj">
+      <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
+      <Name>UniLibControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Landscape\Landscape.csproj">
+      <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>
+      <Name>Landscape</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Socium\Socium.csproj">
+      <Project>{358A8F33-4C83-42EC-B661-AC20467178C5}</Project>
+      <Name>Socium</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MapDraw.resx">
+      <DependentUpon>MapDraw.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniMapDraw.resx">
+      <DependentUpon>MiniMapDraw.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
