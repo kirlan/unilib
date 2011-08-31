@@ -13,16 +13,30 @@ namespace LandscapeGeneration.PathFind
 
         public Dictionary<TransportationNode, TransportationLink> m_cLinks = new Dictionary<TransportationNode, TransportationLink>();
 
+        // не использовать! обращение к словарю занимает больше времени, чем повторное вычисление квадратного корня!
+        //public Dictionary<TransportationNode, float> m_cLinksDist = new Dictionary<TransportationNode, float>();
+
         public float DistanceTo(ITransportationNode pOtherNode, float fCycleShift)
         {
+            float fDist = 0;
+            //if (m_cLinksDist.TryGetValue(pOtherNode as TransportationNode, out fDist))
+            //    return fDist;
+
+            float fOwnX = X;
+            float fOwnY = Y;
             float fOtherX = pOtherNode.X;
-            if (Math.Abs(X - fOtherX) > fCycleShift / 2)
-                if (X < 0)
+            float fOtherY = pOtherNode.Y;
+            if (Math.Abs(fOwnX - fOtherX) > fCycleShift / 2)
+                if (fOwnX < 0)
                     fOtherX -= fCycleShift;
                 else
                     fOtherX += fCycleShift;
 
-            return (float)Math.Sqrt((X - fOtherX) * (X - fOtherX) + (Y - pOtherNode.Y) * (Y - pOtherNode.Y));
+            fDist = (float)Math.Sqrt((fOwnX - fOtherX) * (fOwnX - fOtherX) + (fOwnY - fOtherY) * (fOwnY - fOtherY));
+            //if (m_cLinks.ContainsKey(pOtherNode as TransportationNode))
+            //    m_cLinksDist[pOtherNode as TransportationNode] = fDist;
+
+            return fDist;
         }
 
         public abstract float GetMovementCost();

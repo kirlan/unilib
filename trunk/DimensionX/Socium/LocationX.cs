@@ -8,6 +8,12 @@ using Socium.Settlements;
 
 namespace Socium
 {
+    internal class SeaRouteBuilderInfo
+    {
+        public LocationX m_pFrom = null;
+        public float m_fCost = 0;
+    }
+
     public class LocationX : Location
     {
         public string m_sName = "";
@@ -23,6 +29,11 @@ namespace Socium
 
         public Dictionary<LocationX, Road> m_cHaveRoadTo = new Dictionary<LocationX,Road>();
         public List<LocationX> m_cHaveSeaRouteTo = new List<LocationX>();
+
+        /// <summary>
+        /// ТОЛЬКО для построения морских путей
+        /// </summary>
+        internal Dictionary<LocationX, SeaRouteBuilderInfo> m_cSeaRouteBuildInfo = new Dictionary<LocationX, SeaRouteBuilderInfo>();
 
         public LocationX()
             :base()
@@ -55,6 +66,8 @@ namespace Socium
 
             m_cHaveRoadTo.Clear();
             m_cHaveSeaRouteTo.Clear();
+
+            m_cSeaRouteBuildInfo.Clear();
 
             base.Reset();
         }

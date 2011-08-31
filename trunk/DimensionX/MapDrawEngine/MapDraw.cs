@@ -405,6 +405,8 @@ namespace MapDrawEngine
         /// </summary>
         private ContinentX m_pFocusedContinent = null;
 
+        private LandMass<LandX> m_pFocusedLandMass = null;
+
         /// <summary>
         /// Континент, над которым находится указатель мыши.
         /// </summary>
@@ -1331,20 +1333,20 @@ namespace MapDrawEngine
             switch (pRoad.RoadLevel)
             {
                 case 1:
-                    if (pRoad.m_bSea || pRoad.m_bEmbark)
-                        eRoadType = RoadType.SeaRoute1;
+                    if (pRoad.Sea || pRoad.Embark)
+                        return; //eRoadType = RoadType.SeaRoute1;
                     else
                         eRoadType = RoadType.LandRoad1;
                     break;
                 case 2:
-                    if (pRoad.m_bSea || pRoad.m_bEmbark)
-                        eRoadType = RoadType.SeaRoute2;
+                    if (pRoad.Sea || pRoad.Embark)
+                        return; //eRoadType = RoadType.SeaRoute2;
                     else
                         eRoadType = RoadType.LandRoad2;
                     break;
                 case 3:
-                    if (pRoad.m_bSea || pRoad.m_bEmbark)
-                        eRoadType = RoadType.SeaRoute3;
+                    if (pRoad.Sea || pRoad.Embark)
+                        return; //eRoadType = RoadType.SeaRoute3;
                     else
                         eRoadType = RoadType.LandRoad3;
                     break;
@@ -1922,18 +1924,38 @@ namespace MapDrawEngine
             iX = (int)(iX / m_fActualScale) / 100;
             iY = (int)(iY / m_fActualScale) / 100;
 
-            m_pFocusedContinent = null;
-            m_pFocusedLand = null;
-            m_pFocusedLocation = null;
-
             bool bContinent = false;
-            foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
+            if (m_pFocusedLandMass == null || !m_cLandMassBorders[m_pFocusedLandMass].IsVisible(iX, iY))
             {
-                GraphicsPath pLandMassPath = m_cLandMassBorders[pLandMass];
+                m_pFocusedContinent = null;
+                m_pFocusedLandMass = null;
+                m_pFocusedLand = null;
+                m_pFocusedLocation = null;
 
-                if (pLandMassPath.IsVisible(iX, iY) && !pLandMass.IsWater)
+                foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
                 {
-                    m_pFocusedContinent = pLandMass.Owner as ContinentX;
+                    GraphicsPath pLandMassPath = m_cLandMassBorders[pLandMass];
+
+                    if (pLandMassPath.IsVisible(iX, iY))
+                    {
+                        m_pFocusedLandMass = pLandMass;
+                        break;
+                    }
+                }
+            }
+
+            if (m_pFocusedLandMass != null)
+            {
+                bContinent = !m_pFocusedLandMass.IsWater;
+                if (bContinent)
+                    m_pFocusedContinent = m_pFocusedLandMass.Owner as ContinentX;
+            }
+
+            if(m_pFocusedContinent != null)
+                if (m_pFocusedState == null || !m_cStateBorders[m_pFocusedState].IsVisible(iX, iY))
+                {
+                    m_pFocusedState = null;
+                    m_pFocusedProvince = null;
 
                     foreach (State pState in m_pFocusedContinent.m_cStates)
                     {
@@ -1942,52 +1964,62 @@ namespace MapDrawEngine
                         if (pStatePath.IsVisible(iX, iY))
                         {
                             m_pFocusedState = pState;
-
-                            foreach (Province pProvince in pState.m_cContents)
-                            {
-                                GraphicsPath pProvincePath = m_cProvinceBorders[pProvince];
-
-                                if (pProvincePath.IsVisible(iX, iY))
-                                {
-                                    m_pFocusedProvince = pProvince;
-                                    break;
-                                }
-                            }
-
                             break;
                         }
                     }
-
-                    bContinent = true;
-                    break;
                 }
-            }
 
-            foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
-            {
-                foreach (LandX pLand in pLandMass.m_cContents)
+            if(m_pFocusedState != null)
+                if (m_pFocusedProvince == null || !m_cProvinceBorders[m_pFocusedProvince].IsVisible(iX, iY))
                 {
-                    GraphicsPath pLandPath = m_cLandBorders[pLand];
+                    m_pFocusedProvince = null;
 
-                    if (pLandPath.IsVisible(iX, iY))
+                    foreach (Province pProvince in m_pFocusedState.m_cContents)
                     {
-                        m_pFocusedLand = pLand;
+                        GraphicsPath pProvincePath = m_cProvinceBorders[pProvince];
 
-                        foreach (LocationX pLoc in pLand.m_cContents)
+                        if (pProvincePath.IsVisible(iX, iY))
                         {
-                            GraphicsPath pLocationPath = m_cLocationBorders[pLoc];
-
-                            if (pLocationPath.IsVisible(iX, iY))
-                            {
-                                m_pFocusedLocation = pLoc;
-                                break;
-                            }
+                            m_pFocusedProvince = pProvince;
+                            break;
                         }
-
-                        break;
                     }
                 }
-            }
+
+
+            if(m_pFocusedLandMass != null)
+                if (m_pFocusedLand == null || !m_cLandBorders[m_pFocusedLand].IsVisible(iX, iY))
+                {
+                    m_pFocusedLocation = null;
+
+                    foreach (LandX pLand in m_pFocusedLandMass.m_cContents)
+                    {
+                        GraphicsPath pLandPath = m_cLandBorders[pLand];
+
+                        if (pLandPath.IsVisible(iX, iY))
+                        {
+                            m_pFocusedLand = pLand;
+                            break;
+                        }
+                    }
+                }
+
+            if(m_pFocusedLand != null)
+                if (m_pFocusedLocation == null || !m_cLocationBorders[m_pFocusedLocation].IsVisible(iX, iY))
+                {
+                    m_pFocusedLocation = null;
+
+                    foreach (LocationX pLoc in m_pFocusedLand.m_cContents)
+                    {
+                        GraphicsPath pLocationPath = m_cLocationBorders[pLoc];
+
+                        if (pLocationPath.IsVisible(iX, iY))
+                        {
+                            m_pFocusedLocation = pLoc;
+                            break;
+                        }
+                    }
+                }
 
             return bContinent;
         }
@@ -2050,14 +2082,14 @@ namespace MapDrawEngine
                 {
                     sToolTip += "\nHave roads to:";
                     foreach (var pRoad in m_pFocusedLocation.m_cHaveRoadTo)
-                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName;
+                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_iLevel.ToString() + "]";
                 }
 
                 if (m_pFocusedLocation.m_cHaveSeaRouteTo.Count > 0)
                 {
                     sToolTip += "\nHave sea routes to:";
                     foreach (LocationX pRoute in m_pFocusedLocation.m_cHaveSeaRouteTo)
-                        sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName;
+                        sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName + " [" + m_pFocusedLocation.m_cLinks[pRoute].RoadLevel.ToString() + "]";
                 }
             }
 
