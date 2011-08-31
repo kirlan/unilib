@@ -741,6 +741,13 @@ namespace MapDrawEngine
         {
             DateTime pTime1 = DateTime.Now;
 
+            m_pFocusedContinent = null;
+            m_pFocusedLand = null;
+            m_pFocusedLandMass = null;
+            m_pFocusedLocation = null;
+            m_pFocusedProvince = null;
+            m_pFocusedState = null;
+
             //расчистим рабочее место
             m_cAreaBorders.Clear();
             m_cProvinceBorders.Clear();
