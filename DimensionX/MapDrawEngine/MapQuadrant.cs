@@ -193,17 +193,17 @@ namespace MapDrawEngine
             pPath.Transform(pMatrix);
             gr.DrawPath(MapDraw.s_pBlack2Pen, pPath);
 
-            pPath = (GraphicsPath)m_cRoadsMap[RoadType.SeaRoute3].Clone();
-            pPath.Transform(pMatrix);
-            gr.DrawPath(MapDraw.s_pAqua2Pen, pPath);
+            //pPath = (GraphicsPath)m_cRoadsMap[RoadType.SeaRoute3].Clone();
+            //pPath.Transform(pMatrix);
+            //gr.DrawPath(MapDraw.s_pAqua2Pen, pPath);
 
             pPath = (GraphicsPath)m_cRoadsMap[RoadType.LandRoad2].Clone();
             pPath.Transform(pMatrix);
             gr.DrawPath(MapDraw.s_pBlack1Pen, pPath);
 
-            pPath = (GraphicsPath)m_cRoadsMap[RoadType.SeaRoute2].Clone();
-            pPath.Transform(pMatrix);
-            gr.DrawPath(MapDraw.s_pAqua1Pen, pPath);
+            //pPath = (GraphicsPath)m_cRoadsMap[RoadType.SeaRoute2].Clone();
+            //pPath.Transform(pMatrix);
+            //gr.DrawPath(MapDraw.s_pAqua1Pen, pPath);
 
             if (fScaleMultiplier > 2)
             {
@@ -211,9 +211,9 @@ namespace MapDrawEngine
                 pPath.Transform(pMatrix);
                 gr.DrawPath(MapDraw.s_pBlack1DotPen, pPath);
 
-                pPath = (GraphicsPath)m_cRoadsMap[RoadType.SeaRoute1].Clone();
-                pPath.Transform(pMatrix);
-                gr.DrawPath(MapDraw.s_pAqua1DotPen, pPath);
+                //pPath = (GraphicsPath)m_cRoadsMap[RoadType.SeaRoute1].Clone();
+                //pPath.Transform(pMatrix);
+                //gr.DrawPath(MapDraw.s_pAqua1DotPen, pPath);
             }
         }
 

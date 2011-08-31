@@ -10,7 +10,9 @@ namespace LandscapeGeneration.PathFind
     {
         private float m_fBaseCost;
 
-        private float m_fMoveCostModifer = 1;
+        private float m_fFinalCost;
+
+        //private float m_fMoveCostModifer = 1;
 
         //public float MoveCostModifer
         //{
@@ -34,42 +36,51 @@ namespace LandscapeGeneration.PathFind
                 return;
 
             m_iRoadLevel = iLevel;
-            switch (iLevel)
-            {
-                case 1:
-                    m_fMoveCostModifer = 0.25f;
-                    break;
-                case 2:
-                    m_fMoveCostModifer = 0.10f;
-                    break;
-                case 3:
-                    m_fMoveCostModifer = 0.01f;
-                    break;
-            }
+            //switch (iLevel)
+            //{
+            //    case 1:
+            //        m_fMoveCostModifer = 0.25f;
+            //        break;
+            //    case 2:
+            //        m_fMoveCostModifer = 0.10f;
+            //        break;
+            //    case 3:
+            //        m_fMoveCostModifer = 0.01f;
+            //        break;
+            //}
 
-            if (m_bSea)
-                m_fMoveCostModifer *= m_fMoveCostModifer;
+            //if (m_bSea)
+            //    m_fMoveCostModifer *= m_fMoveCostModifer;
+
+            RecalcFinalCost();
         }
 
         public void ClearRoad()
         {
             m_iRoadLevel = 0;
-            m_fMoveCostModifer = 1;
+            //m_fMoveCostModifer = 1;
+            RecalcFinalCost();
+        }
+
+        private void RecalcFinalCost()
+        {
+            if (m_bEmbark)
+                m_fFinalCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_iRoadLevel + 1));
+            else
+                if(m_bSea)
+                    m_fFinalCost = m_iRoadLevel > 0 ? m_fBaseCost * 0.8f : m_fBaseCost;
+                else
+                    m_fFinalCost = (float)Math.Pow(m_fBaseCost, 1.0 / (m_iRoadLevel + 1));
+
+            if (m_bRuins)
+                m_fFinalCost *= 10;
         }
 
         public float MovementCost
         {
             get
             {
-                //return m_bEmbark ? m_fBaseCost * m_fMoveCostModifer * 10 : m_fBaseCost * m_fMoveCostModifer;
-                float fCost = (float)Math.Pow(m_fBaseCost, 1.0 / (m_iRoadLevel + 1));
-                if(m_bEmbark)
-                    fCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_iRoadLevel + 1));
-
-                if (m_bRuins)
-                    fCost *= 10;
-
-                return fCost;
+                return m_fFinalCost;
             }
         }
 
@@ -78,11 +89,41 @@ namespace LandscapeGeneration.PathFind
         /// </summary>
         public bool m_bClosed = false;
 
-        public bool m_bSea = false;
+        private bool m_bSea = false;
 
-        public bool m_bEmbark = false;
+        public bool Sea
+        {
+            get { return m_bSea; }
+            set 
+            { 
+                m_bSea = value;
+                RecalcFinalCost();
+            }
+        }
 
-        public bool m_bRuins = false;
+        private bool m_bEmbark = false;
+
+        public bool Embark
+        {
+            get { return m_bEmbark; }
+            set 
+            { 
+                m_bEmbark = value;
+                RecalcFinalCost();
+            }
+        }
+
+        private bool m_bRuins = false;
+
+        public bool Ruins
+        {
+            get { return m_bRuins; }
+            set 
+            { 
+                m_bRuins = value;
+                RecalcFinalCost();
+            }
+        }
 
         public PointF[] m_aPoints = new PointF[3];
 
@@ -155,6 +196,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[2].X = pLoc2.X;
 
             m_fBaseCost = fDist1final * pLoc1.GetMovementCost() + fDist2final * pLoc2.GetMovementCost();
+            RecalcFinalCost();
         }
 
         public TransportationLink(ILand pLand1, ILand pLand2, float fCycleShift)
@@ -194,6 +236,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[2].X = pLand2.X;
 
             m_fBaseCost = fDist1final * pLand1.GetMovementCost() + fDist2final * pLand2.GetMovementCost();
+            RecalcFinalCost();
         }
 
         public TransportationLink(ILandMass pLandMass1, ILandMass pLandMass2, float fCycleShift)
@@ -233,6 +276,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[2].X = pLandMass2.X;
 
             m_fBaseCost = fDist1final * pLandMass1.GetMovementCost() + fDist2final * pLandMass2.GetMovementCost();
+            RecalcFinalCost();
         }
 
         public TransportationLink(TransportationNode[] aPath)
@@ -267,6 +311,7 @@ namespace LandscapeGeneration.PathFind
             }
 
             m_aPoints = cPoints.ToArray();
+            RecalcFinalCost();
         }
 
     }
