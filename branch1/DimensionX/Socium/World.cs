@@ -554,6 +554,9 @@ namespace Socium
 
             BuildStates(m_pGrid.CycleShift, !bFinalize);
 
+            if (bFinalize)
+                BuildSeaRoutes(m_pGrid.CycleShift);
+
             foreach (ContinentX pConti in m_aContinents)
             {
                 if (pConti.m_cAreas.Count == 1)
@@ -1100,7 +1103,7 @@ namespace Socium
             }
         }
 
-        private void CalcSeaRoutesCosts(LocationX pHarbor, int iMaxDistance, float fCycleShift)
+        private void BuildSeaRoutesFront(LocationX pHarbor, int iMaxDistance, float fCycleShift)
         {
             List<LocationX> cWaveFront = new List<LocationX>();
 
@@ -1135,16 +1138,16 @@ namespace Socium
                 List<LocationX> cFutureWaveFront = new List<LocationX>();
                 foreach (LocationX pLoc in cWaveFront)
                 {
-                    foreach (ITerritory pLinkedTerr in pLoc.m_aBorderWith)
+                    foreach (var pLinkedNode in pLoc.m_cLinks)
                     {
-                        if (pLinkedTerr.Forbidden)
-                            continue;
+                        LocationX pLinkedLoc = pLinkedNode.Key as LocationX;
 
-                        LocationX pLinkedLoc = pLinkedTerr as LocationX;
+                        if (pLinkedLoc == null)
+                            continue;
 
                         if ((pLinkedLoc.Owner as LandX).IsWater || pLinkedLoc.m_bHarbor)
                         {
-                            float fDist = pLoc.m_cSeaRouteBuildInfo[pHarbor].m_fCost + pLoc.DistanceTo(pLinkedLoc, fCycleShift)*pLoc.GetMovementCost();
+                            float fDist = pLoc.m_cSeaRouteBuildInfo[pHarbor].m_fCost + pLinkedNode.Value.MovementCost;// pLoc.DistanceTo(pLinkedLoc, fCycleShift) * pLoc.GetMovementCost();
 
                             if (fDist > iMaxDistance)
                                 continue;
@@ -1250,21 +1253,21 @@ namespace Socium
                 if(pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village)
                     iMaxLength /= 10;
 
-                CalcSeaRoutesCosts(pHarbor, iMaxLength, fCycleShift);
-            }
+                BuildSeaRoutesFront(pHarbor, iMaxLength, fCycleShift);
+            //}
 
-            foreach (LocationX pHarbor in aHarbors)
-            {
+            //foreach (LocationX pHarbor in aHarbors)
+            //{
                 foreach (var pOtherHarbor in pHarbor.m_cSeaRouteBuildInfo)
                 {
                     if (pOtherHarbor.Key == pHarbor || pHarbor.m_cHaveSeaRouteTo.Contains(pOtherHarbor.Key))
                         continue;
 
-                    Province pProvince = (pHarbor.Owner as LandX).m_pProvince;
-                    Province pOtherProvince = (pOtherHarbor.Key.Owner as LandX).m_pProvince;
+                    State pState = (pHarbor.Owner as LandX).m_pProvince.Owner as State;
+                    State pOtherState = (pOtherHarbor.Key.Owner as LandX).m_pProvince.Owner as State;
                     int iPathLevel = 1;
 
-                    int iMaxHostility = (int)Math.Sqrt(Math.Max(pProvince.CalcHostility(pOtherProvince), pOtherProvince.CalcHostility(pProvince)));
+                    int iMaxHostility = (int)Math.Sqrt(Math.Max(pState.CalcHostility(pOtherState), pOtherState.CalcHostility(pState)));
 
                     if (pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village &&
                         pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
@@ -1294,8 +1297,8 @@ namespace Socium
                             iPathLevel = 3;
                     }
 
-                    int iMaxNavalPath = State.InfrastructureLevels[pOtherProvince.m_iInfrastructureLevel].m_iMaxNavalPath;
-                    int iMaxLength = m_pGrid.RX * 10;
+                    iMaxNavalPath = State.InfrastructureLevels[pOtherState.m_iInfrastructureLevel].m_iMaxNavalPath;
+                    iMaxLength = m_pGrid.RX * 10;
                     if (iMaxNavalPath == 1)
                         iMaxLength /= 10;
                     if (iMaxNavalPath == 2)
@@ -1403,52 +1406,81 @@ namespace Socium
 
         private Dictionary<ShortestPath, int> m_cSeaRoutesProjects = new Dictionary<ShortestPath,int>();
 
-        private void BuildSeaRoute(LocationX pTown1, LocationX pTown2, int iPathLevel, float fCycleShift, int iMaxLength)
-        {
-            //TransportationNode[] aBestPath = FindBestPath(pTown1, pTown2, fCycleShift, true).m_aNodes;
-            //if (aBestPath == null || aBestPath.Length == 0)
-            //    aBestPath = FindBestPath(pTown2, pTown1, fCycleShift, true).m_aNodes;
-            ShortestPath pBestPath = FindReallyBestPath(pTown1, pTown2, fCycleShift, true);
+        //private void BuildSeaRoute(LocationX pTown1, LocationX pTown2, int iPathLevel, float fCycleShift, int iMaxLength)
+        //{
+        //    //TransportationNode[] aBestPath = FindBestPath(pTown1, pTown2, fCycleShift, true).m_aNodes;
+        //    //if (aBestPath == null || aBestPath.Length == 0)
+        //    //    aBestPath = FindBestPath(pTown2, pTown1, fCycleShift, true).m_aNodes;
+        //    ShortestPath pBestPath = FindReallyBestPath(pTown1, pTown2, fCycleShift, true);
 
-            if (pBestPath.m_aNodes != null && pBestPath.m_aNodes.Length > 1 && pBestPath.m_fLength < iMaxLength)
-            //if (aBestPath != null && aBestPath.Length > 1)
-            {
-                m_cSeaRoutesProjects[pBestPath] = iPathLevel;
+        //    if (pBestPath.m_aNodes != null && pBestPath.m_aNodes.Length > 1 && pBestPath.m_fLength < iMaxLength)
+        //    //if (aBestPath != null && aBestPath.Length > 1)
+        //    {
+        //        m_cSeaRoutesProjects[pBestPath] = iPathLevel;
 
-                pTown1.m_cHaveSeaRouteTo.Add(pTown2);
-                pTown2.m_cHaveSeaRouteTo.Add(pTown1);
-            }
-        }
+        //        pTown1.m_cHaveSeaRouteTo.Add(pTown2);
+        //        pTown2.m_cHaveSeaRouteTo.Add(pTown1);
+        //    }
+        //}
 
-        private void FinishSeaRoutes(float fCycleShift)
-        {
-            foreach (var pPath in m_cSeaRoutesProjects)
-            {
-                ShortestPath pBestPath = FindReallyBestPath(pPath.Key.m_aNodes[0] as LocationX, 
-                                                            pPath.Key.m_aNodes[pPath.Key.m_aNodes.Length - 1] as LocationX, 
-                                                            fCycleShift, false);
+        //private void FinishSeaRoutes(float fCycleShift)
+        //{
+        //    foreach (var pPath in m_cSeaRoutesProjects)
+        //    {
+        //        ShortestPath pBestPath = FindReallyBestPath(pPath.Key.m_aNodes[0] as LocationX, 
+        //                                                    pPath.Key.m_aNodes[pPath.Key.m_aNodes.Length - 1] as LocationX, 
+        //                                                    fCycleShift, false);
 
-                TransportationLink pNewLink = new TransportationLink(pPath.Key.m_aNodes);
-                pNewLink.m_bEmbark = true;
-                pNewLink.m_bSea = true;
-                pNewLink.BuildRoad(pPath.Value);
+        //        TransportationLink pNewLink = new TransportationLink(pPath.Key.m_aNodes);
+        //        pNewLink.m_bEmbark = true;
+        //        pNewLink.m_bSea = true;
+        //        pNewLink.BuildRoad(pPath.Value);
 
-                if (pBestPath.m_aNodes != null &&
-                    pBestPath.m_aNodes.Length > 1 &&
-                    pBestPath.m_fLength < pNewLink.MovementCost)
-                    continue; 
+        //        if (pBestPath.m_aNodes != null &&
+        //            pBestPath.m_aNodes.Length > 1 &&
+        //            pBestPath.m_fLength < pNewLink.MovementCost)
+        //            continue; 
                 
-                SetSeaRoute(pBestPath.m_aNodes, pPath.Value);
-            }
+        //        SetSeaRoute(pBestPath.m_aNodes, pPath.Value);
+        //    }
 
-            m_cSeaRoutesProjects.Clear();
-        }
+        //    m_cSeaRoutesProjects.Clear();
+        //}
 
         private void SetSeaRoute(TransportationNode[] aNodes, int iLevel)
         {
+            TransportationNode pLastNode = null;
+            foreach (TransportationNode pNode in aNodes)
+            {
+                if (pLastNode != null)
+                {
+                    pLastNode.m_cLinks[pNode].BuildRoad(1);
+                    //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
+
+                    //if (pLastNode.Owner != pNode.Owner)
+                    //{
+                    //    try
+                    //    {
+                    //        (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(iRoadLevel);
+
+                    //        if ((pLastNode.Owner as LandX).Owner != (pNode.Owner as LandX).Owner)
+                    //        {
+                    //            ((pLastNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(iRoadLevel);
+                    //        }
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Trace.WriteLine(ex.Message);
+                    //    }
+                    //}
+                }
+
+                pLastNode = pNode;
+            }
+
             TransportationLink pNewLink = new TransportationLink(aNodes);
-            pNewLink.m_bEmbark = true;
-            pNewLink.m_bSea = true;
+            pNewLink.Embark = true;
+            pNewLink.Sea = true;
             pNewLink.BuildRoad(iLevel);
 
             SetLink(aNodes[0], aNodes[aNodes.Length - 1], pNewLink);//aSeaRoute);
@@ -1511,9 +1543,6 @@ namespace Socium
                     pProvince.BuildLairs(m_aLands.Length / 125);
                 }
             }
-
-            if (!bFast)
-                BuildSeaRoutes(fCycleShift);
         }
 
         public void Reset(Epoch pNewEpoch)
@@ -1684,7 +1713,7 @@ namespace Socium
                                         pLoc.m_pSettlement = null;
                                         //снимаем флаг "руины" со всех путей, ведущих в эту локацию
                                         foreach (var pLink in pLoc.m_cLinks)
-                                            pLink.Value.m_bRuins = false;
+                                            pLink.Value.Ruins = false;
                                         //и убираем локацию из списка поселений в провинции
                                         //if (pProvince.m_cSettlements.Contains(pLoc))
                                         //    pProvince.m_cSettlements.Remove(pLoc);
@@ -1727,7 +1756,7 @@ namespace Socium
                                     else
                                         //если же оно таки стало руинами - помечаем соответсвенно все пути ведущие в эту локацию, чтобы дороги обходили её стороной
                                         foreach (var pLink in pLoc.m_cLinks)
-                                            pLink.Value.m_bRuins = true;
+                                            pLink.Value.Ruins = true;
 
                                 }
                             }
@@ -1789,7 +1818,7 @@ namespace Socium
                     List<TransportationNode> cErase = new List<TransportationNode>();
                     foreach (TransportationNode pNode in pLoc.m_cLinks.Keys)
                     {
-                        if (pLoc.m_cLinks[pNode].m_bSea)
+                        if (pLoc.m_cLinks[pNode].Sea)
                             cErase.Add(pNode);
                     }
                     foreach (TransportationNode pNode in cErase)

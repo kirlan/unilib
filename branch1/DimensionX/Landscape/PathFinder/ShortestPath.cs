@@ -48,14 +48,14 @@ namespace LandscapeGeneration.PathFind
                         continue;
 
                     //грузиться на корабли и высаживаться с них можно только в портах
-                    if (pLinked.Value.m_bEmbark && !pLinkedNode.m_bHarbor && !path.LastStep.m_bHarbor)
+                    if (pLinked.Value.Embark && !pLinkedNode.m_bHarbor && !path.LastStep.m_bHarbor)
                         continue;
 
                     //ограничиваем доступную территорию по государственному признаку
                     if (pLinked.Value.m_bClosed)
                         continue;
 
-                    if (bNavalOnly && !pLinked.Value.m_bSea && !pLinked.Value.m_bEmbark)
+                    if (bNavalOnly && !pLinked.Value.Sea && !pLinked.Value.Embark)
                         continue;
 
                     //TransportationNode pLinkedNodeOwner = (pLinkedNode as ITerritory).Owner as TransportationNode;

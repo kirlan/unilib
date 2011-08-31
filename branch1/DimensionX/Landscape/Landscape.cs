@@ -677,8 +677,8 @@ namespace LandscapeGeneration
                         continue;
 
                     TransportationLink pTransLink = SetLink(pLoc, pLink);
-                    pTransLink.m_bSea = (pLink.Owner as LAND).IsWater && (pLoc.Owner as LAND).IsWater;
-                    pTransLink.m_bEmbark = (pLink.Owner as LAND).IsWater != (pLoc.Owner as LAND).IsWater;
+                    pTransLink.Sea = (pLink.Owner as LAND).IsWater && (pLoc.Owner as LAND).IsWater;
+                    pTransLink.Embark = (pLink.Owner as LAND).IsWater != (pLoc.Owner as LAND).IsWater;
                 }
             }
             foreach (LAND pLand in m_aLands)
@@ -693,8 +693,8 @@ namespace LandscapeGeneration
 
                     LAND pLinked = pTerr as LAND;
                     TransportationLink pLink = SetLink(pLand, pLinked);
-                    pLink.m_bSea = (pLinked.Owner as LandMass<LAND>).IsWater && (pLand.Owner as LandMass<LAND>).IsWater;
-                    pLink.m_bEmbark = (pLinked.Owner as LandMass<LAND>).IsWater != (pLand.Owner as LandMass<LAND>).IsWater;
+                    pLink.Sea = (pLinked.Owner as LandMass<LAND>).IsWater && (pLand.Owner as LandMass<LAND>).IsWater;
+                    pLink.Embark = (pLinked.Owner as LandMass<LAND>).IsWater != (pLand.Owner as LandMass<LAND>).IsWater;
                 }
             }
             foreach (LandMass<LAND> pLandMass in m_aLandMasses)
@@ -709,8 +709,8 @@ namespace LandscapeGeneration
 
                     LandMass<LAND> pLinked = pTerr as LandMass<LAND>;
                     TransportationLink pLink = SetLink(pLandMass, pLinked);
-                    pLink.m_bSea = (pLinked.Owner == null) && (pLandMass.Owner == null);
-                    pLink.m_bEmbark = (pLinked.Owner == null) != (pLandMass.Owner == null);
+                    pLink.Sea = (pLinked.Owner == null) && (pLandMass.Owner == null);
+                    pLink.Embark = (pLinked.Owner == null) != (pLandMass.Owner == null);
                 }
             }
         }

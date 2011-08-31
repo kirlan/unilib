@@ -833,7 +833,8 @@ namespace Socium
                 if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
                     m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
                     (pInfo.m_cLanguages.Count == 0 ||
-                     pInfo.m_cLanguages.Contains(m_pNation.m_pRace.m_pLanguage)) &&
+                     pInfo.m_cLanguages.Contains(m_pNation.m_pRace.m_pLanguage) ||
+                     Rnd.OneChanceFrom(20)) &&
                     (m_iPopulation > iMaxSize * 80) == pInfo.m_bBig)
                     for (int i = 0; i < pInfo.m_iRank; i++ )
                         cInfos.Add(pInfo);
@@ -1450,7 +1451,7 @@ namespace Socium
                             if (pLinked.Key is LocationX)
                             {
                                 LandX pLinkedOwner = (pLinked.Key as LocationX).Owner as LandX;
-                                if (pLinkedOwner.m_pProvince == null || pLinkedOwner.m_pProvince.Owner != this || pLinked.Value.m_bSea)
+                                if (pLinkedOwner.m_pProvince == null || pLinkedOwner.m_pProvince.Owner != this || pLinked.Value.Sea)
                                     pLoc.m_cLinks[pLinked.Key].m_bClosed = true;
                             }
                             else
