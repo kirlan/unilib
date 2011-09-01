@@ -559,17 +559,70 @@ namespace Socium
 
             foreach (ContinentX pConti in m_aContinents)
             {
-                if (pConti.m_cAreas.Count == 1)
-                    pConti.m_sName = pConti.m_cAreas[0].m_sName;
+                foreach (State pState in pConti.m_cStates)
+                {
+                    //если какая-либо провинция полностью включает в себя какие-либо территории (Area),
+                    //то переименовываем провинцию по имени самой крупной из полностью включенных территорий.
+                    foreach (Province pProvince in pState.m_cContents)
+                    {
+                        Dictionary<AreaX, int> cAreas = new Dictionary<AreaX,int>();
+    
+                        foreach(LandX pLand in pProvince.m_cContents)
+                        {
+                            int iSize = 0;
+                            cAreas.TryGetValue(pLand.Area as AreaX, out iSize);
+                            cAreas[pLand.Area as AreaX] = iSize + pLand.m_cContents.Count;
+                        }
+                        
+                        int iBiggestSize = 0;
+                        int iTotalSize = 0;
+                        AreaX pBiggestArea = null;
+                        foreach(var pArea in cAreas)
+                        {
+                            iTotalSize += pArea.Value;
+                            if(pArea.Value > iBiggestSize)
+                            {
+                                bool bMultiProvince = false;
+                                foreach(LandX pLand in pArea.Key.m_cContents)
+                                    if(pLand.m_pProvince != pProvince)
+                                        bMultiProvince = true;
 
+                                if(!bMultiProvince)
+                                {
+                                    iBiggestSize = pArea.Value;
+                                    pBiggestArea = pArea.Key;
+                                }
+                            }
+                        }
+                        
+                        if(pBiggestArea != null && iBiggestSize > iTotalSize/2)
+                        {
+                            pProvince.m_sName = pBiggestArea.m_sName;
+                        }
+                    }
+
+                    //если государство состоит из единственной провинции, то переименовываем государство по имени провинции
+                    if (pState.m_cContents.Count == 1)
+                        pState.m_sName = pState.m_cContents[0].m_sName;
+
+                    pState.CalculateMagic();
+                }
+
+                //если на континенте единственное государство, то переименовываем континент по имени этого государства
                 if (pConti.m_cStates.Count == 1)
+                {
+                    //если на континенте одно государство и одна территория, то государство должно называться по имени этой территории,
+                    //независимо от того, из скольки провинций оно состоит
                     if (pConti.m_cAreas.Count == 1)
                         pConti.m_cStates[0].m_sName = pConti.m_cAreas[0].m_sName;
-                    else
-                        pConti.m_sName = pConti.m_cStates[0].m_sName;
 
-                foreach (State pState in pConti.m_cStates)
-                    pState.CalculateMagic();
+                    pConti.m_sName = pConti.m_cStates[0].m_sName;
+                }
+                else
+                    //если государств несколько, но территория одна - переименовываем континент по имени этой территории
+                    if (pConti.m_cAreas.Count == 1)
+                        pConti.m_sName = pConti.m_cAreas[0].m_sName;
+
             }
         }
 
