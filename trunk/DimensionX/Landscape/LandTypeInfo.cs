@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace LandscapeGeneration
 {
@@ -14,6 +15,15 @@ namespace LandscapeGeneration
 
     public class LandTypeInfo
     {
+        public Color m_pColor;
+        public Brush m_pBrush;
+
+        public void SetColor(Color pColor)
+        {
+            m_pColor = pColor;
+            m_pBrush = new SolidBrush(m_pColor);
+        }
+        
         public int m_iMovementCost = 100;
 
         public EnvironmentType m_eType = EnvironmentType.Ground;
@@ -33,7 +43,8 @@ namespace LandscapeGeneration
     {
         public enum LandType
         {
-            Sea,
+            Coastral,
+            Ocean,
             Mountains,
             Tundra,
             Taiga,
@@ -85,9 +96,14 @@ namespace LandscapeGeneration
             get { return m_pInstance.m_pLandTypes[LandType.Savanna]; }
         }
 
-        public static LTI Sea
+        public static LTI Ocean
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Sea]; }
+            get { return m_pInstance.m_pLandTypes[LandType.Ocean]; }
+        }
+
+        public static LTI Coastral
+        {
+            get { return m_pInstance.m_pLandTypes[LandType.Coastral]; }
         }
 
         public static LTI Swamp

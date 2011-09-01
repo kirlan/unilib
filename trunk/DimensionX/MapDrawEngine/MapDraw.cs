@@ -864,6 +864,13 @@ namespace MapDrawEngine
                             if (!pQuad.m_cModes[MapMode.Humidity].ContainsKey(pBrush))
                                 pQuad.m_cModes[MapMode.Humidity][pBrush] = new GraphicsPath();
                             pQuad.m_cModes[MapMode.Humidity][pBrush].AddPolygon(aPts);
+
+                            if (pLand.Type == LandTypes<LandTypeInfoX>.Coastral)
+                            {
+                                if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pLand.Type.m_pBrush))
+                                    pQuad.m_cModes[MapMode.Areas][pLand.Type.m_pBrush] = new GraphicsPath();
+                                pQuad.m_cModes[MapMode.Areas][pLand.Type.m_pBrush].AddPolygon(aPts);
+                            }
                         }
                     }
                     m_cLandBorders[pLand] = pPath;
@@ -1635,7 +1642,7 @@ namespace MapDrawEngine
             Graphics gr = Graphics.FromImage(m_pCanvas);
 
             //грунтуем холст цветом моря
-            gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Sea.m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
+            gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Ocean.m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
             if (m_pWorld == null || m_pWorld.m_pGrid.m_aLocations.Length == 0)
