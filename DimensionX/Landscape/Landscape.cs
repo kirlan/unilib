@@ -6,6 +6,7 @@ using BenTools.Mathematics;
 using Random;
 using SimpleVectors;
 using LandscapeGeneration.PathFind;
+using System.Drawing;
 
 namespace LandscapeGeneration
 {
@@ -52,16 +53,38 @@ namespace LandscapeGeneration
 
         public virtual void PresetLandTypesInfo()
         {
-            LandTypes<LTI>.Sea.Init(10, EnvironmentType.Water, "sea");
+            LandTypes<LTI>.Coastral.Init(10, EnvironmentType.Water, "sea");
+            LandTypes<LTI>.Coastral.SetColor(Color.FromArgb(0x27, 0x67, 0x71));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+            
+            LandTypes<LTI>.Ocean.Init(10, EnvironmentType.Water, "ocean");
+            LandTypes<LTI>.Ocean.SetColor(Color.FromArgb(0x1e, 0x5e, 0x69));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+            
             LandTypes<LTI>.Plains.Init(1, EnvironmentType.Ground, "plains");
+            LandTypes<LTI>.Plains.SetColor(Color.FromArgb(0xd3, 0xfa, 0x5f));//(0xdc, 0xfa, 0x83);//LightGreen;
+            
             LandTypes<LTI>.Savanna.Init(1, EnvironmentType.Ground, "savanna");
+            LandTypes<LTI>.Savanna.SetColor(Color.FromArgb(0xf0, 0xff, 0x8a));//(0xbd, 0xb0, 0x6b);//PaleGreen;
+            
             LandTypes<LTI>.Tundra.Init(2, EnvironmentType.Ground, "tundra");
+            LandTypes<LTI>.Tundra.SetColor(Color.FromArgb(0xc9, 0xff, 0xff));//(0xc9, 0xe0, 0xff);//PaleGreen;
+            
             LandTypes<LTI>.Desert.Init(2, EnvironmentType.Ground, "desert");
+            LandTypes<LTI>.Desert.SetColor(Color.FromArgb(0xfa, 0xdc, 0x36));//(0xf9, 0xfa, 0x8a);//LightYellow;
+            
             LandTypes<LTI>.Forest.Init(3, EnvironmentType.Ground, "forest");
+            LandTypes<LTI>.Forest.SetColor(Color.FromArgb(0x56, 0x78, 0x34));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
+            
             LandTypes<LTI>.Taiga.Init(3, EnvironmentType.Ground, "taiga");
+            LandTypes<LTI>.Taiga.SetColor(Color.FromArgb(0x63, 0x78, 0x4e));//LightGreen;//ForestGreen;
+            
             LandTypes<LTI>.Swamp.Init(4, EnvironmentType.Ground, "swamp");
+            LandTypes<LTI>.Swamp.SetColor(Color.FromArgb(0xa7, 0xbd, 0x6b));// DarkKhaki;
+            
             LandTypes<LTI>.Mountains.Init(5, EnvironmentType.Mountains, "mountains");
+            LandTypes<LTI>.Mountains.SetColor(Color.FromArgb(0xbd, 0x6d, 0x46));//Tan;
+            
             LandTypes<LTI>.Jungle.Init(6, EnvironmentType.Ground, "jungle");
+            LandTypes<LTI>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
         }
 
         /// <summary>
@@ -107,7 +130,7 @@ namespace LandscapeGeneration
 
             BuildLandMasses();
 
-            BuildOceans();
+            BuildContinents();
 
             //BuildContinents();
 
@@ -208,7 +231,7 @@ namespace LandscapeGeneration
                 pLandMass.Finish(m_pGrid.CycleShift);
         }
 
-        private void BuildOceans()
+        private void BuildContinents()
         {
             int iMaxOceanCount = m_iLandsCount * m_iOceansPercentage / 100;
             int iOceanCount = 0;
@@ -355,6 +378,76 @@ namespace LandscapeGeneration
         //    }
         //}
 
+        private void AddCoastral()
+        {
+            foreach (LAND pLand in m_aLands)
+            {
+                if (pLand.Type == LandTypes<LTI>.Ocean || pLand.Type == LandTypes<LTI>.Coastral)
+                {
+                    LandMass<LAND> pLM1 = pLand.Owner as LandMass<LAND>;
+
+                    float fMinCollision = float.MaxValue;
+                    LAND pBestLand = null;
+                    foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                    {
+                        if (pTerr.Forbidden)
+                            continue;
+
+                        LAND pLink = pTerr as LAND;
+
+                        if (pLink.Type != null)
+                            continue;
+
+                        LandMass<LAND> pLM2 = pLink.Owner as LandMass<LAND>;
+
+                        if (pLM1 != null && pLM2 != null && pLM1 != pLM2)
+                        {
+                            float fDriftedX1 = pLand.X + (float)pLM1.m_pDrift.X;
+                            float fDriftedY1 = pLand.Y + (float)pLM1.m_pDrift.Y;
+                            float fDriftedX2 = pLink.X + (float)pLM2.m_pDrift.X;
+                            float fDriftedY2 = pLink.Y + (float)pLM2.m_pDrift.Y;
+                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pGrid.CycleShift / 2)
+                                if (fDriftedX1 < 0)
+                                    fDriftedX2 -= m_pGrid.CycleShift;
+                                else
+                                    fDriftedX2 += m_pGrid.CycleShift;
+
+                            float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2));
+
+                            float fCollision = pLand.DistanceTo(pLink, m_pGrid.CycleShift) - fDriftedDist;
+
+                            if (fCollision < fMinCollision)
+                            {
+                                fMinCollision = fCollision;
+                                pBestLand = pLink;
+                            }
+                        }
+                    }
+
+                    if (pBestLand == null)
+                        continue;
+
+                    if (fMinCollision < 1)// || Rnd.OneChanceFrom(2))
+                        pLand.Type = LandTypes<LTI>.Coastral;
+
+                    if (fMinCollision < -1.25 && pLM1.m_cContents.Count > 3)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
+                    {
+                        foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                        {
+                            if (pTerr.Forbidden)
+                                continue;
+
+                            LAND pLink = pTerr as LAND;
+
+                            if(pLink.Type == LandTypes<LTI>.Ocean)
+                                pLink.Type = LandTypes<LTI>.Coastral;
+                        }
+                    }
+
+                }
+            }
+        }
+
         private void AddMountains()
         {
             foreach (LAND pLand in m_aLands)
@@ -363,7 +456,7 @@ namespace LandscapeGeneration
                 {
                     LandMass<LAND> pLM1 = pLand.Owner as LandMass<LAND>;
 
-                    float fMaxCollision = 0;
+                    float fMaxCollision = float.MinValue;
                     LAND pBestLand = null;
                     foreach (ITerritory pTerr in pLand.m_aBorderWith)
                     {
@@ -376,30 +469,33 @@ namespace LandscapeGeneration
 
                         if (pLM1 != null && pLM2 != null && pLM1 != pLM2)
                         {
-                            if (!(pLM1.m_pDrift + pLM2.m_pDrift) > fMaxCollision)//Это не отрицание, это модуль вектора!
+                            float fDriftedX1 = pLand.X + (float)pLM1.m_pDrift.X;
+                            float fDriftedY1 = pLand.Y + (float)pLM1.m_pDrift.Y;
+                            float fDriftedX2 = pLink.X + (float)pLM2.m_pDrift.X;
+                            float fDriftedY2 = pLink.Y + (float)pLM2.m_pDrift.Y;
+                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pGrid.CycleShift / 2)
+                                if (fDriftedX1 < 0)
+                                    fDriftedX2 -= m_pGrid.CycleShift;
+                                else
+                                    fDriftedX2 += m_pGrid.CycleShift;
+
+                            float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2));
+
+                            float fCollision = pLand.DistanceTo(pLink, m_pGrid.CycleShift) - fDriftedDist;
+
+                            if (fCollision > fMaxCollision)
                             {
-                                fMaxCollision = (float)(2 * !(pLM1.m_pDrift + pLM2.m_pDrift));
+                                fMaxCollision = fCollision;
                                 pBestLand = pLink;
                             }
                         }
                     }
 
-                    if (fMaxCollision > 2.5)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
+                    if (fMaxCollision > 1.25)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
                     {
-                        SimpleVector3d pL12 = new SimpleVector3d(pLand.X - pBestLand.X, pLand.Y - pBestLand.Y, 0);
-                        SimpleVector3d pL21 = new SimpleVector3d(pBestLand.X - pLand.X, pBestLand.Y - pLand.Y, 0);
-
-                        pL12 = pL12 / !pL12;
-                        pL21 = pL21 / !pL21;
-
-                        LandMass<LAND> pLMO = pBestLand.Owner as LandMass<LAND>;
-
-                        if (!(pL12 + pLM1.m_pDrift) > !(pL21 + pLMO.m_pDrift))
-                            continue;
-                        
                         pLand.Type = LandTypes<LTI>.Mountains;
 
-                        if(!Rnd.OneChanceFrom(3))
+                        if (!Rnd.OneChanceFrom(3))
                         {
                             int iPeak = Rnd.Get(pLand.m_cContents.Count);
                             if (Rnd.OneChanceFrom(3))
@@ -433,7 +529,7 @@ namespace LandscapeGeneration
                     }
 
                     if (bCouldBe && Rnd.OneChanceFrom(iOneChanceFrom))
-                        pLand.Type = LandTypes<LTI>.Sea;
+                        pLand.Type = LandTypes<LTI>.Ocean;
                 }
             }
         }
@@ -509,10 +605,12 @@ namespace LandscapeGeneration
             foreach (LAND pLand in m_aLands)
             {
                 if (pLand.Owner == null || (pLand.Owner as LandMass<LAND>).IsWater)
-                    pLand.Type = LandTypes<LTI>.Sea;
+                    pLand.Type = LandTypes<LTI>.Ocean;
                 else
                     pLand.Type = null;
             }
+
+            AddCoastral();
 
             AddMountains();
 

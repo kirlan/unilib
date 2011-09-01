@@ -978,55 +978,49 @@ namespace Socium
         {
             base.PresetLandTypesInfo();
 
-            LandTypes<LandTypeInfoX>.Sea.SetResources(0, 0, 0, 0);
-            LandTypes<LandTypeInfoX>.Sea.SetStandAloneBuildingsProbability(0, 0, 1);
-            LandTypes<LandTypeInfoX>.Sea.SetSettlementsDensity(0, 0, 0);
-            LandTypes<LandTypeInfoX>.Sea.SetColor(Color.FromArgb(0x1e, 0x5e, 0x69));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+            LandTypes<LandTypeInfoX>.Coastral.SetResources(0, 0, 0, 0);
+            LandTypes<LandTypeInfoX>.Coastral.SetStandAloneBuildingsProbability(0, 0, 1);
+            LandTypes<LandTypeInfoX>.Coastral.SetSettlementsDensity(0, 0, 0);
+
+            LandTypes<LandTypeInfoX>.Ocean.SetResources(0, 0, 0, 0);
+            LandTypes<LandTypeInfoX>.Ocean.SetStandAloneBuildingsProbability(0, 0, 1);
+            LandTypes<LandTypeInfoX>.Ocean.SetSettlementsDensity(0, 0, 0);
 
             LandTypes<LandTypeInfoX>.Tundra.SetResources(0, 0.1f, 0, 0);
             LandTypes<LandTypeInfoX>.Tundra.SetStandAloneBuildingsProbability(1, 0, 10);
             LandTypes<LandTypeInfoX>.Tundra.SetSettlementsDensity(0.004f, 0.01f, 0.003f);
-            LandTypes<LandTypeInfoX>.Tundra.SetColor(Color.FromArgb(0xc9, 0xff, 0xff));//(0xc9, 0xe0, 0xff);//PaleGreen;
             
             LandTypes<LandTypeInfoX>.Plains.SetResources(3, 0, 0, 0);
             LandTypes<LandTypeInfoX>.Plains.SetStandAloneBuildingsProbability(1, 3, 30);
             LandTypes<LandTypeInfoX>.Plains.SetSettlementsDensity(0.01f, 0.026f, 0.1f);
-            LandTypes<LandTypeInfoX>.Plains.SetColor(Color.FromArgb(0xd3, 0xfa, 0x5f));//(0xdc, 0xfa, 0x83);//LightGreen;
             
             LandTypes<LandTypeInfoX>.Savanna.SetResources(0.1f, 0.2f, 0, 0);
             LandTypes<LandTypeInfoX>.Savanna.SetStandAloneBuildingsProbability(1, 3, 20);
             LandTypes<LandTypeInfoX>.Savanna.SetSettlementsDensity(0.01f, 0.023f, 0.02f);
-            LandTypes<LandTypeInfoX>.Savanna.SetColor(Color.FromArgb(0xf0, 0xff, 0x8a));//(0xbd, 0xb0, 0x6b);//PaleGreen;
             
             LandTypes<LandTypeInfoX>.Desert.SetResources(0, 0.1f, 0, 0);
             LandTypes<LandTypeInfoX>.Desert.SetStandAloneBuildingsProbability(1, 2, 30);
             LandTypes<LandTypeInfoX>.Desert.SetSettlementsDensity(0.006f, 0.01f, 0.003f);
-            LandTypes<LandTypeInfoX>.Desert.SetColor(Color.FromArgb(0xfa, 0xdc, 0x36));//(0xf9, 0xfa, 0x8a);//LightYellow;
             
             LandTypes<LandTypeInfoX>.Forest.SetResources(0, 1, 5, 0);
             LandTypes<LandTypeInfoX>.Forest.SetStandAloneBuildingsProbability(10, 5, 10);
             LandTypes<LandTypeInfoX>.Forest.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
-            LandTypes<LandTypeInfoX>.Forest.SetColor(Color.FromArgb(0x56, 0x78, 0x34));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
             
             LandTypes<LandTypeInfoX>.Taiga.SetResources(0, 1, 5, 0);
             LandTypes<LandTypeInfoX>.Taiga.SetStandAloneBuildingsProbability(10, 5, 10);
             LandTypes<LandTypeInfoX>.Taiga.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
-            LandTypes<LandTypeInfoX>.Taiga.SetColor(Color.FromArgb(0x63, 0x78, 0x4e));//LightGreen;//ForestGreen;
             
             LandTypes<LandTypeInfoX>.Jungle.SetResources(0, 0.5f, 2, 0);
             LandTypes<LandTypeInfoX>.Jungle.SetStandAloneBuildingsProbability(10, 5, 10);
             LandTypes<LandTypeInfoX>.Jungle.SetSettlementsDensity(0.008f, 0.006f, 0.006f);
-            LandTypes<LandTypeInfoX>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
             
             LandTypes<LandTypeInfoX>.Swamp.SetResources(0, 0.2f, 1, 0);
             LandTypes<LandTypeInfoX>.Swamp.SetStandAloneBuildingsProbability(10, 8, 0);
             LandTypes<LandTypeInfoX>.Swamp.SetSettlementsDensity(0.003f, 0.005f, 0.026f);
-            LandTypes<LandTypeInfoX>.Swamp.SetColor(Color.FromArgb(0xa7, 0xbd, 0x6b));// DarkKhaki;
             
             LandTypes<LandTypeInfoX>.Mountains.SetResources(0, 0.5f, 0, 10);
             LandTypes<LandTypeInfoX>.Mountains.SetStandAloneBuildingsProbability(1, 1, 7);
             LandTypes<LandTypeInfoX>.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
-            LandTypes<LandTypeInfoX>.Mountains.SetColor(Color.FromArgb(0xbd, 0x6d, 0x46));//Tan;
         }
 
         private void BuildInterstateRoads(float fCycleShift)
