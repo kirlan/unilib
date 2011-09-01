@@ -1681,10 +1681,10 @@ namespace MapDrawEngine
             }
 
             //рисуем контуры континентов и заливаем внутреннее пространство цветом равнин
-            for (int i = 0; i < m_iQuadsWidth; i++)
-                for (int j = 0; j < m_iQuadsHeight; j++)
-                    if (aVisibleQuads[i, j] != null)
-                        aVisibleQuads[i, j].DrawPath(gr, MapLayer.Continents, i * m_fOneQuadWidth + iQuadDX + 2, j * m_fOneQuadHeight + iQuadDY + 2, m_fActualScale);
+            //for (int i = 0; i < m_iQuadsWidth; i++)
+            //    for (int j = 0; j < m_iQuadsHeight; j++)
+            //        if (aVisibleQuads[i, j] != null)
+            //            aVisibleQuads[i, j].DrawPath(gr, MapLayer.Continents, i * m_fOneQuadWidth + iQuadDX + 2, j * m_fOneQuadHeight + iQuadDY + 2, m_fActualScale);
 
             //закрашиваем карту в соответствии с выбранным режимом отображения карты
             for (int i = 0; i < m_iQuadsWidth; i++)
