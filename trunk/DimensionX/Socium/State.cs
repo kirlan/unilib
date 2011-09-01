@@ -1397,7 +1397,7 @@ namespace Socium
                     sEquality = "Socialism";
                     break;
                 case 4:
-                    sEquality = "Communism";
+                    sEquality = "Utopia";
                     break;
             }
             return sEquality;
