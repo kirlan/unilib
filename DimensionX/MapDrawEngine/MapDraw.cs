@@ -1339,26 +1339,26 @@ namespace MapDrawEngine
         /// <param name="pRoad">участок дороги</param>
         private void AddRoad(TransportationLink pRoad)
         {
-            if (pRoad.RoadLevel == 0)
+            if (pRoad.RoadLevel == RoadQuality.None)
                 return;
 
             RoadType eRoadType = RoadType.LandRoad2;
 
             switch (pRoad.RoadLevel)
             {
-                case 1:
+                case RoadQuality.Country:
                     if (pRoad.Sea || pRoad.Embark)
                         return; //eRoadType = RoadType.SeaRoute1;
                     else
                         eRoadType = RoadType.LandRoad1;
                     break;
-                case 2:
+                case RoadQuality.Normal:
                     if (pRoad.Sea || pRoad.Embark)
                         return; //eRoadType = RoadType.SeaRoute2;
                     else
                         eRoadType = RoadType.LandRoad2;
                     break;
-                case 3:
+                case RoadQuality.Good:
                     if (pRoad.Sea || pRoad.Embark)
                         return; //eRoadType = RoadType.SeaRoute3;
                     else
@@ -1379,7 +1379,7 @@ namespace MapDrawEngine
                             //m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddLines(aLink);
                             m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddCurve(aLink);
 
-                            if (pRoad.RoadLevel == 3)
+                            if (pRoad.RoadLevel == RoadQuality.Good)
                             {
                                 m_aQuadrants[i, j].m_cRoadsMap[RoadType.Back].StartFigure();
                                 //m_aQuadrants[i, j].m_cRoadsMap[RoadType.Back].AddLines(aLink);
@@ -2103,7 +2103,7 @@ namespace MapDrawEngine
                 {
                     sToolTip += "\nHave sea routes to:";
                     foreach (LocationX pRoute in m_pFocusedLocation.m_cHaveSeaRouteTo)
-                        sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName + " [" + m_pFocusedLocation.m_cLinks[pRoute].RoadLevel.ToString() + "]";
+                        sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName;
                 }
             }
 
