@@ -6,6 +6,107 @@ using System.Drawing;
 
 namespace LandscapeGeneration.PathFind
 {
+    public enum RoadQuality
+    { 
+        /// <summary>
+        /// Дороги нет
+        /// </summary>
+        None,
+        /// <summary>
+        /// Просёлочная деревенская дорога, фактически просто две колеи
+        /// </summary>
+        Country,
+        /// <summary>
+        /// Обычная дорога
+        /// </summary>
+        Normal,
+        /// <summary>
+        /// Очень хорошая дорога, уровня имперской римской дороги или скоростного шоссе
+        /// </summary>
+        Good
+    }
+
+    //Вообще надо это делать отдельным классом, ИМХО
+    public enum Transport
+    { 
+        /// <summary>
+        /// Пешком. 3,5 км/ч, 8 часов идти, итого ~25 км. в день.
+        /// </summary>
+        Afoot,
+        /// <summary>
+        /// Верхом на лошади. 8 км/ч, 8 часов = ~60 км. в день.
+        /// </summary>
+        Horse,
+        /// <summary>
+        /// Дилижанс. 5 км/ч, 16 часов = ~80 км. в сутки
+        /// </summary>
+        Stagecoach,
+        /// <summary>
+        /// На машине начала XX века. 20 км/ч, 8 часов = 160 км. в день
+        /// </summary>
+        RetroCar,
+        /// <summary>
+        /// На современной машине. 75 км/ч (в среднем), 8 часов = 600 км. в день
+        /// </summary>
+        ModernCar,
+        /// <summary>
+        /// По железной дороге начала XX века. 60 км/ч, 24 часа = ~1500 км. в сутки
+        /// </summary>
+        SteamRailroad,
+        /// <summary>
+        /// По современной железной дороге. 180 км/ч, 24 часа = ~4500 км. в сутки
+        /// </summary>
+        ElectricRailroad,
+        /// <summary>
+        /// Классический дирижабль начала XX века. 80км/ч, 24 часа = ~2000 км. в сутки
+        /// </summary>
+        Zeppeline,
+        /// <summary>
+        /// Винтовой самолёт. 500 км/ч, 10 часов (дольше пассажирские рейсы без посадки не летают) = 5000 км. в сутки
+        /// </summary>
+        Propellerplane,
+        /// <summary>
+        /// Вертолёт. 250 км/ч, 3 часа максимальный беспосадочный перелёт = 750 км. в сутки (?)
+        /// </summary>
+        Helicopter,
+        /// <summary>
+        /// Реактивный самолёт. 800 км/ч, 10 часов (дольше пассажирские рейсы без посадки не летают) = 8000 км. в сутки
+        /// </summary>
+        Jetplane,
+        /// <summary>
+        /// Летающий автомобиль. 200 км/ч, 8 часов = 1600 км. в сутки
+        /// </summary>
+        Hovercar,
+        /// <summary>
+        /// Пассажирская баллистическая ракета или гиперзвуковой лайнер. 4000 км/ч, 4 часа = 16000 км. в сутки
+        /// </summary>
+        Ballistic,
+        /// <summary>
+        /// Телепорт. Даже не знаю, что сказать о скорости... 20000 км/ч? В общем, в любую точку планеты меньше чем за 1 час.
+        /// </summary>
+        Teleport,
+        /// <summary>
+        /// Весельное судно типа триремы. 50 км. в сутки.
+        /// </summary>
+        Rowboat,
+        /// <summary>
+        /// Прибрежное парусное судно типа ладьи или драккара. 120 км. в сутки
+        /// </summary>
+        Sailer,
+        /// <summary>
+        /// Океанское парусное судно, так же первые пароходы. 30 км/ч, 24 часа = ~600 км. в сутки
+        /// </summary>
+        Oceanship, 
+        /// <summary>
+        /// Современный океанский лайнер. 60 км/ч, 24 часа = ~1500 км. в сутки
+        /// </summary>
+        Motorship,
+        /// <summary>
+        /// Судно на воздушной подушке. 110 км/ч, 24 часа = ~2500 км. в сутки
+        /// </summary>
+        Hovercraft
+    }
+
     public class TransportationLink
     {
         private float m_fBaseCost;
@@ -19,23 +120,40 @@ namespace LandscapeGeneration.PathFind
         //    get { return m_fMoveCostModifer; }
         //}
 
-        private int m_iRoadLevel = 0;
+        private RoadQuality m_eRoadLevel = RoadQuality.None;
 
-        public int RoadLevel
+        /// <summary>
+        /// Уровень построенной дороги. Используется только при отрисовке карты.
+        /// </summary>
+        public RoadQuality RoadLevel
         {
-            get { return m_iRoadLevel; }
+            get 
+            {
+                return m_eRoadLevel;
+                //switch (m_eRoadLevel)
+                //{ 
+                //    case 1:
+                //        return RoadQuality.Country;
+                //    case 2:
+                //        return RoadQuality.Normal;
+                //    case 3:
+                //        return RoadQuality.Good;
+                //    default:
+                //        return RoadQuality.None;
+                //}
+            }
         }
 
         /// <summary>
         /// Построить дорогу на этом участке
         /// </summary>
-        /// <param name="iLevel">Уровень дороги: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
-        public void BuildRoad(int iLevel)
+        /// <param name="eLevel">Уровень дороги: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
+        public void BuildRoad(RoadQuality eLevel)
         {
-            if (iLevel <= m_iRoadLevel)
+            if (eLevel <= m_eRoadLevel)
                 return;
 
-            m_iRoadLevel = iLevel;
+            m_eRoadLevel = eLevel;
             //switch (iLevel)
             //{
             //    case 1:
@@ -57,7 +175,7 @@ namespace LandscapeGeneration.PathFind
 
         public void ClearRoad()
         {
-            m_iRoadLevel = 0;
+            m_eRoadLevel = 0;
             //m_fMoveCostModifer = 1;
             RecalcFinalCost();
         }
@@ -65,12 +183,12 @@ namespace LandscapeGeneration.PathFind
         private void RecalcFinalCost()
         {
             if (m_bEmbark)
-                m_fFinalCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_iRoadLevel + 1));
+                m_fFinalCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_eRoadLevel + 1));
             else
                 if(m_bSea)
-                    m_fFinalCost = m_iRoadLevel > 0 ? m_fBaseCost * 0.8f : m_fBaseCost;
+                    m_fFinalCost = m_eRoadLevel > 0 ? m_fBaseCost * 0.8f : m_fBaseCost;
                 else
-                    m_fFinalCost = (float)Math.Pow(m_fBaseCost, 1.0 / (m_iRoadLevel + 1));
+                    m_fFinalCost = (float)Math.Pow(m_fBaseCost, 1.0 / (m_eRoadLevel + 1));
 
             if (m_bRuins)
                 m_fFinalCost *= 10;
