@@ -1120,22 +1120,22 @@ namespace Socium
                                     }
                                 }
                             }
-                            if (pBestTown1 != null && State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_iMaxGroundRoad > 0 && State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_iMaxGroundRoad > 0)
+                            if (pBestTown1 != null && State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0 && State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0)
                             {
-                                int iMaxRoadLevel = 1;
+                                RoadQuality eMaxRoadLevel = RoadQuality.Country;
                                 foreach (var pRoad in pBestTown1.m_cRoads)
-                                    if (pRoad.Value.Count > 0 && pRoad.Key > iMaxRoadLevel)
-                                        iMaxRoadLevel = pRoad.Key;
+                                    if (pRoad.Value.Count > 0 && pRoad.Key > eMaxRoadLevel)
+                                        eMaxRoadLevel = pRoad.Key;
                                 foreach (var pRoad in pBestTown2.m_cRoads)
-                                    if (pRoad.Value.Count > 0 && pRoad.Key > iMaxRoadLevel)
-                                        iMaxRoadLevel = pRoad.Key;
+                                    if (pRoad.Value.Count > 0 && pRoad.Key > eMaxRoadLevel)
+                                        eMaxRoadLevel = pRoad.Key;
                                 //int iRoadLevel = 2;
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad <= 1 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad <= 1)
                                 //    iRoadLevel = 1;
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad > 2 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad > 2)
                                 //    iRoadLevel = 3;
 
-                                BuildRoad(pBestTown1, pBestTown2, iMaxRoadLevel, fCycleShift);
+                                BuildRoad(pBestTown1, pBestTown2, eMaxRoadLevel, fCycleShift);
                                 pProvince.m_cConnectionString[pLinkedProvince] = "ok";
                                 pLinkedProvince.m_cConnectionString[pProvince] = "ok";
                             }
@@ -1287,14 +1287,14 @@ namespace Socium
                 //continue;
 
                 Province pProvince = (pHarbor.Owner as LandX).m_pProvince;
-                int iMaxNavalPath = State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_iMaxNavalPath;
-                if (iMaxNavalPath == 0)
+                RoadQuality eMaxNavalPath = State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxNavalPath;
+                if (eMaxNavalPath == 0)
                     continue;
 
                 int iMaxLength = m_pGrid.RX * 10;
-                if (iMaxNavalPath == 1)
+                if (eMaxNavalPath == RoadQuality.Country)
                     iMaxLength /= 10;
-                if (iMaxNavalPath == 2)
+                if (eMaxNavalPath == RoadQuality.Normal)
                     iMaxLength /= 4;
 
                 if(pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village)
@@ -1312,7 +1312,7 @@ namespace Socium
 
                     State pState = (pHarbor.Owner as LandX).m_pProvince.Owner as State;
                     State pOtherState = (pOtherHarbor.Key.Owner as LandX).m_pProvince.Owner as State;
-                    int iPathLevel = 1;
+                    RoadQuality ePathLevel = RoadQuality.Country;
 
                     int iMaxHostility = (int)Math.Sqrt(Math.Max(pState.CalcHostility(pOtherState), pOtherState.CalcHostility(pState)));
 
@@ -1330,25 +1330,25 @@ namespace Socium
                     {
                         if (pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Town &&
                             pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Town)
-                            iPathLevel = 2;
+                            ePathLevel = RoadQuality.Normal;
 
                         if ((pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.City ||
                              pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Capital) &&
                             pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Town)
-                            iPathLevel = 2;
+                            ePathLevel = RoadQuality.Normal;
 
                         if ((pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.City ||
                              pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Capital) &&
                             (pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize == SettlementSize.City ||
                              pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Capital))
-                            iPathLevel = 3;
+                            ePathLevel = RoadQuality.Good;
                     }
 
-                    iMaxNavalPath = State.InfrastructureLevels[pOtherState.m_iInfrastructureLevel].m_iMaxNavalPath;
+                    eMaxNavalPath = State.InfrastructureLevels[pOtherState.m_iInfrastructureLevel].m_eMaxNavalPath;
                     iMaxLength = m_pGrid.RX * 10;
-                    if (iMaxNavalPath == 1)
+                    if (eMaxNavalPath == RoadQuality.Country)
                         iMaxLength /= 10;
-                    if (iMaxNavalPath == 2)
+                    if (eMaxNavalPath == RoadQuality.Normal)
                         iMaxLength /= 4;
 
                     //if (pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village)
@@ -1357,9 +1357,9 @@ namespace Socium
                     //if (iPathLevel > iMaxNavalPath)
                     //    iPathLevel = iMaxNavalPath;
 
-                    if (iPathLevel == 1)
+                    if (ePathLevel == RoadQuality.Country)
                         iMaxLength /= 10;
-                    if (iPathLevel == 2)
+                    if (ePathLevel == RoadQuality.Normal)
                         iMaxLength /= 4; 
                     
                     if (pOtherHarbor.Value.m_fCost > iMaxLength)
@@ -1383,7 +1383,7 @@ namespace Socium
                     //    pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village)
                     //    iPathLevel = 1;
 
-                    SetSeaRoute(pPath.ToArray(), iPathLevel);
+                    SetSeaRoute(pPath.ToArray(), ePathLevel);
 
                     pHarbor.m_cHaveSeaRouteTo.Add(pOtherHarbor.Key);
                     pOtherHarbor.Key.m_cHaveSeaRouteTo.Add(pHarbor);
@@ -1494,14 +1494,14 @@ namespace Socium
         //    m_cSeaRoutesProjects.Clear();
         //}
 
-        private void SetSeaRoute(TransportationNode[] aNodes, int iLevel)
+        private void SetSeaRoute(TransportationNode[] aNodes, RoadQuality eLevel)
         {
             TransportationNode pLastNode = null;
             foreach (TransportationNode pNode in aNodes)
             {
                 if (pLastNode != null)
                 {
-                    pLastNode.m_cLinks[pNode].BuildRoad(1);
+                    pLastNode.m_cLinks[pNode].BuildRoad(RoadQuality.Country);
                     //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
 
                     //if (pLastNode.Owner != pNode.Owner)
@@ -1525,10 +1525,10 @@ namespace Socium
                 pLastNode = pNode;
             }
 
-            TransportationLink pNewLink = new TransportationLink(aNodes);
+            TransportationLinkBase pNewLink = new TransportationLinkBase(aNodes);
             pNewLink.Embark = true;
             pNewLink.Sea = true;
-            pNewLink.BuildRoad(iLevel);
+            pNewLink.BuildRoad(eLevel);
 
             SetLink(aNodes[0], aNodes[aNodes.Length - 1], pNewLink);//aSeaRoute);
 
@@ -1564,12 +1564,12 @@ namespace Socium
 
                     pProvince.BuildSettlements(SettlementSize.City, bFast);
                     if (!bFast)
-                        pProvince.BuildRoads(3, fCycleShift);
+                        pProvince.BuildRoads(RoadQuality.Good, fCycleShift);
 
                     pProvince.BuildSettlements(SettlementSize.Town, bFast);
 
                     if (!bFast)
-                        pProvince.BuildRoads(2, fCycleShift);
+                        pProvince.BuildRoads(RoadQuality.Normal, fCycleShift);
                 }
             }
 
@@ -1583,7 +1583,7 @@ namespace Socium
                     pProvince.BuildSettlements(SettlementSize.Village, bFast);
 
                     if (!bFast)
-                        pProvince.BuildRoads(1, fCycleShift);
+                        pProvince.BuildRoads(RoadQuality.Country, fCycleShift);
 
                     pProvince.BuildSettlements(SettlementSize.Hamlet, bFast);
 
@@ -1841,11 +1841,11 @@ namespace Socium
                 pConti.m_cStates.Clear();
 
             //уничтожаем все дороги
-            foreach (TransportationLink pRoad in m_cTransportGrid)
+            foreach (TransportationLinkBase pRoad in m_cTransportGrid)
                 pRoad.ClearRoad();
-            foreach (TransportationLink pRoad in m_cLandsTransportGrid)
+            foreach (TransportationLinkBase pRoad in m_cLandsTransportGrid)
                 pRoad.ClearRoad();
-            foreach (TransportationLink pRoad in m_cLMTransportGrid)
+            foreach (TransportationLinkBase pRoad in m_cLMTransportGrid)
                 pRoad.ClearRoad();
 
             //все локации в мире
@@ -1853,9 +1853,9 @@ namespace Socium
             {
                 //очищаем информацию о дорогах, проходивших через локацию
                 pLoc.m_cRoads.Clear();
-                pLoc.m_cRoads[1] = new List<Road>();
-                pLoc.m_cRoads[2] = new List<Road>();
-                pLoc.m_cRoads[3] = new List<Road>();
+                pLoc.m_cRoads[RoadQuality.Country] = new List<Road>();
+                pLoc.m_cRoads[RoadQuality.Normal] = new List<Road>();
+                pLoc.m_cRoads[RoadQuality.Good] = new List<Road>();
                 pLoc.m_cHaveRoadTo.Clear();
                 pLoc.m_cHaveSeaRouteTo.Clear();
 
@@ -1890,7 +1890,7 @@ namespace Socium
                 if (pLoc != pTown1)
                     pLoc.m_cHaveRoadTo.Remove(pTown1);
 
-                pLoc.m_cRoads[pOldRoad.m_iLevel].Remove(pOldRoad);
+                pLoc.m_cRoads[pOldRoad.m_eLevel].Remove(pOldRoad);
             }
         }
 
@@ -1902,9 +1902,9 @@ namespace Socium
         /// </summary>
         /// <param name="pTown1">первый город</param>
         /// <param name="pTown2">второй город</param>
-        /// <param name="iRoadLevel">уровень новой дороги</param>
+        /// <param name="eRoadLevel">уровень новой дороги</param>
         /// <returns>true - можно строить новую дорогу, false - нельзя</returns>
-        private static bool CheckOldRoad(LocationX pTown1, LocationX pTown2, int iRoadLevel)
+        private static bool CheckOldRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel)
         {
             //проверим, а нет ли уже между этими городами дороги
             while (pTown1.m_cHaveRoadTo.ContainsKey(pTown2) && pTown2.m_cHaveRoadTo.ContainsKey(pTown1))
@@ -1912,7 +1912,7 @@ namespace Socium
                 Road pOldRoad = pTown1.m_cHaveRoadTo[pTown2];
 
                 //если существующая дорога лучше или такая же, как та, которую мы собираемся строить, то нафиг строить?
-                if (pOldRoad.m_iLevel >= iRoadLevel)
+                if (pOldRoad.m_eLevel >= eRoadLevel)
                     return false;
 
                 //удаляем старую дорогу
@@ -1927,14 +1927,14 @@ namespace Socium
         /// Предполагается, что на этом участке дорога не проходит ни через какие населённые пункты.
         /// </summary>
         /// <param name="pRoad">участок дороги</param>
-        /// <param name="iRoadLevel">уровень дороги</param>
-        private static void BuildRoad(Road pRoad, int iRoadLevel)
+        /// <param name="eRoadLevel">уровень дороги</param>
+        private static void BuildRoad(Road pRoad, RoadQuality eRoadLevel)
         {
             LocationX pTown1 = pRoad.Locations[0];
             LocationX pTown2 = pRoad.Locations[pRoad.Locations.Length - 1];
 
             //если между этими двумя городами уже есть дорога не хуже - новую не строим
-            if (!CheckOldRoad(pTown1, pTown2, iRoadLevel))
+            if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
                 return;
 
             LocationX pLastNode = null;
@@ -1945,22 +1945,22 @@ namespace Socium
                 if (pNode != pTown2 && !pNode.m_cHaveRoadTo.ContainsKey(pTown2))
                     pNode.m_cHaveRoadTo[pTown2] = pRoad;
 
-                pNode.m_cRoads[iRoadLevel].Add(pRoad);
+                pNode.m_cRoads[eRoadLevel].Add(pRoad);
 
                 if (pLastNode != null)
                 {
-                    pLastNode.m_cLinks[pNode].BuildRoad(iRoadLevel);
+                    pLastNode.m_cLinks[pNode].BuildRoad(eRoadLevel);
                     //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
 
                     if (pLastNode.Owner != pNode.Owner)
                     {
                         try
                         {
-                            (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(iRoadLevel);
+                            (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(eRoadLevel);
 
                             if ((pLastNode.Owner as LandX).Owner != (pNode.Owner as LandX).Owner)
                             {
-                                ((pLastNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(iRoadLevel);
+                                ((pLastNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(eRoadLevel);
                             }
                         }
                         catch (Exception ex)
@@ -1991,7 +1991,7 @@ namespace Socium
             foreach (LocationX pNode in pOldRoad.Locations)
             {
                 if (pNewRoad == null)
-                    pNewRoad = new Road(pNode, pOldRoad.m_iLevel);
+                    pNewRoad = new Road(pNode, pOldRoad.m_eLevel);
                 else
                 {
                     pNewRoad.BuidTo(pNode);
@@ -2003,7 +2003,7 @@ namespace Socium
                         pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
                     {
                         cRoadsChain.Add(pNewRoad);
-                        pNewRoad = new Road(pNode, pOldRoad.m_iLevel);
+                        pNewRoad = new Road(pNode, pOldRoad.m_eLevel);
                     }
                 }
             }
@@ -2015,7 +2015,7 @@ namespace Socium
             Road[] aRoadsChain = cRoadsChain.ToArray();
 
             foreach (Road pRoad in aRoadsChain)
-                BuildRoad(pRoad, pOldRoad.m_iLevel);
+                BuildRoad(pRoad, pOldRoad.m_eLevel);
         }
 
         /// <summary>
@@ -2024,11 +2024,11 @@ namespace Socium
         /// </summary>
         /// <param name="pTown1">первый город</param>
         /// <param name="pTown2">второй город</param>
-        /// <param name="iRoadLevel">уровень строящейся дороги</param>
+        /// <param name="eRoadLevel">уровень строящейся дороги</param>
         /// <param name="fCycleShift">циклический сдвиг координат по горизонтали для закольцованных карт</param>
-        public static void BuildRoad(LocationX pTown1, LocationX pTown2, int iRoadLevel, float fCycleShift)
+        public static void BuildRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel, float fCycleShift)
         {
-            if (!CheckOldRoad(pTown1, pTown2, iRoadLevel))
+            if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
                 return;
 
             //PathFinder pBestPath = new PathFinder(pTown1, pTown2, fCycleShift, -1);
@@ -2042,7 +2042,7 @@ namespace Socium
                 foreach (LocationX pNode in pBestPath.m_aNodes)
                 {
                     if (pNewRoad == null)
-                        pNewRoad = new Road(pNode, iRoadLevel);
+                        pNewRoad = new Road(pNode, eRoadLevel);
                     else
                     {
                         pNewRoad.BuidTo(pNode);
@@ -2054,7 +2054,7 @@ namespace Socium
                             pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
                         {
                             cRoadsChain.Add(pNewRoad);
-                            pNewRoad = new Road(pNode, iRoadLevel);
+                            pNewRoad = new Road(pNode, eRoadLevel);
                         }
                     }
                 }
@@ -2062,7 +2062,7 @@ namespace Socium
                 Road[] aRoadsChain = cRoadsChain.ToArray();
 
                 foreach (Road pRoad in aRoadsChain)
-                    BuildRoad(pRoad, iRoadLevel);
+                    BuildRoad(pRoad, eRoadLevel);
             }
         }
     }

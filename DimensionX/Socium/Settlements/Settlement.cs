@@ -18,6 +18,33 @@ namespace Socium.Settlements
         Capital
     }
 
+    public enum SettlementSpeciality
+    { 
+        None,
+        Fishing,
+        Lumberjack,
+        Hunting,
+        Mining,
+        Agricultural,
+        Livestock,
+        Raiders,
+        Pirates,
+        Military,
+        Naval,
+        Metalsmith,
+        Woodworking,
+        Jevellery,
+        Textile,
+        Resort,
+        Cultural,
+        Religious,
+        Gambling,
+        MilitaryAcademy,
+        NavalAcademy,
+        ArtsAcademy,
+        SciencesAcademy
+    }
+
     public class SettlementInfo
     {
         public string m_sName;
@@ -28,6 +55,7 @@ namespace Socium.Settlements
         public int m_iDeltaBuildingsCount;
         public BuildingInfo m_pMainBuilding;
         public SettlementSize m_eSize;
+        public SettlementSpeciality m_eSpeciality = SettlementSpeciality.None;
 
         public SettlementInfo(SettlementSize eSize, string sName, int iMinPop, int iDeltaPop, int iMaxProfessionRank, int iMinBuildingsCount, int iDeltaBuildingsCount, BuildingInfo pMainBuilding)
         {
@@ -54,10 +82,10 @@ namespace Socium.Settlements
                 {
                     m_cInfo[SettlementSize.Hamlet] = new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, 0, 1, null);
                     m_cInfo[SettlementSize.Village] = new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, 0, 3, new BuildingInfo("Village hall", "Elder", "Elder", 3));
-                    m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "Baron", "Baroness", 7));
-                    m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Count", "Countess", 14));
-                    m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("Citadel", "Lord", "Lady", 15));
-                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 20, 40, 7, 2, 5, new BuildingInfo("Castle", "General", "General", 7));
+                    m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Town hall", "Mayor", "Mayor", 7));
+                    m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("City hall", "Mayor", "Mayor", 14));
+                    m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("City hall", "Mayor", "Mayor", 15));
+                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 20, 40, 7, 2, 5, new BuildingInfo("Headquarters", "General", "General", 7));
                 }
                 return Settlement.m_cInfo;
             }

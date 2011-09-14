@@ -11,7 +11,7 @@ namespace LandscapeGeneration.PathFind
 
         public bool m_bHarbor = false;
 
-        public Dictionary<TransportationNode, TransportationLink> m_cLinks = new Dictionary<TransportationNode, TransportationLink>();
+        public Dictionary<TransportationNode, TransportationLinkBase> m_cLinks = new Dictionary<TransportationNode, TransportationLinkBase>();
 
         // не использовать! обращение к словарю занимает больше времени, чем повторное вычисление квадратного корня!
         //public Dictionary<TransportationNode, float> m_cLinksDist = new Dictionary<TransportationNode, float>();

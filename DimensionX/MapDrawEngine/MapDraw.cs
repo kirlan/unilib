@@ -1014,7 +1014,7 @@ namespace MapDrawEngine
             }
 
             //вычислим дорожную сетку
-            foreach (TransportationLink pRoad in m_pWorld.m_cTransportGrid)
+            foreach (TransportationLinkBase pRoad in m_pWorld.m_cTransportGrid)
             {
                 AddRoad(pRoad);
             }
@@ -1337,7 +1337,7 @@ namespace MapDrawEngine
         /// Сохраняет информацию об участке дороги в соответствующем квадранте
         /// </summary>
         /// <param name="pRoad">участок дороги</param>
-        private void AddRoad(TransportationLink pRoad)
+        private void AddRoad(TransportationLinkBase pRoad)
         {
             if (pRoad.RoadLevel == RoadQuality.None)
                 return;
@@ -1395,7 +1395,7 @@ namespace MapDrawEngine
         /// <param name="pRoad">участок дороги</param>
         /// <param name="aQuadrants">список квадрантов, через которые проходит дорога</param>
         /// <returns></returns>
-        private PointF[][] GetTransportationLink(TransportationLink pRoad, out bool[,] aQuadrants)
+        private PointF[][] GetTransportationLink(TransportationLinkBase pRoad, out bool[,] aQuadrants)
         {
             aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
 
@@ -1437,7 +1437,7 @@ namespace MapDrawEngine
         /// <param name="bCross">признак того, что дорога пересекает нулевой меридиан</param>
         /// <param name="aQuadrants">список квадрантов, через которые проходит дорога</param>
         /// <returns>массив вершин ломаной линии</returns>
-        private PointF[] BuildPathLine(TransportationLink pPath, float fShift, out bool bCross, out bool[,] aQuadrants)
+        private PointF[] BuildPathLine(TransportationLinkBase pPath, float fShift, out bool bCross, out bool[,] aQuadrants)
         {
             bCross = false;
             aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
@@ -2096,7 +2096,7 @@ namespace MapDrawEngine
                 {
                     sToolTip += "\nHave roads to:";
                     foreach (var pRoad in m_pFocusedLocation.m_cHaveRoadTo)
-                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_iLevel.ToString() + "]";
+                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_eLevel.ToString() + "]";
                 }
 
                 if (m_pFocusedLocation.m_cHaveSeaRouteTo.Count > 0)

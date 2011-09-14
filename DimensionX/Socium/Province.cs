@@ -544,13 +544,13 @@ namespace Socium
         /// <summary>
         /// Присоединяет в общую транспортную сеть ещё не присоединённые города государства.
         /// </summary>
-        /// <param name="iRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
-        public void BuildRoads(int iRoadLevel, float fCycleShift)
+        /// <param name="eRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
+        public void BuildRoads(RoadQuality eRoadLevel, float fCycleShift)
         {
-            if (iRoadLevel > State.InfrastructureLevels[m_iInfrastructureLevel].m_iMaxGroundRoad)
-                iRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_iMaxGroundRoad;
+            if (eRoadLevel > State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad)
+                eRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad;
 
-            if (iRoadLevel == 0)
+            if (eRoadLevel == RoadQuality.None)
                 return;
 
             foreach (LandX pLand in m_cContents)
@@ -574,7 +574,7 @@ namespace Socium
 
             foreach (LocationX pTown in aSettlements)
             {
-                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[2].Count > 0 || pTown.m_cRoads[3].Count > 1))
+                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[RoadQuality.Normal].Count > 0 || pTown.m_cRoads[RoadQuality.Good].Count > 1))
                     cConnected.Add(pTown);
             }
 
@@ -608,7 +608,7 @@ namespace Socium
                 }
                 if (pBestTown2 != null)
                 {
-                    World.BuildRoad(pBestTown1, pBestTown2, iRoadLevel, fCycleShift);
+                    World.BuildRoad(pBestTown1, pBestTown2, eRoadLevel, fCycleShift);
 
                     fMinLength = float.MaxValue;
                     LocationX pBestTown3 = null;
@@ -629,7 +629,7 @@ namespace Socium
                     }
 
                     if (pBestTown3 != null)
-                        World.BuildRoad(pBestTown1, pBestTown3, iRoadLevel, fCycleShift);
+                        World.BuildRoad(pBestTown1, pBestTown3, eRoadLevel, fCycleShift);
 
                     cConnected.Add(pBestTown1);
                 }
