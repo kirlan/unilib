@@ -8,6 +8,7 @@ using NameGen;
 using LandscapeGeneration;
 using Socium.Settlements;
 using Socium.Nations;
+using LandscapeGeneration.PathFind;
 
 namespace Socium
 {
@@ -187,9 +188,9 @@ namespace Socium
                     pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 
             List<Road> cRoads = new List<Road>();
-            cRoads.AddRange(m_cContents[iTown].m_cRoads[1]);
-            cRoads.AddRange(m_cContents[iTown].m_cRoads[2]);
-            cRoads.AddRange(m_cContents[iTown].m_cRoads[3]);
+            cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Country]);
+            cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Normal]);
+            cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Good]);
 
             Road[] aRoads = cRoads.ToArray();
             foreach(Road pRoad in aRoads)

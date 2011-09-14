@@ -107,7 +107,10 @@ namespace LandscapeGeneration.PathFind
         Hovercraft
     }
 
-    public class TransportationLink
+    /// <summary>
+    /// Информация о связях между локациями - базовая версия, не поддерживает транспортные маршруты и выбор средства передвижения
+    /// </summary>
+    public class TransportationLinkBase
     {
         private float m_fBaseCost;
 
@@ -183,12 +186,41 @@ namespace LandscapeGeneration.PathFind
         private void RecalcFinalCost()
         {
             if (m_bEmbark)
-                m_fFinalCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_eRoadLevel + 1));
+//                m_fFinalCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_eRoadLevel + 1));
+                switch(m_eRoadLevel)
+                {
+                    case RoadQuality.None:
+                        m_fFinalCost = m_fBaseCost + 20000;
+                        break;
+                    case RoadQuality.Country:
+                        m_fFinalCost = (float)((m_fBaseCost + 20000) * 0.8f);
+                        break;
+                    case RoadQuality.Normal:
+                        m_fFinalCost = (float)((m_fBaseCost + 20000) * 0.5f);
+                        break;
+                    case RoadQuality.Good:
+                        m_fFinalCost = (float)((m_fBaseCost + 20000) * 0.2f);
+                        break;
+                }
             else
                 if(m_bSea)
                     m_fFinalCost = m_eRoadLevel > 0 ? m_fBaseCost * 0.8f : m_fBaseCost;
                 else
-                    m_fFinalCost = (float)Math.Pow(m_fBaseCost, 1.0 / (m_eRoadLevel + 1));
+                    switch (m_eRoadLevel)
+                    {
+                        case RoadQuality.None:
+                            m_fFinalCost = m_fBaseCost;
+                            break;
+                        case RoadQuality.Country:
+                            m_fFinalCost = (float)(m_fBaseCost * 0.8f);
+                            break;
+                        case RoadQuality.Normal:
+                            m_fFinalCost = (float)(m_fBaseCost * 0.5f);
+                            break;
+                        case RoadQuality.Good:
+                            m_fFinalCost = (float)(m_fBaseCost * 0.2f);
+                            break;
+                    }
 
             if (m_bRuins)
                 m_fFinalCost *= 10;
@@ -260,7 +292,7 @@ namespace LandscapeGeneration.PathFind
             return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
         }
 
-        public TransportationLink(Location pLoc1, Location pLoc2, float fCycleShift)
+        public TransportationLinkBase(Location pLoc1, Location pLoc2, float fCycleShift)
         {
             m_aPoints[0] = new PointF(pLoc1.X, pLoc1.Y);
             m_aPoints[2] = new PointF(pLoc2.X, pLoc2.Y);
@@ -317,7 +349,7 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLink(ILand pLand1, ILand pLand2, float fCycleShift)
+        public TransportationLinkBase(ILand pLand1, ILand pLand2, float fCycleShift)
         {
             m_aPoints[0] = new PointF(pLand1.X, pLand1.Y);
             m_aPoints[2] = new PointF(pLand2.X, pLand2.Y);
@@ -357,7 +389,7 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLink(ILandMass pLandMass1, ILandMass pLandMass2, float fCycleShift)
+        public TransportationLinkBase(ILandMass pLandMass1, ILandMass pLandMass2, float fCycleShift)
         {
             m_aPoints[0] = new PointF(pLandMass1.X, pLandMass1.Y);
             m_aPoints[2] = new PointF(pLandMass2.X, pLandMass2.Y);
@@ -397,7 +429,7 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLink(TransportationNode[] aPath)
+        public TransportationLinkBase(TransportationNode[] aPath)
         {
             List<PointF> cPoints = new List<PointF>();
             cPoints.Add(new PointF(aPath[0].X, aPath[0].Y));
@@ -409,7 +441,7 @@ namespace LandscapeGeneration.PathFind
             {
                 if (pLastNode != null)
                 {
-                    TransportationLink pLink = pLastNode.m_cLinks[pNode];
+                    TransportationLinkBase pLink = pLastNode.m_cLinks[pNode];
                     if (pLink.m_aPoints[0].X == pLastNode.X &&
                         pLink.m_aPoints[0].Y == pLastNode.Y)
                     {

@@ -675,28 +675,28 @@ namespace LandscapeGeneration
                 pContinent.BuildAreas(m_pGrid.CycleShift, m_iLandsCount / 100);
         }
 
-        public List<TransportationLink> m_cTransportGrid = new List<TransportationLink>();
-        public List<TransportationLink> m_cLandsTransportGrid = new List<TransportationLink>();
-        public List<TransportationLink> m_cLMTransportGrid = new List<TransportationLink>();
+        public List<TransportationLinkBase> m_cTransportGrid = new List<TransportationLinkBase>();
+        public List<TransportationLinkBase> m_cLandsTransportGrid = new List<TransportationLinkBase>();
+        public List<TransportationLinkBase> m_cLMTransportGrid = new List<TransportationLinkBase>();
 
         /// <summary>
         /// Устанавливает возможность перехода между указанными локациями при поиске пути.
         /// </summary>
         /// <param name="pNode1">первая локация</param>
         /// <param name="pNode2">вторая локация</param>
-        protected TransportationLink SetLink(TransportationNode pNode1, TransportationNode pNode2)
+        protected TransportationLinkBase SetLink(TransportationNode pNode1, TransportationNode pNode2)
         {
             if (!pNode1.m_cLinks.ContainsKey(pNode2))
             {
                 if (!pNode2.m_cLinks.ContainsKey(pNode1))
                 {
-                    TransportationLink pLink = null;
+                    TransportationLinkBase pLink = null;
                     if (pNode1 is Location && pNode2 is Location)
-                        pLink = new TransportationLink(pNode1 as Location, pNode2 as Location, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as Location, pNode2 as Location, m_pGrid.CycleShift);
                     if (pNode1 is ILand && pNode2 is ILand)
-                        pLink = new TransportationLink(pNode1 as ILand, pNode2 as ILand, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as ILand, pNode2 as ILand, m_pGrid.CycleShift);
                     if (pNode1 is ILandMass && pNode2 is ILandMass)
-                        pLink = new TransportationLink(pNode1 as ILandMass, pNode2 as ILandMass, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as ILandMass, pNode2 as ILandMass, m_pGrid.CycleShift);
 
                     if (pLink == null)
                         throw new Exception("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
@@ -728,7 +728,7 @@ namespace LandscapeGeneration
             return pNode2.m_cLinks[pNode1];
         }
 
-        protected TransportationLink SetLink(TransportationNode pNode1, TransportationNode pNode2, TransportationLink pLink)
+        protected TransportationLinkBase SetLink(TransportationNode pNode1, TransportationNode pNode2, TransportationLinkBase pLink)
         {
             if (!pNode1.m_cLinks.ContainsKey(pNode2))
             {
@@ -774,7 +774,7 @@ namespace LandscapeGeneration
                     if (pLink.Forbidden || pLink.Owner == null)// || pLink.m_bBorder)
                         continue;
 
-                    TransportationLink pTransLink = SetLink(pLoc, pLink);
+                    TransportationLinkBase pTransLink = SetLink(pLoc, pLink);
                     pTransLink.Sea = (pLink.Owner as LAND).IsWater && (pLoc.Owner as LAND).IsWater;
                     pTransLink.Embark = (pLink.Owner as LAND).IsWater != (pLoc.Owner as LAND).IsWater;
                 }
@@ -790,7 +790,7 @@ namespace LandscapeGeneration
                         continue;
 
                     LAND pLinked = pTerr as LAND;
-                    TransportationLink pLink = SetLink(pLand, pLinked);
+                    TransportationLinkBase pLink = SetLink(pLand, pLinked);
                     pLink.Sea = (pLinked.Owner as LandMass<LAND>).IsWater && (pLand.Owner as LandMass<LAND>).IsWater;
                     pLink.Embark = (pLinked.Owner as LandMass<LAND>).IsWater != (pLand.Owner as LandMass<LAND>).IsWater;
                 }
@@ -806,7 +806,7 @@ namespace LandscapeGeneration
                         continue;
 
                     LandMass<LAND> pLinked = pTerr as LandMass<LAND>;
-                    TransportationLink pLink = SetLink(pLandMass, pLinked);
+                    TransportationLinkBase pLink = SetLink(pLandMass, pLinked);
                     pLink.Sea = (pLinked.Owner == null) && (pLandMass.Owner == null);
                     pLink.Embark = (pLinked.Owner == null) != (pLandMass.Owner == null);
                 }

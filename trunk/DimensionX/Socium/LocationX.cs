@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using LandscapeGeneration;
 using Socium.Settlements;
+using LandscapeGeneration.PathFind;
 
 namespace Socium
 {
@@ -25,7 +26,7 @@ namespace Socium
         /// <summary>
         /// Список дорог по типам. Ключи: 1 - просёлок, 2- обычная, 3 - трасса
         /// </summary>
-        public Dictionary<int, List<Road>> m_cRoads = new Dictionary<int,List<Road>>();
+        public Dictionary<RoadQuality, List<Road>> m_cRoads = new Dictionary<RoadQuality, List<Road>>();
 
         public Dictionary<LocationX, Road> m_cHaveRoadTo = new Dictionary<LocationX,Road>();
         public List<LocationX> m_cHaveSeaRouteTo = new List<LocationX>();
@@ -38,9 +39,9 @@ namespace Socium
         public LocationX()
             :base()
         {
-            m_cRoads[1] = new List<Road>();
-            m_cRoads[2] = new List<Road>();
-            m_cRoads[3] = new List<Road>();
+            m_cRoads[RoadQuality.Country] = new List<Road>();
+            m_cRoads[RoadQuality.Normal] = new List<Road>();
+            m_cRoads[RoadQuality.Good] = new List<Road>();
         }
 
         public override string ToString()
@@ -60,9 +61,9 @@ namespace Socium
             m_pSettlement = null;
             m_pBuilding = null;
             m_cRoads.Clear();
-            m_cRoads[1] = new List<Road>();
-            m_cRoads[2] = new List<Road>();
-            m_cRoads[3] = new List<Road>();
+            m_cRoads[RoadQuality.Country] = new List<Road>();
+            m_cRoads[RoadQuality.Normal] = new List<Road>();
+            m_cRoads[RoadQuality.Good] = new List<Road>();
 
             m_cHaveRoadTo.Clear();
             m_cHaveSeaRouteTo.Clear();

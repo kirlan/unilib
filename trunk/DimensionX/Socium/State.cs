@@ -227,15 +227,15 @@ namespace Socium
 
         public class LifeLevel
         {
-            public int m_iMaxGroundRoad;
-            public int m_iMaxNavalPath;
+            public RoadQuality m_eMaxGroundRoad;
+            public RoadQuality m_eMaxNavalPath;
             public int m_iAerialAvailability;
             public List<SettlementSize> m_cAvailableSettlements;
 
-            public LifeLevel(int iMaxRoad, int iMaxNaval, int iAerial, SettlementSize[] cSettlements)
+            public LifeLevel(RoadQuality eMaxRoad, RoadQuality eMaxNaval, int iAerial, SettlementSize[] cSettlements)
             {
-                m_iMaxGroundRoad = iMaxRoad;
-                m_iMaxNavalPath = iMaxNaval;
+                m_eMaxGroundRoad = eMaxRoad;
+                m_eMaxNavalPath = eMaxNaval;
                 m_iAerialAvailability = iAerial;
                 m_cAvailableSettlements = new List<SettlementSize>(cSettlements);
             }
@@ -244,23 +244,23 @@ namespace Socium
         public static LifeLevel[] InfrastructureLevels = 
         {
             // 0 - только не соединённые дорогами поселения
-            new LifeLevel(0, 0, 0, new SettlementSize[]{SettlementSize.Hamlet}),
+            new LifeLevel(RoadQuality.None, RoadQuality.None, 0, new SettlementSize[]{SettlementSize.Hamlet}),
             // 1 - можно строить деревни, просёлочные дороги и короткие морские маршруты
-            new LifeLevel(1, 1, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village}),
+            new LifeLevel(RoadQuality.Country, RoadQuality.Country, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village}),
             // 2 - можно строить городки, обычные дороги и морские маршруты средней дальности
-            new LifeLevel(2, 2, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.Fort}),
+            new LifeLevel(RoadQuality.Normal, RoadQuality.Normal, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.Fort}),
             // 3 - большие города, имперские дороги, неограниченные морские маршруты
-            new LifeLevel(3, 3, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, /*SettlementSize.City, */SettlementSize.Fort}),
+            new LifeLevel(RoadQuality.Good, RoadQuality.Good, 0, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, /*SettlementSize.City, */SettlementSize.Fort}),
             // 4 - большие города, имперские дороги, неограниченные морские маршруты, доступ к воздушному сообщению только в столице
-            new LifeLevel(3, 3, 1, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
+            new LifeLevel(RoadQuality.Good, RoadQuality.Good, 1, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
             // 5 - большие города, имперские дороги, неограниченные морские маршруты, доступ к воздушному сообщению только в столице и центрах провинций
-            new LifeLevel(3, 3, 2, new SettlementSize[]{SettlementSize.Village, SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
+            new LifeLevel(RoadQuality.Good, RoadQuality.Good, 2, new SettlementSize[]{SettlementSize.Village, SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
             // 6 - большие города, имперские дороги, неограниченные морские маршруты, доступ к воздушному сообщению во всех поселениях
-            new LifeLevel(3, 3, 3, new SettlementSize[]{SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
+            new LifeLevel(RoadQuality.Good, RoadQuality.Good, 3, new SettlementSize[]{SettlementSize.Town, SettlementSize.City, SettlementSize.Fort}),
             // 7 - небольшие города, обычные дороги, морской транспорт не используется, доступ к воздушному сообщению во всех поселениях
-            new LifeLevel(2, 0, 3, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.Fort}),
+            new LifeLevel(RoadQuality.Normal, RoadQuality.None, 3, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.Fort}),
             // 8 - деревни, просёлочные дороги, морской транспорт не используется, доступ к воздушному сообщению во всех поселениях
-            new LifeLevel(1, 0, 3, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Fort}),
+            new LifeLevel(RoadQuality.Country, RoadQuality.None, 3, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Fort}),
         }; 
         
         public string m_sName;
@@ -1437,9 +1437,9 @@ namespace Socium
         /// <param name="fCycleShift"></param>
         internal void FixRoads(float fCycleShift)
         {
-            int iRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_iMaxGroundRoad;
+            RoadQuality eRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad;
 
-            if (iRoadLevel == 0)
+            if (eRoadLevel == RoadQuality.None)
                 return;
 
             //Закрываем границы, чтобы нельзя было "срезать" путь по чужой территории
@@ -1494,7 +1494,7 @@ namespace Socium
                 }
                 if (pBestTown2 != null)
                 {
-                    World.BuildRoad(pBestTown1, pBestTown2, iRoadLevel, fCycleShift);
+                    World.BuildRoad(pBestTown1, pBestTown2, eRoadLevel, fCycleShift);
 
                     fMinLength = float.MaxValue;
                     LocationX pBestTown3 = null;
@@ -1515,7 +1515,7 @@ namespace Socium
                     }
 
                     if (pBestTown3 != null)
-                        World.BuildRoad(pBestTown1, pBestTown3, iRoadLevel, fCycleShift);
+                        World.BuildRoad(pBestTown1, pBestTown3, eRoadLevel, fCycleShift);
 
                     cConnected.Add(pBestTown1);
                 }
@@ -1533,7 +1533,7 @@ namespace Socium
             List<LocationX> cForts = new List<LocationX>();
             foreach (LocationX pTown in aSettlements)
             {
-                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[2].Count > 0 || pTown.m_cRoads[3].Count > 0))
+                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[RoadQuality.Normal].Count > 0 || pTown.m_cRoads[RoadQuality.Good].Count > 0))
                     cConnected.Add(pTown);
                 else
                     if (pTown.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Fort)
@@ -1560,7 +1560,7 @@ namespace Socium
                 }
                 if (pBestTown != null)
                 {
-                    World.BuildRoad(pFort, pBestTown, Math.Min(2, iRoadLevel), fCycleShift);
+                    World.BuildRoad(pFort, pBestTown, eRoadLevel, fCycleShift);
 
                     fMinLength = float.MaxValue;
                     LocationX pBestTown2 = null;
@@ -1579,7 +1579,7 @@ namespace Socium
                     }
 
                     if (pBestTown2 != null)
-                        World.BuildRoad(pFort, pBestTown2, Math.Min(2, iRoadLevel), fCycleShift);
+                        World.BuildRoad(pFort, pBestTown2, eRoadLevel, fCycleShift);
 
                     cConnected.Add(pFort);
                 }
