@@ -113,11 +113,11 @@ namespace Socium
         /// </summary>
         public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
 
-        public int m_iFish = 0;
-        public int m_iGrain = 0;
-        public int m_iGame = 0;
-        public int m_iOre = 0;
-        public int m_iWood = 0;
+        public float m_fFish = 0;
+        public float m_fGrain = 0;
+        public float m_fGame = 0;
+        public float m_fOre = 0;
+        public float m_fWood = 0;
         public int m_iPopulation = 0;
 
         public List<LocationX> m_cSettlements = new List<LocationX>();
@@ -463,6 +463,340 @@ namespace Socium
                 pLand.BuildLair();
         }
 
+        public void SpecializeSettlements()
+        { 
+            foreach(LocationX pLoc in m_cSettlements)
+            {
+                if (pLoc.m_pSettlement.m_eSpeciality != SettlementSpeciality.None)
+                    continue;
+
+                bool bCoast = false;
+                foreach (Location pLink in pLoc.m_aBorderWith)
+                {
+                    if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                        bCoast = true;
+                }
+                
+                LandX pLand = pLoc.Owner as LandX;
+
+                switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                {
+                    case SettlementSize.Hamlet:
+                        if (bCoast)
+                        {
+                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                        }
+                        else
+                        {
+                            List<float> cResources = new List<float>();
+                            cResources.Add(pLand.Type.m_fGrain * pLand.m_cContents.Count);
+                            cResources.Add(pLand.Type.m_fGame * pLand.m_cContents.Count);
+                            cResources.Add(pLand.Type.m_fOre * pLand.m_cContents.Count);
+                            cResources.Add(pLand.Type.m_fWood * pLand.m_cContents.Count);
+
+                            int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                            switch (iChoosen)
+                            {
+                                case 0:
+                                    pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(2) ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                    break;
+                                case 1:
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Hunters;
+                                    break;
+                                case 2:
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Miners;
+                                    break;
+                                case 3:
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Lumberjacks;
+                                    break;
+                            }
+                        }
+                        break;
+                    case SettlementSize.Village:
+                        if (bCoast)
+                        {
+                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                        }
+                        else
+                        {
+                            List<float> cResources = new List<float>();
+                            cResources.Add(pLand.Type.m_fGrain * pLand.m_cContents.Count);
+                            cResources.Add(pLand.Type.m_fGame * pLand.m_cContents.Count);
+                            cResources.Add(pLand.Type.m_fOre * pLand.m_cContents.Count);
+                            cResources.Add(pLand.Type.m_fWood * pLand.m_cContents.Count);
+
+                            int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                            switch (iChoosen)
+                            {
+                                case 0:
+                                    pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(2) ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                    break;
+                                case 1:
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Hunters;
+                                    break;
+                                case 2:
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Miners;
+                                    break;
+                                case 3:
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Lumberjacks;
+                                    break;
+                            }
+                        }
+                        break;
+                    case SettlementSize.Town:
+                        if (bCoast && !Rnd.OneChanceFrom(3))
+                        {
+                            if (m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Naval;
+                            else
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                        }
+                        else
+                        {
+                            if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                            {
+                                List<float> cResources = new List<float>();
+                                cResources.Add(m_fGrain + m_fGame);
+                                cResources.Add(m_fOre);
+                                cResources.Add(m_fWood);
+
+                                int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                switch (iChoosen)
+                                {
+                                    case 0:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                        break;
+                                    case 1:
+                                        pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                        break;
+                                    case 2:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                List<float> cResources = new List<float>();
+                                cResources.Add((pLand.Type.m_fGrain + pLand.Type.m_fGame) * pLand.m_cContents.Count);
+                                cResources.Add(pLand.Type.m_fOre * pLand.m_cContents.Count);
+                                cResources.Add(pLand.Type.m_fWood * pLand.m_cContents.Count);
+
+                                int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                switch (iChoosen)
+                                {
+                                    case 0:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                        break;
+                                    case 1:
+                                        pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                        break;
+                                    case 2:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+                    case SettlementSize.City:
+                        if (bCoast && m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                            pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
+                        else
+                        {
+                            if (bCoast && m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
+                            else
+                            {
+                                if (Rnd.OneChanceFrom(2))
+                                {
+                                    List<float> cResources = new List<float>();
+                                    cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel]);
+                                    cResources.Add(m_pCulture.MentalityValues[Mentality.Piety][m_iInfrastructureLevel]);
+                                    cResources.Add(m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel]);
+                                    cResources.Add(m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel]);
+                                    cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Selfishness][m_iInfrastructureLevel]);
+
+                                    int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                    switch (iChoosen)
+                                    {
+                                        case 0:
+                                            pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
+                                            break;
+                                        case 1:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Religious;
+                                            break;
+                                        case 2:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.MilitaryAcademy;
+                                            break;
+                                        case 3:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Gambling;
+                                            break;
+                                        case 4:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.SciencesAcademy;
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                    {
+                                        List<float> cResources = new List<float>();
+                                        cResources.Add(m_fGrain + m_fGame);
+                                        cResources.Add(m_fOre);
+                                        cResources.Add(m_fWood);
+
+                                        int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                        switch (iChoosen)
+                                        {
+                                            case 0:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                break;
+                                            case 1:
+                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                break;
+                                            case 2:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        List<float> cResources = new List<float>();
+                                        cResources.Add((pLand.Type.m_fGrain + pLand.Type.m_fGame) * pLand.m_cContents.Count);
+                                        cResources.Add(pLand.Type.m_fOre * pLand.m_cContents.Count);
+                                        cResources.Add(pLand.Type.m_fWood * pLand.m_cContents.Count);
+
+                                        int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                        switch (iChoosen)
+                                        {
+                                            case 0:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                break;
+                                            case 1:
+                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                break;
+                                            case 2:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case SettlementSize.Capital:
+                        if (bCoast && m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.NavalAcademy;
+                        else
+                        {
+                            if (bCoast && m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
+                            else
+                            {
+                                if (Rnd.OneChanceFrom(2))
+                                {
+                                    List<float> cResources = new List<float>();
+                                    cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel]);
+                                    cResources.Add(m_pCulture.MentalityValues[Mentality.Piety][m_iInfrastructureLevel]);
+                                    cResources.Add(m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel]);
+                                    cResources.Add(m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel]);
+                                    cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Selfishness][m_iInfrastructureLevel]);
+
+                                    int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                    switch (iChoosen)
+                                    {
+                                        case 0:
+                                            pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
+                                            break;
+                                        case 1:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Religious;
+                                            break;
+                                        case 2:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.MilitaryAcademy;
+                                            break;
+                                        case 3:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Gambling;
+                                            break;
+                                        case 4:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.SciencesAcademy;
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                    {
+                                        List<float> cResources = new List<float>();
+                                        cResources.Add(m_fGrain + m_fGame);
+                                        cResources.Add(m_fOre);
+                                        cResources.Add(m_fWood);
+
+                                        int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                        switch (iChoosen)
+                                        {
+                                            case 0:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                break;
+                                            case 1:
+                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                break;
+                                            case 2:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        List<float> cResources = new List<float>();
+                                        cResources.Add((pLand.Type.m_fGrain + pLand.Type.m_fGame) * pLand.m_cContents.Count);
+                                        cResources.Add(pLand.Type.m_fOre * pLand.m_cContents.Count);
+                                        cResources.Add(pLand.Type.m_fWood * pLand.m_cContents.Count);
+
+                                        int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                        switch (iChoosen)
+                                        {
+                                            case 0:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                break;
+                                            case 1:
+                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                break;
+                                            case 2:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case SettlementSize.Fort:
+                        if (bCoast)
+                            if (m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] > 1.75 &&
+                                m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel] > 1.75)
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Pirates;
+                            else
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Naval;
+                        else
+                            if (m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] > 1.75 &&
+                                m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel] > 1.75)
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Raiders;
+                            else
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Military;
+                        break;
+                }
+            }
+        }
+
         public void BuildSettlements(SettlementSize eSize, bool bFast)
         {
             if (!State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(eSize))
@@ -658,11 +992,11 @@ namespace Socium
 
             int iAverageMagicLimit = 0;
 
-            m_iFish = 0;
-            m_iGrain = 0;
-            m_iGame = 0;
-            m_iWood = 0;
-            m_iOre = 0;
+            m_fFish = 0;
+            m_fGrain = 0;
+            m_fGame = 0;
+            m_fWood = 0;
+            m_fOre = 0;
             m_iPopulation = 0;
 
             foreach (LandX pLand in m_cContents)
@@ -680,11 +1014,11 @@ namespace Socium
                     }
                 }
 
-                m_iFish += (int)(iCoast*3/pLand.MovementCost);
-                m_iGrain += (int)(pLand.m_cContents.Count * pLand.Type.m_fGrain);
-                m_iGame += (int)(pLand.m_cContents.Count * pLand.Type.m_fGame);
-                m_iWood += (int)(pLand.m_cContents.Count * pLand.Type.m_fWood);
-                m_iOre += (int)(pLand.m_cContents.Count * pLand.Type.m_fOre);
+                m_fFish += iCoast*3/pLand.MovementCost;
+                m_fGrain += pLand.m_cContents.Count * pLand.Type.m_fGrain;
+                m_fGame += pLand.m_cContents.Count * pLand.Type.m_fGame;
+                m_fWood += pLand.m_cContents.Count * pLand.Type.m_fWood;
+                m_fOre += pLand.m_cContents.Count * pLand.Type.m_fOre;
 
                 m_iPopulation += pLand.m_cContents.Count;
                 iAverageMagicLimit += m_pNation.m_iMagicLimit * pLand.m_cContents.Count;
@@ -692,11 +1026,11 @@ namespace Socium
 
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
 
-            if (m_iWood*2 < m_iPopulation && m_iOre*2 < m_iPopulation)
+            if (m_fWood*2 < m_iPopulation && m_fOre*2 < m_iPopulation)
                 m_iTechLevel -= 2;
-            else if (m_iWood + m_iOre < m_iPopulation)// || m_iOre < m_iPopulation)
+            else if (m_fWood + m_fOre < m_iPopulation)// || m_iOre < m_iPopulation)
                 m_iTechLevel--;
-            else if ((m_iWood > m_iPopulation*2 && m_iOre > m_iPopulation*2) || Rnd.OneChanceFrom(8))
+            else if ((m_fWood > m_iPopulation*2 && m_fOre > m_iPopulation*2) || Rnd.OneChanceFrom(8))
                 m_iTechLevel++;
 
             if (m_pNation.m_bInvader)
@@ -723,11 +1057,11 @@ namespace Socium
             if (m_iTechLevel == 0 && iAverageMagicLimit == 0)
                 m_iInfrastructureLevel = 0;
 
-            if ((m_iGrain + m_iFish + m_iGame)*2 < m_iPopulation)
+            if ((m_fGrain + m_fFish + m_fGame)*2 < m_iPopulation)
                 m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);            
-            if (m_iGrain + m_iFish + m_iGame < m_iPopulation || Rnd.OneChanceFrom(10))
+            if (m_fGrain + m_fFish + m_fGame < m_iPopulation || Rnd.OneChanceFrom(10))
                 m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);
-            if (m_iGrain + m_iFish + m_iGame > m_iPopulation * 2 && Rnd.OneChanceFrom(10))
+            if (m_fGrain + m_fFish + m_fGame > m_iPopulation * 2 && Rnd.OneChanceFrom(10))
                 m_iInfrastructureLevel++;
 
             if (m_iInfrastructureLevel < 0)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)

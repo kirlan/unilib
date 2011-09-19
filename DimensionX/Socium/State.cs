@@ -753,9 +753,9 @@ namespace Socium
                             m_cBorderWith[pState] = new List<Line>();
                     } 
                 
-                m_iFood += pProvince.m_iGrain + pProvince.m_iFish + pProvince.m_iGame;
-                m_iWood += pProvince.m_iWood;
-                m_iOre += pProvince.m_iOre;
+                m_iFood += (int)(pProvince.m_fGrain + pProvince.m_fFish + pProvince.m_fGame);
+                m_iWood += (int)pProvince.m_fWood;
+                m_iOre += (int)pProvince.m_fOre;
 
                 m_iPopulation += pProvince.m_iPopulation;
 
