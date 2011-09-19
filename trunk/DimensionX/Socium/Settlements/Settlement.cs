@@ -21,20 +21,20 @@ namespace Socium.Settlements
     public enum SettlementSpeciality
     { 
         None,
-        Fishing,
-        Lumberjack,
-        Hunting,
-        Mining,
-        Agricultural,
-        Livestock,
+        Fishers,
+        Lumberjacks,
+        Hunters,
+        Miners,
+        Peasants,
+        Farmers,
         Raiders,
         Pirates,
         Military,
         Naval,
-        Metalsmith,
-        Woodworking,
-        Jevellery,
-        Textile,
+        Factory,
+        Artisans,
+        Jevellers,
+        Tailors,
         Resort,
         Cultural,
         Religious,
@@ -55,7 +55,6 @@ namespace Socium.Settlements
         public int m_iDeltaBuildingsCount;
         public BuildingInfo m_pMainBuilding;
         public SettlementSize m_eSize;
-        public SettlementSpeciality m_eSpeciality = SettlementSpeciality.None;
 
         public SettlementInfo(SettlementSize eSize, string sName, int iMinPop, int iDeltaPop, int iMaxProfessionRank, int iMinBuildingsCount, int iDeltaBuildingsCount, BuildingInfo pMainBuilding)
         {
@@ -92,6 +91,7 @@ namespace Socium.Settlements
         }
 
         public SettlementInfo m_pInfo;
+        public SettlementSpeciality m_eSpeciality = SettlementSpeciality.None;
 
         public string m_sName;
 
@@ -144,13 +144,13 @@ namespace Socium.Settlements
             switch(m_iRuinsAge)
             {
                 case 0:
-                    return string.Format("{0} {1}", m_pInfo.m_sName, m_sName);
+                    return string.Format("{2} {0} {1}", m_pInfo.m_sName, m_sName, m_eSpeciality);
                 case 1:
-                    return string.Format("ruins of {0} {1}", m_pNation.m_sName, m_pInfo.m_sName).ToLower();
+                    return string.Format("ruins of {2} {0} {1}", m_pNation.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
                 case 2:
-                    return string.Format("ancient ruins of {0} {1}", m_pNation.m_sName, m_pInfo.m_sName).ToLower();
+                    return string.Format("ancient ruins of {2} {0} {1}", m_pNation.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
                 default:
-                    return string.Format("forgotten ruins of {0} {1}", m_pNation.m_sName, m_pInfo.m_sName).ToLower();
+                    return string.Format("forgotten ruins of {2} {0} {1}", m_pNation.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
             }
         }
     }

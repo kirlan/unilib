@@ -557,6 +557,10 @@ namespace Socium
             if (bFinalize)
                 BuildSeaRoutes(m_pGrid.CycleShift);
 
+            foreach (Province pProvince in m_aProvinces)
+                if (!pProvince.Forbidden)
+                    pProvince.SpecializeSettlements();
+            
             foreach (ContinentX pConti in m_aContinents)
             {
                 foreach (State pState in pConti.m_cStates)
