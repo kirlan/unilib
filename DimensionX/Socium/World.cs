@@ -851,6 +851,28 @@ namespace Socium
                     cStates.Add(pState);
                 }
             
+            //Позаботимся о том, чтобы у каждой расы пришельцев было своё государство
+            foreach(Nation pInvader in m_aLocalNations)
+                if (pInvader.m_bInvader)
+                {
+                    List<Province> cSeeds = new List<Province>();
+                    foreach (Province pProvince in m_aProvinces)
+                        if (pProvince.m_pNation == pInvader && pProvince.Owner == null)
+                            cSeeds.Add(pProvince);
+
+                    if(cSeeds.Count > 0)
+                    {
+                        Province pSeed = cSeeds[Rnd.Get(cSeeds.Count)];
+                        State pState = new State();
+                        pState.Start(pSeed);
+                        cStates.Add(pState);
+
+                        if (!m_aLocalNations.Contains(pState.m_pNation))
+                            throw new Exception();
+                        cUsed.Add(pSeed.m_pCenter.Continent);
+                    }
+                }
+
             //Позаботимся о том, чтобы на каждом континенте было хотя бы одно государство
             foreach (ContinentX pConti in m_aContinents)
             {
@@ -1318,7 +1340,8 @@ namespace Socium
                     State pOtherState = (pOtherHarbor.Key.Owner as LandX).m_pProvince.Owner as State;
                     RoadQuality ePathLevel = RoadQuality.Country;
 
-                    int iMaxHostility = (int)Math.Sqrt(Math.Max(pState.CalcHostility(pOtherState), pOtherState.CalcHostility(pState)));
+//                    int iMaxHostility = (int)Math.Sqrt(Math.Max(pState.CalcHostility(pOtherState), pOtherState.CalcHostility(pState)));
+                    int iMaxHostility = (int)Math.Max(pState.CalcHostility(pOtherState), pOtherState.CalcHostility(pState));
 
                     if (pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village &&
                         pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
