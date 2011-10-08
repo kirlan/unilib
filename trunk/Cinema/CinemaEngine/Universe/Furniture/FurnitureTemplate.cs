@@ -20,6 +20,12 @@ namespace CinemaEngine
 
         private List<FurnitureAnchor> m_cAnchors = new List<FurnitureAnchor>();
 
+        /// <summary>
+        /// список одновременно доступных способ использования предмета мебели -
+        /// например, на диване можно сидеть или лежать (это один способ, т.к. 
+        /// несколько разных актёров не могут ОДНОВРЕМЕННО и сидеть и лежать) И 
+        /// одновременно кто-то может стоять рядом с диваном.
+        /// </summary>
         internal List<FurnitureAnchor> Anchors
         {
             get { return m_cAnchors; }

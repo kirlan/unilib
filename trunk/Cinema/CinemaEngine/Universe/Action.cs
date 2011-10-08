@@ -14,6 +14,9 @@ namespace CinemaEngine
     {
         private string m_sName;
 
+        /// <summary>
+        /// Название действия
+        /// </summary>
         public string Name
         {
             get { return m_sName; }
@@ -22,12 +25,20 @@ namespace CinemaEngine
 
         private string m_sDescription;
 
+        /// <summary>
+        /// Художественное описание действия
+        /// </summary>
         public string Description
         {
             get { return m_sDescription; }
             set { m_sDescription = value; }
         }
 
+        /// <summary>
+        /// Вычиляет рейтинг хардкорности в пределах заданного жанра на основании присвоенных действия тэгов
+        /// </summary>
+        /// <param name="eGenre">жанр, рейтинг соответствия которому нужно определить</param>
+        /// <returns>вычисленный рейтинг - от 0 до GenreTag.MaxRating (5)</returns>
         public int GetRating(GenreTag.Genre eGenre)
         {
             int iRating = 0;
@@ -42,6 +53,10 @@ namespace CinemaEngine
             return iRating;
         }
 
+        /// <summary>
+        /// Вычисляет общий рейтинг хардкорности (сумма по всем жанрам)
+        /// </summary>
+        /// <returns>вычисленный рейтинг - может быть выше GenreTag.MaxRating (5)</returns>
         public int GetFullRating()
         {
             int iRating = 0;
@@ -55,6 +70,9 @@ namespace CinemaEngine
 
         private List<GenreTag> m_cTags = new List<GenreTag>();
 
+        /// <summary>
+        /// Список тэгов, описывающих действие с формальной точки зрения
+        /// </summary>
         public List<GenreTag> Tags
         {
             get { return m_cTags; }
@@ -62,6 +80,9 @@ namespace CinemaEngine
 
         private List<Role> m_cRoles = new List<Role>();
 
+        /// <summary>
+        /// Список ролей для участвующих в действии актёров
+        /// </summary>
         public List<Role> Roles
         {
             get { return m_cRoles; }
@@ -98,6 +119,10 @@ namespace CinemaEngine
             }
         }
 
+        /// <summary>
+        /// Присвоение. Действие становится точной копией другого действия.
+        /// </summary>
+        /// <param name="pUpdate">копируемое действие</param>
         public void Assign(Action pUpdate)
         {
             m_sName = pUpdate.m_sName;

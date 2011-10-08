@@ -66,9 +66,9 @@
     <Compile Include="VoronoiVertex.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FortuneVoronoi\FortuneVoronoi.csproj">
+    <ProjectReference Include="..\FortuneVoronoi\Fortune.csproj">
       <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
-      <Name>FortuneVoronoi</Name>
+      <Name>Fortune</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Random\Random.csproj">
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>

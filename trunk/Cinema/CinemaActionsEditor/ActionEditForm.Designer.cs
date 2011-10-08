@@ -306,11 +306,13 @@
             // 
             // ActorsGender
             // 
+            this.ActorsGender.CanBeEmpty = true;
             checkBoxProperties1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.ActorsGender.CheckBoxProperties = checkBoxProperties1;
             this.ActorsGender.Delimeter = "/";
             this.ActorsGender.DisplayMemberSingleItem = "";
             this.ActorsGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ActorsGender.EmptyString = "none";
             this.ActorsGender.FormattingEnabled = true;
             this.ActorsGender.Location = new System.Drawing.Point(266, 1);
             this.ActorsGender.Name = "ActorsGender";

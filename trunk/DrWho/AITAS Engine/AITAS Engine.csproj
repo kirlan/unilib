@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6AD61490-9146-4828-8594-BBE9C3F3E0E0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AITAS_Engine</RootNamespace>
+    <AssemblyName>AITAS Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\Attribute.cs" />
+    <Compile Include="Attributes\AttributeAwareness.cs" />
+    <Compile Include="Attributes\AttributeCoordination.cs" />
+    <Compile Include="Attributes\AttributeIngenuity.cs" />
+    <Compile Include="Attributes\AttributePresence.cs" />
+    <Compile Include="Attributes\AttributeResolve.cs" />
+    <Compile Include="Attributes\AttributeStrength.cs" />
+    <Compile Include="Character.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Skills\SkillAthletics.cs" />
+    <Compile Include="Skills\Skill.cs" />
+    <Compile Include="Skills\SkillConvince.cs" />
+    <Compile Include="Skills\SkillCraft.cs" />
+    <Compile Include="Skills\SkillCreation.cs" />
+    <Compile Include="Skills\SkillEntertainment.cs" />
+    <Compile Include="Skills\SkillFighting.cs" />
+    <Compile Include="Skills\SkillKnowledge.cs" />
+    <Compile Include="Skills\SkillMarksman.cs" />
+    <Compile Include="Skills\SkillMedicine.cs" />
+    <Compile Include="Skills\SkillScience.cs" />
+    <Compile Include="Skills\SkillSubterfuge.cs" />
+    <Compile Include="Skills\SkillSurvival.cs" />
+    <Compile Include="Skills\SkillTechnology.cs" />
+    <Compile Include="Skills\SkillTransport.cs" />
+    <Compile Include="Trait.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

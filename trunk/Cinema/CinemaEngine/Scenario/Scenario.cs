@@ -6,6 +6,7 @@ using System.Text;
 namespace CinemaEngine
 {
     /// <summary>
+    /// Самый верхний уровень. 
     /// Последовательность эпизодов, объединённая общим списком действующих лиц
     /// </summary>
     class Scenario
@@ -20,6 +21,9 @@ namespace CinemaEngine
         
         private List<Character> m_cRoles = new List<Character>();
 
+        /// <summary>
+        /// Список действующих лиц - персонажей
+        /// </summary>
         public List<Character> Roles
         {
             get { return m_cRoles; }
@@ -27,6 +31,9 @@ namespace CinemaEngine
 
         private List<Episode> m_cEpisodes;
 
+        /// <summary>
+        /// Список эпизодов
+        /// </summary>
         internal List<Episode> Episodes
         {
             get { return m_cEpisodes; }

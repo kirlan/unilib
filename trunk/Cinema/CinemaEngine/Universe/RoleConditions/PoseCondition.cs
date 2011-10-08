@@ -7,10 +7,15 @@ using System.Xml;
 
 namespace CinemaEngine.RoleConditions
 {
+    /// <summary>
+    /// Условие, основанное на позе персонажа.
+    /// </summary>
     public class PoseCondition : RoleCondition
     {
         private bool m_bForbidden = false;
-
+        /// <summary>
+        /// Признак того, является ли указанная поза требуемой или наоборот - недопустимой
+        /// </summary>
         public bool Forbidden
         {
             get { return m_bForbidden; }
@@ -18,7 +23,9 @@ namespace CinemaEngine.RoleConditions
         }
 
         private CharacterState.Pose m_ePose = CharacterState.Pose.Undefined;
-
+        /// <summary>
+        /// Поза персонажа
+        /// </summary>
         public CharacterState.Pose Pose
         {
             get { return m_ePose; }

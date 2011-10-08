@@ -7,12 +7,15 @@ using System.Collections.ObjectModel;
 namespace CinemaEngine
 {
     /// <summary>
-    /// Одно или несколько действий, происходящих (одновременно) в определённый промежуток времени
+    /// Одно или несколько параллельных действий, происходящих в определённый промежуток времени
     /// </summary>
     class Scene
     {
         private DateTime m_iTimeStamp;
 
+        /// <summary>
+        /// Время начала действия в сцене (от начала эпизода)
+        /// </summary>
         public DateTime TimeStamp
         {
             get { return m_iTimeStamp; }
@@ -21,6 +24,9 @@ namespace CinemaEngine
 
         private DateTime m_iLength;
 
+        /// <summary>
+        /// Длительность сцены
+        /// </summary>
         public DateTime Length
         {
             get { return m_iLength; }
@@ -33,6 +39,10 @@ namespace CinemaEngine
         /// </summary>
         private List<CharacterState> m_cRoles = new List<CharacterState>();
 
+        /// <summary>
+        /// Состояние всех действующих лиц в начале сцены.
+        /// Должно быть передано в сцену извне при создании сцены.
+        /// </summary>
         public List<CharacterState> Roles
         {
             get { return m_cRoles; }
@@ -51,6 +61,11 @@ namespace CinemaEngine
 
         private List<ActionCast> m_cActions = new List<ActionCast>();
 
+        /// <summary>
+        /// Список происходящих одновременно действий (например, в комнате три человека - двое разговаривают,
+        /// а третий смотрит телевизор - это 2 параллельных действия).
+        /// Большинство сцен, вероятно, будут иметь только одно действие.
+        /// </summary>
         public List<ActionCast> Actions
         {
             get { return m_cActions; }
