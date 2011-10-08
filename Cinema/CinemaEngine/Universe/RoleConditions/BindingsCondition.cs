@@ -9,17 +9,25 @@ using ReadOnlyDictionary;
 
 namespace CinemaEngine.RoleConditions
 {
+    /// <summary>
+    /// Условие, основанное на связях персонажа с другими персонажами ("сосёт член", "целится в", "держит за руку"...)
+    /// или с самим собой - если это просто состояния ("связаны ноги", "связаны руки"...)
+    /// </summary>
     public class BindingsCondition : RoleCondition
     {
         private List<KeyValuePair<string, string>> m_cAllowed = new List<KeyValuePair<string, string>>();
-
+        /// <summary>
+        /// Состояния, наличие которых у персонажа необходимо для соответствия роли.
+        /// </summary>
         public ReadOnlyCollection<KeyValuePair<string, string>> Allowed
         {
             get { return new ReadOnlyCollection<KeyValuePair<string, string>>(m_cAllowed); }
         }
 
         private List<KeyValuePair<string, string>> m_cForbidden = new List<KeyValuePair<string, string>>();
-
+        /// <summary>
+        /// Состояния, наличие которых у персонажа недопустимо для соответствия роли.
+        /// </summary>
         public ReadOnlyCollection<KeyValuePair<string, string>> Forbidden
         {
             get { return new ReadOnlyCollection<KeyValuePair<string, string>>(m_cForbidden); }

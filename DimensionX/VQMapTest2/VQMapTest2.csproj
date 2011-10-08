@@ -80,9 +80,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FortuneVoronoi\FortuneVoronoi.csproj">
+    <ProjectReference Include="..\FortuneVoronoi\Fortune.csproj">
       <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
-      <Name>FortuneVoronoi</Name>
+      <Name>Fortune</Name>
     </ProjectReference>
     <ProjectReference Include="..\Landscape\Landscape.csproj">
       <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>

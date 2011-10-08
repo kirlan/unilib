@@ -6,12 +6,15 @@ using System.Text;
 namespace CinemaEngine
 {
     /// <summary>
-    /// Персонаж
+    /// Персонаж сценария (не актёр!)
     /// </summary>
     public class Character
     {
         private string m_sName;
 
+        /// <summary>
+        /// Имя персонажа
+        /// </summary>
         public string Name
         {
             get { return m_sName; }
@@ -20,6 +23,9 @@ namespace CinemaEngine
 
         private Actor.Gender m_eGender;
 
+        /// <summary>
+        /// Пол персонажа
+        /// </summary>
         public Actor.Gender Gender
         {
             get { return m_eGender; }
@@ -28,6 +34,9 @@ namespace CinemaEngine
 
         private Dictionary<Actor.Gender, int> m_cTemper = new Dictionary<Actor.Gender, int>();
 
+        /// <summary>
+        /// ?
+        /// </summary>
         public Dictionary<Actor.Gender, int> Temper
         {
             get { return m_cTemper; }
@@ -35,6 +44,9 @@ namespace CinemaEngine
 
         private Actor m_pPerformer;
 
+        /// <summary>
+        /// Актёр, назначеный играть этого персонажа
+        /// </summary>
         public Actor Performer
         {
             get { return m_pPerformer; }

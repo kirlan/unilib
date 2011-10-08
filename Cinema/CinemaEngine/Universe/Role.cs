@@ -15,7 +15,9 @@ namespace CinemaEngine
     public class Role
     {
         private string m_sName;
-
+        /// <summary>
+        /// Условное название роли (Палач, Ведьма, Парень1, Парень2, Девушка и т.д.)
+        /// </summary>
         public string Name
         {
             get { return m_sName; }
@@ -23,6 +25,10 @@ namespace CinemaEngine
 
         private Dictionary<RoleCondition.ConditionType, RoleCondition> m_cConditions = new Dictionary<RoleCondition.ConditionType, RoleCondition>();
 
+        /// <summary>
+        /// Условия, которым должен соответствовать актёр, чтобы иметь возможность исполнять эту роль.
+        /// Могут быть трёх типов: поза (стоит, сидит, лежит и т.д.), пол и взаимодействие с другими актёрами (держит за руку, смотрит, обнимает и пр.)
+        /// </summary>
         public Dictionary<RoleCondition.ConditionType, RoleCondition> Conditions
         {
             get { return m_cConditions; }
@@ -30,6 +36,9 @@ namespace CinemaEngine
 
         private Dictionary<RoleCondition.ConditionType, RoleCondition> m_cConsequences = new Dictionary<RoleCondition.ConditionType, RoleCondition>();
 
+        /// <summary>
+        /// Изменение состояния или позы актёра после отыгрыша роли.
+        /// </summary>
         public Dictionary<RoleCondition.ConditionType, RoleCondition> Consequences
         {
             get { return m_cConsequences; }

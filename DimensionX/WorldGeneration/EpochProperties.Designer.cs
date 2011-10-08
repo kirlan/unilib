@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            PresentationControls.CheckBoxProperties checkBoxProperties3 = new PresentationControls.CheckBoxProperties();
             PresentationControls.CheckBoxProperties checkBoxProperties1 = new PresentationControls.CheckBoxProperties();
+            PresentationControls.CheckBoxProperties checkBoxProperties2 = new PresentationControls.CheckBoxProperties();
             this.PresetsPanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -112,7 +112,7 @@
             // 
             this.PresetsPanel.Controls.Add(this.tableLayoutPanel1);
             this.PresetsPanel.Controls.Add(this.panel5);
-            this.PresetsPanel.Location = new System.Drawing.Point(14, 54);
+            this.PresetsPanel.Location = new System.Drawing.Point(3, 53);
             this.PresetsPanel.Name = "PresetsPanel";
             this.PresetsPanel.Size = new System.Drawing.Size(418, 221);
             this.PresetsPanel.TabIndex = 0;
@@ -210,8 +210,8 @@
             // NativesRacesSet
             // 
             this.NativesRacesSet.CanBeEmpty = false;
-            checkBoxProperties3.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.NativesRacesSet.CheckBoxProperties = checkBoxProperties3;
+            checkBoxProperties1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.NativesRacesSet.CheckBoxProperties = checkBoxProperties1;
             this.NativesRacesSet.Delimeter = ", ";
             this.NativesRacesSet.DisplayMemberSingleItem = "";
             this.NativesRacesSet.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -354,8 +354,8 @@
             // InvadersRacesSet
             // 
             this.InvadersRacesSet.CanBeEmpty = false;
-            checkBoxProperties1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.InvadersRacesSet.CheckBoxProperties = checkBoxProperties1;
+            checkBoxProperties2.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.InvadersRacesSet.CheckBoxProperties = checkBoxProperties2;
             this.InvadersRacesSet.Delimeter = ", ";
             this.InvadersRacesSet.DisplayMemberSingleItem = "";
             this.InvadersRacesSet.Dock = System.Windows.Forms.DockStyle.Fill;

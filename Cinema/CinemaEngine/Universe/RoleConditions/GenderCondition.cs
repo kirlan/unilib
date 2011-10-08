@@ -7,10 +7,15 @@ using System.Xml;
 
 namespace CinemaEngine.RoleConditions
 {
+    /// <summary>
+    /// Условие, основанное на поле персонажа
+    /// </summary>
     public class GenderCondition : RoleCondition
     {
         private List<Actor.Gender> m_cGenders = new List<Actor.Gender>();
-
+        /// <summary>
+        /// Список полов, к которым может принадлежать персонаж для соответствия роли
+        /// </summary>
         public List<Actor.Gender> Genders
         {
             get { return m_cGenders; }
