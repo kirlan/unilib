@@ -78,6 +78,10 @@
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\UniLibXML\UniLibXML.csproj">
+      <Project>{86734B75-7AAB-4904-9E86-212B7B370E2F}</Project>
+      <Name>UniLibXML</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FortuneVoronoi\Fortune.csproj">
       <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
       <Name>Fortune</Name>

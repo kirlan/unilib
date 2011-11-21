@@ -554,8 +554,8 @@ namespace Socium
 
             BuildStates(m_pGrid.CycleShift, !bFinalize);
 
-            if (bFinalize)
-                BuildSeaRoutes(m_pGrid.CycleShift);
+            //if (bFinalize)
+            //    BuildSeaRoutes(m_pGrid.CycleShift);
 
             foreach (Province pProvince in m_aProvinces)
                 if (!pProvince.Forbidden)

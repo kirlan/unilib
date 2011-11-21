@@ -71,6 +71,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RacesSet.cs" />
     <Compile Include="ProgressPreset.cs" />
+    <Compile Include="WorldPreset.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EpochProperties.resx">
@@ -94,6 +95,10 @@
     <ProjectReference Include="..\..\UniLibControls\UniLibControls.csproj">
       <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
       <Name>UniLibControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UniLibXML\UniLibXML.csproj">
+      <Project>{86734B75-7AAB-4904-9E86-212B7B370E2F}</Project>
+      <Name>UniLibXML</Name>
     </ProjectReference>
     <ProjectReference Include="..\Landscape\Landscape.csproj">
       <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>

@@ -32,7 +32,6 @@
             this.StartGenerationButton = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.GridsManagerButton = new System.Windows.Forms.Button();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.AgesView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -44,11 +43,16 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.epochProperties1 = new WorldGeneration.EpochProperties();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.GridsComboBox = new System.Windows.Forms.ComboBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.mapProperties1 = new WorldGeneration.MapProperties();
-            this.epochProperties1 = new WorldGeneration.EpochProperties();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -56,8 +60,9 @@
             // 
             // StartGenerationButton
             // 
+            this.StartGenerationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.StartGenerationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.StartGenerationButton.Location = new System.Drawing.Point(374, 362);
+            this.StartGenerationButton.Location = new System.Drawing.Point(732, 362);
             this.StartGenerationButton.Name = "StartGenerationButton";
             this.StartGenerationButton.Size = new System.Drawing.Size(162, 31);
             this.StartGenerationButton.TabIndex = 8;
@@ -81,18 +86,14 @@
             this.GridsManagerButton.TabIndex = 2;
             this.GridsManagerButton.Text = "Show grids manager...";
             this.toolTip1.SetToolTip(this.GridsManagerButton, "Build completely new grid to use it and - optional - save to file for future use." +
-        "");
+                    "");
             this.GridsManagerButton.UseVisualStyleBackColor = true;
             this.GridsManagerButton.Click += new System.EventHandler(this.GridsManagerButton_Click);
             // 
-            // folderBrowserDialog1
-            // 
-            this.folderBrowserDialog1.Description = "No working folder settings found. Please, select a folder to store World Builder " +
-    "data.";
-            this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            // 
             // groupBox5
             // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.AgesView);
             this.groupBox5.Controls.Add(this.tableLayoutPanel1);
             this.groupBox5.Controls.Add(this.epochProperties1);
@@ -105,6 +106,8 @@
             // 
             // AgesView
             // 
+            this.AgesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.AgesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -145,6 +148,8 @@
             // 
             // tableLayoutPanel1
             // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 5;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -209,6 +214,21 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // epochProperties1
+            // 
+            this.epochProperties1.AdvancedMode = false;
+            this.epochProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.epochProperties1.BackColor = System.Drawing.Color.White;
+            this.epochProperties1.Enabled = false;
+            this.epochProperties1.Epoch = null;
+            this.epochProperties1.Location = new System.Drawing.Point(5, 131);
+            this.epochProperties1.Name = "epochProperties1";
+            this.epochProperties1.Size = new System.Drawing.Size(425, 215);
+            this.epochProperties1.TabIndex = 4;
+            this.epochProperties1.UpdateEvent += new WorldGeneration.EpochProperties.UpdateEventHandler(this.epochProperties1_UpdateEvent);
+            // 
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.GridsComboBox);
@@ -233,6 +253,7 @@
             // 
             // checkBox1
             // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkBox1.Location = new System.Drawing.Point(16, 370);
@@ -246,25 +267,58 @@
             // mapProperties1
             // 
             this.mapProperties1.AdvancedMode = false;
+            this.mapProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.mapProperties1.BackColor = System.Drawing.Color.White;
+            this.mapProperties1.ContinentsCount = 5;
             this.mapProperties1.Enabled = false;
+            this.mapProperties1.EquatorPosition = 50;
+            this.mapProperties1.LandMassesCount = 150;
+            this.mapProperties1.LandsCount = 3000;
             this.mapProperties1.Location = new System.Drawing.Point(9, 55);
             this.mapProperties1.LocationsGrid = null;
             this.mapProperties1.Name = "mapProperties1";
+            this.mapProperties1.PartialMap = false;
+            this.mapProperties1.PoleDistance = 45;
             this.mapProperties1.Size = new System.Drawing.Size(443, 229);
+            this.mapProperties1.StatesCount = 8;
             this.mapProperties1.TabIndex = 16;
+            this.mapProperties1.WaterPercent = 66;
             // 
-            // epochProperties1
+            // button5
             // 
-            this.epochProperties1.AdvancedMode = false;
-            this.epochProperties1.BackColor = System.Drawing.Color.White;
-            this.epochProperties1.Enabled = false;
-            this.epochProperties1.Epoch = null;
-            this.epochProperties1.Location = new System.Drawing.Point(5, 131);
-            this.epochProperties1.Name = "epochProperties1";
-            this.epochProperties1.Size = new System.Drawing.Size(425, 215);
-            this.epochProperties1.TabIndex = 4;
-            this.epochProperties1.UpdateEvent += new WorldGeneration.EpochProperties.UpdateEventHandler(this.epochProperties1_UpdateEvent);
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button5.Location = new System.Drawing.Point(456, 362);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(162, 31);
+            this.button5.TabIndex = 18;
+            this.button5.Text = "Load world preset";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.LoadWorldPreset_Click);
+            // 
+            // button6
+            // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button6.Location = new System.Drawing.Point(288, 362);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(162, 31);
+            this.button6.TabIndex = 19;
+            this.button6.Text = "Save world preset";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.SaveWorldPreset_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.DefaultExt = "xml";
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "XML files|*.xml|All files|*.*";
+            this.openFileDialog1.Title = "Load Dimension X world preset file";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "xml";
+            this.saveFileDialog1.Filter = "XML files|*.xml|All files|*.*";
+            this.saveFileDialog1.Title = "Save Dimension X world preset file";
             // 
             // GenerationForm
             // 
@@ -272,6 +326,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(906, 401);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.mapProperties1);
             this.Controls.Add(this.groupBox5);
@@ -297,7 +353,6 @@
 
         private System.Windows.Forms.Button StartGenerationButton;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.ComboBox GridsComboBox;
         private System.Windows.Forms.Button GridsManagerButton;
@@ -315,5 +370,10 @@
         private EpochProperties epochProperties1;
         private MapProperties mapProperties1;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }
