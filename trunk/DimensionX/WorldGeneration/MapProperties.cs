@@ -217,41 +217,49 @@ namespace WorldGeneration
         public int LandsCount
         {
             get { return LandsCountBar.Value; }
+            set { LandsCountBar.Value = value; }
         }
 
         public int LandMassesCount
         {
             get { return LandMassesCountBar.Value; }
+            set { LandMassesCountBar.Value = value; }
         }
 
         public int ContinentsCount
         {
             get { return (int)ContinentsCountEdit.Value; }
+            set { ContinentsCountEdit.Value = value; }
         }
 
         public int WaterPercent
         {
             get { return WaterPercentBar.Value; }
+            set { WaterPercentBar.Value = value; }
         }
 
         public bool PartialMap
         {
             get { return PartialMapBox.Checked; }
+            set { PartialMapBox.Checked = value; }
         }
 
         public int EquatorPosition
         {
             get { return EquatorBar.Value; }
+            set { EquatorBar.Value = value; }
         }
 
         public int PoleDistance
         {
             get { return PoleBar.Value; }
+            set { PoleBar.Value = value; }
         }
 
         public int StatesCount
         {
             get { return StatesCountBar.Value; }
+            set { StatesCountBar.Value = value; }
         }
 
         public void Randomize()

@@ -564,7 +564,7 @@ namespace LandscapeGeneration
 
         public bool m_bLoaded = false;
 
-        private string m_sFilename;
+        public string m_sFilename;
 
         public LocationsGrid(string sFilename)
         {

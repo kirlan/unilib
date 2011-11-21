@@ -19,6 +19,11 @@ namespace WorldGeneration
         public EpochWrapper()
         { }
 
+        public EpochWrapper(Epoch pEpoch)
+        {
+            m_pEpoch = pEpoch;
+        }
+
         public string Name
         {
             get { return m_pEpoch.m_sName; }

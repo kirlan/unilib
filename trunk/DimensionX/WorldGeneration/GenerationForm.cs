@@ -18,8 +18,8 @@ namespace WorldGeneration
     {
         private string m_sWorkingDir = "";
 
-        private LocationsGrid<LocationX> m_cLocations = null;
-        private LocationsGrid<LocationX> m_cLastUsedLocations = null;
+        private LocationsGrid<LocationX> m_cLocationsGrid = null;
+        private LocationsGrid<LocationX> m_cLastUsedGrid = null;
         private World m_pWorld = null;
 
         public World World
@@ -51,13 +51,13 @@ namespace WorldGeneration
 
             Refresh();
 
-            if (m_cLastUsedLocations == m_cLocations)
-                m_cLastUsedLocations.Reset();
+            if (m_cLastUsedGrid == m_cLocationsGrid)
+                m_cLastUsedGrid.Reset();
             else
             {
-                if (m_cLastUsedLocations != null)
-                    m_cLastUsedLocations.Unload();
-                m_cLastUsedLocations = m_cLocations;
+                if (m_cLastUsedGrid != null)
+                    m_cLastUsedGrid.Unload();
+                m_cLastUsedGrid = m_cLocationsGrid;
             }
 
             List<Epoch> cEpoches = new List<Epoch>();
@@ -65,7 +65,7 @@ namespace WorldGeneration
             foreach (ListViewItem pItem in AgesView.Items)
                 cEpoches.Add((pItem.Tag as EpochWrapper).GetEpochInfo());
 
-            m_pWorld = new World(m_cLastUsedLocations,
+            m_pWorld = new World(m_cLastUsedGrid,
                 mapProperties1.ContinentsCount,
                 !mapProperties1.PartialMap,
                 mapProperties1.LandsCount,
@@ -176,14 +176,14 @@ namespace WorldGeneration
             if (GridsComboBox.SelectedIndex == -1)
                 return;
 
-            m_cLocations = (LocationsGrid<LocationX>)GridsComboBox.SelectedItem;
+            m_cLocationsGrid = (LocationsGrid<LocationX>)GridsComboBox.SelectedItem;
 
             groupBox5.Enabled = true;
             groupBox6.Enabled = true;
             mapProperties1.Enabled = true;
             StartGenerationButton.Enabled = true;
 
-            mapProperties1.LocationsGrid = m_cLocations;
+            mapProperties1.LocationsGrid = m_cLocationsGrid;
             //CalculateLimits(m_cLocations.m_iLocationsCount);
 
             if (AgesView.Items.Count == 0)
@@ -291,6 +291,79 @@ namespace WorldGeneration
                     button3.Enabled = AgesView.SelectedItems[0].Index > 0;
                     button4.Enabled = AgesView.SelectedItems[0].Index < AgesView.Items.Count - 1;
                 }
+        }
+
+        private void SaveWorldPreset_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                if (m_cLastUsedGrid == m_cLocationsGrid)
+                    m_cLastUsedGrid.Reset();
+                else
+                {
+                    if (m_cLastUsedGrid != null)
+                        m_cLastUsedGrid.Unload();
+                    m_cLastUsedGrid = m_cLocationsGrid;
+                }
+
+                List<Epoch> cEpoches = new List<Epoch>();
+
+                foreach (ListViewItem pItem in AgesView.Items)
+                    cEpoches.Add((pItem.Tag as EpochWrapper).GetEpochInfo());
+
+                WorldPreset pWorldPreset = new WorldPreset(m_cLastUsedGrid,
+                    mapProperties1.ContinentsCount,
+                    !mapProperties1.PartialMap,
+                    mapProperties1.LandsCount,
+                    mapProperties1.StatesCount,
+                    mapProperties1.LandMassesCount,
+                    mapProperties1.WaterPercent,
+                    mapProperties1.EquatorPosition,
+                    mapProperties1.PoleDistance,
+                    cEpoches.ToArray());
+
+                pWorldPreset.Save(saveFileDialog1.FileName);
+            }
+        }
+
+        private void LoadWorldPreset_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                WorldPreset pWorldPreset = new WorldPreset(openFileDialog1.FileName, GridsComboBox.Items);
+                if (pWorldPreset.m_pLocationsGrid != null)
+                    GridsComboBox.SelectedItem = pWorldPreset.m_pLocationsGrid;
+
+                checkBox1.Checked = true;
+
+                mapProperties1.LandsCount = pWorldPreset.m_iLands;
+                mapProperties1.LandMassesCount = pWorldPreset.m_iLandMasses;
+                mapProperties1.ContinentsCount = pWorldPreset.m_iContinents;
+                mapProperties1.WaterPercent = pWorldPreset.m_iOcean;
+
+                mapProperties1.PartialMap = !pWorldPreset.m_bGreatOcean;
+                mapProperties1.EquatorPosition = pWorldPreset.m_iEquator;
+                mapProperties1.PoleDistance = pWorldPreset.m_iPole;
+
+                mapProperties1.StatesCount = pWorldPreset.m_iStates;
+
+                AgesView.Items.Clear();
+
+                foreach (Epoch pEpoch in pWorldPreset.m_aEpoches)
+                {
+                    EpochWrapper pEpochInfo = new EpochWrapper(pEpoch);
+
+                    ListViewItem pItem = AgesView.Items.Add(pEpochInfo.Name);
+                    pItem.SubItems.Add(pEpochInfo.NativesPresetString);
+                    pItem.SubItems.Add(pEpochInfo.NativesRacesString);
+                    pItem.SubItems.Add(pEpochInfo.Length.ToString());
+
+                    pItem.Tag = pEpochInfo;
+                }
+
+                if (AgesView.Items.Count > 0)
+                    AgesView.Items[0].Selected = true;
+            }
         }
     }
 }
