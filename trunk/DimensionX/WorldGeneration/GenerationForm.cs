@@ -65,6 +65,8 @@ namespace WorldGeneration
             foreach (ListViewItem pItem in AgesView.Items)
                 cEpoches.Add((pItem.Tag as EpochWrapper).GetEpochInfo());
 
+            WaitForm.StartWait();
+
             m_pWorld = new World(m_cLastUsedGrid,
                 mapProperties1.ContinentsCount,
                 !mapProperties1.PartialMap,
@@ -75,8 +77,12 @@ namespace WorldGeneration
                 mapProperties1.WaterPercent,
                 mapProperties1.EquatorPosition,
                 mapProperties1.PoleDistance,
-                cEpoches.ToArray());
-            
+                cEpoches.ToArray(),
+                WaitForm.BeginStep,
+                WaitForm.ProgressStep);
+
+            WaitForm.CloseWait();
+
             Cursor = Cursors.Arrow;
 
             StartGenerationButton.Enabled = true;

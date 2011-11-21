@@ -485,12 +485,7 @@ namespace Socium
         /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
         /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
-        /// <param name="iRacesCount">Количество различных рас, населяющих мир.</param>
-        /// <param name="iMinTechLevel">Минимальный возможный в этом мире уровень технического развития.</param>
-        /// <param name="iMaxTechLevel">Максимальный возможный в этом мире уровень технического развития.</param>
-        /// <param name="iMinMagicLevel">Минимальный возможный в этом мире уровень владения магией.</param>
-        /// <param name="iMaxMagicLevel">Максимальный возможный в этом мире уровень владения магией.</param>
-        /// <param name="iInvasionProbability">Вероятность вторжения из более развитого мира (0-100%).</param>
+        /// <param name="aEpoches">Информация об эпохах развития мира (расы, техническое развитие, магические способности, пришельцы и т.д....)</param>
         public World(LocationsGrid<LocationX> cLocations, 
                      int iContinents, 
                      bool bGreatOcean, 
@@ -501,17 +496,21 @@ namespace Socium
                      int iOcean, 
                      int iEquator, 
                      int iPole, 
-                     Epoch[] aEpoches)
-            : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole)
+                     Epoch[] aEpoches,
+                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+            : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole, BeginStep, ProgressStep)
         {
-            Create(iProvinces, iStates, aEpoches);
+            Create(iProvinces, iStates, aEpoches, BeginStep, ProgressStep);
         }
 
         Epoch[] m_aEpoches;
 
         private void Create(int iProvinces, 
-                            int iStates, 
-                            Epoch[] aEpoches)
+                            int iStates,
+                            Epoch[] aEpoches,
+                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
             Language.ResetUsedLists();
             Epoch.s_cUsedNames.Clear();
@@ -528,39 +527,61 @@ namespace Socium
 
                 for (int i = 0; i < pEpoch.m_iLength - 1; i++)
                 {
-                    PopulateWorld(pEpoch, false);
+                    BeginStep("Simulating history - " + pEpoch.m_sName + " (" + (i+1).ToString() + ")...", 8);
+                    PopulateWorld(pEpoch, false, BeginStep, ProgressStep);
                     Reset(pEpoch);
                 }
 
                 iCounter--;
 
-                PopulateWorld(pEpoch, iCounter == 0);
+                BeginStep("Simulating history - " + pEpoch.m_sName + " (" + pEpoch.m_iLength.ToString() + ")...", 8);
+                PopulateWorld(pEpoch, iCounter == 0, BeginStep, ProgressStep);
             }
         }
 
-        private void PopulateWorld(Epoch pEpoch, bool bFinalize)
+        private void PopulateWorld(Epoch pEpoch, bool bFinalize,
+                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
             SetWorldLevels(pEpoch);
 
             AddRaces(pEpoch);
             if (bFinalize)
                 AddInvadersRaces(pEpoch);
+
+            //BeginStep("Distributing races...", 1);
             DistributeRacesToLandMasses();
+            //ProgressStep();
+            
+            //BeginStep("Populating lands...", 1);
             PopulateAreas();
+            //ProgressStep();
 
+            //BeginStep("Building provinces...", 1);
             BuildProvinces();
+            //ProgressStep();
 
-            BuildCities(m_pGrid.CycleShift, !bFinalize);
+//            BeginStep("Building cities...", 1);
+//            ProgressStep();
+            BuildCities(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
 
-            BuildStates(m_pGrid.CycleShift, !bFinalize);
+//            BeginStep("Building states...", 1);
+            //ProgressStep();
+            BuildStates(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
 
             //if (bFinalize)
             //    BuildSeaRoutes(m_pGrid.CycleShift);
 
+            BeginStep("Specializing settlements...", m_aProvinces.Length);
             foreach (Province pProvince in m_aProvinces)
+            {
                 if (!pProvince.Forbidden)
                     pProvince.SpecializeSettlements();
-            
+                ProgressStep();
+            }
+
+            BeginStep("Renaming provinces...", m_aStates.Length);
+            //ProgressStep();
             foreach (ContinentX pConti in m_aContinents)
             {
                 foreach (State pState in pConti.m_cStates)
@@ -610,6 +631,8 @@ namespace Socium
                         pState.m_sName = pState.m_cContents[0].m_sName;
 
                     pState.CalculateMagic();
+                    
+                    ProgressStep();
                 }
 
                 //если на континенте единственное государство, то переименовываем континент по имени этого государства
@@ -628,6 +651,8 @@ namespace Socium
                         pConti.m_sName = pConti.m_cAreas[0].m_sName;
 
             }
+
+            //ProgressStep();
         }
 
         private void BuildProvinces()
@@ -830,8 +855,12 @@ namespace Socium
                 pProvince.Finish(m_pGrid.CycleShift);
         }
 
-        private void BuildStates(float fCycleShift, bool bFast)
+        private void BuildStates(float fCycleShift, bool bFast,
+                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
+            BeginStep("Building states...", 10);
+
             List<ContinentX> cUsed = new List<ContinentX>();
 
             List<State> cStates = new List<State>();
@@ -850,6 +879,8 @@ namespace Socium
 
                     cStates.Add(pState);
                 }
+
+            ProgressStep();
             
             //Позаботимся о том, чтобы у каждой расы пришельцев было своё государство
             foreach(Nation pInvader in m_aLocalNations)
@@ -872,6 +903,8 @@ namespace Socium
                         cUsed.Add(pSeed.m_pCenter.Continent);
                     }
                 }
+
+            ProgressStep();
 
             //Позаботимся о том, чтобы на каждом континенте было хотя бы одно государство
             foreach (ContinentX pConti in m_aContinents)
@@ -912,6 +945,8 @@ namespace Socium
                 cUsed.Add(pConti);
             }
 
+            ProgressStep();
+
             //догоняем количество государств до заданного числа
             while(cStates.Count < m_iStatesCount)
             {
@@ -948,6 +983,8 @@ namespace Socium
                     throw new Exception();
             }
 
+            ProgressStep();
+
             //приращиваем территории всех государств до заданного лимита
             int iMaxStateSize = m_aProvinces.Length / cStates.Count;
             bool bContinue = false;
@@ -959,6 +996,8 @@ namespace Socium
                         bContinue = true;
             }
             while (bContinue);
+
+            ProgressStep();
 
             //убедимся, что государства заняли весь континент.
             //если остались ничейные провинции - будем принудительно наращивать все государства, пока пустых мест не останется.
@@ -983,6 +1022,8 @@ namespace Socium
             }
             while (iCnt++ < m_aProvinces.Length);
 
+            ProgressStep();
+
             //если остались незанятые провинции - стартуем там дополнительные государства и приращиваем их территории до заданного лимита
             foreach(Province pProvince in m_aProvinces)
             {
@@ -996,6 +1037,8 @@ namespace Socium
             }
 
             m_aStates = cStates.ToArray();
+
+            ProgressStep();
 
             //строим столицы, налаживаем дипломатические связи и распределяем по континентам
             foreach (State pState in m_aStates)
@@ -1019,6 +1062,8 @@ namespace Socium
                 pConti.m_cStates.Add(pState);
             }
 
+            ProgressStep();
+
             //сглаживаем культурные различия соседних стран
             //высокоразвитые страны "подтягивают" более отсталые, но не наоборот
             foreach (State pState in m_aStates)
@@ -1038,6 +1083,8 @@ namespace Socium
 
                 pState.m_iSocialEquality = (pState.m_iSocialEquality + iSum) / (iCounter + 1);
             }
+
+            ProgressStep();
 
             //строим форты на границах враждующих государств и фиксим дороги
             Dictionary<State, Dictionary<State, int>> cHostility = new Dictionary<State, Dictionary<State, int>>();
@@ -1581,8 +1628,12 @@ namespace Socium
             }
         }
 
-        private void BuildCities(float fCycleShift, bool bFast)
+        private void BuildCities(float fCycleShift, bool bFast,
+                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
+            BeginStep("Building cities...", m_aProvinces.Length * 2 + 1);
+
             foreach (Province pProvince in m_aProvinces)
             {
                 if (!pProvince.Forbidden)
@@ -1598,10 +1649,14 @@ namespace Socium
                     if (!bFast)
                         pProvince.BuildRoads(RoadQuality.Normal, fCycleShift);
                 }
+
+                ProgressStep();
             }
 
             if (!bFast)
                 BuildInterstateRoads(fCycleShift);
+
+            ProgressStep();
 
             foreach (Province pProvince in m_aProvinces)
             {
@@ -1616,6 +1671,8 @@ namespace Socium
 
                     pProvince.BuildLairs(m_aLands.Length / 125);
                 }
+
+                ProgressStep();
             }
         }
 
