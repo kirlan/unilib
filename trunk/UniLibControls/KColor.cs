@@ -44,7 +44,15 @@ namespace nsUniLibControls
         public double Hue
         {
             get { return m_fHue; }
-            set { m_fHue = value; Convert2RGB(); }
+            set 
+            { 
+                m_fHue = value;
+                while (m_fHue > 360)
+                    m_fHue -= 360;
+                while (m_fHue < 0)
+                    m_fHue += 360;
+                Convert2RGB(); 
+            }
         }
 
         private double m_fSaturation = 0;
@@ -54,7 +62,11 @@ namespace nsUniLibControls
         public double Saturation
         {
             get { return m_fSaturation; }
-            set { m_fSaturation = value; Convert2RGB(); }
+            set 
+            { 
+                m_fSaturation = Math.Min(Math.Max(value, 0), 1); 
+                Convert2RGB(); 
+            }
         }
 
         private double m_fLightness = 0;
@@ -64,7 +76,11 @@ namespace nsUniLibControls
         public double Lightness
         {
             get { return m_fLightness; }
-            set { m_fLightness = value; Convert2RGB(); }
+            set 
+            {
+                m_fLightness = Math.Min(Math.Max(value, 0), 1);
+                Convert2RGB(); 
+            }
         }
 
         public Color RGB

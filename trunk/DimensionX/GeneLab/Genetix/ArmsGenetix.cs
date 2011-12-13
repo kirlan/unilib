@@ -69,7 +69,8 @@ namespace GeneLab.Genetix
                         pMutant.m_eArmsCount = ArmsCount.Bimanous;
                 }
 
-                pMutant.m_eArmsType = (ArmsType)Rnd.Get(typeof(ArmsType));
+                if (Rnd.OneChanceFrom(2))
+                    pMutant.m_eArmsType = (ArmsType)Rnd.Get(typeof(ArmsType));
 
                 return pMutant;
             }
@@ -79,23 +80,6 @@ namespace GeneLab.Genetix
 
         public GenetixBase MutateNation()
         {
-            if (Rnd.OneChanceFrom(20))
-            {
-                ArmsGenetix pMutant = new ArmsGenetix(this);
-
-                if (Rnd.OneChanceFrom(2))
-                {
-                    if (pMutant.m_eArmsCount == ArmsCount.Bimanous)
-                        pMutant.m_eArmsCount = ArmsCount.Quadrumanous;
-                    if (pMutant.m_eArmsCount == ArmsCount.Quadrumanous)
-                        pMutant.m_eArmsCount = ArmsCount.Bimanous;
-                }
-
-                pMutant.m_eArmsType = (ArmsType)Rnd.Get(typeof(ArmsType));
-
-                return pMutant;
-            }
-
             return this;
         }
 

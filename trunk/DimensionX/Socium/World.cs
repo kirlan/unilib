@@ -15,13 +15,6 @@ using Socium.Psichology;
 
 namespace Socium
 {
-    public enum MagicAbilityPrevalence
-    {
-        rare,
-        common,
-        almost_everyone
-    }
-
     public enum MagicAbilityDistribution
     {
         mostly_weak,

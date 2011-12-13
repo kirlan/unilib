@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,8 +44,12 @@
     <Compile Include="Genetix\ArmsGenetix.cs" />
     <Compile Include="Fenotype.cs" />
     <Compile Include="GenetixBase.cs" />
+    <Compile Include="Genetix\BodyGenetix.cs" />
+    <Compile Include="Genetix\BrainGenetix.cs" />
+    <Compile Include="Genetix\HeadGenetix.cs" />
     <Compile Include="Genetix\HideGenetix.cs" />
     <Compile Include="Genetix\LegsGenetix.cs" />
+    <Compile Include="Genetix\LifeCycleGenetix.cs" />
     <Compile Include="Genetix\TailGenetix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Genetix\WingsGenetix.cs" />
@@ -53,6 +58,10 @@
     <ProjectReference Include="..\..\Random\Random.csproj">
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
       <Name>Random</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UniLibControls\UniLibControls.csproj">
+      <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
+      <Name>UniLibControls</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

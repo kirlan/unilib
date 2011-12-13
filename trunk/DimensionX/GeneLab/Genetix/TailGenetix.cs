@@ -74,7 +74,7 @@ namespace GeneLab.Genetix
             {
                 TailGenetix pMutant = new TailGenetix(this);
 
-                if (pMutant.m_eTailLength != TailLength.None)
+                if (pMutant.m_eTailLength != TailLength.None || Rnd.OneChanceFrom(2))
                     pMutant.m_eTailLength = (TailLength)Rnd.Get(typeof(TailLength));
 
                 pMutant.m_eTailControl = (TailControl)Rnd.Get(typeof(TailControl));

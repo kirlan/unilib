@@ -92,28 +92,27 @@ namespace GeneLab.Genetix
             {
                 WingsGenetix pMutant = new WingsGenetix(this);
 
-                pMutant.m_eWingsCount = (WingsCount)Rnd.Get(typeof(WingsCount));
+                if (Rnd.OneChanceFrom(2))
+                    pMutant.m_eWingsCount = (WingsCount)Rnd.Get(typeof(WingsCount));
 
-                if (m_eWingsForce == WingsForce.None)
+                int iChance = Rnd.Get(4);
+                if (m_eWingsForce != WingsForce.None)
+                    iChance = Rnd.Get(3);
+                    
+                switch (iChance)
                 {
-                    if (Rnd.OneChanceFrom(5))
+                    case 0:
+                        pMutant.m_eWingsType = WingsType.Feathered;
+                        break;
+                    case 1:
+                        pMutant.m_eWingsType = WingsType.Leather;
+                        break;
+                    case 2:
+                        pMutant.m_eWingsType = WingsType.Insectoid;
+                        break;
+                    case 3:
                         pMutant.m_eWingsType = WingsType.Tentacles;
-                }
-                else
-                {
-                    int iChance = Rnd.Get(3);
-                    switch (iChance)
-                    {
-                        case 0:
-                            pMutant.m_eWingsType = WingsType.Feathered;
-                            break;
-                        case 1:
-                            pMutant.m_eWingsType = WingsType.Leather;
-                            break;
-                        case 2:
-                            pMutant.m_eWingsType = WingsType.Insectoid;
-                            break;
-                    }
+                        break;
                 }
 
                 pMutant.m_eWingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
