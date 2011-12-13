@@ -91,10 +91,15 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 LegsGenetix pMutant = new LegsGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
                     pMutant.m_eLegsCount = (LegsCount)Rnd.Get(typeof(LegsCount));
+
+                if (pMutant.m_eLegsCount != m_eLegsCount)
+                    bMutation = true;
 
                 int iChance = 0;
                 if (pMutant.m_eLegsCount == LegsCount.Bipedal)
@@ -138,7 +143,11 @@ namespace GeneLab.Genetix
                         break;
                 }
 
-                return pMutant;
+                if (pMutant.m_eLegsType != m_eLegsType)
+                    bMutation = true;
+
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -146,150 +155,6 @@ namespace GeneLab.Genetix
 
         public GenetixBase MutateNation()
         {
-            if (Rnd.OneChanceFrom(20))
-            {
-                LegsGenetix pMutant = new LegsGenetix(this);
-
-                int iChance = 0;
-                switch (pMutant.m_eLegsCount)
-                {
-                    case LegsCount.NoneTail:
-                        {
-                            int[] aChances = new int[] { 8, 2, 1, 4, 0, 2, 1 };
-                            iChance = Rnd.ChooseOne(aChances, 1);
-                        }
-                        break;
-                    case LegsCount.NoneBlob:
-                        {
-                            int[] aChances = new int[] { 2, 8, 1, 4, 0, 2, 1 };
-                            iChance = Rnd.ChooseOne(aChances, 1);
-                        }
-                        break;
-                    case LegsCount.NoneHover:
-                        {
-                            int[] aChances = new int[] { 4, 2, 8, 4, 0, 2, 1 };
-                            iChance = Rnd.ChooseOne(aChances, 1);
-                        }
-                        break;
-                    case LegsCount.Bipedal:
-                        {
-                            int[] aChances = new int[] { 4, 2, 1, 16, 8, 2, 1 };
-                            iChance = Rnd.ChooseOne(aChances, 1);
-                        }
-                        break;
-                    case LegsCount.Quadrupedal:
-                        {
-                            int[] aChances = new int[] { 0, 0, 0, 0, 8, 4, 2 };
-                            iChance = Rnd.ChooseOne(aChances, 1);
-                        }
-                        break;
-                    case LegsCount.Hexapod:
-                        {
-                            int[] aChances = new int[] { 0, 1, 1, 0, 1, 4, 2 };
-                            iChance = Rnd.ChooseOne(aChances, 1);
-                        }
-                        break;
-                    case LegsCount.Octapod:
-                        {
-                            int[] aChances = new int[] { 0, 1, 1, 0, 1, 2, 4 };
-                            iChance = Rnd.ChooseOne(aChances, 1);
-                        }
-                        break;
-                }
-                switch (iChance)
-                {
-                    case 0:
-                        pMutant.m_eLegsCount = LegsCount.NoneTail;
-                        break;
-                    case 1:
-                        pMutant.m_eLegsCount = LegsCount.NoneBlob;
-                        break;
-                    case 2:
-                        pMutant.m_eLegsCount = LegsCount.NoneHover;
-                        break;
-                    case 3:
-                        pMutant.m_eLegsCount = LegsCount.Bipedal;
-                        break;
-                    case 4:
-                        pMutant.m_eLegsCount = LegsCount.Quadrupedal;
-                        break;
-                    case 5:
-                        pMutant.m_eLegsCount = LegsCount.Hexapod;
-                        break;
-                    case 6:
-                        pMutant.m_eLegsCount = LegsCount.Octapod;
-                        break;
-                }
-
-                switch (pMutant.m_eLegsType)
-                {
-                    case LegsType.Hoofs:
-                        iChance = 0;
-                        break;
-                    case LegsType.Foots:
-                        iChance = 1;
-                        break;
-                    case LegsType.Paws:
-                        iChance = 2;
-                        break;
-                    case LegsType.Claws:
-                        iChance = 3;
-                        break;
-                    case LegsType.Spidery:
-                        iChance = 4;
-                        break;
-                    case LegsType.Tentacles:
-                        iChance = 5;
-                        break;
-                }
-
-                if (pMutant.m_eLegsCount == LegsCount.Bipedal)
-                {
-                    int[] aChances = new int[] { 4, 8, 4, 4, 0, 0 };
-                    if(aChances[iChance] == 0)
-                        iChance = Rnd.ChooseOne(aChances, 1);
-                }
-
-                if (pMutant.m_eLegsCount == LegsCount.Quadrupedal)
-                {
-                    int[] aChances = new int[] { 8, 4, 8, 2, 1, 1 };
-                    if (aChances[iChance] == 0)
-                        iChance = Rnd.ChooseOne(aChances, 1);
-                }
-
-                if (pMutant.m_eLegsCount == LegsCount.Hexapod ||
-                    pMutant.m_eLegsCount == LegsCount.Octapod)
-                {
-                    int[] aChances = new int[] { 1, 0, 1, 1, 4, 2 };
-                    if (aChances[iChance] == 0)
-                        iChance = Rnd.ChooseOne(aChances, 1);
-                }
-
-                switch (iChance)
-                {
-                    case 0:
-                        pMutant.m_eLegsType = LegsType.Hoofs;
-                        break;
-                    case 1:
-                        pMutant.m_eLegsType = LegsType.Foots;
-                        break;
-                    case 2:
-                        pMutant.m_eLegsType = LegsType.Paws;
-                        break;
-                    case 3:
-                        pMutant.m_eLegsType = LegsType.Claws;
-                        break;
-                    case 4:
-                        pMutant.m_eLegsType = LegsType.Spidery;
-                        break;
-                    case 5:
-                        pMutant.m_eLegsType = LegsType.Tentacles;
-                        break;
-                }
-
-                return pMutant;
-            }
-
             return this;
         }
 

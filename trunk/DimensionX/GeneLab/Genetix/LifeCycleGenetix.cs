@@ -105,6 +105,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 LifeCycleGenetix pMutant = new LifeCycleGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -133,10 +135,17 @@ namespace GeneLab.Genetix
                 if (m_eDyingRate == DyingRate.Moderate && m_eBirthRate == BirthRate.Low)
                     m_eBirthRate = BirthRate.Moderate;
 
+                if (pMutant.m_eBirthRate != m_eBirthRate ||
+                    pMutant.m_eDyingRate != m_eDyingRate)
+                    bMutation = true;
+
                 if (Rnd.OneChanceFrom(2))
                     pMutant.m_eGendersDistribution = (GendersDistribution)Rnd.Get(typeof(GendersDistribution));
+                if (pMutant.m_eGendersDistribution != m_eGendersDistribution)
+                    bMutation = true;
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -146,6 +155,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(20))
             {
+                bool bMutation = false;
+
                 LifeCycleGenetix pMutant = new LifeCycleGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -173,6 +184,10 @@ namespace GeneLab.Genetix
 
                 if (m_eDyingRate == DyingRate.Moderate && m_eBirthRate == BirthRate.Low)
                     m_eBirthRate = BirthRate.Moderate;
+                
+                if (pMutant.m_eBirthRate != m_eBirthRate ||
+                    pMutant.m_eDyingRate != m_eDyingRate)
+                    bMutation = true;
 
                 if (Rnd.OneChanceFrom(2))
                 {
@@ -194,8 +209,12 @@ namespace GeneLab.Genetix
                             pMutant.m_eGendersDistribution = GendersDistribution.MostlyMales;
                             break;
                     }
+
+                    bMutation = true;
                 }
-                return pMutant;
+
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -205,6 +224,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 LifeCycleGenetix pMutant = new LifeCycleGenetix(this);
 
                 if (Rnd.OneChanceFrom(5))
@@ -233,10 +254,17 @@ namespace GeneLab.Genetix
                 if (m_eDyingRate == DyingRate.Moderate && m_eBirthRate == BirthRate.Low)
                     m_eBirthRate = BirthRate.Moderate;
 
+                if (pMutant.m_eBirthRate != m_eBirthRate ||
+                    pMutant.m_eDyingRate != m_eDyingRate)
+                    bMutation = true;
+
                 if (Rnd.OneChanceFrom(2))
                     pMutant.m_eGendersDistribution = (GendersDistribution)Rnd.Get(typeof(GendersDistribution));
+                if (pMutant.m_eGendersDistribution != m_eGendersDistribution)
+                    bMutation = true;
 
-                return pMutant;
+                if (bMutation)
+                    return pMutant;
             }
 
             return this;

@@ -2,185 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Random;
 
 namespace GeneLab.Genetix
 {
-    public enum EarsType
-    {
-        /// <summary>
-        /// ушей нет
-        /// </summary>
-        None,
-        /// <summary>
-        /// обычные человеческие уши
-        /// </summary>
-        Human,
-        /// <summary>
-        /// заострённые эльфийские
-        /// </summary>
-        PointyElven,
-        /// <summary>
-        /// круглые звериные, как у мышей, овец или медведя
-        /// </summary>
-        RoundAnimal,
-        /// <summary>
-        /// заострённые звериные, как у хищников
-        /// </summary>
-        PointyAnimal,
-        /// <summary>
-        /// большие звериные, как у слона
-        /// </summary>
-        BigAnimal,
-        /// <summary>
-        /// усики, как у насекомых
-        /// </summary>
-        Feelers
-    }
-
-    public enum HairsAmount
-    { 
-        /// <summary>
-        /// нет другой растительности на голове, кроме естественного покрова тела
-        /// </summary>
-        None,
-        /// <summary>
-        /// редкие волосы
-        /// </summary>
-        Sparse,
-        /// <summary>
-        /// густые волосы
-        /// </summary>
-        Thick
-    }
-
-    public enum HairsType
-    { 
-        /// <summary>
-        /// обычные волосы
-        /// </summary>
-        Hair,
-        /// <summary>
-        /// вибриссы, как у животных
-        /// </summary>
-        Whiskers,
-        /// <summary>
-        /// щупальца
-        /// </summary>
-        Tentackles
-    }
-
-    public enum HairsColor
-    {
-        /// <summary>
-        /// светлые волосы
-        /// </summary>
-        Blonde,
-        /// <summary>
-        /// тёмные волосы
-        /// </summary>
-        Brunette,
-        /// <summary>
-        /// рыжие волосы
-        /// </summary>
-        Red,
-        /// <summary>
-        /// русые волосы
-        /// </summary>
-        DarkBlond,
-        /// <summary>
-        /// альбинос - чисто белые волосы
-        /// </summary>
-        Albino,
-        /// <summary>
-        /// зелёные волосы
-        /// </summary>
-        Green,
-        /// <summary>
-        /// синие волосы
-        /// </summary>
-        Blue,
-        /// <summary>
-        /// цвет волос совпадает с цветом естественного покрова тела
-        /// </summary>
-        Hide
-    }
-
-    public enum NoseType
-    {
-        /// <summary>
-        /// носа нет, только две ноздри
-        /// </summary>
-        None,
-        /// <summary>
-        /// обычный человеческий нос
-        /// </summary>
-        Normal,
-        /// <summary>
-        /// обычный звериный нос
-        /// </summary>
-        Snout,
-        /// <summary>
-        /// хобот, как у слона
-        /// </summary>
-        Proboscis
-    }
-
-    public enum MouthType
-    {
-        /// <summary>
-        /// обычный рот, как у человека или другого млекопитающего животного (зубы, язык, губы)
-        /// </summary>
-        Normal,
-        /// <summary>
-        /// клюв как у птиц
-        /// </summary>
-        Beak,
-        /// <summary>
-        /// жвалы, как у насекомых
-        /// </summary>
-        Mandibles,
-        /// <summary>
-        /// щупальца, как у Ктулху
-        /// </summary>
-        Tentackles
-    }
-
-    public enum EyesPlacement
-    {
-        /// <summary>
-        /// все глаза расположены на передней стороне головы и смотрят в одном направлении (вперёд).
-        /// </summary>
-        Tunnel,
-        /// <summary>
-        /// глаза разнесены на разные стороны головы и смотрят в разные стороны, обеспечивая максимальный угол обзора
-        /// </summary>
-        Panoramic,
-        /// <summary>
-        /// глаза расположены на подвижных стебельках и могут смотреть в любую сторону
-        /// </summary>
-        Stalks
-    }
-
-    public enum EyesType
-    {
-        /// <summary>
-        /// обычные глаза, как у человека (круглый зрачок, закрывающееся веко)
-        /// </summary>
-        Normal,
-        /// <summary>
-        /// глаза, как у кошки (вертикальный зрачок, закрывающееся веко)
-        /// </summary>
-        CatEye,
-        /// <summary>
-        /// рыбий глаз - с круглым зрачком, прозрачной роговой пластинкой, без закрывающегося века
-        /// </summary>
-        FishEye,
-        /// <summary>
-        /// фасеточный глаз, как у стрекозы
-        /// </summary>
-        Facetted
-    }
-
     public enum NeckLength
     {
         /// <summary>
@@ -196,7 +21,7 @@ namespace GeneLab.Genetix
         /// </summary>
         ShortRotary,
         /// <summary>
-        /// длинная шея, как у лошадей
+        /// длинная, ограниченно подвижная шея, как у лошадей
         /// </summary>
         Long,
         /// <summary>
@@ -205,57 +30,142 @@ namespace GeneLab.Genetix
         ExtraLong
     }
 
-//Шея (отсутствует/короткая/длинная/очень длинная и гибкая)
+    public enum HeadForm
+    {
+        /// <summary>
+        /// голова с уменьшенной лобной частью - как у животных и питекантропов
+        /// </summary>
+        Flat,
+        /// <summary>
+        /// обычная голова, как у человека
+        /// </summary>
+        Human,
+        /// <summary>
+        /// голова с гипертрофированной лобной частью - как у сектоидов
+        /// </summary>
+        IncreasedForehead,
+        /// <summary>
+        /// голова с гипертрофированной затылочной частью - как у Чужого
+        /// </summary>
+        IncreasedNape,
+        /// <summary>
+        /// голова, похожая на головку молота - как у насекомых или рыбы-молота
+        /// </summary>
+        Hammer
+    }
+
     public class HeadGenetix: GenetixBase
     {
         public int m_iHeadsCount = 1;
 
-        public EarsType m_eEarsType = EarsType.Human;
-
-        public HairsAmount m_eHairsM = HairsAmount.Sparse;
-
-        public HairsAmount m_eHairsF = HairsAmount.Thick;
-
-        public HairsAmount m_eBeardM = HairsAmount.Thick;
-
-        public HairsAmount m_eBeardF = HairsAmount.None;
-
-        public HairsType m_eHairsType = HairsType.Hair;
-
-        public List<HairsColor> m_cHairColors = new List<HairsColor>(new HairsColor[] {HairsColor.Brunette, HairsColor.Blonde, HairsColor.DarkBlond, HairsColor.Red});
-
-        public NoseType m_eNoseType = NoseType.Normal;
-
-        public MouthType m_eMouthType = MouthType.Normal;
-
-        public EyesPlacement m_eEyesPlacement = EyesPlacement.Tunnel;
-
-        public int m_iEyesCount = 2;
-
-        public EyesType m_eEyesType = EyesType.Normal;
-
         public NeckLength m_eNeckLength = NeckLength.Short;
 
+        public HeadForm m_eHeadForm = HeadForm.Human;
+
+        public HeadGenetix()
+        { }
+
+        public HeadGenetix(HeadGenetix pPredcessor)
+        {
+            m_iHeadsCount = pPredcessor.m_iHeadsCount;
+            m_eNeckLength = pPredcessor.m_eNeckLength;
+            m_eHeadForm = pPredcessor.m_eHeadForm;
+        }
+
+        public HeadGenetix(int iHeadsCount, NeckLength eNeckLength, HeadForm eHeadForm)
+        {
+            m_iHeadsCount = iHeadsCount;
+            m_eNeckLength = eNeckLength;
+            m_eHeadForm = eHeadForm;
+        }
+        
         #region GenetixBase Members
 
         public GenetixBase MutateRace()
         {
-            throw new NotImplementedException();
+            if (Rnd.OneChanceFrom(10))
+            {
+                bool bMutation = false;
+
+                HeadGenetix pMutant = new HeadGenetix(this);
+
+                pMutant.m_iHeadsCount = 1 + (int)Math.Pow(Rnd.Get(14), 3) / 1000;
+                if (pMutant.m_iHeadsCount != m_iHeadsCount)
+                    bMutation = true;
+                    
+                if (pMutant.m_iHeadsCount == 1 &&
+                    pMutant.m_eNeckLength != NeckLength.Long &&
+                    pMutant.m_eNeckLength != NeckLength.ExtraLong)
+                {
+                    int iChance = (int)Math.Pow(Rnd.Get(17), 3) / 1000;
+                    switch (iChance)
+                    {
+                        case 0:
+                            pMutant.m_eNeckLength = NeckLength.Short;
+                            break;
+                        case 1:
+                            pMutant.m_eNeckLength = NeckLength.None;
+                            break;
+                        case 2:
+                            pMutant.m_eNeckLength = NeckLength.ShortRotary;
+                            break;
+                        case 3:
+                            pMutant.m_eNeckLength = NeckLength.Long;
+                            break;
+                        case 4:
+                            pMutant.m_eNeckLength = NeckLength.ExtraLong;
+                            break;
+                    }
+                }
+                else
+                {
+                    int iChance = (int)Math.Pow(Rnd.Get(17), 3) / 1000;
+                    switch (iChance)
+                    {
+                        case 0:
+                            pMutant.m_eNeckLength = NeckLength.Long;
+                            break;
+                        case 1:
+                            pMutant.m_eNeckLength = NeckLength.ExtraLong;
+                            break;
+                        case 2:
+                            pMutant.m_eNeckLength = NeckLength.Short;
+                            break;
+                        case 3:
+                            pMutant.m_eNeckLength = NeckLength.ShortRotary;
+                            break;
+                        case 4:
+                            pMutant.m_eNeckLength = NeckLength.None;
+                            break;
+                    }
+                }
+                if (pMutant.m_eNeckLength != m_eNeckLength)
+                    bMutation = true;
+
+                pMutant.m_eHeadForm = (HeadForm)Rnd.Get(typeof(HeadForm));
+                if (pMutant.m_eHeadForm != m_eHeadForm)
+                    bMutation = true;
+
+                if(bMutation)
+                    return pMutant;
+            }
+
+            return this;
         }
 
         public GenetixBase MutateNation()
         {
-            throw new NotImplementedException();
+            return this;
         }
 
         public GenetixBase MutateFamily()
         {
-            throw new NotImplementedException();
+            return this;
         }
 
         public GenetixBase MutateIndividual()
         {
-            throw new NotImplementedException();
+            return this;
         }
 
         #endregion

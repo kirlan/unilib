@@ -59,6 +59,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 ArmsGenetix pMutant = new ArmsGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -67,12 +69,19 @@ namespace GeneLab.Genetix
                         pMutant.m_eArmsCount = ArmsCount.Quadrumanous;
                     if (pMutant.m_eArmsCount == ArmsCount.Quadrumanous)
                         pMutant.m_eArmsCount = ArmsCount.Bimanous;
+
+                    bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
+                {
                     pMutant.m_eArmsType = (ArmsType)Rnd.Get(typeof(ArmsType));
+                    if (pMutant.m_eArmsType != m_eArmsType)
+                        bMutation = true;
+                }
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
