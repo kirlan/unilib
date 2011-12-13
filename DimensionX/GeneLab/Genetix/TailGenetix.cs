@@ -72,10 +72,15 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 TailGenetix pMutant = new TailGenetix(this);
 
                 if (pMutant.m_eTailLength != TailLength.None || Rnd.OneChanceFrom(2))
                     pMutant.m_eTailLength = (TailLength)Rnd.Get(typeof(TailLength));
+
+                if (pMutant.m_eTailLength != m_eTailLength)
+                    bMutation = true;
 
                 pMutant.m_eTailControl = (TailControl)Rnd.Get(typeof(TailControl));
 
@@ -86,9 +91,13 @@ namespace GeneLab.Genetix
                     pMutant.m_eTailControl = TailControl.Crude;
 
                 if (pMutant.m_eTailLength == TailLength.Long && pMutant.m_eTailControl == TailControl.None)
-                    pMutant.m_eTailControl = TailControl.Crude; 
-                
-                return pMutant;
+                    pMutant.m_eTailControl = TailControl.Crude;
+
+                if (pMutant.m_eTailControl != m_eTailControl)
+                    bMutation = true;
+
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -98,10 +107,15 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(20))
             {
+                bool bMutation = false;
+
                 TailGenetix pMutant = new TailGenetix(this);
 
                 if (pMutant.m_eTailLength != TailLength.None)
                     pMutant.m_eTailLength = (TailLength)Rnd.Get(typeof(TailLength));
+
+                if (pMutant.m_eTailLength != m_eTailLength)
+                    bMutation = true;
 
                 pMutant.m_eTailControl = (TailControl)Rnd.Get(typeof(TailControl));
 
@@ -114,7 +128,11 @@ namespace GeneLab.Genetix
                 if (pMutant.m_eTailLength == TailLength.Long && pMutant.m_eTailControl == TailControl.None)
                     pMutant.m_eTailControl = TailControl.Crude;
 
-                return pMutant;
+                if (pMutant.m_eTailControl != m_eTailControl)
+                    bMutation = true;
+
+                if (bMutation)
+                    return pMutant;
             }
 
             return this;

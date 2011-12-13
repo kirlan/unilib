@@ -21,7 +21,7 @@ namespace GeneLab.Genetix
         /// </summary>
         Capable,
         /// <summary>
-        /// разумный, но недалёкий
+        /// разумный, но тупой
         /// </summary>
         Primitive,
         /// <summary>
@@ -104,6 +104,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 BrainGenetix pMutant = new BrainGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -129,6 +131,7 @@ namespace GeneLab.Genetix
                             pMutant.m_eIntelligence = Intelligence.Sapient;
                             break;
                     }
+                    bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -141,6 +144,9 @@ namespace GeneLab.Genetix
                          pMutant.m_eIntelligence == Intelligence.Capable) &&
                         Rnd.OneChanceFrom(2))
                         pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+
+                    if (m_eMagicAbilityPrevalence == pMutant.m_eMagicAbilityPrevalence)
+                        bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -160,6 +166,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.m_eIntelligence == Intelligence.Ingenious)
                         pMutant.m_iMagicAbilityPotential = 4 + Rnd.Get(5); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
+
+                    if (pMutant.m_iMagicAbilityPotential != m_iMagicAbilityPotential)
+                        bMutation = true;
                 }
                 else
                 {
@@ -173,7 +182,8 @@ namespace GeneLab.Genetix
                         pMutant.m_iMagicAbilityPotential = Math.Max(4, pMutant.m_iMagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
                 }
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -183,6 +193,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(20))
             {
+                bool bMutation = false;
+
                 BrainGenetix pMutant = new BrainGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -195,6 +207,9 @@ namespace GeneLab.Genetix
                          pMutant.m_eIntelligence == Intelligence.Capable) &&
                         Rnd.OneChanceFrom(2))
                         pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+                
+                    if (m_eMagicAbilityPrevalence != pMutant.m_eMagicAbilityPrevalence)
+                        bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -214,6 +229,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.m_eIntelligence == Intelligence.Ingenious)
                         pMutant.m_iMagicAbilityPotential = 4 + Rnd.Get(5); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
+
+                    if (pMutant.m_iMagicAbilityPotential != m_iMagicAbilityPotential)
+                        bMutation = true;
                 }
                 else
                 {
@@ -227,7 +245,8 @@ namespace GeneLab.Genetix
                         pMutant.m_iMagicAbilityPotential = Math.Max(4, pMutant.m_iMagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
                 }
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -237,6 +256,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(5))
             {
+                bool bMutation = false;
+
                 BrainGenetix pMutant = new BrainGenetix(this);
 
                 if (Rnd.OneChanceFrom(10))
@@ -259,6 +280,8 @@ namespace GeneLab.Genetix
                             pMutant.m_eIntelligence = Intelligence.Sapient;
                             break;
                     }
+
+                    bMutation = true;
                 } 
                 
                 if (Rnd.OneChanceFrom(2))
@@ -271,6 +294,9 @@ namespace GeneLab.Genetix
                          pMutant.m_eIntelligence == Intelligence.Capable) &&
                         Rnd.OneChanceFrom(2))
                         pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+                
+                    if (m_eMagicAbilityPrevalence != pMutant.m_eMagicAbilityPrevalence)
+                        bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -290,6 +316,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.m_eIntelligence == Intelligence.Ingenious)
                         pMutant.m_iMagicAbilityPotential = 4 + Rnd.Get(5); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
+
+                    if (pMutant.m_iMagicAbilityPotential != m_iMagicAbilityPotential)
+                        bMutation = true;
                 }
                 else
                 {
@@ -303,7 +332,8 @@ namespace GeneLab.Genetix
                         pMutant.m_iMagicAbilityPotential = Math.Max(4, pMutant.m_iMagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
                 }
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;

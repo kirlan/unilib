@@ -83,8 +83,10 @@ namespace GeneLab.Genetix
             m_sSpotsColor = GetPredefinedColor(eSpotsColor);
         }
 
-        private void MutateHideType()
+        private bool MutateHideType()
         {
+            HideType eHideType = m_eHideType;
+
             int iChance = 0;
             switch (m_eHideType)
             {
@@ -155,9 +157,11 @@ namespace GeneLab.Genetix
                     m_eHideType = HideType.Shell;
                     break;
             }
+
+            return m_eHideType != eHideType;
         }
 
-        private void MutateHideColor()
+        private bool MutateHideColor()
         {
             if (m_eHideType == HideType.BareSkin)
             {
@@ -181,19 +185,27 @@ namespace GeneLab.Genetix
                 else
                     pColor.Lightness -= Math.Pow(Rnd.Get(1f), 2);
 
+                string sHideColor = m_sHideColor;
+
                 m_eHideColor = pColor.RGB;
                 m_sHideColor = GetPredefinedColor(pColor);
+
+                return sHideColor != m_sHideColor;
             }
             else
             {
-                MutateHideColorAnimalsOnly();
+                return MutateHideColorAnimalsOnly();
             }
         }
 
-        private void MutateHideColorAnimalsOnly()
+        private bool MutateHideColorAnimalsOnly()
         {
             if (m_eHideType != HideType.BareSkin)
             {
+                bool bSpots = m_bSpots;
+                string sHideColor = m_sHideColor;
+                string sSpotsColor = m_sSpotsColor;
+
                 m_bSpots = Rnd.OneChanceFrom(2);
 
                 KColor pColor = new KColor();
@@ -250,7 +262,11 @@ namespace GeneLab.Genetix
                     }
                     while (m_sSpotsColor == m_sHideColor);
                 }
+
+                return bSpots != m_bSpots || sHideColor != m_sHideColor || sSpotsColor != m_sSpotsColor;
             }
+
+            return false;
         }
 
         private string GetPredefinedColor(Color eColor)
@@ -408,12 +424,18 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 HideGenetix pMutant = new HideGenetix(this);
 
-                pMutant.MutateHideType();
-                pMutant.MutateHideColor();
+                if(pMutant.MutateHideType())
+                    bMutation = true;
+                
+                if (pMutant.MutateHideColor())
+                    bMutation = true;
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -423,6 +445,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(5))
             {
+                bool bMutation = false;
+
                 HideGenetix pMutant = new HideGenetix(this);
 
                 switch (pMutant.m_eHideType)
@@ -430,26 +454,37 @@ namespace GeneLab.Genetix
                     case HideType.BareSkin:
                         {
                             if (Rnd.OneChanceFrom(10))
+                            {
                                 pMutant.m_eHideType = HideType.FurShort;
+                                bMutation = true;
+                            }
                         }
                         break;
                     case HideType.FurShort:
                         {
                             if (Rnd.OneChanceFrom(10))
+                            {
                                 pMutant.m_eHideType = Rnd.OneChanceFrom(4) ? HideType.BareSkin : HideType.FurLong;
+                                bMutation = true;
+                            }
                         }
                         break;
                     case HideType.FurLong:
                         {
                             if (Rnd.OneChanceFrom(2))
+                            {
                                 pMutant.m_eHideType = HideType.FurShort;
+                                bMutation = true;
+                            }
                         }
                         break;
                 }
 
-                pMutant.MutateHideColor();
+                if (pMutant.MutateHideColor())
+                    bMutation = true;
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
@@ -461,9 +496,8 @@ namespace GeneLab.Genetix
             {
                 HideGenetix pMutant = new HideGenetix(this);
 
-                pMutant.MutateHideColorAnimalsOnly();
-
-                return pMutant;
+                if(pMutant.MutateHideColorAnimalsOnly())
+                    return pMutant;
             }
 
             return this;
@@ -475,9 +509,8 @@ namespace GeneLab.Genetix
             {
                 HideGenetix pMutant = new HideGenetix(this);
 
-                pMutant.MutateHideColorAnimalsOnly();
-
-                return pMutant;
+                if(pMutant.MutateHideColorAnimalsOnly())
+                    return pMutant;
             }
 
             return this;

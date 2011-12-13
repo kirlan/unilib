@@ -78,19 +78,19 @@ namespace GeneLab.Genetix
         Сarnivorous,
         /// <summary>
         /// вампиризм - питается кровью других разумных существ
-        /// применимо только к разумным существам - вампирам, вервольфам, иллитидам и т.п.
+        /// применимо только к разумным существам - вампирам и т.п.
         /// </summary>
         ParasitismBlood,
         /// людоедство - питается мясом других разумных существ
-        /// применимо только к разумным существам - вампирам, вервольфам, иллитидам и т.п.
+        /// применимо только к разумным существам - вервольфам и т.п.
         /// </summary>
         ParasitismMeat,
         /// эмоциональный вампиризм - питается эмоциями других разумных существ
-        /// применимо только к разумным существам - вампирам, вервольфам, иллитидам и т.п.
+        /// применимо только к разумным существам - иллитидам и т.п.
         /// </summary>
         ParasitismEmote,
         /// энергетический вампиризм - питается жизненной энергией других существ
-        /// применимо только к разумным существам - вампирам, вервольфам, иллитидам и т.п.
+        /// применимо только к разумным существам - иллитидам и т.п.
         /// </summary>
         ParasitismEnergy,
         /// <summary>
@@ -124,7 +124,7 @@ namespace GeneLab.Genetix
             m_eNutritionType = eNutritionType;
         }
 
-        private void MutateNutritionType()
+        private bool MutateNutritionType()
         {
             int iChance = 0;
             int[] aChances = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
@@ -246,6 +246,8 @@ namespace GeneLab.Genetix
 
             iChance = Rnd.ChooseOne(aChances, 1);
 
+            NutritionType eNutritionType = m_eNutritionType;
+
             switch (iChance)
             {
                 case 0:
@@ -282,6 +284,8 @@ namespace GeneLab.Genetix
                     m_eNutritionType = NutritionType.Mineral;
                     break;
             }
+
+            return m_eNutritionType != eNutritionType;
         }
 
         #region GenetixBase Members
@@ -290,6 +294,8 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
+                bool bMutation = false;
+
                 BodyGenetix pMutant = new BodyGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -312,14 +318,22 @@ namespace GeneLab.Genetix
                             pMutant.m_eBodySize = BodySize.Big;
                             break;
                     }
+
+                    bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
+                {
                     pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                    if (pMutant.m_eBodyBuild != m_eBodyBuild)
+                        bMutation = true;
+                }
 
-                pMutant.MutateNutritionType();
+                if (pMutant.MutateNutritionType())
+                    bMutation = true;
 
-                return pMutant;
+                if(bMutation)
+                    return pMutant;
             }
 
             return this;
