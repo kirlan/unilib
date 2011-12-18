@@ -27,9 +27,6 @@ namespace Socium
         public int m_iTechLevel;
         public int m_iMagicLimit;
 
-        public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.rare;
-        public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
-
         public Province[] m_aProvinces = null;
 
         private int m_iProvincesCount = 300;
@@ -42,25 +39,6 @@ namespace Socium
 
         private void SetWorldLevels(Epoch pEpoch)
         {
-            m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.GetExp(typeof(MagicAbilityPrevalence), 4);
-            m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.GetExp(typeof(MagicAbilityDistribution), 4);
-
-            //int iTotalLevel = 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000);
-            //int iBalance = Rnd.Get(201);
-
-            //if (iBalance > 100)
-            //{
-            //    m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
-            //    //m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
-            //    m_iTechLevel = (200 - iBalance) * m_iMagicLimit / iBalance;
-            //}
-            //else
-            //{
-            //    m_iTechLevel = 1 + Rnd.Get(iTotalLevel);//iTotalLevel - m_iBioLevel;
-            //    //m_iMagicLimit = Rnd.Get(iTotalLevel + 1);//iTotalLevel * iBalance / 100;
-            //    m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
-            //}
-
             m_iTechLevel = Math.Min(pEpoch.m_iNativesMaxTechLevel, pEpoch.m_iNativesMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
             m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
         }
@@ -216,11 +194,11 @@ namespace Socium
                     cLandChances[pLand] = 1.0f;// / pRace.m_iRank;
 
                     //рассчитываем шансы, исходя из предпочтений и антипатий расы
-                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aPrefferedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_aPreferredLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] *= 100;
 
-                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aHatedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_aHatedLands)
                         if (pLand.Type == pType)
                             cLandChances[pLand] /= 1000;
 
@@ -327,11 +305,11 @@ namespace Socium
 
                     cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
 
-                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aPrefferedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_aPreferredLands)
                         if (cLandTypesCount.ContainsKey(pType))
                             cNationChances[pNation] *= cLandTypesCount[pType];
 
-                    foreach (LandTypeInfoX pType in pNation.m_pRace.m_aHatedLands)
+                    foreach (LandTypeInfoX pType in pNation.m_aHatedLands)
                         if (cLandTypesCount.ContainsKey(pType))
                             cNationChances[pNation] /= cLandTypesCount[pType];
                 }
@@ -505,6 +483,8 @@ namespace Socium
                             LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                             LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
+            foreach (Race pRace in Race.m_cAllRaces)
+                pRace.ResetNations();
             Language.ResetUsedLists();
             Epoch.s_cUsedNames.Clear();
 
@@ -1683,7 +1663,7 @@ namespace Socium
                     if (pLand.m_pNation != pProvince.m_pNation)
                     {
                         bool bHated = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_pRace.m_aHatedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_aHatedLands)
                             if (pLand.Type == pLTI)
                                 bHated = true;
 
@@ -1691,7 +1671,7 @@ namespace Socium
                             continue;
 
                         bool bPreferred = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_pRace.m_aPrefferedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_aPreferredLands)
                             if (pLand.Type == pLTI)
                                 bPreferred = true;
 
@@ -1708,7 +1688,7 @@ namespace Socium
                             continue;
 
                         bool bHated = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_pRace.m_aHatedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_aHatedLands)
                             if (pLand.Type == pLTI)
                                 bHated = true;
 
