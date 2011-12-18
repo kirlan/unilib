@@ -98,8 +98,8 @@ namespace VQMapTest2
             label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel), m_pWorld.m_iTechLevel);
             if (m_pWorld.m_iMagicLimit > 0)
             {
-                label8.Text = string.Format("Magic users: {0}, ", m_pWorld.m_eMagicAbilityPrevalence.ToString().Replace('_', ' '));
-                label2.Text = string.Format("          {2}, up to {0} [M{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit, m_pWorld.m_eMagicAbilityDistribution.ToString().Replace('_', ' '));
+                label8.Text = string.Format("Magic users: up to {0} [M{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit);
+                label2.Text = "";
             }
             else
             {
