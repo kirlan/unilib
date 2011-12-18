@@ -16,6 +16,7 @@ using Random;
 using Socium.Languages;
 using Socium.Nations;
 using Socium.Settlements;
+using GeneLab.Genetix;
 
 namespace MapDrawEngine
 {
@@ -583,11 +584,11 @@ namespace MapDrawEngine
 
             switch (ePrevalence)
             {
-                case MagicAbilityPrevalence.rare:
+                case MagicAbilityPrevalence.Rare:
                     return new SolidBrush(background.RGB);
-                case MagicAbilityPrevalence.common:
+                case MagicAbilityPrevalence.Common:
                     return new HatchBrush(HatchStyle.DottedDiamond, foreground.RGB, background.RGB);
-                case MagicAbilityPrevalence.almost_everyone:
+                case MagicAbilityPrevalence.AlmostEveryone:
                     return new HatchBrush(HatchStyle.DiagonalCross, foreground.RGB, background.RGB);
                 default:
                     throw new ArgumentException();
@@ -991,7 +992,7 @@ namespace MapDrawEngine
                     if (pProvince.m_pNation.m_bHegemon)
                         pBrush = m_cHegemonNationColorsID[pProvince.m_pNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pNation.m_iMagicLimit][pProvince.m_pNation.m_eMagicAbilityPrevalence];
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pNation.m_iMagicLimit][pProvince.m_pNation.m_pFenotype.m_pBrain.m_eMagicAbilityPrevalence];
                     
                     foreach (MapQuadrant pQuad in aQuads)
                     {

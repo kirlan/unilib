@@ -9,6 +9,7 @@ using LandscapeGeneration.PathFind;
 using Socium.Settlements;
 using Socium.Nations;
 using Socium.Psichology;
+using GeneLab.Genetix;
 
 namespace Socium
 {
@@ -107,7 +108,7 @@ namespace Socium
         /// <summary>
         /// Как часто встрачаются носители магических способностей
         /// </summary>
-        public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.rare;
+        public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
         /// <summary>
         /// Процент реально крутых магов среди всех носителей магических способностей
         /// </summary>
@@ -192,11 +193,13 @@ namespace Socium
             //        fCost /= 10;
             //}
 
-            foreach (LandTypeInfoX pType in m_pNation.m_pRace.m_aPrefferedLands)
+
+
+            foreach (LandTypeInfoX pType in m_pNation.m_aPreferredLands)
                 if (pType == pLand.Type)
                     fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            foreach (LandTypeInfoX pType in m_pNation.m_pRace.m_aHatedLands)
+            foreach (LandTypeInfoX pType in m_pNation.m_aHatedLands)
                 if (pType == pLand.Type)
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 

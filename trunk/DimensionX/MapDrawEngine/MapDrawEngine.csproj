@@ -77,6 +77,10 @@
       <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
       <Name>UniLibControls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GeneLab\GeneLab.csproj">
+      <Project>{76F06EE9-C037-4FCF-B177-81CC81022EAF}</Project>
+      <Name>GeneLab</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Landscape\Landscape.csproj">
       <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>
       <Name>Landscape</Name>
