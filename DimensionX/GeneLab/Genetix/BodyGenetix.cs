@@ -101,11 +101,173 @@ namespace GeneLab.Genetix
 
     public class BodyGenetix: GenetixBase
     {
+        /// <summary>
+        /// eats only vegetables and have small and agile bodies 
+        /// </summary>
+        /// <returns></returns>
+        public string GetDescription()
+        {
+            string sSize = "?";
+            switch (m_eBodySize)
+            {
+                case BodySize.Tini:
+                    sSize = "tiny";
+                    break;
+                case BodySize.Small:
+                    sSize = "small";
+                    break;
+                case BodySize.Normal:
+                    sSize = "average-sized";
+                    break;
+                case BodySize.Big:
+                    sSize = "quite big";
+                    break;
+                case BodySize.Giant:
+                    sSize = "enormously big";
+                    break;
+            }
+
+            string sComplexion = "?";
+            switch (m_eBodyBuild)
+            {
+                case BodyBuild.Slim:
+                    sComplexion = "agile";
+                    break;
+                case BodyBuild.Normal:
+                    sComplexion = "proportional";
+                    break;
+                case BodyBuild.Muscular:
+                    sComplexion = "strong";
+                    break;
+                case BodyBuild.Fat:
+                    sComplexion = "stout";
+                    break;
+            }
+
+            string sMeals = "?";
+            switch (m_eNutritionType)
+            {
+                case NutritionType.Eternal:
+                    sMeals = "have no need in any food at all";
+                    break;
+                case NutritionType.Mineral:
+                    sMeals = "have consumes various minearals as food";
+                    break;
+                case NutritionType.Organic:
+                    sMeals = "eats both meat and vegetables";
+                    break;
+                case NutritionType.ParasitismBlood:
+                    sMeals = "drinks blood of their victims";
+                    break;
+                case NutritionType.ParasitismEmote:
+                    sMeals = "feeds on emotes of their victims";
+                    break;
+                case NutritionType.ParasitismEnergy:
+                    sMeals = "drains life energy of their victims";
+                    break;
+                case NutritionType.ParasitismMeat:
+                    sMeals = "eats meat of their victims";
+                    break;
+                case NutritionType.Photosynthesis:
+                    sMeals = "needs only a sunlight to gain their life energy";
+                    break;
+                case NutritionType.Thermosynthesis:
+                    sMeals = "needs only access to heat source to gain their life energy";
+                    break;
+                case NutritionType.Vegetarian:
+                    sMeals = "eats only vegetables";
+                    break;
+                case NutritionType.Сarnivorous:
+                    sMeals = "eats only meat";
+                    break;
+            }
+
+            return sMeals + " and have " + sSize + " and " + sComplexion + " bodies";
+        }
+
+        public static BodyGenetix Human
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Normal, NutritionType.Organic); }
+        }
+
+        public static BodyGenetix Barbarian
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.Organic); }
+        }
+
+        public static BodyGenetix Bull
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.Vegetarian); }
+        }
+
+        public static BodyGenetix Orc
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.Сarnivorous); }
+        }
+
+        public static BodyGenetix Goblin
+        {
+            get { return new BodyGenetix(BodySize.Small, BodyBuild.Slim, NutritionType.Сarnivorous); }
+        }
+
+        public static BodyGenetix Dwarf
+        {
+            get { return new BodyGenetix(BodySize.Small, BodyBuild.Muscular, NutritionType.Organic); }
+        }
+
+        public static BodyGenetix Hobbit
+        {
+            get { return new BodyGenetix(BodySize.Small, BodyBuild.Fat, NutritionType.Organic); }
+        }
+
+        public static BodyGenetix Elf
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Slim, NutritionType.Organic); }
+        }
+
+        public static BodyGenetix Furry
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Slim, NutritionType.Сarnivorous); }
+        }
+
+        public static BodyGenetix Pixie
+        {
+            get { return new BodyGenetix(BodySize.Tini, BodyBuild.Slim, NutritionType.Vegetarian); }
+        }
+
+        public static BodyGenetix Giant
+        {
+            get { return new BodyGenetix(BodySize.Giant, BodyBuild.Muscular, NutritionType.Organic); }
+        }
+
+        public static BodyGenetix Vampire
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Normal, NutritionType.ParasitismBlood); }
+        }
+
+        public static BodyGenetix Werevolf
+        {
+            get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.ParasitismMeat); }
+        }
+
+
         public BodySize m_eBodySize = BodySize.Normal;
 
         public BodyBuild m_eBodyBuild = BodyBuild.Normal;
 
         public NutritionType m_eNutritionType = NutritionType.Organic;
+
+        public bool IsIdentical(GenetixBase pOther)
+        {
+            BodyGenetix pAnother = pOther as BodyGenetix;
+
+            if (pAnother == null)
+                return false;
+
+            return m_eBodySize == pAnother.m_eBodySize && 
+                m_eBodyBuild == pAnother.m_eBodyBuild &&
+                m_eNutritionType == pAnother.m_eNutritionType;
+        }
 
         public BodyGenetix()
         { }
@@ -124,7 +286,7 @@ namespace GeneLab.Genetix
             m_eNutritionType = eNutritionType;
         }
 
-        private bool MutateNutritionType()
+        private void MutateNutritionType()
         {
             int iChance = 0;
             int[] aChances = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
@@ -187,6 +349,31 @@ namespace GeneLab.Genetix
                     break;
             }
 
+            if (m_eBodySize == BodySize.Big)
+            {
+                aChances[5] *= 2;//Сarnivorous
+                aChances[7] *= 2;//ParasitismMeat
+            }
+
+            if (m_eBodySize == BodySize.Giant)
+            {
+                aChances[0] *= 2;//Eternal
+                aChances[1] *= 2;//Photosynthesis
+                aChances[2] *= 2;//Thermosynthesis
+                aChances[3] *= 2;//Vegetarian
+                aChances[7] *= 2;//ParasitismMeat
+                aChances[10] *= 2;//Mineral
+
+                aChances[5] = Math.Min(1, aChances[5]);//Сarnivorous
+            }
+
+            if (m_eBodySize == BodySize.Tini ||
+                m_eBodySize == BodySize.Small)
+            {
+                aChances[5] = Math.Min(1, aChances[5]);//Сarnivorous
+                aChances[7] = Math.Min(1, aChances[7]);//ParasitismMeat
+            }
+
             if (m_eBodyBuild == BodyBuild.Muscular)
             {
                 aChances[4] *= 2;//Organic
@@ -207,8 +394,8 @@ namespace GeneLab.Genetix
                 aChances[9] *= 2;//ParasitismEnergy
 
                 aChances[5] = Math.Min(1, aChances[5]);//Сarnivorous
-                aChances[6] = Math.Min(1, aChances[6]);//ParasitismBlood
-                aChances[7] = Math.Min(1, aChances[7]);//ParasitismMeat
+                aChances[6] = 0;// Math.Min(1, aChances[6]);//ParasitismBlood
+                aChances[7] = 0;// Math.Min(1, aChances[7]);//ParasitismMeat
             }
 
             if (m_eBodyBuild == BodyBuild.Slim)
@@ -216,32 +403,8 @@ namespace GeneLab.Genetix
                 aChances[3] *= 2;//Vegetarian
                 aChances[6] *= 2;//ParasitismBlood
 
-                aChances[10] = Math.Min(1, aChances[10]);//Mineral
-            }
-
-            if (m_eBodySize == BodySize.Tini ||
-                m_eBodySize == BodySize.Small)
-            {
-                aChances[5] = Math.Min(1, aChances[5]);//Сarnivorous
                 aChances[7] = Math.Min(1, aChances[7]);//ParasitismMeat
-            }
-
-            if (m_eBodySize == BodySize.Big)
-            {
-                aChances[5] *= 2;//Сarnivorous
-                aChances[7] *= 2;//ParasitismMeat
-            }
-
-            if (m_eBodySize == BodySize.Giant)
-            {
-                aChances[0] *= 2;//Eternal
-                aChances[1] *= 2;//Photosynthesis
-                aChances[2] *= 2;//Thermosynthesis
-                aChances[3] *= 2;//Vegetarian
-                aChances[7] *= 2;//ParasitismMeat
-                aChances[10] *= 2;//Mineral
-
-                aChances[5] = Math.Min(1, aChances[5]);//Сarnivorous
+                aChances[10] = Math.Min(1, aChances[10]);//Mineral
             }
 
             iChance = Rnd.ChooseOne(aChances, 1);
@@ -284,8 +447,6 @@ namespace GeneLab.Genetix
                     m_eNutritionType = NutritionType.Mineral;
                     break;
             }
-
-            return m_eNutritionType != eNutritionType;
         }
 
         #region GenetixBase Members
@@ -294,8 +455,6 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
-                bool bMutation = false;
-
                 BodyGenetix pMutant = new BodyGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -318,21 +477,29 @@ namespace GeneLab.Genetix
                             pMutant.m_eBodySize = BodySize.Big;
                             break;
                     }
-
-                    bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
-                {
-                    pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
-                    if (pMutant.m_eBodyBuild != m_eBodyBuild)
-                        bMutation = true;
-                }
+                    switch (pMutant.m_eBodyBuild)
+                    {
+                        case BodyBuild.Slim:
+                            pMutant.m_eBodyBuild = BodyBuild.Normal;
+                            break;
+                        case BodyBuild.Normal:
+                            pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                            break;
+                        case BodyBuild.Muscular:
+                            pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Normal : BodyBuild.Fat;
+                            break;
+                        case BodyBuild.Fat:
+                            pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Normal : BodyBuild.Muscular;
+                            break;
+                    }
 
-                if (pMutant.MutateNutritionType())
-                    bMutation = true;
+                if (Rnd.OneChanceFrom(2))
+                    pMutant.MutateNutritionType();
 
-                if(bMutation)
+                if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
 

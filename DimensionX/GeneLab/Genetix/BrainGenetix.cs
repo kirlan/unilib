@@ -53,12 +53,128 @@ namespace GeneLab.Genetix
 
     public class BrainGenetix: GenetixBase
     {
+        /// <summary>
+        /// very clever creatures with quite common mystic powers
+        /// </summary>
+        /// <returns></returns>
+        public string GetDescription()
+        {
+            string sIntellect = "?";
+            switch (m_eIntelligence)
+            {
+                case Intelligence.None:
+                    sIntellect = "brainless creatures";
+                    break;
+                case Intelligence.Basic:
+                    sIntellect = "not so clever creatures";
+                    break;
+                case Intelligence.Capable:
+                    sIntellect = "very clever creatures";
+                    break;
+                case Intelligence.Primitive:
+                    sIntellect = "primitive sentient beings";
+                    break;
+                case Intelligence.Sapient:
+                    sIntellect = "quite sentient beings";
+                    break;
+                case Intelligence.Ingenious:
+                    sIntellect = "highly intelligent beings";
+                    break;
+            }
+
+            string sMagic = "?";
+            switch (m_eMagicAbilityPrevalence)
+            {
+                case MagicAbilityPrevalence.Rare:
+                    sMagic = "rare";
+                    break;
+                case MagicAbilityPrevalence.Common:
+                    sMagic = "quite common";
+                    break;
+                case MagicAbilityPrevalence.AlmostEveryone:
+                    sMagic = "widespreaded";
+                    break;
+            }
+
+            string sMagicForce = "?";
+            switch (m_iMagicAbilityPotential)
+            {
+                case 0:
+                    sMagicForce = m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? " and mostly fictional magic abilities" : ", but mostly fictional magic abilities";
+                    break;
+                case 1:
+                    sMagicForce = " extra-sensoric powers";
+                    break;
+                case 2:
+                    sMagicForce = " mystic powers";
+                    break;
+                case 3:
+                    sMagicForce = " super powers";
+                    break;
+                case 4:
+                    sMagicForce = " magic abilities";
+                    break;
+                case 5:
+                    sMagicForce = m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but quite high magic abilities" : " and quite high magic abilities";
+                    break;
+                case 6:
+                    sMagicForce = m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but extremely high magic abilities" : " and extremely high magic abilities";
+                    break;
+                case 7:
+                    sMagicForce = " god-like abilities";
+                    break;
+                case 8:
+                    sMagicForce = " omnipotence abilities";
+                    break;
+            }
+
+            return sIntellect + " with " + sMagic + sMagicForce;
+        }
+
+        public static BrainGenetix HumanFantasy
+        {
+            get { return new BrainGenetix(Intelligence.Sapient, MagicAbilityPrevalence.Common, 4); }
+        }
+
+        public static BrainGenetix HumanReal
+        {
+            get { return new BrainGenetix(Intelligence.Sapient, MagicAbilityPrevalence.Rare, 0); }
+        }
+
+        public static BrainGenetix HumanSF
+        {
+            get { return new BrainGenetix(Intelligence.Sapient, MagicAbilityPrevalence.Rare, 3); }
+        }
+
+        public static BrainGenetix Elf
+        {
+            get { return new BrainGenetix(Intelligence.Ingenious, MagicAbilityPrevalence.Common, 4); }
+        }
+
+        public static BrainGenetix Barbarian
+        {
+            get { return new BrainGenetix(Intelligence.Primitive, MagicAbilityPrevalence.Rare, 2); }
+        }
+
+
         public Intelligence m_eIntelligence = Intelligence.Sapient;
 
         public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
 
         public int m_iMagicAbilityPotential = 0;
 
+        public bool IsIdentical(GenetixBase pOther)
+        {
+            BrainGenetix pAnother = pOther as BrainGenetix;
+
+            if (pAnother == null)
+                return false;
+
+            return m_eIntelligence == pAnother.m_eIntelligence &&
+                m_eMagicAbilityPrevalence == pAnother.m_eMagicAbilityPrevalence &&
+                m_iMagicAbilityPotential == pAnother.m_iMagicAbilityPotential;
+        }
+        
         public BrainGenetix()
         { }
 
@@ -104,8 +220,6 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
-                bool bMutation = false;
-
                 BrainGenetix pMutant = new BrainGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -131,7 +245,6 @@ namespace GeneLab.Genetix
                             pMutant.m_eIntelligence = Intelligence.Sapient;
                             break;
                     }
-                    bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -144,9 +257,6 @@ namespace GeneLab.Genetix
                          pMutant.m_eIntelligence == Intelligence.Capable) &&
                         Rnd.OneChanceFrom(2))
                         pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-
-                    if (m_eMagicAbilityPrevalence == pMutant.m_eMagicAbilityPrevalence)
-                        bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -166,9 +276,6 @@ namespace GeneLab.Genetix
 
                     if (pMutant.m_eIntelligence == Intelligence.Ingenious)
                         pMutant.m_iMagicAbilityPotential = 4 + Rnd.Get(5); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
-
-                    if (pMutant.m_iMagicAbilityPotential != m_iMagicAbilityPotential)
-                        bMutation = true;
                 }
                 else
                 {
@@ -182,7 +289,7 @@ namespace GeneLab.Genetix
                         pMutant.m_iMagicAbilityPotential = Math.Max(4, pMutant.m_iMagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
                 }
 
-                if(bMutation)
+                if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
 
@@ -193,8 +300,6 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(20))
             {
-                bool bMutation = false;
-
                 BrainGenetix pMutant = new BrainGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
@@ -207,9 +312,6 @@ namespace GeneLab.Genetix
                          pMutant.m_eIntelligence == Intelligence.Capable) &&
                         Rnd.OneChanceFrom(2))
                         pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-                
-                    if (m_eMagicAbilityPrevalence != pMutant.m_eMagicAbilityPrevalence)
-                        bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -229,9 +331,6 @@ namespace GeneLab.Genetix
 
                     if (pMutant.m_eIntelligence == Intelligence.Ingenious)
                         pMutant.m_iMagicAbilityPotential = 4 + Rnd.Get(5); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
-
-                    if (pMutant.m_iMagicAbilityPotential != m_iMagicAbilityPotential)
-                        bMutation = true;
                 }
                 else
                 {
@@ -245,7 +344,7 @@ namespace GeneLab.Genetix
                         pMutant.m_iMagicAbilityPotential = Math.Max(4, pMutant.m_iMagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
                 }
 
-                if(bMutation)
+                if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
 
@@ -256,8 +355,6 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(5))
             {
-                bool bMutation = false;
-
                 BrainGenetix pMutant = new BrainGenetix(this);
 
                 if (Rnd.OneChanceFrom(10))
@@ -280,8 +377,6 @@ namespace GeneLab.Genetix
                             pMutant.m_eIntelligence = Intelligence.Sapient;
                             break;
                     }
-
-                    bMutation = true;
                 } 
                 
                 if (Rnd.OneChanceFrom(2))
@@ -294,9 +389,6 @@ namespace GeneLab.Genetix
                          pMutant.m_eIntelligence == Intelligence.Capable) &&
                         Rnd.OneChanceFrom(2))
                         pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-                
-                    if (m_eMagicAbilityPrevalence != pMutant.m_eMagicAbilityPrevalence)
-                        bMutation = true;
                 }
 
                 if (Rnd.OneChanceFrom(2))
@@ -316,9 +408,6 @@ namespace GeneLab.Genetix
 
                     if (pMutant.m_eIntelligence == Intelligence.Ingenious)
                         pMutant.m_iMagicAbilityPotential = 4 + Rnd.Get(5); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
-
-                    if (pMutant.m_iMagicAbilityPotential != m_iMagicAbilityPotential)
-                        bMutation = true;
                 }
                 else
                 {
@@ -332,7 +421,7 @@ namespace GeneLab.Genetix
                         pMutant.m_iMagicAbilityPotential = Math.Max(4, pMutant.m_iMagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
                 }
 
-                if(bMutation)
+                if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
 

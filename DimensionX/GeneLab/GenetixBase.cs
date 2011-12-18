@@ -11,5 +11,9 @@ namespace GeneLab
         GenetixBase MutateNation();
         GenetixBase MutateFamily();
         GenetixBase MutateIndividual();
+
+        bool IsIdentical(GenetixBase pOther);
+
+        string GetDescription();
     }
 }

@@ -3,11 +3,506 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GeneLab.Genetix;
+using LandscapeGeneration;
+using nsUniLibControls;
 
 namespace GeneLab
 {
-    public class Fenotype: GenetixBase
+    public class Fenotype<LTI> : GenetixBase
+        where LTI: LandTypeInfo, new()
     {
+        public string GetDescription()
+        {
+            return "They are " + m_pBrain.GetDescription() +
+                   ". They have " + m_pHead.GetDescription() +
+                   (m_pArms.m_eArmsCount != ArmsCount.None ? ", " + m_pArms.GetDescription() : "") +
+                   ", " + m_pLegs.GetDescription() +
+                   (m_pWings.m_eWingsCount != WingsCount.None ? ", " + m_pWings.GetDescription() : "") +
+                   (m_pTail.m_eTailLength != TailLength.None ? " and " + m_pTail.GetDescription() + ". " : ". ") +
+                   "They " + m_pBody.GetDescription() + ", " + m_pHide.GetDescription() + ". " +
+                   "On the head they have " + m_pEyes.GetDescription() + " and " + m_pEars.GetDescription() + " of a " + m_pFace.GetDescription() + ". " +
+                   m_pHairs.GetDescription() + " " +
+                   "Usually they " + m_pLifeCycle.GetDescription() + ".";
+        }
+
+        public string GetComparsion(Fenotype<LTI> pOriginal)
+        {
+            if (pOriginal.IsIdentical(this))
+                return "";
+
+            string sResult = "";
+
+            if (!pOriginal.m_pBrain.IsIdentical(m_pBrain))
+                sResult += "They are " + m_pBrain.GetDescription() + ".";
+
+            if (!pOriginal.m_pHead.IsIdentical(m_pHead) ||
+                !pOriginal.m_pArms.IsIdentical(m_pArms) ||
+                !pOriginal.m_pLegs.IsIdentical(m_pLegs) ||
+                !pOriginal.m_pWings.IsIdentical(m_pWings) ||
+                !pOriginal.m_pTail.IsIdentical(m_pTail))
+            {
+                if (sResult != "")
+                    sResult += " ";
+
+                sResult += "They have ";
+
+                bool bSemicolon = false;
+                if (!pOriginal.m_pHead.IsIdentical(m_pHead))
+                {
+                    sResult += m_pHead.GetDescription();
+                    bSemicolon = true;
+                }
+
+                if(!pOriginal.m_pArms.IsIdentical(m_pArms))
+                {
+                    if (m_pArms.m_eArmsCount != ArmsCount.None)
+                    {
+                        if (bSemicolon)
+                            sResult += ", ";
+                        sResult += m_pArms.GetDescription();
+
+                        bSemicolon = true;
+                    }
+                    else
+                    {
+                        if (bSemicolon)
+                            sResult += ", ";
+                        sResult += "no arms";
+                    }
+                }
+
+                if (!pOriginal.m_pLegs.IsIdentical(m_pLegs))
+                {
+                    if (bSemicolon)
+                        sResult += ", ";
+                    sResult += m_pLegs.GetDescription();
+
+                    bSemicolon = true;
+                }
+
+                if (!pOriginal.m_pWings.IsIdentical(m_pWings))
+                {
+                    if (m_pWings.m_eWingsCount != WingsCount.None)
+                    {
+                        if (bSemicolon)
+                            sResult += ", ";
+                        sResult += m_pWings.GetDescription();
+
+                        bSemicolon = true;
+                    }
+                    else
+                    {
+                        if (bSemicolon)
+                            sResult += ", ";
+                        sResult += "no wings";
+                    }
+                }
+
+                if (!pOriginal.m_pTail.IsIdentical(m_pTail))
+                {
+                    if (m_pTail.m_eTailLength != TailLength.None)
+                    {
+                        if (bSemicolon)
+                            sResult += " and ";
+                        sResult += m_pTail.GetDescription();
+                    }
+                    else
+                    {
+                        if (bSemicolon)
+                            sResult += " and ";
+                        sResult += "no tail";
+                    }
+                }
+
+                sResult += ".";
+            }
+
+            if (!pOriginal.m_pBody.IsIdentical(m_pBody) ||
+                !pOriginal.m_pHide.IsIdentical(m_pHide))
+            {
+                if (sResult != "")
+                    sResult += " ";
+
+                bool bSemicolon = false;
+                if(!pOriginal.m_pBody.IsIdentical(m_pBody))
+                {
+                    sResult += "They " + m_pBody.GetDescription();
+                    bSemicolon = true;
+                }
+                else
+                    sResult += "Their bodies are ";
+
+                if(!pOriginal.m_pHide.IsIdentical(m_pHide))
+                {
+                    if (bSemicolon)
+                        sResult += ", ";
+                    sResult += m_pHide.GetDescription();
+                }
+
+                sResult += ".";
+            }
+
+            if (!pOriginal.m_pEyes.IsIdentical(m_pEyes) ||
+                !pOriginal.m_pEars.IsIdentical(m_pEars) ||
+                !pOriginal.m_pFace.IsIdentical(m_pFace))
+            {
+                if (sResult != "")
+                    sResult += " ";
+
+                bool bSemicolon = false;
+                if (!pOriginal.m_pEyes.IsIdentical(m_pEyes) ||
+                    !pOriginal.m_pEars.IsIdentical(m_pEars))
+                {
+                    sResult += "They have ";
+
+                    if (!pOriginal.m_pEyes.IsIdentical(m_pEyes))
+                    {
+                        sResult += m_pEyes.GetDescription();
+                        bSemicolon = true;
+                    }
+
+                    if (!pOriginal.m_pEars.IsIdentical(m_pEars))
+                    {
+                        if (bSemicolon)
+                            sResult += " and ";
+
+                        sResult += m_pEars.GetDescription() + " of a ";
+                    }
+                    else
+                    {
+                        if (bSemicolon && !pOriginal.m_pFace.IsIdentical(m_pFace))
+                            sResult += " at the ";
+                    }
+                }
+                else
+                    sResult += "They have ";
+
+                if (!pOriginal.m_pFace.IsIdentical(m_pFace))
+                    sResult += m_pFace.GetDescription();
+                else
+                    if (!pOriginal.m_pEars.IsIdentical(m_pEars))
+                        sResult += "head";// m_pFace.m_eNoseType == NoseType.Normal ? "face" : "muzzle";
+
+                sResult += ".";
+            }
+
+            if (!pOriginal.m_pHairs.IsIdentical(m_pHairs))
+            {
+                if (sResult != "")
+                    sResult += " ";
+
+                if (m_pHairs.GetDescription() != "")
+                    sResult += m_pHairs.GetDescription();
+                else
+                    sResult = "Both males and females are bald, and have no beard or moustache.";
+            }
+
+            if (!pOriginal.m_pLifeCycle.IsIdentical(m_pLifeCycle))
+            {
+                if (sResult != "")
+                    sResult += " ";
+
+                sResult += "Usually they " + m_pLifeCycle.GetDescription() + ".";
+            }
+
+            if (sResult == "")
+                return  GetComparsion(pOriginal);
+
+            return sResult;
+        }
+
+        public void GetTerritoryPreferences(out LTI[] aPreferred, out LTI[] aHated)
+        {
+            Dictionary<LandTypes<LTI>.LandType, int> cLandTypes = new Dictionary<LandTypes<LTI>.LandType, int>();
+            foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+                cLandTypes[eLand] = 1;
+
+            //ноги дают преимущество на различных типа территории.
+            //чем больше ног - тем больше преимущество
+            int iMultiplier = 1;
+            switch (m_pLegs.m_eLegsCount)
+            {
+                case LegsCount.Quadrupedal:
+                    iMultiplier = 2;
+                    break;
+                case LegsCount.Hexapod:
+                    iMultiplier = 3;
+                    break;
+                case LegsCount.Octapod:
+                    iMultiplier = 4;
+                    break;
+            }
+
+
+            if (m_pLegs.m_eLegsCount != LegsCount.NoneBlob &&
+               m_pLegs.m_eLegsCount != LegsCount.NoneHover &&
+               m_pLegs.m_eLegsCount != LegsCount.NoneTail)
+            {
+                switch (m_pLegs.m_eLegsType)
+                {
+                    //копыта дают премущества на равнинах и в горах
+                    case LegsType.Hoofs:
+                        cLandTypes[LandTypes<LTI>.LandType.Plains] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Savanna] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Tundra] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Mountains] += iMultiplier;
+                        break;
+                    //case LegsType.Foots:
+                    //    cLandTypes[LandTypes<LTI>.LandType.Plains] += iMultiplier;
+                    //    cLandTypes[LandTypes<LTI>.LandType.Savanna] += iMultiplier;
+                    //    cLandTypes[LandTypes<LTI>.LandType.Tundra] += iMultiplier;
+                    //    break;
+                    //звериные лапы с когтями - на равнинах и в лесах
+                    case LegsType.Paws:
+                        cLandTypes[LandTypes<LTI>.LandType.Plains] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Savanna] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Forest] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Jungle] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Taiga] += iMultiplier;
+                        break;
+                    //птичьи лапы с когтями - в лесах и в горах
+                    case LegsType.Claws:
+                        cLandTypes[LandTypes<LTI>.LandType.Forest] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Jungle] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Taiga] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Mountains] += iMultiplier;
+                        break;
+                    //паучьи лапы - в песках и горах
+                    case LegsType.Spidery:
+                        cLandTypes[LandTypes<LTI>.LandType.Desert] += iMultiplier;
+                        cLandTypes[LandTypes<LTI>.LandType.Mountains] += iMultiplier;
+                        break;
+                    //щупальца - в болотах
+                    case LegsType.Tentacles:
+                        cLandTypes[LandTypes<LTI>.LandType.Swamp] += iMultiplier;
+                        break;
+                }
+            }
+            else
+            {
+                //безногие расы более комфортно себя чувствуют в пустынях и болотах
+                cLandTypes[LandTypes<LTI>.LandType.Desert] += iMultiplier;
+                cLandTypes[LandTypes<LTI>.LandType.Swamp] += iMultiplier;
+            }
+
+            if (m_pTail.m_eTailLength == TailLength.Long)
+            {
+                switch (m_pTail.m_eTailControl)
+                {
+                    //длинный плохоуправляемый хвост помогает удерживать равновесие, что важно в лесах и горах
+                    case TailControl.Crude:
+                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+                        break;
+                    //длинный и ловкий хвост помогает скакать по веткам деревьев
+                    case TailControl.Skillful:
+                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 3;
+                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 3;
+                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 3;
+                        break;
+                }
+            }
+
+            if (m_pWings.m_eWingsForce != WingsForce.None)
+            {
+                switch (m_pWings.m_eWingsForce)
+                {
+                    //слабые крылья хороши там, где есть высокие места, откуда можно планировать - в лесах и горах
+                    case WingsForce.Gliding:
+                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+                        break;
+                    //сильные крылья хороши так же и на равнинах, где можно высоко взлететь и получить дополнительный обзор
+                    case WingsForce.Flying:
+                        cLandTypes[LandTypes<LTI>.LandType.Plains] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+                        cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+                        break;
+                }
+
+                //в болотах живут крылатые только с кожистыми или насекомыми крыльями
+                if (m_pWings.m_eWingsType == WingsType.Feathered)
+                    cLandTypes[LandTypes<LTI>.LandType.Swamp] = 0;
+            }
+
+            switch (m_pHide.m_eHideType)
+            {
+                //существа с голой кожей не любят болота
+                case HideType.BareSkin:
+                    //cLandTypes[LandTypes<LTI>.LandType.Plains] *= 2;
+                    //cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
+
+                    cLandTypes[LandTypes<LTI>.LandType.Swamp] = 0;
+                    break;
+                //длинный мех подходит для холодных регионов и не подходит для жарких и влажных
+                case HideType.FurLong:
+                    cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
+                    cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+
+                    cLandTypes[LandTypes<LTI>.LandType.Swamp] = 0;
+                    cLandTypes[LandTypes<LTI>.LandType.Desert] = 0;
+                    cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
+                    break;
+                //хитин, наоборот, подходит для жарких и влажных мест, но не подходит для холодных
+                case HideType.Chitin:
+                    cLandTypes[LandTypes<LTI>.LandType.Swamp] *= 2;
+                    cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
+                    cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+
+                    cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
+                    cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                    break;
+                //аналогично чешуя
+                case HideType.Scales:
+                    cLandTypes[LandTypes<LTI>.LandType.Swamp] *= 2;
+                    cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
+                    cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+
+                    cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
+                    cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                    break;
+                //костяные панцири хороши для болота и не подходят для холодных регионов
+                case HideType.Shell:
+                    cLandTypes[LandTypes<LTI>.LandType.Swamp] *= 2;
+
+                    cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
+                    cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                    break;
+            }
+
+            KColor pColor = new KColor();
+            pColor.RGB = m_pHide.m_eHideColor;
+
+            //светлая кожа не подходит для жарких регионов
+            if (pColor.Lightness > 0.75)
+            {
+                //cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
+                //cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+
+                cLandTypes[LandTypes<LTI>.LandType.Savanna] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Desert] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
+            }
+
+            //тёмная кожа не подходит для холодных регионов и даёт бонусы в особо жарких местах
+            if (pColor.Lightness < 0.25)
+            {
+                cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
+                cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
+                cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+
+                cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+            }
+
+            int iPigmented = 0;
+            int iPigmentless = 0;
+            foreach (HairsColor eColor in m_pHairs.m_cHairColors)
+            {
+                if (eColor == HairsColor.Albino ||
+                    eColor == HairsColor.Blonde ||
+                    eColor == HairsColor.Red)
+                    iPigmentless++;
+
+                if (eColor == HairsColor.Black ||
+                    eColor == HairsColor.Brunette ||
+                    eColor == HairsColor.Blue)
+                    iPigmented++;
+            }
+
+            //светловолосые расы не живут в жарких странах
+            if (iPigmentless > iPigmented * 2)
+            {
+                //cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
+                //cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+
+                cLandTypes[LandTypes<LTI>.LandType.Savanna] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Desert] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
+            }
+
+            //с другой стороны, тёмные волосы более свойственны жителям жарких стран
+            if (iPigmented > iPigmentless * 2)
+            {
+                cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
+                cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
+                cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+
+                cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+            }
+
+            //ловкость и стройность отлично подходит для лесов, но плохо сочетается с горами
+            if (m_pBody.m_eBodyBuild == BodyBuild.Slim)
+            {
+                cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
+                cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+
+                cLandTypes[LandTypes<LTI>.LandType.Mountains] = 0;
+            }
+
+            //склонность к тучности мешает выживанию на пересечённой местности
+            if (m_pBody.m_eBodyBuild == BodyBuild.Fat)
+            {
+                cLandTypes[LandTypes<LTI>.LandType.Forest] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+
+                cLandTypes[LandTypes<LTI>.LandType.Mountains] = 0;
+            }
+
+            //повышенная мускулистость отлично сочетается с горами
+            if (m_pBody.m_eBodyBuild == BodyBuild.Muscular)
+            {
+                cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+            }
+
+            cLandTypes[LandTypes<LTI>.LandType.Ocean] = 0;
+            cLandTypes[LandTypes<LTI>.LandType.Coastral] = 0;
+
+            //ищем наиболее предпочтительные регионы
+            int iMax = 0;
+            foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+                if (iMax < cLandTypes[eLand])
+                    iMax = cLandTypes[eLand];
+
+            //если предпочтительных вообще нет, то все регионы одинаково предпочтительны
+            if (iMax == 0)
+            {
+                foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+                    cLandTypes[eLand] = 1;
+
+                cLandTypes[LandTypes<LTI>.LandType.Ocean] = 0;
+                cLandTypes[LandTypes<LTI>.LandType.Coastral] = 0;
+
+                iMax = 1;
+            }
+
+            //заполняем выходные структуры
+            List<LTI> cPreferred = new List<LTI>();
+            List<LTI> cHated = new List<LTI>();
+
+            foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+            {
+                if (cLandTypes[eLand] == iMax)
+                    cPreferred.Add(LandTypes<LTI>.m_pInstance.m_pLandTypes[eLand]);
+                if (cLandTypes[eLand] == 0 && eLand != LandTypes<LTI>.LandType.Ocean && eLand != LandTypes<LTI>.LandType.Coastral)
+                    cHated.Add(LandTypes<LTI>.m_pInstance.m_pLandTypes[eLand]);
+            }
+
+            aPreferred = cPreferred.ToArray();
+            aHated = cHated.ToArray();
+        }
+
         public LegsGenetix m_pLegs;
         public ArmsGenetix m_pArms;
         public WingsGenetix m_pWings;
@@ -22,9 +517,41 @@ namespace GeneLab
         public EyesGenetix m_pEyes;
         public FaceGenetix m_pFace;
 
+        private Fenotype()
+        { }
+
+        public Fenotype(BodyGenetix pBody,
+                        HeadGenetix pHead,
+                        LegsGenetix pLegs,
+                        ArmsGenetix pArms,
+                        WingsGenetix pWings,
+                        TailGenetix pTail,
+                        HideGenetix pHide,
+                        BrainGenetix pBrain,
+                        LifeCycleGenetix pLifeCycle,
+                        FaceGenetix pFace,
+                        EarsGenetix pEars,
+                        EyesGenetix pEyes,
+                        HairsGenetix pHairs)
+        {
+            m_pBody = pBody;
+            m_pHead = pHead;
+            m_pLegs = pLegs;
+            m_pArms = pArms;
+            m_pWings = pWings;
+            m_pTail = pTail;
+            m_pHide = pHide;
+            m_pBrain = pBrain;
+            m_pLifeCycle = pLifeCycle;
+            m_pFace = pFace;
+            m_pEars = pEars;
+            m_pEyes = pEyes;
+            m_pHairs = pHairs;
+        }
+
         public GenetixBase MutateRace()
         {
-            Fenotype pMutant = new Fenotype();
+            Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
             pMutant.m_pLegs = (LegsGenetix)m_pLegs.MutateRace();
             pMutant.m_pArms = (ArmsGenetix)m_pArms.MutateRace();
@@ -40,12 +567,15 @@ namespace GeneLab
             pMutant.m_pEyes = (EyesGenetix)m_pEyes.MutateRace();
             pMutant.m_pFace = (FaceGenetix)m_pFace.MutateRace();
 
-            return pMutant;
+            if (!pMutant.IsIdentical(this))
+                return pMutant;
+
+            return this;
         }
 
         public GenetixBase MutateNation()
         {
-            Fenotype pMutant = new Fenotype();
+            Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
             pMutant.m_pLegs = (LegsGenetix)m_pLegs.MutateNation();
             pMutant.m_pArms = (ArmsGenetix)m_pArms.MutateNation();
@@ -61,12 +591,15 @@ namespace GeneLab
             pMutant.m_pEyes = (EyesGenetix)m_pEyes.MutateNation();
             pMutant.m_pFace = (FaceGenetix)m_pFace.MutateNation();
 
-            return pMutant;
+            if (!pMutant.IsIdentical(this))
+                return pMutant;
+
+            return this;
         }
 
         public GenetixBase MutateFamily()
         {
-            Fenotype pMutant = new Fenotype();
+            Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
             pMutant.m_pLegs = (LegsGenetix)m_pLegs.MutateFamily();
             pMutant.m_pArms = (ArmsGenetix)m_pArms.MutateFamily();
@@ -82,12 +615,15 @@ namespace GeneLab
             pMutant.m_pEyes = (EyesGenetix)m_pEyes.MutateFamily();
             pMutant.m_pFace = (FaceGenetix)m_pFace.MutateFamily();
 
-            return pMutant;
+            if (!pMutant.IsIdentical(this))
+                return pMutant;
+
+            return this;
         }
 
         public GenetixBase MutateIndividual()
         {
-            Fenotype pMutant = new Fenotype();
+            Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
             pMutant.m_pLegs = (LegsGenetix)m_pLegs.MutateIndividual();
             pMutant.m_pArms = (ArmsGenetix)m_pArms.MutateIndividual();
@@ -103,7 +639,37 @@ namespace GeneLab
             pMutant.m_pEyes = (EyesGenetix)m_pEyes.MutateIndividual();
             pMutant.m_pFace = (FaceGenetix)m_pFace.MutateIndividual();
 
-            return pMutant;
+            if (!pMutant.IsIdentical(this))
+                return pMutant;
+
+            return this;
         }
+
+        #region GenetixBase Members
+
+
+        public bool IsIdentical(GenetixBase pOther)
+        {
+            Fenotype<LTI> pAnother = pOther as Fenotype<LTI>;
+
+            if (pAnother == null)
+                return false;
+
+            return pAnother.m_pLegs.IsIdentical(m_pLegs) &&
+                pAnother.m_pArms.IsIdentical(m_pArms) &&
+                pAnother.m_pWings.IsIdentical(m_pWings) &&
+                pAnother.m_pTail.IsIdentical(m_pTail) &&
+                pAnother.m_pHide.IsIdentical(m_pHide) &&
+                pAnother.m_pBody.IsIdentical(m_pBody) &&
+                pAnother.m_pBrain.IsIdentical(m_pBrain) &&
+                pAnother.m_pLifeCycle.IsIdentical(m_pLifeCycle) &&
+                pAnother.m_pHead.IsIdentical(m_pHead) &&
+                pAnother.m_pHairs.IsIdentical(m_pHairs) &&
+                pAnother.m_pEars.IsIdentical(m_pEars) &&
+                pAnother.m_pEyes.IsIdentical(m_pEyes) &&
+                pAnother.m_pFace.IsIdentical(m_pFace);
+        }
+
+        #endregion
     }
 }

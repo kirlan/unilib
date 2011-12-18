@@ -46,12 +46,85 @@ namespace GeneLab.Genetix
         Top
     }
     
-    class EarsGenetix : GenetixBase
+    public class EarsGenetix : GenetixBase
     {
+        /// <summary>
+        /// long pointy ears at the sides of head
+        /// </summary>
+        /// <returns></returns>
+        public string GetDescription()
+        {
+            string sEars = "?";
+            switch (m_eEarsType)
+            {
+                case EarsType.None:
+                    sEars = "no ears";
+                    break;
+                case EarsType.Round:
+                    sEars = "small round ears";
+                    break;
+                case EarsType.Pointy:
+                    sEars = "small pointy ears";
+                    break;
+                case EarsType.Long:
+                    sEars = "long pointy ears";
+                    break;
+                case EarsType.BigRound:
+                    sEars = "big round ears";
+                    break;
+                case EarsType.Feelers:
+                    sEars = "thin, long feelers";
+                    break;
+            }
+
+            return sEars + " at the " + (m_eEarsPlacement == EarsPlacement.Top ? "top" : "sides");
+        }
+
+        public static EarsGenetix None
+        {
+            get { return new EarsGenetix(EarsType.None, EarsPlacement.Side); }
+        }
+
+        public static EarsGenetix Human
+        {
+            get { return new EarsGenetix(EarsType.Round, EarsPlacement.Side); }
+        }
+
+        public static EarsGenetix Herbivore
+        {
+            get { return new EarsGenetix(EarsType.Round, EarsPlacement.Top); }
+        }
+
+        public static EarsGenetix Carnivore
+        {
+            get { return new EarsGenetix(EarsType.Pointy, EarsPlacement.Top); }
+        }
+
+        public static EarsGenetix Elf
+        {
+            get { return new EarsGenetix(EarsType.Pointy, EarsPlacement.Side); }
+        }
+
+        public static EarsGenetix Insect
+        {
+            get { return new EarsGenetix(EarsType.Feelers, EarsPlacement.Top); }
+        }
+
         public EarsType m_eEarsType = EarsType.Round;
 
         public EarsPlacement m_eEarsPlacement = EarsPlacement.Side;
 
+        public bool IsIdentical(GenetixBase pOther)
+        {
+            EarsGenetix pAnother = pOther as EarsGenetix;
+
+            if (pAnother == null)
+                return false;
+
+            return m_eEarsType == pAnother.m_eEarsType &&
+                m_eEarsPlacement == pAnother.m_eEarsPlacement;
+        }
+        
         public EarsGenetix()
         { }
 
@@ -71,25 +144,15 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(10))
             {
-                bool bMutation = false;
-
                 EarsGenetix pMutant = new EarsGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
-                {
                     pMutant.m_eEarsType = (EarsType)Rnd.Get(typeof(EarsType));
-                    if (pMutant.m_eEarsType != m_eEarsType)
-                        bMutation = true;
-                }
 
-                if (Rnd.OneChanceFrom(2))
-                {
-                    pMutant.m_eEarsPlacement = (EarsPlacement)Rnd.Get(typeof(EarsPlacement));
-                    if (pMutant.m_eEarsPlacement != m_eEarsPlacement)
-                        bMutation = true;
-                }
+                //if (Rnd.OneChanceFrom(2))
+                //    pMutant.m_eEarsPlacement = (EarsPlacement)Rnd.Get(typeof(EarsPlacement));
 
-                if(bMutation)
+                if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
 
