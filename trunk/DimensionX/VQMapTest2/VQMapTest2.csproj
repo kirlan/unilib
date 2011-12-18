@@ -84,6 +84,10 @@
       <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
       <Name>Fortune</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GeneLab\GeneLab.csproj">
+      <Project>{76F06EE9-C037-4FCF-B177-81CC81022EAF}</Project>
+      <Name>GeneLab</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Landscape\Landscape.csproj">
       <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>
       <Name>Landscape</Name>
