@@ -734,6 +734,11 @@ namespace Socium
 
             m_iInfrastructureLevel = 0;
             //float fInfrastructureLevel = 0;
+
+            int iGrain = 0;
+            int iGame = 0;
+            int iFish = 0;
+
             foreach (Province pProvince in m_cContents)
             {
                 int iCount = 0;
@@ -754,7 +759,10 @@ namespace Socium
                             m_cBorderWith[pState] = new List<Line>();
                     } 
                 
-                m_iFood += (int)(pProvince.m_fGrain + pProvince.m_fFish + pProvince.m_fGame);
+                //m_iFood += (int)(pProvince.m_fGrain + pProvince.m_fFish + pProvince.m_fGame);
+                iGrain += (int)pProvince.m_fGrain;
+                iGame += (int)pProvince.m_fGame;
+                iFish += (int)pProvince.m_fFish; 
                 m_iWood += (int)pProvince.m_fWood;
                 m_iOre += (int)pProvince.m_fOre;
 
@@ -781,8 +789,45 @@ namespace Socium
                 m_pMethropoly.m_pNation = pMaxNation;
                 foreach (LandX pLand in m_pMethropoly.m_cContents)
                     pLand.m_pNation = m_pNation;
-            } 
-            
+            }
+
+            switch (m_pNation.m_pFenotype.m_pBody.m_eNutritionType)
+            {
+                case NutritionType.Eternal:
+                    m_iFood = m_iPopulation;
+                    break;
+                case NutritionType.Mineral:
+                    m_iFood = m_iOre;
+                    break;
+                case NutritionType.Organic:
+                    m_iFood = iFish + iGrain + iGame;
+                    break;
+                case NutritionType.ParasitismBlood:
+                    m_iFood = m_iPopulation;
+                    break;
+                case NutritionType.ParasitismEmote:
+                    m_iFood = m_iPopulation;
+                    break;
+                case NutritionType.ParasitismEnergy:
+                    m_iFood = m_iPopulation;
+                    break;
+                case NutritionType.ParasitismMeat:
+                    m_iFood = m_iPopulation;
+                    break;
+                case NutritionType.Photosynthesis:
+                    m_iFood = m_iPopulation;
+                    break;
+                case NutritionType.Thermosynthesis:
+                    m_iFood = m_iPopulation;
+                    break;
+                case NutritionType.Vegetarian:
+                    m_iFood = iGrain;
+                    break;
+                case NutritionType.Сarnivorous:
+                    m_iFood = iFish + iGame;
+                    break;
+            }
+
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
             //m_iInfrastructureLevel /= m_cContents.Count;
             //m_iInfrastructureLevel = (int)(m_cContents.Count / fInfrastructureLevel + 0.1) - 1;
