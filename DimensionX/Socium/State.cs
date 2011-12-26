@@ -1437,10 +1437,10 @@ namespace Socium
                     sEquality = "Serfdom";
                     break;
                 case 2:
-                    sEquality = "Capitalism";
+                    sEquality = "Hired labour";
                     break;
                 case 3:
-                    sEquality = "Socialism";
+                    sEquality = "Social equality";
                     break;
                 case 4:
                     sEquality = "Utopia";
