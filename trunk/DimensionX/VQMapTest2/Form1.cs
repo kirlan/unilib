@@ -14,6 +14,7 @@ using MapDrawEngine;
 using WorldGeneration;
 using Socium.Psichology;
 using Socium.Settlements;
+using Socium.Nations;
 
 namespace VQMapTest2
 {
@@ -231,12 +232,14 @@ namespace VQMapTest2
 
             richTextBox1.Clear();
 
-            richTextBox1.AppendText(string.Format("Social order : {0} {1} [C{2}]\n\n", State.GetControlString(e.m_pState.m_iControl), e.m_pState.m_pInfo.m_sName, e.m_pState.m_iCultureLevel));
+            richTextBox1.AppendText(string.Format("{0} {1}\n\n", e.m_pState.m_sName, e.m_pState.m_pInfo.m_sName));
+
+            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", e.m_pState.m_pNation.m_iTechLevel, e.m_pState.m_pNation.m_iMagicLimit, e.m_pState.m_pNation));
+
+            richTextBox1.AppendText(string.Format("Social order : {0} [C{1}]\n\n", State.GetControlString(e.m_pState.m_iControl), e.m_pState.m_iCultureLevel));
 
             richTextBox1.AppendText(string.Format("Economic system : {0}\n\n", State.GetEqualityString(e.m_pState.m_iSocialEquality))); 
             
-            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", e.m_pState.m_pNation.m_iTechLevel, e.m_pState.m_pNation.m_iMagicLimit, e.m_pState.m_pNation));
-
             richTextBox1.AppendText(string.Format("Culture:\n"));
             foreach (Mentality eMentality in Culture.Mentalities)
             {
@@ -250,7 +253,36 @@ namespace VQMapTest2
             }
             richTextBox1.AppendText("\n");
 
-            richTextBox1.AppendText(e.m_pState.m_pCustoms.GetCustomsString());
+            string sRaceName = e.m_pState.m_pNation.m_pRace.m_sName;
+            sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
+            richTextBox1.AppendText(sRaceName + "s " + e.m_pState.m_pNation.m_pRace.m_pFenotype.GetDescription());
+            richTextBox1.AppendText("\n");
+            richTextBox1.AppendText("Known " + e.m_pState.m_pNation.m_pRace.m_sName + " nations are: ");
+            bool bFirst = true;
+            List<Nation> cKnownNations = new List<Nation>();
+            foreach (State pState in m_pWorld.m_aStates)
+            {
+                if(pState.m_pNation.m_pRace == e.m_pState.m_pNation.m_pRace && !cKnownNations.Contains(pState.m_pNation))
+                {
+                    if (!bFirst)
+                        richTextBox1.AppendText(", ");
+
+                    bFirst = false;
+
+                    richTextBox1.AppendText(pState.m_pNation.m_sName);
+
+                    cKnownNations.Add(pState.m_pNation);
+                }
+            }
+            richTextBox1.AppendText(".\n\n");
+
+            string sFenotypeNation = e.m_pState.m_pNation.m_pFenotype.GetComparsion(e.m_pState.m_pNation.m_pRace.m_pFenotype);
+            if (!sFenotypeNation.StartsWith("are"))
+                sFenotypeNation = "are common " + e.m_pState.m_pNation.m_pRace.m_sName + "s, however " + sFenotypeNation.Substring(0, 1).ToLower() + sFenotypeNation.Substring(1);
+            richTextBox1.AppendText(e.m_pState.m_pNation.m_sName + "s " + sFenotypeNation);
+            richTextBox1.AppendText("\n\n");
+
+            richTextBox1.AppendText(e.m_pState.m_pCustoms.GetCustomsString2());
             richTextBox1.AppendText("\n");
 
             if (e.m_pState.GetImportedTech() == -1)
@@ -275,7 +307,7 @@ namespace VQMapTest2
             if(cEnemies.Length > 0)
             {
                 richTextBox1.AppendText("Enemies: ");
-                bool bFirst = true;
+                bFirst = true;
                 foreach (State pState in cEnemies)
                 {
                     if(!bFirst)
@@ -292,7 +324,7 @@ namespace VQMapTest2
             if (cAllies.Length > 0)
             {
                 richTextBox1.AppendText("Allies: ");
-                bool bFirst = true;
+                bFirst = true;
                 foreach (State pState in cAllies)
                 {
                     if (!bFirst)

@@ -36,11 +36,13 @@ namespace WorldGeneration
             if (m_pWaitForm == null)
                 return;
 
-            m_pWaitForm.richTextBox1.AppendText(sDescription + "\r\n");
+            //m_pWaitForm.richTextBox1.SuspendLayout();
+            m_pWaitForm.richTextBox1.AppendText(sDescription + "\n");
             m_pWaitForm.panel2.Width = 0;
             m_pWaitForm.m_iScale = iLength;
             m_pWaitForm.m_iRealProgress = 0;
             //m_pWaitForm.progressBar1.Maximum = iLength;
+            //m_pWaitForm.richTextBox1.ResumeLayout();
             m_pWaitForm.Refresh();
         }
 

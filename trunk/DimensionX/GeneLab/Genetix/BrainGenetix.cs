@@ -75,7 +75,7 @@ namespace GeneLab.Genetix
                     sIntellect = "primitive sentient beings";
                     break;
                 case Intelligence.Sapient:
-                    sIntellect = "quite sentient beings";
+                    sIntellect = "sentient beings";
                     break;
                 case Intelligence.Ingenious:
                     sIntellect = "highly intelligent beings";

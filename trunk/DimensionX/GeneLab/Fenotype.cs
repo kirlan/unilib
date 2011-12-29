@@ -11,20 +11,50 @@ namespace GeneLab
     public class Fenotype<LTI> : GenetixBase
         where LTI: LandTypeInfo, new()
     {
+        private readonly static Fenotype<LTI> s_HumanEtalon = new Fenotype<LTI>(BodyGenetix.Human,
+                                                HeadGenetix.Human,
+                                                LegsGenetix.Human,
+                                                ArmsGenetix.Human,
+                                                WingsGenetix.None,
+                                                TailGenetix.None,
+                                                HideGenetix.HumanWhite,
+                                                BrainGenetix.HumanReal,
+                                                LifeCycleGenetix.Human,
+                                                FaceGenetix.Human,
+                                                EarsGenetix.Human,
+                                                EyesGenetix.Human,
+                                                HairsGenetix.HumanWhite);
+
+        /// <summary>
+        /// are very clever cratures ... could have only a few children during whole lifetime, which are mostly females.
+        /// </summary>
+        /// <returns></returns>
         public string GetDescription()
         {
-            return "They are " + m_pBrain.GetDescription() +
-                   ". They have " + m_pHead.GetDescription() +
-                   (m_pArms.m_eArmsCount != ArmsCount.None ? ", " + m_pArms.GetDescription() : "") +
-                   ", " + m_pLegs.GetDescription() +
-                   (m_pWings.m_eWingsCount != WingsCount.None ? ", " + m_pWings.GetDescription() : "") +
-                   (m_pTail.m_eTailLength != TailLength.None ? " and " + m_pTail.GetDescription() + ". " : ". ") +
-                   "They " + m_pBody.GetDescription() + ", " + m_pHide.GetDescription() + ". " +
-                   "On the head they have " + m_pEyes.GetDescription() + " and " + m_pEars.GetDescription() + " of a " + m_pFace.GetDescription() + ". " +
-                   m_pHairs.GetDescription() + " " +
-                   "Usually they " + m_pLifeCycle.GetDescription() + ".";
+            string sResult = GetComparsion(s_HumanEtalon);
+            if (sResult.Length == 0)
+                sResult = "are just humans.";
+
+            if (!sResult.StartsWith("are"))
+                sResult = "are quite common humans." + sResult;
+
+            return sResult;
+            //return "are " + m_pBrain.GetDescription() +
+            //       ". They have " + m_pHead.GetDescription() +
+            //       (m_pArms.m_eArmsCount != ArmsCount.None ? ", " + m_pArms.GetDescription() : "") +
+            //       ", " + m_pLegs.GetDescription() +
+            //       (m_pWings.m_eWingsCount != WingsCount.None ? ", " + m_pWings.GetDescription() : "") +
+            //       (m_pTail.m_eTailLength != TailLength.None ? " and " + m_pTail.GetDescription() + ". " : ". ") +
+            //       "They " + m_pBody.GetDescription() + ", " + m_pHide.GetDescription() + ". " +
+            //       "On the head they have " + m_pEyes.GetDescription() + " and " + m_pEars.GetDescription() + " of a " + m_pFace.GetDescription() + ". " +
+            //       m_pHairs.GetDescription() + " " +
+            //       "Usually they " + m_pLifeCycle.GetDescription() + ".";
         }
 
+        /// <summary>
+        /// are very clever cratures ... could have only a few children during whole lifetime, which are mostly females.
+        /// </summary>
+        /// <returns></returns>
         public string GetComparsion(Fenotype<LTI> pOriginal)
         {
             if (pOriginal.IsIdentical(this))
@@ -33,7 +63,7 @@ namespace GeneLab
             string sResult = "";
 
             if (!pOriginal.m_pBrain.IsIdentical(m_pBrain))
-                sResult += "They are " + m_pBrain.GetDescription() + ".";
+                sResult += "are " + m_pBrain.GetDescription() + ".";
 
             if (!pOriginal.m_pHead.IsIdentical(m_pHead) ||
                 !pOriginal.m_pArms.IsIdentical(m_pArms) ||

@@ -49,7 +49,7 @@ namespace GeneLabTest
             richTextBox1.Clear();
 
             richTextBox1.AppendText("Original race: " + sName + ".\n\r");
-            richTextBox1.AppendText(pFenotype.GetDescription() + "\n\r");
+            richTextBox1.AppendText(sName + " " + pFenotype.GetDescription() + "\n\r");
 
             Fenotype<LandTypeInfoX> pMutant;
 
@@ -60,7 +60,7 @@ namespace GeneLabTest
             while (pMutant.IsIdentical(pFenotype));
 
             richTextBox1.AppendText("Original race mutations:\n\r");
-            richTextBox1.AppendText(pMutant.GetComparsion(pFenotype) + "\n\r\n\r");
+            richTextBox1.AppendText("They " + pMutant.GetComparsion(pFenotype) + "\n\r\n\r");
 
             pFenotype = pMutant;
 
