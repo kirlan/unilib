@@ -9,10 +9,10 @@ namespace WorldGeneration
     {
         public static RacesSet[] s_aSets = 
         {
-            new RacesSet("humans (west europe)", new string[] {"whiteskin", "barbarian"}),
-            new RacesSet("humans (east europe)", new string[] {"whiteskin", "slavic", "hellene", "imperial"}),
-            new RacesSet("humans (middle east)", new string[] {"hindu", "yellowskin", "sandman", "blackskin"}),
-            new RacesSet("humans (new world)", new string[] {"redskin", "nomad"}),
+            new RacesSet("humans (west europe)", new string[] {"white", "barb"}),
+            new RacesSet("humans (east europe)", new string[] {"white", "slavic", "hellene", "imperial"}),
+            new RacesSet("humans (middle east)", new string[] {"hindu", "yellow", "dervish", "black"}),
+            new RacesSet("humans (new world)", new string[] {"red", "nomad"}),
             new RacesSet("mithology (west europe)", new string[] {"faery", "pixie"}),
             new RacesSet("mithology (east europe)", new string[] {"centaur", "minotaur", "satyr", "harpy"}),
             new RacesSet("mithology (middle east)", new string[] {"naga", "rakshasa", "asura", "djinn"}),

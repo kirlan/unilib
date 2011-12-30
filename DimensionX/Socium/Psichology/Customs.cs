@@ -68,13 +68,13 @@ namespace Socium.Psichology
 
             m_eMindSet = Rnd.OneChanceFrom(3) ? MindSet.Balanced_mind : Rnd.OneChanceFrom(3) ? MindSet.Logic : MindSet.Intuition;
 
-            m_eSexuality = !Rnd.OneChanceFrom(3) ? Sexuality.Moderate_sexuality : Rnd.OneChanceFrom(5) ? Sexuality.Puritan : Sexuality.Lecherous;
+            m_eSexuality = !Rnd.OneChanceFrom(3) ? Sexuality.Moderate_sexuality : Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
 
-            m_eSexRelations = Rnd.OneChanceFrom(5) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(5) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
+            m_eSexRelations = Rnd.OneChanceFrom(9) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(5) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
 
             //m_eReligion = Rnd.OneChanceFrom(3) ? Religion.Atheism : Religion.Piety;
 
-            m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polygamy : Rnd.OneChanceFrom(5) ? FamilySize.Polyamory : FamilySize.Monogamy;
+            m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polygamy : Rnd.OneChanceFrom(9) ? FamilySize.Polyamory : FamilySize.Monogamy;
         }
 
         public Customs(Customs m_pAncestorCustoms)
