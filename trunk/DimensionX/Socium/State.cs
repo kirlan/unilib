@@ -353,7 +353,7 @@ namespace Socium
 
                 Province pProvince = pTerr as Province;
 
-                if (pProvince != null && pProvince.Owner == null && !pProvince.m_pCenter.IsWater)
+                if (pProvince != null && pProvince.Owner == null && !pProvince.m_pCenter.IsWater && m_pMethropoly.m_pNation.m_pRace.m_pLanguage == pProvince.m_pNation.m_pRace.m_pLanguage)
                 {
                     AddProvince(pProvince);
                     bFullyGrown = false;

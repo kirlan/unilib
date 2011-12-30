@@ -855,7 +855,7 @@ namespace Socium
 
             ProgressStep();
             
-            //Позаботимся о том, чтобы у каждой расы пришельцев было своё государство
+            //Позаботимся о том, чтобы у каждой расы пришельцев было хотя бы одно своё государство
             foreach(Nation pInvader in m_aLocalNations)
                 if (pInvader.m_bInvader)
                 {
