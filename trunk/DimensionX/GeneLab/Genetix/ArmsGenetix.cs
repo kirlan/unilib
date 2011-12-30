@@ -56,7 +56,7 @@ namespace GeneLab.Genetix
             get { return new ArmsGenetix(ArmsCount.Quadrumanous, ArmsType.Nippers); }
         }
 
-        public static ArmsGenetix Motaro
+        public static ArmsGenetix Human4
         {
             get { return new ArmsGenetix(ArmsCount.Quadrumanous, ArmsType.Palms); }
         }

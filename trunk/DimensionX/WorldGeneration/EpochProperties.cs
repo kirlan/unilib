@@ -85,13 +85,13 @@ namespace WorldGeneration
 
             NativesSocialPreset.Items.Clear();
             NativesSocialPreset.Items.AddRange(ProgressPreset.s_aSocietyPresets);
-            NativesSocialPreset.Items.Add("Custom");
+            NativesSocialPreset.Items.Add("Custom progress preset");
             if (NativesSocialPreset.Items.Count > 0)
                 NativesSocialPreset.SelectedIndex = 0;
 
             InvadersSocialPreset.Items.Clear();
             InvadersSocialPreset.Items.AddRange(ProgressPreset.s_aSocietyPresets);
-            InvadersSocialPreset.Items.Add("Custom");
+            InvadersSocialPreset.Items.Add("Custom progress preset");
             if (InvadersSocialPreset.Items.Count > 0)
                 InvadersSocialPreset.SelectedIndex = 0;
 
@@ -132,12 +132,12 @@ namespace WorldGeneration
                 if (m_pEpoch.NativesPreset != null)
                     NativesSocialPreset.SelectedItem = m_pEpoch.NativesPreset;
                 else
-                    NativesSocialPreset.SelectedItem = "Custom";
+                    NativesSocialPreset.SelectedItem = "Custom progress preset";
 
                 if (m_pEpoch.InvadersPreset != null)
                     InvadersSocialPreset.SelectedItem = m_pEpoch.InvadersPreset;
                 else
-                    InvadersSocialPreset.SelectedItem = "Custom";
+                    InvadersSocialPreset.SelectedItem = "Custom progress preset";
 
                 m_bInitMode = true;
                 foreach (RacesSet pSet in RacesSet.s_aSets)

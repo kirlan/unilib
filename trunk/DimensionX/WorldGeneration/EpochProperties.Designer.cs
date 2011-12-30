@@ -216,7 +216,7 @@
             this.NativesRacesSet.DisplayMemberSingleItem = "";
             this.NativesRacesSet.Dock = System.Windows.Forms.DockStyle.Fill;
             this.NativesRacesSet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.NativesRacesSet.EmptyString = "Custom";
+            this.NativesRacesSet.EmptyString = "Custom races set";
             this.NativesRacesSet.FormattingEnabled = true;
             this.NativesRacesSet.Location = new System.Drawing.Point(85, 30);
             this.NativesRacesSet.Name = "NativesRacesSet";
@@ -360,7 +360,7 @@
             this.InvadersRacesSet.DisplayMemberSingleItem = "";
             this.InvadersRacesSet.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InvadersRacesSet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.InvadersRacesSet.EmptyString = "Custom";
+            this.InvadersRacesSet.EmptyString = "Custom races set";
             this.InvadersRacesSet.FormattingEnabled = true;
             this.InvadersRacesSet.Location = new System.Drawing.Point(85, 30);
             this.InvadersRacesSet.Name = "InvadersRacesSet";
