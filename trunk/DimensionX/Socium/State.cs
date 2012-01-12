@@ -751,7 +751,7 @@ namespace Socium
                 int iCount = 0;
                 if (!cNationsCount.TryGetValue(pProvince.m_pNation, out iCount))
                     cNationsCount[pProvince.m_pNation] = 0;
-                cNationsCount[pProvince.m_pNation] = iCount + pProvince.m_cContents.Count;
+                cNationsCount[pProvince.m_pNation] = iCount + pProvince.m_iPopulation;
                 if (cNationsCount[pProvince.m_pNation] > iMaxPop)
                 {
                     iMaxPop = cNationsCount[pProvince.m_pNation];
