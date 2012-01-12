@@ -851,24 +851,41 @@ namespace Socium.Nations
         /// <param name="pWorld">мир</param>
         public void Accommodate(World pWorld, Epoch pEpoch)
         {
-            int iOldLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
-
             if (m_bInvader)
             {
-                //int iBalance = Rnd.Get(201);
+                //m_iTechLevel = Math.Min(pEpoch.m_iInvadersMaxTechLevel, pEpoch.m_iInvadersMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
+                //m_iMagicLimit = Math.Min(pEpoch.m_iInvadersMaxMagicLevel, pEpoch.m_iInvadersMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
 
-                //if (iBalance > 100)
-                //{
-                //    m_iMagicLimit = pWorld.m_iMagicLimit + (9 - pWorld.m_iMagicLimit) / 2 + (int)(Math.Pow(Rnd.Get(10), 3) * (4 - pWorld.m_iMagicLimit / 2) / 1000);
-                //    m_iTechLevel = (200 - iBalance) * m_iMagicLimit / iBalance;
-                //}
-                //else
-                //{
-                //    m_iTechLevel = pWorld.m_iTechLevel + (9 - pWorld.m_iTechLevel) / 2 + (int)(Math.Pow(Rnd.Get(10), 3) * (4 - pWorld.m_iTechLevel / 2) / 1000);
-                //    m_iMagicLimit = iBalance * m_iTechLevel / (200 - iBalance);
-                //} 
-                m_iTechLevel = Math.Min(pEpoch.m_iInvadersMaxTechLevel, pEpoch.m_iInvadersMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-                m_iMagicLimit = Math.Min(pEpoch.m_iInvadersMaxMagicLevel, pEpoch.m_iInvadersMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
+                m_iTechLevel = pEpoch.m_iInvadersMinTechLevel + Rnd.Get(pEpoch.m_iInvadersMaxTechLevel - pEpoch.m_iInvadersMinTechLevel + 1);
+                m_iMagicLimit = pEpoch.m_iInvadersMinMagicLevel + Rnd.Get(pEpoch.m_iInvadersMaxMagicLevel - pEpoch.m_iInvadersMinMagicLevel + 1);
+
+                if (m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Primitive)
+                    m_iTechLevel = pEpoch.m_iInvadersMinTechLevel;
+            
+                int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
+                if (Rnd.OneChanceFrom(10))
+                    m_iMagicLimit += iMagicLimit;
+                else
+                    m_iMagicLimit -= iMagicLimit;
+
+                int iOldTechLevel = m_iTechLevel;
+
+                int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
+                if (m_pFenotype.m_pBrain.m_eIntelligence != Intelligence.Primitive &&
+                    (m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(10)))
+                    m_iTechLevel += iTechLevel;
+                else
+                    m_iTechLevel -= iTechLevel;
+
+                if (m_iMagicLimit < pEpoch.m_iInvadersMinMagicLevel)
+                    m_iMagicLimit = pEpoch.m_iInvadersMinMagicLevel;
+                if (m_iMagicLimit > pEpoch.m_iInvadersMaxMagicLevel)
+                    m_iMagicLimit = pEpoch.m_iInvadersMaxMagicLevel;
+
+                if (m_iTechLevel < pEpoch.m_iInvadersMinTechLevel)
+                    m_iTechLevel = pEpoch.m_iInvadersMinTechLevel;
+                if (m_iTechLevel > pEpoch.m_iInvadersMaxTechLevel)
+                    m_iTechLevel = pEpoch.m_iInvadersMaxTechLevel;
             }
             else
             {
@@ -879,8 +896,13 @@ namespace Socium.Nations
                     else
                         m_iMagicLimit = (m_iMagicLimit + pWorld.m_iMagicLimit + 1) / 2;
 
-                    if (m_iTechLevel <= pWorld.m_iTechLevel && !m_bDying)
+                    if (m_iTechLevel <= pWorld.m_iTechLevel)
+                    {
                         m_iTechLevel = pWorld.m_iTechLevel;
+
+                        if (m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Primitive)
+                            m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
+                    }
                     else
                         m_iTechLevel = (m_iTechLevel + pWorld.m_iTechLevel + 1) / 2;
                 }
@@ -894,7 +916,8 @@ namespace Socium.Nations
                 int iOldTechLevel = m_iTechLevel;
 
                 int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
-                if (Rnd.OneChanceFrom(10))
+                if (m_pFenotype.m_pBrain.m_eIntelligence != Intelligence.Primitive && 
+                    (m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(10)))
                     m_iTechLevel += iTechLevel;
                 else
                     m_iTechLevel -= iTechLevel;

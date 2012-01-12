@@ -18,7 +18,7 @@ namespace WorldGeneration
         /// <summary>
         /// Показывает диалог ожидания.
         /// </summary>
-        public static void StartWait()
+        public static void StartWait(IWin32Window pOwner)
         {
             Monitor.Enter(m_pWaitFormLock);
 
@@ -27,7 +27,7 @@ namespace WorldGeneration
 
             m_pWaitForm = new WaitForm();
 
-            m_pWaitForm.Show();
+            m_pWaitForm.Show(pOwner);
             m_pWaitForm.Refresh();
         }
 
@@ -89,6 +89,13 @@ namespace WorldGeneration
                 panel2.Width = iScaledProgress;
                 Refresh();
             }
+        }
+
+        private void WaitForm_Load(object sender, EventArgs e)
+        {
+            StartPosition = FormStartPosition.Manual;
+
+            Location = new System.Drawing.Point(Owner.Location.X + (Owner.Width - Width) / 2, Owner.Location.Y + (Owner.Height - Height) / 2);
         }
     }
 }

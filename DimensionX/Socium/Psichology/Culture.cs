@@ -231,7 +231,7 @@ namespace Socium.Psichology
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) completely pacifistic"),
                             new MentalityCluster(0.33f, 0.66f, "(+2) quite amiable"),
                             new MentalityCluster(0.66f, 1.0f, "(+1) peaceful"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) unfriendly"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) hot-tempered"),
                             new MentalityCluster(1.33f, 1.66f, "(-2) agressive"),
                             new MentalityCluster(1.66f, 2.0f, "(-3) extremely agressive"),
 
@@ -258,22 +258,22 @@ namespace Socium.Psichology
                             new MentalityCluster(0.66f, 1.0f, "(+1) open-minded"),
                             new MentalityCluster(1.0f, 1.33f, "(-1) narrow-minded"),
                             new MentalityCluster(1.33f, 1.66f, "(-2) fanatical"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) closed community"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) irreconcilable"),
                         };
                     s_cMentalityClusters[Mentality.Piety] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) full conscience freedom"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) just ethical code"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) just prayers"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) complex religious rites"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) animal sacrifices"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) sapience sacrifices"),
+                        {   new MentalityCluster(0.0f, 0.33f, "(+3) no supernatural forces"),
+                            new MentalityCluster(0.33f, 0.66f, "(+2) 1 unpersonified force"),
+                            new MentalityCluster(0.66f, 1.0f, "(+1) 2 opposing unpersonified forces"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) 2 opposing deities"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) 2 big opposing groups of deities"),
+                            new MentalityCluster(1.66f, 2.0f, "(-3) lot of elemental deities"),
                         };
                     s_cMentalityClusters[Mentality.Treachery] = new MentalityCluster[] 
                         {   new MentalityCluster(0.0f, 0.33f, "(+3) absolutely honest"),
                             new MentalityCluster(0.33f, 0.66f, "(+2) honest"),
                             new MentalityCluster(0.66f, 1.0f, "(+1) lawful"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) sly"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) treacherous"),
+                            new MentalityCluster(1.0f, 1.33f, "(-1) dishonest"),
+                            new MentalityCluster(1.33f, 1.66f, "(-2) criminal"),
                             new MentalityCluster(1.66f, 2.0f, "(-3) completely corrupt"),
                         };
                 }
