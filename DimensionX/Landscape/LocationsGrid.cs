@@ -508,6 +508,8 @@ namespace LandscapeGeneration
                     pLoc.Save(binWriter);
                 }
             }
+
+            m_sFilename = sFilename;
         }
 
         public static bool CheckFile(string sFilename, out string sDescription, out int iLocationsCount, out bool bCycled)
@@ -606,7 +608,8 @@ namespace LandscapeGeneration
 
                 if (count != 0)
                 {
-                    BeginStep("Loading grid...", 1);
+                    if(BeginStep != null)
+                        BeginStep("Loading grid...", 1);
 
                     // Reset the position in the stream to zero.
                     binReader.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -624,18 +627,21 @@ namespace LandscapeGeneration
                     m_iRX = binReader.ReadInt32();
                     m_bCycled = binReader.ReadInt32() == 1;
 
-                    ProgressStep();
+                    if(ProgressStep != null)
+                        ProgressStep();
 
                     Dictionary<long, Vertex> cTempDicVertex = new Dictionary<long, Vertex>();
                     int iVertexesCount = binReader.ReadInt32();
-                    BeginStep("Loading vertexes...", iVertexesCount*2);
+                    if (BeginStep != null)
+                        BeginStep("Loading vertexes...", iVertexesCount * 2);
                     for (int i = 0; i < iVertexesCount; i++)
                     {
                         Vertex pVertexLoc = new Vertex(binReader);
 
                         cTempDicVertex[pVertexLoc.m_iID] = pVertexLoc;
 
-                        ProgressStep();
+                        if (ProgressStep != null)
+                            ProgressStep();
                     }
 
                     m_aVertexes = new List<Vertex>(cTempDicVertex.Values).ToArray();
@@ -649,12 +655,14 @@ namespace LandscapeGeneration
                         }
                         pVertex.m_cLinksTmp.Clear();
 
-                        ProgressStep();
+                        if (ProgressStep != null)
+                            ProgressStep();
                     }
 
                     Dictionary<long, LOC> cTempDic = new Dictionary<long, LOC>();
                     int iLocationsCount = binReader.ReadInt32();
-                    BeginStep("Loading locations...", iLocationsCount * 2);
+                    if (BeginStep != null)
+                        BeginStep("Loading locations...", iLocationsCount * 2);
                     for (int i = 0; i < iLocationsCount; i++)
                     {
                         LOC pLoc = new LOC();
@@ -662,7 +670,8 @@ namespace LandscapeGeneration
 
                         cTempDic[pLoc.m_iID] = pLoc;
 
-                        ProgressStep();
+                        if (ProgressStep != null)
+                            ProgressStep();
                     }
 
                     m_aLocations = new List<LOC>(cTempDic.Values).ToArray();
@@ -677,7 +686,8 @@ namespace LandscapeGeneration
                         pLoc.m_cBorderWithID.Clear();
                         pLoc.FillBorderWithKeys();
 
-                        ProgressStep();
+                        if (ProgressStep != null)
+                            ProgressStep();
                     }
 
                     //Восстанавливаем словарь соседей для вертексов
@@ -693,12 +703,14 @@ namespace LandscapeGeneration
                     cTempDicVertex.Clear();
                     cTempDic.Clear();
 
-                    BeginStep("Recalculating grid edges...", m_aLocations.Length);
+                    if (BeginStep != null)
+                        BeginStep("Recalculating grid edges...", m_aLocations.Length);
                     //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
                     foreach (LOC pLoc in m_aLocations)
                     {
                         pLoc.BuildBorder(m_iRX * 2);
-                        ProgressStep();
+                        if (ProgressStep != null)
+                            ProgressStep();
                     }
 
                     m_bLoaded = true;
@@ -725,7 +737,8 @@ namespace LandscapeGeneration
 
         public override string ToString()
         {
-            return m_sDescription;
+            FileInfo pInfo = new FileInfo(m_sFilename);
+            return m_sDescription + " (" + pInfo.Name + ")";
         }
     }
 }

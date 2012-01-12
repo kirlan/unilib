@@ -107,18 +107,23 @@ namespace WorldGeneration
 
         private void GridsManagerButton_Click(object sender, EventArgs e)
         {
-            GridBuildingForm pForm = new GridBuildingForm(m_sWorkingDir);
+            GridsManager pForm = new GridsManager(m_sWorkingDir);
 
-            if (pForm.ShowDialog() == DialogResult.OK)
-            {
-                StartGenerationButton.Enabled = true;
-                groupBox5.Enabled = true;
-                groupBox6.Enabled = true;
-                mapProperties1.Enabled = true;
+            pForm.ShowDialog();
+            ScanWorkingDir();
 
-                GridsComboBox.Items.Add(pForm.m_cLocations);
-                GridsComboBox.SelectedItem = pForm.m_cLocations;
-            }
+            //GridBuildingForm pForm = new GridBuildingForm(m_sWorkingDir);
+
+            //if (pForm.ShowDialog() == DialogResult.OK)
+            //{
+            //    StartGenerationButton.Enabled = true;
+            //    groupBox5.Enabled = true;
+            //    groupBox6.Enabled = true;
+            //    mapProperties1.Enabled = true;
+
+            //    GridsComboBox.Items.Add(pForm.m_pLocationsGrid);
+            //    GridsComboBox.SelectedItem = pForm.m_pLocationsGrid;
+            //}
         }
 
         private bool GetNewWorkingDir(RegistryKey key)
@@ -181,7 +186,16 @@ namespace WorldGeneration
 
             key.Close();
 
-            dirInfo = new DirectoryInfo(m_sWorkingDir); 
+            ScanWorkingDir();
+
+            return true;
+        }
+
+        private void ScanWorkingDir()
+        {
+            GridsComboBox.Items.Clear();
+
+            DirectoryInfo dirInfo = new DirectoryInfo(m_sWorkingDir);
             FileInfo[] fileNames = dirInfo.GetFiles("*.*");
 
             foreach (FileInfo fi in fileNames)
@@ -202,8 +216,6 @@ namespace WorldGeneration
 
             if (GridsComboBox.Items.Count > 0)
                 GridsComboBox.SelectedIndex = 0;
-
-            return true;
         }
 
         private void GridsComboBox_SelectedIndexChanged(object sender, EventArgs e)

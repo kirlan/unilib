@@ -14,7 +14,7 @@ namespace WorldGeneration
 {
     public partial class GridBuildingForm : Form
     {
-        public LocationsGrid<LocationX> m_cLocations = null;
+        public LocationsGrid<LocationX> m_pLocationsGrid = null;
 
         private string m_sWorkingFolder = "";
 
@@ -31,10 +31,6 @@ namespace WorldGeneration
 
             NoGridWidth.Value = 5;
             NoGridHeight.Value = 4;
-
-            button2.Enabled = false;
-
-            label3.Text = "Your grid is not ready yet...";
 
             m_sWorkingFolder = sWorkingFolder;
         }
@@ -63,15 +59,13 @@ namespace WorldGeneration
             panel1.Enabled = false;
             Looped.Enabled = false;
 
-            tableLayoutPanel2.Enabled = false;
-
             button1.Enabled = false;
             button1.Text = "... Please wait ...";
 
             Refresh();
         
             if (radioButton2.Checked)
-                m_cLocations = new LocationsGrid<LocationX>(int.Parse(GridWidth.Text), int.Parse(GridHeight.Text), GridType.Hex, textBox1.Text, Looped.Checked);
+                m_pLocationsGrid = new LocationsGrid<LocationX>(int.Parse(GridWidth.Text), int.Parse(GridHeight.Text), GridType.Hex, textBox1.Text, Looped.Checked);
 
             if (radioButton3.Checked)
             {
@@ -91,7 +85,7 @@ namespace WorldGeneration
                         iLocationsCount = 50000;
                         break;
                 }
-                m_cLocations = new LocationsGrid<LocationX>(iLocationsCount, (int)NoGridWidth.Value, (int)NoGridHeight.Value, textBox1.Text, Looped.Checked);
+                m_pLocationsGrid = new LocationsGrid<LocationX>(iLocationsCount, (int)NoGridWidth.Value, (int)NoGridHeight.Value, textBox1.Text, Looped.Checked);
             }
 
             Cursor = Cursors.Arrow;
@@ -102,28 +96,11 @@ namespace WorldGeneration
             panel1.Enabled = true;
             Looped.Enabled = true;
 
-            tableLayoutPanel2.Enabled = true;
-
             button1.Enabled = true;
             button1.Text = "Build grid";
 
-            button2.Enabled = true;
-
-            label3.Text = string.Format("Grid '{0}' sucsessfully built.", textBox1.Text);
-
-            button3.Text = "Use It";
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            DialogResult = m_cLocations == null ? DialogResult.Cancel : DialogResult.OK;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (m_cLocations == null)
+            if (m_pLocationsGrid == null)
             {
-                button2.Enabled = false;
                 return;
             }
 
@@ -136,7 +113,31 @@ namespace WorldGeneration
                 bAvailable = FileNameAvailable(string.Format("{0}_{1}", m_sFilename, iCounter));
             }
 
-            m_cLocations.Save(iCounter > 0 ? string.Format("{2}\\{0}_{1}.dxg", m_sFilename, iCounter, m_sWorkingFolder) : string.Format("{1}\\{0}.dxg", m_sFilename, m_sWorkingFolder));
+            m_pLocationsGrid.Save(iCounter > 0 ? string.Format("{2}\\{0}_{1}.dxg", m_sFilename, iCounter, m_sWorkingFolder) : string.Format("{1}\\{0}.dxg", m_sFilename, m_sWorkingFolder));
+
+            DialogResult = DialogResult.OK;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DialogResult = m_pLocationsGrid == null ? DialogResult.Cancel : DialogResult.OK;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (m_pLocationsGrid == null)
+                return;
+
+            bool bAvailable = FileNameAvailable(m_sFilename);
+
+            int iCounter = 0;
+            while (!bAvailable)
+            {
+                iCounter++;
+                bAvailable = FileNameAvailable(string.Format("{0}_{1}", m_sFilename, iCounter));
+            }
+
+            m_pLocationsGrid.Save(iCounter > 0 ? string.Format("{2}\\{0}_{1}.dxg", m_sFilename, iCounter, m_sWorkingFolder) : string.Format("{1}\\{0}.dxg", m_sFilename, m_sWorkingFolder));
 
             DialogResult = DialogResult.OK;
         }
