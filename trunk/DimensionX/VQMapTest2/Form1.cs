@@ -523,5 +523,32 @@ namespace VQMapTest2
             ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_pGrid.CycleShift, false);
             mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
         }
+
+        private void worldToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            repeatCreationFromPresetToolStripMenuItem.DropDownItems.Clear();
+
+            foreach (string sPreset in m_pGenerationForm.m_cLastUsedPresets)
+            {
+                repeatCreationFromPresetToolStripMenuItem.DropDownItems.Add(sPreset).Click += new EventHandler(UsedPresetClick);
+            }
+
+            repeatCreationFromPresetToolStripMenuItem.Enabled = repeatCreationFromPresetToolStripMenuItem.DropDownItems.Count > 0;
+        }
+
+        private void UsedPresetClick(object sender, EventArgs e)
+        {
+            ToolStripItem pItem = sender as ToolStripItem;
+
+            if (pItem != null)
+            {
+                m_pGenerationForm.LoadPreset(pItem.Text);
+                m_pGenerationForm.GenerateWorld(this);
+            
+                m_pWorld = m_pGenerationForm.World;
+                label1.Visible = false;
+                ShowWorld();
+            }
+        }
     }
 }

@@ -713,6 +713,13 @@ namespace Socium
 
         public StateInfo m_pInfo = null;
 
+        /// <summary>
+        /// Строит столицу государства, рассчитывает уровни технического и культурного развития, определяет форму правления...
+        /// </summary>
+        /// <param name="iMinSize">предел количества провинций, ниже которого государство считается карликовым</param>
+        /// <param name="iMaxSize">предел количества провинций, выше которого государство считается гигантским</param>
+        /// <param name="bFast">флаг быстрой (упрощённой) генерации</param>
+        /// <returns>локация, в которой построена столица</returns>
         public LocationX BuildCapital(int iMinSize, int iMaxSize, bool bFast)
         {
             m_iTechLevel = 0;

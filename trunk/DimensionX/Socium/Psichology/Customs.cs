@@ -317,7 +317,7 @@ namespace Socium.Psichology
                 }
                 else
                     sResult += ", ";
-                sResult += "likes sex just for fun";
+                sResult += "makes sex a lot";
             }
 
             //if (m_eReligion == Religion.Atheism)

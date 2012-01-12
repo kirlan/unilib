@@ -90,6 +90,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.miniMapDraw1 = new MapDrawEngine.MiniMapDraw();
             this.mapDraw1 = new MapDrawEngine.MapDraw();
+            this.repeatCreationFromPresetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -440,17 +441,19 @@
             // 
             this.worldToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
+            this.repeatCreationFromPresetToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem});
             this.worldToolStripMenuItem.Name = "worldToolStripMenuItem";
             this.worldToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
             this.worldToolStripMenuItem.Text = "World";
+            this.worldToolStripMenuItem.DropDownOpening += new System.EventHandler(this.worldToolStripMenuItem_DropDownOpening);
             // 
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_New_Click);
             // 
@@ -458,18 +461,18 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.saveToolStripMenuItem.Text = "Save...";
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(104, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(217, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_Exit_Click);
             // 
@@ -723,6 +726,12 @@
             this.mapDraw1.TabIndex = 20;
             this.mapDraw1.SelectedStateChanged += new System.EventHandler<MapDrawEngine.MapDraw.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
             // 
+            // repeatCreationFromPresetToolStripMenuItem
+            // 
+            this.repeatCreationFromPresetToolStripMenuItem.Name = "repeatCreationFromPresetToolStripMenuItem";
+            this.repeatCreationFromPresetToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.repeatCreationFromPresetToolStripMenuItem.Text = "Repeat creation from preset";
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -822,6 +831,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.TabPage tabPage9;
+        private System.Windows.Forms.ToolStripMenuItem repeatCreationFromPresetToolStripMenuItem;
     }
 }
 

@@ -978,6 +978,11 @@ namespace Socium
                         pLoc.m_cLinks[pLink].m_bClosed = false;
         }
 
+        /// <summary>
+        /// Строит столицу провинции, рассчитывает уровни технического и культурного развития...
+        /// </summary>
+        /// <param name="bFast">флаг быстрой (упрощённой) генерации</param>
+        /// <returns>локация со столицей</returns>
         public LocationX BuildCapital(bool bFast)
         {
             m_iTechLevel = m_pNation.m_iTechLevel;
@@ -1128,6 +1133,12 @@ namespace Socium
             return m_pAdministrativeCenter;
         }
 
+        /// <summary>
+        /// Находит подходящую локацию и строит там поселение указанного типа
+        /// </summary>
+        /// <param name="pCenter">тип поселения</param>
+        /// <param name="bFast">флаг быстрой (упрощённой) генерации</param>
+        /// <returns>локация с построенным поселением</returns>
         private LocationX BuildAdministrativeCenter(SettlementInfo pCenter, bool bFast)
         {
             Dictionary<LandX, float> cLandsChances = new Dictionary<LandX, float>();
