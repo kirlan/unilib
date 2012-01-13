@@ -339,23 +339,50 @@ namespace VQMapTest2
 
             listBox1.Items.Clear();
 
-            Dictionary<SettlementSpeciality, int> cPop = new Dictionary<SettlementSpeciality, int>();
+            Dictionary<string, int> cPop = new Dictionary<string, int>();
 
             foreach(Province pProvince in e.m_pState.m_cContents)
                 foreach (LocationX pLoc in pProvince.m_cSettlements)
                 {
                     listBox1.Items.Add(pLoc);
 
-                    int iPop = 0;
-                    cPop.TryGetValue(pLoc.m_pSettlement.m_eSpeciality, out iPop);
-                    cPop[pLoc.m_pSettlement.m_eSpeciality] = iPop + pLoc.GetPopulation();
+                    foreach (Building pBuilding in pLoc.m_pSettlement.m_cBuildings)
+                    {
+                        if (pBuilding.m_pInfo.m_eSize == BuildingSize.Unique)
+                            continue;
+
+                        int iPop = 0;
+                        cPop.TryGetValue(pBuilding.m_pInfo.m_sOwnerM, out iPop);
+                        cPop[pBuilding.m_pInfo.m_sOwnerM] = iPop + pBuilding.m_pInfo.m_iMinPop;
+                    }
                 }
 
             richTextBox2.Clear();
 
             int iTotal = 0;
+            
+            Dictionary<string, int> cPopSorted = new Dictionary<string, int>();
 
-            foreach (var vPop in cPop)
+            while (cPopSorted.Count < cPop.Count)
+            {
+                int iMax = 0;
+                string sMax = "";
+                foreach (var vPop in cPop)
+                {
+                    if (cPopSorted.ContainsKey(vPop.Key))
+                        continue;
+
+                    if (vPop.Value > iMax)
+                    {
+                        iMax = vPop.Value;
+                        sMax = vPop.Key;
+                    }
+                }
+
+                cPopSorted[sMax] = iMax;
+            }
+
+            foreach (var vPop in cPopSorted)
             {
                 richTextBox2.AppendText(vPop.Key + " : " + vPop.Value + "\r\n");
                 iTotal += vPop.Value;

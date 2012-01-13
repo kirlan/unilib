@@ -1284,5 +1284,11 @@ namespace Socium
 
             return iHostility;
         }
+
+        internal void AddBuildings()
+        {
+            foreach (LocationX pLoc in m_cSettlements)
+                pLoc.m_pSettlement.AddBuildings(this);
+        }
     }
 }

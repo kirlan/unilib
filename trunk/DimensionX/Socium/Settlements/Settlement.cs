@@ -56,15 +56,41 @@ namespace Socium.Settlements
         public BuildingInfo m_pMainBuilding;
         public SettlementSize m_eSize;
 
-        public SettlementInfo(SettlementSize eSize, string sName, int iMinPop, int iDeltaPop, int iMaxProfessionRank, int iMinBuildingsCount, int iDeltaBuildingsCount, BuildingInfo pMainBuilding)
+        public SettlementInfo(SettlementSize eSize, string sName, int iMinPop, int iDeltaPop, int iMaxProfessionRank, BuildingInfo pMainBuilding)
         {
             m_eSize = eSize;
             m_sName = sName;
             m_iMinPop = iMinPop;
             m_iDeltaPop = iDeltaPop;
             m_iMaxProfessionRank = iMaxProfessionRank;
-            m_iMinBuildingsCount = iMinBuildingsCount;
-            m_iDeltaBuildingsCount = iDeltaBuildingsCount;
+
+            switch (m_eSize)
+            {
+                case SettlementSize.Hamlet:
+                    m_iMinBuildingsCount = 1;
+                    m_iDeltaBuildingsCount = 1;
+                    break;
+                case SettlementSize.Village:
+                    m_iMinBuildingsCount = 2;
+                    m_iDeltaBuildingsCount = 2;
+                    break;
+                case SettlementSize.Town:
+                    m_iMinBuildingsCount = 4;
+                    m_iDeltaBuildingsCount = 2;
+                    break;
+                case SettlementSize.City:
+                    m_iMinBuildingsCount = 6;
+                    m_iDeltaBuildingsCount = 2;
+                    break;
+                case SettlementSize.Capital:
+                    m_iMinBuildingsCount = 7;
+                    m_iDeltaBuildingsCount = 2;
+                    break;
+                case SettlementSize.Fort:
+                    m_iMinBuildingsCount = 2;
+                    m_iDeltaBuildingsCount = 1;
+                    break;
+            }
             m_pMainBuilding = pMainBuilding;
         }
     }
@@ -79,12 +105,12 @@ namespace Socium.Settlements
             {
                 if (m_cInfo.Count == 0)
                 {
-                    m_cInfo[SettlementSize.Hamlet] = new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, 0, 1, null);
-                    m_cInfo[SettlementSize.Village] = new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, 0, 3, new BuildingInfo("Village hall", "Elder", "Elder", 3));
-                    m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Town hall", "Mayor", "Mayor", 7));
-                    m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("City hall", "Mayor", "Mayor", 14));
-                    m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("City hall", "Mayor", "Mayor", 15));
-                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, 7, 2, 5, new BuildingInfo("Headquarters", "General", "General", 7));
+                    m_cInfo[SettlementSize.Hamlet] = new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, null);
+                    m_cInfo[SettlementSize.Village] = new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Village hall", "Elder", "Elder", BuildingSize.Unique));
+                    m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Town hall", "Mayor", "Mayor", BuildingSize.Unique));
+                    m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("City hall", "Mayor", "Mayor", BuildingSize.Unique));
+                    m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, new BuildingInfo("City hall", "Mayor", "Mayor", BuildingSize.Unique));
+                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, 7, new BuildingInfo("Headquarters", "General", "General", BuildingSize.Unique));
                 }
                 return Settlement.m_cInfo;
             }
@@ -103,6 +129,8 @@ namespace Socium.Settlements
 
         public int m_iTechLevel;
         public int m_iMagicLimit;
+
+        public bool m_bCapital;
 
         public List<Building> m_cBuildings = new List<Building>();
 
@@ -125,16 +153,23 @@ namespace Socium.Settlements
             m_iTechLevel = iTech;
             m_iMagicLimit = iMagic;
 
-            if (m_pInfo.m_pMainBuilding != null && (bCapital || !Rnd.OneChanceFrom(3)))
+            m_bCapital = bCapital;
+        }
+
+        public void AddBuildings(Province pProvince)
+        {
+            m_cBuildings.Clear();
+
+            int iBuildingsCount = m_pInfo.m_iMinBuildingsCount + Rnd.Get(m_pInfo.m_iDeltaBuildingsCount + 1);
+            for (int i = 0; i < iBuildingsCount; i++)
             {
-                Building pNewBuilding = new Building(this, m_pInfo.m_pMainBuilding, bCapital);
+                Building pNewBuilding = new Building(this, pProvince);
                 m_cBuildings.Add(pNewBuilding);
             }
 
-            int iBuildingsCount = m_pInfo.m_iMinBuildingsCount + Rnd.Get(m_pInfo.m_iDeltaBuildingsCount);
-            for (int i = 0; i < iBuildingsCount; i++)
+            if (m_pInfo.m_pMainBuilding != null && (m_bCapital || !Rnd.OneChanceFrom(3)))
             {
-                Building pNewBuilding = new Building(this);
+                Building pNewBuilding = new Building(this, m_pInfo.m_pMainBuilding, m_bCapital);
                 m_cBuildings.Add(pNewBuilding);
             }
         }
