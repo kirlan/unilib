@@ -44,6 +44,18 @@ namespace Socium
             m_cRoads[RoadQuality.Good] = new List<Road>();
         }
 
+        public int GetPopulation()
+        {
+            int iRes = 0;
+
+            if (m_pSettlement != null)
+            {
+                iRes = m_pSettlement.m_pInfo.m_iMinPop;// *((LandX)Owner).m_pProvince.m_iInfrastructureLevel;
+            }
+
+            return iRes;
+        }
+
         public override string ToString()
         {
             if (m_pSettlement != null)

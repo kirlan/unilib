@@ -339,35 +339,32 @@ namespace VQMapTest2
 
             listBox1.Items.Clear();
 
+            Dictionary<SettlementSpeciality, int> cPop = new Dictionary<SettlementSpeciality, int>();
+
             foreach(Province pProvince in e.m_pState.m_cContents)
                 foreach (LocationX pLoc in pProvince.m_cSettlements)
+                {
                     listBox1.Items.Add(pLoc);
 
+                    int iPop = 0;
+                    cPop.TryGetValue(pLoc.m_pSettlement.m_eSpeciality, out iPop);
+                    cPop[pLoc.m_pSettlement.m_eSpeciality] = iPop + pLoc.GetPopulation();
+                }
+
+            richTextBox2.Clear();
+
+            int iTotal = 0;
+
+            foreach (var vPop in cPop)
+            {
+                richTextBox2.AppendText(vPop.Key + " : " + vPop.Value + "\r\n");
+                iTotal += vPop.Value;
+            }
+            richTextBox2.AppendText("Total : " + iTotal + "\r\n");
+
             comboBox1.Focus();
-            //worldMap1.SetPan(e.m_iX - worldMap1.ClientRectangle.Width / 2, e.m_iY - worldMap1.ClientRectangle.Height / 2);
         }
         
-        //public delegate void AutoScrollPositionDelegate(ScrollableControl ctrl, Point p);
-
-        ///// <summary>
-        ///// Специальный хитрый механизм для того, чтобы получив фокус, карта мира не скроллилась к своему началу.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void worldMap1_Enter(object sender, EventArgs e)
-        //{
-        //    Point p = panel1.AutoScrollPosition;
-        //    AutoScrollPositionDelegate del = new AutoScrollPositionDelegate(SetAutoScrollPosition);
-        //    Object[] args = { panel1, p };
-        //    BeginInvoke(del, args);
-        //}
-        //private void SetAutoScrollPosition(ScrollableControl sender, Point p)
-        //{
-        //    p.X = Math.Abs(p.X);
-        //    p.Y = Math.Abs(p.Y);
-        //    sender.AutoScrollPosition = p;
-        //}
-
         private GenerationForm m_pGenerationForm = new GenerationForm();
 
         private void ToolStripMenuItem_New_Click(object sender, EventArgs e)

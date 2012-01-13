@@ -84,7 +84,7 @@ namespace Socium.Settlements
                     m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, 2, 5, new BuildingInfo("Town hall", "Mayor", "Mayor", 7));
                     m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("City hall", "Mayor", "Mayor", 14));
                     m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("City hall", "Mayor", "Mayor", 15));
-                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 20, 40, 7, 2, 5, new BuildingInfo("Headquarters", "General", "General", 7));
+                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, 7, 2, 5, new BuildingInfo("Headquarters", "General", "General", 7));
                 }
                 return Settlement.m_cInfo;
             }
