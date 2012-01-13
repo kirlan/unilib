@@ -553,6 +553,14 @@ namespace Socium
                 ProgressStep();
             }
 
+            BeginStep("Adding buildings...", m_aProvinces.Length);
+            foreach (Province pProvince in m_aProvinces)
+            {
+                if (!pProvince.Forbidden)
+                    pProvince.AddBuildings();
+                ProgressStep();
+            }
+
             BeginStep("Renaming provinces...", m_aStates.Length);
             //ProgressStep();
             foreach (ContinentX pConti in m_aContinents)
