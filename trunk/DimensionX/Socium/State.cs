@@ -94,83 +94,83 @@ namespace Socium
             new StateInfo("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "King", "Queen", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Baron", "Baroness", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Dwarwen, Language.European, Language.Highlander, Language.Northman}),
+                "Prince", "Princess", true, 2, 6, false, new Language[] {Language.Dwarwen, Language.European, Language.Highlander, Language.Northman}),
             new StateInfo("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "King", "Queen", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Count", "Countess", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Highlander}),
+                "Prince", "Princess", true, 2, 6, false, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Highlander}),
             new StateInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Emperor", "Empress", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Duke", "Duchess", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, true, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Dwarwen}),            
+                "Prince", "Princess", true, 2, 6, true, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Dwarwen}),            
             new StateInfo("Regnum", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Rex", "Regina", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Dux", "Ducissam", BuildingSize.Unique)), 
-                "Princeps", "Principissa", true, 2, 8, false, new Language[] {Language.Latin}),
+                "Princeps", "Principissa", true, 2, 6, false, new Language[] {Language.Latin}),
             new StateInfo("Imperium", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Imperator", "Imperatrix", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Rex", "Regina", BuildingSize.Unique)), 
-                "Princeps", "Principissa", true, 2, 8, true, new Language[] {Language.Latin}),
+                "Princeps", "Principissa", true, 2, 6, true, new Language[] {Language.Latin}),
             new StateInfo("Shogunate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Shogun", "Midaidokoro", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Gensui", "Gensui", BuildingSize.Unique)), 
-                "Prince", "Hime", true, 2, 8, false, new Language[] {Language.Asian}),            
+                "Prince", "Hime", true, 2, 6, false, new Language[] {Language.Asian}),            
             new StateInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Tenno", "Chugu", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Daimyo", "Lady", BuildingSize.Unique)), 
-                "Shinno", "Naishinno", true, 2, 8, true, new Language[] {Language.Asian}),
+                "Shinno", "Naishinno", true, 2, 6, true, new Language[] {Language.Asian}),
             new StateInfo("Caliphate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Caliph", "Calipha", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Emir", "Emira", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Arabian}),
+                "Prince", "Princess", true, 2, 6, false, new Language[] {Language.Arabian}),
             new StateInfo("Sultanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Sultan", "Sultana", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Shah", "Shahbanu", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Arabian, Language.African}),            
+                "Prince", "Princess", true, 2, 6, false, new Language[] {Language.Arabian, Language.African}),            
             new StateInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Padishah", "Padishahbanu", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Shah", "Shahbanu", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, true, new Language[] {Language.Arabian, Language.African}),
+                "Prince", "Princess", true, 2, 6, true, new Language[] {Language.Arabian, Language.African}),
             new StateInfo("Khanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Khan", "Khatun", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Bey", "Hanım", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, false, new Language[] {Language.Orkish, Language.Eskimoid}),
+                "Prince", "Princess", true, 2, 6, false, new Language[] {Language.Orkish, Language.Eskimoid}),
             new StateInfo("Khaganate", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Khagan", "Great Khatun", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Khan", "Khatun", BuildingSize.Unique)), 
-                "Prince", "Princess", true, 2, 8, true, new Language[] {Language.Orkish, Language.Eskimoid}),
+                "Prince", "Princess", true, 2, 6, true, new Language[] {Language.Orkish, Language.Eskimoid}),
             new StateInfo("Knyazdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Knyaz", "Kniagina", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Boyar", "Boyarynia", BuildingSize.Unique)), 
-                "Tsarevich", "Tsarevna", true, 2, 8, false, new Language[] {Language.Slavic}),
+                "Tsarevich", "Tsarevna", true, 2, 6, false, new Language[] {Language.Slavic}),
             new StateInfo("Tsardom", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Tsar", "Tsaritsa", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Knyaz", "Kniagina", BuildingSize.Unique)), 
-                "Tsarevich", "Tsarevna", true, 2, 8, true, new Language[] {Language.Slavic}),
+                "Tsarevich", "Tsarevna", true, 2, 6, true, new Language[] {Language.Slavic}),
             new StateInfo("Basileia", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Basileus", "Basilissa", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Hypatos", "Hypatissa", BuildingSize.Unique)), 
-                "Prinkipas", "Prinkipissa", true, 2, 8, false, new Language[] {Language.Greek}),
+                "Prinkipas", "Prinkipissa", true, 2, 6, false, new Language[] {Language.Greek}),
             new StateInfo("Autokratoria", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Autokrator", "Autokrateira", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Anthypatos", "Anthypatissa", BuildingSize.Unique)), 
-                "Prinkipas", "Prinkipissa", true, 2, 8, true, new Language[] {Language.Greek}),
+                "Prinkipas", "Prinkipissa", true, 2, 6, true, new Language[] {Language.Greek}),
             new StateInfo("Raj", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Raja", "Rani", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Thakur", "Thakurani", BuildingSize.Unique)), 
-                "Rajkumar", "Rajkumari", true, 2, 8, false, new Language[] {Language.Hindu}),            
+                "Rajkumar", "Rajkumari", true, 2, 6, false, new Language[] {Language.Hindu}),            
             new StateInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Maharaja", "Maharani", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Raja", "Rani", BuildingSize.Unique)), 
-                "Maharajkumar", "Maharajkumari", true, 8, 6, true, new Language[] {Language.Hindu}),
+                "Maharajkumar", "Maharajkumari", true, 2, 6, true, new Language[] {Language.Hindu}),
             new StateInfo("Altepetl", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Tlatoani", "Cihuatlatoani", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Teuctli", "Cihuatecutli", BuildingSize.Unique)), 
-                "Tlatocapilli", "Cihuapilli", true, 2, 8, false, new Language[] {Language.Aztec}),           
+                "Tlatocapilli", "Cihuapilli", true, 2, 6, false, new Language[] {Language.Aztec}),           
             new StateInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", "Emperor", "Empress", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", "Teuctli", "Cihuatecutli", BuildingSize.Unique)), 
-                "Tlatocapilli", "Cihuapilli", true, 2, 8, true, new Language[] {Language.Aztec}),
+                "Tlatocapilli", "Cihuapilli", true, 2, 6, true, new Language[] {Language.Aztec}),
             new StateInfo("Republic", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Statehouse", "President", "President", BuildingSize.Unique)), 
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Town hall", "Governor", "Governor", BuildingSize.Unique)), 
@@ -1644,6 +1644,385 @@ namespace Socium
                     foreach (LocationX pLoc in pLand.m_cContents)
                         foreach (TransportationNode pLink in pLoc.m_cLinks.Keys)
                             pLoc.m_cLinks[pLink].m_bClosed = false;
+        }
+
+        public void SpecializeSettlements()
+        {
+            foreach(Province pProvince in m_cContents)
+                foreach (LocationX pLoc in pProvince.m_cSettlements)
+                {
+                    if (pLoc.m_pSettlement.m_eSpeciality != SettlementSpeciality.None)
+                        continue;
+
+                    bool bCoast = false;
+                    foreach (Location pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                            bCoast = true;
+                    }
+
+                    LandX pLand = pLoc.Owner as LandX;
+
+                    switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                    {
+                        case SettlementSize.Hamlet:
+                            if (bCoast)
+                            {
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                            }
+                            else
+                            {
+                                List<float> cResources = new List<float>();
+                                cResources.Add(pLand.Type.m_fGrain * pLand.m_cContents.Count);
+                                cResources.Add(pLand.Type.m_fGame * pLand.m_cContents.Count);
+
+                                //в развитом обществе охота - это уже не способ добычи пищи, а больше развлечение
+                                if (m_iInfrastructureLevel > 2)
+                                {
+                                    cResources[0] += cResources[1];
+                                    cResources[1] = 0;
+                                }
+
+                                if (m_iInfrastructureLevel > 1)
+                                {
+                                    cResources.Add(pLand.Type.m_fOre * pLand.m_cContents.Count);
+                                    cResources.Add(pLand.Type.m_fWood * pLand.m_cContents.Count);
+                                }
+
+                                int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                switch (iChoosen)
+                                {
+                                    case 0:
+                                        pLoc.m_pSettlement.m_eSpeciality = m_iInfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                        break;
+                                    case 1:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Hunters;
+                                        break;
+                                    case 2:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Miners;
+                                        break;
+                                    case 3:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Lumberjacks;
+                                        break;
+                                }
+                            }
+                            break;
+                        case SettlementSize.Village:
+                            if (bCoast)
+                            {
+                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                            }
+                            else
+                            {
+                                List<float> cResources = new List<float>();
+                                cResources.Add(pLand.Type.m_fGrain * pLand.m_cContents.Count);
+                                cResources.Add(pLand.Type.m_fGame * pLand.m_cContents.Count);
+                                cResources.Add(pLand.Type.m_fOre * pLand.m_cContents.Count);
+                                cResources.Add(pLand.Type.m_fWood * pLand.m_cContents.Count);
+
+                                //в развитом обществе охота - это уже не способ добычи пищи, а больше развлечение
+                                if (m_iInfrastructureLevel > 2)
+                                {
+                                    cResources[0] += cResources[1];
+                                    cResources[1] = 0;
+                                }
+
+                                int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                switch (iChoosen)
+                                {
+                                    case 0:
+                                        pLoc.m_pSettlement.m_eSpeciality = m_iInfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                        break;
+                                    case 1:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Hunters;
+                                        break;
+                                    case 2:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Miners;
+                                        break;
+                                    case 3:
+                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Lumberjacks;
+                                        break;
+                                }
+                            }
+                            break;
+                        case SettlementSize.Town:
+                            if (bCoast && !Rnd.OneChanceFrom(3))
+                            {
+                                if (Rnd.OneChanceFrom(2))
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Naval;
+                                else
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                            }
+                            else
+                            {
+                                if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                {
+                                    List<float> cResources = new List<float>();
+                                    cResources.Add(m_iFood);
+                                    cResources.Add(m_iOre);
+                                    cResources.Add(m_iWood);
+
+                                    int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                    switch (iChoosen)
+                                    {
+                                        case 0:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                            break;
+                                        case 1:
+                                            pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                            break;
+                                        case 2:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    List<float> cResources = new List<float>();
+                                    cResources.Add(pProvince.m_fGame + pProvince.m_fGrain);
+                                    cResources.Add(pProvince.m_fOre);
+                                    cResources.Add(pProvince.m_fWood);
+
+                                    int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                    switch (iChoosen)
+                                    {
+                                        case 0:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                            break;
+                                        case 1:
+                                            pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                            break;
+                                        case 2:
+                                            pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                            break;
+                                    }
+                                }
+                            }
+                            break;
+                        case SettlementSize.City:
+                            if (bCoast && Rnd.OneChanceFrom(2))
+                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
+                            else
+                            {
+                                if (bCoast && m_iInfrastructureLevel > 2 && m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
+                                else
+                                {
+                                    if (Rnd.OneChanceFrom(2))
+                                    {
+                                        List<float> cResources = new List<float>();
+                                        cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel]);
+                                        cResources.Add(m_pCulture.MentalityValues[Mentality.Piety][m_iInfrastructureLevel]);
+                                        cResources.Add(m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel]);
+                                        cResources.Add(m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel]);
+
+                                        float fScience = 0.05f;
+                                        if (m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                            fScience = 0.25f;
+                                        if (m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                            fScience = 0.5f;
+
+                                        if (m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                            fScience *= 2;
+                                        if (m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                            fScience *= 4;
+
+                                        cResources.Add(fScience);
+                                        //                                    cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Selfishness][m_iInfrastructureLevel]);
+
+                                        int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                        switch (iChoosen)
+                                        {
+                                            case 0:
+                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
+                                                break;
+                                            case 1:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Religious;
+                                                break;
+                                            case 2:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.MilitaryAcademy;
+                                                break;
+                                            case 3:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Gambling;
+                                                break;
+                                            case 4:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.SciencesAcademy;
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                        {
+                                            List<float> cResources = new List<float>();
+                                            cResources.Add(m_iFood);
+                                            cResources.Add(m_iOre);
+                                            cResources.Add(m_iWood);
+
+                                            int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                            switch (iChoosen)
+                                            {
+                                                case 0:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                    break;
+                                                case 1:
+                                                    pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                    break;
+                                                case 2:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                    break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            List<float> cResources = new List<float>();
+                                            cResources.Add(pProvince.m_fGame + pProvince.m_fGrain);
+                                            cResources.Add(pProvince.m_fOre);
+                                            cResources.Add(pProvince.m_fWood);
+
+                                            int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                            switch (iChoosen)
+                                            {
+                                                case 0:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                    break;
+                                                case 1:
+                                                    pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                    break;
+                                                case 2:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case SettlementSize.Capital:
+                            if (bCoast && Rnd.OneChanceFrom(2))
+                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
+                            else
+                            {
+                                if (bCoast && m_iInfrastructureLevel > 2 && m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
+                                else
+                                {
+                                    if (Rnd.OneChanceFrom(2))
+                                    {
+                                        List<float> cResources = new List<float>();
+                                        cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Rudeness][m_iInfrastructureLevel]);
+                                        cResources.Add(m_pCulture.MentalityValues[Mentality.Piety][m_iInfrastructureLevel]);
+                                        cResources.Add(m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel]);
+                                        cResources.Add(m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel]);
+
+                                        float fScience = 0.05f;
+                                        if (m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                            fScience = 0.25f;
+                                        if (m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                            fScience = 0.5f;
+
+                                        if (m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                            fScience *= 2;
+                                        if (m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                            fScience *= 4;
+
+                                        cResources.Add(fScience);
+                                        //                                    cResources.Add(2 - m_pCulture.MentalityValues[Mentality.Selfishness][m_iInfrastructureLevel]);
+
+                                        int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                        switch (iChoosen)
+                                        {
+                                            case 0:
+                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
+                                                break;
+                                            case 1:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Religious;
+                                                break;
+                                            case 2:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.MilitaryAcademy;
+                                                break;
+                                            case 3:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Gambling;
+                                                break;
+                                            case 4:
+                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.SciencesAcademy;
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                        {
+                                            List<float> cResources = new List<float>();
+                                            cResources.Add(m_iFood);
+                                            cResources.Add(m_iOre);
+                                            cResources.Add(m_iWood);
+
+                                            int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                            switch (iChoosen)
+                                            {
+                                                case 0:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                    break;
+                                                case 1:
+                                                    pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                    break;
+                                                case 2:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                    break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            List<float> cResources = new List<float>();
+                                            cResources.Add(pProvince.m_fGame + pProvince.m_fGrain);
+                                            cResources.Add(pProvince.m_fOre);
+                                            cResources.Add(pProvince.m_fWood);
+
+                                            int iChoosen = Rnd.ChooseOne(cResources, 2);
+
+                                            switch (iChoosen)
+                                            {
+                                                case 0:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                    break;
+                                                case 1:
+                                                    pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                    break;
+                                                case 2:
+                                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case SettlementSize.Fort:
+                            if (bCoast)
+                                if (m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] > 1.5 &&
+                                    m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel] > 1.5)
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Pirates;
+                                else
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Naval;
+                            else
+                                if (m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] > 1.5 &&
+                                    m_pCulture.MentalityValues[Mentality.Treachery][m_iInfrastructureLevel] > 1.5)
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Raiders;
+                                else
+                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Military;
+                            break;
+                    }
+                }
         }
     }
 }

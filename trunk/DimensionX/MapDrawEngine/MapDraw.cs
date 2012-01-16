@@ -2087,10 +2087,17 @@ namespace MapDrawEngine
 
                 if (m_pFocusedLocation.m_pSettlement != null && m_pFocusedLocation.m_pSettlement.m_cBuildings.Count > 0)
                 {
+                    Dictionary<string, int> cBuildings = new Dictionary<string, int>();
+
                     foreach (Building pBuilding in m_pFocusedLocation.m_pSettlement.m_cBuildings)
                     {
-                        sToolTip += "\n         - " + pBuilding.ToString();
+                        int iCount = 0;
+                        cBuildings.TryGetValue(pBuilding.ToString(), out iCount);
+                        cBuildings[pBuilding.ToString()] = iCount + 1;
                     }
+
+                    foreach (var vBuilding in cBuildings)
+                        sToolTip += "\n         - " + vBuilding.Key + "  x" + vBuilding.Value.ToString();
                 }
 
                 if (m_pFocusedLocation.m_cHaveRoadTo.Count > 0)
