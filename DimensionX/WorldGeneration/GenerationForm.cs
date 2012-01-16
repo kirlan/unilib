@@ -370,6 +370,25 @@ namespace WorldGeneration
                     cEpoches.ToArray());
 
                 pWorldPreset.Save(saveFileDialog1.FileName);
+
+                if (m_cLastUsedPresets.Contains(saveFileDialog1.FileName))
+                    m_cLastUsedPresets.Remove(saveFileDialog1.FileName);
+
+                m_cLastUsedPresets.Insert(0, saveFileDialog1.FileName);
+
+                while (m_cLastUsedPresets.Count > 5)
+                    m_cLastUsedPresets.RemoveAt(5);
+
+                RegistryKey key;
+                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DimensionX", true);
+                if (key != null)
+                {
+                    for (int i = 1; i <= m_cLastUsedPresets.Count; i++)
+                    {
+                        key.SetValue("preset" + i.ToString(), m_cLastUsedPresets[i - 1]);
+                    }
+                    key.Close();
+                }
             }
         }
 

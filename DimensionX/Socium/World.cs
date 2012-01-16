@@ -546,10 +546,10 @@ namespace Socium
             //    BuildSeaRoutes(m_pGrid.CycleShift);
 
             BeginStep("Specializing settlements...", m_aProvinces.Length);
-            foreach (Province pProvince in m_aProvinces)
+            foreach (State pState in m_aStates)
             {
-                if (!pProvince.Forbidden)
-                    pProvince.SpecializeSettlements();
+                if (!pState.Forbidden)
+                    pState.SpecializeSettlements();
                 ProgressStep();
             }
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Random;
+using Socium.Psichology;
+using GeneLab.Genetix;
 
 namespace Socium.Settlements
 {
@@ -17,6 +19,149 @@ namespace Socium.Settlements
     
     public class BuildingInfo
     {
+        public static readonly BuildingInfo LoafersHut          = new BuildingInfo("Hut", "loafer", "loafer", BuildingSize.Small);
+        
+        public static readonly BuildingInfo SlavePensSmall      = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Small);
+        public static readonly BuildingInfo SlavePensMedium     = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Medium);
+        public static readonly BuildingInfo SlavePensLarge      = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Large);
+        public static readonly BuildingInfo SlavePensHuge       = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Huge);
+        
+        public static readonly BuildingInfo SlaveMarketMedium   = new BuildingInfo("Slave Market", "slaver", "slaver", BuildingSize.Medium);
+        
+        public static readonly BuildingInfo WarriorsHutSmall    = new BuildingInfo("Warriors Hut", "warrior", "warrior", BuildingSize.Small);
+
+        public static readonly BuildingInfo GuardTowerSmall     = new BuildingInfo("Guard Tower", "guard", "guard", BuildingSize.Small);
+        public static readonly BuildingInfo GuardBarracksSmall  = new BuildingInfo("Guard Barracks", "guard", "guard", BuildingSize.Small);
+        public static readonly BuildingInfo GuardBarracksMedium = new BuildingInfo("Guard Barracks", "guard", "guard", BuildingSize.Medium);
+        public static readonly BuildingInfo PrisonSmall         = new BuildingInfo("Prison", "guard", "guard", BuildingSize.Small);
+        public static readonly BuildingInfo PrisonMedium        = new BuildingInfo("Prison", "guard", "guard", BuildingSize.Medium);
+        
+        public static readonly BuildingInfo EmergencyPostSmall  = new BuildingInfo("Emergency Post", "watcher", "watcher", BuildingSize.Small);
+        public static readonly BuildingInfo HoldingSmall        = new BuildingInfo("Holding", "watcher", "watcher", BuildingSize.Small);
+        public static readonly BuildingInfo HoldingMedium       = new BuildingInfo("Holding", "watcher", "watcher", BuildingSize.Medium);
+        
+        public static readonly BuildingInfo PoliceStationSmall  = new BuildingInfo("Police Station", "policeman", "policeman", BuildingSize.Small);
+        public static readonly BuildingInfo PoliceStationMedium = new BuildingInfo("Police Department", "policeman", "policeman", BuildingSize.Medium);
+        public static readonly BuildingInfo PrisonPoliceSmall   = new BuildingInfo("Prison", "policeman", "policeman", BuildingSize.Small);
+        public static readonly BuildingInfo PrisonPoliceMedium  = new BuildingInfo("Prison", "policeman", "policeman", BuildingSize.Medium);
+        
+        public static readonly BuildingInfo FishingBoatMedium   = new BuildingInfo("Fishing boat", "fisher", "fisher", BuildingSize.Medium);
+        public static readonly BuildingInfo FishingBoatLarge    = new BuildingInfo("Fishing Trawler", "fisher", "fisher", BuildingSize.Large);
+        
+        public static readonly BuildingInfo FarmMedium          = new BuildingInfo("Farm", "farmer", "farmer", BuildingSize.Medium);
+        public static readonly BuildingInfo FarmLarge           = new BuildingInfo("Ranch", "farmer", "farmer", BuildingSize.Large);
+
+        public static readonly BuildingInfo PeasantsHutMedium   = new BuildingInfo("Peasants' Hut", "peasant", "peasant", BuildingSize.Medium);
+        public static readonly BuildingInfo PeasantsHutLarge    = new BuildingInfo("Plantation", "peasant", "peasant", BuildingSize.Large);
+        
+        public static readonly BuildingInfo HuntersHutMedium    = new BuildingInfo("Hunters Hut", "hunter", "hunter", BuildingSize.Medium);
+        public static readonly BuildingInfo HuntersHutLarge     = new BuildingInfo("Hunters Lodge", "hunter", "hunter", BuildingSize.Large);
+        
+        public static readonly BuildingInfo MineMedium          = new BuildingInfo("Quarry", "miner", "miner", BuildingSize.Medium);
+        public static readonly BuildingInfo MineLarge           = new BuildingInfo("Mine", "miner", "miner", BuildingSize.Large);
+        
+        public static readonly BuildingInfo LumberjacksHutMedium = new BuildingInfo("Lumberjacks Hut", "lumberjack", "lumberjack", BuildingSize.Medium);
+        public static readonly BuildingInfo LumberjacksHutLarge = new BuildingInfo("Sawmill", "lumberjack", "lumberjack", BuildingSize.Large);
+
+        public static readonly BuildingInfo ShamansHutSmall     = new BuildingInfo("Shamans Hut", "shaman", "shaman", BuildingSize.Small);
+
+        public static readonly BuildingInfo ChurchSmall         = new BuildingInfo("Church", "priest", "priest", BuildingSize.Small);
+        public static readonly BuildingInfo ChurchMedium        = new BuildingInfo("Temple", "priest", "priest", BuildingSize.Medium);
+        public static readonly BuildingInfo ChurchLarge         = new BuildingInfo("Cathedral", "priest", "priest", BuildingSize.Large);
+        
+        public static readonly BuildingInfo TavernSmall         = new BuildingInfo("Tavern", "barman", "barmaid", BuildingSize.Small);
+        public static readonly BuildingInfo BarSmall            = new BuildingInfo("Bar", "barman", "barmaid", BuildingSize.Small);
+        public static readonly BuildingInfo NightClubMedium     = new BuildingInfo("Night Club", "barman", "barmaid", BuildingSize.Medium);
+
+        public static readonly BuildingInfo RoguesDenSmall      = new BuildingInfo("Rogue's Den", "rogue", "rogue", BuildingSize.Small);
+        public static readonly BuildingInfo RoguesDenMedium     = new BuildingInfo("Rogue's Den", "rogue", "rogue", BuildingSize.Medium);
+
+        public static readonly BuildingInfo GamblingSmall       = new BuildingInfo("Gambling Den", "gambler", "gambler", BuildingSize.Small);
+        public static readonly BuildingInfo GamblingMedium      = new BuildingInfo("Casino", "gambler", "gambler", BuildingSize.Medium);
+
+        public static readonly BuildingInfo BrothelMedium       = new BuildingInfo("Brothel", "whore", "whore", BuildingSize.Medium);
+
+        public static readonly BuildingInfo StripClubSmall      = new BuildingInfo("Strip Club", "stripper", "stripper", BuildingSize.Small);
+
+        public static readonly BuildingInfo CultureMeduim       = new BuildingInfo("Concert Hall", "musician", "musician", BuildingSize.Medium);
+        public static readonly BuildingInfo CultureLarge        = new BuildingInfo("Conservatoire", "musician", "musician", BuildingSize.Large);
+
+        public static readonly BuildingInfo TheatreMedium       = new BuildingInfo("Theatre", "actor", "actor", BuildingSize.Medium);
+        public static readonly BuildingInfo CinemaLarge         = new BuildingInfo("Film Studio", "actor", "actor", BuildingSize.Large);
+
+        public static readonly BuildingInfo CircusMedium        = new BuildingInfo("Circus", "gladiator", "gladiator", BuildingSize.Medium);
+
+        public static readonly BuildingInfo TraderMedium        = new BuildingInfo("Merchant ship", "sailor", "sailor", BuildingSize.Medium);
+        public static readonly BuildingInfo TraderLarge         = new BuildingInfo("Freighter", "sailor", "sailor", BuildingSize.Large);
+        public static readonly BuildingInfo NavalAcademyHuge    = new BuildingInfo("Nautical School", "sailor", "sailor", BuildingSize.Huge);
+        public static readonly BuildingInfo NavalVessel         = new BuildingInfo("Naval Vessel", "sailor", "sailor", BuildingSize.Medium);
+        
+        public static readonly BuildingInfo TailorWorkshopSmall = new BuildingInfo("Tailoring Shop", "tailor", "tailor", BuildingSize.Small);
+
+        public static readonly BuildingInfo JevellerWorkshopSmall = new BuildingInfo("Jewellery Workshop", "jeveller", "jeveller", BuildingSize.Small);
+        
+        public static readonly BuildingInfo SmithySmall         = new BuildingInfo("Smithy", "blacksmith", "blacksmith", BuildingSize.Small);
+        
+        public static readonly BuildingInfo CarpentrySmall      = new BuildingInfo("Carpentry Workshop", "carpenter", "carpenter", BuildingSize.Small);
+
+        public static readonly BuildingInfo IronworksSmall      = new BuildingInfo("Ironworks", "worker", "worker", BuildingSize.Medium);
+        public static readonly BuildingInfo IronworksMedium     = new BuildingInfo("Metallurgical Plant", "worker", "worker", BuildingSize.Large);
+        public static readonly BuildingInfo FurnitureSmall      = new BuildingInfo("Woodworking Factory", "worker", "worker", BuildingSize.Medium);
+        public static readonly BuildingInfo FurnitureMedium     = new BuildingInfo("Woodworking Factory", "worker", "worker", BuildingSize.Large);
+        public static readonly BuildingInfo ClothesFactorySmall = new BuildingInfo("Sewing Workshop", "worker", "worker", BuildingSize.Medium);
+        public static readonly BuildingInfo ClothesFactoryMedium = new BuildingInfo("Textile Factory", "worker", "worker", BuildingSize.Large);
+        public static readonly BuildingInfo JevellerWorkshopMedium = new BuildingInfo("Jewellery Factory", "worker", "worker", BuildingSize.Large);
+
+        public static readonly BuildingInfo IronworksSlvSmall   = new BuildingInfo("Ironworks", "slave", "slave", BuildingSize.Medium);
+        public static readonly BuildingInfo IronworksSlvMedium  = new BuildingInfo("Metallurgical Plant", "slave", "slave", BuildingSize.Large);
+        public static readonly BuildingInfo FurnitureSlvSmall   = new BuildingInfo("Woodworking Factory", "slave", "slave", BuildingSize.Medium);
+        public static readonly BuildingInfo FurnitureSlvMedium  = new BuildingInfo("Woodworking Factory", "slave", "slave", BuildingSize.Large);
+        public static readonly BuildingInfo ClothesFactorySlvSmall = new BuildingInfo("Sewing Workshop", "slave", "slave", BuildingSize.Medium);
+        public static readonly BuildingInfo ClothesFactorySlvMedium = new BuildingInfo("Textile Factory", "slave", "slave", BuildingSize.Large);
+        public static readonly BuildingInfo JevellerWorkshopSlvMedium = new BuildingInfo("Jewellery Factory", "slave", "slave", BuildingSize.Large);
+
+        public static readonly BuildingInfo PirateShip = new BuildingInfo("Pirate ship", "pirate", "pirate", BuildingSize.Small);
+
+        public static readonly BuildingInfo BanditsBarracks     = new BuildingInfo("Barracks", "bandit", "bandit", BuildingSize.Small);
+
+        public static readonly BuildingInfo BarracksSmall       = new BuildingInfo("Barracks", "soldier", "soldier", BuildingSize.Small);
+        public static readonly BuildingInfo BarracksHuge        = new BuildingInfo("Barracks", "soldier", "soldier", BuildingSize.Huge);
+
+        public static readonly BuildingInfo ScienceSmall        = new BuildingInfo("Laboratory", "scientiest", "scientiest", BuildingSize.Small);
+        public static readonly BuildingInfo ScienceMedium       = new BuildingInfo("University", "scientiest", "scientiest", BuildingSize.Medium);
+        public static readonly BuildingInfo ScienceLarge        = new BuildingInfo("Academy", "scientiest", "scientiest", BuildingSize.Large);
+
+        public static readonly BuildingInfo SchoolSmall         = new BuildingInfo("School", "teacher", "teacher", BuildingSize.Small);
+        public static readonly BuildingInfo SchoolMedium        = new BuildingInfo("College", "teacher", "teacher", BuildingSize.Medium);
+
+        public static readonly BuildingInfo InnSmall            = new BuildingInfo("Inn", "innkeeper", "barmaid", BuildingSize.Small);
+
+        public static readonly BuildingInfo MarketSmall         = new BuildingInfo("Marketplace", "merchant", "merchant", BuildingSize.Small);
+        public static readonly BuildingInfo MarketMedium        = new BuildingInfo("Bazaar", "merchant", "merchant", BuildingSize.Large);
+
+        public static readonly BuildingInfo CourtSmall          = new BuildingInfo("Courthouse", "scribe", "scribe", BuildingSize.Small);
+        public static readonly BuildingInfo CourtMedium         = new BuildingInfo("Administration", "scribe", "scribe", BuildingSize.Medium);
+
+        public static readonly BuildingInfo AdministrationSmall = new BuildingInfo("Courthouse", "clerk", "clerk", BuildingSize.Small);
+        public static readonly BuildingInfo AdministrationMedium = new BuildingInfo("Administration", "clerk", "clerk", BuildingSize.Medium);
+
+        public static readonly BuildingInfo HotelSmall          = new BuildingInfo("Motel", "clerk", "clerk", BuildingSize.Small);
+        public static readonly BuildingInfo HotelMedium         = new BuildingInfo("Hotel", "clerk", "clerk", BuildingSize.Medium);
+        public static readonly BuildingInfo HotelLarge          = new BuildingInfo("Resort", "clerk", "clerk", BuildingSize.Large);
+
+        public static readonly BuildingInfo OfficeSmall         = new BuildingInfo("Company", "clerk", "clerk", BuildingSize.Small);
+        public static readonly BuildingInfo OfficeMedium        = new BuildingInfo("Agency", "clerk", "clerk", BuildingSize.Medium);
+        public static readonly BuildingInfo OfficeLarge         = new BuildingInfo("Corporation", "clerk", "clerk", BuildingSize.Medium);
+
+        public static readonly BuildingInfo CastleSmall         = new BuildingInfo("Castle", "noble", "noble", BuildingSize.Medium);
+        public static readonly BuildingInfo EstateSmall         = new BuildingInfo("Estate", "noble", "noble", BuildingSize.Medium);
+        public static readonly BuildingInfo MansionSmall        = new BuildingInfo("Mansion", "noble", "noble", BuildingSize.Small);
+        public static readonly BuildingInfo MansionMedium       = new BuildingInfo("Palace", "noble", "noble", BuildingSize.Medium);
+
+        public static readonly BuildingInfo MedicineSmall       = new BuildingInfo("Chemist Shop", "chemist", "chemist", BuildingSize.Medium);
+        public static readonly BuildingInfo MedicineMedium      = new BuildingInfo("Clinic", "doctor", "doctor", BuildingSize.Medium);
+        public static readonly BuildingInfo MedicineLarge       = new BuildingInfo("Hospital", "doctor", "doctor", BuildingSize.Large);
+                
         public string m_sName;
         public string m_sOwnerM;
         public string m_sOwnerF;
@@ -45,15 +190,15 @@ namespace Socium.Settlements
                     m_iMaxPop = 15;
                     break;
                 case BuildingSize.Medium:
-                    m_iMinPop = 10;
+                    m_iMinPop = 30;//10;
                     m_iMaxPop = 30;
                     break;
                 case BuildingSize.Large:
-                    m_iMinPop = 15;
+                    m_iMinPop = 150;//15;
                     m_iMaxPop = 45;
                     break;
                 case BuildingSize.Huge:
-                    m_iMinPop = 20;
+                    m_iMinPop = 300;//20;
                     m_iMaxPop = 70;
                     break;
             }
@@ -122,476 +267,815 @@ namespace Socium.Settlements
         {
             m_pSettlement = pSettlement;
 
-            int iInfrastructureLevel = ((State)pProvince.Owner).m_iInfrastructureLevel;
-            int iControl = ((State)pProvince.Owner).m_iControl;
+            State pState = (State)pProvince.Owner;
 
+            int iInfrastructureLevel = pState.m_iInfrastructureLevel;
+            int iControl = pState.m_iControl *2;
+
+            Dictionary<BuildingInfo, float> cChances = new Dictionary<BuildingInfo, float>();
             switch (m_pSettlement.m_pInfo.m_eSize)
             {
                 case SettlementSize.Hamlet:
-                    if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                     {
-                        if (((State)pProvince.Owner).m_iSocialEquality == 0 && Rnd.OneChanceFrom(4))
+                        if (pSettlement.m_cBuildings.Count > 0)
                         {
-                            m_pInfo = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Small);
-                        }
-                        else
-                        {
-                            if (Rnd.Get(4) < iControl ||
-                               (iInfrastructureLevel < 2 && Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Piety][pProvince.m_iInfrastructureLevel]))
+                            BuildingInfo pGuard;
+                            if (iInfrastructureLevel < 2)
                             {
+                                pGuard = BuildingInfo.WarriorsHutSmall;
+                                //else
+                                //    if (iInfrastructureLevel < 4)
+                                //        pGuard = BuildingInfo.GuardTowerSmall;
+                                //    else
+                                //        if (iInfrastructureLevel == 8)
+                                //            pGuard = BuildingInfo.EmergencyPostSmall;
+                                //        else
+                                //            pGuard = BuildingInfo.PoliceStationSmall;
+
+                                cChances[pGuard] = (float)iControl / 4;
                                 if (iInfrastructureLevel < 2)
-                                    m_pInfo = new BuildingInfo("Hut", "warrior", "warrior", BuildingSize.Small);
-                                else
-                                    if (iInfrastructureLevel < 4)
-                                        m_pInfo = new BuildingInfo("Guard Tower", "guard", "guard", BuildingSize.Small);
-                                    else
-                                        if (iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Emergency Post", "watcher", "watcher", BuildingSize.Small);
-                                        else
-                                            m_pInfo = new BuildingInfo("Police Station", "policeman", "policeman", BuildingSize.Small);
+                                    cChances[pGuard] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
                             }
-                            else
-                                if (iInfrastructureLevel < 2 && Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Piety][pProvince.m_iInfrastructureLevel])
-                                    m_pInfo = new BuildingInfo("Hut", "shaman", "shaman", BuildingSize.Small);
 
+                            if (iInfrastructureLevel < 2)
+                                cChances[BuildingInfo.ShamansHutSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
+
+                            if (pState.m_iSocialEquality == 0)
+                            {
+                                cChances[BuildingInfo.SlavePensMedium] = (float)cChances.Count;// / 2 + 1;
+                            }
                         }
-                    }
 
-                    if (m_pInfo == null)
-                    {
+                        BuildingInfo pProfile;
                         switch (m_pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.Fishers:
-                                m_pInfo = new BuildingInfo("Fishing boat", "fisher", "fisher", BuildingSize.Small);
+                                pProfile = BuildingInfo.FishingBoatMedium;
                                 break;
                             case SettlementSpeciality.Farmers:
-                                m_pInfo = new BuildingInfo("Farm", "farmer", "farmer", BuildingSize.Small);
+                                pProfile = BuildingInfo.FarmMedium;
                                 break;
                             case SettlementSpeciality.Peasants:
-                                m_pInfo = new BuildingInfo("Hut", "peasant", "peasant", BuildingSize.Small);
+                                pProfile = BuildingInfo.PeasantsHutMedium;
                                 break;
                             case SettlementSpeciality.Hunters:
-                                m_pInfo = new BuildingInfo("Hut", "hunter", "hunter", BuildingSize.Small);
+                                pProfile = BuildingInfo.HuntersHutMedium;
                                 break;
                             case SettlementSpeciality.Miners:
-                                m_pInfo = new BuildingInfo("Mine", "miner", "miner", BuildingSize.Small);
+                                pProfile = BuildingInfo.MineMedium;
                                 break;
                             case SettlementSpeciality.Lumberjacks:
-                                m_pInfo = new BuildingInfo("Hut", "lumberjack", "lumberjack", BuildingSize.Small);
+                                pProfile = BuildingInfo.LumberjacksHutMedium;
+                                break;
+                            default:
+                                pProfile = BuildingInfo.LoafersHut;
                                 break;
                         }
+
+                        cChances[pProfile] = (float)cChances.Count + 1;
                     }
                     break;
                 case SettlementSize.Village:
-                    if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                     {
-                        if (((State)pProvince.Owner).m_iSocialEquality == 0 && Rnd.OneChanceFrom(3))
+                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
-                            m_pInfo = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Small);
-                        }
-                        else
-                        {
-                            if (Rnd.Get(4) < iControl)
-                            {
-                                if (iInfrastructureLevel < 2)
-                                    m_pInfo = new BuildingInfo("Hut", "warrior", "warrior", BuildingSize.Small);
-                                else
-                                    if (iInfrastructureLevel < 4)
-                                        m_pInfo = new BuildingInfo("Guard Tower", "guard", "guard", BuildingSize.Small);
-                                    else
-                                        if (iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Emergency Post", "watcher", "watcher", BuildingSize.Small);
-                                        else
-                                            m_pInfo = new BuildingInfo("Police Station", "policeman", "policeman", BuildingSize.Small);
-                            }
+                            BuildingInfo pGuard;
+                            if (iInfrastructureLevel < 2)
+                                pGuard = BuildingInfo.WarriorsHutSmall;
                             else
-                                if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Piety][pProvince.m_iInfrastructureLevel])
-                                {
-                                    if (iInfrastructureLevel < 2)
-                                        m_pInfo = new BuildingInfo("Hut", "shaman", "shaman", BuildingSize.Small);
+                                if (iInfrastructureLevel < 4)
+                                    pGuard = BuildingInfo.GuardTowerSmall;
+                                else
+                                    if (iInfrastructureLevel == 8)
+                                        pGuard = BuildingInfo.EmergencyPostSmall;
                                     else
-                                        m_pInfo = new BuildingInfo("Church", "priest", "priest", BuildingSize.Small);
+                                        pGuard = BuildingInfo.PoliceStationSmall;
+
+                            cChances[pGuard] = (float)iControl / 4;
+
+                            BuildingInfo pChurch;
+                            if (iInfrastructureLevel < 2)
+                                pChurch = BuildingInfo.ShamansHutSmall;
+                            else
+                                pChurch = BuildingInfo.ChurchSmall;
+
+                            cChances[pChurch] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
+
+                            if (iInfrastructureLevel >= 2)
+                            {
+                                if (iInfrastructureLevel < 4)
+                                {
+                                    cChances[BuildingInfo.InnSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                    cChances[BuildingInfo.TavernSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
                                 }
                                 else
-                                    if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                        m_pInfo = new BuildingInfo("Inn", "barman", "barmaid", BuildingSize.Small);
-                                    else
-                                        if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][pProvince.m_iInfrastructureLevel])
-                                            m_pInfo = new BuildingInfo("Hideout", "rogue", "rogue", BuildingSize.Small);
-                        }
-                    }
+                                {
+                                    cChances[BuildingInfo.HotelSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                    cChances[BuildingInfo.BarSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                }
 
-                    if(m_pInfo == null)
-                    {
+                                cChances[BuildingInfo.RoguesDenSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
+                            }
+
+                            if (iInfrastructureLevel >= 3)
+                            {
+                                float fScience = 0.05f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                    fScience = 0.25f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                    fScience = 0.5f;
+
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                    fScience *= 2;
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                    fScience *= 4;
+
+                                cChances[BuildingInfo.SchoolSmall] = fScience / 4;
+                            }
+
+                            if (pState.m_iSocialEquality == 0)
+                            {
+                                cChances[BuildingInfo.SlavePensMedium] = (float)cChances.Count;// / 2 + 1;
+                            }
+
+                            cChances[BuildingInfo.MarketSmall] = (float)cChances.Count / 2;// / 2 + 1;
+
+                            if (pState.m_pInfo.m_bDinasty)
+                            {
+                                cChances[BuildingInfo.EstateSmall] = (float)cChances.Count / 4;
+                                cChances[BuildingInfo.CastleSmall] = (float)cChances.Count / 12;
+                            }
+                        }
+
+                        BuildingInfo pProfile;
                         switch (m_pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.Fishers:
-                                m_pInfo = new BuildingInfo("Fishing boat", "fisher", "fisher", BuildingSize.Small);
+                                pProfile = BuildingInfo.FishingBoatMedium;
                                 break;
                             case SettlementSpeciality.Farmers:
-                                m_pInfo = new BuildingInfo("Farm", "farmer", "farmer", BuildingSize.Small);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.FarmMedium : BuildingInfo.FarmLarge;
                                 break;
                             case SettlementSpeciality.Peasants:
-                                m_pInfo = new BuildingInfo("Hut", "peasant", "peasant", BuildingSize.Small);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.PeasantsHutMedium : BuildingInfo.PeasantsHutLarge;
                                 break;
                             case SettlementSpeciality.Hunters:
-                                m_pInfo = new BuildingInfo("Hut", "hunter", "hunter", BuildingSize.Small);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.HuntersHutMedium : BuildingInfo.HuntersHutLarge;
                                 break;
                             case SettlementSpeciality.Miners:
-                                m_pInfo = new BuildingInfo("Mine", "miner", "miner", BuildingSize.Small);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.MineMedium : BuildingInfo.MineLarge;
                                 break;
                             case SettlementSpeciality.Lumberjacks:
-                                m_pInfo = new BuildingInfo("Hut", "lumberjack", "lumberjack", BuildingSize.Small);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.LumberjacksHutMedium : BuildingInfo.LumberjacksHutLarge;
+                                break;
+                            default:
+                                pProfile = BuildingInfo.LoafersHut;
                                 break;
                         }
+
+                        cChances[pProfile] = (float)cChances.Count + 1;
                     }
                     break;
                 case SettlementSize.Town:
-                    if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                     {
-                        if (((State)pProvince.Owner).m_iSocialEquality == 0 && Rnd.OneChanceFrom(3))
+                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
-                            if(Rnd.OneChanceFrom(4))
-                                m_pInfo = new BuildingInfo("Slave Market", "slaver", "slaver", BuildingSize.Medium);
+                            BuildingInfo pGuard;
+                            if (iInfrastructureLevel < 4)
+                                pGuard = BuildingInfo.GuardBarracksSmall;
                             else
-                                m_pInfo = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Medium);
-                        }
-                        else
-                        {
-                            if (Rnd.Get(4) < iControl)
-                            {
-                                if (Rnd.OneChanceFrom(2))
-                                {
-                                    if (iInfrastructureLevel < 4)
-                                            m_pInfo = new BuildingInfo("Guard Tower", "guard", "guard", BuildingSize.Medium);
-                                    else
-                                        if(iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Emergency Post", "watcher", "watcher", BuildingSize.Medium);
-                                        else
-                                            m_pInfo = new BuildingInfo("Police Station", "policeman", "policeman", BuildingSize.Medium);
-                                }
+                                if (iInfrastructureLevel == 8)
+                                    pGuard = BuildingInfo.EmergencyPostSmall;
                                 else
-                                {
-                                    if (iInfrastructureLevel < 4)
-                                        m_pInfo = new BuildingInfo("Prison", "guard", "guard", BuildingSize.Medium);
-                                    else
-                                        if (iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Holding", "watcher", "watcher", BuildingSize.Medium);
-                                        else
-                                            m_pInfo = new BuildingInfo("Prison", "policeman", "policeman", BuildingSize.Medium);
-                                }
+                                    pGuard = BuildingInfo.PoliceStationSmall;
+
+                            cChances[pGuard] = (float)iControl / 4;
+
+                            BuildingInfo pPrison;
+                            if (iInfrastructureLevel < 4)
+                                pPrison = BuildingInfo.PrisonSmall;
+                            else
+                                if (iInfrastructureLevel == 8)
+                                    pPrison = BuildingInfo.HoldingSmall;
+                                else
+                                    pPrison = BuildingInfo.PrisonPoliceSmall;
+
+                            cChances[pPrison] = (float)iControl / 4;
+
+                            cChances[BuildingInfo.ChurchMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 10;
+                            cChances[BuildingInfo.ChurchSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
+
+                            switch (pState.m_pCustoms.m_eSexuality)
+                            {
+                                case Psichology.Customs.Sexuality.Moderate_sexuality:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    if(iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                                case Psichology.Customs.Sexuality.Lecherous:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    if(iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                            }
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                cChances[BuildingInfo.InnSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                cChances[BuildingInfo.TavernSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
                             }
                             else
-                                if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Piety][pProvince.m_iInfrastructureLevel])
-                                {
-                                    if(Rnd.OneChanceFrom(5))
-                                        m_pInfo = new BuildingInfo("Temple", "priest", "priest", BuildingSize.Medium);
-                                    else
-                                        m_pInfo = new BuildingInfo("Church", "priest", "priest", BuildingSize.Small);
-                                }
-                                else
-                                    if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                    {
-                                        if ((pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Lecherous && Rnd.OneChanceFrom(2)) ||
-                                            (pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Moderate_sexuality && Rnd.OneChanceFrom(4)))
-                                            m_pInfo = new BuildingInfo("Brothel", "whore", "whore", BuildingSize.Medium);
-                                        else
-                                            m_pInfo = new BuildingInfo("Bar", "barman", "barmaid", BuildingSize.Medium);
-                                    }
-                                    else
-                                        if (Rnd.Get(2f) > pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                            m_pInfo = new BuildingInfo("Theatre", "actor", "actor", BuildingSize.Medium);
-                                        else
-                                            if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][pProvince.m_iInfrastructureLevel])
-                                                m_pInfo = new BuildingInfo("Hideout", "rogue", "rogue", BuildingSize.Medium);
-                        }
-                    }
+                            {
+                                cChances[BuildingInfo.HotelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                cChances[BuildingInfo.BarSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                            }
 
-                    if (m_pInfo == null)
-                    {
+                            cChances[BuildingInfo.TheatreMedium] = 1f - pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+
+                            cChances[BuildingInfo.RoguesDenMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
+                            cChances[BuildingInfo.GamblingSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
+
+                            if (iInfrastructureLevel < 3)
+                                cChances[BuildingInfo.MedicineSmall] = (float)cChances.Count / 6;
+                            else
+                                cChances[BuildingInfo.MedicineMedium] = (float)cChances.Count / 6;
+
+                            float fBureaucracy = 0.05f;
+                            if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                fBureaucracy = 0.25f;
+                            if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                fBureaucracy = 0.5f;
+
+                            if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == GeneLab.Genetix.Intelligence.Sapient)
+                                fBureaucracy *= 2;
+                            if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == GeneLab.Genetix.Intelligence.Primitive)
+                                fBureaucracy *= 4;
+
+                            if (m_pSettlement.m_bCapital)
+                                fBureaucracy *= 2;
+
+                            fBureaucracy *= (float)iControl / 2;
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                cChances[BuildingInfo.CourtSmall] = fBureaucracy / 2;
+                                cChances[BuildingInfo.CourtMedium] = fBureaucracy / 4;
+                            }
+                            else
+                            {
+                                cChances[BuildingInfo.AdministrationSmall] = fBureaucracy / 2;
+                                cChances[BuildingInfo.AdministrationMedium] = fBureaucracy / 4;
+                            }
+
+                            if (iInfrastructureLevel >= 3)
+                            {
+                                float fScience = 0.05f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                    fScience = 0.25f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                    fScience = 0.5f;
+
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                    fScience *= 2;
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                    fScience *= 4;
+
+                                cChances[BuildingInfo.ScienceSmall] = fScience / 4;
+
+                                cChances[BuildingInfo.SchoolSmall] = fScience;
+                                cChances[BuildingInfo.SchoolMedium] = fScience / 2;
+                            }
+
+                            if (pState.m_iSocialEquality == 0)
+                            {
+                                cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 3 + 1;
+                                cChances[BuildingInfo.SlavePensLarge] = (float)cChances.Count;// / 2 + 1;
+                            }
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                cChances[BuildingInfo.MarketSmall] = (float)cChances.Count / 3 + 1;
+                                cChances[BuildingInfo.MarketMedium] = (float)cChances.Count / 10 + 1;
+                            }
+                            else
+                            {
+                                cChances[BuildingInfo.OfficeSmall] = (float)cChances.Count;// / 2 + 1;
+                                cChances[BuildingInfo.OfficeMedium] = (float)cChances.Count / 2;// / 2 + 1;
+                            }
+
+                            if (pState.m_pInfo.m_bDinasty)
+                                cChances[BuildingInfo.MansionSmall] = m_pSettlement.m_bCapital ? (float)cChances.Count*2 : (float)cChances.Count;
+                        }
+
+                        BuildingInfo pProfile;
                         switch (m_pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.Fishers:
-                                m_pInfo = new BuildingInfo("Fishing boat", "fisher", "fisher", BuildingSize.Medium);
+                                pProfile = BuildingInfo.FishingBoatLarge;
                                 break;
                             case SettlementSpeciality.Naval:
-                                m_pInfo = new BuildingInfo("Patrol boat", "sailor", "sailor", BuildingSize.Medium);
+                                pProfile = BuildingInfo.TraderMedium;
                                 break;
                             case SettlementSpeciality.Tailors:
-                                m_pInfo = new BuildingInfo("Workshop", "tailor", "tailor", BuildingSize.Small);
+                                if (iInfrastructureLevel < 4)
+                                    pProfile = BuildingInfo.TailorWorkshopSmall;
+                                else
+                                    pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.ClothesFactorySlvSmall : BuildingInfo.ClothesFactorySmall;
                                 break;
                             case SettlementSpeciality.Jevellers:
-                                m_pInfo = new BuildingInfo("Workshop", "jeveller", "jeveller", BuildingSize.Small);
+                                pProfile = BuildingInfo.JevellerWorkshopSmall;
                                 break;
                             case SettlementSpeciality.Factory:
-                                m_pInfo = new BuildingInfo("Workshop", "worker", "worker", BuildingSize.Small);
+                                if (iInfrastructureLevel < 4)
+                                    pProfile = BuildingInfo.SmithySmall;
+                                else
+                                    pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.IronworksSlvSmall : BuildingInfo.IronworksSmall;
                                 break;
                             case SettlementSpeciality.Artisans:
-                                m_pInfo = new BuildingInfo("Workshop", "artisan", "artisan", BuildingSize.Small);
+                                if (iInfrastructureLevel < 4)
+                                    pProfile = BuildingInfo.CarpentrySmall;
+                                else
+                                    pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.FurnitureSlvSmall : BuildingInfo.FurnitureSmall;
+                                break;
+                            default:
+                                pProfile = BuildingInfo.LoafersHut;
                                 break;
                         }
+
+                        cChances[pProfile] = (float)cChances.Count + 1;
                     }
                     break;
                 case SettlementSize.City:
-                    if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                     {
-                        if (((State)pProvince.Owner).m_iSocialEquality == 0 && Rnd.OneChanceFrom(3))
+                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
-                            if (Rnd.OneChanceFrom(4))
-                                m_pInfo = new BuildingInfo("Slave Market", "slaver", "slaver", BuildingSize.Large);
+                            BuildingInfo pGuard;
+                            if (iInfrastructureLevel < 4)
+                                pGuard = BuildingInfo.GuardBarracksMedium;
                             else
-                                m_pInfo = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Medium);
-                        }
-                        else
-                        {
-                            if (Rnd.Get(4) < iControl)
-                            {
-                                if (Rnd.OneChanceFrom(2))
-                                {
-                                    if (iInfrastructureLevel < 4)
-                                        m_pInfo = new BuildingInfo("Guard Tower", "guard", "guard", BuildingSize.Medium);
-                                    else
-                                        if (iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Emergency Post", "watcher", "watcher", BuildingSize.Medium);
-                                        else
-                                            if(Rnd.OneChanceFrom(4))
-                                                m_pInfo = new BuildingInfo("Police Department", "policeman", "policeman", BuildingSize.Large);
-                                            else
-                                                m_pInfo = new BuildingInfo("Police Station", "policeman", "policeman", BuildingSize.Medium);
-                                }
+                                if (iInfrastructureLevel == 8)
+                                    pGuard = BuildingInfo.EmergencyPostSmall;
                                 else
-                                {
-                                    if (iInfrastructureLevel < 4)
-                                        m_pInfo = new BuildingInfo("Prison", "guard", "guard", BuildingSize.Medium);
-                                    else
-                                        if (iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Holding", "watcher", "watcher", BuildingSize.Medium);
-                                        else
-                                            m_pInfo = new BuildingInfo("Prison", "policeman", "policeman", BuildingSize.Medium);
-                                }
-                            }
-                            else
-                                if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Piety][pProvince.m_iInfrastructureLevel])
-                                {
-                                    if (Rnd.OneChanceFrom(5))
-                                        m_pInfo = new BuildingInfo("Temple", "priest", "priest", BuildingSize.Medium);
-                                    else
-                                        m_pInfo = new BuildingInfo("Church", "priest", "priest", BuildingSize.Small);
-                                }
-                                else
-                                    if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                    {
-                                        if ((pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Lecherous && Rnd.OneChanceFrom(2)) ||
-                                            (pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Moderate_sexuality && Rnd.OneChanceFrom(4)))
-                                            m_pInfo = new BuildingInfo("Brothel", "whore", "whore", BuildingSize.Medium);
-                                        else
-                                            m_pInfo = new BuildingInfo("Bar", "barman", "barmaid", BuildingSize.Medium);
-                                    }
-                                    else
-                                        if (Rnd.Get(2f) > pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                            m_pInfo = new BuildingInfo("Theatre", "actor", "actor", BuildingSize.Medium);
-                                        else
-                                            if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][pProvince.m_iInfrastructureLevel])
-                                                m_pInfo = new BuildingInfo("Hideout", "rogue", "rogue", BuildingSize.Medium);
-                            }
-                        }
-                        if (m_pInfo == null)
-                        {
-                            switch (m_pSettlement.m_eSpeciality)
-                            {
-                                case SettlementSpeciality.NavalAcademy:
-                                    m_pInfo = new BuildingInfo("Naval Academy", "sailor", "sailor", BuildingSize.Large);
-                                    break;
-                                case SettlementSpeciality.Naval:
-                                    m_pInfo = new BuildingInfo("War ship", "sailor", "sailor", BuildingSize.Large);
-                                    break;
-                                case SettlementSpeciality.Resort:
-                                    m_pInfo = new BuildingInfo("Hotel", "barman", "barmaid", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.Cultural:
-                                    m_pInfo = new BuildingInfo("Theatre", "actor", "actor", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.ArtsAcademy:
-                                    m_pInfo = new BuildingInfo("Arts Academy", "painter", "painter", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.Religious:
-                                    m_pInfo = new BuildingInfo("Cathedral", "priest", "priest", BuildingSize.Large);
-                                    break;
-                                case SettlementSpeciality.MilitaryAcademy:
-                                    m_pInfo = new BuildingInfo("Barracks", "soldier", "soldier", BuildingSize.Large);
-                                    break;
-                                case SettlementSpeciality.Gambling:
-                                    m_pInfo = new BuildingInfo("Casino", "gambler", "gambler", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.SciencesAcademy:
-                                    m_pInfo = new BuildingInfo("University", "scientiest", "scientiest", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.Tailors:
-                                    m_pInfo = new BuildingInfo("Factory", "tailor", "tailor", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.Jevellers:
-                                    m_pInfo = new BuildingInfo("Factory", "jeveller", "jeveller", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.Factory:
-                                    m_pInfo = new BuildingInfo("Factory", "worker", "worker", BuildingSize.Medium);
-                                    break;
-                                case SettlementSpeciality.Artisans:
-                                    m_pInfo = new BuildingInfo("Factory", "artisan", "artisan", BuildingSize.Medium);
-                                    break;
-                            }
-                        }
-                    break;
-                case SettlementSize.Capital:
-                    if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
-                    {
-                        if (((State)pProvince.Owner).m_iSocialEquality == 0 && Rnd.OneChanceFrom(3))
-                        {
-                            if (Rnd.OneChanceFrom(4))
-                                m_pInfo = new BuildingInfo("Slave Market", "slaver", "slaver", BuildingSize.Large);
-                            else
-                                m_pInfo = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Medium);
-                        }
-                        else
-                        {
-                            if (Rnd.Get(4) < iControl)
-                            {
-                                if (Rnd.OneChanceFrom(2))
-                                {
-                                    if (iInfrastructureLevel < 4)
-                                        m_pInfo = new BuildingInfo("Guard Tower", "guard", "guard", BuildingSize.Medium);
-                                    else
-                                        if (iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Emergency Post", "watcher", "watcher", BuildingSize.Medium);
-                                        else
-                                            if (Rnd.OneChanceFrom(4))
-                                                m_pInfo = new BuildingInfo("Police Department", "policeman", "policeman", BuildingSize.Large);
-                                            else
-                                                m_pInfo = new BuildingInfo("Police Station", "policeman", "policeman", BuildingSize.Medium);
-                                }
-                                else
-                                {
-                                    if (iInfrastructureLevel < 4)
-                                        m_pInfo = new BuildingInfo("Prison", "guard", "guard", BuildingSize.Medium);
-                                    else
-                                        if (iInfrastructureLevel == 8)
-                                            m_pInfo = new BuildingInfo("Holding", "watcher", "watcher", BuildingSize.Medium);
-                                        else
-                                            m_pInfo = new BuildingInfo("Prison", "policeman", "policeman", BuildingSize.Medium);
-                                }
-                            }
-                            else
-                                if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Piety][pProvince.m_iInfrastructureLevel])
-                                {
-                                    if(Rnd.OneChanceFrom(5))
-                                        m_pInfo = new BuildingInfo("Temple", "priest", "priest", BuildingSize.Medium);
-                                    else
-                                        m_pInfo = new BuildingInfo("Church", "priest", "priest", BuildingSize.Small);
-                                }
-                                else
-                                    if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                    {
-                                        if ((pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Lecherous && Rnd.OneChanceFrom(2)) ||
-                                            (pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Moderate_sexuality && Rnd.OneChanceFrom(4)))
-                                            m_pInfo = new BuildingInfo("Brothel", "whore", "whore", BuildingSize.Medium);
-                                        else
-                                            m_pInfo = new BuildingInfo("Bar", "barman", "barmaid", BuildingSize.Medium);
-                                    }
-                                    else
-                                        if (Rnd.Get(2f) > pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                            m_pInfo = new BuildingInfo("Theatre", "actor", "actor", BuildingSize.Medium);
-                                        else
-                                            if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][pProvince.m_iInfrastructureLevel])
-                                                m_pInfo = new BuildingInfo("Hideout", "rogue", "rogue", BuildingSize.Medium);
-                        }
-                    }
+                                    pGuard = BuildingInfo.PoliceStationSmall;
 
-                    if (m_pInfo == null)
-                    {
+                            cChances[pGuard] = (float)iControl / 4;
+
+                            if(iInfrastructureLevel >= 4 && iInfrastructureLevel < 8)
+                                cChances[BuildingInfo.PoliceStationMedium] = (float)iControl / 8;
+                                                        
+                            BuildingInfo pPrison;
+                            if (iInfrastructureLevel < 4)
+                                pPrison = BuildingInfo.PrisonSmall;
+                            else
+                                if (iInfrastructureLevel == 8)
+                                    pPrison = BuildingInfo.HoldingSmall;
+                                else
+                                    pPrison = BuildingInfo.PrisonPoliceSmall;
+
+                            cChances[pPrison] = (float)iControl / 4;
+
+                            cChances[BuildingInfo.ChurchMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 10;
+                            cChances[BuildingInfo.ChurchSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
+
+                            switch (pState.m_pCustoms.m_eSexuality)
+                            {
+                                case Psichology.Customs.Sexuality.Moderate_sexuality:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    if (iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                                case Psichology.Customs.Sexuality.Lecherous:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    if (iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                            }
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                cChances[BuildingInfo.InnSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                cChances[BuildingInfo.TavernSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                cChances[BuildingInfo.CircusMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] *
+                                                                      pState.m_pCulture.MentalityValues[Psichology.Mentality.Agression][iInfrastructureLevel] / 4;
+                            }
+                            else
+                            {
+                                cChances[BuildingInfo.HotelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                cChances[BuildingInfo.BarSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                cChances[BuildingInfo.NightClubMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                            }
+
+                            cChances[BuildingInfo.TheatreMedium] = 1f - pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+
+                            cChances[BuildingInfo.RoguesDenMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
+                            cChances[BuildingInfo.GamblingSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
+
+                            if (iInfrastructureLevel < 3)
+                                cChances[BuildingInfo.MedicineSmall] = (float)cChances.Count / 6;
+                            else
+                            {
+                                cChances[BuildingInfo.MedicineMedium] = (float)cChances.Count / 6;
+                                cChances[BuildingInfo.MedicineLarge] = (float)cChances.Count / 12;
+                            }
+
+                            float fBureaucracy = 0.05f;
+                            if (pState.m_pCustoms.m_eMindSet == Psichology.Customs.MindSet.Balanced_mind)
+                                fBureaucracy = 0.25f;
+                            if (pState.m_pCustoms.m_eMindSet == Psichology.Customs.MindSet.Logic)
+                                fBureaucracy = 0.5f;
+
+                            if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == GeneLab.Genetix.Intelligence.Sapient)
+                                fBureaucracy *= 2;
+                            if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == GeneLab.Genetix.Intelligence.Primitive)
+                                fBureaucracy *= 4;
+
+                            if (m_pSettlement.m_bCapital)
+                                fBureaucracy *= 2;
+
+                            fBureaucracy *= (float)iControl / 2;
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                cChances[BuildingInfo.CourtSmall] = fBureaucracy / 2;
+                                cChances[BuildingInfo.CourtMedium] = fBureaucracy / 4;
+                            }
+                            else
+                            {
+                                cChances[BuildingInfo.AdministrationSmall] = fBureaucracy / 2;
+                                cChances[BuildingInfo.AdministrationMedium] = fBureaucracy / 4;
+                            }
+
+                            if (iInfrastructureLevel >= 3)
+                            {
+                                float fScience = 0.05f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                    fScience = 0.25f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                    fScience = 0.5f;
+
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                    fScience *= 2;
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                    fScience *= 4;
+
+                                cChances[BuildingInfo.ScienceSmall] = fScience / 4;
+                                cChances[BuildingInfo.ScienceMedium] = fScience / 8;
+
+                                cChances[BuildingInfo.SchoolSmall] = fScience;
+                                cChances[BuildingInfo.SchoolMedium] = fScience / 2;
+                            }
+
+                            if (pState.m_iSocialEquality == 0)
+                            {
+                                cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 3 + 1;
+                                cChances[BuildingInfo.SlavePensHuge] = (float)cChances.Count;// / 2 + 1;
+                            }
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                //cChances[BuildingInfo.MarketSmall] = cChances.Count;// / 2 + 1;
+                                cChances[BuildingInfo.MarketMedium] = (float)cChances.Count / 10 + 1;
+                            }
+                            else
+                            {
+                                //cChances[BuildingInfo.OfficeSmall] = cChances.Count;// / 2 + 1;
+                                cChances[BuildingInfo.OfficeMedium] = (float)cChances.Count;// / 2 + 1;
+                                cChances[BuildingInfo.OfficeLarge] = (float)cChances.Count / 2;// / 2 + 1;
+                            }
+
+                            if (pState.m_pInfo.m_bDinasty)
+                            {
+                                cChances[BuildingInfo.MansionSmall] = m_pSettlement.m_bCapital ? (float)cChances.Count * 2 : (float)cChances.Count;
+                                cChances[BuildingInfo.MansionMedium] = m_pSettlement.m_bCapital ? (float)cChances.Count * 2 : (float)cChances.Count;
+                            }
+                        }
+
+                        BuildingInfo pProfile;
                         switch (m_pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.NavalAcademy:
-                                m_pInfo = new BuildingInfo("Naval Academy", "sailor", "sailor", BuildingSize.Large);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : BuildingInfo.TraderLarge;
+                                break;
+                            case SettlementSpeciality.Naval:
+                                pProfile = BuildingInfo.TraderLarge;
                                 break;
                             case SettlementSpeciality.Resort:
-                                m_pInfo = new BuildingInfo("Hotel", "barman", "barmaid", BuildingSize.Medium);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.HotelMedium : BuildingInfo.HotelLarge;
                                 break;
                             case SettlementSpeciality.Cultural:
-                                m_pInfo = new BuildingInfo("Theatre", "actor", "actor", BuildingSize.Medium);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.CultureMeduim : BuildingInfo.CultureLarge;
                                 break;
                             case SettlementSpeciality.ArtsAcademy:
-                                m_pInfo = new BuildingInfo("Arts Academy", "painter", "painter", BuildingSize.Medium);
+                                pProfile = iInfrastructureLevel < 4  ? (pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
                                 break;
                             case SettlementSpeciality.Religious:
-                                m_pInfo = new BuildingInfo("Cathedral", "priest", "priest", BuildingSize.Large);
+                                pProfile = BuildingInfo.ChurchLarge;
                                 break;
                             case SettlementSpeciality.MilitaryAcademy:
-                                m_pInfo = new BuildingInfo("Barracks", "soldier", "soldier", BuildingSize.Large);
+                                pProfile = BuildingInfo.BarracksHuge;
                                 break;
                             case SettlementSpeciality.Gambling:
-                                m_pInfo = new BuildingInfo("Casino", "gambler", "gambler", BuildingSize.Medium);
+                                pProfile = BuildingInfo.GamblingMedium;
                                 break;
                             case SettlementSpeciality.SciencesAcademy:
-                                m_pInfo = new BuildingInfo("University", "scientiest", "scientiest", BuildingSize.Medium);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.ScienceMedium : BuildingInfo.ScienceLarge;
                                 break;
                             case SettlementSpeciality.Tailors:
-                                m_pInfo = new BuildingInfo("Factory", "tailor", "tailor", BuildingSize.Medium);
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.ClothesFactorySlvMedium : BuildingInfo.ClothesFactoryMedium;
                                 break;
                             case SettlementSpeciality.Jevellers:
-                                m_pInfo = new BuildingInfo("Factory", "jeveller", "jeveller", BuildingSize.Medium);
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvMedium : BuildingInfo.JevellerWorkshopMedium;
                                 break;
                             case SettlementSpeciality.Factory:
-                                m_pInfo = new BuildingInfo("Factory", "worker", "worker", BuildingSize.Medium);
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.IronworksSlvMedium : BuildingInfo.IronworksMedium;
                                 break;
                             case SettlementSpeciality.Artisans:
-                                m_pInfo = new BuildingInfo("Factory", "artisan", "artisan", BuildingSize.Medium);
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.FurnitureSlvMedium : BuildingInfo.FurnitureMedium;
+                                break;
+                            default:
+                                pProfile = BuildingInfo.LoafersHut;
                                 break;
                         }
+
+                        cChances[pProfile] = (float)cChances.Count + 1;
+                    }
+                    break;
+                case SettlementSize.Capital:
+                    {
+                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
+                        {
+                            BuildingInfo pGuard;
+                            if (iInfrastructureLevel < 4)
+                                pGuard = BuildingInfo.GuardBarracksMedium;
+                            else
+                                if (iInfrastructureLevel == 8)
+                                    pGuard = BuildingInfo.EmergencyPostSmall;
+                                else
+                                    pGuard = BuildingInfo.PoliceStationSmall;
+
+                            cChances[pGuard] = (float)iControl / 4;
+
+                            if (iInfrastructureLevel >= 4 && iInfrastructureLevel < 8)
+                                cChances[BuildingInfo.PoliceStationMedium] = (float)iControl / 8;
+
+                            BuildingInfo pPrison;
+                            if (iInfrastructureLevel < 4)
+                                pPrison = BuildingInfo.PrisonMedium;
+                            else
+                                if (iInfrastructureLevel == 8)
+                                    pPrison = BuildingInfo.HoldingMedium;
+                                else
+                                    pPrison = BuildingInfo.PrisonPoliceMedium;
+
+                            cChances[pPrison] = (float)iControl / 4;
+
+                            cChances[BuildingInfo.ChurchMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 10;
+                            cChances[BuildingInfo.ChurchSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
+
+                            switch (pState.m_pCustoms.m_eSexuality)
+                            {
+                                case Psichology.Customs.Sexuality.Moderate_sexuality:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    if (iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                                case Psichology.Customs.Sexuality.Lecherous:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    if (iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                            }
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                cChances[BuildingInfo.InnSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                cChances[BuildingInfo.TavernSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                cChances[BuildingInfo.CircusMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] *
+                                                                      pState.m_pCulture.MentalityValues[Psichology.Mentality.Agression][iInfrastructureLevel] / 4;
+                            }
+                            else
+                            {
+                                cChances[BuildingInfo.HotelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 8;
+                                cChances[BuildingInfo.BarSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                cChances[BuildingInfo.NightClubMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                            }
+
+                            cChances[BuildingInfo.TheatreMedium] = 1f - pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+
+                            cChances[BuildingInfo.RoguesDenMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
+                            cChances[BuildingInfo.GamblingSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
+
+                            if (iInfrastructureLevel < 3)
+                                cChances[BuildingInfo.MedicineSmall] = (float)cChances.Count / 6;
+                            else
+                            {
+                                cChances[BuildingInfo.MedicineMedium] = (float)cChances.Count / 6;
+                                cChances[BuildingInfo.MedicineLarge] = (float)cChances.Count / 12;
+                            }
+
+                            float fBureaucracy = 0.05f;
+                            if (pState.m_pCustoms.m_eMindSet == Psichology.Customs.MindSet.Balanced_mind)
+                                fBureaucracy = 0.25f;
+                            if (pState.m_pCustoms.m_eMindSet == Psichology.Customs.MindSet.Logic)
+                                fBureaucracy = 0.5f;
+
+                            if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == GeneLab.Genetix.Intelligence.Sapient)
+                                fBureaucracy *= 2;
+                            if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == GeneLab.Genetix.Intelligence.Primitive)
+                                fBureaucracy *= 4;
+
+                            if (m_pSettlement.m_bCapital)
+                                fBureaucracy *= 2;
+
+                            fBureaucracy *= (float)iControl / 2;
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                cChances[BuildingInfo.CourtSmall] = fBureaucracy / 2;
+                                cChances[BuildingInfo.CourtMedium] = fBureaucracy / 4;
+                            }
+                            else
+                            {
+                                cChances[BuildingInfo.AdministrationSmall] = fBureaucracy / 2;
+                                cChances[BuildingInfo.AdministrationMedium] = fBureaucracy / 4;
+                            }
+
+                            if (iInfrastructureLevel >= 3)
+                            {
+                                float fScience = 0.05f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                    fScience = 0.25f;
+                                if (pState.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                    fScience = 0.5f;
+
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                    fScience *= 2;
+                                if (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                    fScience *= 4;
+
+                                cChances[BuildingInfo.ScienceSmall] = fScience / 4;
+                                cChances[BuildingInfo.ScienceMedium] = fScience / 8;
+
+                                cChances[BuildingInfo.SchoolSmall] = fScience;
+                                cChances[BuildingInfo.SchoolMedium] = fScience / 2;
+                            }
+
+                            if (pState.m_iSocialEquality == 0)
+                            {
+                                cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 3 + 1;
+                                cChances[BuildingInfo.SlavePensHuge] = (float)cChances.Count;// / 2 + 1;
+                            }
+
+                            if (iInfrastructureLevel < 4)
+                            {
+                                //cChances[BuildingInfo.MarketSmall] = cChances.Count;// / 2 + 1;
+                                cChances[BuildingInfo.MarketMedium] = (float)cChances.Count / 10 + 1;
+                            }
+                            else
+                            {
+                                //cChances[BuildingInfo.OfficeSmall] = cChances.Count;// / 2 + 1;
+                                cChances[BuildingInfo.OfficeMedium] = (float)cChances.Count;// / 2 + 1;
+                                cChances[BuildingInfo.OfficeLarge] = (float)cChances.Count / 2;// / 2 + 1;
+                            }
+
+                            if (pState.m_pInfo.m_bDinasty)
+                            {
+                                cChances[BuildingInfo.MansionSmall] = m_pSettlement.m_bCapital ? (float)cChances.Count * 2 : (float)cChances.Count;
+                                cChances[BuildingInfo.MansionMedium] = m_pSettlement.m_bCapital ? (float)cChances.Count * 2 : (float)cChances.Count;
+                            }
+                        }
+
+                        BuildingInfo pProfile;
+                        switch (m_pSettlement.m_eSpeciality)
+                        {
+                            case SettlementSpeciality.NavalAcademy:
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : BuildingInfo.TraderLarge;
+                                break;
+                            case SettlementSpeciality.Naval:
+                                pProfile = BuildingInfo.TraderLarge;
+                                break;
+                            case SettlementSpeciality.Resort:
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.HotelMedium : BuildingInfo.HotelLarge;
+                                break;
+                            case SettlementSpeciality.Cultural:
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.CultureMeduim : BuildingInfo.CultureLarge;
+                                break;
+                            case SettlementSpeciality.ArtsAcademy:
+                                pProfile = iInfrastructureLevel < 4  ? (pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
+                                break;
+                            case SettlementSpeciality.Religious:
+                                pProfile = BuildingInfo.ChurchLarge;
+                                break;
+                            case SettlementSpeciality.MilitaryAcademy:
+                                pProfile = BuildingInfo.BarracksHuge;
+                                break;
+                            case SettlementSpeciality.Gambling:
+                                pProfile = BuildingInfo.GamblingMedium;
+                                break;
+                            case SettlementSpeciality.SciencesAcademy:
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.ScienceMedium : BuildingInfo.ScienceLarge;
+                                break;
+                            case SettlementSpeciality.Tailors:
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.ClothesFactorySlvMedium : BuildingInfo.ClothesFactoryMedium;
+                                break;
+                            case SettlementSpeciality.Jevellers:
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvMedium : BuildingInfo.JevellerWorkshopMedium;
+                                break;
+                            case SettlementSpeciality.Factory:
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.IronworksSlvSmall : BuildingInfo.IronworksMedium;
+                                break;
+                            case SettlementSpeciality.Artisans:
+                                pProfile = pState.m_iSocialEquality == 0 ? BuildingInfo.FurnitureSlvMedium : BuildingInfo.FurnitureMedium;
+                                break;
+                            default:
+                                pProfile = BuildingInfo.LoafersHut;
+                                break;
+                        }
+
+                        cChances[pProfile] = (float)cChances.Count + 1;
                     }
                     break;
                 case SettlementSize.Fort:
-                    if (Rnd.OneChanceFrom(4))
                     {
-                        if (((State)pProvince.Owner).m_iSocialEquality == 0 && Rnd.OneChanceFrom(3))
-                            m_pInfo = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Medium);
-                        else
-                            if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Piety][pProvince.m_iInfrastructureLevel])
-                            {
-                                if(Rnd.OneChanceFrom(5))
-                                    m_pInfo = new BuildingInfo("Temple", "priest", "priest", BuildingSize.Medium);
-                                else
-                                    m_pInfo = new BuildingInfo("Church", "priest", "priest", BuildingSize.Small);
-                            }
-                            else
-                                if (Rnd.Get(2f) < pProvince.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][pProvince.m_iInfrastructureLevel])
-                                {
-                                    if ((pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Lecherous && Rnd.OneChanceFrom(2)) ||
-                                        (pProvince.m_pCustoms.m_eSexuality == Psichology.Customs.Sexuality.Moderate_sexuality && Rnd.OneChanceFrom(4)))
-                                        m_pInfo = new BuildingInfo("Brothel", "whore", "whore", BuildingSize.Medium);
-                                    else
-                                        m_pInfo = new BuildingInfo("Bar", "barman", "barmaid", BuildingSize.Medium);
-                                }
-                    }
+                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
+                        {
+                            cChances[BuildingInfo.ChurchMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 10;
+                            cChances[BuildingInfo.ChurchSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
 
-                    if (m_pInfo == null)
-                    {
+                            switch (pState.m_pCustoms.m_eSexuality)
+                            {
+                                case Psichology.Customs.Sexuality.Moderate_sexuality:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    if (iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                                case Psichology.Customs.Sexuality.Lecherous:
+                                    cChances[BuildingInfo.BrothelMedium] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    if (iInfrastructureLevel >= 4)
+                                        cChances[BuildingInfo.StripClubSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    break;
+                            }
+
+                            if (iInfrastructureLevel < 4)
+                                cChances[BuildingInfo.TavernSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                            else
+                                cChances[BuildingInfo.BarSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+
+                            if (pState.m_iSocialEquality == 0)
+                            {
+                                cChances[BuildingInfo.SlavePensMedium] = (float)cChances.Count / 2;
+                            }
+                        }
+
+                        BuildingInfo pProfile;
                         switch (m_pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.Pirates:
-                                m_pInfo = new BuildingInfo("Pirate ship", "pirate", "pirate", BuildingSize.Medium);
+                                pProfile = BuildingInfo.PirateShip;
                                 break;
                             case SettlementSpeciality.Naval:
-                                m_pInfo = new BuildingInfo("War ship", "sailor", "sailor", BuildingSize.Medium);
+                                pProfile = BuildingInfo.NavalVessel;
                                 break;
                             case SettlementSpeciality.Raiders:
-                                m_pInfo = new BuildingInfo("Barracks", "bandit", "bandit", BuildingSize.Small);
+                                pProfile = BuildingInfo.BanditsBarracks;
                                 break;
                             case SettlementSpeciality.Military:
-                                m_pInfo = new BuildingInfo("Barracks", "soldier", "soldier", BuildingSize.Small);
+                                pProfile = BuildingInfo.BarracksSmall;
+                                break;
+                            default:
+                                pProfile = BuildingInfo.LoafersHut;
                                 break;
                         }
+
+                        cChances[pProfile] = (float)cChances.Count + 1;
                     }
                     break;
             }
+
+            foreach (Building pBuilding in m_pSettlement.m_cBuildings)
+                if (cChances.ContainsKey(pBuilding.m_pInfo))
+                {
+                    float fKoeff = 1;
+                    switch (pBuilding.m_pInfo.m_eSize)
+                    {
+                        case BuildingSize.Small:
+                            fKoeff = 0.75f;
+                            break;
+                        case BuildingSize.Medium:
+                            fKoeff = 0.5f;
+                            break;
+                        case BuildingSize.Large:
+                            fKoeff = 0.25f;
+                            break;
+                        case BuildingSize.Huge:
+                            fKoeff = 0.125f;
+                            break;
+                    }
+                    cChances[pBuilding.m_pInfo] *= fKoeff;
+                }
+
+            int iChance = Rnd.ChooseOne(cChances.Values);
+            m_pInfo = cChances.ElementAt(iChance).Key;
         }
 
         public override string ToString()

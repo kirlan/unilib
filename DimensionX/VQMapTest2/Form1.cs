@@ -380,14 +380,14 @@ namespace VQMapTest2
                 }
 
                 cPopSorted[sMax] = iMax;
+                iTotal += iMax;
             }
 
             foreach (var vPop in cPopSorted)
             {
-                richTextBox2.AppendText(vPop.Key + " : " + vPop.Value + "\r\n");
-                iTotal += vPop.Value;
+                richTextBox2.AppendText(vPop.Key + "s : " + vPop.Value*100/iTotal + "%\r\n");
             }
-            richTextBox2.AppendText("Total : " + iTotal + "\r\n");
+            //richTextBox2.AppendText("Total : " + iTotal + "\r\n");
 
             comboBox1.Focus();
         }

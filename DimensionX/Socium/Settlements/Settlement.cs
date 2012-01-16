@@ -67,27 +67,27 @@ namespace Socium.Settlements
             switch (m_eSize)
             {
                 case SettlementSize.Hamlet:
-                    m_iMinBuildingsCount = 1;
+                    m_iMinBuildingsCount = 5;
                     m_iDeltaBuildingsCount = 1;
                     break;
                 case SettlementSize.Village:
-                    m_iMinBuildingsCount = 2;
-                    m_iDeltaBuildingsCount = 2;
-                    break;
-                case SettlementSize.Town:
-                    m_iMinBuildingsCount = 4;
-                    m_iDeltaBuildingsCount = 2;
-                    break;
-                case SettlementSize.City:
-                    m_iMinBuildingsCount = 6;
-                    m_iDeltaBuildingsCount = 2;
-                    break;
-                case SettlementSize.Capital:
                     m_iMinBuildingsCount = 7;
                     m_iDeltaBuildingsCount = 2;
                     break;
+                case SettlementSize.Town:
+                    m_iMinBuildingsCount = 15;
+                    m_iDeltaBuildingsCount = 2;
+                    break;
+                case SettlementSize.City:
+                    m_iMinBuildingsCount = 20;
+                    m_iDeltaBuildingsCount = 2;
+                    break;
+                case SettlementSize.Capital:
+                    m_iMinBuildingsCount = 30;
+                    m_iDeltaBuildingsCount = 2;
+                    break;
                 case SettlementSize.Fort:
-                    m_iMinBuildingsCount = 2;
+                    m_iMinBuildingsCount = 10;
                     m_iDeltaBuildingsCount = 1;
                     break;
             }
