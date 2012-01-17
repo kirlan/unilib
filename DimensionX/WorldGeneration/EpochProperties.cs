@@ -70,8 +70,8 @@ namespace WorldGeneration
 
             for (int i = 0; i < 9; i++)
             {
-                BaseTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
-                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+                BaseTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i, Socium.Psichology.Customs.Progressiveness.Normal), i));
+                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i, Socium.Psichology.Customs.Progressiveness.Normal), i));
 
                 BaseMagicBox.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
                 MaxMagicBox.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
@@ -234,7 +234,7 @@ namespace WorldGeneration
 
             MaxTechBox.Items.Clear();
             for (int i = BaseTechBox.SelectedIndex; i < 9; i++)
-                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i), i));
+                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i, Socium.Psichology.Customs.Progressiveness.Normal), i));
 
             if (tabControl1.SelectedIndex == 0)
                 MaxTechBox.SelectedIndex = Math.Max(0, m_pEpoch.NativesMaxTechLevel - BaseTechBox.SelectedIndex);

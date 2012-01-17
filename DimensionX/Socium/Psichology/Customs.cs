@@ -36,20 +36,34 @@ namespace Socium.Psichology
             Homosexual
         }
 
-        //public enum Religion
-        //{
-        //    Piety,
-        //    Agnosticism,
-        //    Atheism
-        //}
-
         public enum FamilySize
         {
             Monogamy,
             Polygamy,
             Polyamory
         }
-        
+
+        public enum BodyModifications
+        {
+            Mandatory,
+            Allowed,
+            Blamed
+        }
+
+        public enum Childhood
+        {
+            Family_upbringing,
+            Common_upbringing,
+            Communal_upbringing
+        }
+
+        public enum Progressiveness
+        {
+            Traditionalism,
+            Normal,
+            Technofetishism
+        }
+
         public GenderPriority m_eGenderPriority = GenderPriority.Genders_equality;
 
         public MindSet m_eMindSet = MindSet.Balanced_mind;
@@ -58,9 +72,13 @@ namespace Socium.Psichology
 
         public SexualOrientation m_eSexRelations = SexualOrientation.Heterosexual;
 
-        //public Religion m_eReligion = Religion.Agnosticism;
-
         public FamilySize m_eFamilySize = FamilySize.Monogamy;
+
+        public BodyModifications m_eBodyModifications = BodyModifications.Allowed;
+
+        public Childhood m_eChildhood = Childhood.Common_upbringing;
+
+        public Progressiveness m_eProgress = Progressiveness.Normal;
 
         public Customs()
         {
@@ -72,9 +90,16 @@ namespace Socium.Psichology
 
             m_eSexRelations = Rnd.OneChanceFrom(9) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(5) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
 
-            //m_eReligion = Rnd.OneChanceFrom(3) ? Religion.Atheism : Religion.Piety;
+            if(m_eSexRelations != SexualOrientation.Heterosexual && m_eGenderPriority != GenderPriority.Matriarchy)
+                m_eSexRelations = Rnd.OneChanceFrom(9) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(5) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
 
             m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polygamy : Rnd.OneChanceFrom(9) ? FamilySize.Polyamory : FamilySize.Monogamy;
+
+            m_eBodyModifications = Rnd.OneChanceFrom(3) ? BodyModifications.Allowed : Rnd.OneChanceFrom(3) ? BodyModifications.Mandatory : BodyModifications.Blamed;
+
+            m_eChildhood = Rnd.OneChanceFrom(2) ? Childhood.Common_upbringing : Rnd.OneChanceFrom(3) ? Childhood.Family_upbringing : Childhood.Communal_upbringing;
+
+            m_eProgress = Rnd.OneChanceFrom(2) ? Progressiveness.Normal : Rnd.OneChanceFrom(3) ? Progressiveness.Technofetishism : Progressiveness.Traditionalism;
         }
 
         public Customs(Customs m_pAncestorCustoms)
@@ -83,10 +108,12 @@ namespace Socium.Psichology
             m_eMindSet = m_pAncestorCustoms.m_eMindSet;
             m_eSexuality = m_pAncestorCustoms.m_eSexuality;
             m_eSexRelations = m_pAncestorCustoms.m_eSexRelations;
-            //m_eReligion = m_pAncestorCustoms.m_eReligion;
             m_eFamilySize = m_pAncestorCustoms.m_eFamilySize;
+            m_eBodyModifications = m_pAncestorCustoms.m_eBodyModifications;
+            m_eChildhood = m_pAncestorCustoms.m_eChildhood;
+            m_eProgress = m_pAncestorCustoms.m_eProgress;
             
-            int iChoice = Rnd.Get(10);
+            int iChoice = Rnd.Get(14);
             switch (iChoice)
             {
                 case 0:
@@ -112,18 +139,34 @@ namespace Socium.Psichology
                         m_eSexRelations = Rnd.OneChanceFrom(5) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
                     else
                         m_eSexRelations = SexualOrientation.Bisexual;
+
+                    if (m_eSexRelations != SexualOrientation.Heterosexual && m_eGenderPriority != GenderPriority.Matriarchy)
+                        m_eSexRelations = Rnd.OneChanceFrom(9) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(5) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
+
                     break;
                 case 4:
-                //    if (m_eReligion == Religion.Agnosticism)
-                //        m_eReligion = Rnd.OneChanceFrom(3) ? Religion.Atheism : Religion.Piety;
-                //    else
-                //        m_eReligion = Religion.Agnosticism;
-                //    break;
-                //case 5:
                     if (m_eFamilySize == FamilySize.Polygamy)
                         m_eFamilySize = Rnd.OneChanceFrom(5) ? FamilySize.Polyamory : FamilySize.Monogamy;
                     else
                         m_eFamilySize = FamilySize.Polygamy;
+                    break;
+                case 5:
+                    if (m_eBodyModifications == BodyModifications.Allowed)
+                        m_eBodyModifications = Rnd.OneChanceFrom(5) ? BodyModifications.Mandatory : BodyModifications.Blamed;
+                    else
+                        m_eBodyModifications = BodyModifications.Allowed;
+                    break;
+                case 6:
+                    if (m_eChildhood == Childhood.Common_upbringing)
+                        m_eChildhood = Rnd.OneChanceFrom(3) ? Childhood.Family_upbringing : Childhood.Communal_upbringing;
+                    else
+                        m_eChildhood = Childhood.Common_upbringing;
+                    break;
+                case 7:
+                    if (m_eProgress == Progressiveness.Normal)
+                        m_eProgress = Rnd.OneChanceFrom(3) ? Progressiveness.Technofetishism : Progressiveness.Traditionalism;
+                    else
+                        m_eProgress = Progressiveness.Normal;
                     break;
             }            
         }
@@ -230,17 +273,6 @@ namespace Socium.Psichology
                 sResult += "same sex relations";
             }
 
-            //if (m_eReligion == Religion.Atheism)
-            //{
-            //    sResult += "\n   ";
-            //    sResult += "atheism";
-            //}
-            //if (m_eReligion == Religion.Piety)
-            //{
-            //    sResult += "\n   ";
-            //    sResult += "piety";
-            //}
-
             if (m_eFamilySize == FamilySize.Monogamy)
             {
                 sResult += "\n   ";
@@ -250,6 +282,39 @@ namespace Socium.Psichology
             {
                 sResult += "\n   ";
                 sResult += "wedlock denial";
+            }
+
+            if (m_eBodyModifications == BodyModifications.Blamed)
+            {
+                sResult += "\n   ";
+                sResult += "unmodified body";
+            }
+            if (m_eBodyModifications == BodyModifications.Mandatory)
+            {
+                sResult += "\n   ";
+                sResult += "modified body";
+            }
+
+            if (m_eChildhood == Childhood.Family_upbringing)
+            {
+                sResult += "\n   ";
+                sResult += "family upbringing";
+            }
+            if (m_eChildhood == Childhood.Communal_upbringing)
+            {
+                sResult += "\n   ";
+                sResult += "communal upbringing";
+            }
+
+            if (m_eProgress == Progressiveness.Traditionalism)
+            {
+                sResult += "\n   ";
+                sResult += "traditions";
+            }
+            if (m_eProgress == Progressiveness.Technofetishism)
+            {
+                sResult += "\n   ";
+                sResult += "technical progress";
             }
 
             return "Praises: " + sResult + "\n";
@@ -297,6 +362,75 @@ namespace Socium.Psichology
                 sResult += "are guided mostly by pure logic";
             }
 
+            if (m_eBodyModifications == BodyModifications.Blamed)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "has no tatoo or pierceing";
+            }
+            if (m_eBodyModifications == BodyModifications.Mandatory)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "has some specific tatoo or pierceing";
+            }
+
+            if (m_eProgress == Progressiveness.Traditionalism)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "doesn't like novelties";
+            }
+            if (m_eProgress == Progressiveness.Technofetishism)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "likes any novelties";
+            }
+
+            if (m_eChildhood == Childhood.Family_upbringing)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "rising own children personally";
+            }
+            if (m_eChildhood == Childhood.Communal_upbringing)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "not rising own children personally";
+            }
+
             if (m_eSexuality == Sexuality.Puritan)
             {
                 if (bFirst)
@@ -319,17 +453,6 @@ namespace Socium.Psichology
                     sResult += ", ";
                 sResult += "makes sex a lot";
             }
-
-            //if (m_eReligion == Religion.Atheism)
-            //{
-            //    sResult += "\n   ";
-            //    sResult += "atheism";
-            //}
-            //if (m_eReligion == Religion.Piety)
-            //{
-            //    sResult += "\n   ";
-            //    sResult += "piety";
-            //}
 
             if (m_eFamilySize == FamilySize.Monogamy)
             {
@@ -555,24 +678,6 @@ namespace Socium.Psichology
                     sNegativeReasons += " (-1) " + pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + "\n";
                 }
 
-            //if (m_eReligion == pOpponent.m_eReligion)
-            //{
-            //    iHostility--;
-            //    sPositiveReasons += " (+1) " + pOpponent.m_eReligion.ToString().Replace('_', ' ') + "\n";
-            //}
-            //else
-            //    if (m_eReligion != Religion.Agnosticism &&
-            //        pOpponent.m_eReligion != Religion.Agnosticism)
-            //    {
-            //        iHostility += 2;
-            //        sNegativeReasons += " (-2) " + pOpponent.m_eReligion.ToString().Replace('_', ' ') + "\n";
-            //    }
-            //    else
-            //    {
-            //        iHostility++;
-            //        sNegativeReasons += " (-1) " + pOpponent.m_eReligion.ToString().Replace('_', ' ') + "\n";
-            //    }
-
             if (m_eFamilySize == pOpponent.m_eFamilySize)
             {
                 iHostility--;
@@ -589,6 +694,60 @@ namespace Socium.Psichology
                 {
                     iHostility++;
                     sNegativeReasons += " (-1) " + pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + "\n";
+                }
+
+            if (m_eBodyModifications == pOpponent.m_eBodyModifications)
+            {
+                iHostility--;
+                sPositiveReasons += " (+1) " + pOpponent.m_eBodyModifications.ToString().Replace('_', ' ') + "\n";
+            }
+            else
+                if (m_eBodyModifications != BodyModifications.Allowed &&
+                    pOpponent.m_eBodyModifications != BodyModifications.Allowed)
+                {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eBodyModifications.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) " + pOpponent.m_eBodyModifications.ToString().Replace('_', ' ') + "\n";
+                }
+
+            if (m_eChildhood == pOpponent.m_eChildhood)
+            {
+                iHostility--;
+                sPositiveReasons += " (+1) " + pOpponent.m_eChildhood.ToString().Replace('_', ' ') + "\n";
+            }
+            else
+                if (m_eChildhood != Childhood.Common_upbringing &&
+                    pOpponent.m_eChildhood != Childhood.Common_upbringing)
+                {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eChildhood.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) " + pOpponent.m_eChildhood.ToString().Replace('_', ' ') + "\n";
+                }
+
+            if (m_eProgress == pOpponent.m_eProgress)
+            {
+                iHostility--;
+                sPositiveReasons += " (+1) " + pOpponent.m_eProgress.ToString().Replace('_', ' ') + "\n";
+            }
+            else
+                if (m_eProgress != Progressiveness.Normal &&
+                    pOpponent.m_eProgress != Progressiveness.Normal)
+                {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eProgress.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) " + pOpponent.m_eProgress.ToString().Replace('_', ' ') + "\n";
                 }
 
             return iHostility;

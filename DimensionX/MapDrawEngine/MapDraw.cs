@@ -920,7 +920,7 @@ namespace MapDrawEngine
 
                         //определим, каким цветом эта земля должна закрашиваться на карте технологий
                         int iImported = pState.GetImportedTech();
-                        Brush pTechBrush = m_aTechLevel[pState.m_iTechLevel, iImported == -1 ? pState.m_iTechLevel : iImported];
+                        Brush pTechBrush = m_aTechLevel[pState.GetEffectiveTech(), iImported == -1 ? pState.GetEffectiveTech() : iImported];
                         Brush pCivBrush = m_aCivLevel[pState.m_iCultureLevel, pState.m_iControl];
 
                         foreach (MapQuadrant pQuad in aQuads)
