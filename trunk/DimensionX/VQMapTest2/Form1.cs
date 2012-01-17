@@ -96,7 +96,7 @@ namespace VQMapTest2
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
-            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel), m_pWorld.m_iTechLevel);
+            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel, Socium.Psichology.Customs.Progressiveness.Normal), m_pWorld.m_iTechLevel);
             if (m_pWorld.m_iMagicLimit > 0)
             {
                 label8.Text = string.Format("Magic users: up to {0} [M{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit);
@@ -286,10 +286,10 @@ namespace VQMapTest2
             richTextBox1.AppendText("\n");
 
             if (e.m_pState.GetImportedTech() == -1)
-                richTextBox1.AppendText(string.Format("Used tech: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.m_iTechLevel), e.m_pState.m_iTechLevel));
+                richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.m_iTechLevel, e.m_pState.m_pCustoms.m_eProgress), e.m_pState.GetEffectiveTech()));
             else
-                richTextBox1.AppendText(string.Format("Used tech: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.GetImportedTech()), e.m_pState.GetImportedTech()));
-            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.m_iTechLevel), e.m_pState.m_iTechLevel));
+                richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", e.m_pState.GetImportedTechString(), e.m_pState.GetImportedTech()));
+            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", State.GetTechString(e.m_pState.m_iTechLevel, e.m_pState.m_pCustoms.m_eProgress), e.m_pState.GetEffectiveTech()));
 
             if (e.m_pState.m_iMagicLimit > 0)
             {

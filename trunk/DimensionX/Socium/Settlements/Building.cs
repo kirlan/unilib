@@ -79,7 +79,7 @@ namespace Socium.Settlements
         public static readonly BuildingInfo GamblingSmall       = new BuildingInfo("Gambling Den", "gambler", "gambler", BuildingSize.Small);
         public static readonly BuildingInfo GamblingMedium      = new BuildingInfo("Casino", "gambler", "gambler", BuildingSize.Medium);
 
-        public static readonly BuildingInfo BrothelMedium       = new BuildingInfo("Brothel", "whore", "whore", BuildingSize.Medium);
+        public static readonly BuildingInfo BrothelMedium       = new BuildingInfo("Brothel", "prostitute", "prostitute", BuildingSize.Medium);
 
         public static readonly BuildingInfo StripClubSmall      = new BuildingInfo("Strip Club", "stripper", "stripper", BuildingSize.Small);
 

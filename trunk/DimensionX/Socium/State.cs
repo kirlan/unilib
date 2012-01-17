@@ -876,8 +876,11 @@ namespace Socium
             //if (m_iInfrastructureLevel > 8)
             //    m_iInfrastructureLevel = 8;
 
-            if (m_iTechLevel > m_iInfrastructureLevel * 2)
-                m_iTechLevel = m_iInfrastructureLevel * 2;
+            while (GetEffectiveTech() > m_iInfrastructureLevel * 2)
+                m_iTechLevel--;
+
+            if (m_iTechLevel < 0)
+                m_iTechLevel = 0;
 
             List<StateInfo> cInfos = new List<StateInfo>();
 
@@ -1343,38 +1346,38 @@ namespace Socium
                 }
             }
 
-        public static string GetTechString(int iLevel)
+        public static string GetTechString(int iLevel, Customs.Progressiveness eProgress)
         {
-            string sTech = "prehistoric";
+            string sTech = "stone weapons";
             switch (iLevel)
             {
+                case 0:
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "obsidian weapons" : "stone weapons";
+                    break;
                 case 1:
-                    sTech = "bronze weapons";
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "bronze weapons" : eProgress == Customs.Progressiveness.Traditionalism ? "stone weapons, rare iron weapons" : "iron weapons";
                     break;
                 case 2:
-                    sTech = "steel weapons";
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "repeating crossbows" : eProgress == Customs.Progressiveness.Traditionalism ? "iron weapons, rare steel weapons" : "steel weapons";
                     break;
                 case 3:
-                    sTech = "muskets";
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "multibarrel guns" : eProgress == Customs.Progressiveness.Traditionalism ? "steel weapons, rare muskets" : "muskets";
                     break;
                 case 4:
-                    sTech = "rifles";//railroads
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "lightning guns" : eProgress == Customs.Progressiveness.Traditionalism ? "muskets, rare rifles" : "rifles";//railroads
                     break;
                 case 5:
-                    sTech = "machineguns";//aviation
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "intellectual guns" : eProgress == Customs.Progressiveness.Traditionalism ? "rifles, rare machineguns" : "machineguns";//aviation
                     break;
                 case 6:
-                    sTech = "beam guns";
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "mecha suits" : eProgress == Customs.Progressiveness.Traditionalism ? "machineguns, rare beam guns" : "beam guns";
                     break;
                 case 7:
-                    sTech = "desintegrators";//limited teleportation
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "nanites" : eProgress == Customs.Progressiveness.Traditionalism ? "beam guns, rare desintegrators" : "desintegrators";//limited teleportation
                     break;
                 case 8:
-                    sTech = "reality destructors";//unlimited teleportation
+                    sTech = eProgress == Customs.Progressiveness.Traditionalism ? "desintegrators, rare reality destructors" : "reality destructors";//unlimited teleportation
                     break;
-                //case 8:
-                //    sTech = "mind net";
-                //    break;
             }
 
             return sTech;
@@ -1456,22 +1459,67 @@ namespace Socium
             return sEquality;
         }
 
+        public int GetEffectiveTech()
+        {
+            int iMaxTech = m_iTechLevel;
+            if (m_pCustoms.m_eProgress == Customs.Progressiveness.Technofetishism)
+                iMaxTech++;
+
+            if (m_pCustoms.m_eProgress == Customs.Progressiveness.Traditionalism)
+                iMaxTech--;
+
+            if (iMaxTech > 8)
+                iMaxTech = 8;
+            if (iMaxTech < 0)
+                iMaxTech = 0;
+
+            return iMaxTech;
+        }
+
         public int GetImportedTech()
         {
             if (m_pNation.m_bDying)
                 return -1;
 
-            int iMaxTech = m_iTechLevel;
+            int iMaxTech = GetEffectiveTech();
             foreach (State pState in m_aBorderWith)
             {
-                if (pState.m_iTechLevel > iMaxTech)
-                    iMaxTech = pState.m_iTechLevel;
+                if (pState.Forbidden)
+                    continue;
+
+                if (pState.GetEffectiveTech() > iMaxTech)
+                    iMaxTech = pState.GetEffectiveTech();
             }
 
-            if (iMaxTech <= this.m_iTechLevel)
+            if (iMaxTech <= GetEffectiveTech())
                 iMaxTech = -1;
 
             return iMaxTech;
+        }
+
+        public string GetImportedTechString()
+        {
+            if (m_pNation.m_bDying)
+                return "";
+
+            int iMaxTech = GetEffectiveTech();
+            State pExporter = null;
+            foreach (State pState in m_aBorderWith)
+            {
+                if (pState.Forbidden)
+                    continue;
+
+                if (pState.GetEffectiveTech() > iMaxTech)
+                {
+                    iMaxTech = pState.GetEffectiveTech();
+                    pExporter = pState;
+                }
+            }
+
+            if (pExporter == null)
+                return "";
+
+            return State.GetTechString(pExporter.m_iTechLevel, pExporter.m_pCustoms.m_eProgress);
         }
 
         public override string ToString()
