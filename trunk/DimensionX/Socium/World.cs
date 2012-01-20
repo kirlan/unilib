@@ -836,6 +836,13 @@ namespace Socium
                 pProvince.Finish(m_pGrid.CycleShift);
         }
 
+        /// <summary>
+        /// Распределяем провинции, строим столицы, налаживаем дипломатию и строим форты.
+        /// </summary>
+        /// <param name="fCycleShift"></param>
+        /// <param name="bFast"></param>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildStates(float fCycleShift, bool bFast,
                             LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                             LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)

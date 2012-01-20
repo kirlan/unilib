@@ -1333,7 +1333,7 @@ namespace Socium
                     if (fTreat == 0)
                         continue;
 
-                    if (Rnd.ChooseOne(fTreat, fBorder - fTreat))
+                    if (Rnd.ChooseOne(fTreat, fBorder));// - fTreat))
                         //if (m_iSize > 1 || Rnd.OneChanceFrom(2))
                         {
                             LocationX pFort = pLand.BuildFort(pMainEnemy, bFast);
@@ -1630,6 +1630,10 @@ namespace Socium
             foreach (Province pProvince in m_cContents)
                 cSettlements.AddRange(pProvince.m_cSettlements);
             LocationX[] aSettlements = cSettlements.ToArray();
+
+            eRoadLevel = RoadQuality.Normal;
+            if (eRoadLevel > State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad)
+                eRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad;
 
             List<LocationX> cForts = new List<LocationX>();
             foreach (LocationX pTown in aSettlements)
