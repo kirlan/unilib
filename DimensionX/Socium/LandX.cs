@@ -124,7 +124,10 @@ namespace Socium
                     iRoadsCount += pRoads.Value.Count;
                 int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : ((bCoast || iRoadsCount > 0) ? 50 : 10));
 
-                if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)
+                if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
+                    iChances = 0;
+
+                if (pLoc.m_pBuilding != null)
                     iChances = 0;
 
                 if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
@@ -183,9 +186,9 @@ namespace Socium
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
 
             m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, m_pProvince.m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, bCapital, bFast);
-            foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
-                if (pLoc.m_pBuilding == null)
-                    pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
+            //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
+            //    if (pLoc.m_pBuilding == null)
+            //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 
             List<Road> cRoads = new List<Road>();
             cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Country]);
