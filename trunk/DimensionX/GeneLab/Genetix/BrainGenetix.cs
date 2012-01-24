@@ -34,21 +34,21 @@ namespace GeneLab.Genetix
         Ingenious
     }
 
-    public enum MagicAbilityPrevalence
-    {
-        /// <summary>
-        /// маги - большая редкость
-        /// </summary>
-        Rare,
-        /// <summary>
-        /// маги - обычное дело
-        /// </summary>
-        Common,
-        /// <summary>
-        /// не маги - большая редкость
-        /// </summary>
-        AlmostEveryone
-    }
+    //public enum MagicAbilityPrevalence
+    //{
+    //    /// <summary>
+    //    /// маги - большая редкость
+    //    /// </summary>
+    //    Rare,
+    //    /// <summary>
+    //    /// маги - обычное дело
+    //    /// </summary>
+    //    Common,
+    //    /// <summary>
+    //    /// не маги - большая редкость
+    //    /// </summary>
+    //    AlmostEveryone
+    //}
 
 
     public class BrainGenetix: GenetixBase
@@ -82,25 +82,25 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            string sMagic = "?";
-            switch (m_eMagicAbilityPrevalence)
-            {
-                case MagicAbilityPrevalence.Rare:
-                    sMagic = "rare";
-                    break;
-                case MagicAbilityPrevalence.Common:
-                    sMagic = "quite common";
-                    break;
-                case MagicAbilityPrevalence.AlmostEveryone:
-                    sMagic = "widespreaded";
-                    break;
-            }
+            //string sMagic = "?";
+            //switch (m_eMagicAbilityPrevalence)
+            //{
+            //    case MagicAbilityPrevalence.Rare:
+            //        sMagic = "rare";
+            //        break;
+            //    case MagicAbilityPrevalence.Common:
+            //        sMagic = "quite common";
+            //        break;
+            //    case MagicAbilityPrevalence.AlmostEveryone:
+            //        sMagic = "widespreaded";
+            //        break;
+            //}
 
             string sMagicForce = "?";
             switch (m_iMagicAbilityPotential)
             {
                 case 0:
-                    sMagicForce = m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? " and mostly fictional magic abilities" : ", but mostly fictional magic abilities";
+                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? " and mostly fictional magic abilities" : ", but */" mostly fictional magic abilities";
                     break;
                 case 1:
                     sMagicForce = " extra-sensoric powers";
@@ -115,10 +115,10 @@ namespace GeneLab.Genetix
                     sMagicForce = " magic abilities";
                     break;
                 case 5:
-                    sMagicForce = m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but quite high magic abilities" : " and quite high magic abilities";
+                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but quite high magic abilities" : " and */" quite high magic abilities";
                     break;
                 case 6:
-                    sMagicForce = m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but extremely high magic abilities" : " and extremely high magic abilities";
+                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but extremely high magic abilities" : " and */" extremely high magic abilities";
                     break;
                 case 7:
                     sMagicForce = " god-like abilities";
@@ -128,38 +128,38 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return sIntellect + " with " + sMagic + sMagicForce;
+            return sIntellect + " with" + /*sMagic + */sMagicForce;
         }
 
         public static BrainGenetix HumanFantasy
         {
-            get { return new BrainGenetix(Intelligence.Sapient, MagicAbilityPrevalence.Common, 4); }
+            get { return new BrainGenetix(Intelligence.Sapient, /*MagicAbilityPrevalence.Common,*/ 4); }
         }
 
         public static BrainGenetix HumanReal
         {
-            get { return new BrainGenetix(Intelligence.Sapient, MagicAbilityPrevalence.Rare, 0); }
+            get { return new BrainGenetix(Intelligence.Sapient, /*MagicAbilityPrevalence.Rare,*/ 0); }
         }
 
         public static BrainGenetix HumanSF
         {
-            get { return new BrainGenetix(Intelligence.Sapient, MagicAbilityPrevalence.Rare, 3); }
+            get { return new BrainGenetix(Intelligence.Sapient, /*MagicAbilityPrevalence.Rare,*/ 3); }
         }
 
         public static BrainGenetix Elf
         {
-            get { return new BrainGenetix(Intelligence.Ingenious, MagicAbilityPrevalence.Common, 4); }
+            get { return new BrainGenetix(Intelligence.Ingenious, /*MagicAbilityPrevalence.Common,*/ 4); }
         }
 
         public static BrainGenetix Barbarian
         {
-            get { return new BrainGenetix(Intelligence.Primitive, MagicAbilityPrevalence.Rare, 2); }
+            get { return new BrainGenetix(Intelligence.Primitive, /*MagicAbilityPrevalence.Rare,*/ 2); }
         }
 
 
         public Intelligence m_eIntelligence = Intelligence.Sapient;
 
-        public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+        //public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
 
         public int m_iMagicAbilityPotential = 0;
 
@@ -171,7 +171,7 @@ namespace GeneLab.Genetix
                 return false;
 
             return m_eIntelligence == pAnother.m_eIntelligence &&
-                m_eMagicAbilityPrevalence == pAnother.m_eMagicAbilityPrevalence &&
+                //m_eMagicAbilityPrevalence == pAnother.m_eMagicAbilityPrevalence &&
                 m_iMagicAbilityPotential == pAnother.m_iMagicAbilityPotential;
         }
         
@@ -181,14 +181,14 @@ namespace GeneLab.Genetix
         public BrainGenetix(BrainGenetix pPredcessor)
         {
             m_eIntelligence = pPredcessor.m_eIntelligence;
-            m_eMagicAbilityPrevalence = pPredcessor.m_eMagicAbilityPrevalence;
+            //m_eMagicAbilityPrevalence = pPredcessor.m_eMagicAbilityPrevalence;
             m_iMagicAbilityPotential = pPredcessor.m_iMagicAbilityPotential;
         }
 
-        public BrainGenetix(Intelligence eIntelligence, MagicAbilityPrevalence eMagicAbilityPrevalence, int iMagicAbilityPotential)
+        public BrainGenetix(Intelligence eIntelligence, /*MagicAbilityPrevalence eMagicAbilityPrevalence, */int iMagicAbilityPotential)
         {
             m_eIntelligence = eIntelligence;
-            m_eMagicAbilityPrevalence = eMagicAbilityPrevalence;
+            //m_eMagicAbilityPrevalence = eMagicAbilityPrevalence;
             m_iMagicAbilityPotential = iMagicAbilityPotential;
 
             while (m_iMagicAbilityPotential > 8)
@@ -247,17 +247,17 @@ namespace GeneLab.Genetix
                     }
                 }
 
-                if (Rnd.OneChanceFrom(2))
-                {
-                    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+                //if (Rnd.OneChanceFrom(2))
+                //{
+                //    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
 
-                    //дополнительно снижаем частоту распространения магических способностей среди животных
-                    if ((pMutant.m_eIntelligence == Intelligence.None ||
-                         pMutant.m_eIntelligence == Intelligence.Basic ||
-                         pMutant.m_eIntelligence == Intelligence.Capable) &&
-                        Rnd.OneChanceFrom(2))
-                        pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-                }
+                //    //дополнительно снижаем частоту распространения магических способностей среди животных
+                //    if ((pMutant.m_eIntelligence == Intelligence.None ||
+                //         pMutant.m_eIntelligence == Intelligence.Basic ||
+                //         pMutant.m_eIntelligence == Intelligence.Capable) &&
+                //        Rnd.OneChanceFrom(2))
+                //        pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+                //}
 
                 if (Rnd.OneChanceFrom(2))
                 {
@@ -302,17 +302,17 @@ namespace GeneLab.Genetix
             {
                 BrainGenetix pMutant = new BrainGenetix(this);
 
-                if (Rnd.OneChanceFrom(2))
-                {
-                    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+                //if (Rnd.OneChanceFrom(2))
+                //{
+                //    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
 
-                    //дополнительно снижаем частоту распространения магических способностей среди животных
-                    if ((pMutant.m_eIntelligence == Intelligence.None ||
-                         pMutant.m_eIntelligence == Intelligence.Basic ||
-                         pMutant.m_eIntelligence == Intelligence.Capable) &&
-                        Rnd.OneChanceFrom(2))
-                        pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-                }
+                //    //дополнительно снижаем частоту распространения магических способностей среди животных
+                //    if ((pMutant.m_eIntelligence == Intelligence.None ||
+                //         pMutant.m_eIntelligence == Intelligence.Basic ||
+                //         pMutant.m_eIntelligence == Intelligence.Capable) &&
+                //        Rnd.OneChanceFrom(2))
+                //        pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+                //}
 
                 if (Rnd.OneChanceFrom(2))
                 {
@@ -379,17 +379,17 @@ namespace GeneLab.Genetix
                     }
                 } 
                 
-                if (Rnd.OneChanceFrom(2))
-                {
-                    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+                //if (Rnd.OneChanceFrom(2))
+                //{
+                //    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
 
-                    //дополнительно снижаем частоту распространения магических способностей среди животных
-                    if ((pMutant.m_eIntelligence == Intelligence.None ||
-                         pMutant.m_eIntelligence == Intelligence.Basic ||
-                         pMutant.m_eIntelligence == Intelligence.Capable) &&
-                        Rnd.OneChanceFrom(2))
-                        pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-                }
+                //    //дополнительно снижаем частоту распространения магических способностей среди животных
+                //    if ((pMutant.m_eIntelligence == Intelligence.None ||
+                //         pMutant.m_eIntelligence == Intelligence.Basic ||
+                //         pMutant.m_eIntelligence == Intelligence.Capable) &&
+                //        Rnd.OneChanceFrom(2))
+                //        pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+                //}
 
                 if (Rnd.OneChanceFrom(2))
                 {

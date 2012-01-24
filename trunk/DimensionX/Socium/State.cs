@@ -583,15 +583,15 @@ namespace Socium
                     m_iMagicLimit = pProvince.m_pNation.m_iMagicLimit;
 
                 float fPrevalence = 1;
-                switch (pProvince.m_pNation.m_pFenotype.m_pBrain.m_eMagicAbilityPrevalence)
+                switch (pProvince.m_pNation.m_pCustoms.m_eMagic)
                 {
-                    case MagicAbilityPrevalence.Rare:
+                    case Customs.Magic.Magic_Feared:
                         fPrevalence = 0.1f;
                         break;
-                    case MagicAbilityPrevalence.Common:
+                    case Customs.Magic.Magic_Allowed:
                         fPrevalence = 0.5f;
                         break;
-                    case MagicAbilityPrevalence.AlmostEveryone:
+                    case Customs.Magic.Magic_Praised:
                         fPrevalence = 0.9f;
                         break;
                 }
@@ -619,13 +619,13 @@ namespace Socium
             }
             fMagesCount /= m_iPopulation;
 
-            m_eMagicAbilityPrevalence = MagicAbilityPrevalence.AlmostEveryone;
+            //m_eMagicAbilityPrevalence = MagicAbilityPrevalence.AlmostEveryone;
 
-            if (fMagesCount <= 0.75)
-                m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Common;
+            //if (fMagesCount <= 0.75)
+            //    m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Common;
 
-            if (fMagesCount <= 0.25)
-                m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+            //if (fMagesCount <= 0.25)
+            //    m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
 
             float fWeakMagesCount = 0;
             float fPowerfulMagesCount = 0;
@@ -700,7 +700,7 @@ namespace Socium
         /// <summary>
         /// Как часто встрачаются носители магических способностей
         /// </summary>
-        public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+        //public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
         /// <summary>
         /// Процент реально крутых магов среди всех носителей магических способностей
         /// </summary>

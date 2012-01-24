@@ -96,7 +96,7 @@ namespace VQMapTest2
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
-            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel, Socium.Psichology.Customs.Progressiveness.Normal), m_pWorld.m_iTechLevel);
+            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel, Socium.Psichology.Customs.Progressiveness.Moderate_Science), m_pWorld.m_iTechLevel);
             if (m_pWorld.m_iMagicLimit > 0)
             {
                 label8.Text = string.Format("Magic users: up to {0} [M{1}]", State.GetMagicString(m_pWorld.m_iMagicLimit), m_pWorld.m_iMagicLimit);

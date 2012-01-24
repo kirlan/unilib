@@ -45,9 +45,9 @@ namespace Socium.Psichology
 
         public enum BodyModifications
         {
-            Mandatory,
-            Allowed,
-            Blamed
+            Body_Modifications_Mandatory,
+            Body_Modifications_Allowed,
+            Body_Modifications_Blamed
         }
 
         public enum Childhood
@@ -60,8 +60,15 @@ namespace Socium.Psichology
         public enum Progressiveness
         {
             Traditionalism,
-            Normal,
+            Moderate_Science,
             Technofetishism
+        }
+
+        public enum Magic
+        {
+            Magic_Feared,
+            Magic_Allowed,
+            Magic_Praised
         }
 
         public GenderPriority m_eGenderPriority = GenderPriority.Genders_equality;
@@ -74,11 +81,13 @@ namespace Socium.Psichology
 
         public FamilySize m_eFamilySize = FamilySize.Monogamy;
 
-        public BodyModifications m_eBodyModifications = BodyModifications.Allowed;
+        public BodyModifications m_eBodyModifications = BodyModifications.Body_Modifications_Allowed;
 
         public Childhood m_eChildhood = Childhood.Common_upbringing;
 
-        public Progressiveness m_eProgress = Progressiveness.Normal;
+        public Progressiveness m_eProgress = Progressiveness.Moderate_Science;
+
+        public Magic m_eMagic = Magic.Magic_Allowed;
 
         public Customs()
         {
@@ -95,11 +104,13 @@ namespace Socium.Psichology
 
             m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polygamy : Rnd.OneChanceFrom(9) ? FamilySize.Polyamory : FamilySize.Monogamy;
 
-            m_eBodyModifications = Rnd.OneChanceFrom(3) ? BodyModifications.Allowed : Rnd.OneChanceFrom(3) ? BodyModifications.Mandatory : BodyModifications.Blamed;
+            m_eBodyModifications = Rnd.OneChanceFrom(3) ? BodyModifications.Body_Modifications_Allowed : Rnd.OneChanceFrom(3) ? BodyModifications.Body_Modifications_Mandatory : BodyModifications.Body_Modifications_Blamed;
 
             m_eChildhood = Rnd.OneChanceFrom(2) ? Childhood.Common_upbringing : Rnd.OneChanceFrom(3) ? Childhood.Family_upbringing : Childhood.Communal_upbringing;
 
-            m_eProgress = Rnd.OneChanceFrom(2) ? Progressiveness.Normal : Rnd.OneChanceFrom(3) ? Progressiveness.Technofetishism : Progressiveness.Traditionalism;
+            m_eProgress = Rnd.OneChanceFrom(2) ? Progressiveness.Moderate_Science : Rnd.OneChanceFrom(3) ? Progressiveness.Technofetishism : Progressiveness.Traditionalism;
+
+            m_eMagic = Rnd.OneChanceFrom(2) ? Magic.Magic_Allowed : Rnd.OneChanceFrom(3) ? Magic.Magic_Praised : Magic.Magic_Feared;
         }
 
         public Customs(Customs m_pAncestorCustoms)
@@ -112,8 +123,9 @@ namespace Socium.Psichology
             m_eBodyModifications = m_pAncestorCustoms.m_eBodyModifications;
             m_eChildhood = m_pAncestorCustoms.m_eChildhood;
             m_eProgress = m_pAncestorCustoms.m_eProgress;
+            m_eMagic = m_pAncestorCustoms.m_eMagic;
             
-            int iChoice = Rnd.Get(14);
+            int iChoice = Rnd.Get(16);
             switch (iChoice)
             {
                 case 0:
@@ -151,10 +163,10 @@ namespace Socium.Psichology
                         m_eFamilySize = FamilySize.Polygamy;
                     break;
                 case 5:
-                    if (m_eBodyModifications == BodyModifications.Allowed)
-                        m_eBodyModifications = Rnd.OneChanceFrom(5) ? BodyModifications.Mandatory : BodyModifications.Blamed;
+                    if (m_eBodyModifications == BodyModifications.Body_Modifications_Allowed)
+                        m_eBodyModifications = Rnd.OneChanceFrom(5) ? BodyModifications.Body_Modifications_Mandatory : BodyModifications.Body_Modifications_Blamed;
                     else
-                        m_eBodyModifications = BodyModifications.Allowed;
+                        m_eBodyModifications = BodyModifications.Body_Modifications_Allowed;
                     break;
                 case 6:
                     if (m_eChildhood == Childhood.Common_upbringing)
@@ -163,10 +175,16 @@ namespace Socium.Psichology
                         m_eChildhood = Childhood.Common_upbringing;
                     break;
                 case 7:
-                    if (m_eProgress == Progressiveness.Normal)
+                    if (m_eProgress == Progressiveness.Moderate_Science)
                         m_eProgress = Rnd.OneChanceFrom(3) ? Progressiveness.Technofetishism : Progressiveness.Traditionalism;
                     else
-                        m_eProgress = Progressiveness.Normal;
+                        m_eProgress = Progressiveness.Moderate_Science;
+                    break;
+                case 8:
+                    if (m_eMagic == Magic.Magic_Allowed)
+                        m_eMagic = Rnd.OneChanceFrom(3) ? Magic.Magic_Praised : Magic.Magic_Feared;
+                    else
+                        m_eMagic = Magic.Magic_Allowed;
                     break;
             }            
         }
@@ -284,12 +302,12 @@ namespace Socium.Psichology
                 sResult += "wedlock denial";
             }
 
-            if (m_eBodyModifications == BodyModifications.Blamed)
+            if (m_eBodyModifications == BodyModifications.Body_Modifications_Blamed)
             {
                 sResult += "\n   ";
                 sResult += "unmodified body";
             }
-            if (m_eBodyModifications == BodyModifications.Mandatory)
+            if (m_eBodyModifications == BodyModifications.Body_Modifications_Mandatory)
             {
                 sResult += "\n   ";
                 sResult += "modified body";
@@ -315,6 +333,17 @@ namespace Socium.Psichology
             {
                 sResult += "\n   ";
                 sResult += "technical progress";
+            }
+
+            if (m_eMagic == Magic.Magic_Feared)
+            {
+                sResult += "\n   ";
+                sResult += "magic denial";
+            }
+            if (m_eMagic == Magic.Magic_Praised)
+            {
+                sResult += "\n   ";
+                sResult += "magic";
             }
 
             return "Praises: " + sResult + "\n";
@@ -362,7 +391,30 @@ namespace Socium.Psichology
                 sResult += "are guided mostly by pure logic";
             }
 
-            if (m_eBodyModifications == BodyModifications.Blamed)
+            if (m_eMagic == Magic.Magic_Feared)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "denies any form of magic";
+            }
+            if (m_eMagic == Magic.Magic_Praised)
+            {
+                if (bFirst)
+                {
+                    sResult += ", who ";
+                    bFirst = false;
+                }
+                else
+                    sResult += ", ";
+                sResult += "have and use own magic abilities";
+            }
+
+            if (m_eBodyModifications == BodyModifications.Body_Modifications_Blamed)
             {
                 if (bFirst)
                 {
@@ -373,7 +425,7 @@ namespace Socium.Psichology
                     sResult += ", ";
                 sResult += "has no tatoo or pierceing";
             }
-            if (m_eBodyModifications == BodyModifications.Mandatory)
+            if (m_eBodyModifications == BodyModifications.Body_Modifications_Mandatory)
             {
                 if (bFirst)
                 {
@@ -702,8 +754,8 @@ namespace Socium.Psichology
                 sPositiveReasons += " (+1) " + pOpponent.m_eBodyModifications.ToString().Replace('_', ' ') + "\n";
             }
             else
-                if (m_eBodyModifications != BodyModifications.Allowed &&
-                    pOpponent.m_eBodyModifications != BodyModifications.Allowed)
+                if (m_eBodyModifications != BodyModifications.Body_Modifications_Allowed &&
+                    pOpponent.m_eBodyModifications != BodyModifications.Body_Modifications_Allowed)
                 {
                     iHostility += 2;
                     sNegativeReasons += " (-2) " + pOpponent.m_eBodyModifications.ToString().Replace('_', ' ') + "\n";
@@ -738,8 +790,8 @@ namespace Socium.Psichology
                 sPositiveReasons += " (+1) " + pOpponent.m_eProgress.ToString().Replace('_', ' ') + "\n";
             }
             else
-                if (m_eProgress != Progressiveness.Normal &&
-                    pOpponent.m_eProgress != Progressiveness.Normal)
+                if (m_eProgress != Progressiveness.Moderate_Science &&
+                    pOpponent.m_eProgress != Progressiveness.Moderate_Science)
                 {
                     iHostility += 2;
                     sNegativeReasons += " (-2) " + pOpponent.m_eProgress.ToString().Replace('_', ' ') + "\n";
@@ -748,6 +800,24 @@ namespace Socium.Psichology
                 {
                     iHostility++;
                     sNegativeReasons += " (-1) " + pOpponent.m_eProgress.ToString().Replace('_', ' ') + "\n";
+                }
+
+            if (m_eMagic == pOpponent.m_eMagic)
+            {
+                iHostility--;
+                sPositiveReasons += " (+1) " + pOpponent.m_eMagic.ToString().Replace('_', ' ') + "\n";
+            }
+            else
+                if (m_eMagic != Magic.Magic_Allowed &&
+                    pOpponent.m_eMagic != Magic.Magic_Allowed)
+                {
+                    iHostility += 2;
+                    sNegativeReasons += " (-2) " + pOpponent.m_eMagic.ToString().Replace('_', ' ') + "\n";
+                }
+                else
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) " + pOpponent.m_eMagic.ToString().Replace('_', ' ') + "\n";
                 }
 
             return iHostility;
