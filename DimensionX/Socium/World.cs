@@ -2071,8 +2071,8 @@ namespace Socium
                     if (pNode.m_pSettlement != null &&
                         pNode.m_pSettlement.m_iRuinsAge == 0 &&
                         (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
-                        pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
-                        pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
+                         pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
+                         pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
                     {
                         cRoadsChain.Add(pNewRoad);
                         pNewRoad = new Road(pNode, pOldRoad.m_eLevel);

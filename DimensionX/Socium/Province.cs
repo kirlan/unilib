@@ -108,7 +108,7 @@ namespace Socium
         /// <summary>
         /// Как часто встрачаются носители магических способностей
         /// </summary>
-        public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+        //public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
         /// <summary>
         /// Процент реально крутых магов среди всех носителей магических способностей
         /// </summary>
