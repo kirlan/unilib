@@ -25,6 +25,15 @@ namespace Socium
 
         public Dictionary<SettlementSize, float> m_cSettlementsDensity = new Dictionary<SettlementSize, float>();
 
+        /// <summary>
+        /// Вероятность встретить поселение заданного типа в земле этого типа.
+        /// ВАЖНО: взаимное соотношение вероятностей разных типов поселений для одного типа территории никакого значения НЕ ИГРАЕТ.
+        /// Значение играет соотношение вероятностей одного и того же типа поселений для разных типов территорий - 
+        /// выбираться для постройки поселения заданного размера будет земля с более высокой вероятностью.
+        /// </summary>
+        /// <param name="fCity">Capital и City</param>
+        /// <param name="fTown">Town</param>
+        /// <param name="fVillage">Village и Hamlet</param>
         public void SetSettlementsDensity(float fCity, float fTown, float fVillage)
         {
             m_cSettlementsDensity[SettlementSize.Capital] = fCity;

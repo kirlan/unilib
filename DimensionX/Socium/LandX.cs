@@ -101,35 +101,54 @@ namespace Socium
             return m_cContents[iLair];
         }
 
+        /// <summary>
+        /// находит в земле незанятую локацию, строит там поселение и обновляет проходящие через него дороги.
+        /// если незанятых локаций нет - возвращает null, иначе - локацию с построенным поселением
+        /// </summary>
+        /// <param name="pInfo">тип поселения</param>
+        /// <param name="bCapital">если true - будем пытаться строить даже если все места заняты. исключение - только если пригодных для заселения локаций нет вообще в принципе</param>
+        /// <param name="bFast">флаг режима ускоренной генерации - в "быстром" режиме не составляем имя для поселения</param>
+        /// <returns></returns>
         public LocationX BuildSettlement(SettlementInfo pInfo, bool bCapital, bool bFast)
         {
             //Теперь в этой земле выберем локацию, желательно не на границе с другой землёй.
             //Исключение для побережья - ему наоборот, предпочтение.
             List<int> cChances = new List<int>();
             bool bNoChances = true;
+
+            //вычислим шансы быть выбранной для строительства для всех локаций в земле.
             foreach (LocationX pLoc in m_cContents)
             {
                 bool bCoast = false;
                 bool bBorder = false;
+                //определим, является ли эта локация пограничной с другой землёй или побережьем.
                 foreach (Location pLink in pLoc.m_aBorderWith)
                 {
                     if (pLink.Owner != pLoc.Owner)
+                    {
                         bBorder = true;
-                    if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
-                        bCoast = true;
+                        if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                            bCoast = true;
+                    }
                 }
 
+                //сколько дорог проходит через этй локацию?
                 int iRoadsCount = 0;
                 foreach(var pRoads in pLoc.m_cRoads)
                     iRoadsCount += pRoads.Value.Count;
-                int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : ((bCoast || iRoadsCount > 0) ? 50 : 10));
 
+                //в пограничных локациях строим только если это побережье или есть дороги, во внутренних - отдаём предпочтение локациям с дорогами.
+                int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : (iRoadsCount > 0 ? 50 : 10));
+
+                //если в локации уже есть поселение - ловить нечего. На руинах, однако, строить можно.
                 if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
                     iChances = 0;
 
+                //если в локации есть какая-то одиночная постройка (монстрячье логово, например), опять ловить нечего.
                 if (pLoc.m_pBuilding != null)
                     iChances = 0;
 
+                //если это край карты или географическая аномалия (горный пик, вулкан...) - тоже пролетаем.
                 if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
                     iChances = 0;
 
@@ -139,32 +158,43 @@ namespace Socium
                 cChances.Add(iChances);
             }
 
+            //если для всех локаций в земле шансы нулевые, а строим мы столицу - попытаемся найти подходящую локацию ещё раз, ослабив критерии отбора.
+            //в частности, разрешаем строить поверх других поселений или одиночных построек и в географических аномалиях.
+            //на краю карты строить по прежнему нельзя.
             if (bNoChances)
             {
                 if (bCapital)
                 {
                     bNoChances = true;
                     cChances.Clear();
+                    //вычислим шансы быть выбранной для строительства для всех локаций в земле.
                     foreach (LocationX pLoc in m_cContents)
                     {
                         bool bCoast = false;
                         bool bBorder = false;
+                        //определим, является ли эта локация пограничной с другой землёй или побережьем.
                         foreach (Location pLink in pLoc.m_aBorderWith)
                         {
                             if (pLink.Owner != pLoc.Owner)
+                            {
                                 bBorder = true;
-                            if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
-                                bCoast = true;
+                                if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                                    bCoast = true;
+                            }
                         }
 
+                        //сколько дорог проходит через этй локацию?
                         int iRoadsCount = 0;
                         foreach (var pRoads in pLoc.m_cRoads)
                             iRoadsCount += pRoads.Value.Count;
-                        int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : ((bCoast || iRoadsCount > 0) ? 50 : 10));
+
+                        //в пограничных локациях строим только если это побережье или есть дороги, во внутренних - отдаём предпочтение локациям с дорогами.
+                        int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : (iRoadsCount > 0 ? 50 : 10));
 
                         if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)
                             iChances = 1;
 
+                        //если это край карты - тоже пролетаем.
                         if (pLoc.m_bBorder)
                             iChances = 0;
 
@@ -182,14 +212,15 @@ namespace Socium
             }
 
             int iTown = Rnd.ChooseOne(cChances, 2);
+
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-
             m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, m_pProvince.m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, bCapital, bFast);
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 
+            //обновим все дороги, проходящие через новое поселение, чтобы на дорожных указателях появилось имя нового поселения.
             List<Road> cRoads = new List<Road>();
             cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Country]);
             cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Normal]);

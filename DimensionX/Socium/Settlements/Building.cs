@@ -161,7 +161,13 @@ namespace Socium.Settlements
         public static readonly BuildingInfo MedicineSmall       = new BuildingInfo("Chemist Shop", "chemist", "chemist", BuildingSize.Medium);
         public static readonly BuildingInfo MedicineMedium      = new BuildingInfo("Clinic", "doctor", "doctor", BuildingSize.Medium);
         public static readonly BuildingInfo MedicineLarge       = new BuildingInfo("Hospital", "doctor", "doctor", BuildingSize.Large);
-                
+
+        public static readonly BuildingInfo AlchemyShopSmall    = new BuildingInfo("Alchemy Shop", "alchemist", "alchemist", BuildingSize.Small);
+      
+        public static readonly BuildingInfo MagicSmall          = new BuildingInfo("Mage Tower", "mage", "mage", BuildingSize.Small);
+        public static readonly BuildingInfo MagicMedium         = new BuildingInfo("Magic University", "mage", "mage", BuildingSize.Medium);
+        public static readonly BuildingInfo MagicLarge          = new BuildingInfo("Magic Academy", "mage", "mage", BuildingSize.Large);
+        
         public string m_sName;
         public string m_sOwnerM;
         public string m_sOwnerF;
@@ -279,22 +285,11 @@ namespace Socium.Settlements
                     {
                         if (pSettlement.m_cBuildings.Count > 0)
                         {
-                            BuildingInfo pGuard;
                             if (iInfrastructureLevel < 2)
                             {
-                                pGuard = BuildingInfo.WarriorsHutSmall;
-                                //else
-                                //    if (iInfrastructureLevel < 4)
-                                //        pGuard = BuildingInfo.GuardTowerSmall;
-                                //    else
-                                //        if (iInfrastructureLevel == 8)
-                                //            pGuard = BuildingInfo.EmergencyPostSmall;
-                                //        else
-                                //            pGuard = BuildingInfo.PoliceStationSmall;
-
-                                cChances[pGuard] = (float)iControl / 4;
+                                cChances[BuildingInfo.WarriorsHutSmall] = (float)iControl / 4;
                                 if (iInfrastructureLevel < 2)
-                                    cChances[pGuard] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
+                                    cChances[BuildingInfo.WarriorsHutSmall] = pState.m_pCulture.MentalityValues[Psichology.Mentality.Piety][iInfrastructureLevel] / 2;
                             }
 
                             if (iInfrastructureLevel < 2)
