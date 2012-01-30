@@ -75,6 +75,7 @@
     <Compile Include="Road.cs" />
     <Compile Include="Settlements\Settlement.cs" />
     <Compile Include="State.cs" />
+    <Compile Include="Stratum.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

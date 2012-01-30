@@ -206,9 +206,9 @@ namespace Socium
             if (pLand.m_pNation != m_pNation)
             {
                 if (m_pNation.m_bDying)
-                    fCost *= 5000;
+                    fCost *= 9999999;
                 else
-                    fCost *= 2;
+                    fCost *= 99999;
             }
 
             if (m_pNation.m_bHegemon)
@@ -216,6 +216,9 @@ namespace Socium
 
             if (fCost < 1)
                 fCost = 1;
+
+            if (fCost > int.MaxValue)
+                fCost = int.MaxValue - 1;
 
             return (int)fCost;
         }
@@ -301,6 +304,8 @@ namespace Socium
                     pLand.m_iProvincePresence -= iBestCost;
                     if (pBestLand.m_pProvince == null)
                     {
+                        if(pBestLand.m_pNation != pLand.m_pNation)
+                            GetGrowCost(pBestLand);
                         pBestLand.m_iProvincePresence += iBestCost;
                         return pBestLand;
                     }
@@ -331,6 +336,9 @@ namespace Socium
                     continue;
 
                 LandX pLand = pTerr as LandX;
+
+                if (pLand.m_pNation != m_pNation)
+                    continue;
 
                 if (pLand.m_pProvince == null && !pLand.IsWater)
                 {
@@ -468,9 +476,12 @@ namespace Socium
 
         public void BuildSettlements(SettlementSize eSize, bool bFast)
         {
+            //проверим для начала, а позволяет ли вообще текущий уровень инфраструктуры поселения такого размера?
             if (!State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(eSize))
                 return;
 
+            //определим, сколько поселений должно быть.
+            //считаем, что каждая третья земля в провинции содержит поселение, 2/3 из них деревни, 2/9 городки и 1/9 - большие города
             int iMinCount = m_cContents.Count / 3;
             switch (eSize)
             {
@@ -482,10 +493,20 @@ namespace Socium
                     break;
             }
 
+            //если провинция состоит из единственной земли, увеличиваем там плотность населения вдвое
+            int iSingleLandMultiplier = 1;
+            if(m_cContents.Count == 1)
+                iSingleLandMultiplier = 2;
+
+            iMinCount *= iSingleLandMultiplier;
+
+            //рассчитаем для каждой земли, входящей в провинцию, шанс быть выбранной для поселения заданного размера
             Dictionary<LandX, float> cLandsChances = new Dictionary<LandX, float>();
             foreach (LandX pLand in m_cContents)
                 cLandsChances[pLand] = (float)pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize];
 
+            //пытаемся построить заданное количество поселений.
+            //реально может быть построено меньше, если свободных мест меньше, чем поселений
             for (int i = 0; i < iMinCount; i++)
             {
                 int iChance = Rnd.ChooseOne(cLandsChances.Values, 1);
@@ -501,33 +522,39 @@ namespace Socium
                             m_cSettlements.Add(pSettlement);
                             //bHaveOne = true;
                         }
-                        cLandsChances[pLand] = 0;
+                        cLandsChances[pLand] = cLandsChances[pLand] / 2;//0;
                         break;
                     }
                 }
             }
 
+            //закончив "обязательную программу" пройдёмся по всем землям и во всех, где нет ни одного поселения, попытаемся что-нибудь построить.
             foreach (LandX pLand in m_cContents)
             {
-                bool bHaveOne = false;
+                int iSettlements = 0;
                 foreach (LocationX pLoc in pLand.m_cContents)
-                    if (pLoc.m_pSettlement != null)
+                    if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
                     {
-                        bHaveOne = true;
-                        break;
+                        iSettlements++;
+                        //break;
                     }
-                if (bHaveOne)
-                    continue;
+                //if (bHaveOne)
+                //    continue;
 
-                int iSettlementsCount = (int)(pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize]);
+                //считаем среднее количество поселений в земле исходя из размеров земли и вероятности поселения.
+                //если количество выходит меньше 1, то считаем вероятность единственного поселения.
+                //впрочем, больше одного строить всё равно не будем.
+                int iSettlementsCount = (int)(pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize] * iSingleLandMultiplier);
                 if (iSettlementsCount == 0)
                 {
-                    int iSettlementChance = (int)(1 / (pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize]));
+                    int iSettlementChance = (int)(1 / (pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize] * iSingleLandMultiplier));
                     if (Rnd.OneChanceFrom(iSettlementChance))
                         iSettlementsCount = 1;
                 }
-                else
-                    iSettlementsCount = 1;
+                //else
+                //    iSettlementsCount = 1;
+
+                iSettlementsCount -= iSettlements;
 
                 for (int i = 0; i < iSettlementsCount; i++)
                 {
