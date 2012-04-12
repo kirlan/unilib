@@ -83,7 +83,7 @@ namespace VixenQuest
 
         /// <summary>
         /// Обычный энкаунтер - встреча с оппонентом и цепочка вызванных ею действий.
-        /// Начинается с путешествия по локации, заканчивается привалом - в случае необходимости.
+        /// Начинается с отдыха и путешествия по локации, заканчивается сексом.
         /// </summary>
         /// <param name="pVixen"></param>
         /// <param name="pCurrentLocation"></param>
@@ -97,43 +97,64 @@ namespace VixenQuest
             Action pLastAction = null;
 
             int iCounter0 = 0;
+            bool bHaveSex = false;
+            //пытаемся создать энкаунтер с сексом (в случае неудачи, делаем не больше 100 попыток)
             do
             {
+                //начинаем с чистого листа
                 m_cActions.Clear();
-                Action pGoingToBossLair = new Action(pVixen, pTarget.m_pHome, pDestination);
-                m_cActions.Add(pGoingToBossLair);
+                bHaveSex = false;
                 
-                ActionType eFirstAction = ActionType.Rest;
+                //опционально - небольшая прогулка после предыдущего энкаунтера
+                //if (Rnd.OneChanceFrom(2))
+                //{
+                //    Action pBeginTrawel = new Action(pVixen, pTarget.m_pHome, pDestination);
+                //    m_cActions.Add(pBeginTrawel);
+                //}
+                //первое действие в энкаунтере - отдых
+                Action pRest = new Action(pVixen, pTarget.m_pHome, ActionType.Rest);
+                m_cActions.Add(pRest);
 
+                //второе действие - продолжение путешествия
+                Action pContinueTrawel = new Action(pVixen, pTarget.m_pHome, pDestination);
+                m_cActions.Add(pContinueTrawel);
+                
                 m_pTarget = pTarget;
 
+                //определим тип третьего действия - результат встречи с оппонентом
+                ActionType eFirstAction = ActionType.Rest;
                 if (pVixen.WannaFuck(m_pTarget) && m_pTarget.WannaFuck(pVixen) && Rnd.OneChanceFrom(2))
-                    eFirstAction = ActionType.Seducing;
+                    eFirstAction = ActionType.Seducing; //оба готовы друг-друга трахнуть - будет секс
                 else
                 {
                     if (pVixen.WannaFuck(m_pTarget))
-                        eFirstAction = ActionType.Pursue;
+                        eFirstAction = ActionType.Pursue; //ГГ готов трахнуть оппонента, но оппонент этого не хочет - ловим оппонента
                     else
                         if (m_pTarget.WannaFuck(pVixen))
-                            eFirstAction = ActionType.Evade;
+                            eFirstAction = ActionType.Evade;//Оппонент ловит ГГ
                         else
-                            return;
+                            return; //никто никого не хочет - разошлись как в море корабли
                 }
 
+                //третье действие - в соответствии с выбором сделанным выше
                 pLastAction = new Action(pVixen, pTarget.m_pHome, m_pTarget, eFirstAction);
                 m_cActions.Add(pLastAction);
 
+                //определим затраты сил и энергии на третье действие
                 int iVixenTiredness = pLastAction.CostToVixen(pVixen);
                 int iTargetTiredness = pLastAction.CostToTarget(pVixen);
 
                 pLastAction.SetProgress(pVixen, iVixenTiredness, iTargetTiredness);
 
+                //четвёртое действие - по результатам третьего (собственно секс)
                 pLastAction = AddAction(pVixen, pLastAction, iVixenTiredness, iTargetTiredness);
                 if (pLastAction != null)
                 {
+                    //пересчитываем остаток сил и здоровья у обоих участников
                     iVixenTiredness += pLastAction.CostToVixen(pVixen);
                     iTargetTiredness += pLastAction.CostToTarget(pVixen);
 
+                    //если четвёртое действие не по силам одному из участников - отменяем его, иначе записываем в список
                     if (iVixenTiredness >= pVixen.EffectiveStats[Stat.Potency] &&
                         iTargetTiredness >= m_pTarget.Stats[Stat.Potency])
                     {
@@ -144,15 +165,17 @@ namespace VixenQuest
                         pLastAction.SetProgress(pVixen, iVixenTiredness, iTargetTiredness);
 
                         m_cActions.Add(pLastAction);
+                        bHaveSex = true;
                     }
                 }
 
                 iCounter0++;
             }
-            while (m_cActions.Count < 3 && iCounter0 < 100);
+            while (!bHaveSex && iCounter0 < 100);
 
             m_iCurrentActionIndex = 0;
 
+            //обнуляем потенцию проигравшего после последнего действия
             if (m_cActions[m_cActions.Count - 1].m_iTargetPotency > 0 && m_cActions[m_cActions.Count - 1].m_iVixenPotency > 0)
             {
                 if (m_cActions[m_cActions.Count - 1].m_iTargetPotency <= m_cActions[m_cActions.Count - 1].m_iVixenPotency)
@@ -160,11 +183,6 @@ namespace VixenQuest
                 else
                     m_cActions[m_cActions.Count - 1].m_iVixenPotency = 0;
             }
-
-            Action pRest = new Action(pVixen, pTarget.m_pHome, ActionType.Rest);
-            m_cActions.Add(pRest);
-            Action pContinueTrawel = new Action(pVixen, pTarget.m_pHome, pDestination);
-            m_cActions.Add(pContinueTrawel);
 
             m_pReward = Reward.MakeReward(m_pTarget);
         }
@@ -180,35 +198,47 @@ namespace VixenQuest
             }
         }
 
+        /// <summary>
+        /// Определяет возможное развитие событий после указанного действия
+        /// </summary>
+        /// <param name="pVixen">ГГ</param>
+        /// <param name="pLastAction">последнее случившееся действие</param>
+        /// <param name="iVixenTiredness">усталость ГГ</param>
+        /// <param name="iTargetTiredness">усталость оппонента</param>
+        /// <returns></returns>
         private Action AddAction(Vixen pVixen, Action pLastAction, int iVixenTiredness, int iTargetTiredness)
         {
+            //мы убегали...
             if (pLastAction.m_eType == ActionType.Evade)
             {
                 if (pLastAction.Success(pVixen))
-                    return null;
+                    return null; //...и нас не поймали
                 else
                     if (iTargetTiredness < m_pTarget.Stats[Stat.Potency])
-                        return AddPassiveSexAction(pVixen, pLastAction.m_pLocation);
+                        return AddPassiveSexAction(pVixen, pLastAction.m_pLocation); //...и нас поймали
                     else
-                        return null;
+                        return null; //...и нас поймали бы, если бы у преследователя не кончились силы
             }
+            //мы догоняли...
             if (pLastAction.m_eType == ActionType.Pursue)
             {
                 if (pLastAction.Success(pVixen) && iVixenTiredness < pVixen.EffectiveStats[Stat.Potency])
-                    return AddActiveSexAction(pVixen, pLastAction.m_pLocation);
+                    return AddActiveSexAction(pVixen, pLastAction.m_pLocation); //...и догнали!
                 else
-                    return null;
+                    return null; //...и не догнали :(
             }
+            //прелюдия к сексу
             if (pLastAction.m_eType == ActionType.Seducing)
             {
                 if (pLastAction.Success(pVixen) && iVixenTiredness < pVixen.EffectiveStats[Stat.Potency])
-                    return AddActiveSexAction(pVixen, pLastAction.m_pLocation);
+                    return AddActiveSexAction(pVixen, pLastAction.m_pLocation); //инициатива на нашей стороне
                 else
                     if (iTargetTiredness < m_pTarget.Stats[Stat.Potency])
-                        return AddPassiveSexAction(pVixen, pLastAction.m_pLocation);
+                        return AddPassiveSexAction(pVixen, pLastAction.m_pLocation); //инициатива не на нашей стороне
                     else
-                        return null;
+                        return null; // секс был бы, но все слишком устали
             }
+            //продолжение секса
             if (pLastAction.m_eType == ActionType.Fucking ||
                 pLastAction.m_eType == ActionType.AssFucking ||
                 pLastAction.m_eType == ActionType.OralFucking ||
@@ -221,18 +251,23 @@ namespace VixenQuest
                 if ((pLastAction.Passive || iTargetTiredness >= m_pTarget.Stats[Stat.Potency]) &&
                     iVixenTiredness < pVixen.EffectiveStats[Stat.Potency])
                 {
+                    //инициатива была не на нашей стороне, но противник устал, а мы - нет
+                    //мы хотим его?
                     if (pVixen.WannaFuck(m_pTarget))
-                        return AddActiveSexAction(pVixen, pLastAction.m_pLocation);
+                        return AddActiveSexAction(pVixen, pLastAction.m_pLocation); //да - значит теперь инициатива наша
                     else
-                        return new Action(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Evade);
+                        return new Action(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Evade); //нет - просто сматываемся
                 }
                 else
+                    //мы устали ИЛИ в прошлом действии инициатива была наша - меняемся ролями
+                    //если у оппонента ещё есть силы
                     if (iTargetTiredness < m_pTarget.Stats[Stat.Potency])
                     {
+                        //и он хочет нас
                         if(m_pTarget.WannaFuck(pVixen))
-                            return AddPassiveSexAction(pVixen, pLastAction.m_pLocation);
+                            return AddPassiveSexAction(pVixen, pLastAction.m_pLocation); //то он нас трахает
                         else
-                            return new Action(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Pursue);
+                            return new Action(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Pursue); //иначе - сматывается
                     }
                     //else
                     //    if (iVixenTiredness < pVixen.EffectiveStats[Stat.Potency] * 3)

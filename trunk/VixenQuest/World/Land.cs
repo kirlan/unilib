@@ -3,9 +3,141 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Random;
+using BenTools.Mathematics;
+using System.IO;
+using System.Drawing;
 
 namespace VixenQuest.World
 {
+    public class Vertex
+    {
+        public float m_fX;
+        public float m_fY;
+
+        public float X
+        {
+            get { return m_fX; }
+        }
+
+        public float Y
+        {
+            get { return m_fY; }
+        }
+
+        private static long s_iCounter = 0;
+
+        public long m_iID = s_iCounter++;
+
+        public List<Vertex> m_cVertexes = new List<Vertex>();
+
+        public List<long> m_cLinksTmp = new List<long>();
+
+        public List<Location> m_cLocations = new List<Location>();
+
+        public List<long> m_cLocationsTmp = new List<long>();
+
+        public Vertex(BTVector pVector)
+        {
+            m_fX = (float)pVector.data[0];
+            m_fY = (float)pVector.data[1];
+        }
+
+        //public Vertex(BinaryReader binReader)
+        //{
+        //    m_iID = binReader.ReadInt64();
+
+        //    m_fX = (float)binReader.ReadDouble();
+        //    m_fY = (float)binReader.ReadDouble();
+
+
+        //    int iLinksCount = binReader.ReadInt32();
+        //    for (int i = 0; i < iLinksCount; i++)
+        //        m_cLinksTmp.Add(binReader.ReadInt64());
+
+        //    int iLocationsCount = binReader.ReadInt32();
+        //    for (int i = 0; i < iLocationsCount; i++)
+        //        m_cLocationsTmp.Add(binReader.ReadInt64());
+        //}
+
+        //public void Save(BinaryWriter binWriter)
+        //{
+        //    binWriter.Write(m_iID);
+
+        //    binWriter.Write((double)m_fX);
+        //    binWriter.Write((double)m_fY);
+
+        //    binWriter.Write(m_cVertexes.Count);
+        //    foreach (Vertex pVertex in m_cVertexes)
+        //        binWriter.Write(pVertex.m_iID);
+
+        //    binWriter.Write(m_cLocations.Count);
+        //    foreach (Location pLocation in m_cLocations)
+        //        binWriter.Write(pLocation.m_iID);
+        //}
+
+        public override string ToString()
+        {
+            return string.Format("X: {0}, Y: {1}", X, Y);
+        }
+
+        //public override float GetMovementCost()
+        //{
+        //    return 100;
+        //}
+    }
+
+    public class Line
+    {
+        public Vertex m_pPoint1;
+        public Vertex m_pPoint2;
+
+        public Line(Vertex pPoint1, Vertex pPoint2)
+        {
+            m_pPoint1 = pPoint1;
+            m_pPoint2 = pPoint2;
+
+            m_fLength = (float)Math.Sqrt((pPoint1.m_fX - pPoint2.m_fX) * (pPoint1.m_fX - pPoint2.m_fX) + (pPoint1.m_fY - pPoint2.m_fY) * (pPoint1.m_fY - pPoint2.m_fY));
+
+            //if (m_fLength == 0.0)
+            //    throw new Exception("Zero length line!");
+            //if(m_fLength > Landscape.RY/2)
+            //    m_fLength = (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
+        }
+
+        public Line(Line pOriginal)
+        {
+            m_pPoint1 = pOriginal.m_pPoint1;
+            m_pPoint2 = pOriginal.m_pPoint2;
+
+            m_fLength = pOriginal.m_fLength;
+        }
+
+        public Line(BinaryReader binReader, Dictionary<long, Vertex> cVertexes)
+        {
+            m_pPoint1 = cVertexes[binReader.ReadInt64()];
+            m_pPoint2 = cVertexes[binReader.ReadInt64()];
+
+            m_fLength = (float)Math.Sqrt((m_pPoint1.m_fX - m_pPoint2.m_fX) * (m_pPoint1.m_fX - m_pPoint2.m_fX) + (m_pPoint1.m_fY - m_pPoint2.m_fY) * (m_pPoint1.m_fY - m_pPoint2.m_fY));
+        }
+
+        public void Save(BinaryWriter binWriter)
+        {
+            binWriter.Write(m_pPoint1.m_iID);
+            binWriter.Write(m_pPoint2.m_iID);
+        }
+
+        public Line m_pPrevious = null;
+        public Line m_pNext = null;
+
+        public float m_fLength;
+
+        public override string ToString()
+        {
+            return string.Format("({0}) - ({1}), Length {2}", m_pPoint1, m_pPoint2, m_fLength);
+        }
+
+    }
+
     enum LandType
     {
         Undefined,
@@ -116,18 +248,147 @@ namespace VixenQuest.World
             new ValuedString("lady knight", 10),
         };
 
-        private List<Land> m_cLinks = new List<Land>();
+        public Dictionary<Land, List<Line>> m_cBorderWith = new Dictionary<Land, List<Line>>();
 
-        internal List<Land> Links
+        /// <summary>
+        /// Границы с другими такими же объектами
+        /// </summary>
+        public Dictionary<Land, List<Line>> BorderWith
         {
-            get { return m_cLinks; }
+            get { return m_cBorderWith; }
         }
 
-        private const int m_iMaxLinks = 8;
+        public Land[] m_aBorderWith = null;
 
-        public int MaxLinks
+        internal void FillBorderWithKeys()
         {
-            get { return m_iMaxLinks; }
+            m_aBorderWith = new List<Land>(m_cBorderWith.Keys).ToArray();
+        }
+
+        /// <summary>
+        /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
+        /// </summary>
+        public bool m_bBorder = false;
+        public bool m_bUnclosed = false;
+
+        public bool Forbidden
+        {
+            get { return m_bUnclosed || m_bBorder; }
+        }
+
+        public long m_iID = 0;
+        public PointF m_pCenter = new PointF(0, 0);
+        
+        public float X
+        {
+            get { return m_pCenter.X; }
+        }
+
+        public float Y
+        {
+            get { return m_pCenter.Y; }
+        }
+
+        public void Create(long iID, double x, double y)
+        {
+            Create(iID, (float)x, (float)y);
+        }
+
+        public void Create(long iID, float x, float y)
+        {
+            m_pCenter = new PointF(x, y);
+            m_iID = iID;
+        }
+
+        internal Land m_pOrigin = null;
+
+        public Line m_pFirstLine = null;
+
+        private float m_fPerimeter = 0;
+
+        public float PerimeterLength
+        {
+            get { return m_fPerimeter; }
+        }
+
+        /// <summary>
+        /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
+        /// </summary>
+        public void BuildBorder(float fCycleShift)
+        {
+            if (m_bUnclosed || m_bBorder)
+                return;
+
+            m_pFirstLine = m_cBorderWith[m_aBorderWith[0]][0];
+
+            Line pCurrentLine = m_pFirstLine;
+            List<Line> cTotalBorder = new List<Line>();
+
+            m_fPerimeter = 0;
+            foreach (var cLines in m_cBorderWith)
+            {
+                cTotalBorder.AddRange(cLines.Value);
+                foreach (Line pLine in cLines.Value)
+                    m_fPerimeter += pLine.m_fLength;
+            }
+
+            Line[] aTotalBorder = cTotalBorder.ToArray();
+
+            int iLength = 0;
+            do
+            {
+                bool bFound = false;
+                foreach (Line pLine in aTotalBorder)
+                {
+                    if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
+                        (pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY &&
+                         (pLine.m_pPoint1.m_fX == pCurrentLine.m_pPoint2.m_fX ||
+                          Math.Abs(pLine.m_pPoint1.m_fX - pCurrentLine.m_pPoint2.m_fX) == fCycleShift)))
+                    {
+                        pCurrentLine.m_pNext = pLine;
+                        pLine.m_pPrevious = pCurrentLine;
+
+                        pCurrentLine = pLine;
+
+                        iLength++;
+
+                        bFound = true;
+
+                        break;
+                    }
+                }
+                if (!bFound)
+                {
+                    m_bUnclosed = true;
+                    return;
+                }
+            }
+            while (pCurrentLine != m_pFirstLine && iLength < m_cBorderWith.Count);
+        }
+
+        /// <summary>
+        /// Смещает центр локации в реальный геометрический центр многоугольника
+        /// </summary>
+        public void CorrectCenter()
+        {
+            if (m_bUnclosed || m_bBorder)
+                return;
+
+            float fX = 0, fY = 0, fLength = 0;
+
+            Line pLine = m_pFirstLine;
+            do
+            {
+                fX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
+                fY += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                fLength += pLine.m_fLength;
+
+                pLine = pLine.m_pNext;
+            }
+            while (pLine != m_pFirstLine);
+
+            m_pCenter.X = fX / fLength;
+            m_pCenter.Y = fY / fLength;
         }
 
         public List<Location> m_cLocations = new List<Location>();
@@ -201,24 +462,9 @@ namespace VixenQuest.World
             }
         }
 
-        private int m_iX;
-
-        public int X
-        {
-            get { return m_iX; }
-        }
-        private int m_iY;
-
-        public int Y
-        {
-            get { return m_iY; }
-        }
-
-        public Land(World pWorld, int iX, int iY)
+        public Land(World pWorld)
             : base(pWorld)
         {
-            m_iX = iX;
-            m_iY = iY;
         }
 
         private LandType m_eType = LandType.Undefined;
