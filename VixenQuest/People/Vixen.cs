@@ -122,7 +122,7 @@ namespace VixenQuest
                         else
                             return "Horned Demon";
                     case VixenRace.Human:
-                        return "Angel";
+                        return "Human";
                     case VixenRace.Orc:
                         return "Orc";
                     case VixenRace.TentacleDemon:
@@ -562,8 +562,14 @@ namespace VixenQuest
             }
         }
 
+        public string m_sLastLoot = "";
+        public string m_sLastLoss = "";
+
         public void Complete(Encounter pEncounter)
         {
+            m_sLastLoot = "";
+            m_sLastLoss = "";
+
             m_iExperience += pEncounter.Experience;
             //m_iTiredness += pAction.Tiredness;
 
@@ -576,15 +582,31 @@ namespace VixenQuest
             if (pEncounter.m_pTarget.m_pRace.m_eSapience != Sapience.Animal &&
                 pEncounter.m_cActions.Count > 1 &&
                 Rnd.Chances(m_cEffectiveStats[Stat.Luck], m_cEffectiveStats[Stat.Luck] + pEncounter.m_pTarget.Stats[Stat.Luck]))
+            {
                 AddLoot(pEncounter.m_pReward);
+                m_sLastLoot = pEncounter.m_pReward.m_sName;
+            }
         }
 
         public void Lose(Encounter pEncounter)
         {
+            m_sLastLoot = "";
+            m_sLastLoss = "";
+
             if ((pEncounter.m_cActions.Count > 1 &&
                 Rnd.Chances(m_cEffectiveStats[Stat.Luck], m_cEffectiveStats[Stat.Luck] + pEncounter.m_pTarget.Stats[Stat.Luck])) ||
                 Rnd.OneChanceFrom(2))
+            {
+                m_iExperience += Math.Max(1, pEncounter.Experience/2);
+                //m_iTiredness += pAction.Tiredness;
+
+                while (m_iExperience >= Experience2LevelUp)
+                {
+                    m_iExperience -= Experience2LevelUp;
+                    LevelUp();
+                }
                 return;
+            }
 
             int iLoss = Rnd.Get(m_cClothes.Count + m_cJevelry.Count);
 
@@ -592,6 +614,7 @@ namespace VixenQuest
             {
                 if (iLoss-- <= 0)
                 {
+                    m_sLastLoss = m_cClothes[bodyPart].m_sName;
                     m_cClothes.Remove(bodyPart);
                     UseLoot();
                     return;
@@ -601,6 +624,7 @@ namespace VixenQuest
             {
                 if (iLoss-- <= 0)
                 {
+                    m_sLastLoss = m_cJevelry[bodyPart].m_sName;
                     m_cJevelry.Remove(bodyPart);
                     UseLoot();
                     return;

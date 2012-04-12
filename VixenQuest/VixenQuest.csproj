@@ -139,6 +139,10 @@
     <Compile Include="World\Universe.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DimensionX\FortuneVoronoi\Fortune.csproj">
+      <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
+      <Name>Fortune</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NameGen\NameGen.csproj">
       <Project>{A21776DA-BEA3-46E1-9C94-26FFBBDF7A66}</Project>
       <Name>NameGen</Name>

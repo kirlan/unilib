@@ -43,7 +43,7 @@ namespace VixenQuest
             m_pWorld = pWorld;
 
             m_aColorsID.Clear();
-            foreach (Land pLand in m_pWorld.m_cLands)
+            foreach (Land pLand in m_pWorld.m_aLands)
             {
                 switch (Rnd.Get(3))
                 {
@@ -72,29 +72,10 @@ namespace VixenQuest
             if (m_pWorld == null)
                 return;
 
-            if (m_pWorld.m_cLands.Count == 0)
+            if (m_pWorld.m_aLands.Length == 0)
                 return;
 
-            foreach (int x in m_pWorld.m_cMap.Keys)
-            {
-                foreach (int y in m_pWorld.m_cMap[x].Keys)
-                {
-                    //int iDiameter = (int)(fkY / 3);
-
-                    //if (pWorld.m_eWorldType == CWorld.WorldType.PrimitiveWorld ||
-                    //    pWorld.m_eWorldType == CWorld.WorldType.EmptyWorld)
-                    //{
-                    //    if (pWorld.m_pNearestCivilizedWorld != null)
-                    //    {
-                    //        gr.FillEllipse(Brushes.Gray, pWorld.m_iX * fkX - 1, pWorld.m_iY * fkY - 1, iDiameter+2, iDiameter+2);
-                    //    }
-                    //}
-                    //gr.FillEllipse(marking, pWorld.m_iX * fkX, pWorld.m_iY * fkY, iDiameter, iDiameter);
-                    DrawLandPoint(x, y);//, Brushes.Black);
-                }
-            }
-
-            foreach (Land pLand in m_pWorld.m_cLands)
+            foreach (Land pLand in m_pWorld.m_aLands)
             {
                 DrawLandCenter(pLand);
             }
@@ -123,8 +104,8 @@ namespace VixenQuest
             float fkX = (float)ClientRectangle.Width / (m_pWorld.WorldScale * 2);
             float fkY = (float)ClientRectangle.Height / (m_pWorld.WorldScale * 2);
 
-            Brush marking = GetWorldBrush(m_pWorld.m_cMap[x][y].m_pLand);
-            gr.FillRectangle(marking, fkX + (m_pWorld.WorldScale + x) * fkX - fkX / 2, fkY + (m_pWorld.WorldScale + y) * fkY - fkY / 2, fkX, fkY);
+            //Brush marking = GetWorldBrush(m_pWorld.m_cMap[x][y].m_pLand);
+            //gr.FillRectangle(marking, fkX + (m_pWorld.WorldScale + x) * fkX - fkX / 2, fkY + (m_pWorld.WorldScale + y) * fkY - fkY / 2, fkX, fkY);
         }
 
         private void DrawLandCenter(Land pLand)
@@ -141,7 +122,7 @@ namespace VixenQuest
             Brush marking = Brushes.Black;
             gr.FillEllipse(marking, fkX + (m_pWorld.WorldScale + pLand.X) * fkX - iDiameter / 2, fkY + (m_pWorld.WorldScale + pLand.Y) * fkY - iDiameter / 2, iDiameter, iDiameter);
 
-            foreach (Land pLink in pLand.Links)
+            foreach (Land pLink in pLand.m_aBorderWith)
             {
                 gr.DrawLine(new Pen(marking), fkX + (m_pWorld.WorldScale + pLand.X) * fkX, fkY + (m_pWorld.WorldScale + pLand.Y) * fkY,
                     fkX + (m_pWorld.WorldScale + pLink.X) * fkX, fkY + (m_pWorld.WorldScale + pLink.Y) * fkY);

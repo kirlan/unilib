@@ -52,6 +52,8 @@ namespace VixenQuest
 
             ShowQuests(true);
 
+            ShowLog(true);
+
             ActionBar.Maximum = ActionBar.ClientRectangle.Width;
             ActionBar.Value = 0;
 
@@ -62,9 +64,65 @@ namespace VixenQuest
 
             TargetPotencyBar.Maximum = VixenPotencyBar.Maximum;
 
-            worldMap1.DrawMap(m_pWorld.m_cWorldsByTiers[0][0]);
-
             timer1.Enabled = true;
+        }
+
+        private string m_sLoggedAdventure = "";
+        private string m_sLoggedQuest = "";
+        private string m_sLastMessage = "";
+
+        private void AddToJournal(string sMessage)
+        {
+            AddToJournal(sMessage, false, false);
+        }
+
+        private void AddToJournal(string sMessage, bool bBold, bool bUnderline)
+        {
+            if (m_sLastMessage == sMessage)
+                return;
+
+            FontStyle eStyle = FontStyle.Regular;
+            if (bBold)
+                eStyle |= FontStyle.Bold;
+            if (bUnderline)
+                eStyle |= FontStyle.Underline;
+            JournalTextBox.SelectionFont = new Font(JournalTextBox.Font, eStyle);
+            //JournalTextBox.SelectionStart = JournalTextBox.TextLength;
+            JournalTextBox.AppendText(sMessage + "\n");
+            //JournalTextBox.SelectionLength = sMessage.Trim().Length;
+            //JournalTextBox.SelectionLength = 0;
+            JournalTextBox.ScrollToCaret();
+
+            m_sLastMessage = sMessage;
+        }
+
+        private void AddLootToJournal(string sMessage)
+        {
+            JournalTextBox.AppendText(sMessage + "\n");
+            JournalTextBox.ScrollToCaret();
+        }
+
+        private void ShowLog(bool bRecreate)
+        {
+            if (m_pStoryLine == null)
+                return;
+
+            if (bRecreate)
+                JournalTextBox.Clear();
+
+            if (m_pStoryLine.CurrentAdventure.m_sName != m_sLoggedAdventure)
+            {
+                m_sLoggedAdventure = m_pStoryLine.CurrentAdventure.m_sName;
+                AddToJournal("\n" + m_sLoggedAdventure, true, false);
+            }
+
+            if (m_pStoryLine.CurrentQuest.m_sName != m_sLoggedQuest)
+            {
+                if (m_sLoggedQuest.Length > 0)
+                    AddToJournal("Mission complete: " + m_sLoggedQuest + "!\n", false, true);
+                m_sLoggedQuest = m_pStoryLine.CurrentQuest.m_sName;
+                AddToJournal("New mission: " +  m_sLoggedQuest, false, true);
+            }
         }
 
         private void ShowQuests(bool bRecreate)
@@ -492,6 +550,11 @@ namespace VixenQuest
 
         bool m_bShowViktoryMode = false;
 
+        private int m_iDay = 0;
+        private int m_iDayTime = 5;
+
+        bool m_bLastActionSuccess = false;
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (m_pVixen == null || m_pStoryLine == null)
@@ -601,16 +664,10 @@ namespace VixenQuest
             }
             else
             {
-                if (m_iCurrentStep >= m_iTotalSteps)
+                if (m_iCurrentStep > m_iTotalSteps)
                 {
                     ActionBar.Value = 0;
                     m_iOldValueVP = VixenPotencyBar.Value;
-                    string sLoot = "";
-                    if (m_pStoryLine.CurrentEncounter.m_pReward != null)
-                        sLoot = m_pStoryLine.CurrentEncounter.m_pReward.m_sName;
-                    
-                    //Переходим к следующему действию.
-                    m_pStoryLine.Advance();
 
                     if (m_pStoryLine.CurrentEncounter.m_pTarget != null && m_pStoryLine.CurrentEncounter.FirstAction)
                     {
@@ -631,42 +688,88 @@ namespace VixenQuest
                     m_iOldValue = ActionBar.Value;
                     m_iTotalSteps = m_pVixen.ActionDifficulty(m_pStoryLine.CurrentAction);
                     m_iCurrentStep = 0;
-                    ShowInventory(sLoot);
-                    UpdateTraits();
-                    ShowStats(false);
-                    ShowSkills(false);
-                    ShowClothes(false);
-                    ShowJevelry(false);
                     ShowPlot(false);
                     ShowQuests(false);
+                    ShowLog(false);
+
+                    if (m_pStoryLine.CurrentAction.m_eType == ActionType.Rest ||
+                        m_pStoryLine.CurrentAction.m_eType == ActionType.Move)
+                        m_iDayTime++;
+                    if (m_iDayTime >= 3)
+                    {
+                        m_iDayTime = 0;
+                        m_iDay++;
+                        AddToJournal("\nDay " + m_iDay.ToString() + ".");
+                    }
+                    AddToJournal(m_pStoryLine.CurrentAction.GetDescription());
 
                     m_bShowViktoryMode = false;
                 }
-                else
+                else 
                 {
-                    if (VixenPotencyBar.Value > TargetPotencyBar.Value)
-                        VixenPotencyBar.Visible = true;
-                    else
+                    if (m_iCurrentStep == 0)
                     {
-                        string sEncounterName = m_pStoryLine.CurrentAction.m_pTarget.ShortEncounterName;
-                        //sEncounterName = sEncounterName.Substring(0, 1).ToUpper() + sEncounterName.Substring(1);
-                        ActionLabel.Text = "   Left lying completely drained...";
+                        m_bLastActionSuccess = m_pStoryLine.CurrentAction.m_iTargetPotency < m_pStoryLine.CurrentAction.m_iVixenPotency;
 
-                        VixenPotencyBar.Visible = m_bBlink;
+                        bool bLastEncounterSuccess = m_pStoryLine.CurrentEncounter.Succcess;
+                        bool bEvade = m_pStoryLine.CurrentAction.m_eType == ActionType.Evade;
+                        string sTargetName = "";
+                        if (m_pStoryLine.CurrentEncounter.m_pTarget != null)
+                        {
+                            sTargetName = m_pStoryLine.CurrentEncounter.m_pTarget.LongEncounterName;
+                            sTargetName = sTargetName.Substring(0, 1).ToUpper() + sTargetName.Substring(1);
+                        }
+
+                        //Переходим к следующему действию.
+                        m_pStoryLine.Advance();
+
+                        if (m_pStoryLine.CurrentEncounter.FirstAction)
+                        {
+                            if (!bLastEncounterSuccess && sTargetName != "")
+                            {
+                                if (m_pVixen.m_sLastLoss != "")
+                                    AddToJournal(sTargetName + " wins and takes " + m_pVixen.m_sLastLoss.ToLower() + ".");
+                                else
+                                    AddToJournal("...Failed.");
+                            }
+                            if (bLastEncounterSuccess && sTargetName != "")
+                            {
+                                if (bEvade)
+                                    AddToJournal("...Successfull!");
+                                else
+                                {
+                                    if (m_pVixen.m_sLastLoot != "")
+                                        AddToJournal(sTargetName + " begs for mercy and offers " + m_pVixen.m_sLastLoot.ToLower() + ".");
+                                    else
+                                        AddToJournal(sTargetName + " begs for mercy!");
+                                }
+                            }
+                        }
+
+                        ShowInventory(m_pVixen.m_sLastLoot);
+                        UpdateTraits();
+                        ShowStats(false);
+                        ShowSkills(false);
+                        ShowClothes(false);
+                        ShowJevelry(false);
                     }
 
-                    if (TargetPotencyBar.Value > VixenPotencyBar.Value)
-                        TargetPotencyBar.Visible = true;
-                    else
+                    if (m_bLastActionSuccess)// VixenPotencyBar.Value > TargetPotencyBar.Value)
                     {
-                        string sEncounterName = m_pStoryLine.CurrentAction.m_pTarget.ShortEncounterName;
-                        //sEncounterName = sEncounterName.Substring(0, 1).ToUpper() + sEncounterName.Substring(1);
-                        if(m_pStoryLine.CurrentAction.m_eType == ActionType.Evade)
+                        if (m_pStoryLine.CurrentAction.m_eType == ActionType.Evade)
                             ActionLabel.Text = "   Successfully escaped...";
                         else
                             ActionLabel.Text = "   Departing - tired, but triumphant...";
 
                         TargetPotencyBar.Visible = m_bBlink;
+                        VixenPotencyBar.Visible = true;
+                    }
+                    else
+                    {
+                        ActionLabel.Text = "   Left lying completely drained...";
+
+                        VixenPotencyBar.Visible = m_bBlink;
+                        TargetPotencyBar.Visible = true;
                     }
 
                     if (m_iBlinkCounter++ > 0)
@@ -674,7 +777,7 @@ namespace VixenQuest
                         m_iBlinkCounter = 0;
                         m_bBlink = !m_bBlink;
                     }
-                    
+
                     //VixenPotencyBar.Value = (VixenPotencyBar.Value + m_iShouldBeValueVP) / 2;
                     //TargetPotencyBar.Value = (TargetPotencyBar.Value + m_iShouldBeValueTP) / 2;
 

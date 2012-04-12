@@ -19,7 +19,7 @@ namespace VixenQuest.World
         {
             m_iTier = 0;
             World pMarketplace = new World("Superior Marketplace", this);
-            m_pMarketplace = pMarketplace.m_cLands[0];
+            m_pMarketplace = pMarketplace.m_aLands[0];
 
             //for (int i = 0; i < 6; i++)
             //    UnlockNewTier(i);
@@ -135,7 +135,7 @@ namespace VixenQuest.World
             while (Q.Count > 0 && !bFinished)
             {
                 Land pLand = Q.Dequeue();
-                foreach (Land pLinked in pLand.Links)
+                foreach (Land pLinked in pLand.m_aBorderWith)
                 {
                     if (!pMatrix.ContainsKey(pLinked))
                     {
@@ -160,7 +160,7 @@ namespace VixenQuest.World
             {
                 Land pBestPretender = null;
                 int iBestDistance = int.MaxValue;
-                foreach (Land pLinked in pPoint.Links)
+                foreach (Land pLinked in pPoint.m_aBorderWith)
                 {
                     if (pMatrix.ContainsKey(pLinked) && pMatrix[pLinked] < iBestDistance)
                     {

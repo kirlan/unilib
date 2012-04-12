@@ -37,33 +37,33 @@ namespace VixenQuest
             "Resting ",
             "Relaxing ",
             "Dreaming ",
-            //"Dancing striptease ",
-            //"Dancing naked ",
-            //"Dancing nude ",
-            //"Performing exotic dances ",
-            //"Publicly masturbating ",
-            //"Acting in a striptease show ",
-            //"Acting in a sexual show ",
-            //"Acting in a pornographic show ",
-            //"Participating in a sexual marathon ",
-            //"Winning a sexual marathon ",
-            //"Watching a striptease show ",
-            //"Watching a sexual show ",
-            //"Watching a miraculous pornographic show ",
-            //"Looking for a sponsor ",
-            //"Discussing a new job ",
-            //"Meeting with the employer ",
-            //"Degusting a green wine ",
-            //"Getting drunk ",
-            //"Taking part in a wild orgy ",
-            //"Participating in a tantric ritual ",
+            "Dancing striptease ",
+            "Dancing naked ",
+            "Dancing nude ",
+            "Performing exotic dances ",
+            "Publicly masturbating ",
+            "Acting in a striptease show ",
+            "Acting in a sexual show ",
+            "Acting in a pornographic show ",
+            "Participating in a sexual marathon ",
+            "Winning a sexual marathon ",
+            "Watching a striptease show ",
+            "Watching a sexual show ",
+            "Watching a miraculous pornographic show ",
+            "Looking for a sponsor ",
+            "Discussing a new job ",
+            "Meeting with the employer ",
+            "Degusting a green wine ",
+            "Getting drunk ",
+            "Taking part in a wild orgy ",
+            "Participating in a tantric ritual ",
             //"Spending a couple of days ",
             //"Spending a night ",
             //"Spending a hot night ",
             //"Spending an unforgettable night ",
             //"Spending a few nights ",
             //"Spending a few hot nights ",
-            //"Having a bath ",
+            "Having a bath ",
         };
 
         private static string[] m_aActRestPlace = 
@@ -124,7 +124,7 @@ namespace VixenQuest
         private static string[] m_aActMoveTo = 
         {
             "Trawelling to the ",
-            "Running to the ",
+            //"Running to the ",
             "Moving to the ",
             "Riding to the ",
             "Walking to the ",
@@ -134,7 +134,7 @@ namespace VixenQuest
         private static string[] m_aActMove = 
         {
             "Trawelling through the ",
-            "Running through the ",
+            //"Running through the ",
             "Moving through the ",
             "Riding through the ",
             "Walking through the ",
@@ -201,29 +201,27 @@ namespace VixenQuest
         {
            "Seducing",
            "Charming",
-           "Dancing striptease",
+           //"Dancing striptease",
            "Kissing",
            "Comforting",
+           "Caressing",
            "Undressing",
-           "Posing",
+           //"Posing",
            "Persuading",
            "Negotiating",
-           "Posing naked",
-           "Touching own body",
+           //"Posing naked",
+           //"Touching own body",
+           "Touching",
            //"Masturbating",
            //"Doing a makeup to",
            //"Bodypainting on",
-           "Spying",
-           "Flirting",
+           //"Spying",
+           //"Flirting",
            //"Spyed",
            //"Spying upon a masturbating",
            //"Spying upon a sunbathing",
            //"Spying upon a",        
            //"Seduced",
-           "Catched while bathing nude",
-           "Catched while sunbathing nude",
-           "Catched while dancing nude in the rain",
-           "Catched while masturbating",
         };
 
         private static string[] m_aActFlirt2 = 
@@ -231,13 +229,19 @@ namespace VixenQuest
            "Smothered with kisses",
            "Comforted",
            "Spyed",
-           "Falling in love to",
+           "Kissed",
+           "Charmed",
+           //"Falling in love to",
             //"Negotiated with",
-           "Spying upon a masturbating",
-           "Spying upon a sunbathing",
-           "Spying upon a",
+           //"Spying upon a masturbating",
+           //"Spying upon a sunbathing",
+           //"Spying upon a",
             //"Bodypainted",
-           "Seduced"
+           "Seduced",
+           "Catched while bathing nude",
+           "Catched while sunbathing nude",
+           "Catched while dancing nude in the rain",
+           "Catched while masturbating",
         };
 
         private static string[] m_aActFlirtAnimal1 = 
@@ -245,11 +249,11 @@ namespace VixenQuest
            "Luring",
            "Decoying",
            "Feeding",
-           "Spying",
-           "Catched while bathing nude",
-           "Catched while sunbathing nude",
-           "Catched while dancing nude in the rain",
-           "Catched while masturbating",
+           //"Spying",
+           //"Catched while bathing nude",
+           //"Catched while sunbathing nude",
+           //"Catched while dancing nude in the rain",
+           //"Catched while masturbating",
         };
 
         private static string[] m_aActFlirtAnimal2 = 
@@ -287,6 +291,27 @@ namespace VixenQuest
         public ActionType m_eType;
 
         public Item m_pLoot;
+
+        public string GetDescription()
+        {
+            if (m_pTarget == null)
+                return m_sName;
+            else
+            {
+                string sName = m_sName.Trim();
+                while (sName.EndsWith("."))
+                    sName = sName.Remove(sName.Length - 1);
+                if (Passive)
+                {
+                    if (m_eType == ActionType.Evade)
+                        return sName + " from " + m_pTarget.LongEncounterName + "...";
+                    else
+                        return sName + " by " + m_pTarget.LongEncounterName + "...";
+                }
+                else
+                    return sName + " " + m_pTarget.LongEncounterName + "...";
+            }
+        }
 
         private string GetActionName(ActionType eType, Vixen pVixen)
         {
@@ -698,19 +723,19 @@ namespace VixenQuest
                     part1 = Rnd.Get(m_aActRest.Length);
                     m_sName = m_aActRest[part1];
 
-                    //if (Rnd.OneChanceFrom(2))
-                    //{
-                    //    int part2 = Rnd.Get(m_aActRestPlace.Length);
-                    //    m_sName += m_aActRestPlace[part2];
-                    //}
-                    //else
-                    //{
-                    //    int part2 = Rnd.Get(m_aActRestOwnedPlace.Length);
-                    //    m_sName += m_aActRestOwnedPlace[part2];
+                    if (Rnd.OneChanceFrom(2))
+                    {
+                        int part2 = Rnd.Get(m_aActRestPlace.Length);
+                        m_sName += m_aActRestPlace[part2];
+                    }
+                    else
+                    {
+                        int part2 = Rnd.Get(m_aActRestOwnedPlace.Length);
+                        m_sName += m_aActRestOwnedPlace[part2];
 
-                    //    int part3 = Rnd.Get(m_aActRestPlaceOwner.Length);
-                    //    m_sName += m_aActRestPlaceOwner[part3];
-                    //}
+                        int part3 = Rnd.Get(m_aActRestPlaceOwner.Length);
+                        m_sName += m_aActRestPlaceOwner[part3];
+                    }
                     m_sName += "...";
 
                     m_iVixenPotency = pVixen.EffectiveStats[Stat.Potency];

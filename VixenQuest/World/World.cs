@@ -5,6 +5,7 @@ using System.Text;
 using Random;
 using NameGen;
 using System.Drawing;
+using BenTools.Mathematics;
 
 namespace VixenQuest.World
 {
@@ -20,7 +21,7 @@ namespace VixenQuest.World
 
         public Universe m_pUniverse;
 
-        public List<Land> m_cLands = new List<Land>();
+        public Land[] m_aLands = null; 
 
         private const int m_iWorldScale = 150;
 
@@ -29,383 +30,311 @@ namespace VixenQuest.World
             get { return m_iWorldScale; }
         }
 
-        private const int m_iMinDist = 25;
-        private const int m_iMaxDist = 35;
-
         public class LandPtr
         { 
             public Land m_pLand = null;
         }
 
-        public Dictionary<int, Dictionary<int, LandPtr>> m_cMap = new Dictionary<int, Dictionary<int, LandPtr>>();
-
+        private int m_iLocationsCount = 150;
+        
         private void GenerateMap()
         {
-            int iX, iY;
+            m_iLocationsCount = (int)(Math.Pow(m_iWorldScale, 2) * Math.PI / 1000);
 
-            double fAngle = 0;
+            bool bOK = true;
             do
             {
-                iX = (int)(m_iWorldScale * Math.Cos(fAngle));
-                iY = (int)(m_iWorldScale * Math.Sin(fAngle));
-                Land pNewLand = AddLand(iX, iY);
-                pNewLand.Type = LandType.Forbidden;
-                pNewLand.Assign(null, false);
-
-                int iDelta = m_iMinDist + Rnd.Get(m_iMaxDist - m_iMinDist);
-                fAngle += (double)iDelta / m_iWorldScale;
+                BuildRandomGrid();
+                bOK = CalculateVoronoi();
             }
-            while (fAngle < 2 * Math.PI);
+            while (!bOK);
 
-            int iLocationsCount = (int)(Math.Pow(m_iWorldScale, 2) * Math.PI / 1000);
-            while (m_cLands.Count < iLocationsCount)
+            //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
+            foreach (Land pLand in m_aLands)
             {
-                do
-                {
-                    iX = m_iWorldScale - Rnd.Get(m_iWorldScale * 2);
-                    iY = m_iWorldScale - Rnd.Get(m_iWorldScale * 2);
-                }
-                while (!PossibleLocation(iX, iY));
-
-                AddLand(iX, iY);
+                pLand.BuildBorder(m_iWorldScale * 2);
+                pLand.CorrectCenter();
             }
-
-            List<Land> cEmpty = new List<Land>();
-            for (int i = 0; i < m_cLands.Count; i++)
-            {
-                if (m_cLands[i].Links.Count == 0)
-                    cEmpty.Add(m_cLands[i]);
-            }
-
-            foreach (Land pLand in cEmpty)
-                m_cLands.Remove(pLand);
         }
 
-        private Land AddLand(int iX, int iY)
+        public Vertex[] m_aVertexes = null;
+
+        private bool CalculateVoronoi()
         {
-            Land pNewLand = new Land(this, iX, iY);
-            m_cLands.Add(pNewLand);
+            Dictionary<BTVector, Land> cData = new Dictionary<BTVector, Land>();
+            foreach (Land pLoc in m_aLands)
+                cData[new BTVector(pLoc.m_pCenter.X, pLoc.m_pCenter.Y)] = pLoc;
 
-            int k;
-            int try_count = -1;
-            do
+            //Строим диаграмму вороного - определяем границы локаций
+            VoronoiGraph graph = Fortune.ComputeVoronoiGraph(cData.Keys);
+            Dictionary<BTVector, Vertex> cVertexes = new Dictionary<BTVector, Vertex>();
+
+            //Переводим данные из диаграммы Вороного в наш формат
+            try
             {
-                k = MakeLink(pNewLand);
-                try_count++;
-                //if (k == -1)
-                //    k = pNewLocation.MaxLinks + 1;
+                foreach (VoronoiEdge pEdge in graph.Edges)
+                    AddEdge(cData, cVertexes, pEdge);
             }
-            while (try_count < 2 * pNewLand.MaxLinks);
-            //while (Rnd.Get(pNewLocation.MaxLinks * pNewLocation.MaxLinks) <= k * k && try_count < 2 * pNewLocation.MaxLinks) ;
+            catch (Exception ex)
+            {
+                //бывает, алгоритм выдаёт данные, которые мы не можем корректно перевести (нулевые рёбра, etc.)
+                //в этом случае всё приходится начинать заново
+                return false;
+            }
 
-            return pNewLand;
+            m_aVertexes = new List<Vertex>(cVertexes.Values).ToArray();
+
+            foreach (Land pLoc in m_aLands)
+                pLoc.FillBorderWithKeys();
+
+            return true;
         }
 
-        private int MakeLink(Land pNewLand)
+        private bool AddEdge(Dictionary<BTVector, Land> cData, Dictionary<BTVector, Vertex> cVertexes, VoronoiEdge pEdge)
         {
-            float fDist;
-            int k;
-            for (int i = 0; i < m_cLands.Count; i++)
+            Land pLoc1 = null;
+            Land pLoc2 = null;
+            if (cData.ContainsKey(pEdge.LeftData))
+                pLoc1 = cData[pEdge.LeftData];
+            if (cData.ContainsKey(pEdge.RightData))
+                pLoc2 = cData[pEdge.RightData];
+
+            if (pLoc1.m_pOrigin != null && pLoc2.m_pOrigin != null)
+                return false;
+
+            if (pEdge.VVertexA == Fortune.VVUnkown || pEdge.VVertexB == Fortune.VVUnkown)
             {
-                fDist = (m_cLands[i].X - pNewLand.X) * (m_cLands[i].X - pNewLand.X) +
-                    (m_cLands[i].Y - pNewLand.Y) * (m_cLands[i].Y - pNewLand.Y);
-                if (m_cLands[i] != pNewLand && fDist < 2 * m_iMaxDist * m_iMaxDist)
-                {
-                    k = CreateLink(m_cLands[i], pNewLand);
-                    if (k != -1)
-                        return k;
-                }
+                pLoc1.m_bUnclosed = true;
+                pLoc2.m_bUnclosed = true;
+                return false;
             }
-            return -1;
-        }
-
-        private int CreateLink(Land pLand1, Land pLand2)
-        {
-            if (pLand1.Links.Contains(pLand2))
-                return -1;
-
-            if (pLand1.Links.Count >= pLand1.MaxLinks || pLand2.Links.Count >= pLand2.MaxLinks)
-                return -1;
-
-            double k1, b1;
-            //						коеффициент наклона потенциальной связи
-            if (pLand1.X - pLand2.X != 0)
-                k1 = (double)(pLand1.Y - pLand2.Y) / (pLand1.X - pLand2.X);
-            else
-                k1 = (double)(pLand1.Y - pLand2.Y) / (pLand1.X - pLand2.X + 0.00000001);
-
-            b1 = (double)pLand2.Y - pLand2.X * k1;
-
-
-            //	Проверка перекрёстков
-            for (int i = 0; i < m_cLands.Count; i++)
+            if (pEdge.VVertexA.data[0] < -m_iWorldScale * 2 ||
+                pEdge.VVertexA.data[0] > m_iWorldScale * 2 ||
+                pEdge.VVertexA.data[1] < -m_iWorldScale * 2 ||
+                pEdge.VVertexA.data[1] > m_iWorldScale * 2 ||
+                pEdge.VVertexB.data[0] < -m_iWorldScale * 2 ||
+                pEdge.VVertexB.data[0] > m_iWorldScale * 2 ||
+                pEdge.VVertexB.data[1] < -m_iWorldScale * 2 ||
+                pEdge.VVertexB.data[1] > m_iWorldScale * 2)
             {
-                Land pLand3 = m_cLands[i];
-                if (pLand3 != pLand1 &&
-                    pLand3 != pLand2)
+                pLoc1.m_bUnclosed = true;
+                pLoc2.m_bUnclosed = true;
+                return false;
+            }
+
+            if (!cVertexes.ContainsKey(pEdge.VVertexA))
+                cVertexes[pEdge.VVertexA] = new Vertex(pEdge.VVertexA);
+
+            Vertex pVertexA = cVertexes[pEdge.VVertexA];
+
+            if (!cVertexes.ContainsKey(pEdge.VVertexB))
+                cVertexes[pEdge.VVertexB] = new Vertex(pEdge.VVertexB);
+
+            Vertex pVertexB = cVertexes[pEdge.VVertexB];
+
+            //Для определения того, лежат ли точки A и B относительно центра локации L1 по часовой стрелке
+            //или против, рассчитаем z-координату векторного произведения векторов (L1, A) и (L1, B).
+            //Если она будет положительна, то все три вектора (направления на вершины из центра локации и 
+            //их векторное произведение) составляют "правую тройку", т.е. точки A и B лежат против часовой 
+            //стрелки относительно центра.
+            //Мы же, для определённости будем все вектора границы локации приводить к направлению "по часовой стрелке".
+
+            float fAx = pVertexA.X - pLoc1.X;
+            float fAy = pVertexA.Y - pLoc1.Y;
+            float fBx = pVertexB.X - pLoc1.X;
+            float fBy = pVertexB.Y - pLoc1.Y;
+
+            bool bSwap = false;
+            if (fAx * fBy > fAy * fBx)
+                bSwap = true;
+
+            if (bSwap)
+            {
+                Vertex pVertexC = pVertexA;
+                pVertexA = pVertexB;
+                pVertexB = pVertexC;
+            }
+
+            if (!pVertexA.m_cVertexes.Contains(pVertexB))
+                pVertexA.m_cVertexes.Add(pVertexB);
+            if (!pVertexB.m_cVertexes.Contains(pVertexA))
+                pVertexB.m_cVertexes.Add(pVertexA);
+
+            if (pLoc1 != null && pLoc1.m_pOrigin == null)
+            {
+                if (!pVertexA.m_cLocations.Contains(pLoc1))
+                    pVertexA.m_cLocations.Add(pLoc1);
+                if (!pVertexB.m_cLocations.Contains(pLoc1))
+                    pVertexB.m_cLocations.Add(pLoc1);
+
+                if (pLoc2 != null)
                 {
-                    for (int j = 0; j < pLand3.Links.Count; j++)
+                    Line pLine = new Line(pVertexA, pVertexB);
+                    if (pLine.m_fLength > 0)
                     {
-                        Land pLand4 = pLand3.Links[j];
-                        if (pLand4 != pLand1 &&
-                            pLand4 != pLand2)
+                        foreach (List<Line> cLines in pLoc1.BorderWith.Values)
+                            if (cLines[0].m_pPoint1 == pVertexA)
+                                throw new Exception("Wrong edge!");
+                        //if(!bTwin)
+                        if (pLoc2.m_pOrigin == null)
                         {
-                            //	Нашли пару соединённых пещер, не входящих в рассматриваемую пару.
-                            double k2, b2;
-                            //						коеффициент наклона существующей связи
-                            if (pLand3.X - pLand4.X != 0)
-                                k2 = (double)(pLand3.Y - pLand4.Y) / (pLand3.X - pLand4.X);
-                            else
-                                k2 = (double)(pLand3.Y - pLand4.Y) / (pLand3.X - pLand4.X + 0.00000001);
-
-                            b2 = (double)pLand4.Y - pLand4.X * k2;
-
-                            if (k1 != k2)
-                            {
-                                double x1;
-                                x1 = (b2 - b1) / (k1 - k2);
-
-                                //						ЕСЛИ точка пересечения где-то здесь
-                                if (((x1 > pLand1.X && x1 < pLand2.X) ||
-                                     (x1 < pLand1.X && x1 > pLand2.X)) &&
-                                    ((x1 > pLand3.X && x1 < pLand4.X) ||
-                                     (x1 < pLand3.X && x1 > pLand4.X)))
-                                {
-                                    return -1;
-                                }
-                            }
+                            pLoc1.BorderWith[pLoc2] = new List<Line>();
+                            pLoc1.BorderWith[pLoc2].Add(pLine);
                         }
+                        else
+                        {
+                            pLoc1.BorderWith[pLoc2.m_pOrigin] = new List<Line>();
+                            pLoc1.BorderWith[pLoc2.m_pOrigin].Add(pLine);
+                        }
+                        //else
+                        //    pLoc1.m_cBorderWith[pLoc2] = new Line(pVertexB, pVertexA);
                     }
                 }
             }
 
-            pLand1.Links.Add(pLand2);
-            pLand2.Links.Add(pLand1);
-
-            return pLand1.Links.Count;
-        }
-
-        private bool PossibleLocation(int iX, int iY)
-        {
-            float fDist = iX * iX + iY * iY;
-            if (fDist > m_iWorldScale * m_iWorldScale)
-                return false;
-
-            bool result = false;
-
-            for (int i = 0; i < m_cLands.Count; i++)
+            if (pLoc2 != null && pLoc2.m_pOrigin == null)
             {
-                fDist = (m_cLands[i].X - iX) * (m_cLands[i].X - iX) + (m_cLands[i].Y - iY) * (m_cLands[i].Y - iY);
-                if (fDist < m_iMinDist * m_iMinDist)
-                    return false;
-                if (fDist < m_iMaxDist * m_iMaxDist && m_cLands[i].Links.Count < m_cLands[i].MaxLinks)
-                    result = true;
+                if (!pVertexA.m_cLocations.Contains(pLoc2))
+                    pVertexA.m_cLocations.Add(pLoc2);
+                if (!pVertexB.m_cLocations.Contains(pLoc2))
+                    pVertexB.m_cLocations.Add(pLoc2);
+
+                if (pLoc1 != null)
+                {
+                    Line pLine = new Line(pVertexB, pVertexA);
+                    if (pLine.m_fLength > 0)
+                    {
+                        foreach (List<Line> cLines in pLoc2.m_cBorderWith.Values)
+                            if (cLines[0].m_pPoint1 == pVertexB)
+                                throw new Exception("Wrong edge!");
+                        //if (!bTwin)
+                        if (pLoc1.m_pOrigin == null)
+                        {
+                            pLoc2.BorderWith[pLoc1] = new List<Line>();
+                            pLoc2.BorderWith[pLoc1].Add(pLine);
+                        }
+                        else
+                        {
+                            pLoc2.BorderWith[pLoc1.m_pOrigin] = new List<Line>();
+                            pLoc2.BorderWith[pLoc1.m_pOrigin].Add(pLine);
+                        }
+                        //else
+                        //    pLoc2.m_cBorderWith[pLoc1] = new Line(pVertexA, pVertexB);
+                    }
+                }
             }
 
-            if (m_cLands.Count < 1)
-                return true;
+            return true;
+        }
 
-            return result;
+        private void BuildRandomGrid()
+        {
+            List<Land> cLocations = new List<Land>();
+
+            float kr = (int)(Math.Sqrt((float)m_iLocationsCount));
+
+            float dkr = m_iWorldScale / (kr * 2);
+
+            //Создаём периметр карты из "запретных" локаций, для того чтобы получить ровную кромку.
+            for (int ii = 0; ii <= kr; ii++)
+            {
+                int xx = (int)(ii * 2 * m_iWorldScale / kr);
+
+                Land pLocation11 = new Land(this);
+                pLocation11.Create(cLocations.Count, m_iWorldScale - xx, m_iWorldScale - dkr);
+                pLocation11.m_bBorder = xx == 0 || xx == 2 * m_iWorldScale;//false;
+                cLocations.Add(pLocation11);
+
+                Land pLocation12 = new Land(this);
+                pLocation12.Create(cLocations.Count, m_iWorldScale - xx, m_iWorldScale + dkr);
+                pLocation12.m_bBorder = true;
+                cLocations.Add(pLocation12);
+
+                Land pLocation21 = new Land(this);
+                pLocation21.Create(cLocations.Count, m_iWorldScale - xx, -m_iWorldScale - dkr);
+                pLocation21.m_bBorder = true;
+                cLocations.Add(pLocation21);
+
+                Land pLocation22 = new Land(this);
+                pLocation22.Create(cLocations.Count, m_iWorldScale - xx, -m_iWorldScale + dkr);
+                pLocation22.m_bBorder = xx == 0 || xx == 2 * m_iWorldScale;//false;
+                cLocations.Add(pLocation22);
+            }
+
+            for (int jj = 0; jj <= kr; jj++)
+            {
+                int yy = (int)(jj * 2 * m_iWorldScale / kr);
+
+                Land pLocation11 = new Land(this);
+                pLocation11.Create(cLocations.Count, m_iWorldScale - dkr, m_iWorldScale - yy);
+                pLocation11.m_bBorder = yy == 0 || yy == 2 * m_iWorldScale;//false;
+                cLocations.Add(pLocation11);
+
+                Land pLocation12 = new Land(this);
+                pLocation12.Create(cLocations.Count, m_iWorldScale + dkr, m_iWorldScale - yy);
+                pLocation12.m_bBorder = true;
+                cLocations.Add(pLocation12);
+
+                Land pLocation21 = new Land(this);
+                pLocation21.Create(cLocations.Count, -m_iWorldScale - dkr, m_iWorldScale - yy);
+                pLocation21.m_bBorder = true;
+                cLocations.Add(pLocation21);
+
+                Land pLocation22 = new Land(this);
+                pLocation22.Create(cLocations.Count, -m_iWorldScale + dkr, m_iWorldScale - yy);
+                pLocation22.m_bBorder = yy == 0 || yy == 2 * m_iWorldScale;//false;
+                cLocations.Add(pLocation22);
+            }
+
+            //Добавляем центры остальных локаций в случайные позиции внутри периметра.
+            for (int i = 0; i < m_iLocationsCount; i++)
+            {
+                Land pLocation = new Land(this);
+                pLocation.Create(cLocations.Count, m_iWorldScale - dkr * 2 - Rnd.Get(m_iWorldScale * 2 - 4 * dkr), m_iWorldScale - dkr * 2 - Rnd.Get(m_iWorldScale * 2 - 4 * dkr));
+                cLocations.Add(pLocation);
+            }
+
+            m_aLands = cLocations.ToArray();
         }
 
         private void PopulateMap()
         {
-            for (int i = 0; i < m_cStates.Count; i++)
+            foreach (State pState in m_cStates)
             {
                 int iLoc = -1;
                 do
                 {
-                    iLoc = Rnd.Get(m_cLands.Count);
+                    iLoc = Rnd.Get(m_aLands.Length);
                 }
-                while (m_cLands[iLoc].m_pState != null || m_cLands[iLoc].Type == LandType.Forbidden);
+                while (m_aLands[iLoc].m_pState != null || m_aLands[iLoc].Type == LandType.Forbidden);
 
-                m_cLands[iLoc].Assign(m_cStates[i], true);
+                m_aLands[iLoc].Assign(pState, true);
             }
 
             bool bExpanding = false;
             do
             {
                 bExpanding = false;
-                for (int i = 0; i < m_cLands.Count; i++)
+                foreach (Land pLand in m_aLands)
                 {
-                    if (m_cLands[i].m_pState != null)
+                    if (pLand.m_pState != null)
                     {
                         List<Land> cPossibleDirections = new List<Land>();
-                        for (int j = 0; j < m_cLands[i].Links.Count; j++)
+                        foreach (Land pLink in pLand.m_aBorderWith)
                         {
-                            if (m_cLands[i].Links[j].m_pState == null && m_cLands[i].Links[j].Type != LandType.Forbidden)
-                                cPossibleDirections.Add(m_cLands[i].Links[j]);
+                            if (pLink.m_pState == null && pLink.Type != LandType.Forbidden)
+                                cPossibleDirections.Add(pLink);
                         }
                         if (cPossibleDirections.Count > 0)
                         {
                             int iLoc = Rnd.Get(cPossibleDirections.Count);
-                            cPossibleDirections[iLoc].Assign(m_cLands[i].m_pState, false);
+                            cPossibleDirections[iLoc].Assign(pLand.m_pState, false);
                             bExpanding = true;
                         }
                     }
                 }
             }
             while (bExpanding);
-        }
-
-        /// <summary>
-        /// Определяем границы провинций
-        /// </summary>
-        /// <param name="lake"></param>
-        private void BuildProvinceMap(int lake)
-        {
-            double lake_modifer;
-
-	        if(lake>15)
-		        lake_modifer = lake-14;
-	        else
-		        lake_modifer = 1.0/(16-lake);
-        //=========================
-            //квадраты расстояний от данной точки до центров всех провинций
-	        Dictionary<Land, int>	distance = new Dictionary<Land,int>();
-	        Dictionary<Land, double>	distance_ = new Dictionary<Land,double>();
-
-
-            //последовательно перебираем все точки карты
-	        foreach(int xx in m_cMap.Keys)
-	        {
-		        foreach(int yy in m_cMap[xx].Keys)
-		        {
-			        double mim_dist;
-			        mim_dist = m_iWorldScale*m_iWorldScale*2;
-			        Dictionary<Land,int>	conn_count = new Dictionary<Land,int>();
-			        
-                    //считаем квадраты расстояний от данной точки до центров всех провинций
-                    //запоминаем только те земли, которые попадают в радиус m_iMaxDist
-                    foreach(Land pLand in m_cLands)
-			        {
-                        int iDistSquare = (xx-pLand.X)*(xx-pLand.X) + (yy-pLand.Y)*(yy-pLand.Y);
-                        if (iDistSquare < m_iMaxDist * m_iMaxDist)
-                            distance[pLand] = iDistSquare;
-			        }
-                    //для каждой провинции в радиусе m_iMaxDist считаем количество смежных, так же входящих в этот радиус
-                    foreach (Land pLand1 in distance.Keys)
-			        {
-				        conn_count[pLand1]=1;
-        		        foreach(Land pLand2 in pLand1.Links)
-					        if(distance.ContainsKey(pLand2))
-						        conn_count[pLand1]++;
-			        }
-
-                    //перебираем все провинции и смотрим, может ли эта точка принадлежать им
-			        foreach(Land pLand1 in distance.Keys)
-			        {
-                        if (distance[pLand1] < m_iMaxDist * m_iMaxDist * 0.81)
-                        {
-                            double mif_dist; //коеффициент претензий i-того города на данную точку
-                            mif_dist = 2 * m_iMaxDist;
-                            distance_[pLand1] = Math.Sqrt(distance[pLand1]);
-                            //перебираем все провинции, центры которых лежат в радиусе m_iMaxDist от нашей точки
-                            foreach (Land pLand2 in distance.Keys)
-                            {
-                                if (pLand2 != pLand1)
-                                {
-                                    //квадрат расстояния между центрами провинций
-                                    double tdist = Math.Sqrt((pLand2.X - pLand1.X) * (pLand2.X - pLand1.X) + (pLand2.Y - pLand1.Y) * (pLand2.Y - pLand1.Y));
-                                    if (tdist < m_iMaxDist * 1.8) //рассматриваем только те j-тые города, которые реально могут быть соединены с i-тым городом
-                                    {
-                                        double mx, my;
-                                        mx = (double)(conn_count[pLand2] * pLand1.X + conn_count[pLand1] * pLand2.X) / (conn_count[pLand1] + conn_count[pLand2]);
-                                        my = (double)(conn_count[pLand2] * pLand1.Y + conn_count[pLand1] * pLand2.Y) / (conn_count[pLand1] + conn_count[pLand2]);
-                                        double ddist;
-                                        ddist = (double)(xx - mx) * (xx - mx) + (yy - my) * (yy - my);
-                                        double mdist;
-                                        mdist = (double)(pLand1.X - mx) * (pLand1.X - mx) + (pLand1.Y - my) * (pLand1.Y - my);
-                                        double miff_dist; //вклад j-того города в коеффициент претензий i-того города на данную точку
-                                        if (pLand2.Links.Contains(pLand1))
-                                        {
-                                            miff_dist = 1.0 - Math.Sqrt(mdist) / (Math.Sqrt(distance[pLand1]) + Math.Sqrt(ddist));
-                                            miff_dist = miff_dist * miff_dist;
-                                        }
-                                        else
-                                        {
-                                            miff_dist = Math.Sqrt(mdist) / (Math.Sqrt(distance[pLand1]) + Math.Sqrt(ddist));
-                                            double dist_mod;
-                                            dist_mod = m_iMaxDist * 1.8 / tdist;
-                                            miff_dist = (1.0 - (1.0 - miff_dist) * (1.0 - miff_dist)) * 2.0 * dist_mod * dist_mod;
-                                        }
-                                        mif_dist = mif_dist * 1.9 * miff_dist;
-                                    }
-                                }
-                            }
-                            if (distance[pLand1] > (m_iMinDist / 4) * (m_iMinDist / 4))
-                                distance_[pLand1] = (Math.Sqrt(distance[pLand1]) - m_iMinDist / 3.5) * (Math.Sqrt(distance[pLand1]) - m_iMinDist / 3.5) * mif_dist * 0.0005 * 4 / conn_count[pLand1];
-                            else
-                                distance_[pLand1] = 14.0 * (distance[pLand1] - (m_iMinDist / 4) * (m_iMinDist / 4) - 50.0);
-                        }
-                        else
-                            distance_[pLand1] = mim_dist;
-			        }
-
-                    //ищем в рабочем радиусе тройки соединённых между собой провинций
-                    foreach (Land pLand1 in distance.Keys)
-                    {
-                            foreach (Land pLand2 in pLand1.Links)
-                            {
-                                if (distance.ContainsKey(pLand2))
-						        {
-                                    foreach (Land pLand3 in pLand1.Links)
-                                    {
-                                        if (pLand2.Links.Contains(pLand3) && distance.ContainsKey(pLand3))
-								        {
-									        double a,b,c,a1,b1,c1,s1,s2,s3,s4;
-                                            a = (double)Math.Sqrt((pLand1.X - pLand2.X) * (pLand1.X - pLand2.X) + (pLand1.Y - pLand2.Y) * (pLand1.Y - pLand2.Y));//расстояние между 1 и 2 провинциями
-                                            b = (double)Math.Sqrt((pLand1.X - pLand3.X) * (pLand1.X - pLand3.X) + (pLand1.Y - pLand3.Y) * (pLand1.Y - pLand3.Y));//расстояние между 1 и 3 провинциями
-                                            c = (double)Math.Sqrt((pLand3.X - pLand2.X) * (pLand3.X - pLand2.X) + (pLand3.Y - pLand2.Y) * (pLand3.Y - pLand2.Y));//расстояние между 2 и 3 провинциями
-                                            c1 = (double)Math.Sqrt(distance[pLand1]);
-                                            b1 = (double)Math.Sqrt(distance[pLand2]);
-                                            a1 = (double)Math.Sqrt(distance[pLand3]);
-                                            s1 = (double)Math.Sqrt(Math.Abs((a + b + c) * (a + b - c) * (b + c - a) * (a + c - b)));
-                                            s2 = (double)Math.Sqrt(Math.Abs((a1 + b1 + c) * (a1 + b1 - c) * (b1 + c - a1) * (a1 + c - b1)));
-                                            s3 = (double)Math.Sqrt(Math.Abs((a + b1 + c1) * (a + b1 - c1) * (b1 + c1 - a) * (a + c1 - b1)));
-                                            s4 = (double)Math.Sqrt(Math.Abs((a1 + b + c1) * (a1 + b - c1) * (b + c1 - a1) * (a1 + c1 - b)));
-									        if(s2+s3+s4 <= s1*1.15)
-									        {
-										        distance_[pLand1] = distance_[pLand1]/lake_modifer;
-										        distance_[pLand2] = distance_[pLand2]/lake_modifer;
-										        distance_[pLand3] = distance_[pLand3]/lake_modifer;
-									        }
-								        }
-							        }
-						        }
-					        }
-			        }
-
-                    mim_dist = int.MaxValue;
-                    foreach (Land pLand in distance_.Keys)
-                    {
-				        if(distance_[pLand] < mim_dist)
-				        {
-					        mim_dist = distance_[pLand];
-					        m_cMap[xx][yy].m_pLand = pLand;
-				        }
-			        }
-                    //if(mim_dist > m_iMinDist/2)
-                    //{
-                    //    m_cMap[xx][yy] = null;
-                    //}
-
-                    //if (m_cMap[xx][yy] != null)
-                    //{
-                    //    //if (xx < m_cMap[xx][yy].minx)
-                    //    //    m_cMap[xx][yy].minx = xx;
-                    //    //if (yy < m_cMap[xx][yy].miny)
-                    //    //    m_cMap[xx][yy].miny = yy;
-                    //    //if (xx > m_cMap[xx][yy].maxx - 1)
-                    //    //    m_cMap[xx][yy].maxx = xx + 1;
-                    //    //if (yy > m_cMap[xx][yy].maxy - 1)
-                    //    //    m_cMap[xx][yy].maxy = yy + 1;
-
-                    //    //m_cMap[xx][yy].size++;
-                    //    overallSize++;
-                    //}
-		        }
-	        }
         }
 
         public List<Race> m_cLocalRaces = new List<Race>();
@@ -416,12 +345,6 @@ namespace VixenQuest.World
         private World()
             : base()
         {
-            for (int i = -m_iWorldScale; i < m_iWorldScale; i++)
-            {
-                m_cMap[i] = new Dictionary<int, LandPtr>();
-                for (int j = -m_iWorldScale; j < m_iWorldScale; j++)
-                    m_cMap[i][j] = new LandPtr();
-            }
         }
 
         /// <summary>
@@ -440,7 +363,8 @@ namespace VixenQuest.World
 
             Land pLand = new Land(this, sName);
             //pLand.Assign(m_cStates[0], false);
-            m_cLands.Add(pLand);
+            m_aLands = new Land[1];
+            m_aLands[0] = pLand;
         }
 
         /// <summary>
@@ -534,7 +458,6 @@ namespace VixenQuest.World
             }
 
             PopulateMap();
-            BuildProvinceMap(Rnd.Get(30));
         }
 
         private Race GetRandomRace(Sapience eSapience)
@@ -581,7 +504,7 @@ namespace VixenQuest.World
         public override Opponent[] AvailableOpponents()
         {
             if (m_cAvailableOpponents.Count == 0)
-                foreach (Land land in m_cLands)
+                foreach (Land land in m_aLands)
                     m_cAvailableOpponents.AddRange(land.AvailableOpponents());
 
             return m_cAvailableOpponents.ToArray();
