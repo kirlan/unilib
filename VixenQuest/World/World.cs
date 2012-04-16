@@ -6,6 +6,7 @@ using Random;
 using NameGen;
 using System.Drawing;
 using BenTools.Mathematics;
+using VixenQuest.People;
 
 namespace VixenQuest.World
 {

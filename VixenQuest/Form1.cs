@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using Random;
 using VixenQuest.World;
+using VixenQuest.People;
+using VixenQuest.Story;
 
 namespace VixenQuest
 {
@@ -78,8 +80,8 @@ namespace VixenQuest
 
         private void AddToJournal(string sMessage, bool bBold, bool bUnderline)
         {
-            if (m_sLastMessage == sMessage)
-                return;
+            //if (m_sLastMessage == sMessage)
+            //    return;
 
             FontStyle eStyle = FontStyle.Regular;
             if (bBold)
@@ -94,12 +96,6 @@ namespace VixenQuest
             JournalTextBox.ScrollToCaret();
 
             m_sLastMessage = sMessage;
-        }
-
-        private void AddLootToJournal(string sMessage)
-        {
-            JournalTextBox.AppendText(sMessage + "\n");
-            JournalTextBox.ScrollToCaret();
         }
 
         private void ShowLog(bool bRecreate)
@@ -315,10 +311,10 @@ namespace VixenQuest
                 newItem.SubItems.Add("");
                 JevelryListView.Items.Add(newItem);
 
-                if(m_pVixen.Gender == Gender.Male)
-                    newItem = new ListViewItem("Cock");
-                else
+                if (m_pVixen.HaveCunt)
                     newItem = new ListViewItem("Clit");
+                else
+                    newItem = new ListViewItem("Cock");
                 newItem.SubItems.Add("");
                 JevelryListView.Items.Add(newItem);
             }
@@ -485,10 +481,10 @@ namespace VixenQuest
             TraitsListView.Items[1].SubItems[1].Text = m_pVixen.GenderString;
             TraitsListView.Items[2].SubItems[1].Text = m_pVixen.RaceString;
             TraitsListView.Items[3].SubItems[1].Text = m_pVixen.OrientationString;
-            if(m_pVixen.Gender == Gender.Male)
-                TraitsListView.Items[4].SubItems[1].Text = m_pVixen.Class.m_sNameM;
-            else
+            if (m_pVixen.HaveCunt)
                 TraitsListView.Items[4].SubItems[1].Text = m_pVixen.Class.m_sNameF;
+            else
+                TraitsListView.Items[4].SubItems[1].Text = m_pVixen.Class.m_sNameM;
             TraitsListView.Items[5].SubItems[1].Text = m_pVixen.Level.ToString();
 
             //ExperienceBar.Value = 0;

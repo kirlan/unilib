@@ -6,6 +6,8 @@ using Random;
 using nsUniLibXML;
 using System.Xml;
 using VixenQuest.World;
+using VixenQuest.People;
+using VixenQuest.Story;
 
 namespace VixenQuest
 {
@@ -47,7 +49,7 @@ namespace VixenQuest
             Fuck(pTarget);
         }
 
-        public Loot(Action pAction)
+        public Loot(VQAction pAction)
         {
             m_sName = "";
 
@@ -123,7 +125,7 @@ namespace VixenQuest
 
         private void Fuck(Opponent pTarget)
         {
-            string sNameOf = pTarget.SingleName.Trim();
+            string sNameOf = pTarget.GetDescription();
             if (sNameOf.EndsWith("s"))
                 sNameOf += "'";
             else

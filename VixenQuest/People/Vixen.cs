@@ -6,8 +6,9 @@ using Random;
 using nsUniLibXML;
 using System.Xml;
 using VixenQuest.World;
+using VixenQuest.Story;
 
-namespace VixenQuest
+namespace VixenQuest.People
 {
     public enum VixenRace
     { 
@@ -106,7 +107,7 @@ namespace VixenQuest
                     case VixenRace.Angel:
                         return "Angel";
                     case VixenRace.CatPeople:
-                        if (m_eGender == Gender.Female || m_eGender == Gender.Shemale)
+                        if (HaveCunt)
                             return "Catwoman";
                         else
                             return "Catman";
@@ -117,7 +118,7 @@ namespace VixenQuest
                     case VixenRace.Faery:
                         return "Faery";
                     case VixenRace.HellDemon:
-                        if (m_eGender == Gender.Female || m_eGender == Gender.Shemale)
+                        if (HaveCunt)
                             return "Horned Demoness";
                         else
                             return "Horned Demon";
@@ -126,7 +127,7 @@ namespace VixenQuest
                     case VixenRace.Orc:
                         return "Orc";
                     case VixenRace.TentacleDemon:
-                        if (m_eGender == Gender.Female || m_eGender == Gender.Shemale)
+                        if (HaveCunt)
                             return "Tentacled Demoness";
                         else
                             return "Tentacled Demon";
@@ -308,9 +309,9 @@ namespace VixenQuest
             ClothesBodyPart eBodyPart = pReward.m_pInfo.m_eBodyPart;
             ClothesGender eGender = pReward.m_pInfo.m_eGender;
 
-            if (m_eGender == Gender.Male && eGender == ClothesGender.Female)
+            if (!HaveCunt && eGender == ClothesGender.Female)
                 return false;
-            if (m_eGender != Gender.Male && eGender == ClothesGender.Male)
+            if (HaveCunt && eGender == ClothesGender.Male)
                 return false;
 
             if (m_cClothes.ContainsKey(eBodyPart) &&
@@ -469,9 +470,9 @@ namespace VixenQuest
             ClothesBodyPart eBodyPart = pNewClothes.m_pInfo.m_eBodyPart;
             ClothesGender eGender = pNewClothes.m_pInfo.m_eGender;
 
-            if (m_eGender == Gender.Male && eGender == ClothesGender.Female)
+            if (!HaveCunt && eGender == ClothesGender.Female)
                 return false;
-            if (m_eGender != Gender.Male && eGender == ClothesGender.Male)
+            if (HaveCunt && eGender == ClothesGender.Male)
                 return false;
 
             if (!m_cClothes.ContainsKey(eBodyPart))
@@ -632,7 +633,7 @@ namespace VixenQuest
             }
         }
 
-        public string Complete(Action pAction)
+        public string Complete(VQAction pAction)
         {
             if (pAction.m_eType == ActionType.Bargain)
             {
@@ -641,13 +642,13 @@ namespace VixenQuest
             }
 
             if (pAction.m_pTarget != null && pAction.IsSkilled && 
-                Rnd.Get(pAction.m_pTarget.Skills[pAction.Skill]) > m_cSkills[pAction.Skill])
+                Rnd.Get(pAction.m_pTarget.Skills[pAction.TargetSkill]) > m_cSkills[pAction.VixenSkill])
             {
-                if (!pAction.Passive || Rnd.Chances((int)Math.Pow(pAction.m_pTarget.Skills[pAction.Skill], 2),
-                                                    (int)Math.Pow(m_cSkills[pAction.Skill] +
-                                                                  pAction.m_pTarget.Skills[pAction.Skill], 2)))
+                if (!pAction.Passive || Rnd.Chances((int)Math.Pow(pAction.m_pTarget.Skills[pAction.TargetSkill], 2),
+                                                    (int)Math.Pow(m_cSkills[pAction.VixenSkill] +
+                                                                  pAction.m_pTarget.Skills[pAction.TargetSkill], 2)))
                 {
-                    m_cSkills[pAction.Skill]++;
+                    m_cSkills[pAction.VixenSkill]++;
                 }
             }
 
@@ -702,7 +703,7 @@ namespace VixenQuest
             RecalcStatsBonuses();
         }
 
-        public int ActionDifficulty(Action pAction)
+        public int ActionDifficulty(VQAction pAction)
         {
             if (pAction.m_eType == ActionType.Move)
                 return 50;
@@ -719,9 +720,11 @@ namespace VixenQuest
 
             if (pAction.m_eType == ActionType.Fucking ||
                 pAction.m_eType == ActionType.AssFucking ||
+                pAction.m_eType == ActionType.Fisting ||
+                pAction.m_eType == ActionType.AssFisting ||
                 pAction.m_eType == ActionType.OralFucking ||
                 pAction.m_eType == ActionType.Sado)
-                diff = (float)pAction.m_pTarget.Skills[pAction.Skill] / m_cSkills[pAction.Skill];
+                diff = (float)pAction.m_pTarget.Skills[pAction.TargetSkill] / m_cSkills[pAction.VixenSkill];
 
             if (pAction.m_eType == ActionType.Seducing)
                 diff = (float)pAction.m_pTarget.Stats[Stat.Beauty] / m_cEffectiveStats[Stat.Beauty];
@@ -731,9 +734,11 @@ namespace VixenQuest
 
             if (pAction.m_eType == ActionType.Fucked ||
                 pAction.m_eType == ActionType.AssFucked ||
+                pAction.m_eType == ActionType.Fisted ||
+                pAction.m_eType == ActionType.AssFisted ||
                 pAction.m_eType == ActionType.OralFucked ||
                 pAction.m_eType == ActionType.Maso)
-                diff = (float)m_cSkills[pAction.Skill] / pAction.m_pTarget.Skills[pAction.Skill];
+                diff = (float)m_cSkills[pAction.VixenSkill] / pAction.m_pTarget.Skills[pAction.TargetSkill];
 
             if (pAction.m_eType == ActionType.Seduced)
                 diff = (float)m_cEffectiveStats[Stat.Beauty] / pAction.m_pTarget.Stats[Stat.Beauty];
@@ -764,7 +769,7 @@ namespace VixenQuest
             pXml.AddAttribute(pXml.Root, "name", m_sName);
             pXml.AddAttribute(pXml.Root, "race", m_eRace);
             pXml.AddAttribute(pXml.Root, "xp", m_iExperience);
-            pXml.AddAttribute(pXml.Root, "class", m_eGender == VixenQuest.Gender.Male ? m_pClass.m_sNameM : m_pClass.m_sNameF);
+            pXml.AddAttribute(pXml.Root, "class", m_eGender == Gender.Male ? m_pClass.m_sNameM : m_pClass.m_sNameF);
 
             XmlNode pClothesNode = pXml.CreateNode(pXml.Root, "Clothes");
             foreach (ClothesBodyPart bodyPart in m_cClothes.Keys)

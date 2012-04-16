@@ -5,6 +5,7 @@ using System.Text;
 using Random;
 using nsUniLibXML;
 using System.Xml;
+using VixenQuest.People;
 
 namespace VixenQuest
 {

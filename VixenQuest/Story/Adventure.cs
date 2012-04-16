@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using Random;
 using VixenQuest.World;
+using VixenQuest.People;
 
-namespace VixenQuest
+namespace VixenQuest.Story
 {
     class Adventure
     {
@@ -36,7 +37,7 @@ namespace VixenQuest
         {
             get { return m_cQuests[m_iCurrentQuestIndex]; }
         }
-        public Action CurrentAction
+        public VQAction CurrentAction
         {
             get { return CurrentQuest.CurrentAction; }
         }

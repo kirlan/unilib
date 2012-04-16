@@ -6,7 +6,7 @@ using nsUniLibXML;
 using System.Xml;
 using VixenQuest.World;
 
-namespace VixenQuest
+namespace VixenQuest.People
 {
     public enum Gender
     {
@@ -35,7 +35,8 @@ namespace VixenQuest
         Anal,
         Oral,
         Traditional,
-        SM
+        SM,
+        Foreplay
     }
 
     public abstract class Person
@@ -93,22 +94,29 @@ namespace VixenQuest
             }
         }
 
+        public bool HaveCunt
+        {
+            get { return m_eGender == Gender.Female || m_eGender == Gender.Shemale; }
+        }
+
+        public bool HaveDick
+        {
+            get { return m_eGender == Gender.Male || m_eGender == Gender.Shemale; }
+        }
+
         public virtual bool WannaFuck(Person pOpponent)
         {
             switch (m_eOrientation)
             {
                 case Orientation.Stright:
-                    if ((m_eGender == Gender.Male && pOpponent.Gender == Gender.Male) ||
-                        (m_eGender != Gender.Male && pOpponent.Gender != Gender.Male))
-                        return false;
-                    break;
+                    return ((HaveDick && pOpponent.HaveCunt) ||
+                            (HaveCunt && pOpponent.HaveDick));
                 case Orientation.Homo:
-                    if ((m_eGender == Gender.Male && pOpponent.Gender != Gender.Male) ||
-                        (m_eGender != Gender.Male && pOpponent.Gender == Gender.Male))
-                        return false;
-                    break;
+                    return ((HaveDick && pOpponent.HaveDick) ||
+                            (HaveCunt && pOpponent.HaveCunt));
+                default:
+                    return true;
             }
-            return true;
         }
 
         protected int m_iLevel = 1;

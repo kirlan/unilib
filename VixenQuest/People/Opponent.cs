@@ -6,7 +6,7 @@ using Random;
 using VixenQuest.World;
 using NameGen;
 
-namespace VixenQuest
+namespace VixenQuest.People
 {
     class Profession
     { 
@@ -360,11 +360,11 @@ namespace VixenQuest
             else
                 m_eOrientation = pRace.m_ePreferredOrientation;
 
-            if (m_eGender == Gender.Male && m_eOrientation == Orientation.Bi)
-            {
-                int orientationId = Rnd.Get(Enum.GetValues(typeof(Orientation)).Length);
-                m_eOrientation = (Orientation)Enum.GetValues(typeof(Orientation)).GetValue(orientationId);
-            }
+            //if (m_eGender == Gender.Male && m_eOrientation == Orientation.Bi)
+            //{
+            //    int orientationId = Rnd.Get(Enum.GetValues(typeof(Orientation)).Length);
+            //    m_eOrientation = (Orientation)Enum.GetValues(typeof(Orientation)).GetValue(orientationId);
+            //}
 
             m_iLevel = pRace.m_iRank;
             int iMoodRank = 0;
@@ -385,7 +385,7 @@ namespace VixenQuest
                 iMoodRank = m_aAnimalMood[iMood].m_iValue;
             }
 
-            if (m_eGender == Gender.Female || m_eGender == Gender.Shemale)
+            if (HaveCunt)
                 m_sSingleName += pRace.m_sNameF;
             else
                 m_sSingleName += pRace.m_sName;
@@ -417,7 +417,7 @@ namespace VixenQuest
         {
             if (m_pRace.m_eSapience == Sapience.Human)
             {
-                if (m_eGender == Gender.Female || m_eGender == Gender.Shemale)
+                if (HaveCunt)
                 {
                         int part2 = Rnd.Get(aProfessionF.Length);
                         m_pProfession = aProfessionF[part2];
@@ -537,6 +537,14 @@ namespace VixenQuest
             m_sSingleName = m_sName + " " + m_sFamily + ", " + m_sSingleName;
         }
 
+        public string GetDescription()
+        {
+            return (m_eGender == Gender.Shemale ? "shemale " : "") +
+                (m_eOrientation == Orientation.Bi ? "bisexual " : "") +
+                (m_eOrientation == Orientation.Homo ? OrientationString.ToLower() + " " : "") + 
+                (HaveCunt ? m_pRace.m_sNameF : m_pRace.m_sName).Trim() + " " + m_pProfession.m_sName;
+        }
+
         /// <summary>
         /// Простые граждане
         /// </summary>
@@ -583,7 +591,7 @@ namespace VixenQuest
 
             Create(pState.m_cRaces[State.DwellersCathegory.MajorRaces][index]);
 
-            if (m_eGender == Gender.Female || m_eGender == Gender.Shemale)
+            if (HaveCunt)
                 m_pProfession = new ValuedString(bRuler ? pState.m_pInfo.m_sRulerF : pState.m_pInfo.m_sHeirF, bRuler ? pState.m_pInfo.m_iRank : pState.m_pInfo.m_iRank-1);
             else
                 m_pProfession = new ValuedString(bRuler ? pState.m_pInfo.m_sRulerM : pState.m_pInfo.m_sHeirM, bRuler ? pState.m_pInfo.m_iRank : pState.m_pInfo.m_iRank - 1);
@@ -629,7 +637,7 @@ namespace VixenQuest
                 else
                     sRelation += "'s";
 
-                if (m_eGender == Gender.Female || m_eGender == Gender.Shemale)
+                if (HaveCunt)
                 {
                     if (Rnd.OneChanceFrom(5) && bCouldBeSibling)
                     {
