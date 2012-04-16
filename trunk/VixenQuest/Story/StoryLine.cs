@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using VixenQuest.World;
+using VixenQuest.People;
 
-namespace VixenQuest
+namespace VixenQuest.Story
 {
     class StoryLine
     {
@@ -37,7 +38,7 @@ namespace VixenQuest
         {
             get { return CurrentAdventure.CurrentQuest; }
         }
-        public Action CurrentAction
+        public VQAction CurrentAction
         {
             get { return CurrentQuest.CurrentAction; }
         }

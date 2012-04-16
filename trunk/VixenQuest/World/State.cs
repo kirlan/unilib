@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Random;
 using NameGen;
+using VixenQuest.People;
 
 namespace VixenQuest.World
 {
