@@ -885,10 +885,18 @@ namespace MapDrawEngine
                         foreach (var aPts in aPoints)
                         {
                             pPath.AddPolygon(aPts);
+
+                            //определим, каким цветом эта земля должна закрашиваться на карте высот
+                            Brush pBrush = GetElevationColor(pLoc.m_fHeight, m_pWorld.m_fMaxDepth, m_pWorld.m_fMaxHeight);
+
                             foreach (MapQuadrant pQuad in aQuads)
                             {
                                 pQuad.m_cLayers[MapLayer.Locations].StartFigure();
                                 pQuad.m_cLayers[MapLayer.Locations].AddLines(aPts);
+
+                                if (!pQuad.m_cModes[MapMode.Elevation].ContainsKey(pBrush))
+                                    pQuad.m_cModes[MapMode.Elevation][pBrush] = new GraphicsPath();
+                                pQuad.m_cModes[MapMode.Elevation][pBrush].AddPolygon(aPts);
                             }
                         }
                         m_cLocationBorders[pLoc] = pPath;
@@ -1060,6 +1068,29 @@ namespace MapDrawEngine
 
             if (m_pMiniMap != null)
                 m_pMiniMap.WorldAssigned();
+        }
+
+        private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight)
+        {
+            KColor color = new KColor();
+            //color.RGB = Color.Green;
+
+            if (fHeight < 0)
+            {
+                //color.RGB = Color.Navy;
+                //color.Lightness = 0.8 - (double)fHeight / (fMinHeight * 2);
+                color.RGB = Color.Green;
+                color.Hue = 200 + 40 * fHeight / fMinHeight;
+            }
+            else
+            {
+                //color.RGB = Color.Brown;
+                //color.Lightness = 0.2 + (double)fHeight / (fMaxHeight * 2);
+                color.RGB = Color.Goldenrod;
+                color.Hue = 160 - 160 * fHeight / fMaxHeight;
+            }
+
+            return new SolidBrush(color.RGB);
         }
 
         #region Вспомогательные функции, используемые в Assign

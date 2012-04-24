@@ -75,6 +75,8 @@ namespace LandscapeGeneration
 
         public RegionType m_eType = RegionType.Empty;
 
+        public float m_fHeight = 0;
+
         #region IXY Members
 
         public override float X

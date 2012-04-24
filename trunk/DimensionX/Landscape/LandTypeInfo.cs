@@ -66,6 +66,15 @@ namespace LandscapeGeneration
                 m_pLandTypes[eType] = new LTI();
         }
 
+        public static LandType GetLandType(LTI pLTI)
+        {
+            foreach (var pItem in m_pInstance.m_pLandTypes)
+                if (pItem.Value == pLTI)
+                    return pItem.Key;
+
+            return LandType.Ocean;
+        }
+
         public static LTI Desert
         {
             get { return m_pInstance.m_pLandTypes[LandType.Desert]; }
