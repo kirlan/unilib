@@ -1367,10 +1367,10 @@ namespace Socium
                     sTech = eProgress == Customs.Progressiveness.Technofetishism ? "lightning guns" : eProgress == Customs.Progressiveness.Traditionalism ? "muskets, rare rifles" : "rifles";//railroads
                     break;
                 case 5:
-                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "intellectual guns" : eProgress == Customs.Progressiveness.Traditionalism ? "rifles, rare machineguns" : "machineguns";//aviation
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "smartguns" : eProgress == Customs.Progressiveness.Traditionalism ? "rifles, rare submachine guns" : "submachine guns";//aviation
                     break;
                 case 6:
-                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "mecha suits" : eProgress == Customs.Progressiveness.Traditionalism ? "machineguns, rare beam guns" : "beam guns";
+                    sTech = eProgress == Customs.Progressiveness.Technofetishism ? "mecha suits" : eProgress == Customs.Progressiveness.Traditionalism ? "submachine guns, rare beam guns" : "beam guns";
                     break;
                 case 7:
                     sTech = eProgress == Customs.Progressiveness.Technofetishism ? "nanites" : eProgress == Customs.Progressiveness.Traditionalism ? "beam guns, rare desintegrators" : "desintegrators";//limited teleportation

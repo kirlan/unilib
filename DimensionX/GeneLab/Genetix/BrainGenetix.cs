@@ -100,31 +100,31 @@ namespace GeneLab.Genetix
             switch (m_iMagicAbilityPotential)
             {
                 case 0:
-                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? " and mostly fictional magic abilities" : ", but */" mostly fictional magic abilities";
+                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? " and mostly fictional magic abilities" : ", but */" zero magic potencial";
                     break;
                 case 1:
-                    sMagicForce = " extra-sensoric powers";
+                    sMagicForce = " extra-sensoric powers potencial";
                     break;
                 case 2:
-                    sMagicForce = " mystic powers";
+                    sMagicForce = " mystic powers potencial";
                     break;
                 case 3:
-                    sMagicForce = " super powers";
+                    sMagicForce = " super powers potencial";
                     break;
                 case 4:
-                    sMagicForce = " magic abilities";
+                    sMagicForce = " average magic potencial";
                     break;
                 case 5:
-                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but quite high magic abilities" : " and */" quite high magic abilities";
+                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but quite high magic abilities" : " and */" quite high magic potencial";
                     break;
                 case 6:
-                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but extremely high magic abilities" : " and */" extremely high magic abilities";
+                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but extremely high magic abilities" : " and */" extremely high magic potencial";
                     break;
                 case 7:
-                    sMagicForce = " god-like abilities";
+                    sMagicForce = " god-like potencial";
                     break;
                 case 8:
-                    sMagicForce = " omnipotence abilities";
+                    sMagicForce = " omnipotence potencial";
                     break;
             }
 
