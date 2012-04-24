@@ -146,18 +146,21 @@ namespace VQMapTest2
                     mapDraw1.Mode = MapMode.Humidity;
                     break;
                 case 2:
-                    mapDraw1.Mode = MapMode.Natives;
+                    mapDraw1.Mode = MapMode.Elevation;
                     break;
                 case 3:
-                    mapDraw1.Mode = MapMode.Nations;
+                    mapDraw1.Mode = MapMode.Natives;
                     break;
                 case 4:
-                    mapDraw1.Mode = MapMode.TechLevel;
+                    mapDraw1.Mode = MapMode.Nations;
                     break;
                 case 5:
-                    mapDraw1.Mode = MapMode.PsiLevel;
+                    mapDraw1.Mode = MapMode.TechLevel;
                     break;
                 case 6:
+                    mapDraw1.Mode = MapMode.PsiLevel;
+                    break;
+                case 7:
                     mapDraw1.Mode = MapMode.Infrastructure;
                     break;
             }

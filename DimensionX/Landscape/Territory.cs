@@ -119,7 +119,7 @@ namespace LandscapeGeneration
 
             ITerritory pAddon = null;
 
-            int iChoice = Rnd.ChooseOne(cBorderLength.Values, 2);
+            int iChoice = Rnd.ChooseOne(cBorderLength.Values, 4);
             foreach (var pInner in cBorderLength)
             {
                 iChoice--;

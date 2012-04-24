@@ -38,6 +38,10 @@ namespace MapDrawEngine
         /// </summary>
         Humidity,
         /// <summary>
+        /// карта высот
+        /// </summary>
+        Elevation,
+        /// <summary>
         /// уровень технического развития
         /// </summary>
         TechLevel,

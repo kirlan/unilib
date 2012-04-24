@@ -132,13 +132,18 @@ namespace LandscapeGeneration
 
             BuildContinents(BeginStep, ProgressStep);
 
-            //BuildContinents();
-
             BuildAreas(BeginStep, ProgressStep);
+
+            CalculateElevations(BeginStep, ProgressStep);
 
             BuildTransportGrid(BeginStep, ProgressStep);
         }
 
+        /// <summary>
+        /// Формирует "земли" - группы смежных локаций, имеющих одинаковый тип территории
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildLands(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building lands...", m_iLandsCount + m_pGrid.m_aLocations.Length / m_iLandsCount + m_pGrid.m_aLocations.Length + m_iLandsCount); 
@@ -198,6 +203,11 @@ namespace LandscapeGeneration
             }
         }
 
+        /// <summary>
+        /// Формирует тектонические плиты
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildLandMasses(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building landmasses...", m_iLandMassesCount + m_aLands.Length / m_iLandMassesCount + m_aLands.Length + m_iLandMassesCount); 
@@ -256,6 +266,12 @@ namespace LandscapeGeneration
             }
         }
 
+        /// <summary>
+        /// Формирует континенты - несоприкасающиеся между собой группы смежных тектонических плит.
+        /// Тектонические плиты, не принадлежащие ни одному континенту, маркируются как "океан".
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildContinents(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             int iMaxOceanCount = m_iLandsCount * m_iOceansPercentage / 100;
@@ -414,6 +430,11 @@ namespace LandscapeGeneration
         //    }
         //}
 
+        /// <summary>
+        /// Формирует шельфовое "мелководье" там, где океанические и континентальные тектонические плиты расходятся
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void AddCoastral(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting coastral regions...", m_aLands.Length);
@@ -487,6 +508,11 @@ namespace LandscapeGeneration
             }
         }
 
+        /// <summary>
+        /// Формирует горы там, где тектонические плиты сталкиваются
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void AddMountains(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting mountain regions...", m_aLands.Length);
@@ -650,6 +676,11 @@ namespace LandscapeGeneration
             while (aHumidityFront.Length > 0);
         }
 
+        /// <summary>
+        /// Распределяет типы территорий и объединяет смежные земли с одинаковым типом территории в "зоны"
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildAreas(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             //Make seas
@@ -730,6 +761,209 @@ namespace LandscapeGeneration
             {
                 pContinent.BuildAreas(m_pGrid.CycleShift, m_iLandsCount / 100);
                 ProgressStep();
+            }
+        }
+
+        public float m_fMaxDepth = 0;
+        public float m_fMaxHeight = 0;
+
+        protected void CalculateElevations(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        {
+            BeginStep("Calculating elevation...", m_pGrid.m_aLocations.Length);
+
+            List<LOC> cOcean = new List<LOC>();
+            List<LOC> cLand = new List<LOC>();
+
+            //Плясать будем от шельфа - у него фиксированная глубина -1
+            //весь остальной океан - глубже, вся суша - выше
+            foreach (LAND pLand in m_aLands)
+            {
+                if(pLand.Forbidden)
+                    continue;
+
+                if (pLand.Type == LandTypes<LTI>.Coastral)
+                {
+                    foreach (LOC pLoc in pLand.m_cContents)
+                    {
+                        pLoc.m_fHeight = -1;
+
+                        ProgressStep();
+
+                        foreach (LOC pLink in pLoc.m_aBorderWith)
+                        {
+                            if(pLink.Forbidden || pLink.Owner == null || pLink.Owner == pLand)
+                                continue;
+
+                            if ((pLink.Owner as LAND).Type == LandTypes<LTI>.Ocean)
+                            {
+                                if (!cOcean.Contains(pLink))
+                                    cOcean.Add(pLink);
+                            }
+                            else
+                            {
+                                if ((pLink.Owner as LAND).Type != LandTypes<LTI>.Coastral && !cLand.Contains(pLink))
+                                    cLand.Add(pLink);
+                            }
+                        }
+                    }
+                }
+
+                //Бывают прибрежные участки океана, где нет шельфа...
+                //Их тоже надо учесть!
+                if (pLand.Type == LandTypes<LTI>.Ocean)
+                {
+                    foreach (LOC pLoc in pLand.m_cContents)
+                    {
+                        foreach (LOC pLink in pLoc.m_aBorderWith)
+                        {
+                            if (pLink.Forbidden || pLink.Owner == null || pLink.Owner == pLand)
+                                continue;
+
+                            if ((pLink.Owner as LAND).Type != LandTypes<LTI>.Ocean &&
+                                (pLink.Owner as LAND).Type != LandTypes<LTI>.Coastral)
+                            {
+                                if (!cOcean.Contains(pLoc))
+                                    cOcean.Add(pLoc);
+                                if (!cLand.Contains(pLink))
+                                    cLand.Add(pLink);
+                            }
+                        }
+                    }
+                }
+            }
+
+            List<LOC> cWaveFront = new List<LOC>();
+
+            //с океаном всё просто - чем дальше от берега, тем глубже
+            m_fMaxDepth = -2;
+            while (cOcean.Count > 0)
+            {
+                cWaveFront.Clear();
+                foreach (LOC pLoc in cOcean)
+                {
+                    pLoc.m_fHeight = m_fMaxDepth;
+                    ProgressStep();
+
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
+                            continue;
+
+                        if ((pLink.Owner as LAND).Type == LandTypes<LTI>.Ocean && !cWaveFront.Contains(pLink))
+                            cWaveFront.Add(pLink);
+                    }
+                }
+
+                cOcean.Clear();
+                cOcean.AddRange(cWaveFront);
+
+                m_fMaxDepth--;
+            }
+
+            //с сушей сложнее...
+            m_fMaxHeight = 1;
+            while (cLand.Count > 0)
+            {
+                cWaveFront.Clear();
+
+                float fMinElevation = float.MaxValue;
+                float fMaxElevation = float.MinValue;
+                foreach (LOC pLoc in cLand)
+                {
+                    float fElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                    if (fElevation < fMinElevation)
+                        fMinElevation = fElevation;
+                    if (fElevation > fMaxElevation)
+                        fMaxElevation = fElevation;
+                }
+
+                List<LOC> cFullUpdate = new List<LOC>();
+
+                for (float fEl = fMinElevation; fEl < fMaxElevation; fEl++)
+                {
+                    List<LOC> cLocalUpdate = new List<LOC>();
+                    foreach (LOC pLoc in cLand)
+                    {
+                        if (pLoc.m_fHeight != 0 && cLocalUpdate.Contains(pLoc))
+                            continue;
+
+                        float fElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                        if (fElevation == fEl)
+                        {
+                            SameElevationSplat(pLoc, cLocalUpdate);
+                        }
+                    }
+
+                    foreach (LOC pLoc in cLocalUpdate)
+                    {
+                        pLoc.m_fHeight = m_fMaxHeight + fEl;
+                        ProgressStep();
+                        cFullUpdate.Add(pLoc);
+                    }
+                }
+                foreach (LOC pLoc in cFullUpdate)
+                {
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
+                            continue;
+
+                        if (!cWaveFront.Contains(pLink))
+                            cWaveFront.Add(pLink);
+                    }
+                }
+
+                cLand.Clear();
+                cLand.AddRange(cWaveFront);
+
+                m_fMaxHeight += fMaxElevation;
+            }
+        }
+
+        private void SameElevationSplat(LOC pLoc, List<LOC> pStorage)
+        {
+            pStorage.Add(pLoc);
+
+            float fElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+
+            foreach (LOC pLink in pLoc.m_aBorderWith)
+            {
+                if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
+                    continue;
+
+                float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLink.Owner as LAND).Type));
+
+                if (fElevation == fLinkElevation && !pStorage.Contains(pLink))
+                {
+                    SameElevationSplat(pLink, pStorage);
+                }
+            }
+        }
+
+        private float GetElevation(LandTypes<LTI>.LandType eLTI)
+        {
+            switch (eLTI)
+            {
+                case LandTypes<LTI>.LandType.Desert:
+                    return 1;
+                case LandTypes<LTI>.LandType.Forest:
+                    return 10;
+                case LandTypes<LTI>.LandType.Jungle:
+                    return 10;
+                case LandTypes<LTI>.LandType.Mountains:
+                    return 100;
+                case LandTypes<LTI>.LandType.Plains:
+                    return 1;
+                case LandTypes<LTI>.LandType.Savanna:
+                    return 1;
+                case LandTypes<LTI>.LandType.Swamp:
+                    return 1;
+                case LandTypes<LTI>.LandType.Taiga:
+                    return 10;
+                case LandTypes<LTI>.LandType.Tundra:
+                    return 1;
+                default:
+                    return 1;
             }
         }
 
