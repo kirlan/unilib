@@ -17,6 +17,7 @@ using Socium.Languages;
 using Socium.Nations;
 using Socium.Settlements;
 using GeneLab.Genetix;
+using Socium.Psichology;
 
 namespace MapDrawEngine
 {
@@ -90,7 +91,7 @@ namespace MapDrawEngine
         /// <summary>
         /// цвета разных уровней магического развития
         /// </summary>
-        private Dictionary<int, Dictionary<MagicAbilityPrevalence, Brush>> m_cPsiLevel = new Dictionary<int,Dictionary<MagicAbilityPrevalence,Brush>>();
+        private Dictionary<int, Dictionary<Customs.Magic, Brush>> m_cPsiLevel = new Dictionary<int, Dictionary<Customs.Magic, Brush>>();
 
         /// <summary>
         /// цвета разных уровней технического развития
@@ -515,8 +516,8 @@ namespace MapDrawEngine
 
             for (int i = 0; i <= 8; i++)
             {
-                m_cPsiLevel[i] = new Dictionary<MagicAbilityPrevalence, Brush>();
-                foreach(MagicAbilityPrevalence ePrevalence in Enum.GetValues(typeof(MagicAbilityPrevalence)))
+                m_cPsiLevel[i] = new Dictionary<Customs.Magic, Brush>();
+                foreach (Customs.Magic ePrevalence in Enum.GetValues(typeof(Customs.Magic)))
                     m_cPsiLevel[i][ePrevalence] = GetPsiLevelColor(i, ePrevalence);
             }
 
@@ -564,9 +565,9 @@ namespace MapDrawEngine
         /// Вычисляет цвет для отображения заданного уровня магии
         /// </summary>
         /// <param name="iMaxPsiLevel">максимальный доступный уровень магии (0-8)</param>
-        /// <param name="ePrevalence">распространённость магии</param>
+        /// <param name="ePrevalence">отношение местных к магии</param>
         /// <returns>цвет</returns>
-        private Brush GetPsiLevelColor(int iMaxPsiLevel, MagicAbilityPrevalence ePrevalence)
+        private Brush GetPsiLevelColor(int iMaxPsiLevel, Customs.Magic ePrevalence)
         {
             KColor background = new KColor();
             background.RGB = Color.Orchid;
@@ -579,17 +580,17 @@ namespace MapDrawEngine
             foreground.RGB = Color.Gray;
             //color1.Saturation = (double)iBaseTechLevel / 8;
 
-            if(iMaxPsiLevel == 0)
-                return new SolidBrush(background.RGB);
+            //if(iMaxPsiLevel == 0)
+            //    return new SolidBrush(background.RGB);
 
             switch (ePrevalence)
             {
-                case MagicAbilityPrevalence.Rare:
+                case Customs.Magic.Magic_Praised:
                     return new SolidBrush(background.RGB);
-                case MagicAbilityPrevalence.Common:
-                    return new HatchBrush(HatchStyle.DottedDiamond, foreground.RGB, background.RGB);
-                case MagicAbilityPrevalence.AlmostEveryone:
-                    return new HatchBrush(HatchStyle.DiagonalCross, foreground.RGB, background.RGB);
+                case Customs.Magic.Magic_Allowed:
+                    return new HatchBrush(HatchStyle.DottedDiamond, Color.Gray, background.RGB);
+                case Customs.Magic.Magic_Feared:
+                    return new HatchBrush(HatchStyle.DiagonalCross, Color.Red, background.RGB);
                 default:
                     throw new ArgumentException();
             }
@@ -992,7 +993,7 @@ namespace MapDrawEngine
                     if (pProvince.m_pNation.m_bHegemon)
                         pBrush = m_cHegemonNationColorsID[pProvince.m_pNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pNation.m_iMagicLimit][pProvince.m_pNation.m_pFenotype.m_pBrain.m_eMagicAbilityPrevalence];
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pNation.m_iMagicLimit][pProvince.m_pCustoms.m_eMagic];
                     
                     foreach (MapQuadrant pQuad in aQuads)
                     {

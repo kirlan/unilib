@@ -293,12 +293,22 @@ namespace VQMapTest2
 
             if (e.m_pState.m_iMagicLimit > 0)
             {
-                richTextBox1.AppendText(string.Format("Magic users: {0}, ", e.m_pState.m_eMagicAbilityPrevalence.ToString().Replace('_', ' ')));
+                string sMagicAttitude = "regulated";
+                if (e.m_pState.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
+                    sMagicAttitude = "outlawed";
+                if (e.m_pState.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+                    sMagicAttitude = "unlimited";
+                richTextBox1.AppendText(string.Format("Magic users: {0}, ", sMagicAttitude));
                 richTextBox1.AppendText(string.Format("{2}, up to {0} [M{1}]\n\n", State.GetMagicString(e.m_pState.m_iMagicLimit), e.m_pState.m_iMagicLimit, e.m_pState.m_eMagicAbilityDistribution.ToString().Replace('_', ' ')));
             }
             else
             {
-                richTextBox1.AppendText("Magic users: none [M0]\n\n");
+                string sMagicAttitude = "but allowed";
+                if (e.m_pState.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
+                    sMagicAttitude = "and outlawed";
+                if (e.m_pState.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+                    sMagicAttitude = "but praised";
+                richTextBox1.AppendText(string.Format("Magic users: none, {0} [M0]\n\n", sMagicAttitude));
             }
 
             richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_iWood, e.m_pState.m_iOre, e.m_pState.m_iPopulation));

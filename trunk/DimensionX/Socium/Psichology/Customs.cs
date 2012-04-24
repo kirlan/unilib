@@ -17,7 +17,7 @@ namespace Socium.Psichology
 
         public enum MindSet
         {
-            Intuition,
+            Emotions,
             Balanced_mind,
             Logic
         }
@@ -93,7 +93,7 @@ namespace Socium.Psichology
         {
             m_eGenderPriority = Rnd.OneChanceFrom(3) ? GenderPriority.Genders_equality : Rnd.OneChanceFrom(3) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy;
 
-            m_eMindSet = Rnd.OneChanceFrom(3) ? MindSet.Balanced_mind : Rnd.OneChanceFrom(3) ? MindSet.Logic : MindSet.Intuition;
+            m_eMindSet = Rnd.OneChanceFrom(3) ? MindSet.Balanced_mind : Rnd.OneChanceFrom(3) ? MindSet.Logic : MindSet.Emotions;
 
             m_eSexuality = !Rnd.OneChanceFrom(3) ? Sexuality.Moderate_sexuality : Rnd.OneChanceFrom(3) ? Sexuality.Puritan : Sexuality.Lecherous;
 
@@ -136,7 +136,7 @@ namespace Socium.Psichology
                     break;
                 case 1:
                     if (m_eMindSet == MindSet.Balanced_mind)
-                        m_eMindSet = Rnd.OneChanceFrom(3) ? MindSet.Logic : MindSet.Intuition;
+                        m_eMindSet = Rnd.OneChanceFrom(3) ? MindSet.Logic : MindSet.Emotions;
                     else
                         m_eMindSet = MindSet.Balanced_mind;
                     break;
@@ -258,7 +258,7 @@ namespace Socium.Psichology
                 sResult += "womanhood";
             }
 
-            if (m_eMindSet == MindSet.Intuition)
+            if (m_eMindSet == MindSet.Emotions)
             {
                 sResult += "\n   ";
                 sResult += "emotions";
@@ -355,20 +355,20 @@ namespace Socium.Psichology
 
             if (m_eGenderPriority == GenderPriority.Patriarchy)
             {
-                sResult += "men";
+                sResult += "males";
             }
             if (m_eGenderPriority == GenderPriority.Matriarchy)
             {
-                sResult += "women";
+                sResult += "females";
             }
             if (m_eGenderPriority == GenderPriority.Genders_equality)
             {
-                sResult += "men and women";
+                sResult += "males and females";
             }
 
             bool bFirst = true;
 
-            if (m_eMindSet == MindSet.Intuition)
+            if (m_eMindSet == MindSet.Emotions)
             {
                 if (bFirst)
                 {
@@ -411,7 +411,7 @@ namespace Socium.Psichology
                 }
                 else
                     sResult += ", ";
-                sResult += "have and use own magic abilities";
+                sResult += "accepts any form of magic";
             }
 
             if (m_eBodyModifications == BodyModifications.Body_Modifications_Blamed)
@@ -529,7 +529,7 @@ namespace Socium.Psichology
                     }
                     if (m_eGenderPriority == GenderPriority.Genders_equality)
                     {
-                        sResult += " spouse of opposite gender";
+                        sResult += " spouse";
                     }
                 }
                 if (m_eSexRelations == SexualOrientation.Homosexual)
@@ -561,12 +561,12 @@ namespace Socium.Psichology
                 if (m_eSexuality == Sexuality.Puritan)
                     sResult += ", but may be in platonic relations with persons";
                 else
-                    sResult += ", but have lovers";
+                    sResult += ", but have a number of lovers";
 
-                if (m_eSexRelations == SexualOrientation.Heterosexual)
-                {
-                    sResult += " of opposite gender";
-                }
+                //if (m_eSexRelations == SexualOrientation.Heterosexual)
+                //{
+                //    sResult += " of opposite gender";
+                //}
                 if (m_eSexRelations == SexualOrientation.Homosexual)
                 {
                     sResult += " of the same gender";
