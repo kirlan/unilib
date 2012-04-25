@@ -59,12 +59,12 @@ namespace Socium
         public override string ToString()
         {
             if (m_pSettlement != null)
-                return string.Format("{2} {0} {1}", m_pSettlement.ToString(), m_pCenter.ToString(), GetStringID());
+                return string.Format("{2} {0} {1}, h:{3}", m_pSettlement.ToString(), m_pCenter.ToString(), GetStringID(), m_fHeight);
             
             if (m_pBuilding != null)
-                return string.Format("{2} {0} {1}", m_pBuilding.ToString(), m_pCenter.ToString(), GetStringID());
+                return string.Format("{2} {0} {1}, h:{3}", m_pBuilding.ToString(), m_pCenter.ToString(), GetStringID(), m_fHeight);
 
-            return string.Format("{3} {0} {1} {2}", m_eType, m_sName, m_pCenter.ToString(), GetStringID());
+            return string.Format("{3} {0} {1} {2}, h:{4}", m_eType, m_sName, m_pCenter.ToString(), GetStringID(), m_fHeight);
         }
 
         public override void Reset()

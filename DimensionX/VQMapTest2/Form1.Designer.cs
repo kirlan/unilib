@@ -47,6 +47,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage10 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -73,6 +74,7 @@
             this.showLocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLandMassesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.testPathFinding1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,7 +94,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.miniMapDraw1 = new MapDrawEngine.MiniMapDraw();
             this.mapDraw1 = new MapDrawEngine.MapDraw();
-            this.tabPage10 = new System.Windows.Forms.TabPage();
+            this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -340,44 +342,53 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(145, 4);
+            this.tabPage2.Location = new System.Drawing.Point(538, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(301, 699);
+            this.tabPage2.Size = new System.Drawing.Size(0, 699);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Humidity";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // tabPage10
+            // 
+            this.tabPage10.Location = new System.Drawing.Point(538, 4);
+            this.tabPage10.Name = "tabPage10";
+            this.tabPage10.Size = new System.Drawing.Size(0, 699);
+            this.tabPage10.TabIndex = 7;
+            this.tabPage10.Text = "Elevation";
+            this.tabPage10.UseVisualStyleBackColor = true;
+            // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(273, 4);
+            this.tabPage3.Location = new System.Drawing.Point(538, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(173, 699);
+            this.tabPage3.Size = new System.Drawing.Size(0, 699);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Natives";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(332, 4);
+            this.tabPage4.Location = new System.Drawing.Point(538, 4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(114, 699);
+            this.tabPage4.Size = new System.Drawing.Size(0, 699);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Nations";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(406, 4);
+            this.tabPage5.Location = new System.Drawing.Point(538, 4);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(40, 699);
+            this.tabPage5.Size = new System.Drawing.Size(0, 699);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Tech level";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(460, 4);
+            this.tabPage6.Location = new System.Drawing.Point(538, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 699);
             this.tabPage6.TabIndex = 5;
@@ -505,7 +516,8 @@
             this.showStateBordersToolStripMenuItem,
             this.showProvinciesBordersToolStripMenuItem,
             this.toolStripMenuItem2,
-            this.debugToolStripMenuItem1});
+            this.debugToolStripMenuItem1,
+            this.dModeToolStripMenuItem});
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
             this.debugToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.debugToolStripMenuItem.Text = "View";
@@ -584,6 +596,14 @@
             this.showLandMassesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.showLandMassesToolStripMenuItem.Text = "Show LandMasses";
             this.showLandMassesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
+            // 
+            // dModeToolStripMenuItem
+            // 
+            this.dModeToolStripMenuItem.CheckOnClick = true;
+            this.dModeToolStripMenuItem.Name = "dModeToolStripMenuItem";
+            this.dModeToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.dModeToolStripMenuItem.Text = "3d mode";
+            this.dModeToolStripMenuItem.CheckedChanged += new System.EventHandler(this.dModeToolStripMenuItem_CheckedChanged);
             // 
             // optionsToolStripMenuItem
             // 
@@ -747,19 +767,24 @@
             this.mapDraw1.TabIndex = 20;
             this.mapDraw1.SelectedStateChanged += new System.EventHandler<MapDrawEngine.MapDraw.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
             // 
-            // tabPage10
+            // mapDraw3d1
             // 
-            this.tabPage10.Location = new System.Drawing.Point(214, 4);
-            this.tabPage10.Name = "tabPage10";
-            this.tabPage10.Size = new System.Drawing.Size(232, 699);
-            this.tabPage10.TabIndex = 7;
-            this.tabPage10.Text = "Elevation";
-            this.tabPage10.UseVisualStyleBackColor = true;
+            this.mapDraw3d1.Location = new System.Drawing.Point(631, 509);
+            this.mapDraw3d1.Name = "mapDraw3d1";
+            this.mapDraw3d1.Size = new System.Drawing.Size(75, 105);
+            this.mapDraw3d1.TabIndex = 22;
+            this.mapDraw3d1.Text = "mapDraw3d1";
+            this.mapDraw3d1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseDown);
+            this.mapDraw3d1.MouseEnter += new System.EventHandler(this.mapDraw3d1_MouseEnter);
+            this.mapDraw3d1.MouseLeave += new System.EventHandler(this.mapDraw3d1_MouseLeave);
+            this.mapDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseMove);
+            this.mapDraw3d1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseUp);
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1016, 739);
+            this.Controls.Add(this.mapDraw3d1);
             this.Controls.Add(this.miniMapDraw1);
             this.Controls.Add(this.mapDraw1);
             this.Controls.Add(this.label2);
@@ -858,6 +883,8 @@
         private System.Windows.Forms.ToolStripMenuItem repeatCreationFromPresetToolStripMenuItem;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.TabPage tabPage10;
+        private System.Windows.Forms.ToolStripMenuItem dModeToolStripMenuItem;
+        private MapDrawXNAEngine.MapDraw3d mapDraw3d1;
     }
 }
 

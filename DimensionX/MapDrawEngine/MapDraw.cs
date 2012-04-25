@@ -1087,7 +1087,7 @@ namespace MapDrawEngine
                 //color.RGB = Color.Brown;
                 //color.Lightness = 0.2 + (double)fHeight / (fMaxHeight * 2);
                 color.RGB = Color.Goldenrod;
-                color.Hue = 160 - 160 * fHeight / fMaxHeight;
+                color.Hue = 100 - 100 * fHeight / fMaxHeight;
             }
 
             return new SolidBrush(color.RGB);
