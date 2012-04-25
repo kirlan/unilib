@@ -778,8 +778,11 @@ namespace LandscapeGeneration
             //весь остальной океан - глубже, вся суша - выше
             foreach (LAND pLand in m_aLands)
             {
-                if(pLand.Forbidden)
+                if (pLand.Forbidden)
+                {
+                    ProgressStep();
                     continue;
+                }
 
                 if (pLand.Type == LandTypes<LTI>.Coastral)
                 {
@@ -861,81 +864,166 @@ namespace LandscapeGeneration
             }
 
             //с сушей сложнее...
-            m_fMaxHeight = 1;
+            m_fMaxHeight = 0;
             while (cLand.Count > 0)
             {
                 cWaveFront.Clear();
 
                 float fMinElevation = float.MaxValue;
-                float fMaxElevation = float.MinValue;
+
                 foreach (LOC pLoc in cLand)
                 {
-                    float fElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
-                    if (fElevation < fMinElevation)
-                        fMinElevation = fElevation;
-                    if (fElevation > fMaxElevation)
-                        fMaxElevation = fElevation;
-                }
-
-                List<LOC> cFullUpdate = new List<LOC>();
-
-                for (float fEl = fMinElevation; fEl < fMaxElevation; fEl++)
-                {
-                    List<LOC> cLocalUpdate = new List<LOC>();
-                    foreach (LOC pLoc in cLand)
+                    if (pLoc.m_fHeight == 0)
                     {
-                        if (pLoc.m_fHeight != 0 && cLocalUpdate.Contains(pLoc))
-                            continue;
+                        float fLinkElevation = GetElevationRnd(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                        if (fLinkElevation < fMinElevation)
+                            fMinElevation = fLinkElevation;
 
-                        float fElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
-                        if (fElevation == fEl)
-                        {
-                            SameElevationSplat(pLoc, cLocalUpdate);
-                        }
-                    }
-
-                    foreach (LOC pLoc in cLocalUpdate)
-                    {
-                        pLoc.m_fHeight = m_fMaxHeight + fEl;
+                        pLoc.m_fHeight = m_fMaxHeight + fLinkElevation;
                         ProgressStep();
-                        cFullUpdate.Add(pLoc);
+                        cWaveFront.Add(pLoc);
                     }
-                }
-                foreach (LOC pLoc in cFullUpdate)
-                {
-                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    else
                     {
-                        if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
-                            continue;
+                        float fLinkElevation = pLoc.m_fHeight - m_fMaxHeight;
+                        if (fLinkElevation < fMinElevation)
+                            fMinElevation = fLinkElevation;
 
-                        if (!cWaveFront.Contains(pLink))
-                            cWaveFront.Add(pLink);
+                        if (pLoc.m_fHeight <= m_fMaxHeight)
+                        {
+                            foreach (LOC pLink in pLoc.m_aBorderWith)
+                            {
+                                if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
+                                    continue;
+
+                                if (!cWaveFront.Contains(pLink))
+                                    cWaveFront.Add(pLink);
+                            }
+                        }
+                        else
+                            cWaveFront.Add(pLoc);
                     }
                 }
 
                 cLand.Clear();
                 cLand.AddRange(cWaveFront);
 
-                m_fMaxHeight += fMaxElevation;
+                m_fMaxHeight += fMinElevation;
+            }
+
+            NoiseMap();
+
+            PlainMap();
+            PlainMap();
+
+            CalculateVertexes();
+        }
+
+        private void CalculateVertexes()
+        {
+            foreach (Vertex pVertex in m_pGrid.m_aVertexes)
+            {
+                int iCount = 0;
+                bool bOcean = false;
+                bool bLand = false;
+                foreach (LOC pLoc in pVertex.m_cLocations)
+                {
+                    if (pLoc.Forbidden)
+                        continue;
+
+                    pVertex.m_fZ += pLoc.m_fHeight;
+                    iCount++;
+
+                    if (pLoc.m_fHeight > 0)
+                        bLand = true;
+                    if (pLoc.m_fHeight < 0)
+                        bOcean = true;
+                }
+
+                if (iCount > 0)
+                    pVertex.m_fZ /= iCount;
+
+                if (bOcean && bLand)
+                    pVertex.m_fZ = 0;
             }
         }
 
-        private void SameElevationSplat(LOC pLoc, List<LOC> pStorage)
+        private void PlainMap()
         {
-            pStorage.Add(pLoc);
-
-            float fElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
-
-            foreach (LOC pLink in pLoc.m_aBorderWith)
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
             {
-                if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
+                if (pLoc.Forbidden)
                     continue;
 
-                float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLink.Owner as LAND).Type));
-
-                if (fElevation == fLinkElevation && !pStorage.Contains(pLink))
+                float fLokElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                foreach (LOC pLink in pLoc.m_aBorderWith)
                 {
-                    SameElevationSplat(pLink, pStorage);
+                    if (pLink.Forbidden || pLink.Owner == null)
+                        continue;
+
+                    float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLink.Owner as LAND).Type));
+                    if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
+                    {
+                        float fAverage = (pLoc.m_fHeight + pLink.m_fHeight)/2;
+                        if (pLoc.m_fHeight > 0)
+                            pLoc.m_fHeight = Math.Max(0.1f, (fAverage + pLoc.m_fHeight) / 2);
+                        else
+                            pLoc.m_fHeight = Math.Min(-0.1f, (fAverage + pLoc.m_fHeight) / 2);
+
+                        if (pLink.m_fHeight > 0)
+                            pLink.m_fHeight = Math.Max(0.1f, (fAverage + pLink.m_fHeight) / 2);
+                        else
+                            pLink.m_fHeight = Math.Min(-0.1f, (fAverage + pLink.m_fHeight) / 2);
+                    }
+                }
+            }
+        }
+
+        private void NoiseMap()
+        {
+            PerlinNoise perlinNoise = new PerlinNoise(99);
+            double widthDivisor = 0.5 / (double)m_pGrid.RX;
+            double heightDivisor = 0.5 / (double)m_pGrid.RY;
+
+
+            float vMin = 0;
+            float vMax = 0;
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.m_fHeight < 0)
+                    continue;
+
+                // Note that the result from the noise function is in the range -1 to 1, but I want it in the range of 0 to 1
+                // that's the reason of the strange code
+                float v = (float)(
+                    // First octave
+                    (perlinNoise.Noise(16 * pLoc.X * widthDivisor, 16 * pLoc.Y * heightDivisor, -0.5) + 1) / 2 * 0.5 +
+                    // Second octave
+                    (perlinNoise.Noise(32 * pLoc.X * widthDivisor, 32 * pLoc.Y * heightDivisor, 0) + 1) / 2 * 0.3 +
+                    // Third octave
+                    (perlinNoise.Noise(64 * pLoc.X * widthDivisor, 64 * pLoc.Y * heightDivisor, +0.5) + 1) / 2 * 0.2);
+
+                v = v - 0.5f;
+
+                if (v < vMin)
+                    vMin = v;
+                if (v > vMax)
+                    vMax = v;
+
+                v = Math.Min(1, Math.Max(-1, v*5));
+
+                //float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                if (pLoc.m_fHeight > 0)
+                {
+                    float fLinkElevation = Math.Min(pLoc.m_fHeight - 0.5f, 10);
+                    pLoc.m_fHeight += v * fLinkElevation;
+                    //pLoc.m_fHeight = 10 + v * 10;
+                }
+                else
+                {
+                    float fLinkElevation = Math.Max(pLoc.m_fHeight + 0.5f, -10);
+                    pLoc.m_fHeight -= v * fLinkElevation;
+                    //pLoc.m_fHeight = 10 + v * 10;
                 }
             }
         }
@@ -945,26 +1033,37 @@ namespace LandscapeGeneration
             switch (eLTI)
             {
                 case LandTypes<LTI>.LandType.Desert:
-                    return 1;
+                    return 0.1f;
                 case LandTypes<LTI>.LandType.Forest:
-                    return 10;
+                    return 2;
                 case LandTypes<LTI>.LandType.Jungle:
-                    return 10;
+                    return 2;
                 case LandTypes<LTI>.LandType.Mountains:
-                    return 100;
+                    return 10;
                 case LandTypes<LTI>.LandType.Plains:
                     return 1;
                 case LandTypes<LTI>.LandType.Savanna:
                     return 1;
                 case LandTypes<LTI>.LandType.Swamp:
-                    return 1;
+                    return 0.1f;
                 case LandTypes<LTI>.LandType.Taiga:
-                    return 10;
+                    return 2;
                 case LandTypes<LTI>.LandType.Tundra:
+                    return 0.5f;
+                case LandTypes<LTI>.LandType.Ocean:
+                    return 5;
+                case LandTypes<LTI>.LandType.Coastral:
                     return 1;
                 default:
                     return 1;
             }
+        }
+
+        private float GetElevationRnd(LandTypes<LTI>.LandType eLTI)
+        {
+            float fResult = GetElevation(eLTI);
+
+            return fResult / 2 + Rnd.Get(fResult);
         }
 
         public List<TransportationLinkBase> m_cTransportGrid = new List<TransportationLinkBase>();

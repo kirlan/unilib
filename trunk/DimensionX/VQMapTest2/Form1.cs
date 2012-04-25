@@ -24,6 +24,12 @@ namespace VQMapTest2
         {
             InitializeComponent();
 
+            mapDraw3d1.Visible = false;
+            mapDraw3d1.Top = mapDraw1.Top;
+            mapDraw3d1.Left = mapDraw1.Left;
+            mapDraw3d1.Height = mapDraw1.Height;
+            mapDraw3d1.Width = mapDraw1.Width;
+
             MapScaleChanged(this, null);
             MapModeChanged(this, null);
             MapLayersChanged(this, null);
@@ -32,6 +38,8 @@ namespace VQMapTest2
             showRoadsToolStripMenuItem.Checked = true;
 
             mapDraw1.BindMiniMap(miniMapDraw1);
+
+            mapDraw3d1.MouseWheel += new MouseEventHandler(mapDraw3d1_MouseWheel);
         }
 
         private World m_pWorld;
@@ -96,6 +104,8 @@ namespace VQMapTest2
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
+            mapDraw3d1.Assign(m_pWorld);
+
             label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel, Socium.Psichology.Customs.Progressiveness.Moderate_Science), m_pWorld.m_iTechLevel);
             if (m_pWorld.m_iMagicLimit > 0)
             {
@@ -132,6 +142,11 @@ namespace VQMapTest2
 
         private void Form1_Resize(object sender, EventArgs e)
         {
+            mapDraw3d1.Top = mapDraw1.Top;
+            mapDraw3d1.Left = mapDraw1.Left;
+            mapDraw3d1.Height = mapDraw1.Height;
+            mapDraw3d1.Width = mapDraw1.Width;
+
             MapScaleChanged(sender, e);
         }
 
@@ -586,6 +601,67 @@ namespace VQMapTest2
                 label1.Visible = false;
                 ShowWorld();
             }
+        }
+
+        private void dModeToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            mapDraw1.Visible = !dModeToolStripMenuItem.Checked;
+            mapDraw3d1.Visible = dModeToolStripMenuItem.Checked;
+        }
+
+        private bool m_b3dMapDragging = false;
+        private bool m_b3dMapRotate = false;
+
+        private void mapDraw3d1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                m_b3dMapDragging = true;
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                m_b3dMapRotate = true;
+        }
+
+        private void mapDraw3d1_MouseUp(object sender, MouseEventArgs e)
+        {
+            m_b3dMapDragging = false;
+            m_b3dMapRotate = false;
+        }
+
+        private void mapDraw3d1_MouseLeave(object sender, EventArgs e)
+        {
+            m_b3dMapDragging = false;
+            m_b3dMapRotate = false;
+        }
+
+        void mapDraw3d1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            mapDraw3d1.m_fScaling = -e.Delta;
+//            mapDraw3d1.m_fScaling = 0;
+        }
+
+        private void mapDraw3d1_MouseEnter(object sender, EventArgs e)
+        {
+            mapDraw3d1.Focus();
+        }
+
+        private Point m_pMap3DLastMouseLocation = new Point(0, 0);
+
+        private void mapDraw3d1_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point p = new Point(0, 0);
+
+            if (m_pMap3DLastMouseLocation.X > 0)
+            {
+                p.X = m_pMap3DLastMouseLocation.X - e.X;
+                p.Y = m_pMap3DLastMouseLocation.Y - e.Y;
+            }
+            m_pMap3DLastMouseLocation = e.Location;
+
+            if (m_b3dMapDragging)
+                mapDraw3d1.PanCamera(p.X, p.Y);
+
+            if (m_b3dMapRotate)
+    //            mapDraw3d1.m_pCamera.Rotate(0, p.Y * 0.01f, p.X * 0.01f);
+                mapDraw3d1.m_pCamera.Rotate(p.X * 0.01f, p.Y * 0.01f, 0);
         }
     }
 }

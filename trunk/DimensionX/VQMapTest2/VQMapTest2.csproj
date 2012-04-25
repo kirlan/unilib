@@ -104,6 +104,10 @@
       <Project>{D4EC0262-98BF-46D0-B90C-FAFAC13DED50}</Project>
       <Name>MapDrawEngine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MapDrawXNAEngine\MapDrawXNAEngine.csproj">
+      <Project>{DF8FB19D-26BC-4101-8371-DE523CF5F957}</Project>
+      <Name>MapDrawXNAEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Socium\Socium.csproj">
       <Project>{358A8F33-4C83-42EC-B661-AC20467178C5}</Project>
       <Name>Socium</Name>

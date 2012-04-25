@@ -1,0 +1,390 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using System.Windows.Forms;
+using Socium;
+using LandscapeGeneration;
+using System.Drawing;
+using Microsoft.Xna.Framework.Input;
+
+namespace MapDrawXNAEngine
+{
+    public struct VertexPositionColorNormal: IVertexType
+    {
+        public Vector3 Position;
+        public Microsoft.Xna.Framework.Color Color;
+        public Vector3 Normal;
+
+        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
+        (
+            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+            new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+            new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
+        );
+
+        VertexDeclaration IVertexType.VertexDeclaration
+        {
+            get { return VertexDeclaration; }
+        }
+    }
+    
+    /// <summary>
+    /// Example control inherits from GraphicsDeviceControl, which allows it to
+    /// render using a GraphicsDevice. This control shows how to draw animating
+    /// 3D graphics inside a WinForms application. It hooks the Application.Idle
+    /// event, using this to invalidate the control, which will cause the animation
+    /// to constantly redraw.
+    /// </summary>
+    public class MapDraw3d : GraphicsDeviceControl
+    {
+        /// <summary>
+        /// мир, карту которого мы рисуем
+        /// </summary>
+        internal World m_pWorld = null;
+
+        BasicEffect effect;
+        Stopwatch timer;
+
+        VertexPositionColorNormal[] userPrimitives;
+        int[] userPrimitivesIndices;
+        int m_iTrianglesCount = 0;
+
+        private readonly float m_fHeightMultiplier = 100;
+
+        private void FillPrimitives1()
+        {
+            // Create the verticies for our triangle
+            userPrimitives = new VertexPositionColorNormal[m_pWorld.m_pGrid.m_aVertexes.Length + m_pWorld.m_pGrid.m_aLocations.Length];
+
+            Dictionary<long, int> cVertexes = new Dictionary<long, int>();
+            Dictionary<long, int> cLocations = new Dictionary<long, int>();
+
+            int iCounter = 0;
+            foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
+            {
+                userPrimitives[iCounter] = new VertexPositionColorNormal();
+                userPrimitives[iCounter].Position = new Vector3(pVertex.m_fX, pVertex.m_fY, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ);
+
+                LandTypeInfoX pLTI = null;
+                Microsoft.Xna.Framework.Color pMixedColor = Microsoft.Xna.Framework.Color.White;
+                foreach (LocationX pLoc in pVertex.m_cLocations)
+                {
+                    if (pLoc.Forbidden || pLoc.Owner == null)
+                        continue;
+
+                    if (pLTI == null)
+                    {
+                        pLTI = (pLoc.Owner as LandX).Type;
+                        pMixedColor = ConvertColor(pLTI.m_pColor);
+                    }
+                    else
+                        pMixedColor = Microsoft.Xna.Framework.Color.Lerp(pMixedColor, ConvertColor((pLoc.Owner as LandX).Type.m_pColor), 0.5f);
+                    //if (pLTI != (pLoc.Owner as LandX).Type)
+                    //{
+                    //    pLTI = null;
+                    //    break;
+                    //}
+                }
+                //if(pLTI != null)
+                //    userPrimitives[iCounter].Color = ConvertColor(pLTI.m_pColor);
+                userPrimitives[iCounter].Color = pMixedColor;
+
+                cVertexes[pVertex.m_iID] = iCounter;
+
+                iCounter++;
+            }
+
+            m_iTrianglesCount = 0;
+            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+            {
+                userPrimitives[iCounter] = new VertexPositionColorNormal();
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X, pLoc.Y, pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight);
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
+                else
+                    userPrimitives[iCounter].Color = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
+
+                cLocations[pLoc.m_iID] = iCounter;
+
+                m_iTrianglesCount += pLoc.m_aBorderWith.Length;
+
+                iCounter++;
+            }
+
+            // Create the indices used for each triangle
+            userPrimitivesIndices = new int[m_iTrianglesCount * 3];
+
+            iCounter = 0;
+
+            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
+                    continue;
+
+                Line pLine = pLoc.m_pFirstLine;
+                //последовательно перебирает все связанные линии, пока круг не замкнётся.
+                do
+                {
+
+                    userPrimitivesIndices[iCounter++] = cLocations[pLoc.m_iID];
+                    userPrimitivesIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
+                    userPrimitivesIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID];
+
+                    pLine = pLine.m_pNext;
+                }
+                while (pLine != pLoc.m_pFirstLine);
+            }
+        }
+
+        private void FillPrimitives2()
+        {
+            int iPrimitivesCount = 0;
+            foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
+            {
+                List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
+                foreach (LocationX pLoc in pVertex.m_cLocations)
+                {
+                    if (pLoc.Forbidden || pLoc.Owner == null)
+                        continue;
+
+                    if (!cTypes.Contains((pLoc.Owner as LandX).Type))
+                    {
+                        cTypes.Add((pLoc.Owner as LandX).Type);
+                        iPrimitivesCount++;
+                    }
+                }
+
+            }
+
+            // Create the verticies for our triangle
+            userPrimitives = new VertexPositionColorNormal[iPrimitivesCount + m_pWorld.m_pGrid.m_aLocations.Length];
+
+            Dictionary<long, Dictionary<LandTypeInfoX, int>> cVertexes = new Dictionary<long, Dictionary<LandTypeInfoX, int>>();
+            Dictionary<long, int> cLocations = new Dictionary<long, int>();
+
+            int iCounter = 0;
+            foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
+            {
+                cVertexes[pVertex.m_iID] = new Dictionary<LandTypeInfoX, int>();
+
+                List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
+                foreach (LocationX pLoc in pVertex.m_cLocations)
+                {
+                    if (pLoc.Forbidden || pLoc.Owner == null)
+                        continue;
+
+                    if (!cTypes.Contains((pLoc.Owner as LandX).Type))
+                    {
+                        cTypes.Add((pLoc.Owner as LandX).Type);
+                        userPrimitives[iCounter] = new VertexPositionColorNormal();
+                        userPrimitives[iCounter].Position = new Vector3(pVertex.m_fX, pVertex.m_fY, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ);
+                        userPrimitives[iCounter].Color = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
+
+                        cVertexes[pVertex.m_iID][(pLoc.Owner as LandX).Type] = iCounter;
+
+                        iCounter++;
+                    }
+                }
+            }
+
+            m_iTrianglesCount = 0;
+            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+            {
+                userPrimitives[iCounter] = new VertexPositionColorNormal();
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X, pLoc.Y, pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight);
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
+                else
+                    userPrimitives[iCounter].Color = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
+
+                cLocations[pLoc.m_iID] = iCounter;
+
+                m_iTrianglesCount += pLoc.m_aBorderWith.Length;
+
+                iCounter++;
+            }
+
+            // Create the indices used for each triangle
+            userPrimitivesIndices = new int[m_iTrianglesCount * 3];
+
+            iCounter = 0;
+
+            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
+                    continue;
+
+                Line pLine = pLoc.m_pFirstLine;
+                //последовательно перебирает все связанные линии, пока круг не замкнётся.
+                do
+                {
+
+                    userPrimitivesIndices[iCounter++] = cLocations[pLoc.m_iID];
+                    userPrimitivesIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][(pLoc.Owner as LandX).Type];
+                    userPrimitivesIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID][(pLoc.Owner as LandX).Type];
+
+                    pLine = pLine.m_pNext;
+                }
+                while (pLine != pLoc.m_pFirstLine);
+            }
+        }
+
+        private void CalculateNormals()
+        {
+            for (int i = 0; i < userPrimitives.Length; i++)
+                userPrimitives[i].Normal = new Vector3(0, 0, 0);
+
+            for (int i = 0; i < m_iTrianglesCount; i++)
+            {
+                int index1 = userPrimitivesIndices[i * 3];
+                int index2 = userPrimitivesIndices[i * 3 + 1];
+                int index3 = userPrimitivesIndices[i * 3 + 2];
+
+                Vector3 side1 = userPrimitives[index1].Position - userPrimitives[index3].Position;
+                Vector3 side2 = userPrimitives[index1].Position - userPrimitives[index2].Position;
+                Vector3 normal = Vector3.Cross(side1, side2);
+
+                userPrimitives[index1].Normal += normal;
+                userPrimitives[index2].Normal += normal;
+                userPrimitives[index3].Normal += normal;
+            }
+
+            for (int i = 0; i < userPrimitives.Length; i++)
+                userPrimitives[i].Normal.Normalize();
+        }
+
+        /// <summary>
+        /// Привязать карту к миру.
+        /// Строим контуры всего, что придётся рисовать в ОРИГИНАЛЬНЫХ координатах
+        /// и раскидываем их по квадрантам
+        /// </summary>
+        /// <param name="pWorld">мир</param>
+        public void Assign(World pWorld)
+        {
+            m_pWorld = pWorld;
+
+            FillPrimitives2();
+            CalculateNormals();
+        }
+
+        private Microsoft.Xna.Framework.Color eSkyColor = Microsoft.Xna.Framework.Color.Lavender;
+
+        public FreeCamera m_pCamera = null;
+
+        /// <summary>
+        /// Initializes the control.
+        /// </summary>
+        protected override void Initialize()
+        {
+            // Create our effect.
+            effect = new BasicEffect(GraphicsDevice);
+
+            effect.VertexColorEnabled = true;
+
+            m_pCamera = new FreeCamera(new Vector3(0, 0, 100000),
+                                        MathHelper.ToRadians(180),
+                                        MathHelper.ToRadians(0),
+                                        MathHelper.ToRadians(180),
+                                        GraphicsDevice);
+
+            // Start the animation timer.
+            timer = Stopwatch.StartNew();
+            lastTime = timer.Elapsed.TotalMilliseconds;
+
+            // Hook the idle event to constantly redraw our animation.
+            Application.Idle += delegate { Invalidate(); };
+        }
+
+        private Microsoft.Xna.Framework.Color ConvertColor(System.Drawing.Color Value)
+        {
+            return new Microsoft.Xna.Framework.Color(Value.R, Value.G, Value.B, Value.A);
+        }
+
+        private System.Drawing.Color ConvertColor(Microsoft.Xna.Framework.Color Value) 
+        {
+            return System.Drawing.Color.FromArgb(Value.A, Value.R, Value.G, Value.B);
+        }
+        
+        double lastTime = 0;
+
+        public float m_fScaling = 0;
+
+        public void PanCamera(float fLeft, float fUp)
+        {
+            m_pCamera.Move(fLeft * m_pCamera.Position.Z * 0.00118f, fUp * m_pCamera.Position.Z * 0.00118f);
+        }
+
+        /// <summary>
+        /// Draws the control.
+        /// </summary>
+        protected override void Draw()
+        {
+            GraphicsDevice.Clear(eSkyColor);
+
+            double fElapsedTime = timer.Elapsed.TotalMilliseconds - lastTime;
+            lastTime = timer.Elapsed.TotalMilliseconds;
+
+            if (m_pWorld == null)
+                return;
+
+            // Spin the triangle according to how much time has passed.
+            float time = (float)timer.Elapsed.TotalSeconds;
+
+            // Set transform matrices.
+            float aspect = GraphicsDevice.Viewport.AspectRatio;
+
+//            effect.World = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
+//            effect.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
+            effect.World = Matrix.CreateScale(0.5f);
+
+            //effect.View = Matrix.CreateLookAt(new Vector3(50000, 0, 15000),
+            //                                  Vector3.Zero, Vector3.Left);
+
+
+            if (m_fScaling != 0)
+            {
+                Vector3 translation = m_pCamera.Direction;
+                // Move 3 units per millisecond, independent of frame rate
+                translation *= m_fScaling * (float)fElapsedTime;
+                m_pCamera.Move(translation);
+                m_fScaling = 0;
+            }
+            m_pCamera.Update();
+            if (m_pCamera.Position.Z < m_pWorld.m_fMaxHeight * m_fHeightMultiplier)
+            {
+                Vector3 pReturn = new Vector3(0, 0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier - m_pCamera.Position.Z);
+                m_pCamera.Move(pReturn);
+                m_pCamera.Update();
+            }
+            // Update the mouse state
+            effect.View = m_pCamera.View;
+            effect.Projection = m_pCamera.Projection;
+
+//            effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 150000);
+
+            effect.LightingEnabled = true;
+//            effect.DirectionalLight0.Direction = Vector3.Transform(Vector3.Normalize(new Vector3(0, 1, 0)), Matrix.CreateRotationX(time * 0.2f));
+            effect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, 1, 2));
+            effect.AmbientLightColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.2f).ToVector3();
+
+            effect.PreferPerPixelLighting = true;
+
+            //effect.FogColor = eSkyColor.ToVector3();
+            //effect.FogEnabled = true;
+            //effect.FogStart = 5000.0f;
+            //effect.FogEnd = 180000.0f;
+            
+            // Set renderstates.
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+
+            // Draw the triangle.
+            effect.CurrentTechnique.Passes[0].Apply();
+            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
+                                              userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
+        }
+    }
+}
