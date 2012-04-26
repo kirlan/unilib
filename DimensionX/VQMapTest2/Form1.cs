@@ -634,7 +634,7 @@ namespace VQMapTest2
 
         void mapDraw3d1_MouseWheel(object sender, MouseEventArgs e)
         {
-            mapDraw3d1.m_fScaling = -e.Delta;
+            mapDraw3d1.m_fScaling = e.Delta;
 //            mapDraw3d1.m_fScaling = 0;
         }
 
@@ -661,7 +661,8 @@ namespace VQMapTest2
 
             if (m_b3dMapRotate)
     //            mapDraw3d1.m_pCamera.Rotate(0, p.Y * 0.01f, p.X * 0.01f);
-                mapDraw3d1.m_pCamera.Rotate(p.X * 0.01f, p.Y * 0.01f, 0);
+    //            mapDraw3d1.m_pCamera.Rotate(p.X * 0.01f, p.Y * 0.01f, 0);
+                mapDraw3d1.m_pCamera.Orbit(p.X * 0.01f, p.Y * 0.01f, 0);
         }
     }
 }
