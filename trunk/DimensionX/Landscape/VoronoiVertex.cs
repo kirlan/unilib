@@ -79,7 +79,7 @@ namespace LandscapeGeneration
 
         public override string ToString()
         {
-            return string.Format("X: {0}, Y: {1}, Z: {1}", X, Y, m_fZ);
+            return string.Format("X: {0}, Y: {1}, Z: {2}", X, Y, m_fZ);
         }
 
         //public override float GetMovementCost()
