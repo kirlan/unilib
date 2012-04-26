@@ -181,7 +181,9 @@ namespace MapDrawXNAEngine
                     {
                         cTypes.Add((pLoc.Owner as LandX).Type);
                         userPrimitives[iCounter] = new VertexPositionColorNormal();
-                        userPrimitives[iCounter].Position = new Vector3(pVertex.m_fX, pVertex.m_fY, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ);
+                        //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
+                        //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
+                        userPrimitives[iCounter].Position = new Vector3(pVertex.m_fX, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ, pVertex.m_fY);
                         userPrimitives[iCounter].Color = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
 
                         cVertexes[pVertex.m_iID][(pLoc.Owner as LandX).Type] = iCounter;
@@ -195,7 +197,7 @@ namespace MapDrawXNAEngine
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 userPrimitives[iCounter] = new VertexPositionColorNormal();
-                userPrimitives[iCounter].Position = new Vector3(pLoc.X, pLoc.Y, pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight);
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X, pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight, pLoc.Y);
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
                 else
@@ -269,6 +271,15 @@ namespace MapDrawXNAEngine
 
             FillPrimitives2();
             CalculateNormals();
+
+            if (GraphicsDevice != null)
+            {
+                m_pCamera = new FreeCamera(new Vector3(0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier, 0),
+                                        MathHelper.ToRadians(0),
+                                        MathHelper.ToRadians(0),
+                                        MathHelper.ToRadians(0),
+                                        GraphicsDevice);
+            }
         }
 
         private Microsoft.Xna.Framework.Color eSkyColor = Microsoft.Xna.Framework.Color.Lavender;
@@ -285,11 +296,23 @@ namespace MapDrawXNAEngine
 
             effect.VertexColorEnabled = true;
 
-            m_pCamera = new FreeCamera(new Vector3(0, 0, 100000),
-                                        MathHelper.ToRadians(180),
+            if (m_pWorld == null)
+            {
+                m_pCamera = new FreeCamera(new Vector3(0, 100000, 0),
+                                            MathHelper.ToRadians(180),
+                                            MathHelper.ToRadians(0),
+                                            MathHelper.ToRadians(180),
+                                            GraphicsDevice);
+            }
+            else
+            {
+//                m_pCamera = new FreeCamera(new Vector3(0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier, 0),
+                m_pCamera = new FreeCamera(new Vector3(0, 100000, 0),
                                         MathHelper.ToRadians(0),
-                                        MathHelper.ToRadians(180),
+                                        MathHelper.ToRadians(270),
+                                        MathHelper.ToRadians(0),
                                         GraphicsDevice);
+            }
 
             // Start the animation timer.
             timer = Stopwatch.StartNew();
@@ -315,7 +338,7 @@ namespace MapDrawXNAEngine
 
         public void PanCamera(float fLeft, float fUp)
         {
-            m_pCamera.Move(fLeft * m_pCamera.Position.Z * 0.00118f, fUp * m_pCamera.Position.Z * 0.00118f);
+            m_pCamera.Move(fLeft * m_pCamera.Position.Y * 0.00118f, fUp * m_pCamera.Position.Y * 0.00118f);
         }
 
         /// <summary>
@@ -331,35 +354,25 @@ namespace MapDrawXNAEngine
             if (m_pWorld == null)
                 return;
 
-            // Spin the triangle according to how much time has passed.
             float time = (float)timer.Elapsed.TotalSeconds;
 
             // Set transform matrices.
             float aspect = GraphicsDevice.Viewport.AspectRatio;
 
-//            effect.World = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
-//            effect.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
             effect.World = Matrix.CreateScale(0.5f);
-
-            //effect.View = Matrix.CreateLookAt(new Vector3(50000, 0, 15000),
-            //                                  Vector3.Zero, Vector3.Left);
-
 
             if (m_fScaling != 0)
             {
-                Vector3 translation = m_pCamera.Direction;
-                // Move 3 units per millisecond, independent of frame rate
-                translation *= m_fScaling * (float)fElapsedTime;
-                m_pCamera.Move(translation);
+                m_pCamera.MoveForward(m_fScaling * (float)fElapsedTime);
                 m_fScaling = 0;
             }
             m_pCamera.Update();
-            if (m_pCamera.Position.Z < m_pWorld.m_fMaxHeight * m_fHeightMultiplier)
-            {
-                Vector3 pReturn = new Vector3(0, 0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier - m_pCamera.Position.Z);
-                m_pCamera.Move(pReturn);
-                m_pCamera.Update();
-            }
+            //if (m_pCamera.Position.Y < m_pWorld.m_fMaxHeight * m_fHeightMultiplier)
+            //{
+            //    Vector3 pReturn = new Vector3(0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier - m_pCamera.Position.Y, 0);
+            //    m_pCamera.Jump(pReturn);
+            //    m_pCamera.Update();
+            //}
             // Update the mouse state
             effect.View = m_pCamera.View;
             effect.Projection = m_pCamera.Projection;
@@ -368,10 +381,10 @@ namespace MapDrawXNAEngine
 
             effect.LightingEnabled = true;
 //            effect.DirectionalLight0.Direction = Vector3.Transform(Vector3.Normalize(new Vector3(0, 1, 0)), Matrix.CreateRotationX(time * 0.2f));
-            effect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, 1, 2));
+            effect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, -1, -1));
             effect.AmbientLightColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.2f).ToVector3();
 
-            effect.PreferPerPixelLighting = true;
+//            effect.PreferPerPixelLighting = true;
 
             //effect.FogColor = eSkyColor.ToVector3();
             //effect.FogEnabled = true;

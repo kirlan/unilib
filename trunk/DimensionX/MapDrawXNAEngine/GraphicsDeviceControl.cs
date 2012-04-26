@@ -39,7 +39,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         public GraphicsDevice GraphicsDevice
         {
-            get { return graphicsDeviceService.GraphicsDevice; }
+            get { return graphicsDeviceService == null ? null : graphicsDeviceService.GraphicsDevice; }
         }
 
 
