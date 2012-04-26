@@ -359,8 +359,6 @@ namespace MapDrawXNAEngine
             // Set transform matrices.
             float aspect = GraphicsDevice.Viewport.AspectRatio;
 
-            effect.World = Matrix.CreateScale(0.5f);
-
             if (m_fScaling != 0)
             {
                 m_pCamera.MoveForward(m_fScaling * (float)fElapsedTime);
@@ -386,13 +384,31 @@ namespace MapDrawXNAEngine
 
 //            effect.PreferPerPixelLighting = true;
 
-            //effect.FogColor = eSkyColor.ToVector3();
-            //effect.FogEnabled = true;
-            //effect.FogStart = 5000.0f;
-            //effect.FogEnd = 180000.0f;
+            effect.FogColor = eSkyColor.ToVector3();
+            effect.FogEnabled = true;
+            effect.FogStart = m_pCamera.Position.Y;//5000.0f;
+            effect.FogEnd = Math.Max(m_pCamera.m_fDistance, m_pWorld.m_pGrid.RY/2 + m_pCamera.Position.Y * m_pCamera.Position.Y / 5000);// 180000.0f;
             
             // Set renderstates.
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+
+            if (m_pWorld.m_pGrid.m_bCycled)
+            {
+                effect.World = Matrix.CreateTranslation(-m_pWorld.m_pGrid.RX * 2, 0, 0) * Matrix.CreateScale(0.5f);
+
+                // Draw the triangle.
+                effect.CurrentTechnique.Passes[0].Apply();
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
+                                                  userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
+
+                effect.World = Matrix.CreateTranslation(m_pWorld.m_pGrid.RX * 2, 0, 0) * Matrix.CreateScale(0.5f);
+
+                // Draw the triangle.
+                effect.CurrentTechnique.Passes[0].Apply();
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
+                                                  userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
+            }
+            effect.World = Matrix.CreateScale(0.5f);
 
             // Draw the triangle.
             effect.CurrentTechnique.Passes[0].Apply();
