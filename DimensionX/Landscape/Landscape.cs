@@ -923,6 +923,8 @@ namespace LandscapeGeneration
         {
             foreach (Vertex pVertex in m_pGrid.m_aVertexes)
             {
+                pVertex.m_fZ = 0;
+
                 int iCount = 0;
                 bool bOcean = false;
                 bool bLand = false;
@@ -952,7 +954,7 @@ namespace LandscapeGeneration
         {
             foreach (LOC pLoc in m_pGrid.m_aLocations)
             {
-                if (pLoc.Forbidden)
+                if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
 
                 float fLokElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
@@ -962,18 +964,18 @@ namespace LandscapeGeneration
                         continue;
 
                     float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLink.Owner as LAND).Type));
-                    if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
+                    //if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
                     {
                         float fAverage = (pLoc.m_fHeight + pLink.m_fHeight)/2;
                         if (pLoc.m_fHeight > 0)
-                            pLoc.m_fHeight = Math.Max(0.1f, (fAverage + pLoc.m_fHeight) / 2);
+                            pLoc.m_fHeight = Math.Max(0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
                         else
-                            pLoc.m_fHeight = Math.Min(-0.1f, (fAverage + pLoc.m_fHeight) / 2);
+                            pLoc.m_fHeight = Math.Min(-0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
 
                         if (pLink.m_fHeight > 0)
-                            pLink.m_fHeight = Math.Max(0.1f, (fAverage + pLink.m_fHeight) / 2);
+                            pLink.m_fHeight = Math.Max(0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
                         else
-                            pLink.m_fHeight = Math.Min(-0.1f, (fAverage + pLink.m_fHeight) / 2);
+                            pLink.m_fHeight = Math.Min(-0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
                     }
                 }
             }

@@ -22,7 +22,7 @@ namespace MapDrawXNAEngine
 
         private Vector3 pPOI = Vector3.Zero;
 
-        private float m_fDistance;
+        public float m_fDistance;
         
         public FreeCamera(Vector3 Position, float Yaw, float Pitch, float Roll, GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
@@ -71,10 +71,19 @@ namespace MapDrawXNAEngine
             //VTrans *= fDistance;
             //Move(VTrans);
 
+            //if (fDistance > 0)
+                fDistance *= m_fDistance / 100000;
+            //else
+            //    fDistance *= (float)Math.Sqrt(m_fDistance / 100000);
+
+
             m_fDistance -= fDistance;
 
-            if (m_fDistance < 0)
-                m_fDistance = 0;
+            if (m_fDistance < 1)
+                m_fDistance = 1;
+
+            if (m_fDistance > 100000)
+                m_fDistance = 100000;
         }
 
         public override void Update()
