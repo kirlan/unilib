@@ -913,10 +913,16 @@ namespace LandscapeGeneration
 
             NoiseMap();
 
-            PlainMap();
-            PlainMap();
+            SmoothMap(100);
+            SmoothMap(2);
+            SmoothMap(1);
+            SmoothMap(0.5f);
+            SmoothMap(0.1f);
+            //PlainMap();
 
             CalculateVertexes();
+            SmoothVertexes();
+            SmoothVertexes();
         }
 
         private void CalculateVertexes()
@@ -925,16 +931,17 @@ namespace LandscapeGeneration
             {
                 pVertex.m_fZ = 0;
 
-                int iCount = 0;
+                float fTotalWeight = 0;
                 bool bOcean = false;
                 bool bLand = false;
                 foreach (LOC pLoc in pVertex.m_cLocations)
                 {
-                    if (pLoc.Forbidden)
+                    if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
-                    pVertex.m_fZ += pLoc.m_fHeight;
-                    iCount++;
+                    float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                    pVertex.m_fZ += pLoc.m_fHeight / fLinkElevation;
+                    fTotalWeight += 1 / fLinkElevation;
 
                     if (pLoc.m_fHeight > 0)
                         bLand = true;
@@ -942,15 +949,41 @@ namespace LandscapeGeneration
                         bOcean = true;
                 }
 
-                if (iCount > 0)
-                    pVertex.m_fZ /= iCount;
+                if (fTotalWeight > 0)
+                    pVertex.m_fZ /= fTotalWeight;
 
                 if (bOcean && bLand)
                     pVertex.m_fZ = 0;
             }
         }
 
-        private void PlainMap()
+        private void SmoothVertexes()
+        {
+            foreach (Vertex pVertex in m_pGrid.m_aVertexes)
+            {
+                float fSum = pVertex.m_fZ * 0.2f;
+                float fTotalWeight = 0.2f;
+                foreach (Vertex pLink in pVertex.m_cVertexes)
+                {
+                    //float fDist = (float)Math.Sqrt((pVertex.m_fX - pLink.m_fX) * (pVertex.m_fX - pLink.m_fX) +
+                    //                              (pVertex.m_fY - pLink.m_fY) * (pVertex.m_fY - pLink.m_fY));
+                    float fDist = (pVertex.m_fX - pLink.m_fX) * (pVertex.m_fX - pLink.m_fX) +
+                                                  (pVertex.m_fY - pLink.m_fY) * (pVertex.m_fY - pLink.m_fY);
+                    float fWeight = 1.0f / fDist;
+                    fSum += pLink.m_fZ * fWeight;
+                    fTotalWeight += fWeight;
+                }
+
+                pVertex.m_fZ = fSum / fTotalWeight;
+            }
+        }
+
+        /// <summary>
+        /// Сглаживает карту.
+        /// Локации с типом, предполагающим более высокий перепад уровней, чем заданный, не затрагиваются
+        /// </summary>
+        /// <param name="fMaxElevation"></param>
+        private void SmoothMap(float fMaxElevation)
         {
             foreach (LOC pLoc in m_pGrid.m_aLocations)
             {
@@ -958,25 +991,42 @@ namespace LandscapeGeneration
                     continue;
 
                 float fLokElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
-                foreach (LOC pLink in pLoc.m_aBorderWith)
+
+                if (fLokElevation <= fMaxElevation)
                 {
-                    if (pLink.Forbidden || pLink.Owner == null)
-                        continue;
-
-                    float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLink.Owner as LAND).Type));
-                    //if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
+                    float fTotal = pLoc.m_fHeight;
+                    float fTotalWeight = 1;
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
                     {
-                        float fAverage = (pLoc.m_fHeight + pLink.m_fHeight)/2;
-                        if (pLoc.m_fHeight > 0)
-                            pLoc.m_fHeight = Math.Max(0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
-                        else
-                            pLoc.m_fHeight = Math.Min(-0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
+                        if (pLink.Forbidden || pLink.Owner == null)
+                            continue;
 
-                        if (pLink.m_fHeight > 0)
-                            pLink.m_fHeight = Math.Max(0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
-                        else
-                            pLink.m_fHeight = Math.Min(-0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
+                        float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLink.Owner as LAND).Type));
+                        float fWeight = 1;
+                        if (fLinkElevation > fMaxElevation)
+                            fWeight = 0.5f;
+                        ////if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
+                        //{
+                        //    float fAverage = (pLoc.m_fHeight + pLink.m_fHeight)/2;
+                        //    if (pLoc.m_fHeight > 0)
+                        //        pLoc.m_fHeight = Math.Max(0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
+                        //    else
+                        //        pLoc.m_fHeight = Math.Min(-0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
+
+                        //    if (pLink.m_fHeight > 0)
+                        //        pLink.m_fHeight = Math.Max(0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
+                        //    else
+                        //        pLink.m_fHeight = Math.Min(-0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
+                        //}
+
+                        fTotal += pLink.m_fHeight*fWeight;
+                        fTotalWeight += fWeight;
                     }
+
+                    if (pLoc.m_fHeight > 0)
+                        pLoc.m_fHeight = Math.Max(0.1f, fTotal / fTotalWeight);
+                    else
+                        pLoc.m_fHeight = Math.Min(-0.1f, fTotal / fTotalWeight);
                 }
             }
         }

@@ -171,6 +171,10 @@ namespace MapDrawXNAEngine
             {
                 cVertexes[pVertex.m_iID] = new Dictionary<LandTypeInfoX, int>();
 
+                //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
+                //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
+                Vector3 pPosition = new Vector3(pVertex.m_fX, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ, pVertex.m_fY);
+
                 List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
@@ -181,9 +185,7 @@ namespace MapDrawXNAEngine
                     {
                         cTypes.Add((pLoc.Owner as LandX).Type);
                         userPrimitives[iCounter] = new VertexPositionColorNormal();
-                        //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
-                        //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                        userPrimitives[iCounter].Position = new Vector3(pVertex.m_fX, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ, pVertex.m_fY);
+                        userPrimitives[iCounter].Position = pPosition;
                         userPrimitives[iCounter].Color = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
 
                         cVertexes[pVertex.m_iID][(pLoc.Owner as LandX).Type] = iCounter;
@@ -220,6 +222,8 @@ namespace MapDrawXNAEngine
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
+                bool bError = false;
+
                 Line pLine = pLoc.m_pFirstLine;
                 //последовательно перебирает все связанные линии, пока круг не замкнётся.
                 do
@@ -229,6 +233,20 @@ namespace MapDrawXNAEngine
                     userPrimitivesIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][(pLoc.Owner as LandX).Type];
                     userPrimitivesIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID][(pLoc.Owner as LandX).Type];
 
+                    int index2 = userPrimitivesIndices[iCounter - 2];
+                    int index3 = userPrimitivesIndices[iCounter - 1];
+
+                    if ((userPrimitives[index2].Position.X == userPrimitives[index3].Position.X) && (userPrimitives[index2].Position.Z == userPrimitives[index3].Position.Z))
+                        bError = true;
+
+                    Vector3 pProjection2 = Vector3.Transform(userPrimitives[index2].Position, Matrix.CreateScale(1, 0, 1));
+                    Vector3 pProjection3 = Vector3.Transform(userPrimitives[index3].Position, Matrix.CreateScale(1, 0, 1));
+
+                    float fDistanceProjection = Vector3.Distance(pProjection2, pProjection3);
+                    float fRealDistance = Vector3.Distance(userPrimitives[index2].Position, userPrimitives[index3].Position);
+                    if (fDistanceProjection * 5 < fRealDistance)
+                        bError = true;
+
                     pLine = pLine.m_pNext;
                 }
                 while (pLine != pLoc.m_pFirstLine);
@@ -237,6 +255,8 @@ namespace MapDrawXNAEngine
 
         private void CalculateNormals()
         {
+            bool bError = false;
+
             for (int i = 0; i < userPrimitives.Length; i++)
                 userPrimitives[i].Normal = new Vector3(0, 0, 0);
 
@@ -245,6 +265,16 @@ namespace MapDrawXNAEngine
                 int index1 = userPrimitivesIndices[i * 3];
                 int index2 = userPrimitivesIndices[i * 3 + 1];
                 int index3 = userPrimitivesIndices[i * 3 + 2];
+
+                if (index1 == 0 && index2 == 0 && index3 == 0)
+                    continue;
+
+                if ((userPrimitives[index1].Position.X == userPrimitives[index2].Position.X) && (userPrimitives[index1].Position.Z == userPrimitives[index2].Position.Z))
+                    bError = true;
+                if ((userPrimitives[index1].Position.X == userPrimitives[index3].Position.X) && (userPrimitives[index1].Position.Z == userPrimitives[index3].Position.Z))
+                    bError = true;
+                if ((userPrimitives[index2].Position.X == userPrimitives[index3].Position.X) && (userPrimitives[index2].Position.Z == userPrimitives[index3].Position.Z))
+                    bError = true;
 
                 Vector3 side1 = userPrimitives[index1].Position - userPrimitives[index3].Position;
                 Vector3 side2 = userPrimitives[index1].Position - userPrimitives[index2].Position;
