@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Socium;
 
 namespace MapDrawXNAEngine
 {
@@ -20,7 +21,7 @@ namespace MapDrawXNAEngine
         private Vector3 translationJump;
         private Vector3 translationPan;
 
-        private Vector3 pPOI = Vector3.Zero;
+        public Vector3 m_pPOI = Vector3.Zero;
 
         public float m_fDistance;
         
@@ -35,7 +36,7 @@ namespace MapDrawXNAEngine
             translationJump = Vector3.Zero;
             translationPan = Vector3.Zero;
 
-            m_fDistance = Vector3.Distance(Position, pPOI);
+            m_fDistance = Vector3.Distance(Position, m_pPOI);
         }
 
         public void Orbit(float YawChange, float PitchChange, float RollChange)
@@ -58,9 +59,9 @@ namespace MapDrawXNAEngine
             this.translation += Translation;
         }
 
-        public void Move(float fLeft, float fUp)
+        public void Pan(float fLeft, float fUp)
         {
-            Vector3 pMove = new Vector3(fLeft, -fUp, 0);
+            Vector3 pMove = new Vector3(fLeft, 0, fUp);
             this.translationPan += pMove;
         }
 
@@ -96,24 +97,25 @@ namespace MapDrawXNAEngine
             // Offset the position and reset the translation
             translation = Vector3.Transform(translation, cameraRotation);
             //Position += translation;
-            pPOI += translation;
+            m_pPOI += translation;
 
             translation = Vector3.Zero;
 
             // Offset the position and reset the translation
-            translationPan = Vector3.Transform(translationPan, cameraRotation);
-            translationPan = Vector3.Transform(translationPan, Matrix.CreateScale(1, 0, 1));
+//            translationPan = Vector3.Transform(translationPan, cameraRotation);
+            translationPan = Vector3.Transform(translationPan, Matrix.CreateRotationY(Yaw));
+            //translationPan = Vector3.Transform(translationPan, Matrix.CreateScale(1, 0, 1));
             //Position += translationPan;
-            pPOI += translationPan;
+            m_pPOI += translationPan;
 
             translationPan = Vector3.Zero;
 
             //Position += translationJump;
-            pPOI += translationJump;
+            m_pPOI += translationJump;
 
             translationJump = Vector3.Zero;
 
-            pPOI = Vector3.Transform(pPOI, Matrix.CreateScale(1, 0, 1));
+            m_pPOI = Vector3.Transform(m_pPOI, Matrix.CreateScale(1, 0, 1));
 
             Vector3 pOldDirection = Direction;
 
@@ -125,11 +127,11 @@ namespace MapDrawXNAEngine
             Vector3 cameraOrbit = Vector3.Zero;
 
             //float distance = Vector3.Distance(Position, pPOI);
-            cameraOrbit = pPOI - Direction * m_fDistance;
+            cameraOrbit = m_pPOI - Direction * m_fDistance;
 
             Position = cameraOrbit;
 
-            Vector3 cameraFinalTarget = pPOI;
+            Vector3 cameraFinalTarget = m_pPOI;
 
             Vector3 cameraOriginalUpVector = Vector3.Up;//new Vector3(0, 0, 1);
             Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);

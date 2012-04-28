@@ -16,7 +16,7 @@ namespace LandscapeGeneration
 
         public bool IsWater
         {
-            get { return m_pType != null && m_pType.m_eType == EnvironmentType.Water; }
+            get { return m_pType != null && m_pType.m_eEnvironment == EnvironmentType.Water; }
         }
 
         public Area()

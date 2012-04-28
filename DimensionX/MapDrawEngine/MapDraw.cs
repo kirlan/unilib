@@ -1072,8 +1072,13 @@ namespace MapDrawEngine
 
         private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight)
         {
+            if (fMinHeight == 0)
+                fMinHeight = fHeight;
+            if (fMaxHeight == 0)
+                fMaxHeight = fHeight;
+
             KColor color = new KColor();
-            //color.RGB = Color.Green;
+            color.RGB = Color.Cyan;
 
             if (fHeight < 0)
             {
@@ -1082,7 +1087,7 @@ namespace MapDrawEngine
                 color.RGB = Color.Green;
                 color.Hue = 200 + 40 * fHeight / fMinHeight;
             }
-            else
+            if (fHeight > 0)
             {
                 //color.RGB = Color.Brown;
                 //color.Lightness = 0.2 + (double)fHeight / (fMaxHeight * 2);

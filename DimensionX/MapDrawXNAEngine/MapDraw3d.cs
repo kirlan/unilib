@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
 using System.Windows.Forms;
 using Socium;
 using LandscapeGeneration;
 using System.Drawing;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace MapDrawXNAEngine
 {
@@ -199,11 +203,22 @@ namespace MapDrawXNAEngine
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 userPrimitives[iCounter] = new VertexPositionColorNormal();
-                userPrimitives[iCounter].Position = new Vector3(pLoc.X, pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight, pLoc.Y);
+                float fHeight = pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight;
+                if (pLoc.m_eType == RegionType.Peak)
+                    fHeight += 2 * m_fHeightMultiplier;
+                if (pLoc.m_eType == RegionType.Volcano)
+                    fHeight -= 10 * m_fHeightMultiplier;
+
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X, fHeight, pLoc.Y);
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
                 else
                     userPrimitives[iCounter].Color = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
+
+                if (pLoc.m_eType == RegionType.Peak)
+                    userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
+                if (pLoc.m_eType == RegionType.Volcano)
+                    userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.Red;
 
                 cLocations[pLoc.m_iID] = iCounter;
 
@@ -322,6 +337,7 @@ namespace MapDrawXNAEngine
         protected override void Initialize()
         {
             // Create our effect.
+
             effect = new BasicEffect(GraphicsDevice);
 
             effect.VertexColorEnabled = true;
@@ -368,7 +384,7 @@ namespace MapDrawXNAEngine
 
         public void PanCamera(float fLeft, float fUp)
         {
-            m_pCamera.Move(fLeft * m_pCamera.Position.Y * 0.00118f, fUp * m_pCamera.Position.Y * 0.00118f);
+            m_pCamera.Pan(fLeft * m_pCamera.Position.Y * 0.00118f, fUp * m_pCamera.Position.Y * 0.00118f);
         }
 
         /// <summary>
@@ -377,7 +393,7 @@ namespace MapDrawXNAEngine
         protected override void Draw()
         {
             GraphicsDevice.Clear(eSkyColor);
-
+            
             double fElapsedTime = timer.Elapsed.TotalMilliseconds - lastTime;
             lastTime = timer.Elapsed.TotalMilliseconds;
 
@@ -395,6 +411,12 @@ namespace MapDrawXNAEngine
                 m_fScaling = 0;
             }
             m_pCamera.Update();
+            if (m_pCamera.m_pPOI.X < -m_pWorld.m_pGrid.RX)
+                m_pCamera.m_pPOI += new Vector3(m_pWorld.m_pGrid.RX * 2, 0, 0);
+            if (m_pCamera.m_pPOI.X > m_pWorld.m_pGrid.RX)
+                m_pCamera.m_pPOI -= new Vector3(m_pWorld.m_pGrid.RX * 2, 0, 0);
+            m_pCamera.Update();
+
             //if (m_pCamera.Position.Y < m_pWorld.m_fMaxHeight * m_fHeightMultiplier)
             //{
             //    Vector3 pReturn = new Vector3(0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier - m_pCamera.Position.Y, 0);
@@ -412,7 +434,7 @@ namespace MapDrawXNAEngine
             effect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, -1, -1));
             effect.AmbientLightColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.2f).ToVector3();
 
-//            effect.PreferPerPixelLighting = true;
+            effect.PreferPerPixelLighting = true;
 
             effect.FogColor = eSkyColor.ToVector3();
             effect.FogEnabled = true;
