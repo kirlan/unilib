@@ -21,27 +21,38 @@ namespace GeneLabTest
         {
             InitializeComponent();
 
-            LandTypes<LandTypeInfoX>.Coastral.Init(10, EnvironmentType.Water, "sea");
+            LandTypes<LandTypeInfoX>.Coastral.Init(10, 1, EnvironmentType.Water, "sea");
+            LandTypes<LandTypeInfoX>.Coastral.SetColor(Color.FromArgb(0x27, 0x67, 0x71));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
 
-            LandTypes<LandTypeInfoX>.Ocean.Init(10, EnvironmentType.Water, "ocean");
+            LandTypes<LandTypeInfoX>.Ocean.Init(10, 5, EnvironmentType.Water, "ocean");
+            LandTypes<LandTypeInfoX>.Ocean.SetColor(Color.FromArgb(0x1e, 0x5e, 0x69));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
 
-            LandTypes<LandTypeInfoX>.Plains.Init(1, EnvironmentType.Ground, "plains");
+            LandTypes<LandTypeInfoX>.Plains.Init(1, 1, EnvironmentType.Ground, "plains");
+            LandTypes<LandTypeInfoX>.Plains.SetColor(Color.FromArgb(0xd3, 0xfa, 0x5f));//(0xdc, 0xfa, 0x83);//LightGreen;
 
-            LandTypes<LandTypeInfoX>.Savanna.Init(1, EnvironmentType.Ground, "savanna");
+            LandTypes<LandTypeInfoX>.Savanna.Init(1, 1, EnvironmentType.Ground, "savanna");
+            LandTypes<LandTypeInfoX>.Savanna.SetColor(Color.FromArgb(0xf0, 0xff, 0x8a));//(0xbd, 0xb0, 0x6b);//PaleGreen;
 
-            LandTypes<LandTypeInfoX>.Tundra.Init(2, EnvironmentType.Ground, "tundra");
+            LandTypes<LandTypeInfoX>.Tundra.Init(2, 0.5f, EnvironmentType.Ground, "tundra");
+            LandTypes<LandTypeInfoX>.Tundra.SetColor(Color.FromArgb(0xc9, 0xff, 0xff));//(0xc9, 0xe0, 0xff);//PaleGreen;
 
-            LandTypes<LandTypeInfoX>.Desert.Init(2, EnvironmentType.Ground, "desert");
+            LandTypes<LandTypeInfoX>.Desert.Init(2, 0.1f, EnvironmentType.Ground, "desert");
+            LandTypes<LandTypeInfoX>.Desert.SetColor(Color.FromArgb(0xfa, 0xdc, 0x36));//(0xf9, 0xfa, 0x8a);//LightYellow;
 
-            LandTypes<LandTypeInfoX>.Forest.Init(3, EnvironmentType.Ground, "forest");
+            LandTypes<LandTypeInfoX>.Forest.Init(3, 2, EnvironmentType.Ground, "forest");
+            LandTypes<LandTypeInfoX>.Forest.SetColor(Color.FromArgb(0x56, 0x78, 0x34));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
 
-            LandTypes<LandTypeInfoX>.Taiga.Init(3, EnvironmentType.Ground, "taiga");
+            LandTypes<LandTypeInfoX>.Taiga.Init(3, 2, EnvironmentType.Ground, "taiga");
+            LandTypes<LandTypeInfoX>.Taiga.SetColor(Color.FromArgb(0x63, 0x78, 0x4e));//LightGreen;//ForestGreen;
 
-            LandTypes<LandTypeInfoX>.Swamp.Init(4, EnvironmentType.Ground, "swamp");
+            LandTypes<LandTypeInfoX>.Swamp.Init(4, 0.1f, EnvironmentType.Ground, "swamp");
+            LandTypes<LandTypeInfoX>.Swamp.SetColor(Color.FromArgb(0xa7, 0xbd, 0x6b));// DarkKhaki;
 
-            LandTypes<LandTypeInfoX>.Mountains.Init(5, EnvironmentType.Mountains, "mountains");
+            LandTypes<LandTypeInfoX>.Mountains.Init(5, 10, EnvironmentType.Mountains, "mountains");
+            LandTypes<LandTypeInfoX>.Mountains.SetColor(Color.FromArgb(0xbd, 0x6d, 0x46));//Tan;
 
-            LandTypes<LandTypeInfoX>.Jungle.Init(6, EnvironmentType.Ground, "jungle");
+            LandTypes<LandTypeInfoX>.Jungle.Init(6, 2, EnvironmentType.Ground, "jungle");
+            LandTypes<LandTypeInfoX>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
         }
 
         private void Mutate(Fenotype<LandTypeInfoX> pFenotype, string sName)

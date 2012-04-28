@@ -243,8 +243,8 @@ namespace GeneLab
 
         public void GetTerritoryPreferences(out LTI[] aPreferred, out LTI[] aHated)
         {
-            Dictionary<LandTypes<LTI>.LandType, int> cLandTypes = new Dictionary<LandTypes<LTI>.LandType, int>();
-            foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+            Dictionary<LandType, int> cLandTypes = new Dictionary<LandType, int>();
+            foreach (LandType eLand in Enum.GetValues(typeof(LandType)))
                 cLandTypes[eLand] = 1;
 
             //ноги дают преимущество на различных типа территории.
@@ -272,47 +272,47 @@ namespace GeneLab
                 {
                     //копыта дают премущества на равнинах и в горах
                     case LegsType.Hoofs:
-                        cLandTypes[LandTypes<LTI>.LandType.Plains] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Savanna] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Tundra] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Mountains] += iMultiplier;
+                        cLandTypes[LandType.Plains] += iMultiplier;
+                        cLandTypes[LandType.Savanna] += iMultiplier;
+                        cLandTypes[LandType.Tundra] += iMultiplier;
+                        cLandTypes[LandType.Mountains] += iMultiplier;
                         break;
                     //case LegsType.Foots:
-                    //    cLandTypes[LandTypes<LTI>.LandType.Plains] += iMultiplier;
-                    //    cLandTypes[LandTypes<LTI>.LandType.Savanna] += iMultiplier;
-                    //    cLandTypes[LandTypes<LTI>.LandType.Tundra] += iMultiplier;
+                    //    cLandTypes[LandType.Plains] += iMultiplier;
+                    //    cLandTypes[LandType.Savanna] += iMultiplier;
+                    //    cLandTypes[LandType.Tundra] += iMultiplier;
                     //    break;
                     //звериные лапы с когтями - на равнинах и в лесах
                     case LegsType.Paws:
-                        cLandTypes[LandTypes<LTI>.LandType.Plains] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Savanna] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Forest] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Jungle] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Taiga] += iMultiplier;
+                        cLandTypes[LandType.Plains] += iMultiplier;
+                        cLandTypes[LandType.Savanna] += iMultiplier;
+                        cLandTypes[LandType.Forest] += iMultiplier;
+                        cLandTypes[LandType.Jungle] += iMultiplier;
+                        cLandTypes[LandType.Taiga] += iMultiplier;
                         break;
                     //птичьи лапы с когтями - в лесах и в горах
                     case LegsType.Claws:
-                        cLandTypes[LandTypes<LTI>.LandType.Forest] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Jungle] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Taiga] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Mountains] += iMultiplier;
+                        cLandTypes[LandType.Forest] += iMultiplier;
+                        cLandTypes[LandType.Jungle] += iMultiplier;
+                        cLandTypes[LandType.Taiga] += iMultiplier;
+                        cLandTypes[LandType.Mountains] += iMultiplier;
                         break;
                     //паучьи лапы - в песках и горах
                     case LegsType.Spidery:
-                        cLandTypes[LandTypes<LTI>.LandType.Desert] += iMultiplier;
-                        cLandTypes[LandTypes<LTI>.LandType.Mountains] += iMultiplier;
+                        cLandTypes[LandType.Desert] += iMultiplier;
+                        cLandTypes[LandType.Mountains] += iMultiplier;
                         break;
                     //щупальца - в болотах
                     case LegsType.Tentacles:
-                        cLandTypes[LandTypes<LTI>.LandType.Swamp] += iMultiplier;
+                        cLandTypes[LandType.Swamp] += iMultiplier;
                         break;
                 }
             }
             else
             {
                 //безногие расы более комфортно себя чувствуют в пустынях и болотах
-                cLandTypes[LandTypes<LTI>.LandType.Desert] += iMultiplier;
-                cLandTypes[LandTypes<LTI>.LandType.Swamp] += iMultiplier;
+                cLandTypes[LandType.Desert] += iMultiplier;
+                cLandTypes[LandType.Swamp] += iMultiplier;
             }
 
             if (m_pTail.m_eTailLength == TailLength.Long)
@@ -321,16 +321,16 @@ namespace GeneLab
                 {
                     //длинный плохоуправляемый хвост помогает удерживать равновесие, что важно в лесах и горах
                     case TailControl.Crude:
-                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+                        cLandTypes[LandType.Forest] *= 2;
+                        cLandTypes[LandType.Jungle] *= 2;
+                        cLandTypes[LandType.Taiga] *= 2;
+                        cLandTypes[LandType.Mountains] *= 2;
                         break;
                     //длинный и ловкий хвост помогает скакать по веткам деревьев
                     case TailControl.Skillful:
-                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 3;
-                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 3;
-                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 3;
+                        cLandTypes[LandType.Forest] *= 3;
+                        cLandTypes[LandType.Jungle] *= 3;
+                        cLandTypes[LandType.Taiga] *= 3;
                         break;
                 }
             }
@@ -341,70 +341,70 @@ namespace GeneLab
                 {
                     //слабые крылья хороши там, где есть высокие места, откуда можно планировать - в лесах и горах
                     case WingsForce.Gliding:
-                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+                        cLandTypes[LandType.Forest] *= 2;
+                        cLandTypes[LandType.Jungle] *= 2;
+                        cLandTypes[LandType.Taiga] *= 2;
+                        cLandTypes[LandType.Mountains] *= 2;
                         break;
                     //сильные крылья хороши так же и на равнинах, где можно высоко взлететь и получить дополнительный обзор
                     case WingsForce.Flying:
-                        cLandTypes[LandTypes<LTI>.LandType.Plains] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
-                        cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+                        cLandTypes[LandType.Plains] *= 2;
+                        cLandTypes[LandType.Savanna] *= 2;
+                        cLandTypes[LandType.Tundra] *= 2;
+                        cLandTypes[LandType.Forest] *= 2;
+                        cLandTypes[LandType.Jungle] *= 2;
+                        cLandTypes[LandType.Taiga] *= 2;
+                        cLandTypes[LandType.Mountains] *= 2;
                         break;
                 }
 
                 //в болотах живут крылатые только с кожистыми или насекомыми крыльями
                 if (m_pWings.m_eWingsType == WingsType.Feathered)
-                    cLandTypes[LandTypes<LTI>.LandType.Swamp] = 0;
+                    cLandTypes[LandType.Swamp] = 0;
             }
 
             switch (m_pHide.m_eHideType)
             {
                 //существа с голой кожей не любят болота
                 case HideType.BareSkin:
-                    //cLandTypes[LandTypes<LTI>.LandType.Plains] *= 2;
-                    //cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
+                    //cLandTypes[LandType.Plains] *= 2;
+                    //cLandTypes[LandType.Savanna] *= 2;
 
-                    cLandTypes[LandTypes<LTI>.LandType.Swamp] = 0;
+                    cLandTypes[LandType.Swamp] = 0;
                     break;
                 //длинный мех подходит для холодных регионов и не подходит для жарких и влажных
                 case HideType.FurLong:
-                    cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
-                    cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+                    cLandTypes[LandType.Tundra] *= 2;
+                    cLandTypes[LandType.Taiga] *= 2;
 
-                    cLandTypes[LandTypes<LTI>.LandType.Swamp] = 0;
-                    cLandTypes[LandTypes<LTI>.LandType.Desert] = 0;
-                    cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
+                    cLandTypes[LandType.Swamp] = 0;
+                    cLandTypes[LandType.Desert] = 0;
+                    cLandTypes[LandType.Jungle] = 0;
                     break;
                 //хитин, наоборот, подходит для жарких и влажных мест, но не подходит для холодных
                 case HideType.Chitin:
-                    cLandTypes[LandTypes<LTI>.LandType.Swamp] *= 2;
-                    cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
-                    cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                    cLandTypes[LandType.Swamp] *= 2;
+                    cLandTypes[LandType.Desert] *= 2;
+                    cLandTypes[LandType.Jungle] *= 2;
 
-                    cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
-                    cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                    cLandTypes[LandType.Tundra] = 0;
+                    cLandTypes[LandType.Taiga] = 0;
                     break;
                 //аналогично чешуя
                 case HideType.Scales:
-                    cLandTypes[LandTypes<LTI>.LandType.Swamp] *= 2;
-                    cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
-                    cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                    cLandTypes[LandType.Swamp] *= 2;
+                    cLandTypes[LandType.Desert] *= 2;
+                    cLandTypes[LandType.Jungle] *= 2;
 
-                    cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
-                    cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                    cLandTypes[LandType.Tundra] = 0;
+                    cLandTypes[LandType.Taiga] = 0;
                     break;
                 //костяные панцири хороши для болота и не подходят для холодных регионов
                 case HideType.Shell:
-                    cLandTypes[LandTypes<LTI>.LandType.Swamp] *= 2;
+                    cLandTypes[LandType.Swamp] *= 2;
 
-                    cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
-                    cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                    cLandTypes[LandType.Tundra] = 0;
+                    cLandTypes[LandType.Taiga] = 0;
                     break;
             }
 
@@ -414,23 +414,23 @@ namespace GeneLab
             //светлая кожа не подходит для жарких регионов
             if (pColor.Lightness > 0.75)
             {
-                //cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
-                //cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+                //cLandTypes[LandType.Tundra] *= 2;
+                //cLandTypes[LandType.Taiga] *= 2;
 
-                cLandTypes[LandTypes<LTI>.LandType.Savanna] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Desert] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
+                cLandTypes[LandType.Savanna] = 0;
+                cLandTypes[LandType.Desert] = 0;
+                cLandTypes[LandType.Jungle] = 0;
             }
 
             //тёмная кожа не подходит для холодных регионов и даёт бонусы в особо жарких местах
             if (pColor.Lightness < 0.25)
             {
-                cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
-                cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
-                cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                cLandTypes[LandType.Savanna] *= 2;
+                cLandTypes[LandType.Desert] *= 2;
+                cLandTypes[LandType.Jungle] *= 2;
 
-                cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                cLandTypes[LandType.Tundra] = 0;
+                cLandTypes[LandType.Taiga] = 0;
             }
 
             int iPigmented = 0;
@@ -451,68 +451,68 @@ namespace GeneLab
             //светловолосые расы не живут в жарких странах
             if (iPigmentless > iPigmented * 2)
             {
-                //cLandTypes[LandTypes<LTI>.LandType.Tundra] *= 2;
-                //cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+                //cLandTypes[LandType.Tundra] *= 2;
+                //cLandTypes[LandType.Taiga] *= 2;
 
-                cLandTypes[LandTypes<LTI>.LandType.Savanna] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Desert] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
+                cLandTypes[LandType.Savanna] = 0;
+                cLandTypes[LandType.Desert] = 0;
+                cLandTypes[LandType.Jungle] = 0;
             }
 
             //с другой стороны, тёмные волосы более свойственны жителям жарких стран
             if (iPigmented > iPigmentless * 2)
             {
-                cLandTypes[LandTypes<LTI>.LandType.Savanna] *= 2;
-                cLandTypes[LandTypes<LTI>.LandType.Desert] *= 2;
-                cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
+                cLandTypes[LandType.Savanna] *= 2;
+                cLandTypes[LandType.Desert] *= 2;
+                cLandTypes[LandType.Jungle] *= 2;
 
-                cLandTypes[LandTypes<LTI>.LandType.Tundra] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                cLandTypes[LandType.Tundra] = 0;
+                cLandTypes[LandType.Taiga] = 0;
             }
 
             //ловкость и стройность отлично подходит для лесов, но плохо сочетается с горами
             if (m_pBody.m_eBodyBuild == BodyBuild.Slim)
             {
-                cLandTypes[LandTypes<LTI>.LandType.Forest] *= 2;
-                cLandTypes[LandTypes<LTI>.LandType.Jungle] *= 2;
-                cLandTypes[LandTypes<LTI>.LandType.Taiga] *= 2;
+                cLandTypes[LandType.Forest] *= 2;
+                cLandTypes[LandType.Jungle] *= 2;
+                cLandTypes[LandType.Taiga] *= 2;
 
-                cLandTypes[LandTypes<LTI>.LandType.Mountains] = 0;
+                cLandTypes[LandType.Mountains] = 0;
             }
 
             //склонность к тучности мешает выживанию на пересечённой местности
             if (m_pBody.m_eBodyBuild == BodyBuild.Fat)
             {
-                cLandTypes[LandTypes<LTI>.LandType.Forest] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Jungle] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Taiga] = 0;
+                cLandTypes[LandType.Forest] = 0;
+                cLandTypes[LandType.Jungle] = 0;
+                cLandTypes[LandType.Taiga] = 0;
 
-                cLandTypes[LandTypes<LTI>.LandType.Mountains] = 0;
+                cLandTypes[LandType.Mountains] = 0;
             }
 
             //повышенная мускулистость отлично сочетается с горами
             if (m_pBody.m_eBodyBuild == BodyBuild.Muscular)
             {
-                cLandTypes[LandTypes<LTI>.LandType.Mountains] *= 2;
+                cLandTypes[LandType.Mountains] *= 2;
             }
 
-            cLandTypes[LandTypes<LTI>.LandType.Ocean] = 0;
-            cLandTypes[LandTypes<LTI>.LandType.Coastral] = 0;
+            cLandTypes[LandType.Ocean] = 0;
+            cLandTypes[LandType.Coastral] = 0;
 
             //ищем наиболее предпочтительные регионы
             int iMax = 0;
-            foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+            foreach (LandType eLand in Enum.GetValues(typeof(LandType)))
                 if (iMax < cLandTypes[eLand])
                     iMax = cLandTypes[eLand];
 
             //если предпочтительных вообще нет, то все регионы одинаково предпочтительны
             if (iMax == 0)
             {
-                foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+                foreach (LandType eLand in Enum.GetValues(typeof(LandType)))
                     cLandTypes[eLand] = 1;
 
-                cLandTypes[LandTypes<LTI>.LandType.Ocean] = 0;
-                cLandTypes[LandTypes<LTI>.LandType.Coastral] = 0;
+                cLandTypes[LandType.Ocean] = 0;
+                cLandTypes[LandType.Coastral] = 0;
 
                 iMax = 1;
             }
@@ -521,11 +521,11 @@ namespace GeneLab
             List<LTI> cPreferred = new List<LTI>();
             List<LTI> cHated = new List<LTI>();
 
-            foreach (LandTypes<LTI>.LandType eLand in Enum.GetValues(typeof(LandTypes<LTI>.LandType)))
+            foreach (LandType eLand in Enum.GetValues(typeof(LandType)))
             {
                 if (cLandTypes[eLand] == iMax)
                     cPreferred.Add(LandTypes<LTI>.m_pInstance.m_pLandTypes[eLand]);
-                if (cLandTypes[eLand] == 0 && eLand != LandTypes<LTI>.LandType.Ocean && eLand != LandTypes<LTI>.LandType.Coastral)
+                if (cLandTypes[eLand] == 0 && eLand != LandType.Ocean && eLand != LandType.Coastral)
                     cHated.Add(LandTypes<LTI>.m_pInstance.m_pLandTypes[eLand]);
             }
 

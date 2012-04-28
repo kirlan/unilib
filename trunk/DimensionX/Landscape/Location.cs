@@ -19,11 +19,22 @@ namespace LandscapeGeneration
             m_pPoint2 = pPoint2;
 
             m_fLength = (float)Math.Sqrt((pPoint1.m_fX - pPoint2.m_fX)*(pPoint1.m_fX - pPoint2.m_fX) + (pPoint1.m_fY - pPoint2.m_fY)*(pPoint1.m_fY - pPoint2.m_fY));
+        }
 
-            //if (m_fLength == 0.0)
-            //    throw new Exception("Zero length line!");
-            //if(m_fLength > Landscape.RY/2)
-            //    m_fLength = (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
+        private void CalcLength(float fCycle)
+        {
+            float fPoint1X = m_pPoint1.m_fX;
+            float fPoint1Y = m_pPoint1.m_fY;
+
+            float fPoint2X = m_pPoint2.m_fX;
+            float fPoint2Y = m_pPoint2.m_fY;
+
+            if (fPoint2X + fCycle / 2 < fPoint1X)
+                fPoint2X += fCycle;
+            if (fPoint2X - fCycle / 2 > fPoint1X)
+                fPoint2X -= fCycle;
+
+            m_fLength = (float)Math.Sqrt((fPoint1X - fPoint2X) * (fPoint1X - fPoint2X) + (fPoint1Y - fPoint2Y) * (fPoint1Y - fPoint2Y));
         }
 
         public Line(Line pOriginal)
@@ -125,12 +136,16 @@ namespace LandscapeGeneration
 
         #endregion
 
+        /// <summary>
+        /// Для "призрачных" локаций - ссылка на оригинал.
+        /// </summary>
         internal Location m_pOrigin = null;
 
         /// <summary>
         /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
         /// </summary>
         public bool m_bBorder = false;
+        public bool m_bGhost = false;
 
         public long m_iID = 0;
 

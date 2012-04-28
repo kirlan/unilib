@@ -74,6 +74,11 @@ namespace LandscapeGeneration
             {
                 BuildRandomGrid();
                 bOK = CalculateVoronoi();
+                if (bOK)
+                {
+                    ImproveGrid();
+                    bOK = CalculateVoronoi();
+                }
             }
             while (!bOK);
 
@@ -162,20 +167,25 @@ namespace LandscapeGeneration
         {
             LOC pLoc1 = null;
             LOC pLoc2 = null;
+
+            //получаем ссылки на реальные локации, с которыми связаны BT-вектора
             if (cData.ContainsKey(pEdge.LeftData))
                 pLoc1 = cData[pEdge.LeftData];
             if (cData.ContainsKey(pEdge.RightData))
                 pLoc2 = cData[pEdge.RightData];
 
+            //если обе локации "призрачные" - нас это не интересует
             if (pLoc1.m_pOrigin != null && pLoc2.m_pOrigin != null)
                 return false;
 
+            //если одна из вершин грани оказывается в бесконечности - игнорируем такую грань
             if (pEdge.VVertexA == Fortune.VVUnkown || pEdge.VVertexB == Fortune.VVUnkown)
             {
                 pLoc1.m_bUnclosed = true;
                 pLoc2.m_bUnclosed = true;
                 return false;
             }
+            //если одна из вершин грани оказывается хоть и не в бесконечности, но всё-равно достаточно далеко за краем карты - тоже игнорируем
             if (pEdge.VVertexA.data[0] < -RX*2 ||
                 pEdge.VVertexA.data[0] > RX*2 ||
                 pEdge.VVertexA.data[1] < -RY*2 ||
@@ -190,6 +200,7 @@ namespace LandscapeGeneration
                 return false;
             }
 
+            //при необходимости, создадим новые вертексы для вершин добавляемой грани
             if (!cVertexes.ContainsKey(pEdge.VVertexA))
                 cVertexes[pEdge.VVertexA] = new Vertex(pEdge.VVertexA);
 
@@ -223,6 +234,7 @@ namespace LandscapeGeneration
                 pVertexB = pVertexC;
             }
 
+            //добавим вертексам ссылки друг на друга
             if (!pVertexA.m_cVertexes.Contains(pVertexB))
                 pVertexA.m_cVertexes.Add(pVertexB);
             if (!pVertexB.m_cVertexes.Contains(pVertexA))
@@ -356,7 +368,63 @@ namespace LandscapeGeneration
             m_aLocations = cLocations.ToArray();
         }
 
-        private void BuildRandomGrid()
+        private void ImproveGrid()
+        {
+            List<LOC> cLocations = BuildRandomGridFrame();
+
+            float kx = (int)(Math.Sqrt((float)RX * m_iLocationsCount / RY));
+            float ky = m_iLocationsCount / kx;
+
+            float dkx = RX / (kx * 2);
+            float dky = RY / (ky * 2);
+
+            foreach (LOC pLoc in m_aLocations)
+            {
+                if (!pLoc.m_bBorder && !pLoc.m_bGhost)
+                {
+                    float fX = 0;
+                    float fY = 0;
+                    int iCount = 0;
+
+                    foreach (var cLines in pLoc.m_cBorderWith)
+                    {
+                        foreach (Line pLine in cLines.Value)
+                        {
+                            fX += pLine.m_pPoint2.X;
+                            fY += pLine.m_pPoint2.Y;
+                            iCount++;
+                        }
+                    }
+
+                    if (iCount != 0)
+                    {
+                        LOC pImprovedLoc = new LOC();
+                        pImprovedLoc.Create(cLocations.Count, fX / iCount, fY / iCount);
+                        pImprovedLoc.m_bBorder = false;
+                        cLocations.Add(pImprovedLoc);
+
+                        if (m_bCycled)
+                        {
+                            LOC pGhostLocation = new LOC();
+
+                            if (pImprovedLoc.X > 0)
+                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X - RX * 2, pImprovedLoc.Y, pImprovedLoc);
+                            else
+                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X + RX * 2, pImprovedLoc.Y, pImprovedLoc);
+
+                            pGhostLocation.m_bBorder = true;
+                            pGhostLocation.m_bGhost = true;
+
+                            cLocations.Add(pGhostLocation);
+                        }
+                    }
+                }
+            }
+
+            m_aLocations = cLocations.ToArray();
+        }
+
+        private List<LOC> BuildRandomGridFrame()
         {
             List<LOC> cLocations = new List<LOC>();
 
@@ -373,7 +441,7 @@ namespace LandscapeGeneration
 
                 LOC pLocation11 = new LOC();
                 pLocation11.Create(cLocations.Count, RX - xx, RY - dky);
-                pLocation11.m_bBorder = xx == 0 || xx == 2*RX;//false;
+                pLocation11.m_bBorder = xx == 0 || xx == 2 * RX;//false;
                 cLocations.Add(pLocation11);
 
                 LOC pLocation12 = new LOC();
@@ -455,6 +523,19 @@ namespace LandscapeGeneration
                 }
             }
 
+            return cLocations;
+        }
+
+        private void BuildRandomGrid()
+        {
+            List<LOC> cLocations = BuildRandomGridFrame();
+
+            float kx = (int)(Math.Sqrt((float)RX * m_iLocationsCount / RY));
+            float ky = m_iLocationsCount / kx;
+
+            float dkx = RX / (kx * 2);
+            float dky = RY / (ky * 2);
+
             //Добавляем центры остальных локаций в случайные позиции внутри периметра.
             for (int i = 0; i < m_iLocationsCount; i++)
             {
@@ -472,6 +553,7 @@ namespace LandscapeGeneration
                         pGhostLocation.Create(cLocations.Count, pLocation.X + RX * 2, pLocation.Y, pLocation);
 
                     pGhostLocation.m_bBorder = true;
+                    pGhostLocation.m_bGhost = true;
 
                     cLocations.Add(pGhostLocation);
                 }
@@ -708,7 +790,10 @@ namespace LandscapeGeneration
                     //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
                     foreach (LOC pLoc in m_aLocations)
                     {
-                        pLoc.BuildBorder(m_iRX * 2);
+                        if (pLoc.Forbidden)
+                            continue;
+
+                        pLoc.BuildBorder(CycleShift);
                         if (ProgressStep != null)
                             ProgressStep();
                     }
