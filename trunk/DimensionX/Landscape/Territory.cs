@@ -160,9 +160,9 @@ namespace LandscapeGeneration
         /// Заполняет словарь границ с другими землями.
         /// </summary>
         /// <param name="fCycleShift">Величина смещения X-координаты для закольцованной карты</param>
-        public virtual void Finish(float fCycleShift)
+        public virtual void Finish()
         {
-            ChainBorder(fCycleShift);
+            ChainBorder();
 
             foreach (ITerritory pInner in m_cBorder.Keys)
             {

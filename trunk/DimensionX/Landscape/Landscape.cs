@@ -192,22 +192,22 @@ namespace LandscapeGeneration
                     }
                     while(pLine != pFistLine);
 
-                    for (int a = 0; a < 2; a++)
-                    {
-                        ordered[0].PointOnCurve(ordered[ordered.Count - 2], ordered[ordered.Count - 1], ordered[1],
-                                                     ordered[2], 0.5f, m_pGrid.CycleShift);
-                        ordered[1].PointOnCurve(ordered[ordered.Count - 1], ordered[0], ordered[2],
-                                                     ordered[3], 0.5f, m_pGrid.CycleShift);
-                        for (int i = 2; i < ordered.Count - 2; i++)
-                        {
-                            ordered[i].PointOnCurve(ordered[i - 2], ordered[i - 1], ordered[i + 1],
-                                                         ordered[i + 2], 0.5f, m_pGrid.CycleShift);
-                        }
-                        ordered[ordered.Count - 2].PointOnCurve(ordered[ordered.Count - 4], ordered[ordered.Count - 3], ordered[ordered.Count - 1],
-                                                     ordered[0], 0.5f, m_pGrid.CycleShift);
-                        ordered[ordered.Count - 1].PointOnCurve(ordered[ordered.Count - 3], ordered[ordered.Count - 2], ordered[0],
-                                                     ordered[1], 0.5f, m_pGrid.CycleShift);
-                    }
+                    //for (int a = 0; a < 2; a++)
+                    //{
+                    //    ordered[0].PointOnCurve(ordered[ordered.Count - 2], ordered[ordered.Count - 1], ordered[1],
+                    //                                 ordered[2], 0.5f, m_pGrid.CycleShift);
+                    //    ordered[1].PointOnCurve(ordered[ordered.Count - 1], ordered[0], ordered[2],
+                    //                                 ordered[3], 0.5f, m_pGrid.CycleShift);
+                    //    for (int i = 2; i < ordered.Count - 2; i++)
+                    //    {
+                    //        ordered[i].PointOnCurve(ordered[i - 2], ordered[i - 1], ordered[i + 1],
+                    //                                     ordered[i + 2], 0.5f, m_pGrid.CycleShift);
+                    //    }
+                    //    ordered[ordered.Count - 2].PointOnCurve(ordered[ordered.Count - 4], ordered[ordered.Count - 3], ordered[ordered.Count - 1],
+                    //                                 ordered[0], 0.5f, m_pGrid.CycleShift);
+                    //    ordered[ordered.Count - 1].PointOnCurve(ordered[ordered.Count - 3], ordered[ordered.Count - 2], ordered[0],
+                    //                                 ordered[1], 0.5f, m_pGrid.CycleShift);
+                    //}
                 }
 
                 //foreach (AREA pArea in pCont.m_cAreas)
@@ -275,7 +275,7 @@ namespace LandscapeGeneration
 //            BeginStep("Recalculating lands edges...", m_aLands.Length);
             foreach (LAND pLand in m_aLands)
             {
-                pLand.Finish(m_pGrid.CycleShift);
+                pLand.Finish();
                 ProgressStep();
             }
         }
@@ -338,7 +338,7 @@ namespace LandscapeGeneration
 //            BeginStep("Recalculating landmasses edges...", m_aLandMasses.Length);
             foreach (LandMass<LAND> pLandMass in m_aLandMasses)
             {
-                pLandMass.Finish(m_pGrid.CycleShift);
+                pLandMass.Finish();
                 ProgressStep();
             }
         }
@@ -483,7 +483,7 @@ namespace LandscapeGeneration
             BeginStep("Recalculating continents edges...", m_aContinents.Length);
             foreach (CONT pCont in m_aContinents)
             {
-                pCont.Finish(m_pGrid.CycleShift);
+                pCont.Finish();
                 ProgressStep();
             }
 
@@ -524,17 +524,14 @@ namespace LandscapeGeneration
                         {
                             float fDriftedX1 = pLand.X + (float)pLM1.m_pDrift.X;
                             float fDriftedY1 = pLand.Y + (float)pLM1.m_pDrift.Y;
+                            float fDriftedZ1 = pLand.Z + (float)pLM1.m_pDrift.Z;
                             float fDriftedX2 = pLink.X + (float)pLM2.m_pDrift.X;
                             float fDriftedY2 = pLink.Y + (float)pLM2.m_pDrift.Y;
-                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pGrid.CycleShift / 2)
-                                if (fDriftedX1 < 0)
-                                    fDriftedX2 -= m_pGrid.CycleShift;
-                                else
-                                    fDriftedX2 += m_pGrid.CycleShift;
+                            float fDriftedZ2 = pLink.Z + (float)pLM2.m_pDrift.Z;
 
-                            float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2));
+                            float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2) + (fDriftedZ1 - fDriftedZ2) * (fDriftedZ1 - fDriftedZ2));
 
-                            float fCollision = pLand.DistanceTo(pLink, m_pGrid.CycleShift) - fDriftedDist;
+                            float fCollision = pLand.DistanceTo(pLink) - fDriftedDist;
 
                             if (fCollision < fMinCollision)
                             {
@@ -599,17 +596,14 @@ namespace LandscapeGeneration
                         {
                             float fDriftedX1 = pLand.X + (float)pLM1.m_pDrift.X;
                             float fDriftedY1 = pLand.Y + (float)pLM1.m_pDrift.Y;
+                            float fDriftedZ1 = pLand.Z + (float)pLM1.m_pDrift.Z;
                             float fDriftedX2 = pLink.X + (float)pLM2.m_pDrift.X;
                             float fDriftedY2 = pLink.Y + (float)pLM2.m_pDrift.Y;
-                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pGrid.CycleShift / 2)
-                                if (fDriftedX1 < 0)
-                                    fDriftedX2 -= m_pGrid.CycleShift;
-                                else
-                                    fDriftedX2 += m_pGrid.CycleShift;
+                            float fDriftedZ2 = pLink.Z + (float)pLM2.m_pDrift.Z;
 
-                            float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2));
+                            float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2) + (fDriftedZ1 - fDriftedZ2) * (fDriftedZ1 - fDriftedZ2));
 
-                            float fCollision = pLand.DistanceTo(pLink, m_pGrid.CycleShift) - fDriftedDist;
+                            float fCollision = pLand.DistanceTo(pLink) - fDriftedDist;
 
                             if (fCollision > fMaxCollision)
                             {
@@ -821,7 +815,7 @@ namespace LandscapeGeneration
             //Gathering areas of the same land type
             foreach (CONT pContinent in m_aContinents)
             {
-                pContinent.BuildAreas(m_pGrid.CycleShift, m_iLandsCount / 100);
+                pContinent.BuildAreas(m_iLandsCount / 100);
                 ProgressStep();
             }
         }
@@ -1000,7 +994,7 @@ namespace LandscapeGeneration
         {
             foreach (Vertex pVertex in m_pGrid.m_aVertexes)
             {
-                pVertex.m_fZ = 0;
+                pVertex.m_fHeight = 0;
 
                 float fTotalWeight = 0;
                 bool bOcean = false;
@@ -1011,7 +1005,7 @@ namespace LandscapeGeneration
                         continue;
 
                     float fLinkElevation = (pLoc.Owner as LAND).Type.m_fElevation;
-                    pVertex.m_fZ += pLoc.m_fHeight / fLinkElevation;
+                    pVertex.m_fHeight += pLoc.m_fHeight / fLinkElevation;
                     fTotalWeight += 1 / fLinkElevation;
 
                     if (pLoc.m_fHeight > 0)
@@ -1021,10 +1015,10 @@ namespace LandscapeGeneration
                 }
 
                 if (fTotalWeight > 0)
-                    pVertex.m_fZ /= fTotalWeight;
+                    pVertex.m_fHeight /= fTotalWeight;
 
                 if (bOcean && bLand)
-                    pVertex.m_fZ = 0;
+                    pVertex.m_fHeight = 0;
             }
         }
 
@@ -1032,12 +1026,12 @@ namespace LandscapeGeneration
         {
             foreach (Vertex pVertex in m_pGrid.m_aVertexes)
             {
-                if (float.IsNaN(pVertex.m_fZ))
+                if (float.IsNaN(pVertex.m_fHeight))
                     continue;
 
                 foreach (Vertex pLink in pVertex.m_cVertexes)
                 {
-                    if (float.IsNaN(pLink.m_fZ))
+                    if (float.IsNaN(pLink.m_fHeight))
                         continue;
 
                     float fDist = (float)Math.Sqrt((pVertex.m_fX - pLink.m_fX) * (pVertex.m_fX - pLink.m_fX) +
@@ -1045,8 +1039,8 @@ namespace LandscapeGeneration
 
                     if (fDist < 50)
                     {
-                        pVertex.m_fZ = (pVertex.m_fZ + pLink.m_fZ) / 2;
-                        pLink.m_fZ = pVertex.m_fZ;
+                        pVertex.m_fHeight = (pVertex.m_fHeight + pLink.m_fHeight) / 2;
+                        pLink.m_fHeight = pVertex.m_fHeight;
                     }
                 }
             }
@@ -1199,11 +1193,11 @@ namespace LandscapeGeneration
                 {
                     TransportationLinkBase pLink = null;
                     if (pNode1 is Location && pNode2 is Location)
-                        pLink = new TransportationLinkBase(pNode1 as Location, pNode2 as Location, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as Location, pNode2 as Location);
                     if (pNode1 is ILand && pNode2 is ILand)
-                        pLink = new TransportationLinkBase(pNode1 as ILand, pNode2 as ILand, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as ILand, pNode2 as ILand);
                     if (pNode1 is ILandMass && pNode2 is ILandMass)
-                        pLink = new TransportationLinkBase(pNode1 as ILandMass, pNode2 as ILandMass, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as ILandMass, pNode2 as ILandMass);
 
                     if (pLink == null)
                         throw new Exception("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
@@ -1331,10 +1325,10 @@ namespace LandscapeGeneration
 
         private static int m_iPassword = 0;
 
-        public static ShortestPath FindReallyBestPath(LOC pStart, LOC pFinish, float fCycleShift, bool bNavalOnly)
+        public static ShortestPath FindReallyBestPath(LOC pStart, LOC pFinish, bool bNavalOnly)
         {
-            ShortestPath pBestPath1 = FindBestPath(pStart, pFinish, fCycleShift, bNavalOnly);
-            ShortestPath pBestPath2 = FindBestPath(pFinish, pStart, fCycleShift, bNavalOnly);
+            ShortestPath pBestPath1 = FindBestPath(pStart, pFinish, bNavalOnly);
+            ShortestPath pBestPath2 = FindBestPath(pFinish, pStart, bNavalOnly);
             
             if (pBestPath1 == null ||
                 pBestPath1.m_aNodes.Length == 0 ||
@@ -1346,10 +1340,10 @@ namespace LandscapeGeneration
             return pBestPath1;
         }
 
-        public static ShortestPath FindBestPath(LOC pStart, LOC pFinish, float fCycleShift, bool bNavalOnly)
+        public static ShortestPath FindBestPath(LOC pStart, LOC pFinish, bool bNavalOnly)
         {
             m_iPassword++;
-            ShortestPath pLMPath = new ShortestPath((pStart.Owner as LAND).Owner as LandMass<LAND>, (pFinish.Owner as LAND).Owner as LandMass<LAND>, fCycleShift, -1, bNavalOnly);
+            ShortestPath pLMPath = new ShortestPath((pStart.Owner as LAND).Owner as LandMass<LAND>, (pFinish.Owner as LAND).Owner as LandMass<LAND>, -1, bNavalOnly);
             foreach (TransportationNode pNode in pLMPath.m_aNodes)
             {
                 LandMass<LAND> pLandMass = pNode as LandMass<LAND>;
@@ -1368,7 +1362,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            ShortestPath pLandsPath = new ShortestPath(pStart.Owner as LAND, pFinish.Owner as LAND, fCycleShift, m_iPassword, bNavalOnly);
+            ShortestPath pLandsPath = new ShortestPath(pStart.Owner as LAND, pFinish.Owner as LAND, m_iPassword, bNavalOnly);
             foreach (TransportationNode pNode in pLandsPath.m_aNodes)
             {
                 LAND pLand = pNode as LAND;
@@ -1387,7 +1381,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            ShortestPath pBestPath = new ShortestPath(pStart, pFinish, fCycleShift, m_iPassword, bNavalOnly);
+            ShortestPath pBestPath = new ShortestPath(pStart, pFinish, m_iPassword, bNavalOnly);
 
             //List<TransportationNode> cSucceedPath = new List<TransportationNode>();
             //if (pBestPath.m_aNodes.Length == 0)

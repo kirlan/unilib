@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LandscapeGeneration.PathFind
 {
-    public abstract class TransportationNode : IPointF, ITransportationNode
+    public abstract class TransportationNode : ITransportationNode
     {
         public int m_iPassword = 0;
 
@@ -16,7 +16,7 @@ namespace LandscapeGeneration.PathFind
         // не использовать! обращение к словарю занимает больше времени, чем повторное вычисление квадратного корня!
         //public Dictionary<TransportationNode, float> m_cLinksDist = new Dictionary<TransportationNode, float>();
 
-        public float DistanceTo(ITransportationNode pOtherNode, float fCycleShift)
+        public float DistanceTo(ITransportationNode pOtherNode)
         {
             float fDist = 0;
             //if (m_cLinksDist.TryGetValue(pOtherNode as TransportationNode, out fDist))
@@ -24,15 +24,12 @@ namespace LandscapeGeneration.PathFind
 
             float fOwnX = X;
             float fOwnY = Y;
+            float fOwnZ = Z;
             float fOtherX = pOtherNode.X;
             float fOtherY = pOtherNode.Y;
-            if (Math.Abs(fOwnX - fOtherX) > fCycleShift / 2)
-                if (fOwnX < 0)
-                    fOtherX -= fCycleShift;
-                else
-                    fOtherX += fCycleShift;
+            float fOtherZ = pOtherNode.Z;
 
-            fDist = (float)Math.Sqrt((fOwnX - fOtherX) * (fOwnX - fOtherX) + (fOwnY - fOtherY) * (fOwnY - fOtherY));
+            fDist = (float)Math.Sqrt((fOwnX - fOtherX) * (fOwnX - fOtherX) + (fOwnY - fOtherY) * (fOwnY - fOtherY) + (fOwnZ - fOtherZ) * (fOwnZ - fOtherZ));
             //if (m_cLinks.ContainsKey(pOtherNode as TransportationNode))
             //    m_cLinksDist[pOtherNode as TransportationNode] = fDist;
 
@@ -46,11 +43,19 @@ namespace LandscapeGeneration.PathFind
         public abstract float X
         {
             get;
+            set;
         }
 
         public abstract float Y
         {
             get;
+            set;
+        }
+
+        public abstract float Z
+        {
+            get;
+            set;
         }
 
         #endregion

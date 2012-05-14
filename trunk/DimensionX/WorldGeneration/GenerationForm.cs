@@ -35,7 +35,6 @@ namespace WorldGeneration
 
             StartGenerationButton.Enabled = false;
             groupBox5.Enabled = false;
-            groupBox6.Enabled = false;
             mapProperties1.Enabled = false;
         }
 
@@ -209,7 +208,7 @@ namespace WorldGeneration
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        //MessageBox.Show(ex.Message);
                     }
                 }
             }
@@ -226,7 +225,6 @@ namespace WorldGeneration
             m_cLocationsGrid = (LocationsGrid<LocationX>)GridsComboBox.SelectedItem;
 
             groupBox5.Enabled = true;
-            groupBox6.Enabled = true;
             mapProperties1.Enabled = true;
             StartGenerationButton.Enabled = true;
 

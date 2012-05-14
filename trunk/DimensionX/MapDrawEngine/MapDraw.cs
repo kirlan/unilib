@@ -21,6 +21,10 @@ using Socium.Psichology;
 
 namespace MapDrawEngine
 {
+    /// <summary>
+    /// движок для рисования 2D карт средствами GUI.
+    /// морально устарел, не используется!
+    /// </summary>
     public partial class MapDraw : UserControl
     {
         #region Предопределённые перья для рисования

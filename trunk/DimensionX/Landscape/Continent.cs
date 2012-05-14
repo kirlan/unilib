@@ -104,7 +104,7 @@ namespace LandscapeGeneration
             return pAddon;
         }
 
-        public void BuildAreas(float fCycleShift, int iMaxSize)
+        public void BuildAreas(int iMaxSize)
         {
             foreach (LandMass<LAND> pLandMass in m_cContents)
                 foreach (LAND pLand in pLandMass.m_cContents)
@@ -113,7 +113,7 @@ namespace LandscapeGeneration
                         AREA pArea = new AREA();
                         pArea.Start(pLand, iMaxSize);
                         while (pArea.Grow()) { }
-                        pArea.Finish(fCycleShift);
+                        pArea.Finish();
                         m_cAreas.Add(pArea);
                     }
         }

@@ -5,34 +5,24 @@ using System.Text;
 using System.Drawing;
 using BenTools.Mathematics;
 using System.IO;
-using LandscapeGeneration.PathFind;
 
-namespace LandscapeGeneration
+namespace GridBuilderTest
 {
     public class Vertex : IPointF
     {
-        public float m_fX = 0;
-        public float m_fY = 0;
-        public float m_fZ = 0;
+        public float m_fX;
+        public float m_fY;
         
-        public float m_fHeight = float.NaN;
+        public float m_fZ = float.NaN;
 
         public float X
         {
             get { return m_fX; }
-            set { m_fX = value; }
         }
 
         public float Y
         {
             get { return m_fY; }
-            set { m_fY = value; }
-        }
-
-        public float Z
-        {
-            get { return m_fZ; }
-            set { m_fZ = value; }
         }
 
         private static long s_iCounter = 0;
@@ -47,18 +37,10 @@ namespace LandscapeGeneration
 
         public List<long> m_cLocationsTmp = new List<long>();
 
-        public Vertex(float fX, float fY, float fZ)
-        {
-            m_fX = fX;
-            m_fY = fY;
-            m_fZ = fZ;
-        }
-
         public Vertex(BTVector pVector)
         {
             m_fX = (float)pVector.data[0];
             m_fY = (float)pVector.data[1];
-            m_fZ = 0;
         }
 
         public Vertex(BinaryReader binReader)
@@ -67,7 +49,6 @@ namespace LandscapeGeneration
 
             m_fX = (float)binReader.ReadDouble();
             m_fY = (float)binReader.ReadDouble();
-            m_fZ = (float)binReader.ReadDouble();
 
 
             int iLinksCount = binReader.ReadInt32();
@@ -85,7 +66,6 @@ namespace LandscapeGeneration
 
             binWriter.Write((double)m_fX);
             binWriter.Write((double)m_fY);
-            binWriter.Write((double)m_fZ);
 
             binWriter.Write(m_cVertexes.Count);
             foreach (Vertex pVertex in m_cVertexes)
@@ -98,10 +78,14 @@ namespace LandscapeGeneration
 
         public override string ToString()
         {
-            return string.Format("X: {0}, Y: {1}, Z: {2}, H: {3}", X, Y, Z, m_fHeight);
+            return string.Format("X: {0}, Y: {1}, Z: {2}", X, Y, m_fZ);
         }
 
-        //TODO: для замкнутых (цилиндрических, сферических) миров - вычислять угловые координаты и работать с ними
+        //public override float GetMovementCost()
+        //{
+        //    return 100;
+        //}
+
         internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t, float fCycle)
         {
             float t2 = t * t; 
@@ -143,6 +127,14 @@ namespace LandscapeGeneration
             m_fY = 0.5f * ((2.0f * p1Y) + (-p0Y + p2Y) * t + 
                 (2.0f * p0Y - 5.0f * p1Y + 4 * p2Y - p3Y) * t2 + 
                 (-p0Y + 3.0f * p1Y - 3.0f * p2Y + p3Y) * t3);
+
+            while (m_fX > fCycle / 2)
+                m_fX -= fCycle;
+            while (m_fX < -fCycle / 2)
+                m_fX += fCycle;
+
+            if (m_fX < -100000)
+                throw new Exception();
         }
     }
 }

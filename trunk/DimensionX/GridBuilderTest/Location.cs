@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.IO;
-using LandscapeGeneration.PathFind;
 
-namespace LandscapeGeneration
+namespace GridBuilderTest
 {
     public class Line
     {
@@ -78,37 +77,26 @@ namespace LandscapeGeneration
         Volcano
     }
 
-    public class Location : TransportationNode, ITerritory
+    public class Location : ITerritory
     {
         public Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
 
-        public Vertex m_pCenter = new Vertex(0, 0, 0);
+        public PointF m_pCenter = new PointF(0,0);
 
         public RegionType m_eType = RegionType.Empty;
 
-        /// <summary>
-        /// Высота над уровнем моря
-        /// </summary>
         public float m_fHeight = 0;
 
         #region IXY Members
 
-        public override float X
+        public float X
         {
             get { return m_pCenter.X; }
-            set { m_pCenter.X = value; }
         }
 
-        public override float Y
+        public float Y
         {
             get { return m_pCenter.Y; }
-            set { m_pCenter.Y = value; }
-        }
-
-        public override float Z
-        {
-            get { return m_pCenter.Z; }
-            set { m_pCenter.Z = value; }
         }
 
         #endregion
@@ -163,28 +151,28 @@ namespace LandscapeGeneration
         public int m_iGridX = -1;
         public int m_iGridY = -1;
 
-        public void Create(long iID, double x, double y, double z)
+        public void Create(long iID, double x, double y)
         {
-            Create(iID, (float)x, (float)y, (float)z);
+            Create(iID, (float)x, (float)y);
         }
 
-        public void Create(long iID, float x, float y, float z)
+        public void Create(long iID, float x, float y)
         {
-            m_pCenter = new Vertex(x, y, z);
+            m_pCenter = new PointF(x, y);
             m_iID = iID;
         }
 
-        public void Create(long iID, float x, float y, float z, int iGridX, int iGridY)
+        public void Create(long iID, float x, float y, int iGridX, int iGridY)
         {
-            m_pCenter = new Vertex(x, y, z);
+            m_pCenter = new PointF(x, y);
             m_iID = iID;
             m_iGridX = iGridX;
             m_iGridY = iGridY;
         }
 
-        public void Create(long iID, float x, float y, float z, Location pOrigin)
+        public void Create(long iID, float x, float y, Location pOrigin)
         {
-            m_pCenter = new Vertex(x, y, z);
+            m_pCenter = new PointF(x, y);
             m_iID = iID;
 
             m_pOrigin = pOrigin;
@@ -202,7 +190,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
         /// </summary>
-        public void BuildBorder()
+        public void BuildBorder(float fCycleShift)
         {
             if (m_bUnclosed || m_bBorder)
                 return;
@@ -228,7 +216,10 @@ namespace LandscapeGeneration
                 bool bFound = false;
                 foreach (Line pLine in aTotalBorder)
                 {
-                    if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2)
+                    if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
+                        (pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY &&
+                         (pLine.m_pPoint1.m_fX == pCurrentLine.m_pPoint2.m_fX ||
+                          Math.Abs(pLine.m_pPoint1.m_fX - pCurrentLine.m_pPoint2.m_fX) == fCycleShift)))
                     {
                         pCurrentLine.m_pNext = pLine;
                         pLine.m_pPrevious = pCurrentLine;
@@ -259,14 +250,13 @@ namespace LandscapeGeneration
             if (m_bUnclosed || m_bBorder)
                 return;
 
-            float fX = 0, fY = 0, fZ = 0, fLength = 0;
+            float fX = 0, fY = 0, fLength = 0;
 
             Line pLine = m_pFirstLine;
             do
             {
                 fX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
                 fY += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
-                fZ += pLine.m_fLength * (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2;
                 fLength += pLine.m_fLength;
 
                 pLine = pLine.m_pNext;
@@ -275,7 +265,6 @@ namespace LandscapeGeneration
 
             m_pCenter.X = fX / fLength;
             m_pCenter.Y = fY / fLength;
-            m_pCenter.Z = fZ / fLength;
         }
 
         public string GetStringID()
@@ -292,22 +281,12 @@ namespace LandscapeGeneration
             return m_pCenter.ToString();
         }
 
-        public override float GetMovementCost()
-        {
-            if (m_pOwner == null || Forbidden || m_bBorder)
-                return 100;
-
-            ILand pLand = m_pOwner as ILand;
-            return pLand.MovementCost * (m_eType == RegionType.Empty ? 1 : 10);
-        }
-
         public void Save(BinaryWriter binWriter)
         {
             binWriter.Write(m_iID);
 
             binWriter.Write((double)m_pCenter.X);
             binWriter.Write((double)m_pCenter.Y);
-            binWriter.Write((double)m_pCenter.Z);
 
             binWriter.Write(m_bBorder ? 1 : 0);
             binWriter.Write(m_bUnclosed ? 1 : 0);
@@ -342,7 +321,6 @@ namespace LandscapeGeneration
         /// <param name="binReader"></param>
         public void Load(BinaryReader binReader, Dictionary<long, Vertex> cVertexes)
         {
-            m_cLinks.Clear();
             m_cBorderWith.Clear();
             m_eType = RegionType.Empty;
             m_pOwner = null;
@@ -351,7 +329,6 @@ namespace LandscapeGeneration
 
             m_pCenter.X = (float)binReader.ReadDouble();
             m_pCenter.Y = (float)binReader.ReadDouble();
-            m_pCenter.Z = (float)binReader.ReadDouble();
 
             m_bBorder = binReader.ReadInt32() == 1;
             m_bUnclosed = binReader.ReadInt32() == 1;
@@ -372,7 +349,6 @@ namespace LandscapeGeneration
 
         public virtual void Reset()
         {
-            m_cLinks.Clear();
             m_eType = RegionType.Empty;
             m_pOwner = null;
         }

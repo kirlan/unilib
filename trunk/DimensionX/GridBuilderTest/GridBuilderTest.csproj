@@ -5,14 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C3C6054B-7C5B-48C5-BA79-21688369B735}</ProjectGuid>
+    <ProjectGuid>{7ED52FA7-3FF7-4628-9DD4-4CA2F30C2409}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VQMapTest2</RootNamespace>
-    <AssemblyName>DimensionX World Builder</AssemblyName>
+    <RootNamespace>GridBuilderTest</RootNamespace>
+    <AssemblyName>GridBuilderTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -35,6 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GridBuilderTest, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <ExecutableExtension>.exe</ExecutableExtension>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,14 +51,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicHeap.cs" />
+    <Compile Include="Camera.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FreeCamera.cs" />
+    <Compile Include="GraficDeviceService.cs" />
+    <Compile Include="GraphicsDeviceControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IPointF.cs" />
+    <Compile Include="ITerritory.cs" />
+    <Compile Include="ITransportationNode.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="LocationsGrid.cs" />
+    <Compile Include="MapDraw3d.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Path.cs" />
+    <Compile Include="PriorityQueue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceContainer.cs" />
+    <Compile Include="VoronoiVertex.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -66,9 +89,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -80,45 +101,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FortuneVoronoi\Fortune.csproj">
-      <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
-      <Name>Fortune</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GeneLab\GeneLab.csproj">
-      <Project>{76F06EE9-C037-4FCF-B177-81CC81022EAF}</Project>
-      <Name>GeneLab</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Landscape\Landscape.csproj">
-      <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>
-      <Name>Landscape</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NameGen\NameGen.csproj">
-      <Project>{A21776DA-BEA3-46E1-9C94-26FFBBDF7A66}</Project>
-      <Name>NameGen</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Random\Random.csproj">
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
       <Name>Random</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MapDrawXNAEngine\MapDrawXNAEngine.csproj">
-      <Project>{DF8FB19D-26BC-4101-8371-DE523CF5F957}</Project>
-      <Name>MapDrawXNAEngine</Name>
+    <ProjectReference Include="..\FortuneVoronoi\Fortune.csproj">
+      <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
+      <Name>Fortune</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Socium\Socium.csproj">
-      <Project>{358A8F33-4C83-42EC-B661-AC20467178C5}</Project>
-      <Name>Socium</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\UniLibControls\UniLibControls.csproj">
-      <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
-      <Name>UniLibControls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WorldGeneration\WorldGeneration.csproj">
-      <Project>{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}</Project>
-      <Name>WorldGeneration</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
