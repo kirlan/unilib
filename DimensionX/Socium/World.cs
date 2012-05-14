@@ -536,11 +536,11 @@ namespace Socium
 
 //            BeginStep("Building cities...", 1);
 //            ProgressStep();
-            BuildCities(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
+            BuildCities(!bFinalize, BeginStep, ProgressStep);
 
 //            BeginStep("Building states...", 1);
             //ProgressStep();
-            BuildStates(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
+            BuildStates(!bFinalize, BeginStep, ProgressStep);
 
             //if (bFinalize)
             //    BuildSeaRoutes(m_pGrid.CycleShift);
@@ -833,7 +833,7 @@ namespace Socium
             m_aProvinces = cProvinces.ToArray();
 
             foreach (Province pProvince in m_aProvinces)
-                pProvince.Finish(m_pGrid.CycleShift);
+                pProvince.Finish();
         }
 
         /// <summary>
@@ -843,7 +843,7 @@ namespace Socium
         /// <param name="bFast"></param>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildStates(float fCycleShift, bool bFast,
+        private void BuildStates(bool bFast,
                             LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                             LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
@@ -1032,7 +1032,7 @@ namespace Socium
             foreach (State pState in m_aStates)
             {
                 pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast);
-                pState.Finish(m_pGrid.CycleShift);
+                pState.Finish();
 
                 ContinentX pConti = null;
                 foreach (Province pProvince in pState.m_cContents)
@@ -1083,7 +1083,7 @@ namespace Socium
                     pState.BuildForts(cHostility, bFast);
 
                     if (!bFast)
-                        pState.FixRoads(fCycleShift);
+                        pState.FixRoads();
                 }
             }
         }
@@ -1146,7 +1146,7 @@ namespace Socium
 //            LandTypes<LandTypeInfoX>.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
         }
 
-        private void BuildInterstateRoads(float fCycleShift)
+        private void BuildInterstateRoads()
         {
             foreach (Province pProvince in m_aProvinces)
                 pProvince.m_cConnectionString.Clear();
@@ -1178,7 +1178,7 @@ namespace Socium
                                 {
                                     if (pTown != pOtherTown && !pTown.m_cHaveRoadTo.ContainsKey(pOtherTown))
                                     {
-                                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+                                        float fDist = pTown.DistanceTo(pOtherTown);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
 
                                         if (fDist < fMinLength)
                                         {
@@ -1205,7 +1205,7 @@ namespace Socium
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad > 2 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad > 2)
                                 //    iRoadLevel = 3;
 
-                                BuildRoad(pBestTown1, pBestTown2, eMaxRoadLevel, fCycleShift);
+                                BuildRoad(pBestTown1, pBestTown2, eMaxRoadLevel);
                                 pProvince.m_cConnectionString[pLinkedProvince] = "ok";
                                 pLinkedProvince.m_cConnectionString[pProvince] = "ok";
                             }
@@ -1241,7 +1241,7 @@ namespace Socium
                     }
 
                     pInfo.m_pFrom = pHarbor;
-                    pInfo.m_fCost = pHarbor.DistanceTo(pLinkedLoc, fCycleShift) * pHarbor.GetMovementCost();
+                    pInfo.m_fCost = pHarbor.DistanceTo(pLinkedLoc) * pHarbor.GetMovementCost();
 
                     cWaveFront.Add(pLinkedLoc);
                 }
@@ -1625,7 +1625,7 @@ namespace Socium
             }
         }
 
-        private void BuildCities(float fCycleShift, bool bFast,
+        private void BuildCities(bool bFast,
                             LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                             LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
@@ -1639,19 +1639,19 @@ namespace Socium
 
                     pProvince.BuildSettlements(SettlementSize.City, bFast);
                     if (!bFast)
-                        pProvince.BuildRoads(RoadQuality.Good, fCycleShift);
+                        pProvince.BuildRoads(RoadQuality.Good);
 
                     pProvince.BuildSettlements(SettlementSize.Town, bFast);
 
                     if (!bFast)
-                        pProvince.BuildRoads(RoadQuality.Normal, fCycleShift);
+                        pProvince.BuildRoads(RoadQuality.Normal);
                 }
 
                 ProgressStep();
             }
 
             if (!bFast)
-                BuildInterstateRoads(fCycleShift);
+                BuildInterstateRoads();
 
             ProgressStep();
 
@@ -1662,7 +1662,7 @@ namespace Socium
                     pProvince.BuildSettlements(SettlementSize.Village, bFast);
 
                     if (!bFast)
-                        pProvince.BuildRoads(RoadQuality.Country, fCycleShift);
+                        pProvince.BuildRoads(RoadQuality.Country);
 
                     pProvince.BuildSettlements(SettlementSize.Hamlet, bFast);
 
@@ -2106,14 +2106,13 @@ namespace Socium
         /// <param name="pTown1">первый город</param>
         /// <param name="pTown2">второй город</param>
         /// <param name="eRoadLevel">уровень строящейся дороги</param>
-        /// <param name="fCycleShift">циклический сдвиг координат по горизонтали для закольцованных карт</param>
-        public static void BuildRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel, float fCycleShift)
+        public static void BuildRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel)
         {
             if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
                 return;
 
             //PathFinder pBestPath = new PathFinder(pTown1, pTown2, fCycleShift, -1);
-            ShortestPath pBestPath = FindReallyBestPath(pTown1, pTown2, fCycleShift, false);
+            ShortestPath pBestPath = FindReallyBestPath(pTown1, pTown2, false);
 
             if (pBestPath.m_aNodes != null && pBestPath.m_aNodes.Length > 1)
             {

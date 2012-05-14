@@ -419,9 +419,9 @@ namespace Socium
         /// <summary>
         /// Заполняет словарь границ с другими провинциями.
         /// </summary>
-        public void Finish(float fCycleShift)
+        public void Finish()
         {
-            ChainBorder(fCycleShift);
+            ChainBorder();
 
             foreach (ITerritory pLand in m_cBorder.Keys)
             {
@@ -575,7 +575,7 @@ namespace Socium
         /// Присоединяет в общую транспортную сеть ещё не присоединённые города государства.
         /// </summary>
         /// <param name="eRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
-        public void BuildRoads(RoadQuality eRoadLevel, float fCycleShift)
+        public void BuildRoads(RoadQuality eRoadLevel)
         {
             if (eRoadLevel > State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad)
                 eRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad;
@@ -622,7 +622,7 @@ namespace Socium
 
                     foreach (LocationX pOtherTown in cConnected)
                     {
-                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+                        float fDist = pTown.DistanceTo(pOtherTown);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
 
                         if (fDist < fMinLength &&
                             (fMinLength == float.MaxValue ||
@@ -638,13 +638,13 @@ namespace Socium
                 }
                 if (pBestTown2 != null)
                 {
-                    World.BuildRoad(pBestTown1, pBestTown2, eRoadLevel, fCycleShift);
+                    World.BuildRoad(pBestTown1, pBestTown2, eRoadLevel);
 
                     fMinLength = float.MaxValue;
                     LocationX pBestTown3 = null;
                     foreach (LocationX pOtherTown in cConnected)
                     {
-                        float fDist = pBestTown1.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
+                        float fDist = pBestTown1.DistanceTo(pOtherTown);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
 
                         if (pOtherTown != pBestTown2 &&
                             fDist < fMinLength &&
@@ -659,7 +659,7 @@ namespace Socium
                     }
 
                     if (pBestTown3 != null)
-                        World.BuildRoad(pBestTown1, pBestTown3, eRoadLevel, fCycleShift);
+                        World.BuildRoad(pBestTown1, pBestTown3, eRoadLevel);
 
                     cConnected.Add(pBestTown1);
                 }

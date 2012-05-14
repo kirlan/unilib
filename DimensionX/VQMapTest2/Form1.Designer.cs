@@ -29,12 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -74,7 +68,6 @@
             this.showLocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLandMassesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.testPathFinding1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,11 +85,7 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.miniMapDraw1 = new MapDrawEngine.MiniMapDraw();
-            this.mapDraw1 = new MapDrawEngine.MapDraw();
             this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
-            this.groupBox1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage7.SuspendLayout();
@@ -105,96 +94,6 @@
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox1.Location = new System.Drawing.Point(962, 28);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(51, 139);
-            this.groupBox1.TabIndex = 5;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Scale";
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Controls.Add(this.radioButton1, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.radioButton2, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.radioButton3, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.radioButton4, 0, 3);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 5;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(45, 120);
-            this.tableLayoutPanel2.TabIndex = 4;
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.Checked = true;
-            this.radioButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.radioButton1.Location = new System.Drawing.Point(3, 3);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(39, 24);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "x1";
-            this.radioButton1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton2.Location = new System.Drawing.Point(3, 33);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(39, 24);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "x2";
-            this.radioButton2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
-            // 
-            // radioButton3
-            // 
-            this.radioButton3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.radioButton3.Location = new System.Drawing.Point(3, 63);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(39, 24);
-            this.radioButton3.TabIndex = 2;
-            this.radioButton3.Text = "x8";
-            this.radioButton3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
-            // 
-            // radioButton4
-            // 
-            this.radioButton4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.radioButton4.Location = new System.Drawing.Point(3, 93);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(39, 24);
-            this.radioButton4.TabIndex = 3;
-            this.radioButton4.Text = "x32";
-            this.radioButton4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton4.UseVisualStyleBackColor = true;
-            this.radioButton4.CheckedChanged += new System.EventHandler(this.MapScaleChanged);
             // 
             // comboBox1
             // 
@@ -218,9 +117,9 @@
             this.groupBox4.Controls.Add(this.button1);
             this.groupBox4.Controls.Add(this.tabControl2);
             this.groupBox4.Controls.Add(this.comboBox1);
-            this.groupBox4.Location = new System.Drawing.Point(756, 226);
+            this.groupBox4.Location = new System.Drawing.Point(753, 86);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(257, 509);
+            this.groupBox4.Size = new System.Drawing.Size(257, 645);
             this.groupBox4.TabIndex = 12;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "States:";
@@ -245,7 +144,7 @@
             this.tabControl2.Location = new System.Drawing.Point(9, 46);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(239, 457);
+            this.tabControl2.Size = new System.Drawing.Size(239, 593);
             this.tabControl2.TabIndex = 22;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
@@ -256,7 +155,7 @@
             this.tabPage7.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(231, 431);
+            this.tabPage7.Size = new System.Drawing.Size(231, 567);
             this.tabPage7.TabIndex = 0;
             this.tabPage7.Text = "General Info";
             this.tabPage7.UseVisualStyleBackColor = true;
@@ -267,7 +166,7 @@
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox1.Location = new System.Drawing.Point(3, 3);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(225, 425);
+            this.richTextBox1.Size = new System.Drawing.Size(225, 561);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             this.richTextBox1.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.richTextBox1_LinkClicked);
@@ -408,7 +307,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(766, 172);
+            this.label7.Location = new System.Drawing.Point(763, 32);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(35, 13);
             this.label7.TabIndex = 14;
@@ -418,7 +317,7 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(766, 191);
+            this.label8.Location = new System.Drawing.Point(763, 51);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(35, 13);
             this.label8.TabIndex = 15;
@@ -443,7 +342,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(766, 204);
+            this.label2.Location = new System.Drawing.Point(763, 64);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 18;
@@ -516,8 +415,7 @@
             this.showStateBordersToolStripMenuItem,
             this.showProvinciesBordersToolStripMenuItem,
             this.toolStripMenuItem2,
-            this.debugToolStripMenuItem1,
-            this.dModeToolStripMenuItem});
+            this.debugToolStripMenuItem1});
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
             this.debugToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.debugToolStripMenuItem.Text = "View";
@@ -596,14 +494,6 @@
             this.showLandMassesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.showLandMassesToolStripMenuItem.Text = "Show LandMasses";
             this.showLandMassesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
-            // 
-            // dModeToolStripMenuItem
-            // 
-            this.dModeToolStripMenuItem.CheckOnClick = true;
-            this.dModeToolStripMenuItem.Name = "dModeToolStripMenuItem";
-            this.dModeToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.dModeToolStripMenuItem.Text = "3d mode";
-            this.dModeToolStripMenuItem.CheckedChanged += new System.EventHandler(this.dModeToolStripMenuItem_CheckedChanged);
             // 
             // optionsToolStripMenuItem
             // 
@@ -735,43 +625,23 @@
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
             // 
-            // miniMapDraw1
-            // 
-            this.miniMapDraw1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.miniMapDraw1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.miniMapDraw1.Location = new System.Drawing.Point(756, 28);
-            this.miniMapDraw1.Name = "miniMapDraw1";
-            this.miniMapDraw1.Size = new System.Drawing.Size(203, 139);
-            this.miniMapDraw1.TabIndex = 21;
-            // 
-            // mapDraw1
-            // 
-            this.mapDraw1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.mapDraw1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.mapDraw1.ContextMenuStrip = this.contextMenuStrip1;
-            this.mapDraw1.Location = new System.Drawing.Point(24, 29);
-            this.mapDraw1.Mode = MapDrawEngine.MapMode.Areas;
-            this.mapDraw1.Name = "mapDraw1";
-            this.mapDraw1.ScaleMultiplier = 1F;
-            this.mapDraw1.SelectedState = null;
-            this.mapDraw1.ShowLandMasses = false;
-            this.mapDraw1.ShowLands = false;
-            this.mapDraw1.ShowLocations = true;
-            this.mapDraw1.ShowLocationsBorders = false;
-            this.mapDraw1.ShowProvincies = true;
-            this.mapDraw1.ShowRoads = true;
-            this.mapDraw1.ShowStates = true;
-            this.mapDraw1.Size = new System.Drawing.Size(726, 703);
-            this.mapDraw1.TabIndex = 20;
-            this.mapDraw1.SelectedStateChanged += new System.EventHandler<MapDrawEngine.MapDraw.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
-            // 
             // mapDraw3d1
             // 
-            this.mapDraw3d1.Location = new System.Drawing.Point(631, 509);
+            this.mapDraw3d1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.mapDraw3d1.Location = new System.Drawing.Point(28, 32);
+            this.mapDraw3d1.Mode = MapDrawXNAEngine.MapMode.Areas;
             this.mapDraw3d1.Name = "mapDraw3d1";
-            this.mapDraw3d1.Size = new System.Drawing.Size(75, 105);
+            this.mapDraw3d1.SelectedState = null;
+            this.mapDraw3d1.ShowLandMasses = false;
+            this.mapDraw3d1.ShowLands = false;
+            this.mapDraw3d1.ShowLocations = true;
+            this.mapDraw3d1.ShowLocationsBorders = false;
+            this.mapDraw3d1.ShowProvincies = true;
+            this.mapDraw3d1.ShowRoads = true;
+            this.mapDraw3d1.ShowStates = true;
+            this.mapDraw3d1.Size = new System.Drawing.Size(719, 697);
             this.mapDraw3d1.TabIndex = 22;
             this.mapDraw3d1.Text = "mapDraw3d1";
             this.mapDraw3d1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseDown);
@@ -785,15 +655,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1016, 739);
             this.Controls.Add(this.mapDraw3d1);
-            this.Controls.Add(this.miniMapDraw1);
-            this.Controls.Add(this.mapDraw1);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
             this.Location = new System.Drawing.Point(100, 100);
@@ -801,9 +668,6 @@
             this.Name = "Form1";
             this.Text = "Dimension X Worlds Builder";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.Resize += new System.EventHandler(this.Form1_Resize);
-            this.groupBox1.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage7.ResumeLayout(false);
@@ -819,11 +683,6 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton radioButton4;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ListBox listBox1;
@@ -846,7 +705,6 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.ToolStripMenuItem showLandmarksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showRoadsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showStateBordersToolStripMenuItem;
@@ -875,15 +733,12 @@
         private RichTextBoxLinks.RichTextBoxEx richTextBox1;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem testPathFinding1ToolStripMenuItem;
-        private MapDrawEngine.MapDraw mapDraw1;
-        private MapDrawEngine.MiniMapDraw miniMapDraw1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.TabPage tabPage9;
         private System.Windows.Forms.ToolStripMenuItem repeatCreationFromPresetToolStripMenuItem;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.TabPage tabPage10;
-        private System.Windows.Forms.ToolStripMenuItem dModeToolStripMenuItem;
         private MapDrawXNAEngine.MapDraw3d mapDraw3d1;
     }
 }

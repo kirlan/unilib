@@ -134,10 +134,10 @@ namespace LandscapeGeneration
             return true;
         }
 
-        public virtual void Finish(float fCycleShift)
+        public virtual void Finish()
         {
             //base.Finish();
-            ChainBorder(fCycleShift);
+            ChainBorder();
         }
     
         public override float GetMovementCost()

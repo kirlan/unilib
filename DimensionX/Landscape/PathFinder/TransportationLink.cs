@@ -275,39 +275,26 @@ namespace LandscapeGeneration.PathFind
             }
         }
 
-        public PointF[] m_aPoints = new PointF[3];
+        public Vertex[] m_aPoints = new Vertex[3];
 
-        private static float GetDist(PointF pPoint1, PointF pPoint2)
+        private static float GetDist(Vertex pPoint1, Vertex pPoint2)
         {
-            return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
+            return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y) + (pPoint1.Z - pPoint2.Z) * (pPoint1.Z - pPoint2.Z));
         }
 
-        private static float GetDist(TransportationNode pPoint1, PointF pPoint2)
+        private static float GetDist(TransportationNode pPoint1, Vertex pPoint2)
         {
-            return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
+            return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y) + (pPoint1.Z - pPoint2.Z) * (pPoint1.Z - pPoint2.Z));
         }
 
-        private static float GetDist(PointF pPoint1, Vertex pPoint2)
+        public TransportationLinkBase(Location pLoc1, Location pLoc2)
         {
-            return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
-        }
-
-        public TransportationLinkBase(Location pLoc1, Location pLoc2, float fCycleShift)
-        {
-            m_aPoints[0] = new PointF(pLoc1.X, pLoc1.Y);
-            m_aPoints[2] = new PointF(pLoc2.X, pLoc2.Y);
-
-            if (Math.Abs(pLoc1.X - pLoc2.X) > fCycleShift / 2)
-            {
-                if (pLoc1.X < 0)
-                    m_aPoints[2].X -= fCycleShift;
-                else
-                    m_aPoints[2].X += fCycleShift;
-            }
+            m_aPoints[0] = new Vertex(pLoc1.X, pLoc1.Y, pLoc1.Z);
+            m_aPoints[2] = new Vertex(pLoc2.X, pLoc2.Y, pLoc2.Z);
 
             Line pLine = pLoc1.BorderWith[pLoc2][0];
 
-            m_aPoints[1] = new PointF((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+            m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2, (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2);
 
             float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2 = GetDist(m_aPoints[2], m_aPoints[1]);
@@ -324,6 +311,7 @@ namespace LandscapeGeneration.PathFind
                 {
                     m_aPoints[1].X = (m_aPoints[0].X + m_aPoints[2].X) / 2;
                     m_aPoints[1].Y = (m_aPoints[0].Y + m_aPoints[2].Y) / 2;
+                    m_aPoints[1].Z = (m_aPoints[0].Z + m_aPoints[2].Z) / 2;
                 }
             }
             else
@@ -332,11 +320,13 @@ namespace LandscapeGeneration.PathFind
                 {
                     m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint1.X) / 3;
                     m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint1.Y) / 3;
+                    m_aPoints[1].Z = (m_aPoints[1].Z + 2 * pLine.m_pPoint1.Z) / 3;
                 }
                 else
                 {
                     m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint2.X) / 3;
                     m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint2.Y) / 3;
+                    m_aPoints[1].Z = (m_aPoints[1].Z + 2 * pLine.m_pPoint2.Z) / 3;
                 }
             }
 
@@ -349,25 +339,17 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLinkBase(ILand pLand1, ILand pLand2, float fCycleShift)
+        public TransportationLinkBase(ILand pLand1, ILand pLand2)
         {
-            m_aPoints[0] = new PointF(pLand1.X, pLand1.Y);
-            m_aPoints[2] = new PointF(pLand2.X, pLand2.Y);
-
-            if (Math.Abs(pLand1.X - pLand2.X) > fCycleShift / 2)
-            {
-                if (pLand1.X < 0)
-                    m_aPoints[2].X -= fCycleShift;
-                else
-                    m_aPoints[2].X += fCycleShift;
-            }
+            m_aPoints[0] = new Vertex(pLand1.X, pLand1.Y, pLand1.Z);
+            m_aPoints[2] = new Vertex(pLand2.X, pLand2.Y, pLand2.Z);
 
             Line pBestLine = null;
             float fShortest = float.MaxValue;
             Line[] cLines = pLand1.BorderWith[pLand2].ToArray();
             foreach (Line pLine in cLines)
             {
-                m_aPoints[1] = new PointF((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+                m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2, (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2);
 
                 float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
                 float fDist2 = GetDist(m_aPoints[2], m_aPoints[1]);
@@ -378,7 +360,7 @@ namespace LandscapeGeneration.PathFind
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new PointF((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
+            m_aPoints[1] = new Vertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2, (pBestLine.m_pPoint1.Z + pBestLine.m_pPoint2.Z) / 2);
 
             float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2final = GetDist(m_aPoints[2], m_aPoints[1]); 
@@ -389,25 +371,17 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLinkBase(ILandMass pLandMass1, ILandMass pLandMass2, float fCycleShift)
+        public TransportationLinkBase(ILandMass pLandMass1, ILandMass pLandMass2)
         {
-            m_aPoints[0] = new PointF(pLandMass1.X, pLandMass1.Y);
-            m_aPoints[2] = new PointF(pLandMass2.X, pLandMass2.Y);
-
-            if (Math.Abs(pLandMass1.X - pLandMass2.X) > fCycleShift / 2)
-            {
-                if (pLandMass1.X < 0)
-                    m_aPoints[2].X -= fCycleShift;
-                else
-                    m_aPoints[2].X += fCycleShift;
-            }
+            m_aPoints[0] = new Vertex(pLandMass1.X, pLandMass1.Y, pLandMass1.Z);
+            m_aPoints[2] = new Vertex(pLandMass2.X, pLandMass2.Y, pLandMass2.Z);
 
             Line pBestLine = null;
             float fShortest = float.MaxValue;
             Line[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
             foreach (Line pLine in cLines)
             {
-                m_aPoints[1] = new PointF((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+                m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2, (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2);
 
                 float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
                 float fDist2 = GetDist(m_aPoints[2], m_aPoints[1]); 
@@ -418,7 +392,7 @@ namespace LandscapeGeneration.PathFind
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new PointF((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
+            m_aPoints[1] = new Vertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2, (pBestLine.m_pPoint1.Z + pBestLine.m_pPoint2.Z) / 2);
 
             float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2final = GetDist(m_aPoints[2], m_aPoints[1]);
@@ -431,8 +405,8 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(TransportationNode[] aPath)
         {
-            List<PointF> cPoints = new List<PointF>();
-            cPoints.Add(new PointF(aPath[0].X, aPath[0].Y));
+            List<Vertex> cPoints = new List<Vertex>();
+            cPoints.Add(new Vertex(aPath[0].X, aPath[0].Y, aPath[0].Z));
 
             m_fBaseCost = 0;
 

@@ -6,44 +6,12 @@ using BenTools.Mathematics;
 using Random;
 using System.IO;
 
-namespace LandscapeGeneration
+namespace GridBuilderTest
 {
     public enum GridType
     {
         Square,
         Hex
-    }
-
-    public enum WorldShape
-    {
-        /// <summary>
-        /// обычная плоская прямоугольная карта с непереходимым краем
-        /// </summary>
-        Plain,
-        /// <summary>
-        /// Мир-кольцо - внутренняя поверхность цилиндра, боковые грани непереходимые
-        /// </summary>
-        Ringworld,
-        /// <summary>
-        /// Наружная поверхность цилиндра, боковые грани непереходимые
-        /// </summary>
-        Cilinder,
-        /// <summary>
-        /// Планета - наружная поверхность сферы
-        /// </summary>
-        Planet,
-        /// <summary>
-        /// Пузырь - внутренная поверхность сферы
-        /// </summary>
-        Bubble,
-        /// <summary>
-        /// Панцирь черепахи - круглый плоский мир с горами в центре, со всех сторон окружённый бесконечным океаном
-        /// </summary>
-        Shell,
-        /// <summary>
-        /// Чаша - круглый плоский мир с центральным морем, со всех сторон окружённый непроходимыми горами
-        /// </summary>
-        Chalice
     }
 
     public class LocationsGrid<LOC>
@@ -69,6 +37,11 @@ namespace LandscapeGeneration
             get { return m_iRX; }
         }
 
+        public float CycleShift
+        {
+            get { return m_bCycled ? m_iRX * 2 : 0; }
+        }
+
         public string m_sDescription = ""; 
 
         /// <summary>
@@ -82,7 +55,7 @@ namespace LandscapeGeneration
 
         public Vertex[] m_aVertexes = null;
 
-        public WorldShape m_eShape = WorldShape.Plain;
+        public bool m_bCycled = false;
 
         /// <summary>
         /// Создание сетки из случайных точек
@@ -90,11 +63,11 @@ namespace LandscapeGeneration
         /// <param name="iLocations">количество точек</param>
         /// <param name="iWidth">пропорции карты - ширина</param>
         /// <param name="iHeight">пропорции карты - высота)</param>
-        public LocationsGrid(int iLocations, int iWidth, int iHeight, string sDescription, WorldShape eShape)
+        public LocationsGrid(int iLocations, int iWidth, int iHeight, string sDescription, bool bCycled)
         {
             m_iRX = m_iRY*iWidth/iHeight;
             m_iLocationsCount = iLocations;
-            m_eShape = eShape;
+            m_bCycled = bCycled;
 
             bool bOK = true;
             do
@@ -112,14 +85,15 @@ namespace LandscapeGeneration
             //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
             foreach (LOC pLoc in m_aLocations)
             {
-                pLoc.BuildBorder();
+                pLoc.BuildBorder(m_iRX*2);
                 pLoc.CorrectCenter();
             }
-            
-            if (m_eShape == WorldShape.Ringworld)
+
+            if (m_bCycled)
             {
                 MergeVertexes();
                 MakeRingWorld();
+                //MakeSphere();
             }
 
             m_sDescription = sDescription;
@@ -134,7 +108,7 @@ namespace LandscapeGeneration
         /// <param name="eGridType">тип сетки</param>
         public LocationsGrid(int iWidth, int iHeight, GridType eGridType, string sDescription, bool bCycled)
         {
-            m_eShape = bCycled ? WorldShape.Ringworld : WorldShape.Plain;
+            m_bCycled = bCycled;
 
             if (eGridType == GridType.Hex)
             {
@@ -154,7 +128,7 @@ namespace LandscapeGeneration
                 //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
                 foreach (LOC pLoc in m_aLocations)
                 {
-                    pLoc.BuildBorder();
+                    pLoc.BuildBorder(m_iRX*2);
                     pLoc.CorrectCenter();
                 }
 
@@ -196,11 +170,6 @@ namespace LandscapeGeneration
             return true;
         }
 
-        /// <summary>
-        /// Сливает 2 вертекса в один
-        /// </summary>
-        /// <param name="pFrom">этот вертекс будет удалён</param>
-        /// <param name="pTo">этот останется</param>
         private void MergeVertex(Vertex pFrom, Vertex pTo)
         {
             foreach (Location pLoc in pFrom.m_cLocations)
@@ -222,21 +191,11 @@ namespace LandscapeGeneration
 
             foreach (Vertex pLink in pFrom.m_cVertexes)
             {
-                if (pLink == pFrom)
-                    continue;
-
-                if (!pTo.m_cVertexes.Contains(pLink) && pTo != pLink)
+                if (!pTo.m_cVertexes.Contains(pLink))
                     pTo.m_cVertexes.Add(pLink);
-
-                pLink.m_cVertexes.Remove(pFrom);
-                if(pLink != pTo)
-                    pLink.m_cVertexes.Add(pTo);
             }
         }
 
-        /// <summary>
-        /// Сливает дублирующиеся вертексы на плоской развёртке закольцованной (цилиндрической или сферической) карты
-        /// </summary>
         private void MergeVertexes()
         {
             List<Vertex> cOutspace = new List<Vertex>();
@@ -281,9 +240,6 @@ namespace LandscapeGeneration
 
         }
 
-        /// <summary>
-        /// Преобразует плоскую развёртку в трёхмерный Мир-Кольцо
-        /// </summary>
         private void MakeRingWorld()
         {
             foreach (LOC pLoc in m_aLocations)
@@ -294,8 +250,8 @@ namespace LandscapeGeneration
                 pLoc.m_iGridX = (int)pLoc.m_pCenter.X;
 
                 pLoc.m_pCenter.X = (float)((float)m_iRY * Math.Cos(fPhy));
-                pLoc.m_pCenter.Z = (float)((float)m_iRY * Math.Sin(fPhy));
-                pLoc.m_pCenter.Y = (float)((float)m_iRY * fRo);
+                pLoc.m_pCenter.Y = (float)((float)m_iRY * Math.Sin(fPhy));
+                pLoc.m_fHeight = (float)((float)m_iRY * fRo);
             }
 
             foreach (Vertex pVertex in m_aVertexes)
@@ -303,15 +259,12 @@ namespace LandscapeGeneration
                 float fRo = (float)pVertex.Y / m_iRY;
                 float fPhy = (float)Math.PI * pVertex.X / m_iRX;
 
-                pVertex.m_fX = (float)((float)m_iRY * Math.Cos(fPhy));
-                pVertex.m_fZ = (float)((float)m_iRY * Math.Sin(fPhy));
-                pVertex.m_fY = (float)((float)m_iRY * fRo);
+                pVertex.m_fX = (float)((float)m_iRY * (1 + fPhy / 100) * Math.Cos(fPhy));
+                pVertex.m_fY = (float)((float)m_iRY * (1 + fPhy / 100) * Math.Sin(fPhy));
+                pVertex.m_fZ = (float)((float)m_iRY * fRo);
             }
         }
 
-        /// <summary>
-        /// Преобразует плоскую развёртку в трёхмерную планету
-        /// </summary>
         private void MakeSphere()
         {
             foreach (LOC pLoc in m_aLocations)
@@ -331,7 +284,7 @@ namespace LandscapeGeneration
 
                 pVertex.m_fX = (float)((float)m_iRY * Math.Sin(fRo) * Math.Cos(fPhy));
                 pVertex.m_fY = (float)((float)m_iRY * Math.Sin(fRo) * Math.Sin(fPhy));
-                pVertex.m_fHeight = (float)((float)m_iRY * Math.Cos(fRo));
+                pVertex.m_fZ = (float)((float)m_iRY * Math.Cos(fRo));
             }
         }
 
@@ -339,12 +292,6 @@ namespace LandscapeGeneration
         {
             LOC pLoc1 = null;
             LOC pLoc2 = null;
-
-            if (pEdge.VVertexA == pEdge.VVertexB)
-                return false;
-
-            if (pEdge.VVertexA.data[0] == pEdge.VVertexB.data[0] && pEdge.VVertexA.data[1] == pEdge.VVertexB.data[1])
-                return false;
 
             //получаем ссылки на реальные локации, с которыми связаны BT-вектора
             if (cData.ContainsKey(pEdge.LeftData))
@@ -388,9 +335,6 @@ namespace LandscapeGeneration
                 cVertexes[pEdge.VVertexB] = new Vertex(pEdge.VVertexB);
 
             Vertex pVertexB = cVertexes[pEdge.VVertexB];
-
-            if (pVertexA == pVertexB)
-                return false;
 
             //Для определения того, лежат ли точки A и B относительно центра локации L1 по часовой стрелке
             //или против, рассчитаем z-координату векторного произведения векторов (L1, A) и (L1, B).
@@ -500,7 +444,7 @@ namespace LandscapeGeneration
 
             //List<long> cUsedIDs = new List<long>();
 
-            int iWidthReserv = m_eShape == WorldShape.Ringworld ? 0:2;
+            int iWidthReserv = m_bCycled ? 0:2;
             int iHeightReserv = 2;
 
             for (int yy = -iHeightReserv; yy < iHeight / 2 + iHeightReserv; yy++)
@@ -523,19 +467,19 @@ namespace LandscapeGeneration
                     //if(cUsedIDs.Contains(iID))
                     //    iID += iWidth * iHeight * 2;
 
-                    pLocation.Create(iID, -RX + stepX/2 + fx, -RY + stepY/2 + fy, 0, xx, yy);
+                    pLocation.Create(iID, -RX + stepX/2 + fx, -RY + stepY/2 + fy, xx, yy);
                     pLocation.m_bBorder = bBorder;
 
                     cLocations.Add(pLocation);
 
-                    if (m_eShape == WorldShape.Ringworld)
+                    if (m_bCycled)
                     {
                         LOC pGhostLocation = new LOC();
 
                         if (stepX/2 + fx > RX)
-                            pGhostLocation.Create(iID + iWidth * iHeight * 4, -RX * 3 + stepX/2 + fx, -RY + stepY / 2 + fy, 0, pLocation);
+                            pGhostLocation.Create(iID + iWidth * iHeight * 4, -RX * 3 + stepX/2 + fx, -RY + stepY / 2 + fy, pLocation);
                         else
-                            pGhostLocation.Create(iID + iWidth * iHeight * 4, RX + stepX/2 + fx, -RY + stepY / 2 + fy, 0, pLocation);
+                            pGhostLocation.Create(iID + iWidth * iHeight * 4, RX + stepX/2 + fx, -RY + stepY / 2 + fy, pLocation);
                         
                         pGhostLocation.m_bBorder = true;
 
@@ -580,18 +524,18 @@ namespace LandscapeGeneration
                     if (iCount != 0)
                     {
                         LOC pImprovedLoc = new LOC();
-                        pImprovedLoc.Create(cLocations.Count, fX / iCount, fY / iCount, 0);
+                        pImprovedLoc.Create(cLocations.Count, fX / iCount, fY / iCount);
                         pImprovedLoc.m_bBorder = false;
                         cLocations.Add(pImprovedLoc);
 
-                        if (m_eShape == WorldShape.Ringworld)
+                        if (m_bCycled)
                         {
                             LOC pGhostLocation = new LOC();
 
                             if (pImprovedLoc.X > 0)
-                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X - RX * 2, pImprovedLoc.Y, 0, pImprovedLoc);
+                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X - RX * 2, pImprovedLoc.Y, pImprovedLoc);
                             else
-                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X + RX * 2, pImprovedLoc.Y, 0, pImprovedLoc);
+                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X + RX * 2, pImprovedLoc.Y, pImprovedLoc);
 
                             pGhostLocation.m_bBorder = true;
                             pGhostLocation.m_bGhost = true;
@@ -621,84 +565,84 @@ namespace LandscapeGeneration
                 int xx = (int)(ii * 2 * RX / kx);
 
                 LOC pLocation11 = new LOC();
-                pLocation11.Create(cLocations.Count, RX - xx, RY - dky, 0);
+                pLocation11.Create(cLocations.Count, RX - xx, RY - dky);
                 pLocation11.m_bBorder = xx == 0 || xx == 2 * RX;//false;
                 cLocations.Add(pLocation11);
 
                 LOC pLocation12 = new LOC();
-                pLocation12.Create(cLocations.Count, RX - xx, RY + dky, 0);
+                pLocation12.Create(cLocations.Count, RX - xx, RY + dky);
                 pLocation12.m_bBorder = true;
                 cLocations.Add(pLocation12);
 
                 LOC pLocation21 = new LOC();
-                pLocation21.Create(cLocations.Count, RX - xx, -RY - dky, 0);
+                pLocation21.Create(cLocations.Count, RX - xx, -RY - dky);
                 pLocation21.m_bBorder = true;
                 cLocations.Add(pLocation21);
 
                 LOC pLocation22 = new LOC();
-                pLocation22.Create(cLocations.Count, RX - xx, -RY + dky, 0);
+                pLocation22.Create(cLocations.Count, RX - xx, -RY + dky);
                 pLocation22.m_bBorder = xx == 0 || xx == 2 * RX;//false;
                 cLocations.Add(pLocation22);
 
-                if (m_eShape == WorldShape.Ringworld)
+                if (m_bCycled)
                 {
                     LOC pLocation11Ghost = new LOC();
                     if (pLocation11.X > 0)
-                        pLocation11Ghost.Create(cLocations.Count, pLocation11.X - RX * 2, pLocation11.Y, 0, pLocation11);
+                        pLocation11Ghost.Create(cLocations.Count, pLocation11.X - RX * 2, pLocation11.Y, pLocation11);
                     else
-                        pLocation11Ghost.Create(cLocations.Count, pLocation11.X + RX * 2, pLocation11.Y, 0, pLocation11);
+                        pLocation11Ghost.Create(cLocations.Count, pLocation11.X + RX * 2, pLocation11.Y, pLocation11);
                     pLocation11Ghost.m_bBorder = true;
                     cLocations.Add(pLocation11Ghost);
 
                     LOC pLocation12Ghost = new LOC();
                     if (pLocation12.X > 0)
-                        pLocation12Ghost.Create(cLocations.Count, pLocation12.X - RX * 2, pLocation12.Y, 0, pLocation12);
+                        pLocation12Ghost.Create(cLocations.Count, pLocation12.X - RX * 2, pLocation12.Y, pLocation12);
                     else
-                        pLocation12Ghost.Create(cLocations.Count, pLocation12.X + RX * 2, pLocation12.Y, 0, pLocation12);
+                        pLocation12Ghost.Create(cLocations.Count, pLocation12.X + RX * 2, pLocation12.Y, pLocation12);
                     pLocation12Ghost.m_bBorder = true;
                     cLocations.Add(pLocation12Ghost);
 
                     LOC pLocation21Ghost = new LOC();
                     if (pLocation21.X > 0)
-                        pLocation21Ghost.Create(cLocations.Count, pLocation21.X - RX * 2, pLocation21.Y, 0, pLocation21);
+                        pLocation21Ghost.Create(cLocations.Count, pLocation21.X - RX * 2, pLocation21.Y, pLocation21);
                     else
-                        pLocation21Ghost.Create(cLocations.Count, pLocation21.X + RX * 2, pLocation21.Y, 0, pLocation21);
+                        pLocation21Ghost.Create(cLocations.Count, pLocation21.X + RX * 2, pLocation21.Y, pLocation21);
                     pLocation21Ghost.m_bBorder = true;
                     cLocations.Add(pLocation21Ghost);
 
                     LOC pLocation22Ghost = new LOC();
                     if (pLocation22.X > 0)
-                        pLocation22Ghost.Create(cLocations.Count, pLocation22.X - RX * 2, pLocation22.Y, 0, pLocation22);
+                        pLocation22Ghost.Create(cLocations.Count, pLocation22.X - RX * 2, pLocation22.Y, pLocation22);
                     else
-                        pLocation22Ghost.Create(cLocations.Count, pLocation22.X + RX * 2, pLocation22.Y, 0, pLocation22);
+                        pLocation22Ghost.Create(cLocations.Count, pLocation22.X + RX * 2, pLocation22.Y, pLocation22);
                     pLocation22Ghost.m_bBorder = true;
                     cLocations.Add(pLocation22Ghost);
                 }
             }
 
-            if (m_eShape != WorldShape.Ringworld)
+            if (!m_bCycled)
             {
                 for (int jj = 0; jj <= ky; jj++)
                 {
                     int yy = (int)(jj * 2 * RY / ky);
 
                     LOC pLocation11 = new LOC();
-                    pLocation11.Create(cLocations.Count, RX - dkx, RY - yy, 0);
+                    pLocation11.Create(cLocations.Count, RX - dkx, RY - yy);
                     pLocation11.m_bBorder = yy == 0 || yy == 2 * RY;//false;
                     cLocations.Add(pLocation11);
 
                     LOC pLocation12 = new LOC();
-                    pLocation12.Create(cLocations.Count, RX + dkx, RY - yy, 0);
+                    pLocation12.Create(cLocations.Count, RX + dkx, RY - yy);
                     pLocation12.m_bBorder = true;
                     cLocations.Add(pLocation12);
 
                     LOC pLocation21 = new LOC();
-                    pLocation21.Create(cLocations.Count, -RX - dkx, RY - yy, 0);
+                    pLocation21.Create(cLocations.Count, -RX - dkx, RY - yy);
                     pLocation21.m_bBorder = true;
                     cLocations.Add(pLocation21);
 
                     LOC pLocation22 = new LOC();
-                    pLocation22.Create(cLocations.Count, -RX + dkx, RY - yy, 0);
+                    pLocation22.Create(cLocations.Count, -RX + dkx, RY - yy);
                     pLocation22.m_bBorder = yy == 0 || yy == 2 * RY;//false;
                     cLocations.Add(pLocation22);
                 }
@@ -721,17 +665,17 @@ namespace LandscapeGeneration
             for (int i = 0; i < m_iLocationsCount; i++)
             {
                 LOC pLocation = new LOC();
-                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
+                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky));
                 cLocations.Add(pLocation);
             
-                if (m_eShape == WorldShape.Ringworld)
+                if (m_bCycled)
                 {
                     LOC pGhostLocation = new LOC();
 
                     if (pLocation.X > 0)
-                        pGhostLocation.Create(cLocations.Count, pLocation.X - RX * 2, pLocation.Y, 0, pLocation);
+                        pGhostLocation.Create(cLocations.Count, pLocation.X - RX * 2, pLocation.Y, pLocation);
                     else
-                        pGhostLocation.Create(cLocations.Count, pLocation.X + RX * 2, pLocation.Y, 0, pLocation);
+                        pGhostLocation.Create(cLocations.Count, pLocation.X + RX * 2, pLocation.Y, pLocation);
 
                     pGhostLocation.m_bBorder = true;
                     pGhostLocation.m_bGhost = true;
@@ -743,8 +687,8 @@ namespace LandscapeGeneration
             m_aLocations = cLocations.ToArray();
         }
 
-        private static int s_iVersion = 20;
-        private static string s_sHeader = "DimensionX World Generator 3D Grid File.";
+        private static int s_iVersion = 11;
+        private static string s_sHeader = "DimensionX World Generator Grid File.";
 
         public void Save(string sFilename)
         {
@@ -757,7 +701,7 @@ namespace LandscapeGeneration
                 binWriter.Write(m_sDescription);
                 binWriter.Write(m_iLocationsCount);
                 binWriter.Write(m_iRX);
-                binWriter.Write((int)m_eShape);
+                binWriter.Write(m_bCycled ? 1 : 0);
 
                 binWriter.Write(m_aVertexes.Length);
                 foreach (Vertex pVertex in m_aVertexes)
@@ -775,10 +719,10 @@ namespace LandscapeGeneration
             m_sFilename = sFilename;
         }
 
-        public static bool CheckFile(string sFilename, out string sDescription, out int iLocationsCount, out WorldShape eShape)
+        public static bool CheckFile(string sFilename, out string sDescription, out int iLocationsCount, out bool bCycled)
         {
             sDescription = "";
-            eShape = WorldShape.Plain;
+            bCycled = false;
             iLocationsCount = 0;
 
             if (!File.Exists(sFilename))
@@ -812,7 +756,7 @@ namespace LandscapeGeneration
                     sDescription = binReader.ReadString();
                     iLocationsCount = binReader.ReadInt32();
                     int iRX = binReader.ReadInt32();
-                    eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
+                    bCycled = binReader.ReadInt32() == 1;
                 }
             }
             catch (EndOfStreamException e)
@@ -833,7 +777,7 @@ namespace LandscapeGeneration
 
         public LocationsGrid(string sFilename)
         {
-            if (!CheckFile(sFilename, out m_sDescription, out m_iLocationsCount, out m_eShape))
+            if (!CheckFile(sFilename, out m_sDescription, out m_iLocationsCount, out m_bCycled))
                 throw new ArgumentException("File not exists or have a wrong format!");
 
             m_sFilename = sFilename;
@@ -888,7 +832,7 @@ namespace LandscapeGeneration
                     m_sDescription = binReader.ReadString();
                     m_iLocationsCount = binReader.ReadInt32();
                     m_iRX = binReader.ReadInt32();
-                    m_eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
+                    m_bCycled = binReader.ReadInt32() == 1;
 
                     if(ProgressStep != null)
                         ProgressStep();
@@ -974,7 +918,7 @@ namespace LandscapeGeneration
                         if (pLoc.Forbidden)
                             continue;
 
-                        pLoc.BuildBorder();
+                        pLoc.BuildBorder(CycleShift);
                         if (ProgressStep != null)
                             ProgressStep();
                     }

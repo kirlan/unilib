@@ -85,7 +85,7 @@ namespace WorldGeneration
                         iLocationsCount = 50000;
                         break;
                 }
-                m_pLocationsGrid = new LocationsGrid<LocationX>(iLocationsCount, (int)NoGridWidth.Value, (int)NoGridHeight.Value, textBox1.Text, Looped.Checked);
+                m_pLocationsGrid = new LocationsGrid<LocationX>(iLocationsCount, (int)NoGridWidth.Value, (int)NoGridHeight.Value, textBox1.Text, Looped.Checked ? WorldShape.Ringworld : WorldShape.Plain);
             }
 
             Cursor = Cursors.Arrow;
@@ -151,8 +151,8 @@ namespace WorldGeneration
             {
                 string sDescription;
                 int iLocationsCount;
-                bool bCycled;
-                if (fi.Name == sFileName + ".dxg" && LocationsGrid<LocationX>.CheckFile(fi.FullName, out sDescription, out iLocationsCount, out bCycled))
+                WorldShape eShape;
+                if (fi.Name == sFileName + ".dxg" && LocationsGrid<LocationX>.CheckFile(fi.FullName, out sDescription, out iLocationsCount, out eShape))
                 {
                     return false;
                 }

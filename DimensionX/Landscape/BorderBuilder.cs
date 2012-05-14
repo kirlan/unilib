@@ -72,7 +72,7 @@ namespace LandscapeGeneration
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
         /// </summary>
         /// <param name="fCycleShift">Величина смещения X-координаты для закольцованной карты</param>
-        protected void ChainBorder(float fCycleShift)
+        protected void ChainBorder()
         {
             List<Line> cTotalBorder = new List<Line>();
             foreach (var cLines in m_cBorder)
@@ -83,30 +83,21 @@ namespace LandscapeGeneration
 
             m_fAverageX = 0;
             m_fAverageY = 0;
+            m_fAverageZ = 0;
             float fPerimeter = 0;
             foreach (Line pLine in aTotalBorder)
             {
                 pLine.m_pNext = null;
                 pLine.m_pPrevious = null;
 
-                float fRelativeX1 = pLine.m_pPoint1.m_fX;
-                if (fRelativeX1 > aTotalBorder[0].m_pPoint1.m_fX + fCycleShift / 2)
-                    fRelativeX1 -= fCycleShift;
-                if (fRelativeX1 < aTotalBorder[0].m_pPoint1.m_fX - fCycleShift / 2)
-                    fRelativeX1 += fCycleShift;
-
-                float fRelativeX2 = pLine.m_pPoint2.X;
-                if (fRelativeX2 > aTotalBorder[0].m_pPoint1.m_fX + fCycleShift / 2)
-                    fRelativeX2 -= fCycleShift;
-                if (fRelativeX2 < aTotalBorder[0].m_pPoint1.m_fX - fCycleShift / 2)
-                    fRelativeX2 += fCycleShift;
-
-                m_fAverageX += pLine.m_fLength * (fRelativeX1 + fRelativeX2) / 2;
-                m_fAverageY += pLine.m_fLength * (pLine.m_pPoint1.m_fY + pLine.m_pPoint2.m_fY) / 2;
+                m_fAverageX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
+                m_fAverageY += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                m_fAverageZ += pLine.m_fLength * (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2;
                 fPerimeter += pLine.m_fLength;
             }
             m_fAverageX /= fPerimeter;
             m_fAverageY /= fPerimeter;
+            m_fAverageZ /= fPerimeter;
 
             m_cFirstLines.Clear();
 
@@ -137,10 +128,7 @@ namespace LandscapeGeneration
                         for (int i = 0; i < iTotalCount; i++)
                         {
                             Line pLine = aTotalBorder[i];
-                            if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
-                                (pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY &&
-                                 (pLine.m_pPoint1.m_fX == pCurrentLine.m_pPoint2.m_fX ||
-                                  Math.Abs(pLine.m_pPoint1.m_fX - pCurrentLine.m_pPoint2.m_fX) == fCycleShift)))
+                            if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2)
                             {
                                 pCurrentLine.m_pNext = pLine;
                                 pLine.m_pPrevious = pCurrentLine;
@@ -179,15 +167,24 @@ namespace LandscapeGeneration
 
         private float m_fAverageX = 0;
         private float m_fAverageY = 0;
+        private float m_fAverageZ = 0;
 
         public override float X
         {
             get { return m_fAverageX; }
+            set { m_fAverageX = value; }
         }
 
         public override float Y
         {
             get { return m_fAverageY; }
+            set { m_fAverageY = value; }
+        }
+
+        public override float Z
+        {
+            get { return m_fAverageZ; }
+            set { m_fAverageZ = value; }
         }
     }
 }

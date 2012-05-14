@@ -10,11 +10,11 @@ using Random;
 using LandscapeGeneration.PathFind;
 using LandscapeGeneration;
 using Socium;
-using MapDrawEngine;
 using WorldGeneration;
 using Socium.Psichology;
 using Socium.Settlements;
 using Socium.Nations;
+using MapDrawXNAEngine;
 
 namespace VQMapTest2
 {
@@ -24,20 +24,11 @@ namespace VQMapTest2
         {
             InitializeComponent();
 
-            mapDraw3d1.Visible = false;
-            mapDraw3d1.Top = mapDraw1.Top;
-            mapDraw3d1.Left = mapDraw1.Left;
-            mapDraw3d1.Height = mapDraw1.Height;
-            mapDraw3d1.Width = mapDraw1.Width;
-
-            MapScaleChanged(this, null);
             MapModeChanged(this, null);
             MapLayersChanged(this, null);
 
             showLandmarksToolStripMenuItem.Checked = true;
             showRoadsToolStripMenuItem.Checked = true;
-
-            mapDraw1.BindMiniMap(miniMapDraw1);
 
             mapDraw3d1.MouseWheel += new MouseEventHandler(mapDraw3d1_MouseWheel);
         }
@@ -90,20 +81,6 @@ namespace VQMapTest2
 
         private void ShowWorld()
         {
-            float fScale = 1.0f;
-
-            if (radioButton1.Checked)
-                fScale = 1.0f;
-            if (radioButton2.Checked)
-                fScale = 2.0f;
-            if (radioButton3.Checked)
-                fScale = 8.0f;
-            if (radioButton4.Checked)
-                fScale = 32.0f;
-
-            mapDraw1.Assign(m_pWorld);
-            mapDraw1.ScaleMultiplier = fScale;
-
             mapDraw3d1.Assign(m_pWorld);
 
             label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel, Socium.Psichology.Customs.Progressiveness.Moderate_Science), m_pWorld.m_iTechLevel);
@@ -126,57 +103,33 @@ namespace VQMapTest2
             comboBox1.SelectedIndex = 0;
         }
 
-        private void MapScaleChanged(object sender, EventArgs e)
-        {
-            if (radioButton1.Checked)
-                mapDraw1.ScaleMultiplier = 1;
-            if (radioButton2.Checked)
-                mapDraw1.ScaleMultiplier = 2;
-            if (radioButton3.Checked)
-                mapDraw1.ScaleMultiplier = 8;
-            if (radioButton4.Checked)
-                mapDraw1.ScaleMultiplier = 32;
-
-            comboBox1.Focus();
-        }
-
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            mapDraw3d1.Top = mapDraw1.Top;
-            mapDraw3d1.Left = mapDraw1.Left;
-            mapDraw3d1.Height = mapDraw1.Height;
-            mapDraw3d1.Width = mapDraw1.Width;
-
-            MapScaleChanged(sender, e);
-        }
-
         private void MapModeChanged(object sender, EventArgs e)
         {
             switch (tabControl1.SelectedIndex)
             {
                 case 0:
-                    mapDraw1.Mode = MapMode.Areas;
+                    mapDraw3d1.Mode = MapMode.Areas;
                     break;
                 case 1:
-                    mapDraw1.Mode = MapMode.Humidity;
+                    mapDraw3d1.Mode = MapMode.Humidity;
                     break;
                 case 2:
-                    mapDraw1.Mode = MapMode.Elevation;
+                    mapDraw3d1.Mode = MapMode.Elevation;
                     break;
                 case 3:
-                    mapDraw1.Mode = MapMode.Natives;
+                    mapDraw3d1.Mode = MapMode.Natives;
                     break;
                 case 4:
-                    mapDraw1.Mode = MapMode.Nations;
+                    mapDraw3d1.Mode = MapMode.Nations;
                     break;
                 case 5:
-                    mapDraw1.Mode = MapMode.TechLevel;
+                    mapDraw3d1.Mode = MapMode.TechLevel;
                     break;
                 case 6:
-                    mapDraw1.Mode = MapMode.PsiLevel;
+                    mapDraw3d1.Mode = MapMode.PsiLevel;
                     break;
                 case 7:
-                    mapDraw1.Mode = MapMode.Infrastructure;
+                    mapDraw3d1.Mode = MapMode.Infrastructure;
                     break;
             }
 
@@ -185,13 +138,13 @@ namespace VQMapTest2
 
         private void MapLayersChanged(object sender, EventArgs e)
         {
-            mapDraw1.ShowLocations = showLandmarksToolStripMenuItem.Checked;
-            mapDraw1.ShowRoads = showRoadsToolStripMenuItem.Checked;
-            mapDraw1.ShowStates = showStateBordersToolStripMenuItem.Checked;
-            mapDraw1.ShowProvincies = showProvinciesBordersToolStripMenuItem.Checked;
-            mapDraw1.ShowLocationsBorders = showLocationsToolStripMenuItem.Checked;
-            mapDraw1.ShowLands = showLandsToolStripMenuItem.Checked;
-            mapDraw1.ShowLandMasses = showLandMassesToolStripMenuItem.Checked;
+            mapDraw3d1.ShowLocations = showLandmarksToolStripMenuItem.Checked;
+            mapDraw3d1.ShowRoads = showRoadsToolStripMenuItem.Checked;
+            mapDraw3d1.ShowStates = showStateBordersToolStripMenuItem.Checked;
+            mapDraw3d1.ShowProvincies = showProvinciesBordersToolStripMenuItem.Checked;
+            mapDraw3d1.ShowLocationsBorders = showLocationsToolStripMenuItem.Checked;
+            mapDraw3d1.ShowLands = showLandsToolStripMenuItem.Checked;
+            mapDraw3d1.ShowLandMasses = showLandMassesToolStripMenuItem.Checked;
 
             if (toolStripMenuItem3.Checked != showLandmarksToolStripMenuItem.Checked)
                 toolStripMenuItem3.Checked = showLandmarksToolStripMenuItem.Checked;
@@ -213,13 +166,13 @@ namespace VQMapTest2
 
         private void MapLayersChanged2(object sender, EventArgs e)
         {
-            mapDraw1.ShowLocations = toolStripMenuItem3.Checked;
-            mapDraw1.ShowRoads = toolStripMenuItem4.Checked;
-            mapDraw1.ShowStates = toolStripMenuItem5.Checked;
-            mapDraw1.ShowProvincies = toolStripMenuItem6.Checked;
-            mapDraw1.ShowLocationsBorders = toolStripMenuItem8.Checked;
-            mapDraw1.ShowLands = toolStripMenuItem9.Checked;
-            mapDraw1.ShowLandMasses = toolStripMenuItem10.Checked;
+            mapDraw3d1.ShowLocations = toolStripMenuItem3.Checked;
+            mapDraw3d1.ShowRoads = toolStripMenuItem4.Checked;
+            mapDraw3d1.ShowStates = toolStripMenuItem5.Checked;
+            mapDraw3d1.ShowProvincies = toolStripMenuItem6.Checked;
+            mapDraw3d1.ShowLocationsBorders = toolStripMenuItem8.Checked;
+            mapDraw3d1.ShowLands = toolStripMenuItem9.Checked;
+            mapDraw3d1.ShowLandMasses = toolStripMenuItem10.Checked;
 
             if (showLandmarksToolStripMenuItem.Checked != toolStripMenuItem3.Checked)
                 showLandmarksToolStripMenuItem.Checked = toolStripMenuItem3.Checked;
@@ -241,10 +194,10 @@ namespace VQMapTest2
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mapDraw1.SelectedState = comboBox1.SelectedItem as State;
+            mapDraw3d1.SelectedState = comboBox1.SelectedItem as State;
         }
 
-        private void worldMap1_StateSelectedEvent(object sender, MapDraw.SelectedStateChangedEventArgs e)
+        private void worldMap1_StateSelectedEvent(object sender, MapDraw3d.SelectedStateChangedEventArgs e)
         {
             comboBox1.SelectedItem = e.m_pState;
 
@@ -445,10 +398,8 @@ namespace VQMapTest2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Point pPoint = mapDraw1.GetCentralPoint(mapDraw1.SelectedState);
-
             //Получаем новые координаты для DrawFrame, чтобы выбранное государство было в центре
-            mapDraw1.SetPan(pPoint.X - mapDraw1.DrawFrame.Width / 2, pPoint.Y - mapDraw1.DrawFrame.Height / 2);
+            mapDraw3d1.FocusSelectedState();
 
             comboBox1.Focus();
         }
@@ -467,7 +418,7 @@ namespace VQMapTest2
         private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             int iIndex = int.Parse(e.LinkText.Substring(e.LinkText.IndexOf('#')+1));
-            mapDraw1.SelectedState = comboBox1.Items[iIndex] as State;
+            mapDraw3d1.SelectedState = comboBox1.Items[iIndex] as State;
         }
 
         private int Str2Int(string sStr)
@@ -495,7 +446,7 @@ namespace VQMapTest2
             if (timer1.Enabled)
                 return;
 
-            if (mapDraw1.SelectedState == null)
+            if (mapDraw3d1.SelectedState == null)
                 return;
 
             string sLink = richTextBox1.GetLink(e.Location);
@@ -514,15 +465,15 @@ namespace VQMapTest2
 
                         State pLinkState = comboBox1.Items[iIndex] as State;
 
-                        string sTip = string.Format("{0} {1} to {2} {3}:\n", mapDraw1.SelectedState.m_sName, mapDraw1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
+                        string sTip = string.Format("{0} {1} to {2} {3}:\n", mapDraw3d1.SelectedState.m_sName, mapDraw3d1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
                         string sRelation;
-                        mapDraw1.SelectedState.CalcHostility(pLinkState, out sRelation);
+                        mapDraw3d1.SelectedState.CalcHostility(pLinkState, out sRelation);
 
                         sTip += sRelation;
                         sTip += "\n";
 
-                        sTip += string.Format("{2} {3} to {0} {1}:\n", mapDraw1.SelectedState.m_sName, mapDraw1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
-                        pLinkState.CalcHostility(mapDraw1.SelectedState, out sRelation);
+                        sTip += string.Format("{2} {3} to {0} {1}:\n", mapDraw3d1.SelectedState.m_sName, mapDraw3d1.SelectedState.m_pInfo.m_sName, pLinkState.m_sName, pLinkState.m_pInfo.m_sName);
+                        pLinkState.CalcHostility(mapDraw3d1.SelectedState, out sRelation);
                         sTip += sRelation;
 
                         toolTip1.SetToolTip(richTextBox1, sTip);
@@ -570,10 +521,10 @@ namespace VQMapTest2
                       m_pTPFFinish.m_pBuilding.m_eType != BuildingType.Lair)) && 
                     m_pTPFFinish.m_pSettlement == null));
 
-            mapDraw1.ClearPath();
+            //mapDraw1.ClearPath();
 
-            ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_pGrid.CycleShift, false);
-            mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
+            //ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, false);
+            //mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
         }
 
         private void worldToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
@@ -601,12 +552,6 @@ namespace VQMapTest2
                 label1.Visible = false;
                 ShowWorld();
             }
-        }
-
-        private void dModeToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-        {
-            mapDraw1.Visible = !dModeToolStripMenuItem.Checked;
-            mapDraw3d1.Visible = dModeToolStripMenuItem.Checked;
         }
 
         private bool m_b3dMapDragging = false;

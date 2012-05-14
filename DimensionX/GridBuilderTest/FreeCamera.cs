@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Socium;
 
-namespace MapDrawXNAEngine
+
+namespace XNAEngine
 {
     public class FreeCamera : Camera
     {
@@ -44,7 +44,7 @@ namespace MapDrawXNAEngine
             this.Yaw += YawChange;
             this.Pitch += PitchChange;
 
-            this.Pitch = Math.Max(MathHelper.ToRadians(270), Math.Min(MathHelper.ToRadians(359), this.Pitch));
+            //this.Pitch = Math.Max(MathHelper.ToRadians(270), Math.Min(MathHelper.ToRadians(359), this.Pitch));
 
             this.Roll += RollChange;
         }

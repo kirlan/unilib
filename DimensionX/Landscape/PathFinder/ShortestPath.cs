@@ -17,7 +17,6 @@ namespace LandscapeGeneration.PathFind
         Path<TransportationNode> FindPath(
             TransportationNode start,
             TransportationNode destination,
-            float fCycleShift,
             int iPassword,
             bool bNavalOnly)
         {
@@ -64,7 +63,7 @@ namespace LandscapeGeneration.PathFind
 
                     var newPath = path.AddStep(pLinkedNode, pLinked.Value.MovementCost);
 
-                    float fStrightDistance = pLinkedNode.DistanceTo(destination, fCycleShift);// (float)Math.Sqrt((destination.X - pLink.X) * (destination.X - pLink.X) + (destination.Y - pLink.Y) * (destination.Y - pLink.Y));
+                    float fStrightDistance = pLinkedNode.DistanceTo(destination);// (float)Math.Sqrt((destination.X - pLink.X) * (destination.X - pLink.X) + (destination.Y - pLink.Y) * (destination.Y - pLink.Y));
 
                     //if (pLink.m_pLocation.m_bRoad)// && !bInternal)
                     //    fStrightDistance /= 2;
@@ -75,7 +74,7 @@ namespace LandscapeGeneration.PathFind
             return null;
         }
 
-        public ShortestPath(TransportationNode pFrom, TransportationNode pTo, float fCycleShift, int iPassword, bool bNavalOnly)
+        public ShortestPath(TransportationNode pFrom, TransportationNode pTo, int iPassword, bool bNavalOnly)
         {
             List<TransportationNode> cResult = new List<TransportationNode>();
 
@@ -85,7 +84,7 @@ namespace LandscapeGeneration.PathFind
                 return;
             }
 
-            Path<TransportationNode> pPath = FindPath(pFrom, pTo, fCycleShift, iPassword, bNavalOnly);
+            Path<TransportationNode> pPath = FindPath(pFrom, pTo, iPassword, bNavalOnly);
 
             if (pPath != null)
             {

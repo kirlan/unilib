@@ -17,7 +17,53 @@ using Microsoft.Xna.Framework.Media;
 
 namespace MapDrawXNAEngine
 {
-    public struct VertexPositionColorNormal: IVertexType
+    public enum MapLayer
+    {
+        Continents,
+        Locations,
+        Lands,
+        Provincies,
+        LandMasses,
+        States
+    }
+
+    public enum MapMode
+    {
+        /// <summary>
+        /// физическая карта
+        /// </summary>
+        Areas,
+        /// <summary>
+        /// этническая карта - коренное население
+        /// </summary>
+        Natives,
+        /// <summary>
+        /// этническая карта - доминирующая раса
+        /// </summary>    
+        Nations,
+        /// <summary>
+        /// карта влажности
+        /// </summary>
+        Humidity,
+        /// <summary>
+        /// карта высот
+        /// </summary>
+        Elevation,
+        /// <summary>
+        /// уровень технического развития
+        /// </summary>
+        TechLevel,
+        /// <summary>
+        /// уровень пси-способностей
+        /// </summary>
+        PsiLevel,
+        /// <summary>
+        /// общий уровень жизни, цивилизованность
+        /// </summary>
+        Infrastructure
+    }
+
+    public struct VertexPositionColorNormal : IVertexType
     {
         public Vector3 Position;
         public Microsoft.Xna.Framework.Color Color;
@@ -57,8 +103,11 @@ namespace MapDrawXNAEngine
         int[] userPrimitivesIndices;
         int m_iTrianglesCount = 0;
 
-        private readonly float m_fHeightMultiplier = 100;
+        private readonly float m_fHeightMultiplier = 300;
 
+        /// <summary>
+        /// набор примитивов без дублирования вертексов, с плавным переходом цвета между разноцветными примитивами
+        /// </summary>
         private void FillPrimitives1()
         {
             // Create the verticies for our triangle
@@ -71,7 +120,7 @@ namespace MapDrawXNAEngine
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
                 userPrimitives[iCounter] = new VertexPositionColorNormal();
-                userPrimitives[iCounter].Position = new Vector3(pVertex.m_fX, pVertex.m_fY, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ);
+                userPrimitives[iCounter].Position = new Vector3(pVertex.m_fX, pVertex.m_fY, pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fHeightMultiplier : pVertex.m_fHeight);
 
                 LandTypeInfoX pLTI = null;
                 Microsoft.Xna.Framework.Color pMixedColor = Microsoft.Xna.Framework.Color.White;
@@ -144,6 +193,9 @@ namespace MapDrawXNAEngine
             }
         }
 
+        /// <summary>
+        /// набор примитивов с дублированием вершин на границе разноцветных регионов, так чтобы образовывалась чёткая граница цвета
+        /// </summary>
         private void FillPrimitives2()
         {
             int iPrimitivesCount = 0;
@@ -177,7 +229,11 @@ namespace MapDrawXNAEngine
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                Vector3 pPosition = new Vector3(pVertex.m_fX, pVertex.m_fZ > 0 ? pVertex.m_fZ * m_fHeightMultiplier : pVertex.m_fZ, pVertex.m_fY);
+                Vector3 pPosition = new Vector3(pVertex.m_fX, pVertex.m_fZ, pVertex.m_fY);
+                if(m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                    pPosition -= Vector3.Normalize(pPosition) * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fHeightMultiplier : pVertex.m_fHeight);
+                else
+                    pPosition += Vector3.Up * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fHeightMultiplier : pVertex.m_fHeight);
 
                 List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
                 foreach (LocationX pLoc in pVertex.m_cLocations)
@@ -209,7 +265,12 @@ namespace MapDrawXNAEngine
                 if (pLoc.m_eType == RegionType.Volcano)
                     fHeight -= 10 * m_fHeightMultiplier;
 
-                userPrimitives[iCounter].Position = new Vector3(pLoc.X, fHeight, pLoc.Y);
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X, pLoc.Z, pLoc.Y);
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                    userPrimitives[iCounter].Position -= Vector3.Normalize(userPrimitives[iCounter].Position) * fHeight;
+                else
+                    userPrimitives[iCounter].Position += Vector3.Up * fHeight;
+
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
                 else
@@ -268,6 +329,9 @@ namespace MapDrawXNAEngine
             }
         }
 
+        /// <summary>
+        /// для всех вершин в списке вычисляем нормаль как нормализованный вектор суммы нормалей прилегающих граней
+        /// </summary>
         private void CalculateNormals()
         {
             bool bError = false;
@@ -305,6 +369,243 @@ namespace MapDrawXNAEngine
         }
 
         /// <summary>
+        /// Режим отрисовки карты - физическая карта, карта влажности, этническая карта...
+        /// </summary>
+        private MapMode m_eMode = MapMode.Areas;
+
+        /// <summary>
+        /// Режим отрисовки карты - физическая карта, карта влажности, этническая карта...
+        /// </summary>
+        public MapMode Mode
+        {
+            get { return m_eMode; }
+            set
+            {
+                if (m_eMode != value)
+                {
+                    m_eMode = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте дороги?
+        /// </summary>
+        private bool m_bShowRoads = true;
+
+        /// <summary>
+        /// Отрисовывать ли на карте дороги?
+        /// </summary>
+        public bool ShowRoads
+        {
+            get { return m_bShowRoads; }
+            set
+            {
+                if (m_bShowRoads != value)
+                {
+                    m_bShowRoads = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы государств?
+        /// </summary>
+        private bool m_bShowStates = true;
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы государств?
+        /// </summary>
+        public bool ShowStates
+        {
+            get { return m_bShowStates; }
+            set
+            {
+                if (m_bShowStates != value)
+                {
+                    m_bShowStates = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте значки условных обозначений (города и пр.)?
+        /// </summary>
+        private bool m_bShowLocations = true;
+
+        /// <summary>
+        /// Отрисовывать ли на карте значки условных обозначений (города и пр.)?
+        /// </summary>
+        public bool ShowLocations
+        {
+            get { return m_bShowLocations; }
+            set
+            {
+                if (m_bShowLocations != value)
+                {
+                    m_bShowLocations = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы провинций?
+        /// </summary>
+        private bool m_bShowProvincies = true;
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы провинций?
+        /// </summary>
+        public bool ShowProvincies
+        {
+            get { return m_bShowProvincies; }
+            set
+            {
+                if (m_bShowProvincies != value)
+                {
+                    m_bShowProvincies = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы локаций?
+        /// </summary>
+        private bool m_bShowLocationsBorders = false;
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы локаций?
+        /// </summary>
+        public bool ShowLocationsBorders
+        {
+            get { return m_bShowLocationsBorders; }
+            set
+            {
+                if (m_bShowLocationsBorders != value)
+                {
+                    m_bShowLocationsBorders = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы тектонических плит?
+        /// </summary>
+        private bool m_bShowLandMasses = false;
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы тектонических плит?
+        /// </summary>
+        public bool ShowLandMasses
+        {
+            get { return m_bShowLandMasses; }
+            set
+            {
+                if (m_bShowLandMasses != value)
+                {
+                    m_bShowLandMasses = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы земель?
+        /// </summary>
+        private bool m_bShowLands = false;
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы земель?
+        /// </summary>
+        public bool ShowLands
+        {
+            get { return m_bShowLands; }
+            set
+            {
+                if (m_bShowLands != value)
+                {
+                    m_bShowLands = value;
+                    //Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Выбранное на карте государство
+        /// </summary>
+        private State m_pSelectedState = null;
+
+        /// <summary>
+        /// Выбранное на карте государство
+        /// </summary>
+        public State SelectedState
+        {
+            get { return m_pSelectedState; }
+            set
+            {
+                if (value != m_pSelectedState)
+                {
+                    m_pSelectedState = value;
+                    //Draw();
+
+                    Refresh();
+
+                    FireSelectedStateEvent();
+                }
+            }
+        }
+
+        public void FireSelectedStateEvent()
+        {
+            if (m_pSelectedState == null)
+                return;
+
+            //MapQuadrant[] aQuads;
+            //PointF[][] aPoints = BuildPath(m_pSelectedState.m_cFirstLines, false, out aQuads);
+            //GraphicsPath pPath = new GraphicsPath();
+            //foreach (var aPts in aPoints)
+            //    pPath.AddPolygon(aPts);
+            //RectangleF pRect = pPath.GetBounds();
+
+            //// Copy to a temporary variable to be thread-safe.
+            //EventHandler<SelectedStateChangedEventArgs> temp = SelectedStateChanged;
+            //if (temp != null)
+            //    temp(this, new SelectedStateChangedEventArgs(m_pSelectedState, (int)(pRect.Left + pRect.Width / 2), (int)(pRect.Top + pRect.Height / 2)));
+            
+            // Copy to a temporary variable to be thread-safe.
+            EventHandler<SelectedStateChangedEventArgs> temp = SelectedStateChanged;
+            if (temp != null)
+                temp(this, new SelectedStateChangedEventArgs(m_pSelectedState));
+        }
+
+        /// <summary>
+        /// Информация о том, какое государство выбрано на карте
+        /// </summary>
+        public class SelectedStateChangedEventArgs : EventArgs
+        {
+            /// <summary>
+            /// Выбранное государство
+            /// </summary>
+            public State m_pState;
+
+            public SelectedStateChangedEventArgs(State pState)
+            {
+                m_pState = pState;
+            }
+        }
+        
+        /// <summary>
+        /// Событие, извещающее о том, что на карте выбрано новое государство
+        /// </summary>
+        public event EventHandler<SelectedStateChangedEventArgs> SelectedStateChanged;
+        
+        /// <summary>
         /// Привязать карту к миру.
         /// Строим контуры всего, что придётся рисовать в ОРИГИНАЛЬНЫХ координатах
         /// и раскидываем их по квадрантам
@@ -319,17 +620,16 @@ namespace MapDrawXNAEngine
 
             if (GraphicsDevice != null)
             {
-                m_pCamera = new FreeCamera(new Vector3(0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier, 0),
-                                        MathHelper.ToRadians(0),
-                                        MathHelper.ToRadians(0),
-                                        MathHelper.ToRadians(0),
-                                        GraphicsDevice);
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                    m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY, GraphicsDevice);
+                else
+                    m_pCamera = new PlainCamera(GraphicsDevice);
             }
         }
 
         private Microsoft.Xna.Framework.Color eSkyColor = Microsoft.Xna.Framework.Color.Lavender;
 
-        public FreeCamera m_pCamera = null;
+        public Camera m_pCamera = null;
 
         /// <summary>
         /// Initializes the control.
@@ -342,23 +642,10 @@ namespace MapDrawXNAEngine
 
             effect.VertexColorEnabled = true;
 
-            if (m_pWorld == null)
-            {
-                m_pCamera = new FreeCamera(new Vector3(0, 100000, 0),
-                                            MathHelper.ToRadians(180),
-                                            MathHelper.ToRadians(0),
-                                            MathHelper.ToRadians(180),
-                                            GraphicsDevice);
-            }
+            if (m_pWorld != null && m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY, GraphicsDevice);
             else
-            {
-//                m_pCamera = new FreeCamera(new Vector3(0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier, 0),
-                m_pCamera = new FreeCamera(new Vector3(0, 100000, 0),
-                                        MathHelper.ToRadians(0),
-                                        MathHelper.ToRadians(270),
-                                        MathHelper.ToRadians(0),
-                                        GraphicsDevice);
-            }
+                m_pCamera = new PlainCamera(GraphicsDevice);
 
             // Start the animation timer.
             timer = Stopwatch.StartNew();
@@ -407,27 +694,14 @@ namespace MapDrawXNAEngine
 
             if (m_fScaling != 0)
             {
-                m_pCamera.MoveForward(m_fScaling * (float)fElapsedTime);
+                m_pCamera.ZoomIn(m_fScaling * (float)fElapsedTime);
                 m_fScaling = 0;
             }
             m_pCamera.Update();
-            if (m_pCamera.m_pPOI.X < -m_pWorld.m_pGrid.RX)
-                m_pCamera.m_pPOI += new Vector3(m_pWorld.m_pGrid.RX * 2, 0, 0);
-            if (m_pCamera.m_pPOI.X > m_pWorld.m_pGrid.RX)
-                m_pCamera.m_pPOI -= new Vector3(m_pWorld.m_pGrid.RX * 2, 0, 0);
-            m_pCamera.Update();
 
-            //if (m_pCamera.Position.Y < m_pWorld.m_fMaxHeight * m_fHeightMultiplier)
-            //{
-            //    Vector3 pReturn = new Vector3(0, m_pWorld.m_fMaxHeight * m_fHeightMultiplier - m_pCamera.Position.Y, 0);
-            //    m_pCamera.Jump(pReturn);
-            //    m_pCamera.Update();
-            //}
             // Update the mouse state
             effect.View = m_pCamera.View;
             effect.Projection = m_pCamera.Projection;
-
-//            effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 150000);
 
             effect.LightingEnabled = true;
 //            effect.DirectionalLight0.Direction = Vector3.Transform(Vector3.Normalize(new Vector3(0, 1, 0)), Matrix.CreateRotationX(time * 0.2f));
@@ -436,36 +710,31 @@ namespace MapDrawXNAEngine
 
             effect.PreferPerPixelLighting = true;
 
-            effect.FogColor = eSkyColor.ToVector3();
-            effect.FogEnabled = true;
-            effect.FogStart = m_pCamera.Position.Y;//5000.0f;
-            effect.FogEnd = Math.Max(m_pCamera.m_fDistance, m_pWorld.m_pGrid.RY/2 + m_pCamera.Position.Y * m_pCamera.Position.Y / 5000);// 180000.0f;
+            //effect.FogColor = eSkyColor.ToVector3();
+            //effect.FogEnabled = true;
+            //effect.FogStart = m_pCamera.Position.Y;//5000.0f;
+            //effect.FogEnd = Math.Max(m_pCamera.m_fDistance, m_pWorld.m_pGrid.RY / 2 + m_pCamera.Target.Y * m_pCamera.Target.Y / 5000);// 180000.0f;
             
             // Set renderstates.
-            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            //GraphicsDevice.RasterizerState = RasterizerState.CullNone;//CullCounterClockwise;
+            // Set renderstates.
+            RasterizerState rs = new RasterizerState();
+            rs.CullMode = CullMode.CullCounterClockwiseFace;
+            //rs.FillMode = FillMode.WireFrame;
+            GraphicsDevice.RasterizerState = rs;
 
-            if (m_pWorld.m_pGrid.m_bCycled)
-            {
-                effect.World = Matrix.CreateTranslation(-m_pWorld.m_pGrid.RX * 2, 0, 0) * Matrix.CreateScale(0.5f);
-
-                // Draw the triangle.
-                effect.CurrentTechnique.Passes[0].Apply();
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
-                                                  userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
-
-                effect.World = Matrix.CreateTranslation(m_pWorld.m_pGrid.RX * 2, 0, 0) * Matrix.CreateScale(0.5f);
-
-                // Draw the triangle.
-                effect.CurrentTechnique.Passes[0].Apply();
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
-                                                  userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
-            }
-            effect.World = Matrix.CreateScale(0.5f);
+            //effect.World = Matrix.CreateScale(0.5f);
+            effect.World = Matrix.CreateTranslation(20000, 0, -20000);
 
             // Draw the triangle.
             effect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
                                               userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
+        }
+
+        public void FocusSelectedState()
+        {
+            m_pCamera.Target = new Vector3(m_pSelectedState.X, m_pSelectedState.Y, m_pSelectedState.Z);
         }
     }
 }
