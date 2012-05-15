@@ -601,6 +601,8 @@ namespace VQMapTest2
             }
             m_pMap3DLastMouseLocation = e.Location;
 
+            mapDraw3d1.UpdatePicking(e.X, e.Y);
+
             if (m_b3dMapDragging)
                 mapDraw3d1.PanCamera(p.X, p.Y);
 
