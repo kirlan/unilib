@@ -103,7 +103,7 @@ namespace MapDrawXNAEngine
         int[] userPrimitivesIndices;
         int m_iTrianglesCount = 0;
 
-        private readonly float m_fHeightMultiplier = 300;
+        private float m_fHeightMultiplier = 0.1f;
 
         private void FillPrimitivesFake()
         {
@@ -266,6 +266,11 @@ namespace MapDrawXNAEngine
             Dictionary<long, Dictionary<LandTypeInfoX, int>> cVertexes = new Dictionary<long, Dictionary<LandTypeInfoX, int>>();
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
 
+            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                m_fHeightMultiplier = 0.2f;
+            else
+                m_fHeightMultiplier = 0.1f;
+
             int iCounter = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
@@ -273,11 +278,11 @@ namespace MapDrawXNAEngine
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                Vector3 pPosition = new Vector3(pVertex.m_fX, pVertex.m_fZ, pVertex.m_fY);
+                Vector3 pPosition = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
                 if(m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pPosition -= Vector3.Normalize(pPosition) * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fHeightMultiplier : pVertex.m_fHeight);
+                    pPosition -= Vector3.Normalize(pPosition) * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fHeightMultiplier : pVertex.m_fHeight * m_fHeightMultiplier / 10);
                 else
-                    pPosition += Vector3.Up * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fHeightMultiplier : pVertex.m_fHeight);
+                    pPosition += Vector3.Up * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fHeightMultiplier : pVertex.m_fHeight * m_fHeightMultiplier/10);
 
                 List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
                 foreach (LocationX pLoc in pVertex.m_cLocations)
@@ -303,13 +308,13 @@ namespace MapDrawXNAEngine
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 userPrimitives[iCounter] = new VertexPositionColorNormal();
-                float fHeight = pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight;
+                float fHeight = pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight * m_fHeightMultiplier/10;
                 if (pLoc.m_eType == RegionType.Peak)
                     fHeight += 2 * m_fHeightMultiplier;
                 if (pLoc.m_eType == RegionType.Volcano)
                     fHeight -= 10 * m_fHeightMultiplier;
 
-                userPrimitives[iCounter].Position = new Vector3(pLoc.X, pLoc.Z, pLoc.Y);
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                     userPrimitives[iCounter].Position -= Vector3.Normalize(userPrimitives[iCounter].Position) * fHeight;
                 else
@@ -659,14 +664,14 @@ namespace MapDrawXNAEngine
         {
             m_pWorld = pWorld;
 
-            //FillPrimitives2();
-            FillPrimitivesFake();
+            FillPrimitives2();
+            //FillPrimitivesFake();
             CalculateNormals();
 
             if (GraphicsDevice != null)
             {
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY, GraphicsDevice);
+                    m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY / 1000, GraphicsDevice);
                 else
                     m_pCamera = new PlainCamera(GraphicsDevice);
             }
@@ -692,7 +697,7 @@ namespace MapDrawXNAEngine
             lineEffect.VertexColorEnabled = true;
             
             if (m_pWorld != null && m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY, GraphicsDevice);
+                m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY / 1000, GraphicsDevice);
             else
                 m_pCamera = new PlainCamera(GraphicsDevice);
 
@@ -718,15 +723,11 @@ namespace MapDrawXNAEngine
 
         public float m_fScaling = 0;
 
-        public void PanCamera(float fLeft, float fUp)
+        public bool m_bPanMode = false;
+
+        public void ResetPanning()
         {
-            if (m_pLastPicking != null && m_pCurrentPicking != null)
-            {
-                m_pCamera.Target += (Vector3)m_pLastPicking - (Vector3)m_pCurrentPicking;
-                m_pCurrentPicking = null;
-                m_pLastPicking = null;
-            }
-            //m_pCamera.Pan(fLeft * m_pCamera.Position.Y * 0.00118f, fUp * m_pCamera.Position.Y * 0.00118f);
+            m_pLastPicking = m_pCurrentPicking;
         }
 
         /// <summary>
@@ -753,6 +754,14 @@ namespace MapDrawXNAEngine
                 m_fScaling = 0;
             }
             m_pCamera.Update();
+            if (m_bPanMode && m_pCurrentPicking != null)
+            {
+                if (m_pLastPicking != null)
+                    m_pCamera.Target += (Vector3)m_pLastPicking - (Vector3)m_pCurrentPicking;
+
+               // m_pLastPicking = m_pCurrentPicking;
+                m_pCurrentPicking = null;
+            }
 
             // Update the mouse state
             effect.View = m_pCamera.View;
@@ -895,8 +904,6 @@ namespace MapDrawXNAEngine
                                                         out vertex1, out vertex2,
                                                         out vertex3);
             m_bPicked = false;
-
-            m_pLastPicking = m_pCurrentPicking;
 
             // Do we have a per-triangle intersection with this model?
             if (intersection != null)

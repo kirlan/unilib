@@ -35,19 +35,19 @@ namespace PickerTest
             userPrimitives = new VertexPositionColor[5];
 
             userPrimitives[0] = new VertexPositionColor();
-            userPrimitives[0].Position = new Vector3(-15000, 0, -15000);
+            userPrimitives[0].Position = new Vector3(-1500, 0, -1500);
             userPrimitives[0].Color = Microsoft.Xna.Framework.Color.White;
 
             userPrimitives[1] = new VertexPositionColor();
-            userPrimitives[1].Position = new Vector3(15000, 0, -15000);
+            userPrimitives[1].Position = new Vector3(1500, 0, -1500);
             userPrimitives[1].Color = Microsoft.Xna.Framework.Color.Red;
 
             userPrimitives[2] = new VertexPositionColor();
-            userPrimitives[2].Position = new Vector3(15000, 0, 15000);
+            userPrimitives[2].Position = new Vector3(1500, 0, 1500);
             userPrimitives[2].Color = Microsoft.Xna.Framework.Color.Blue;
 
             userPrimitives[3] = new VertexPositionColor();
-            userPrimitives[3].Position = new Vector3(-15000, 0, 15000);
+            userPrimitives[3].Position = new Vector3(-1500, 0, 1500);
             userPrimitives[3].Color = Microsoft.Xna.Framework.Color.Green;
 
             userPrimitives[4] = new VertexPositionColor();
@@ -195,11 +195,23 @@ namespace PickerTest
                 // Reset renderstates to their default values.
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            
+                GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+                    PrimitiveType.LineList,
+                    m_pPoints,
+                    0,  // index of the first vertex to draw
+                    m_pPoints.Length/2   // number of primitives
+                );
             }
         }
 
         bool m_bPicked = false;
 
+        VertexPositionColor[] m_pPoints;
+
+        public int m_iCursorX = 0;
+        public int m_iCursorY = 0;
+        
         /// <summary>
         /// Runs a per-triangle picking algorithm over all the models in the scene,
         /// storing which triangle is currently under the cursor.
@@ -209,6 +221,24 @@ namespace PickerTest
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
             Ray cursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
+
+            // calculate the ray-plane intersection point
+            Vector3 n = new Vector3(0f, 1f, 0f);
+            Plane p = new Plane(n, 0f);
+
+            // calculate distance of intersection point from r.origin
+            float denominator = Vector3.Dot(p.Normal, cursorRay.Direction);
+            float numerator = Vector3.Dot(p.Normal, cursorRay.Position) + p.D;
+            float t = -(numerator / denominator);
+
+            m_pPoints = new VertexPositionColor[4];
+            m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+            m_pPoints[1] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * t, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+            m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+            m_pPoints[3] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+
+            m_iCursorX = (int)m_pPoints[1].Position.X;
+            m_iCursorY = (int)m_pPoints[1].Position.Z;
 
             // Keep track of the closest object we have seen so far, so we can
             // choose the closest one if there are several models under the cursor.
@@ -238,6 +268,9 @@ namespace PickerTest
                     pickedTriangle[2].Position = vertex3;
 
                     m_bPicked = true;
+
+                    m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
+                    m_pPoints[3] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
                 }
             }
         }

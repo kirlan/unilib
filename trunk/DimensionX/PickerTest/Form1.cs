@@ -20,6 +20,7 @@ namespace PickerTest
         {
             mapDraw3d1.UpdatePicking(e.X, e.Y);
             label1.Text = string.Format("глюк: {2}  -   курсор: x: {0}  y: {1}", e.X, e.Y, !mapDraw3d1.m_bCamMode);
+            label2.Text = string.Format("3D-курсор: x: {0}  y: {1}", mapDraw3d1.m_iCursorX, mapDraw3d1.m_iCursorY);
         }
 
         private void mapDraw3d1_Click(object sender, EventArgs e)

@@ -30,7 +30,7 @@ namespace PickerTest
             this.GraphicsDevice = graphicsDevice;
             generatePerspectiveProjectionMatrix(MathHelper.PiOver4);
 
-            this.Position = new Vector3(0, 50000, 0);
+            this.Position = new Vector3(0, 5000, 0);
 
             m_fDistance = Vector3.Distance(Position, Vector3.Zero);
         }
