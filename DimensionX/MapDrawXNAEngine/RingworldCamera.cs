@@ -53,15 +53,15 @@ namespace MapDrawXNAEngine
 
         public override void ZoomIn(float fDistance)
         {
-            fDistance *= m_fDistance / 100000;
+            fDistance *= m_fDistance / 1000;
 
             m_fDistance -= fDistance;
 
             if (m_fDistance < 1)
                 m_fDistance = 1;
 
-            if (m_fDistance > 100000)
-                m_fDistance = 100000;
+            if (m_fDistance > 100)
+                m_fDistance = 100;
         }
 
         public override void Update()
@@ -76,26 +76,19 @@ namespace MapDrawXNAEngine
 
             targetTranslation = Vector3.Zero;
 
-            Target = Vector3.Normalize(Target);
-            Target *= m_fR;
+            //Target = Vector3.Normalize(Target);
+            //Target *= m_fR;
 
             Vector3 pOldDirection = Direction;
 
-            Vector3 cameraOriginalTarget = Vector3.Forward;
-            Direction = Vector3.Transform(cameraOriginalTarget, cameraRotation);
+            Direction = Vector3.Transform(Vector3.Forward, cameraRotation);
 
-            Vector3 cameraOrbit = Vector3.Zero;
+            Position = Target - Direction * m_fDistance;
 
-            cameraOrbit = Target - Direction * m_fDistance;
-
-            Position = cameraOrbit;
-
-            Vector3 cameraFinalTarget = Target;
-
-            Vector3 cameraOriginalUpVector = Vector3.Normalize(Target) ;//Vector3.Up;//new Vector3(0, 0, 1);
+            Vector3 cameraOriginalUpVector = Vector3.Normalize(Vector3.Transform(Target, Matrix.CreateScale(1, 1, 0)));//Vector3.Up;//new Vector3(0, 0, 1);
             Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
 
-            View = Matrix.CreateLookAt(Position, cameraFinalTarget, cameraRotatedUpVector);
+            View = Matrix.CreateLookAt(Position, Target, cameraRotatedUpVector);
         }
     }
 }

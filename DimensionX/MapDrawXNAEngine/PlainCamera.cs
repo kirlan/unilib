@@ -20,7 +20,7 @@ namespace MapDrawXNAEngine
         public PlainCamera(GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
         {
-            this.Position = new Vector3(0, 100000, 0);
+            this.Position = new Vector3(0, 100000 / 1000, 0);
             this.Yaw = MathHelper.ToRadians(0);
             this.Pitch = MathHelper.ToRadians(270);
             this.Roll = MathHelper.ToRadians(0);
@@ -48,15 +48,15 @@ namespace MapDrawXNAEngine
 
         public override void ZoomIn(float fDistance)
         {
-            fDistance *= m_fDistance / 100000;
+            fDistance *= m_fDistance / 1000;
 
             m_fDistance -= fDistance;
 
             if (m_fDistance < 1)
                 m_fDistance = 1;
 
-            if (m_fDistance > 100000)
-                m_fDistance = 100000;
+            if (m_fDistance > 100)
+                m_fDistance = 100;
         }
 
         public override void Update()
