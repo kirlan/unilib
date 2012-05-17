@@ -6,14 +6,33 @@ using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
 using System.Drawing;
 
-namespace MapDrawXNAEngine
+namespace UniLibXNA
 {
     // System.Drawing and the XNA Framework both define Color and Rectangle
     // types. To avoid conflicts, we specify exactly which ones to use.
     using Color = System.Drawing.Color;
     using Rectangle = Microsoft.Xna.Framework.Rectangle;
+    using Microsoft.Xna.Framework;
 
+    public struct VertexPositionColorNormal : IVertexType
+    {
+        public Vector3 Position;
+        public Microsoft.Xna.Framework.Color Color;
+        public Vector3 Normal;
 
+        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
+        (
+            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+            new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+            new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
+        );
+
+        VertexDeclaration IVertexType.VertexDeclaration
+        {
+            get { return VertexDeclaration; }
+        }
+    }
+    
     /// <summary>
     /// Custom control uses the XNA Framework GraphicsDevice to render onto
     /// a Windows Form. Derived classes can override the Initialize and Draw
@@ -291,5 +310,190 @@ namespace MapDrawXNAEngine
 
 
         #endregion
+
+        // CalculateCursorRay Calculates a world space ray starting at the camera's
+        // "eye" and pointing in the direction of the cursor. Viewport.Unproject is used
+        // to accomplish this. see the accompanying documentation for more explanation
+        // of the math behind this function.
+        public Ray CalculateCursorRay(int x, int y, Matrix projectionMatrix, Matrix viewMatrix)
+        {
+            // create 2 positions in screenspace using the cursor position. 0 is as
+            // close as possible to the camera, 1 is as far away as possible.
+            Vector3 nearSource = new Vector3(x, y, 0f);
+            Vector3 farSource = new Vector3(x, y, 0.5f);
+
+            // use Viewport.Unproject to tell what those two screen space positions
+            // would be in world space. we'll need the projection matrix and view
+            // matrix, which we have saved as member variables. We also need a world
+            // matrix, which can just be identity.
+            Vector3 nearPoint = GraphicsDevice.Viewport.Unproject(nearSource,
+                projectionMatrix, viewMatrix, Matrix.Identity);
+
+            Vector3 farPoint = GraphicsDevice.Viewport.Unproject(farSource,
+                projectionMatrix, viewMatrix, Matrix.Identity);
+
+            // find the direction vector that goes from the nearPoint to the farPoint
+            // and normalize it....
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+
+            // and then create a new ray using nearPoint as the source.
+            return new Ray(nearPoint, direction);
+        }
+
+        /// <summary>
+        /// Checks whether a ray intersects a model. This method needs to access
+        /// the model vertex data, so the model must have been built using the
+        /// custom TrianglePickingProcessor provided as part of this sample.
+        /// Returns the distance along the ray to the point of intersection, or null
+        /// if there is no intersection.
+        /// </summary>
+        static protected float? RayIntersectsLandscape(CullMode culling, Ray ray, VertexPositionColorNormal[] vertexBuffer, int[] indexBuffer,
+            //out bool insideBoundingSphere,
+                                         out Vector3 vertex1, out Vector3 vertex2,
+                                         out Vector3 vertex3)
+        {
+            vertex1 = vertex2 = vertex3 = Vector3.Zero;
+
+            if (indexBuffer == null || indexBuffer.Length < 3)
+                return null;
+
+            // Keep track of the closest triangle we found so far,
+            // so we can always return the closest one.
+            float? closestIntersection = null;
+
+            // Loop over the vertex data, 3 at a time (3 vertices = 1 triangle).
+            //Vector3[] vertices = (Vector3[])tagData["Vertices"];
+
+            for (int i = 0; i < indexBuffer.Length; i += 3)
+            {
+                // Perform a ray to triangle intersection test.
+                float? intersection;
+
+                RayIntersectsTriangle(ref culling, ref ray,
+                                        ref vertexBuffer[indexBuffer[i]].Position,
+                                        ref vertexBuffer[indexBuffer[i + 1]].Position,
+                                        ref vertexBuffer[indexBuffer[i + 2]].Position,
+                                        out intersection);
+
+                // Does the ray intersect this triangle?
+                if (intersection != null)
+                {
+                    // If so, is it closer than any other previous triangle?
+                    if ((closestIntersection == null) ||
+                        (intersection < closestIntersection))
+                    {
+                        // Store the distance to this triangle.
+                        closestIntersection = intersection;
+
+                        vertex1 = vertexBuffer[indexBuffer[i]].Position;
+                        vertex2 = vertexBuffer[indexBuffer[i + 1]].Position;
+                        vertex3 = vertexBuffer[indexBuffer[i + 2]].Position;
+                    }
+                }
+            }
+
+            return closestIntersection;
+        }
+
+        /// <summary>
+        /// Checks whether a ray intersects a triangle. This uses the algorithm
+        /// developed by Tomas Moller and Ben Trumbore, which was published in the
+        /// Journal of Graphics Tools, volume 2, "Fast, Minimum Storage Ray-Triangle
+        /// Intersection".
+        /// 
+        /// This method is implemented using the pass-by-reference versions of the
+        /// XNA math functions. Using these overloads is generally not recommended,
+        /// because they make the code less readable than the normal pass-by-value
+        /// versions. This method can be called very frequently in a tight inner loop,
+        /// however, so in this particular case the performance benefits from passing
+        /// everything by reference outweigh the loss of readability.
+        /// </summary>
+        static protected void RayIntersectsTriangle(ref CullMode culling, ref Ray ray,
+                                          ref Vector3 vertex1,
+                                          ref Vector3 vertex2,
+                                          ref Vector3 vertex3, out float? result)
+        {
+            // Compute vectors along two edges of the triangle.
+            Vector3 edge1, edge2;
+
+            Vector3.Subtract(ref vertex2, ref vertex1, out edge1);
+            Vector3.Subtract(ref vertex3, ref vertex1, out edge2);
+
+            // Compute the determinant.
+            Vector3 directionCrossEdge2;
+            //векторное произведение - перпендикуляр к перемножаемым векторам
+            Vector3.Cross(ref ray.Direction, ref edge2, out directionCrossEdge2);
+
+            float determinant;
+            //скалярное произведение - произведение длин векторов на косинус угла между ними. если угол 90, то 0
+            Vector3.Dot(ref edge1, ref directionCrossEdge2, out determinant);
+
+            // If the ray is parallel to the triangle plane, there is no collision.
+            if (determinant > -float.Epsilon && determinant < float.Epsilon)
+            {
+                result = null;
+                return;
+            }
+
+            float inverseDeterminant = 1.0f / determinant;
+
+            // Calculate the U parameter of the intersection point.
+            Vector3 distanceVector;
+            Vector3.Subtract(ref ray.Position, ref vertex1, out distanceVector);
+
+            float triangleU;
+            //скалярное произведение - произведение длин векторов на косинус угла между ними. если угол 90, то 0
+            Vector3.Dot(ref distanceVector, ref directionCrossEdge2, out triangleU);
+            triangleU *= inverseDeterminant;
+
+            // Make sure it is inside the triangle.
+            if (triangleU < 0 || triangleU > 1)
+            {
+                result = null;
+                return;
+            }
+
+            // Calculate the V parameter of the intersection point.
+            Vector3 distanceCrossEdge1;
+            Vector3.Cross(ref distanceVector, ref edge1, out distanceCrossEdge1);
+
+            float triangleV;
+            Vector3.Dot(ref ray.Direction, ref distanceCrossEdge1, out triangleV);
+            triangleV *= inverseDeterminant;
+
+            // Make sure it is inside the triangle.
+            if (triangleV < 0 || triangleU + triangleV > 1)
+            {
+                result = null;
+                return;
+            }
+
+            // Compute the distance along the ray to the triangle.
+            float rayDistance;
+            Vector3.Dot(ref edge2, ref distanceCrossEdge1, out rayDistance);
+            rayDistance *= inverseDeterminant;
+
+            // Is the triangle behind the ray origin?
+            switch(culling)
+            {
+                case CullMode.CullCounterClockwiseFace:
+                    if (rayDistance < 0)
+                    {
+                        result = null;
+                        return;
+                    }
+                    break;
+                case CullMode.CullClockwiseFace:
+                    if (rayDistance > 0)
+                    {
+                        result = null;
+                        return;
+                    }
+                    break;
+            }
+
+            result = rayDistance;
+        }
     }
 }

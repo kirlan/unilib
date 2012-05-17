@@ -9,8 +9,13 @@ namespace XNAEngine
 {
     public abstract class Camera
     {
+        public Vector3 Position { get; set; }
+        public Vector3 Target { get; set; }
         public Matrix View { get; set; }
         public Matrix Projection { get; set; }
+
+        public float m_fDistance;
+
         protected GraphicsDevice GraphicsDevice { get; set; }
         public Camera(GraphicsDevice graphicsDevice)
         {
@@ -23,13 +28,22 @@ namespace XNAEngine
             //float aspectRatio = (float)pp.BackBufferWidth /
             //(float)pp.BackBufferHeight;
             this.Projection = Matrix.CreatePerspectiveFieldOfView(
-            FieldOfView, GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000000.0f);
+            FieldOfView, GraphicsDevice.Viewport.AspectRatio, 0.1f, float.MaxValue);
         }
         public void UpdateAspectRatio()
         {
             generatePerspectiveProjectionMatrix(MathHelper.PiOver4);
         }
         public virtual void Update()
+        {
+        }
+        public virtual void Pan(float fLeft, float fUp)
+        {
+        }
+        public virtual void ZoomIn(float fDistance)
+        {
+        }
+        public virtual void Orbit(float YawChange, float PitchChange, float RollChange)
         {
         }
     }

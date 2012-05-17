@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.mapDraw3d1 = new PickerTest.MapDraw3d();
+            this.mapDraw3d1 = new PickerTest.PickerTestMapDraw3d();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -82,7 +82,7 @@
 
         #endregion
 
-        private MapDraw3d mapDraw3d1;
+        private PickerTestMapDraw3d mapDraw3d1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
     }

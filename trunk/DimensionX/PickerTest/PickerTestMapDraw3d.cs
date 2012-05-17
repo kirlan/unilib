@@ -22,7 +22,7 @@ namespace PickerTest
     /// event, using this to invalidate the control, which will cause the animation
     /// to constantly redraw.
     /// </summary>
-    public class MapDraw3d : GraphicsDeviceControl
+    public class PickerTestMapDraw3d : GraphicsDeviceControl
     {
         BasicEffect effect;
 

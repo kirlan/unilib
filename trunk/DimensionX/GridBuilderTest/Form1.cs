@@ -34,26 +34,28 @@ namespace GridBuilderTest
             button1.Enabled = true;
         }
 
-        private bool m_b3dMapDragging = false;
         private bool m_b3dMapRotate = false;
 
         private void mapDraw3d1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                m_b3dMapDragging = true;
+            {
+                mapDraw3d1.m_bPanMode = true;
+                mapDraw3d1.ResetPanning();
+            }
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 m_b3dMapRotate = true;
         }
 
         private void mapDraw3d1_MouseUp(object sender, MouseEventArgs e)
         {
-            m_b3dMapDragging = false;
+            mapDraw3d1.m_bPanMode = false;
             m_b3dMapRotate = false;
         }
 
         private void mapDraw3d1_MouseLeave(object sender, EventArgs e)
         {
-            m_b3dMapDragging = false;
+            mapDraw3d1.m_bPanMode = false;
             m_b3dMapRotate = false;
         }
 
@@ -81,8 +83,7 @@ namespace GridBuilderTest
             }
             m_pMap3DLastMouseLocation = e.Location;
 
-            if (m_b3dMapDragging)
-                mapDraw3d1.PanCamera(p.X, p.Y);
+            mapDraw3d1.UpdatePicking(e.X, e.Y);
 
             if (m_b3dMapRotate)
                 //            mapDraw3d1.m_pCamera.Rotate(0, p.Y * 0.01f, p.X * 0.01f);

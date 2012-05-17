@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.mapDraw3d1 = new XNAEngine.MapDraw3d();
+            this.mapDraw3d1 = new XNAEngine.GBTestMapDraw3d();
             this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -74,7 +74,7 @@
 
         #endregion
 
-        private XNAEngine.MapDraw3d mapDraw3d1;
+        private XNAEngine.GBTestMapDraw3d mapDraw3d1;
         private System.Windows.Forms.Button button1;
     }
 }

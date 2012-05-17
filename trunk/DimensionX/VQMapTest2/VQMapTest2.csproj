@@ -112,6 +112,10 @@
       <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
       <Name>UniLibControls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UniLibXNA\UniLibXNA.csproj">
+      <Project>{8F9990DB-F34F-4B11-B325-5BB9B307E216}</Project>
+      <Name>UniLibXNA</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WorldGeneration\WorldGeneration.csproj">
       <Project>{71C2EA2A-552E-4BE1-9E50-3BC0C40ECB37}</Project>
       <Name>WorldGeneration</Name>
