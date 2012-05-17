@@ -13,28 +13,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using GridBuilderTest;
+using UniLibXNA;
 
 namespace XNAEngine
 {
-    public struct VertexPositionColorNormal: IVertexType
-    {
-        public Vector3 Position;
-        public Microsoft.Xna.Framework.Color Color;
-        public Vector3 Normal;
-
-        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
-        (
-            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-            new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
-            new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
-        );
-
-        VertexDeclaration IVertexType.VertexDeclaration
-        {
-            get { return VertexDeclaration; }
-        }
-    }
-    
     /// <summary>
     /// Example control inherits from GraphicsDeviceControl, which allows it to
     /// render using a GraphicsDevice. This control shows how to draw animating
@@ -42,7 +24,7 @@ namespace XNAEngine
     /// event, using this to invalidate the control, which will cause the animation
     /// to constantly redraw.
     /// </summary>
-    public class MapDraw3d : GraphicsDeviceControl
+    public class GBTestMapDraw3d : GraphicsDeviceControl
     {
         /// <summary>
         /// мир, карту которого мы рисуем
@@ -77,7 +59,7 @@ namespace XNAEngine
             {
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                Vector3 pPosition = new Vector3(pVertex.m_fX, pVertex.m_fZ * m_fHeightMultiplier, pVertex.m_fY);
+                Vector3 pPosition = new Vector3(pVertex.m_fX/1000, pVertex.m_fY/1000, pVertex.m_fZ/1000);
 
                 userPrimitives[iCounter] = new VertexPositionColorNormal();
                 userPrimitives[iCounter].Position = pPosition;
@@ -94,7 +76,7 @@ namespace XNAEngine
                 userPrimitives[iCounter] = new VertexPositionColorNormal();
                 float fHeight = pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight;
 
-                userPrimitives[iCounter].Position = new Vector3(pLoc.X, fHeight, pLoc.Y);
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Y / 1000, fHeight / 1000);
                 userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Pink, Microsoft.Xna.Framework.Color.Lime, (float)(m_pGrid.RX - pLoc.m_iGridX) / (m_pGrid.RX * 2));
 
                 cLocations[pLoc.m_iID] = iCounter;
@@ -171,10 +153,7 @@ namespace XNAEngine
 
             if (GraphicsDevice != null)
             {
-                m_pCamera = new FreeCamera(new Vector3(0, 10, 0),
-                                        MathHelper.ToRadians(0),
-                                        MathHelper.ToRadians(45),
-                                        MathHelper.ToRadians(0),
+                m_pCamera = new FreeCamera(m_pGrid.RY/1000,
                                         GraphicsDevice);
             }
         }
@@ -191,13 +170,14 @@ namespace XNAEngine
             // Create our effect.
 
             effect = new BasicEffect(GraphicsDevice);
-
             effect.VertexColorEnabled = true;
 
-            m_pCamera = new FreeCamera(new Vector3(0, 10, 0),
-                                    MathHelper.ToRadians(0),
-                                    MathHelper.ToRadians(45),
-                                    MathHelper.ToRadians(0),
+            // create the effect and vertex declaration for drawing the
+            // picked triangle.
+            lineEffect = new BasicEffect(GraphicsDevice);
+            lineEffect.VertexColorEnabled = true; 
+            
+            m_pCamera = new FreeCamera(50,
                                     GraphicsDevice);
 
             // Start the animation timer.
@@ -222,9 +202,11 @@ namespace XNAEngine
 
         public float m_fScaling = 0;
 
-        public void PanCamera(float fLeft, float fUp)
+        public bool m_bPanMode = false;
+
+        public void ResetPanning()
         {
-            m_pCamera.Pan(fLeft * m_pCamera.Position.Y * 0.00118f, fUp * m_pCamera.Position.Y * 0.00118f);
+            m_pLastPicking = m_pCurrentPicking;
         }
 
         /// <summary>
@@ -247,10 +229,18 @@ namespace XNAEngine
 
             if (m_fScaling != 0)
             {
-                m_pCamera.MoveForward(m_fScaling * (float)fElapsedTime);
+                m_pCamera.ZoomIn(m_fScaling * (float)fElapsedTime);
                 m_fScaling = 0;
             }
             m_pCamera.Update();
+            if (m_bPanMode && m_pCurrentPicking != null)
+            {
+                if (m_pLastPicking != null)
+                    m_pCamera.Target += (Vector3)m_pLastPicking - (Vector3)m_pCurrentPicking;
+
+                // m_pLastPicking = m_pCurrentPicking;
+                m_pCurrentPicking = null;
+            }
 
             // Update the mouse state
             effect.View = m_pCamera.View;
@@ -272,16 +262,114 @@ namespace XNAEngine
             
             // Set renderstates.
             RasterizerState rs = new RasterizerState();
-            rs.CullMode = CullMode.CullClockwiseFace;
+            rs.CullMode = CullMode.CullCounterClockwiseFace;
             //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
-            effect.World = Matrix.CreateTranslation(20000,0,-20000) ;
+            effect.World = Matrix.Identity;
 
             // Draw the triangle.
             effect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
                                               userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
+
+            // Draw the outline of the triangle under the cursor.
+            DrawPickedTriangle();
+        }
+
+        // Vertex array that stores exactly which triangle was picked.
+        VertexPositionColor[] pickedTriangle =
+        {
+            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
+            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
+            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
+        };
+
+        // Effect and vertex declaration for drawing the picked triangle.
+        BasicEffect lineEffect;
+
+        /// <summary>
+        /// Helper for drawing the outline of the triangle currently under the cursor.
+        /// </summary>
+        void DrawPickedTriangle()
+        {
+            if (m_bPicked)
+            {
+                // Set line drawing renderstates. We disable backface culling
+                // and turn off the depth buffer because we want to be able to
+                // see the picked triangle outline regardless of which way it is
+                // facing, and even if there is other geometry in front of it.
+                RasterizerState rs = new RasterizerState();
+                rs.CullMode = CullMode.CullCounterClockwiseFace;
+                //rs.FillMode = FillMode.WireFrame;
+                GraphicsDevice.RasterizerState = rs;
+                GraphicsDevice.DepthStencilState = DepthStencilState.None;
+
+                // Activate the line drawing BasicEffect.
+                lineEffect.Projection = m_pCamera.Projection;
+                lineEffect.View = m_pCamera.View;
+
+                lineEffect.CurrentTechnique.Passes[0].Apply();
+
+                // Draw the triangle.
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
+                                          pickedTriangle, 0, 1);
+
+                // Reset renderstates to their default values.
+                GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            }
+        }
+
+        bool m_bPicked = false;
+
+        Vector3? m_pCurrentPicking = null;
+        Vector3? m_pLastPicking = null;
+
+        /// <summary>
+        /// Runs a per-triangle picking algorithm over all the models in the scene,
+        /// storing which triangle is currently under the cursor.
+        /// </summary>
+        public void UpdatePicking(int x, int y)
+        {
+            // Look up a collision ray based on the current cursor position. See the
+            // Picking Sample documentation for a detailed explanation of this.
+            Ray cursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
+
+            // Keep track of the closest object we have seen so far, so we can
+            // choose the closest one if there are several models under the cursor.
+            float closestIntersection = float.MaxValue;
+
+            Vector3 vertex1, vertex2, vertex3;
+
+            // Perform the ray to model intersection test.
+            float? intersection = RayIntersectsLandscape(CullMode.CullCounterClockwiseFace, cursorRay, userPrimitives, userPrimitivesIndices,
+                                                        out vertex1, out vertex2,
+                                                        out vertex3);
+            m_bPicked = false;
+
+            // Do we have a per-triangle intersection with this model?
+            if (intersection != null)
+            {
+                // If so, is it closer than any other model we might have
+                // previously intersected?
+                if (intersection < closestIntersection)
+                {
+                    // Store information about this model.
+                    closestIntersection = intersection.Value;
+
+                    // Store vertex positions so we can display the picked triangle.
+                    pickedTriangle[0].Position = vertex1;
+                    pickedTriangle[1].Position = vertex2;
+                    pickedTriangle[2].Position = vertex3;
+
+                    m_bPicked = true;
+
+                    m_pCurrentPicking = cursorRay.Position + Vector3.Normalize(cursorRay.Direction) * intersection;
+                }
+            }
+            else
+                m_pCurrentPicking = null;
         }
     }
 }

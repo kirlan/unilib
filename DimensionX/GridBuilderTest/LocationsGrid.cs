@@ -249,8 +249,8 @@ namespace GridBuilderTest
 
                 pLoc.m_iGridX = (int)pLoc.m_pCenter.X;
 
-                pLoc.m_pCenter.X = (float)((float)m_iRY * Math.Cos(fPhy));
-                pLoc.m_pCenter.Y = (float)((float)m_iRY * Math.Sin(fPhy));
+                pLoc.m_pCenter.X = (float)((float)m_iRY * (1 + fPhy / 100) * Math.Cos(fPhy));
+                pLoc.m_pCenter.Y = (float)((float)m_iRY * (1 + fPhy / 100) * Math.Sin(fPhy));
                 pLoc.m_fHeight = (float)((float)m_iRY * fRo);
             }
 

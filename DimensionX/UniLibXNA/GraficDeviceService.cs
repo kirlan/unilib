@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MapDrawXNAEngine
+namespace UniLibXNA
 {
 
     // The IGraphicsDeviceService interface requires a DeviceCreated event, but we

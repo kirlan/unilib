@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MapDrawXNAEngine
+namespace UniLibXNA
 {
     /// <summary>
     /// Container class implements the IServiceProvider interface. This is used
