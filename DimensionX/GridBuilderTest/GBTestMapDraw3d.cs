@@ -162,6 +162,8 @@ namespace XNAEngine
 
         public FreeCamera m_pCamera = null;
 
+        Matrix SteadyView;
+
         /// <summary>
         /// Initializes the control.
         /// </summary>
@@ -179,6 +181,8 @@ namespace XNAEngine
             
             m_pCamera = new FreeCamera(50,
                                     GraphicsDevice);
+
+            SteadyView = Matrix.CreateLookAt(new Vector3(0, 0, 150), Vector3.Zero, Vector3.Down);
 
             // Start the animation timer.
             timer = Stopwatch.StartNew();
@@ -243,7 +247,7 @@ namespace XNAEngine
             }
 
             // Update the mouse state
-            effect.View = m_pCamera.View;
+            effect.View = SteadyView;// m_pCamera.View;
             effect.Projection = m_pCamera.Projection;
 
 //            effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 150000);
@@ -307,7 +311,7 @@ namespace XNAEngine
 
                 // Activate the line drawing BasicEffect.
                 lineEffect.Projection = m_pCamera.Projection;
-                lineEffect.View = m_pCamera.View;
+                lineEffect.View = SteadyView;// m_pCamera.View;
 
                 lineEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -315,6 +319,17 @@ namespace XNAEngine
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
                                           pickedTriangle, 0, 1);
 
+
+                VertexPositionColor[] camera = 
+                {
+                    new VertexPositionColor(m_pCamera.Target, Microsoft.Xna.Framework.Color.White),
+                    new VertexPositionColor(m_pCamera.Top, Microsoft.Xna.Framework.Color.Blue),
+                    new VertexPositionColor(m_pCamera.Position, Microsoft.Xna.Framework.Color.Red),
+                };
+
+                GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, camera, 0, 1);
+                
                 // Reset renderstates to their default values.
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;

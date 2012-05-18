@@ -14,6 +14,7 @@ namespace XNAEngine
         public float Pitch { get; set; }
         public float Roll { get; set; }
         public Vector3 Direction { get; private set; }
+        public Vector3 Top { get; private set; }
 
         private Vector3 targetTranslation;
 
@@ -90,14 +91,14 @@ namespace XNAEngine
             //Target *= m_fR;
 
             Direction = Vector3.Transform(Vector3.Forward, cameraRotation);
-            Direction = Vector3.Transform(Direction, Matrix.CreateRotationZ(fPhi));
+            Direction = Vector3.Transform(Direction, Matrix.CreateRotationZ(-fPhi));
 
             Position = Target - Direction * m_fDistance;
 
             Vector3 cameraOriginalUpVector = Vector3.Normalize(Target);//Vector3.Up;//new Vector3(0, 0, 1);
-            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
+            Top = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
 
-            View = Matrix.CreateLookAt(Position, Target, cameraRotatedUpVector);
+            View = Matrix.CreateLookAt(Position, Target, Top);
 //            View = Matrix.CreateLookAt(Vector3.Zero, Target, Vector3.Forward);
         }
     }
