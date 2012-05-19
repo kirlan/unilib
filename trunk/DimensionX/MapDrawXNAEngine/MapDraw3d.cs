@@ -653,7 +653,7 @@ namespace MapDrawXNAEngine
             if (GraphicsDevice != null)
             {
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY / 1000, GraphicsDevice);
+                    m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
                 else
                     m_pCamera = new PlainCamera(GraphicsDevice);
             }
@@ -679,7 +679,7 @@ namespace MapDrawXNAEngine
             lineEffect.VertexColorEnabled = true;
             
             if (m_pWorld != null && m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RY / 1000, GraphicsDevice);
+                m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
             else
                 m_pCamera = new PlainCamera(GraphicsDevice);
 

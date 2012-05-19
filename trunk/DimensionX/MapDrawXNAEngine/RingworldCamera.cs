@@ -13,6 +13,7 @@ namespace MapDrawXNAEngine
         public float Pitch { get; set; }
         public float Roll { get; set; }
         public Vector3 Direction { get; private set; }
+        public Vector3 Top { get; private set; }
 
         private Vector3 targetTranslation;
 
@@ -27,7 +28,7 @@ namespace MapDrawXNAEngine
             Target = new Vector3(0, m_fR, 0);
 
             Yaw = MathHelper.ToRadians(0);
-            Pitch = MathHelper.ToRadians(45);
+            Pitch = MathHelper.ToRadians(91);
             Roll = MathHelper.ToRadians(0);
             
             targetTranslation = Vector3.Zero;
@@ -40,7 +41,8 @@ namespace MapDrawXNAEngine
             this.Yaw += YawChange;
             this.Pitch += PitchChange;
 
-            this.Pitch = Math.Max(MathHelper.ToRadians(90), Math.Min(MathHelper.ToRadians(179), this.Pitch));
+            //this.Pitch = Math.Max(MathHelper.ToRadians(271), Math.Min(MathHelper.ToRadians(359), this.Pitch)); 
+            this.Pitch = Math.Max(MathHelper.ToRadians(91), Math.Min(MathHelper.ToRadians(269), this.Pitch));
 
             this.Roll += RollChange;
         }
@@ -76,19 +78,26 @@ namespace MapDrawXNAEngine
 
             targetTranslation = Vector3.Zero;
 
-            //Target = Vector3.Normalize(Target);
-            //Target *= m_fR;
+            float fPhi = (float)Math.Atan2(Target.X, Target.Y);
 
-            Vector3 pOldDirection = Direction;
+            float fZ = Target.Z;
+
+            Target = Vector3.Transform(Target, Matrix.CreateScale(1, 1, 0));
+            Target = Vector3.Normalize(Target);
+            Target *= m_fR;
+            Target = new Vector3(Target.X, Target.Y, fZ);
 
             Direction = Vector3.Transform(Vector3.Forward, cameraRotation);
+            Direction = Vector3.Transform(Direction, Matrix.CreateRotationZ(-fPhi));
 
             Position = Target - Direction * m_fDistance;
 
-            Vector3 cameraOriginalUpVector = Vector3.Normalize(Vector3.Transform(Target, Matrix.CreateScale(1, 1, 0)));//Vector3.Up;//new Vector3(0, 0, 1);
-            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
+            Vector3 cameraOriginalUpVector = Vector3.Cross(Vector3.Transform(Target - Direction, Matrix.CreateScale(1, 1, 0)), Direction);
+            cameraOriginalUpVector = Vector3.Cross(cameraOriginalUpVector, Direction);
+            cameraOriginalUpVector = Vector3.Normalize(cameraOriginalUpVector);
+            Top = cameraOriginalUpVector;
 
-            View = Matrix.CreateLookAt(Position, Target, cameraRotatedUpVector);
+            View = Matrix.CreateLookAt(Position, Target, Top);
         }
     }
 }

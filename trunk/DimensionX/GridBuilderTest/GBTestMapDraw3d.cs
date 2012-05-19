@@ -210,8 +210,26 @@ namespace XNAEngine
 
         public void ResetPanning()
         {
-            m_pLastPicking = m_pCurrentPicking;
+            m_pSelectedPicking = m_pCurrentPicking;
+            m_fSelected = GetPos(m_pSelectedPicking);
+            m_iCounter = 0;
         }
+
+        public float m_fDeltaBig = 0;
+
+        public long m_iCounter = 0;
+
+        private float GetPos(Vector3? pPos)
+        {
+            if (pPos != null)
+                return MathHelper.ToDegrees((float)Math.Atan2(((Vector3)pPos).X, ((Vector3)pPos).Y));
+            else
+                return 0;
+        }
+
+        public float m_fTarget = 0;
+        public float m_fSelected = 0;
+        public float m_fCurrent = 0;
 
         /// <summary>
         /// Draws the control.
@@ -237,17 +255,21 @@ namespace XNAEngine
                 m_fScaling = 0;
             }
             m_pCamera.Update();
+            m_fTarget = GetPos(m_pCamera.Target);
             if (m_bPanMode && m_pCurrentPicking != null)
             {
-                if (m_pLastPicking != null)
-                    m_pCamera.Target += (Vector3)m_pLastPicking - (Vector3)m_pCurrentPicking;
+                if (m_pSelectedPicking != null)
+                    m_pCamera.Target += (Vector3)m_pSelectedPicking - (Vector3)m_pCurrentPicking;
 
+                m_fDeltaBig = ((Vector3)m_pSelectedPicking - (Vector3)m_pCurrentPicking).Length();
                 // m_pLastPicking = m_pCurrentPicking;
                 m_pCurrentPicking = null;
+
+                m_iCounter++;
             }
 
             // Update the mouse state
-            effect.View = SteadyView;// m_pCamera.View;
+            effect.View = m_pCamera.View;
             effect.Projection = m_pCamera.Projection;
 
 //            effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 150000);
@@ -311,7 +333,7 @@ namespace XNAEngine
 
                 // Activate the line drawing BasicEffect.
                 lineEffect.Projection = m_pCamera.Projection;
-                lineEffect.View = SteadyView;// m_pCamera.View;
+                lineEffect.View = m_pCamera.View;
 
                 lineEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -323,7 +345,7 @@ namespace XNAEngine
                 VertexPositionColor[] camera = 
                 {
                     new VertexPositionColor(m_pCamera.Target, Microsoft.Xna.Framework.Color.White),
-                    new VertexPositionColor(m_pCamera.Top, Microsoft.Xna.Framework.Color.Blue),
+                    new VertexPositionColor(m_pCamera.Position + m_pCamera.Top*5, Microsoft.Xna.Framework.Color.Blue),
                     new VertexPositionColor(m_pCamera.Position, Microsoft.Xna.Framework.Color.Red),
                 };
 
@@ -339,7 +361,9 @@ namespace XNAEngine
         bool m_bPicked = false;
 
         Vector3? m_pCurrentPicking = null;
-        Vector3? m_pLastPicking = null;
+        Vector3? m_pSelectedPicking = null;
+
+        public float m_fDelta = 0;
 
         /// <summary>
         /// Runs a per-triangle picking algorithm over all the models in the scene,
@@ -380,7 +404,12 @@ namespace XNAEngine
 
                     m_bPicked = true;
 
+                    Vector3? pLastPicking = m_pCurrentPicking;
                     m_pCurrentPicking = cursorRay.Position + Vector3.Normalize(cursorRay.Direction) * intersection;
+                    m_fCurrent = GetPos(m_pCurrentPicking);
+
+                    if (pLastPicking != null)
+                        m_fDelta = ((Vector3)m_pCurrentPicking - (Vector3)pLastPicking).Length();
                 }
             }
             else

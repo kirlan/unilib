@@ -20,7 +20,7 @@ namespace MapDrawXNAEngine
         public Camera(GraphicsDevice graphicsDevice)
         {
             this.GraphicsDevice = graphicsDevice;
-            generatePerspectiveProjectionMatrix(MathHelper.PiOver4);
+            UpdateAspectRatio();
         }
         private void generatePerspectiveProjectionMatrix(float FieldOfView)
         {
@@ -32,7 +32,7 @@ namespace MapDrawXNAEngine
         }
         public void UpdateAspectRatio()
         {
-            generatePerspectiveProjectionMatrix(MathHelper.PiOver4);
+            generatePerspectiveProjectionMatrix(MathHelper.ToRadians(75));
         }
         public virtual void Update()
         {
