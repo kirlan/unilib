@@ -41,6 +41,7 @@ namespace GridBuilderTest
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 mapDraw3d1.m_bPanMode = true;
+                listBox1.Items.Clear();
                 mapDraw3d1.ResetPanning();
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -74,6 +75,11 @@ namespace GridBuilderTest
 
         private void mapDraw3d1_MouseMove(object sender, MouseEventArgs e)
         {
+            if (!m_bEnabled)
+                return;
+
+            m_bEnabled = false;
+
             Point p = new Point(0, 0);
 
             if (m_pMap3DLastMouseLocation.X > 0)
@@ -84,11 +90,21 @@ namespace GridBuilderTest
             m_pMap3DLastMouseLocation = e.Location;
 
             mapDraw3d1.UpdatePicking(e.X, e.Y);
+            label1.Text = mapDraw3d1.m_fDelta.ToString();
+
+            if (mapDraw3d1.m_bPanMode)
+                listBox1.Items.Add(mapDraw3d1.m_iCounter.ToString() + " : " + mapDraw3d1.m_fDeltaBig.ToString() + "  (" + mapDraw3d1.m_fDelta.ToString() + ")  [" + (mapDraw3d1.m_fCurrent - mapDraw3d1.m_fSelected) + " - " + (mapDraw3d1.m_fTarget - mapDraw3d1.m_fSelected) + "]");
 
             if (m_b3dMapRotate)
                 //            mapDraw3d1.m_pCamera.Rotate(0, p.Y * 0.01f, p.X * 0.01f);
                 //            mapDraw3d1.m_pCamera.Rotate(p.X * 0.01f, p.Y * 0.01f, 0);
-                mapDraw3d1.m_pCamera.Orbit(p.X * 0.01f, p.Y * 0.01f, 0);
+                mapDraw3d1.m_pCamera.Orbit(p.X, p.Y, 0);
+        }
+
+        bool m_bEnabled = true;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            m_bEnabled = true;
         }
     }
 }

@@ -286,6 +286,8 @@ namespace LandscapeGeneration
         /// </summary>
         private void MakeRingWorld()
         {
+            float fTrueR = m_iRX / (float)Math.PI;
+
             foreach (LOC pLoc in m_aLocations)
             {
                 float fRo = (float)pLoc.Y / m_iRY;
@@ -293,8 +295,8 @@ namespace LandscapeGeneration
 
                 pLoc.m_iGridX = (int)pLoc.m_pCenter.X;
 
-                pLoc.m_pCenter.X = (float)((float)m_iRY * Math.Cos(fPhy));
-                pLoc.m_pCenter.Z = (float)((float)m_iRY * Math.Sin(fPhy));
+                pLoc.m_pCenter.X = (float)((float)fTrueR * Math.Cos(fPhy));
+                pLoc.m_pCenter.Z = (float)((float)fTrueR * Math.Sin(fPhy));
                 pLoc.m_pCenter.Y = (float)((float)m_iRY * fRo);
             }
 
@@ -303,8 +305,8 @@ namespace LandscapeGeneration
                 float fRo = (float)pVertex.Y / m_iRY;
                 float fPhy = (float)Math.PI * pVertex.X / m_iRX;
 
-                pVertex.m_fX = (float)((float)m_iRY * Math.Cos(fPhy));
-                pVertex.m_fZ = (float)((float)m_iRY * Math.Sin(fPhy));
+                pVertex.m_fX = (float)((float)fTrueR * Math.Cos(fPhy));
+                pVertex.m_fZ = (float)((float)fTrueR * Math.Sin(fPhy));
                 pVertex.m_fY = (float)((float)m_iRY * fRo);
             }
         }

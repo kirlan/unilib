@@ -86,6 +86,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.groupBox4.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage7.SuspendLayout();
@@ -179,7 +180,7 @@
             this.tabPage8.Location = new System.Drawing.Point(4, 22);
             this.tabPage8.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage8.Name = "tabPage8";
-            this.tabPage8.Size = new System.Drawing.Size(231, 431);
+            this.tabPage8.Size = new System.Drawing.Size(231, 567);
             this.tabPage8.TabIndex = 1;
             this.tabPage8.Text = "Settlements";
             this.tabPage8.UseVisualStyleBackColor = true;
@@ -650,6 +651,11 @@
             this.mapDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseMove);
             this.mapDraw3d1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseUp);
             // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -740,6 +746,7 @@
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.TabPage tabPage10;
         private MapDrawXNAEngine.MapDraw3d mapDraw3d1;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 

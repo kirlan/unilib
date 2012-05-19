@@ -594,6 +594,11 @@ namespace VQMapTest2
 
         private void mapDraw3d1_MouseMove(object sender, MouseEventArgs e)
         {
+            if (!m_bMouseMapAllowed)
+                return;
+
+            m_bMouseMapAllowed = false;
+
             Point p = new Point(0, 0);
 
             if (m_pMap3DLastMouseLocation.X > 0)
@@ -609,6 +614,13 @@ namespace VQMapTest2
     //            mapDraw3d1.m_pCamera.Rotate(0, p.Y * 0.01f, p.X * 0.01f);
     //            mapDraw3d1.m_pCamera.Rotate(p.X * 0.01f, p.Y * 0.01f, 0);
                 mapDraw3d1.m_pCamera.Orbit(p.X * 0.01f, p.Y * 0.01f, 0);
+        }
+
+        private bool m_bMouseMapAllowed = true;
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            m_bMouseMapAllowed = true;
         }
     }
 }

@@ -204,7 +204,7 @@ namespace LandscapeGeneration
         /// </summary>
         public void BuildBorder()
         {
-            if (m_bUnclosed || m_bBorder)
+            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0)
                 return;
 
             m_pFirstLine = m_cBorderWith[m_aBorderWith[0]][0];

@@ -28,7 +28,7 @@ namespace XNAEngine
             Position = new Vector3(0, 0, 0);
             Target = new Vector3(0, m_fR, 0);
 
-            Yaw = MathHelper.ToRadians(0);
+            Yaw = MathHelper.ToRadians(90);
             Pitch = MathHelper.ToRadians(45);
             Roll = MathHelper.ToRadians(0);
             
@@ -39,12 +39,12 @@ namespace XNAEngine
 
         public override void Orbit(float YawChange, float PitchChange, float RollChange)
         {
-            this.Yaw += YawChange;
-            this.Pitch += PitchChange;
+            this.Yaw += MathHelper.ToRadians(YawChange);
+            this.Pitch += MathHelper.ToRadians(PitchChange);
 
-            this.Pitch = Math.Max(MathHelper.ToRadians(90), Math.Min(MathHelper.ToRadians(179), this.Pitch));
+            //this.Pitch = Math.Max(MathHelper.ToRadians(90), Math.Min(MathHelper.ToRadians(179), this.Pitch));
 
-            this.Roll += RollChange;
+            this.Roll += MathHelper.ToRadians(RollChange);
         }
 
         public override void Pan(float fLeft, float fUp)
@@ -87,19 +87,17 @@ namespace XNAEngine
             Target *= m_fR;
             Target = new Vector3(Target.X, Target.Y, fZ);
 
-            //Target = Vector3.Normalize(Target);
-            //Target *= m_fR;
-
             Direction = Vector3.Transform(Vector3.Forward, cameraRotation);
             Direction = Vector3.Transform(Direction, Matrix.CreateRotationZ(-fPhi));
 
             Position = Target - Direction * m_fDistance;
 
-            Vector3 cameraOriginalUpVector = Vector3.Normalize(Target);//Vector3.Up;//new Vector3(0, 0, 1);
-            Top = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
+            Vector3 cameraOriginalUpVector = Vector3.Cross(Vector3.Transform(Position, Matrix.CreateScale(1, 1, 0)), Direction);
+            cameraOriginalUpVector = Vector3.Cross(cameraOriginalUpVector, Direction);
+            cameraOriginalUpVector = Vector3.Normalize(cameraOriginalUpVector);
+            Top = cameraOriginalUpVector;
 
             View = Matrix.CreateLookAt(Position, Target, Top);
-//            View = Matrix.CreateLookAt(Vector3.Zero, Target, Vector3.Forward);
         }
     }
 }
