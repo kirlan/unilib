@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using UniLibXNA;
 using System.IO;
+using Random;
 
 namespace MapDrawXNAEngine
 {
@@ -74,6 +75,36 @@ namespace MapDrawXNAEngine
     /// </summary>
     public class MapDraw3d : GraphicsDeviceControl
     {
+        protected class TreeModel
+        {
+            public readonly Vector3 m_pPosition;
+            public readonly float m_fAngle;
+            public readonly Model m_pModel;
+
+            public TreeModel(Vector3 pPosition, float fAngle, Model pModel)
+            {
+                m_pPosition = pPosition;
+                m_fAngle = fAngle;
+                m_pModel = pModel;
+            }
+        }
+
+        protected class SettlementModel
+        {
+            public readonly Vector3 m_pPosition;
+            public readonly float m_fAngle;
+            public readonly Model m_pModel;
+            public readonly float m_fScale;
+
+            public SettlementModel(Vector3 pPosition, float fAngle, float fScale, Model pModel)
+            {
+                m_pPosition = pPosition;
+                m_fAngle = fAngle;
+                m_fScale = fScale;
+                m_pModel = pModel;
+            }
+        }
+
         /// <summary>
         /// мир, карту которого мы рисуем
         /// </summary>
@@ -110,6 +141,10 @@ namespace MapDrawXNAEngine
             m_aLandVertices[0].TexWeights.Y = 0;
             m_aLandVertices[0].TexWeights.Z = 0;
             m_aLandVertices[0].TexWeights.W = 0;
+            m_aLandVertices[0].TexWeights2.X = 0;
+            m_aLandVertices[0].TexWeights2.Y = 0;
+            m_aLandVertices[0].TexWeights2.Z = 0;
+            m_aLandVertices[0].TexWeights2.W = 0;
 
             m_aLandVertices[1] = new VertexMultitextured();
             m_aLandVertices[1].Position = new Vector3(m_pWorld.m_pGrid.RX, 0, -m_pWorld.m_pGrid.RY);
@@ -120,6 +155,10 @@ namespace MapDrawXNAEngine
             m_aLandVertices[1].TexWeights.Y = 1;
             m_aLandVertices[1].TexWeights.Z = 0;
             m_aLandVertices[1].TexWeights.W = 0;
+            m_aLandVertices[1].TexWeights2.X = 0;
+            m_aLandVertices[1].TexWeights2.Y = 0;
+            m_aLandVertices[1].TexWeights2.Z = 0;
+            m_aLandVertices[1].TexWeights2.W = 0;
 
             m_aLandVertices[2] = new VertexMultitextured();
             m_aLandVertices[2].Position = new Vector3(m_pWorld.m_pGrid.RX, 0, m_pWorld.m_pGrid.RY);
@@ -130,6 +169,10 @@ namespace MapDrawXNAEngine
             m_aLandVertices[2].TexWeights.Y = 0;
             m_aLandVertices[2].TexWeights.Z = 1;
             m_aLandVertices[2].TexWeights.W = 0;
+            m_aLandVertices[2].TexWeights2.X = 0;
+            m_aLandVertices[2].TexWeights2.Y = 0;
+            m_aLandVertices[2].TexWeights2.Z = 0;
+            m_aLandVertices[2].TexWeights2.W = 0;
 
             m_aLandVertices[3] = new VertexMultitextured();
             m_aLandVertices[3].Position = new Vector3(-m_pWorld.m_pGrid.RX, 0, m_pWorld.m_pGrid.RY);
@@ -140,6 +183,10 @@ namespace MapDrawXNAEngine
             m_aLandVertices[3].TexWeights.Y = 0;
             m_aLandVertices[3].TexWeights.Z = 0;
             m_aLandVertices[3].TexWeights.W = 1;
+            m_aLandVertices[3].TexWeights2.X = 0;
+            m_aLandVertices[3].TexWeights2.Y = 0;
+            m_aLandVertices[3].TexWeights2.Z = 0;
+            m_aLandVertices[3].TexWeights2.W = 0;
 
             m_aLandVertices[4] = new VertexMultitextured();
             m_aLandVertices[4].Position = new Vector3(0, 0, 0);
@@ -150,7 +197,10 @@ namespace MapDrawXNAEngine
             m_aLandVertices[4].TexWeights.Y = 0.25f;
             m_aLandVertices[4].TexWeights.Z = 0.25f;
             m_aLandVertices[4].TexWeights.W = 0.25f;
-
+            m_aLandVertices[4].TexWeights2.X = 0;
+            m_aLandVertices[4].TexWeights2.Y = 0;
+            m_aLandVertices[4].TexWeights2.Z = 0;
+            m_aLandVertices[4].TexWeights2.W = 0;
 
             m_iLandTrianglesCount = 4;
             m_aLandIndices = new int[m_iLandTrianglesCount * 3];
@@ -171,6 +221,10 @@ namespace MapDrawXNAEngine
             m_aLandIndices[10] = 3;
             m_aLandIndices[11] = 0;
         }
+
+        private TreeModel[] m_aTrees = new TreeModel[0];
+
+        private SettlementModel[] m_aSettlements = new SettlementModel[0];
 
         /// <summary>
         /// набор примитивов без дублирования вертексов, с плавным переходом цвета между разноцветными примитивами
@@ -208,7 +262,6 @@ namespace MapDrawXNAEngine
             {
                 VertexMultitextured pVM = new VertexMultitextured();
 
-                bool bLand = false;
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
                     if (pLoc.Forbidden || pLoc.Owner == null)
@@ -218,13 +271,21 @@ namespace MapDrawXNAEngine
                     pVM.TexWeights.Y = 0;
                     pVM.TexWeights.Z = 0;
                     pVM.TexWeights.W = 0;
+                    pVM.TexWeights2.X = 0;
+                    pVM.TexWeights2.Y = 0;
+                    pVM.TexWeights2.Z = 0;
+                    pVM.TexWeights2.W = 0;
 
                     LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
-                    pVM.TexWeights.X += (eLT == LandType.Coastral || eLT == LandType.Desert) ? 1 : 0;
-                    pVM.TexWeights.Y += (eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Plains || eLT == LandType.Savanna || eLT == LandType.Swamp || eLT == LandType.Taiga) ? 1 : 0;
+                    pVM.TexWeights.X += (eLT == LandType.Savanna || eLT == LandType.Coastral || eLT == LandType.Desert) ? 1 : 0;
+                    pVM.TexWeights.Y += (eLT == LandType.Tundra || eLT == LandType.Savanna || eLT == LandType.Plains) ? 1 : 0;
                     pVM.TexWeights.Z += (eLT == LandType.Mountains || eLT == LandType.Ocean) ? 1 : 0;
                     pVM.TexWeights.W += (eLT == LandType.Tundra) ? 1 : 0;
 
+                    pVM.TexWeights2.X += (eLT == LandType.Swamp || eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Taiga) ? 1 : 0;
+                    //pVM.TexWeights2.Y += (eLT == LandType.Savanna) ? 1 : 0;
+                    pVM.TexWeights2.Z += (eLT == LandType.Swamp) ? 1 : 0;
+                    //pVM.TexWeights2.W += 0;
                 }
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
@@ -287,10 +348,14 @@ namespace MapDrawXNAEngine
                 LandType eLT = LandType.Ocean;
                 if (pLoc.Owner != null)
                     eLT = (pLoc.Owner as LandX).Type.m_eType;
-                m_aLandVertices[iCounter].TexWeights.X = (eLT == LandType.Coastral || eLT == LandType.Desert) ? 1 : 0;
-                m_aLandVertices[iCounter].TexWeights.Y = (eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Plains || eLT == LandType.Savanna || eLT == LandType.Swamp || eLT == LandType.Taiga) ? 1 : 0;
+                m_aLandVertices[iCounter].TexWeights.X = (eLT == LandType.Savanna || eLT == LandType.Coastral || eLT == LandType.Desert) ? 1 : 0;
+                m_aLandVertices[iCounter].TexWeights.Y = (eLT == LandType.Tundra || eLT == LandType.Savanna || eLT == LandType.Plains) ? 1 : 0;
                 m_aLandVertices[iCounter].TexWeights.Z = (eLT == LandType.Mountains || eLT == LandType.Ocean) ? 1 : 0;
                 m_aLandVertices[iCounter].TexWeights.W = (eLT == LandType.Tundra) ? 1 : 0;
+                m_aLandVertices[iCounter].TexWeights2.X = (eLT == LandType.Swamp || eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Taiga) ? 1 : 0;
+                m_aLandVertices[iCounter].TexWeights2.Y = 0;// (eLT == LandType.Savanna) ? 1 : 0;
+                m_aLandVertices[iCounter].TexWeights2.Z = (eLT == LandType.Swamp) ? 1 : 0;
+                m_aLandVertices[iCounter].TexWeights2.W = 0;
 
                 foreach (LocationX pLink in pLoc.m_aBorderWith)
                 {
@@ -300,14 +365,25 @@ namespace MapDrawXNAEngine
                     float fWeight = 1.0f / (float)pLoc.m_aBorderWith.Length;
 
                     eLT = (pLink.Owner as LandX).Type.m_eType;
-                    m_aLandVertices[iCounter].TexWeights.X += (eLT == LandType.Coastral || eLT == LandType.Desert) ? fWeight : 0;
-                    m_aLandVertices[iCounter].TexWeights.Y += (eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Plains || eLT == LandType.Savanna || eLT == LandType.Swamp || eLT == LandType.Taiga) ? fWeight : 0;
+                    m_aLandVertices[iCounter].TexWeights.X += (eLT == LandType.Savanna || eLT == LandType.Coastral || eLT == LandType.Desert) ? fWeight : 0;
+                    m_aLandVertices[iCounter].TexWeights.Y += (eLT == LandType.Tundra || eLT == LandType.Savanna || eLT == LandType.Plains) ? fWeight : 0;
                     m_aLandVertices[iCounter].TexWeights.Z += (eLT == LandType.Mountains || eLT == LandType.Ocean) ? fWeight : 0;
                     m_aLandVertices[iCounter].TexWeights.W += (eLT == LandType.Tundra) ? fWeight : 0;
+                    m_aLandVertices[iCounter].TexWeights2.X += (eLT == LandType.Swamp || eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Taiga) ? fWeight : 0;
+                    //m_aLandVertices[iCounter].TexWeights2.Y += (eLT == LandType.Savanna) ? fWeight : 0;
+                    m_aLandVertices[iCounter].TexWeights2.Z += (eLT == LandType.Swamp) ? fWeight : 0;
                 }
 
                 if (pLoc.m_eType == RegionType.Peak)
+                {
                     m_aLandVertices[iCounter].TexWeights = new Vector4(0, 0, 1, 1);
+                    m_aLandVertices[iCounter].TexWeights2 = new Vector4(0, 0, 0, 0);
+                }
+                if (pLoc.m_eType == RegionType.Volcano)
+                {
+                    m_aLandVertices[iCounter].TexWeights = new Vector4(0, 0, 0, 0);
+                    m_aLandVertices[iCounter].TexWeights2 = new Vector4(0, 0, 0, 1);
+                }
 
                 cLocations[pLoc.m_iID] = iCounter;
 
@@ -321,11 +397,18 @@ namespace MapDrawXNAEngine
 
             iCounter = 0;
 
+            List<TreeModel> cTrees = new List<TreeModel>();
+            List<SettlementModel> cSettlements = new List<SettlementModel>();
+
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
+                LandType eLT = LandType.Ocean;
+                if (pLoc.Owner != null)
+                    eLT = (pLoc.Owner as LandX).Type.m_eType; 
+                
                 Line pLine = pLoc.m_pFirstLine;
                 //последовательно перебирает все связанные линии, пока круг не замкнётся.
                 do
@@ -336,9 +419,56 @@ namespace MapDrawXNAEngine
                     m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID];
 
                     pLine = pLine.m_pNext;
+
+                    if (pLoc.m_pSettlement == null)
+                    {
+                        if (eLT == LandType.Forest)
+                            cTrees.Add(new TreeModel((m_aLandVertices[cLocations[pLoc.m_iID]].Position +
+                                                      m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
+                                                      m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3,
+                                                     Rnd.Get((float)Math.PI * 2),
+                                                     treeModel[Rnd.Get(treeModel.Length)]));
+                        if (eLT == LandType.Jungle)
+                            cTrees.Add(new TreeModel((m_aLandVertices[cLocations[pLoc.m_iID]].Position +
+                                                      m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
+                                                      m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3,
+                                                     Rnd.Get((float)Math.PI * 2),
+                                                     Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : palmModel[Rnd.Get(palmModel.Length)]));
+                        if (eLT == LandType.Taiga)
+                            cTrees.Add(new TreeModel((m_aLandVertices[cLocations[pLoc.m_iID]].Position +
+                                                      m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
+                                                      m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3,
+                                                     Rnd.Get((float)Math.PI * 2),
+                                                     Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)]));
+                    }
                 }
                 while (pLine != pLoc.m_pFirstLine);
+
+                if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
+                {
+                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Capital ||
+                       pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.City)
+                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
+                                             Rnd.Get((float)Math.PI * 2), 0.15f,
+                                             cityModel));
+                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
+                       pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village)
+                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
+                                             Rnd.Get((float)Math.PI * 2), 0.08f,
+                                             villageModel));
+                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Town)
+                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
+                                             Rnd.Get((float)Math.PI * 2), 0.1f,
+                                             townModel));
+                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Fort)
+                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
+                                             Rnd.Get((float)Math.PI * 2), 0.1f,
+                                             fortModel));
+                }
             }
+
+            m_aTrees = cTrees.ToArray();
+            m_aSettlements = cSettlements.ToArray();
         }
         private void BuildUnderWater()
         {
@@ -859,7 +989,10 @@ namespace MapDrawXNAEngine
             for (int i = 0; i < vertexBuffer.Length; i++)
             {
                 vertexBuffer[i].Normal.Normalize();
-                vertexBuffer[i].TexWeights.Normalize();
+
+                float fD = (float)Math.Sqrt(vertexBuffer[i].TexWeights.LengthSquared() + vertexBuffer[i].TexWeights2.LengthSquared());
+                vertexBuffer[i].TexWeights /= fD;
+                vertexBuffer[i].TexWeights2 /= fD;
             }
         }
 
@@ -1125,13 +1258,13 @@ namespace MapDrawXNAEngine
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
                     m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
-                    effect2.CurrentTechnique = effect2.Techniques["PointLight"];
+                    effect2.CurrentTechnique = effect2.Techniques["LandRingworld"];
                     pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
                 }
                 else
                 {
                     m_pCamera = new PlainCamera(GraphicsDevice);
-                    effect2.CurrentTechnique = effect2.Techniques["DirectionalLight"];
+                    effect2.CurrentTechnique = effect2.Techniques["Land"];
                     pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
                 }
             }
@@ -1162,11 +1295,33 @@ namespace MapDrawXNAEngine
         EffectParameter pEffectTexture1;
         EffectParameter pEffectTexture2;
         EffectParameter pEffectTexture3;
+        EffectParameter pEffectTexture4;
+        EffectParameter pEffectTexture5;
+        EffectParameter pEffectTexture6;
+        EffectParameter pEffectTexture7;
+
+        EffectParameter pEffectTextureModel;
 
         Texture2D grassTexture;
         Texture2D sandTexture;
         Texture2D rockTexture;
         Texture2D snowTexture;
+        Texture2D forestTexture;
+        Texture2D savannaTexture;
+        Texture2D swampTexture;
+        Texture2D lavaTexture;
+
+        Texture2D treeTexture;
+        Texture2D settlementsTexture;
+
+        Model[] treeModel = new Model[13];
+        Model[] palmModel = new Model[4];
+        Model[] pineModel = new Model[4];
+
+        Model cityModel;
+        Model villageModel;
+        Model fortModel;
+        Model townModel;
 
         /// <summary>
         /// Initializes the control.
@@ -1174,14 +1329,21 @@ namespace MapDrawXNAEngine
         protected override void Initialize()
         {
             LibContent = new ContentManager(Services);
-            
+
             // Create our effect.
             effect2 = LibContent.Load<Effect>("content/Effect1");
 
             grassTexture = LibContent.Load<Texture2D>("content/1-plain");
             sandTexture = LibContent.Load<Texture2D>("content/1-desert");
-            rockTexture = LibContent.Load<Texture2D>("content/1-stone");
-            snowTexture = LibContent.Load<Texture2D>("content/1-snow");
+            rockTexture = LibContent.Load<Texture2D>("content/rock");
+            snowTexture = LibContent.Load<Texture2D>("content/snow");
+            forestTexture = LibContent.Load<Texture2D>("content/grass");
+            savannaTexture = LibContent.Load<Texture2D>("content/plain");
+            swampTexture = LibContent.Load<Texture2D>("content/river");
+            lavaTexture = LibContent.Load<Texture2D>("content/1-lava");
+
+            treeTexture = LibContent.Load<Texture2D>("content/trees");
+            settlementsTexture = LibContent.Load<Texture2D>("content/fake_houses");
 
             pEffectWorld = effect2.Parameters["World"];
             pEffectView = effect2.Parameters["View"];
@@ -1208,8 +1370,13 @@ namespace MapDrawXNAEngine
             pEffectTexture1 = effect2.Parameters["xTexture1"];
             pEffectTexture2 = effect2.Parameters["xTexture2"];
             pEffectTexture3 = effect2.Parameters["xTexture3"];
+            pEffectTexture4 = effect2.Parameters["xTexture4"];
+            pEffectTexture5 = effect2.Parameters["xTexture5"];
+            pEffectTexture6 = effect2.Parameters["xTexture6"];
+            pEffectTexture7 = effect2.Parameters["xTexture7"];
+            pEffectTextureModel = effect2.Parameters["xTextureModel"];
 
-            effect2.CurrentTechnique = effect2.Techniques["PointLight"];
+            effect2.CurrentTechnique = effect2.Techniques["LandRingworld"];
             pEffectWorld.SetValue(Matrix.Identity);
 
             pEffectAmbientLightColor.SetValue(eSkyColor.ToVector4());
@@ -1231,6 +1398,10 @@ namespace MapDrawXNAEngine
             pEffectTexture1.SetValue(grassTexture);
             pEffectTexture2.SetValue(rockTexture);
             pEffectTexture3.SetValue(snowTexture);
+            pEffectTexture4.SetValue(forestTexture);
+            pEffectTexture5.SetValue(savannaTexture);
+            pEffectTexture6.SetValue(swampTexture);
+            pEffectTexture7.SetValue(lavaTexture);
 
             // create the effect and vertex declaration for drawing the
             // picked triangle.
@@ -1245,12 +1416,80 @@ namespace MapDrawXNAEngine
             else
                 m_pCamera = new PlainCamera(GraphicsDevice);
 
+            LoadTree(0, "content/tree1");
+            LoadTree(1, "content/tree2");
+            LoadTree(2, "content/tree3");
+            LoadTree(3, "content/tree4");
+            LoadTree(4, "content/tree6");
+            LoadTree(5, "content/tree7");
+            LoadTree(6, "content/tree8");
+            LoadTree(7, "content/tree9");
+            LoadTree(8, "content/tree10");
+            LoadTree(9, "content/tree11");
+            LoadTree(10, "content/tree12");
+            LoadTree(11, "content/tree15");
+            LoadTree(12, "content/tree16");
+
+            LoadPalm(0, "content/palm1");
+            LoadPalm(1, "content/palm2");
+            LoadPalm(2, "content/palm3");
+            LoadPalm(3, "content/palm4");
+
+            LoadPine(0, "content/tree5");
+            LoadPine(1, "content/tree13");
+            LoadPine(2, "content/tree14");
+            LoadPine(3, "content/tree16");
+
+            cityModel = LibContent.Load<Model>("content/city");
+            foreach (ModelMesh mesh in cityModel.Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = effect2.Clone();
+
+            villageModel = LibContent.Load<Model>("content/village");
+            foreach (ModelMesh mesh in villageModel.Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = effect2.Clone();
+
+            fortModel = LibContent.Load<Model>("content/fort");
+            foreach (ModelMesh mesh in fortModel.Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = effect2.Clone();
+
+            townModel = LibContent.Load<Model>("content/town");
+            foreach (ModelMesh mesh in townModel.Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = effect2.Clone();
+
             // Start the animation timer.
             timer = Stopwatch.StartNew();
             lastTime = timer.Elapsed.TotalMilliseconds;
 
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
+        }
+
+        private void LoadTree(int index, string sPath)
+        {
+            treeModel[index] = LibContent.Load<Model>(sPath);
+            foreach (ModelMesh mesh in treeModel[index].Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = effect2.Clone();
+        }
+
+        private void LoadPalm(int index, string sPath)
+        {
+            palmModel[index] = LibContent.Load<Model>(sPath);
+            foreach (ModelMesh mesh in palmModel[index].Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = effect2.Clone();
+        }
+
+        private void LoadPine(int index, string sPath)
+        {
+            pineModel[index] = LibContent.Load<Model>(sPath);
+            foreach (ModelMesh mesh in pineModel[index].Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = effect2.Clone();
         }
 
         private Microsoft.Xna.Framework.Color ConvertColor(System.Drawing.Color Value)
@@ -1275,7 +1514,6 @@ namespace MapDrawXNAEngine
         }
 
         RenderTarget2D refractionRenderTarget;
-        Texture2D refractionMap;
         
         /// <summary>
         /// Draws the control.
@@ -1313,37 +1551,38 @@ namespace MapDrawXNAEngine
 
             pEffectCameraPosition.SetValue(m_pCamera.Position);
 
+            pEffectWorld.SetValue(Matrix.Identity);
+
             // Set renderstates.
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.CullCounterClockwiseFace;
             //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
-            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld) 
-                effect2.CurrentTechnique = effect2.Techniques["PointLight"]; 
+            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                effect2.CurrentTechnique = effect2.Techniques["LandRingworld"]; 
             else
-                effect2.CurrentTechnique = effect2.Techniques["DirectionalLight"];
+                effect2.CurrentTechnique = effect2.Techniques["Land"];
             effect2.CurrentTechnique.Passes[0].Apply();
 
             GraphicsDevice.SetRenderTarget(refractionRenderTarget);
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Microsoft.Xna.Framework.Color.Black, 1.0f, 0);
-            //GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
                                               m_aUnderwaterVertices, 0, m_aUnderwaterVertices.Length - 1, m_aUnderwaterIndices, 0, m_iUnderwaterTrianglesCount);
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(eSkyColor);
-            //GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-
-            //using (Stream stream = File.OpenWrite("refractionmap.jpg"))
-            //{
-            //    refractionRenderTarget.SaveAsJpeg(stream, refractionRenderTarget.Width, refractionRenderTarget.Height);
-            //} 
 
             GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
                                               m_aLandVertices, 0, m_aLandVertices.Length - 1, m_aLandIndices, 0, m_iLandTrianglesCount);
             //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
             //                                  m_aUnderwaterVertices, 0, m_aUnderwaterVertices.Length - 1, m_aUnderwaterIndices, 0, m_iUnderwaterTrianglesCount);
-            DrawWater(time);        
+            DrawWater(time);
+
+            for (int i = 0; i < m_aTrees.Length; i++)
+                DrawTree(m_aTrees[i]);
+
+            for (int i = 0; i < m_aSettlements.Length; i++)
+                DrawSettlement(m_aSettlements[i]);
 
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
@@ -1360,6 +1599,55 @@ namespace MapDrawXNAEngine
 
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList,
                                                 m_aWaterVertices, 0, m_aWaterVertices.Length - 1, m_aWaterIndices, 0, m_iWaterTrianglesCount);
+        }
+
+        private void DrawTree(TreeModel pTree)
+        {
+            Matrix worldMatrix = Matrix.CreateScale(0.4f, 0.4f, 0.4f) * Matrix.CreateRotationY(pTree.m_fAngle) * Matrix.CreateTranslation(pTree.m_pPosition);
+
+            Matrix[] xwingTransforms = new Matrix[pTree.m_pModel.Bones.Count];
+            pTree.m_pModel.CopyAbsoluteBoneTransformsTo(xwingTransforms);
+            foreach (ModelMesh mesh in pTree.m_pModel.Meshes)
+            {
+                foreach (Effect currentEffect in mesh.Effects)
+                {
+                    if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                        currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
+                    else
+                        currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
+                    currentEffect.Parameters["xTextureModel"].SetValue(treeTexture);
+                    currentEffect.Parameters["World"].SetValue(xwingTransforms[mesh.ParentBone.Index] * worldMatrix);
+                    currentEffect.Parameters["View"].SetValue(m_pCamera.View);
+                    currentEffect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
+                    currentEffect.Parameters["Projection"].SetValue(m_pCamera.Projection);
+                }
+                mesh.Draw();
+            }
+        }
+
+        private void DrawSettlement(SettlementModel pSettlement)
+        {
+            Matrix worldMatrix = Matrix.CreateScale(pSettlement.m_fScale, pSettlement.m_fScale, pSettlement.m_fScale) * Matrix.CreateRotationY(pSettlement.m_fAngle) * Matrix.CreateTranslation(pSettlement.m_pPosition);
+
+            Matrix[] xwingTransforms = new Matrix[pSettlement.m_pModel.Bones.Count];
+            pSettlement.m_pModel.CopyAbsoluteBoneTransformsTo(xwingTransforms);
+            foreach (ModelMesh mesh in pSettlement.m_pModel.Meshes)
+            {
+                foreach (Effect currentEffect in mesh.Effects)
+                {
+                    if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                        currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
+                    else
+                        currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
+
+                    currentEffect.Parameters["xTextureModel"].SetValue(settlementsTexture);
+                    currentEffect.Parameters["World"].SetValue(xwingTransforms[mesh.ParentBone.Index] * worldMatrix);
+                    currentEffect.Parameters["View"].SetValue(m_pCamera.View);
+                    currentEffect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
+                    currentEffect.Parameters["Projection"].SetValue(m_pCamera.Projection);
+                }
+                mesh.Draw();
+            }
         }
 
         public void FocusSelectedState()
