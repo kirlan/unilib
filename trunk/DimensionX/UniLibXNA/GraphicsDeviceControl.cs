@@ -39,13 +39,15 @@ namespace UniLibXNA
         public Vector3 Normal;
         public Vector4 TextureCoordinate;
         public Vector4 TexWeights;
+        public Vector4 TexWeights2;
 
         public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
          (
              new VertexElement( 0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0 ),
              new VertexElement( sizeof(float) * 3, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0 ),
              new VertexElement( sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0 ),
-             new VertexElement( sizeof(float) * 10, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1 )
+             new VertexElement( sizeof(float) * 10, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1 ),
+             new VertexElement( sizeof(float) * 14, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2 )
          );
 
         VertexDeclaration IVertexType.VertexDeclaration
