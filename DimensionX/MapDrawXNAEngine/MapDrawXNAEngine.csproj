@@ -47,6 +47,7 @@
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -105,6 +106,11 @@
     <Compile Include="TargetCamera.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Content\Content.contentproj">
+      <Project>{9696E015-7C8A-4AA9-9BBE-E0B2BA3F159B}</Project>
+      <Name>Content</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
     <ProjectReference Include="..\Landscape\Landscape.csproj">
       <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>
       <Name>Landscape</Name>

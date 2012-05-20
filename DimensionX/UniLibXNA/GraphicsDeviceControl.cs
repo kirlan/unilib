@@ -32,6 +32,27 @@ namespace UniLibXNA
             get { return VertexDeclaration; }
         }
     }
+
+    public struct VertexMultitextured : IVertexType
+    {
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector4 TextureCoordinate;
+        public Vector4 TexWeights;
+
+        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
+         (
+             new VertexElement( 0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0 ),
+             new VertexElement( sizeof(float) * 3, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0 ),
+             new VertexElement( sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0 ),
+             new VertexElement( sizeof(float) * 10, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1 )
+         );
+
+        VertexDeclaration IVertexType.VertexDeclaration
+        {
+            get { return VertexDeclaration; }
+        }
+    }
     
     /// <summary>
     /// Custom control uses the XNA Framework GraphicsDevice to render onto
@@ -349,7 +370,6 @@ namespace UniLibXNA
         /// if there is no intersection.
         /// </summary>
         static protected float? RayIntersectsLandscape(CullMode culling, Ray ray, VertexPositionColorNormal[] vertexBuffer, int[] indexBuffer,
-            //out bool insideBoundingSphere,
                                          out Vector3 vertex1, out Vector3 vertex2,
                                          out Vector3 vertex3)
         {
@@ -358,16 +378,10 @@ namespace UniLibXNA
             if (indexBuffer == null || indexBuffer.Length < 3)
                 return null;
 
-            // Keep track of the closest triangle we found so far,
-            // so we can always return the closest one.
             float? closestIntersection = null;
-
-            // Loop over the vertex data, 3 at a time (3 vertices = 1 triangle).
-            //Vector3[] vertices = (Vector3[])tagData["Vertices"];
 
             for (int i = 0; i < indexBuffer.Length; i += 3)
             {
-                // Perform a ray to triangle intersection test.
                 float? intersection;
 
                 RayIntersectsTriangle(ref culling, ref ray,
@@ -376,14 +390,101 @@ namespace UniLibXNA
                                         ref vertexBuffer[indexBuffer[i + 2]].Position,
                                         out intersection);
 
-                // Does the ray intersect this triangle?
                 if (intersection != null)
                 {
-                    // If so, is it closer than any other previous triangle?
                     if ((closestIntersection == null) ||
                         (intersection < closestIntersection))
                     {
-                        // Store the distance to this triangle.
+                        closestIntersection = intersection;
+
+                        vertex1 = vertexBuffer[indexBuffer[i]].Position;
+                        vertex2 = vertexBuffer[indexBuffer[i + 1]].Position;
+                        vertex3 = vertexBuffer[indexBuffer[i + 2]].Position;
+                    }
+                }
+            }
+
+            return closestIntersection;
+        }
+
+        /// <summary>
+        /// Checks whether a ray intersects a model. This method needs to access
+        /// the model vertex data, so the model must have been built using the
+        /// custom TrianglePickingProcessor provided as part of this sample.
+        /// Returns the distance along the ray to the point of intersection, or null
+        /// if there is no intersection.
+        /// </summary>
+        static protected float? RayIntersectsLandscape(CullMode culling, Ray ray, VertexPositionNormalTexture[] vertexBuffer, int[] indexBuffer,
+                                         out Vector3 vertex1, out Vector3 vertex2,
+                                         out Vector3 vertex3)
+        {
+            vertex1 = vertex2 = vertex3 = Vector3.Zero;
+
+            if (indexBuffer == null || indexBuffer.Length < 3)
+                return null;
+
+            float? closestIntersection = null;
+
+            for (int i = 0; i < indexBuffer.Length; i += 3)
+            {
+                float? intersection;
+
+                RayIntersectsTriangle(ref culling, ref ray,
+                                        ref vertexBuffer[indexBuffer[i]].Position,
+                                        ref vertexBuffer[indexBuffer[i + 1]].Position,
+                                        ref vertexBuffer[indexBuffer[i + 2]].Position,
+                                        out intersection);
+
+                if (intersection != null)
+                {
+                    if ((closestIntersection == null) ||
+                        (intersection < closestIntersection))
+                    {
+                        closestIntersection = intersection;
+
+                        vertex1 = vertexBuffer[indexBuffer[i]].Position;
+                        vertex2 = vertexBuffer[indexBuffer[i + 1]].Position;
+                        vertex3 = vertexBuffer[indexBuffer[i + 2]].Position;
+                    }
+                }
+            }
+
+            return closestIntersection;
+        }
+
+        /// <summary>
+        /// Checks whether a ray intersects a model. This method needs to access
+        /// the model vertex data, so the model must have been built using the
+        /// custom TrianglePickingProcessor provided as part of this sample.
+        /// Returns the distance along the ray to the point of intersection, or null
+        /// if there is no intersection.
+        /// </summary>
+        static protected float? RayIntersectsLandscape(CullMode culling, Ray ray, VertexMultitextured[] vertexBuffer, int[] indexBuffer,
+                                         out Vector3 vertex1, out Vector3 vertex2,
+                                         out Vector3 vertex3)
+        {
+            vertex1 = vertex2 = vertex3 = Vector3.Zero;
+
+            if (indexBuffer == null || indexBuffer.Length < 3)
+                return null;
+
+            float? closestIntersection = null;
+
+            for (int i = 0; i < indexBuffer.Length; i += 3)
+            {
+                float? intersection;
+
+                RayIntersectsTriangle(ref culling, ref ray,
+                                        ref vertexBuffer[indexBuffer[i]].Position,
+                                        ref vertexBuffer[indexBuffer[i + 1]].Position,
+                                        ref vertexBuffer[indexBuffer[i + 2]].Position,
+                                        out intersection);
+
+                if (intersection != null)
+                {
+                    if ((closestIntersection == null) ||
+                        (intersection < closestIntersection))
+                    {
                         closestIntersection = intersection;
 
                         vertex1 = vertexBuffer[indexBuffer[i]].Position;
