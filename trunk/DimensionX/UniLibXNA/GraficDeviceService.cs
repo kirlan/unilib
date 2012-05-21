@@ -53,6 +53,7 @@ namespace UniLibXNA
                 parameters.DeviceWindowHandle = windowHandle;
                 parameters.PresentationInterval = PresentInterval.Immediate;
                 parameters.IsFullScreen = false;
+                parameters.MultiSampleCount = 4;
 
                 graphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter,
                                                     GraphicsProfile.HiDef,

@@ -12,7 +12,6 @@ namespace MapDrawXNAEngine
         public float Yaw { get; set; }
         public float Pitch { get; set; }
         public float Roll { get; set; }
-        public Vector3 Direction { get; private set; }
         public Vector3 Top { get; private set; }
 
         private Vector3 targetTranslation;

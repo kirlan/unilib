@@ -11,6 +11,7 @@ namespace MapDrawXNAEngine
     {
         public Vector3 Position { get; set; }
         public Vector3 Target { get; set; }
+        public Vector3 Direction { get; protected set; }
         public Matrix View { get; set; }
         public Matrix Projection { get; set; }
 

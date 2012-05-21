@@ -102,7 +102,7 @@ namespace LandscapeGeneration
         }
 
         //TODO: для замкнутых (цилиндрических, сферических) миров - вычислять угловые координаты и работать с ними
-        internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t, float fCycle)
+        internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t)
         {
             float t2 = t * t; 
             float t3 = t2 * t;
@@ -115,26 +115,6 @@ namespace LandscapeGeneration
             float p2Y = p2.Y;
             float p3X = p3.X;
             float p3Y = p3.Y;
-
-            if (p0X + fCycle / 2 < m_fX)
-                p0X += fCycle;
-            if (p0X - fCycle / 2 > m_fX)
-                p0X -= fCycle;
-
-            if (p1X + fCycle / 2 < m_fX)
-                p1X += fCycle;
-            if (p1X - fCycle / 2 > m_fX)
-                p1X -= fCycle;
-
-            if (p2X + fCycle / 2 < m_fX)
-                p2X += fCycle;
-            if (p2X - fCycle / 2 > m_fX)
-                p2X -= fCycle;
-
-            if (p3X + fCycle / 2 < m_fX)
-                p3X += fCycle;
-            if (p3X - fCycle / 2 > m_fX)
-                p3X -= fCycle;
 
             m_fX = 0.5f * ((2.0f * p1X) + (-p0X + p2X) * t + 
                 (2.0f * p0X - 5.0f * p1X + 4 * p2X - p3X) * t2 + 

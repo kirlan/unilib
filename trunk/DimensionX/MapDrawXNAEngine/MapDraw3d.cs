@@ -95,9 +95,9 @@ namespace MapDrawXNAEngine
                     foreach (Effect currentEffect in mesh.Effects)
                     {
                         if (eWorldShape == WorldShape.Ringworld)
-                            currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
+                            currentEffect.CurrentTechnique = currentEffect.Techniques["TreeRingworld"];
                         else
-                            currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
+                            currentEffect.CurrentTechnique = currentEffect.Techniques["Tree"];
                         currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
                     }
                 }
@@ -313,8 +313,8 @@ namespace MapDrawXNAEngine
 
                 m_aLandVertices[iCounter] = new VertexMultitextured();
                 float fHeight = pLoc.m_fHeight * (pLoc.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fOceanHeightMultiplier);
-                if (pLoc.m_eType == RegionType.Peak)
-                    fHeight += 2 * m_fLandHeightMultiplier;
+                //if (pLoc.m_eType == RegionType.Peak)
+                //    fHeight += 0.5f * m_fLandHeightMultiplier;
                 if (pLoc.m_eType == RegionType.Volcano)
                     fHeight -= 10 * m_fLandHeightMultiplier;
 
@@ -410,8 +410,8 @@ namespace MapDrawXNAEngine
                         }
                     }
 
-                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights/4;
-                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2/4;
+                    //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights/4;
+                    //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2/4;
                 }
                 while (pLine != pLoc.m_pFirstLine);
 
@@ -1610,6 +1610,15 @@ namespace MapDrawXNAEngine
 
         private void DrawTree(TreeModel pTree)
         {
+            Vector3 pViewVector = pTree.m_pPosition - m_pCamera.Position;
+
+            float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
+            if (fCos < 0.7) //cos(45) = 0,70710678118654752440084436210485...
+                return;
+
+            if (pViewVector.LengthSquared() > 2500)
+                return;
+
             Matrix[] xwingTransforms = new Matrix[pTree.m_pModel.Bones.Count];
             pTree.m_pModel.CopyAbsoluteBoneTransformsTo(xwingTransforms);
             foreach (ModelMesh mesh in pTree.m_pModel.Meshes)
@@ -1627,6 +1636,15 @@ namespace MapDrawXNAEngine
 
         private void DrawSettlement(SettlementModel pSettlement)
         {
+            Vector3 pViewVector = pSettlement.m_pPosition - m_pCamera.Position;
+
+            float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
+            if (fCos < 0.7) //cos(45) = 0,70710678118654752440084436210485...
+                return;
+
+            if (pViewVector.LengthSquared() > 2500)
+                return;
+
             Matrix[] xwingTransforms = new Matrix[pSettlement.m_pModel.Bones.Count];
             pSettlement.m_pModel.CopyAbsoluteBoneTransformsTo(xwingTransforms);
             foreach (ModelMesh mesh in pSettlement.m_pModel.Meshes)

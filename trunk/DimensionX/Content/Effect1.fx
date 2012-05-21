@@ -250,11 +250,12 @@ ModelVertexShaderOutput ModelVS(ModelVertexShaderInput input, float3 Normal : NO
 
 float alphaReference = .8f;
 
-float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
+float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
 	float4 normal = float4(input.Normal, 1.0);
 	float4 diffuse = 1;//saturate(dot(-DirectionalLightDirection,normal));
+	//float4 diffuse = float4(0.66, 0.66, 0.66, 1.0) + saturate(dot(-DirectionalLightDirection,normal))/3;
 	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
@@ -281,6 +282,48 @@ float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
 	return output;
 }
 
+float4 TreePSPoint(ModelVertexShaderOutput input) : COLOR0
+{
+    // TODO: add your pixel shader code here.
+	float4 normal = float4(input.Normal, 1.0);
+
+	float3 lightDirection = normalize(input.Position3D - DirectionalLightDirection);
+
+	float4 diffuse = saturate(dot(-lightDirection,normal));
+	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
+	float4 specular = pow(saturate(dot(reflect,input.View)),15);
+
+	float d = length(input.Position3D - CameraPosition);
+	float l = exp( - pow( d * FogDensity , 2 ) );
+	l = saturate(1 - l);
+
+    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
+
+	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
+
+	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
+		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
+		   texColor*SpecularColor*specular, FogColor, l);
+}
+
+float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
+{
+    // TODO: add your pixel shader code here.
+	float4 normal = float4(input.Normal, 1.0);
+	float4 diffuse = float4(0.66, 0.66, 0.66, 1.0) + saturate(dot(-DirectionalLightDirection,normal))/3;
+	//float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
+	//float4 specular = pow(saturate(dot(reflect,input.View)),15);
+
+	float d = length(input.Position3D - CameraPosition);
+	float l = exp( - pow( d * FogDensity , 2 ) );
+	l = saturate(1 - l);
+     
+	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
+
+	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
+		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse, FogColor, l);//*output.a;
+}
+
 float4 ModelPSPoint(ModelVertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
@@ -303,6 +346,28 @@ float4 ModelPSPoint(ModelVertexShaderOutput input) : COLOR0
 	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
 		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
 		   texColor*SpecularColor*specular, FogColor, l);
+}
+
+technique Tree
+{
+    pass Pass1
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 ModelVS();
+        PixelShader = compile ps_2_0 TreePSPlain();
+    }
+}
+
+technique TreeRingworld
+{
+    pass Pass1
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 ModelVS();
+        PixelShader = compile ps_2_0 TreePSPoint();
+    }
 }
 
 technique Model
