@@ -80,12 +80,27 @@ namespace MapDrawXNAEngine
             public readonly Vector3 m_pPosition;
             public readonly float m_fAngle;
             public readonly Model m_pModel;
+            public readonly Matrix worldMatrix;
 
-            public TreeModel(Vector3 pPosition, float fAngle, Model pModel)
+            public TreeModel(Vector3 pPosition, float fAngle, Model pModel, WorldShape eWorldShape, Texture2D pTexture)
             {
                 m_pPosition = pPosition;
                 m_fAngle = fAngle;
                 m_pModel = pModel;
+
+                worldMatrix = Matrix.CreateScale(0.2f, 0.2f, 0.2f) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
+
+                foreach (ModelMesh mesh in m_pModel.Meshes)
+                {
+                    foreach (Effect currentEffect in mesh.Effects)
+                    {
+                        if (eWorldShape == WorldShape.Ringworld)
+                            currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
+                        else
+                            currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
+                        currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
+                    }
+                }
             }
         }
 
@@ -95,13 +110,29 @@ namespace MapDrawXNAEngine
             public readonly float m_fAngle;
             public readonly Model m_pModel;
             public readonly float m_fScale;
+            public readonly Matrix worldMatrix;
 
-            public SettlementModel(Vector3 pPosition, float fAngle, float fScale, Model pModel)
+            public SettlementModel(Vector3 pPosition, float fAngle, float fScale, Model pModel, WorldShape eWorldShape, Texture2D pTexture)
             {
                 m_pPosition = pPosition;
                 m_fAngle = fAngle;
                 m_fScale = fScale;
                 m_pModel = pModel;
+
+                worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
+
+                foreach (ModelMesh mesh in m_pModel.Meshes)
+                {
+                    foreach (Effect currentEffect in mesh.Effects)
+                    {
+                        if (eWorldShape == WorldShape.Ringworld)
+                            currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
+                        else
+                            currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
+
+                        currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
+                    }
+                }
             }
         }
 
@@ -346,26 +377,37 @@ namespace MapDrawXNAEngine
 
                     pLine = pLine.m_pNext;
 
-                    if (pLoc.m_pSettlement == null)
+                    Model pTree = null;
+                    switch (eLT)
                     {
-                        if (eLT == LandType.Forest)
-                            cTrees.Add(new TreeModel((m_aLandVertices[cLocations[pLoc.m_iID]].Position +
-                                                      m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
-                                                      m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3,
-                                                     Rnd.Get((float)Math.PI * 2),
-                                                     treeModel[Rnd.Get(treeModel.Length)]));
-                        if (eLT == LandType.Jungle)
-                            cTrees.Add(new TreeModel((m_aLandVertices[cLocations[pLoc.m_iID]].Position +
-                                                      m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
-                                                      m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3,
-                                                     Rnd.Get((float)Math.PI * 2),
-                                                     Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : palmModel[Rnd.Get(palmModel.Length)]));
-                        if (eLT == LandType.Taiga)
-                            cTrees.Add(new TreeModel((m_aLandVertices[cLocations[pLoc.m_iID]].Position +
-                                                      m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
-                                                      m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3,
-                                                     Rnd.Get((float)Math.PI * 2),
-                                                     Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)]));
+                        case LandType.Forest:
+                            pTree = treeModel[Rnd.Get(treeModel.Length)];
+                            break;
+                        case LandType.Jungle:
+                            pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : palmModel[Rnd.Get(palmModel.Length)];
+                            break;
+                        case LandType.Taiga:
+                            pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)];
+                            break;
+                    }
+
+                    if(pTree != null)
+                    {
+                        Vector3 pCenter = (m_aLandVertices[cLocations[pLoc.m_iID]].Position +
+                                            m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
+                                            m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3;
+
+                        if (pLoc.m_pSettlement == null)
+                            cTrees.Add(new TreeModel(pCenter, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+
+                        if (pLoc.m_pSettlement == null ||
+                            pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
+                            pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village)
+                        {
+                            cTrees.Add(new TreeModel((pCenter + m_aLandVertices[cLocations[pLoc.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                            cTrees.Add(new TreeModel((pCenter + m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                            cTrees.Add(new TreeModel((pCenter + m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                        }
                     }
 
                     m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights/4;
@@ -379,20 +421,20 @@ namespace MapDrawXNAEngine
                        pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.City)
                         cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
                                              Rnd.Get((float)Math.PI * 2), 0.15f,
-                                             cityModel));
+                                             cityModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
                     if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
                        pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village)
                         cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
                                              Rnd.Get((float)Math.PI * 2), 0.08f,
-                                             villageModel));
+                                             villageModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
                     if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Town)
                         cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
                                              Rnd.Get((float)Math.PI * 2), 0.1f,
-                                             townModel));
+                                             townModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
                     if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Fort)
                         cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
                                              Rnd.Get((float)Math.PI * 2), 0.1f,
-                                             fortModel));
+                                             fortModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
                 }
 
                 if (pLoc.m_eType == RegionType.Peak)
@@ -1475,12 +1517,16 @@ namespace MapDrawXNAEngine
         }
 
         RenderTarget2D refractionRenderTarget;
-        
+
+        public int m_iFrame = 0;
+
         /// <summary>
         /// Draws the control.
         /// </summary>
         protected override void Draw()
         {
+            m_iFrame++;
+
             double fElapsedTime = timer.Elapsed.TotalMilliseconds - lastTime;
             lastTime = timer.Elapsed.TotalMilliseconds;
 
@@ -1564,20 +1610,13 @@ namespace MapDrawXNAEngine
 
         private void DrawTree(TreeModel pTree)
         {
-            Matrix worldMatrix = Matrix.CreateScale(0.4f, 0.4f, 0.4f) * Matrix.CreateRotationY(pTree.m_fAngle) * Matrix.CreateTranslation(pTree.m_pPosition);
-
             Matrix[] xwingTransforms = new Matrix[pTree.m_pModel.Bones.Count];
             pTree.m_pModel.CopyAbsoluteBoneTransformsTo(xwingTransforms);
             foreach (ModelMesh mesh in pTree.m_pModel.Meshes)
             {
                 foreach (Effect currentEffect in mesh.Effects)
                 {
-                    if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                        currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
-                    else
-                        currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
-                    currentEffect.Parameters["xTextureModel"].SetValue(treeTexture);
-                    currentEffect.Parameters["World"].SetValue(xwingTransforms[mesh.ParentBone.Index] * worldMatrix);
+                    currentEffect.Parameters["World"].SetValue(xwingTransforms[mesh.ParentBone.Index] * pTree.worldMatrix); 
                     currentEffect.Parameters["View"].SetValue(m_pCamera.View);
                     currentEffect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
                     currentEffect.Parameters["Projection"].SetValue(m_pCamera.Projection);
@@ -1588,21 +1627,13 @@ namespace MapDrawXNAEngine
 
         private void DrawSettlement(SettlementModel pSettlement)
         {
-            Matrix worldMatrix = Matrix.CreateScale(pSettlement.m_fScale, pSettlement.m_fScale, pSettlement.m_fScale) * Matrix.CreateRotationY(pSettlement.m_fAngle) * Matrix.CreateTranslation(pSettlement.m_pPosition);
-
             Matrix[] xwingTransforms = new Matrix[pSettlement.m_pModel.Bones.Count];
             pSettlement.m_pModel.CopyAbsoluteBoneTransformsTo(xwingTransforms);
             foreach (ModelMesh mesh in pSettlement.m_pModel.Meshes)
             {
                 foreach (Effect currentEffect in mesh.Effects)
                 {
-                    if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                        currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
-                    else
-                        currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
-
-                    currentEffect.Parameters["xTextureModel"].SetValue(settlementsTexture);
-                    currentEffect.Parameters["World"].SetValue(xwingTransforms[mesh.ParentBone.Index] * worldMatrix);
+                    currentEffect.Parameters["World"].SetValue(xwingTransforms[mesh.ParentBone.Index] * pSettlement.worldMatrix);
                     currentEffect.Parameters["View"].SetValue(m_pCamera.View);
                     currentEffect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
                     currentEffect.Parameters["Projection"].SetValue(m_pCamera.Projection);

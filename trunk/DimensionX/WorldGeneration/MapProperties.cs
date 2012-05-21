@@ -45,7 +45,7 @@ namespace WorldGeneration
                 if (m_cLocationsGrid == null)
                     return;
 
-                if (MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_cLocationsGrid.m_eShape == WorldShape.Ringworld))
+                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_cLocationsGrid.m_eShape == WorldShape.Ringworld))
                 {
                     MapPresets.Items.Clear();
 
@@ -90,6 +90,8 @@ namespace WorldGeneration
             AdvancedPanel.Width = ClientRectangle.Width;
             AdvancedPanel.Height = ClientRectangle.Height;
             AdvancedPanel.Visible = false;
+
+            MapPresets.Items.Clear();
 
             Enabled = false;
         }

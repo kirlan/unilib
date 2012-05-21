@@ -85,8 +85,10 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.label3 = new System.Windows.Forms.Label();
+            this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
             this.groupBox4.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage7.SuspendLayout();
@@ -242,53 +244,53 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(538, 4);
+            this.tabPage2.Location = new System.Drawing.Point(145, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(0, 699);
+            this.tabPage2.Size = new System.Drawing.Size(301, 699);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Humidity";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage10
             // 
-            this.tabPage10.Location = new System.Drawing.Point(538, 4);
+            this.tabPage10.Location = new System.Drawing.Point(214, 4);
             this.tabPage10.Name = "tabPage10";
-            this.tabPage10.Size = new System.Drawing.Size(0, 699);
+            this.tabPage10.Size = new System.Drawing.Size(232, 699);
             this.tabPage10.TabIndex = 7;
             this.tabPage10.Text = "Elevation";
             this.tabPage10.UseVisualStyleBackColor = true;
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(538, 4);
+            this.tabPage3.Location = new System.Drawing.Point(273, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(0, 699);
+            this.tabPage3.Size = new System.Drawing.Size(173, 699);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Natives";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(538, 4);
+            this.tabPage4.Location = new System.Drawing.Point(332, 4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(0, 699);
+            this.tabPage4.Size = new System.Drawing.Size(114, 699);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Nations";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(538, 4);
+            this.tabPage5.Location = new System.Drawing.Point(406, 4);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(0, 699);
+            this.tabPage5.Size = new System.Drawing.Size(40, 699);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Tech level";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(538, 4);
+            this.tabPage6.Location = new System.Drawing.Point(460, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 699);
             this.tabPage6.TabIndex = 5;
@@ -626,6 +628,30 @@
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
             // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 500;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.Location = new System.Drawing.Point(718, 32);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(29, 13);
+            this.label3.TabIndex = 23;
+            this.label3.Text = "999";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // timer3
+            // 
+            this.timer3.Enabled = true;
+            this.timer3.Interval = 1000;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
+            // 
             // mapDraw3d1
             // 
             this.mapDraw3d1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -651,15 +677,11 @@
             this.mapDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseMove);
             this.mapDraw3d1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseUp);
             // 
-            // timer2
-            // 
-            this.timer2.Enabled = true;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1016, 739);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.mapDraw3d1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
@@ -747,6 +769,8 @@
         private System.Windows.Forms.TabPage tabPage10;
         private MapDrawXNAEngine.MapDraw3d mapDraw3d1;
         private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Timer timer3;
     }
 }
 
