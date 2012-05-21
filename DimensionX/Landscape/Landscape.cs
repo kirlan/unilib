@@ -134,7 +134,7 @@ namespace LandscapeGeneration
 
             BuildAreas(BeginStep, ProgressStep);
 
-            //SmoothAreas();
+            SmoothAreas();
             
             CalculateElevations(BeginStep, ProgressStep);
 
@@ -179,40 +179,73 @@ namespace LandscapeGeneration
         {
             foreach(CONT pCont in m_aContinents)
             {
-                foreach (Line pFistLine in pCont.m_cFirstLines)
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Savanna)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Tundra)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Swamp)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Desert)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Forest)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Jungle)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Taiga)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Mountains)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                SmoothBorder(pCont.m_cFirstLines);
+            }
+        }
+
+        private void SmoothBorder(List<Line> cFirstLines)
+        {
+            foreach (Line pFistLine in cFirstLines)
+            {
+                List<Vertex> ordered = new List<Vertex>();
+
+                Line pLine = pFistLine;
+
+                do
                 {
-                    List<Vertex> ordered = new List<Vertex>();
-
-                    Line pLine = pFistLine;
-
-                    do
-                    {
-                        ordered.Add(pLine.m_pPoint2);
-                        pLine = pLine.m_pNext;
-                    }
-                    while(pLine != pFistLine);
-
-                    //for (int a = 0; a < 2; a++)
-                    //{
-                    //    ordered[0].PointOnCurve(ordered[ordered.Count - 2], ordered[ordered.Count - 1], ordered[1],
-                    //                                 ordered[2], 0.5f, m_pGrid.CycleShift);
-                    //    ordered[1].PointOnCurve(ordered[ordered.Count - 1], ordered[0], ordered[2],
-                    //                                 ordered[3], 0.5f, m_pGrid.CycleShift);
-                    //    for (int i = 2; i < ordered.Count - 2; i++)
-                    //    {
-                    //        ordered[i].PointOnCurve(ordered[i - 2], ordered[i - 1], ordered[i + 1],
-                    //                                     ordered[i + 2], 0.5f, m_pGrid.CycleShift);
-                    //    }
-                    //    ordered[ordered.Count - 2].PointOnCurve(ordered[ordered.Count - 4], ordered[ordered.Count - 3], ordered[ordered.Count - 1],
-                    //                                 ordered[0], 0.5f, m_pGrid.CycleShift);
-                    //    ordered[ordered.Count - 1].PointOnCurve(ordered[ordered.Count - 3], ordered[ordered.Count - 2], ordered[0],
-                    //                                 ordered[1], 0.5f, m_pGrid.CycleShift);
-                    //}
+                    ordered.Add(pLine.m_pPoint2);
+                    pLine = pLine.m_pNext;
                 }
+                while (pLine != pFistLine);
 
-                //foreach (AREA pArea in pCont.m_cAreas)
-                //{ 
-                //}
+                for (int a = 0; a < 2; a++)
+                {
+                    ordered[0].PointOnCurve(ordered[ordered.Count - 2], ordered[ordered.Count - 1], ordered[1],
+                                                 ordered[2], 0.5f);
+                    ordered[1].PointOnCurve(ordered[ordered.Count - 1], ordered[0], ordered[2],
+                                                 ordered[3], 0.5f);
+                    for (int i = 2; i < ordered.Count - 2; i++)
+                    {
+                        ordered[i].PointOnCurve(ordered[i - 2], ordered[i - 1], ordered[i + 1],
+                                                     ordered[i + 2], 0.5f);
+                    }
+                    ordered[ordered.Count - 2].PointOnCurve(ordered[ordered.Count - 4], ordered[ordered.Count - 3], ordered[ordered.Count - 1],
+                                                 ordered[0], 0.5f);
+                    ordered[ordered.Count - 1].PointOnCurve(ordered[ordered.Count - 3], ordered[ordered.Count - 2], ordered[0],
+                                                 ordered[1], 0.5f);
+                }
             }
         }
 
@@ -923,7 +956,7 @@ namespace LandscapeGeneration
                 cOcean.Clear();
                 cOcean.AddRange(cWaveFront);
 
-                m_fMaxDepth--;
+                m_fMaxDepth -= 2;
             }
 
             //с сушей сложнее...
