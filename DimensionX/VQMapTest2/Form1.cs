@@ -622,5 +622,12 @@ namespace VQMapTest2
         {
             m_bMouseMapAllowed = true;
         }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            label3.Text = Math.Min(999, mapDraw3d1.m_iFrame).ToString();
+            timer2.Interval = Math.Max(100, 800 / (mapDraw3d1.m_iFrame+1));
+            mapDraw3d1.m_iFrame = 0;
+        }
     }
 }
