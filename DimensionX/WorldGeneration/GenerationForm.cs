@@ -66,14 +66,9 @@ namespace WorldGeneration
 
         public void GenerateWorld(IWin32Window pOwnerWindow)
         {
-            if (m_cLastUsedGrid == m_cLocationsGrid)
-                m_cLastUsedGrid.Reset();
-            else
-            {
-                if (m_cLastUsedGrid != null)
-                    m_cLastUsedGrid.Unload();
-                m_cLastUsedGrid = m_cLocationsGrid;
-            }
+            if (m_cLastUsedGrid != null)
+                m_cLastUsedGrid.Unload();
+            m_cLastUsedGrid = m_cLocationsGrid;
 
             List<Epoch> cEpoches = new List<Epoch>();
 
@@ -342,14 +337,9 @@ namespace WorldGeneration
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                if (m_cLastUsedGrid == m_cLocationsGrid)
-                    m_cLastUsedGrid.Reset();
-                else
-                {
-                    if (m_cLastUsedGrid != null)
-                        m_cLastUsedGrid.Unload();
-                    m_cLastUsedGrid = m_cLocationsGrid;
-                }
+                if (m_cLastUsedGrid != null)
+                    m_cLastUsedGrid.Unload();
+                m_cLastUsedGrid = m_cLocationsGrid;
 
                 List<Epoch> cEpoches = new List<Epoch>();
 

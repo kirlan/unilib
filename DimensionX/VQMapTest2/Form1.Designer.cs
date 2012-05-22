@@ -244,53 +244,53 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(145, 4);
+            this.tabPage2.Location = new System.Drawing.Point(538, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(301, 699);
+            this.tabPage2.Size = new System.Drawing.Size(0, 699);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Humidity";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage10
             // 
-            this.tabPage10.Location = new System.Drawing.Point(214, 4);
+            this.tabPage10.Location = new System.Drawing.Point(538, 4);
             this.tabPage10.Name = "tabPage10";
-            this.tabPage10.Size = new System.Drawing.Size(232, 699);
+            this.tabPage10.Size = new System.Drawing.Size(0, 699);
             this.tabPage10.TabIndex = 7;
             this.tabPage10.Text = "Elevation";
             this.tabPage10.UseVisualStyleBackColor = true;
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(273, 4);
+            this.tabPage3.Location = new System.Drawing.Point(538, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(173, 699);
+            this.tabPage3.Size = new System.Drawing.Size(0, 699);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Natives";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(332, 4);
+            this.tabPage4.Location = new System.Drawing.Point(538, 4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(114, 699);
+            this.tabPage4.Size = new System.Drawing.Size(0, 699);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Nations";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(406, 4);
+            this.tabPage5.Location = new System.Drawing.Point(538, 4);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(40, 699);
+            this.tabPage5.Size = new System.Drawing.Size(0, 699);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Tech level";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(460, 4);
+            this.tabPage6.Location = new System.Drawing.Point(538, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 699);
             this.tabPage6.TabIndex = 5;
@@ -636,7 +636,7 @@
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label3.Location = new System.Drawing.Point(718, 32);
