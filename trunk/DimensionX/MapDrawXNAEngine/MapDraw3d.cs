@@ -158,7 +158,6 @@ namespace MapDrawXNAEngine
         int m_iWaterTrianglesCount = 0;
 
         private float m_fLandHeightMultiplier = 0.1f;
-        private float m_fOceanHeightMultiplier = 0.2f;
 
         private void FillPrimitivesFake()
         {
@@ -283,9 +282,9 @@ namespace MapDrawXNAEngine
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
                 pVM.Position = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pVM.Position -= Vector3.Normalize(pVM.Position) * pVertex.m_fHeight * (pVertex.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fOceanHeightMultiplier);
+                    pVM.Position -= Vector3.Normalize(pVM.Position) * pVertex.m_fHeight * m_fLandHeightMultiplier;
                 else
-                    pVM.Position += Vector3.Up * pVertex.m_fHeight * (pVertex.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fOceanHeightMultiplier);
+                    pVM.Position += Vector3.Up * pVertex.m_fHeight * m_fLandHeightMultiplier;
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -312,7 +311,7 @@ namespace MapDrawXNAEngine
                     continue;
 
                 m_aLandVertices[iCounter] = new VertexMultitextured();
-                float fHeight = pLoc.m_fHeight * (pLoc.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fOceanHeightMultiplier);
+                float fHeight = pLoc.m_fHeight * m_fLandHeightMultiplier;
                 //if (pLoc.m_eType == RegionType.Peak)
                 //    fHeight += 0.5f * m_fLandHeightMultiplier;
                 if (pLoc.m_eType == RegionType.Volcano)
@@ -542,9 +541,9 @@ namespace MapDrawXNAEngine
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
                 pVM.Position = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pVM.Position -= Vector3.Normalize(pVM.Position) * pVertex.m_fHeight * (pVertex.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fOceanHeightMultiplier);
+                    pVM.Position -= Vector3.Normalize(pVM.Position) * pVertex.m_fHeight * m_fLandHeightMultiplier;
                 else
-                    pVM.Position += Vector3.Up * pVertex.m_fHeight * (pVertex.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fOceanHeightMultiplier);
+                    pVM.Position += Vector3.Up * pVertex.m_fHeight * m_fLandHeightMultiplier;
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -575,7 +574,7 @@ namespace MapDrawXNAEngine
                     continue;
 
                 m_aUnderwaterVertices[iCounter] = new VertexMultitextured();
-                float fHeight = pLoc.m_fHeight * (pLoc.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fOceanHeightMultiplier);
+                float fHeight = pLoc.m_fHeight * m_fLandHeightMultiplier;
 
                 m_aUnderwaterVertices[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
@@ -1236,15 +1235,9 @@ namespace MapDrawXNAEngine
             m_pWorld = pWorld;
 
             if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-            {
-                m_fLandHeightMultiplier = 0.2f;
-                m_fOceanHeightMultiplier = 0.4f;
-            }
+                m_fLandHeightMultiplier = 7f / m_pWorld.m_fMaxHeight;
             else
-            {
-                m_fLandHeightMultiplier = 0.1f;
-                m_fOceanHeightMultiplier = 0.2f;
-            }
+                m_fLandHeightMultiplier = 3.5f / m_pWorld.m_fMaxHeight;
 
             BuildLand();
             BuildUnderWater();
@@ -1613,7 +1606,7 @@ namespace MapDrawXNAEngine
             Vector3 pViewVector = pTree.m_pPosition - m_pCamera.Position;
 
             float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
-            if (fCos < 0.7) //cos(45) = 0,70710678118654752440084436210485...
+            if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
                 return;
 
             if (pViewVector.LengthSquared() > 2500)
@@ -1639,7 +1632,7 @@ namespace MapDrawXNAEngine
             Vector3 pViewVector = pSettlement.m_pPosition - m_pCamera.Position;
 
             float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
-            if (fCos < 0.7) //cos(45) = 0,70710678118654752440084436210485...
+            if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
                 return;
 
             if (pViewVector.LengthSquared() > 2500)

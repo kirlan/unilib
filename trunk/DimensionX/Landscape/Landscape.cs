@@ -180,6 +180,10 @@ namespace LandscapeGeneration
             foreach(CONT pCont in m_aContinents)
             {
                 foreach (AREA pArea in pCont.m_cAreas)
+                    if (pArea.m_pType.m_eType == LandType.Plains)
+                        SmoothBorder(pArea.m_cFirstLines);
+
+                foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Savanna)
                         SmoothBorder(pArea.m_cFirstLines);
 
@@ -213,6 +217,14 @@ namespace LandscapeGeneration
 
                 SmoothBorder(pCont.m_cFirstLines);
             }
+
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    continue;
+
+                pLoc.CorrectCenter();
+            }
         }
 
         private void SmoothBorder(List<Line> cFirstLines)
@@ -229,6 +241,9 @@ namespace LandscapeGeneration
                     pLine = pLine.m_pNext;
                 }
                 while (pLine != pFistLine);
+
+                if (ordered.Count < 5)
+                    continue;
 
                 for (int a = 0; a < 2; a++)
                 {
