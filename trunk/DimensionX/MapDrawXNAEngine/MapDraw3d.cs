@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Media;
 using UniLibXNA;
 using System.IO;
 using Random;
+using Socium.Settlements;
 
 namespace MapDrawXNAEngine
 {
@@ -119,6 +120,7 @@ namespace MapDrawXNAEngine
                 m_fScale = fScale;
                 m_pModel = pModel;
 
+//                worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationX(-(float)Math.PI / 2) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
                 worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
 
                 foreach (ModelMesh mesh in m_pModel.Meshes)
@@ -229,6 +231,38 @@ namespace MapDrawXNAEngine
 
         private float m_fTextureScale = 50000;
 
+        private static Vector3 GetPosition(Vertex pVertex, WorldShape eShape, float fMultiplier)
+        {
+            return GetPosition(pVertex, eShape, pVertex.m_fHeight, fMultiplier);
+        }
+
+        private static Vector3 GetPosition(LocationX pLoc, WorldShape eShape, float fMultiplier)
+        {
+            return GetPosition(pLoc, eShape, pLoc.m_fHeight, fMultiplier);
+        }
+
+        private static Vector3 GetPosition(Vertex pVertex, WorldShape eShape, float fHeight, float fMultiplier)
+        {
+            Vector3 pPosition = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
+            if (eShape == WorldShape.Ringworld)
+                pPosition -= Vector3.Normalize(pPosition) * fHeight * fMultiplier;
+            else
+                pPosition += Vector3.Up * fHeight * fMultiplier;
+
+            return pPosition;
+        }
+
+        private static Vector3 GetPosition(LocationX pLoc, WorldShape eShape, float fHeight, float fMultiplier)
+        {
+            Vector3 pPosition = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
+            if (eShape == WorldShape.Ringworld)
+                pPosition -= Vector3.Normalize(pPosition) * fHeight * fMultiplier;
+            else
+                pPosition += Vector3.Up * fHeight * fMultiplier;
+
+            return pPosition;
+        }
+
         /// <summary>
         /// набор примитивов без дублирования вертексов, с плавным переходом цвета между разноцветными примитивами
         /// </summary>
@@ -280,11 +314,7 @@ namespace MapDrawXNAEngine
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                pVM.Position = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pVM.Position -= Vector3.Normalize(pVM.Position) * pVertex.m_fHeight * m_fLandHeightMultiplier;
-                else
-                    pVM.Position += Vector3.Up * pVertex.m_fHeight * m_fLandHeightMultiplier;
+                pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -317,11 +347,7 @@ namespace MapDrawXNAEngine
                 if (pLoc.m_eType == RegionType.Volcano)
                     fHeight -= 10 * m_fLandHeightMultiplier;
 
-                m_aLandVertices[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    m_aLandVertices[iCounter].Position -= Vector3.Normalize(m_aLandVertices[iCounter].Position) * fHeight;
-                else
-                    m_aLandVertices[iCounter].Position += Vector3.Up * fHeight;
+                m_aLandVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -363,19 +389,40 @@ namespace MapDrawXNAEngine
 
                 LandType eLT = LandType.Ocean;
                 if (pLoc.Owner != null)
-                    eLT = (pLoc.Owner as LandX).Type.m_eType; 
-                
+                    eLT = (pLoc.Owner as LandX).Type.m_eType;
+
+                float fMinHeight = float.MaxValue;
                 Line pLine = pLoc.m_pFirstLine;
-                //последовательно перебирает все связанные линии, пока круг не замкнётся.
                 do
                 {
-
                     m_aLandIndices[iCounter++] = cLocations[pLoc.m_iID];
                     m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
                     m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID];
 
-                    pLine = pLine.m_pNext;
+                    if (fMinHeight > pLine.m_pPoint1.m_fHeight)
+                        fMinHeight = pLine.m_pPoint1.m_fHeight;
 
+                    pLine = pLine.m_pNext;
+                }
+                while (pLine != pLoc.m_pFirstLine);
+
+                if (pLoc.m_pSettlement != null)
+                {
+                    m_aLandVertices[cLocations[pLoc.m_iID]].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, (pLoc.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
+                    pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position = GetPosition(pLine.m_pPoint1, m_pWorld.m_pGrid.m_eShape, (pLine.m_pPoint1.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
+
+                //последовательно перебирает все связанные линии, пока круг не замкнётся.
+                pLine = pLoc.m_pFirstLine; 
+                do
+                {
                     Model pTree = null;
                     switch (eLT)
                     {
@@ -411,29 +458,41 @@ namespace MapDrawXNAEngine
 
                     //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights/4;
                     //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2/4;
+
+                    pLine = pLine.m_pNext;
                 }
                 while (pLine != pLoc.m_pFirstLine);
 
                 if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
                 {
-                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Capital ||
-                       pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.City)
-                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
-                                             Rnd.Get((float)Math.PI * 2), 0.15f,
-                                             cityModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
-                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
-                       pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village)
-                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
-                                             Rnd.Get((float)Math.PI * 2), 0.08f,
-                                             villageModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
-                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Town)
-                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
-                                             Rnd.Get((float)Math.PI * 2), 0.1f,
-                                             townModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
-                    if (pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Fort)
-                        cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
-                                             Rnd.Get((float)Math.PI * 2), 0.1f,
-                                             fortModel, m_pWorld.m_pGrid.m_eShape, settlementsTexture));
+                    Texture2D pTexture = m_cSettlementTextures[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
+                    Model pModel = m_cSettlementModels[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
+                    float fScale = 0.01f; //0.015f;
+                    //switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                    //{
+                    //    case Socium.Settlements.SettlementSize.Hamlet:
+                    //        fScale = 0.01f;
+                    //        break;
+                    //    case Socium.Settlements.SettlementSize.Village:
+                    //        fScale = 0.01f;
+                    //        break;
+                    //    case Socium.Settlements.SettlementSize.Fort:
+                    //        fScale = 0.015f;
+                    //        break;
+                    //    case Socium.Settlements.SettlementSize.Town:
+                    //        fScale = 0.015f;
+                    //        break;
+                    //    case Socium.Settlements.SettlementSize.City:
+                    //        fScale = 0.015f;
+                    //        break;
+                    //    case Socium.Settlements.SettlementSize.Capital:
+                    //        fScale = 0.015f;
+                    //        break;
+                    //}
+
+                    cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
+                                            Rnd.Get((float)Math.PI * 2), fScale*2,
+                                            pModel, m_pWorld.m_pGrid.m_eShape, pTexture));
                 }
 
                 if (pLoc.m_eType == RegionType.Peak)
@@ -539,11 +598,7 @@ namespace MapDrawXNAEngine
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                pVM.Position = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pVM.Position -= Vector3.Normalize(pVM.Position) * pVertex.m_fHeight * m_fLandHeightMultiplier;
-                else
-                    pVM.Position += Vector3.Up * pVertex.m_fHeight * m_fLandHeightMultiplier;
+                pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -576,11 +631,7 @@ namespace MapDrawXNAEngine
                 m_aUnderwaterVertices[iCounter] = new VertexMultitextured();
                 float fHeight = pLoc.m_fHeight * m_fLandHeightMultiplier;
 
-                m_aUnderwaterVertices[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    m_aUnderwaterVertices[iCounter].Position -= Vector3.Normalize(m_aUnderwaterVertices[iCounter].Position) * fHeight;
-                else
-                    m_aUnderwaterVertices[iCounter].Position += Vector3.Up * fHeight;
+                m_aUnderwaterVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -693,11 +744,7 @@ namespace MapDrawXNAEngine
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                pVM.Position = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pVM.Position -= Vector3.Normalize(pVM.Position) * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fLandHeightMultiplier : 0);
-                else
-                    pVM.Position += Vector3.Up * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fLandHeightMultiplier : 0);
+                pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, 0);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -730,14 +777,7 @@ namespace MapDrawXNAEngine
                 m_aWaterVertices[iCounter] = new VertexPositionTexture();
                 float fHeight = pLoc.m_fHeight * m_fLandHeightMultiplier;
 
-                m_aWaterVertices[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
-                if (fHeight > 0)
-                {
-                    if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                        m_aLandVertices[iCounter].Position -= Vector3.Normalize(m_aLandVertices[iCounter].Position) * fHeight;
-                    else
-                        m_aLandVertices[iCounter].Position += Vector3.Up * fHeight;
-                }
+                m_aWaterVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, 0);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -823,11 +863,7 @@ namespace MapDrawXNAEngine
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                Vector3 pPosition = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
-                if(m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pPosition -= Vector3.Normalize(pPosition) * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fLandHeightMultiplier : pVertex.m_fHeight * m_fLandHeightMultiplier / 10);
-                else
-                    pPosition += Vector3.Up * (pVertex.m_fHeight > 0 ? pVertex.m_fHeight * m_fLandHeightMultiplier : pVertex.m_fHeight * m_fLandHeightMultiplier/10);
+                Vector3 pPosition = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
                 foreach (LocationX pLoc in pVertex.m_cLocations)
@@ -868,17 +904,13 @@ namespace MapDrawXNAEngine
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 m_aLandVertices[iCounter] = new VertexMultitextured();
-                float fHeight = pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fLandHeightMultiplier : pLoc.m_fHeight * m_fLandHeightMultiplier/10;
+                float fHeight = m_fLandHeightMultiplier;
                 if (pLoc.m_eType == RegionType.Peak)
-                    fHeight += 2 * m_fLandHeightMultiplier;
+                    fHeight *= 1.1f;
                 if (pLoc.m_eType == RegionType.Volcano)
-                    fHeight -= 10 * m_fLandHeightMultiplier;
+                    fHeight *= 0.8f;
 
-                m_aLandVertices[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    m_aLandVertices[iCounter].Position -= Vector3.Normalize(m_aLandVertices[iCounter].Position) * fHeight;
-                else
-                    m_aLandVertices[iCounter].Position += Vector3.Up * fHeight;
+                m_aLandVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 //if (pLoc.m_eType == RegionType.Peak)
                 //    userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
@@ -1308,39 +1340,16 @@ namespace MapDrawXNAEngine
         Texture2D lavaTexture;
 
         Texture2D treeTexture;
-        Texture2D settlementsTexture;
 
         Model[] treeModel = new Model[13];
         Model[] palmModel = new Model[4];
         Model[] pineModel = new Model[4];
 
-        Model cityModel;
-        Model villageModel;
-        Model fortModel;
-        Model townModel;
+        Dictionary<SettlementSize, Dictionary<int, Model>> m_cSettlementModels = new Dictionary<SettlementSize,Dictionary<int,Model>>();
+        Dictionary<SettlementSize, Dictionary<int, Texture2D>> m_cSettlementTextures = new Dictionary<SettlementSize,Dictionary<int,Texture2D>>();
 
-        /// <summary>
-        /// Initializes the control.
-        /// </summary>
-        protected override void Initialize()
+        private void BindEffectParameters()
         {
-            LibContent = new ContentManager(Services);
-
-            // Create our effect.
-            effect2 = LibContent.Load<Effect>("content/Effect1");
-
-            grassTexture = LibContent.Load<Texture2D>("content/1-plain");
-            sandTexture = LibContent.Load<Texture2D>("content/1-desert");
-            rockTexture = LibContent.Load<Texture2D>("content/rock");
-            snowTexture = LibContent.Load<Texture2D>("content/snow");
-            forestTexture = LibContent.Load<Texture2D>("content/grass");
-            savannaTexture = LibContent.Load<Texture2D>("content/plain");
-            swampTexture = LibContent.Load<Texture2D>("content/river");
-            lavaTexture = LibContent.Load<Texture2D>("content/1-lava");
-
-            treeTexture = LibContent.Load<Texture2D>("content/trees");
-            settlementsTexture = LibContent.Load<Texture2D>("content/fake_houses");
-
             pEffectWorld = effect2.Parameters["World"];
             pEffectView = effect2.Parameters["View"];
             pEffectProjection = effect2.Parameters["Projection"];
@@ -1371,6 +1380,202 @@ namespace MapDrawXNAEngine
             pEffectTexture6 = effect2.Parameters["xTexture6"];
             pEffectTexture7 = effect2.Parameters["xTexture7"];
             pEffectTextureModel = effect2.Parameters["xTextureModel"];
+        }
+
+        private void LoadTerrainTextures()
+        {
+            grassTexture = LibContent.Load<Texture2D>("content/dds/1-plain");
+            sandTexture = LibContent.Load<Texture2D>("content/dds/1-desert");
+            rockTexture = LibContent.Load<Texture2D>("content/dds/rock");
+            snowTexture = LibContent.Load<Texture2D>("content/dds/snow");
+            forestTexture = LibContent.Load<Texture2D>("content/dds/grass");
+            savannaTexture = LibContent.Load<Texture2D>("content/dds/plain");
+            swampTexture = LibContent.Load<Texture2D>("content/dds/river");
+            lavaTexture = LibContent.Load<Texture2D>("content/dds/1-lava");
+        }
+
+        private void LoadTrees()
+        {
+            treeTexture = LibContent.Load<Texture2D>("content/dds/trees");
+
+            treeModel[0] = LoadModel("content/fbx/tree1");
+            treeModel[1] = LoadModel("content/fbx/tree2");
+            treeModel[2] = LoadModel("content/fbx/tree3");
+            treeModel[3] = LoadModel("content/fbx/tree4");
+            treeModel[4] = LoadModel("content/fbx/tree6");
+            treeModel[5] = LoadModel("content/fbx/tree7");
+            treeModel[6] = LoadModel("content/fbx/tree8");
+            treeModel[7] = LoadModel("content/fbx/tree9");
+            treeModel[8] = LoadModel("content/fbx/tree10");
+            treeModel[9] = LoadModel("content/fbx/tree11");
+            treeModel[10] = LoadModel("content/fbx/tree12");
+            treeModel[11] = LoadModel("content/fbx/tree15");
+            treeModel[12] = LoadModel("content/fbx/tree16");
+
+            palmModel[0] = LoadModel("content/fbx/palm1");
+            palmModel[1] = LoadModel("content/fbx/palm2");
+            palmModel[2] = LoadModel("content/fbx/palm3");
+            palmModel[3] = LoadModel("content/fbx/palm4");
+
+            pineModel[0] = LoadModel("content/fbx/tree5");
+            pineModel[1] = LoadModel("content/fbx/tree13");
+            pineModel[2] = LoadModel("content/fbx/tree14");
+            pineModel[3] = LoadModel("content/fbx/tree16");
+        }
+
+        private void LoadSettlements()
+        {
+            foreach (SettlementSize eSize in Enum.GetValues(typeof(SettlementSize)))
+            {
+                m_cSettlementModels[eSize] = new Dictionary<int, Model>();
+                m_cSettlementTextures[eSize] = new Dictionary<int, Texture2D>();
+            }
+
+            Texture2D pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T0");
+            m_cSettlementModels[SettlementSize.Hamlet][0] = LoadModel("content/fbx/hamlet_T0");
+            m_cSettlementTextures[SettlementSize.Hamlet][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.Village][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.Town][0] = pTexture;
+            m_cSettlementModels[SettlementSize.City][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.City][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.Capital][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][0] = LoadModel("content/fbx/fort_T1");
+            m_cSettlementTextures[SettlementSize.Fort][0] = LibContent.Load<Texture2D>("content/dds/Fort_T1");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T1");
+            m_cSettlementModels[SettlementSize.Hamlet][1] = LoadModel("content/fbx/hamlet_T1");
+            m_cSettlementTextures[SettlementSize.Hamlet][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][1] = LoadModel("content/fbx/village_T1");
+            m_cSettlementTextures[SettlementSize.Village][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][1] = LoadModel("content/fbx/town_T1");
+            m_cSettlementTextures[SettlementSize.Town][1] = pTexture;
+            m_cSettlementModels[SettlementSize.City][1] = LoadModel("content/fbx/city_T1");
+            m_cSettlementTextures[SettlementSize.City][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][1] = LoadModel("content/fbx/city_T1");
+            m_cSettlementTextures[SettlementSize.Capital][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][1] = LoadModel("content/fbx/fort_T1");
+            m_cSettlementTextures[SettlementSize.Fort][1] = LibContent.Load<Texture2D>("content/dds/Fort_T1");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_small");
+            m_cSettlementModels[SettlementSize.Hamlet][2] = LoadModel("content/fbx/hamlet_T2");
+            m_cSettlementTextures[SettlementSize.Hamlet][2] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][2] = LoadModel("content/fbx/village_T2");
+            m_cSettlementTextures[SettlementSize.Village][2] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_big");
+            m_cSettlementModels[SettlementSize.Town][2] = LoadModel("content/fbx/town_T2");
+            m_cSettlementTextures[SettlementSize.Town][2] = pTexture;
+            m_cSettlementModels[SettlementSize.City][2] = LoadModel("content/fbx/city_T2");
+            m_cSettlementTextures[SettlementSize.City][2] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][2] = LoadModel("content/fbx/city_T2");
+            m_cSettlementTextures[SettlementSize.Capital][2] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][2] = LoadModel("content/fbx/fort_T2");
+            m_cSettlementTextures[SettlementSize.Fort][2] = LibContent.Load<Texture2D>("content/dds/Fort_T2");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_small");
+            m_cSettlementModels[SettlementSize.Hamlet][3] = LoadModel("content/fbx/hamlet_T2");
+            m_cSettlementTextures[SettlementSize.Hamlet][3] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][3] = LoadModel("content/fbx/village_T2");
+            m_cSettlementTextures[SettlementSize.Village][3] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T3_big");
+            m_cSettlementModels[SettlementSize.Town][3] = LoadModel("content/fbx/town_T3");
+            m_cSettlementTextures[SettlementSize.Town][3] = pTexture;
+            m_cSettlementModels[SettlementSize.City][3] = LoadModel("content/fbx/city_T3");
+            m_cSettlementTextures[SettlementSize.City][3] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][3] = LoadModel("content/fbx/city_T3");
+            m_cSettlementTextures[SettlementSize.Capital][3] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][3] = LoadModel("content/fbx/fort_T3");
+            m_cSettlementTextures[SettlementSize.Fort][3] = LibContent.Load<Texture2D>("content/dds/Fort_T3");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_small");
+            m_cSettlementModels[SettlementSize.Hamlet][4] = LoadModel("content/fbx/hamlet_T4");
+            m_cSettlementTextures[SettlementSize.Hamlet][4] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][4] = LoadModel("content/fbx/village_T4");
+            m_cSettlementTextures[SettlementSize.Village][4] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_big");
+            m_cSettlementModels[SettlementSize.Town][4] = LoadModel("content/fbx/town_T4");
+            m_cSettlementTextures[SettlementSize.Town][4] = pTexture;
+            m_cSettlementModels[SettlementSize.City][4] = LoadModel("content/fbx/city_T4");
+            m_cSettlementTextures[SettlementSize.City][4] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][4] = LoadModel("content/fbx/city_T4");
+            m_cSettlementTextures[SettlementSize.Capital][4] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][4] = LoadModel("content/fbx/fort_T3");
+            m_cSettlementTextures[SettlementSize.Fort][4] = LibContent.Load<Texture2D>("content/dds/Fort_T3");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_small");
+            m_cSettlementModels[SettlementSize.Hamlet][5] = LoadModel("content/fbx/hamlet_T4");
+            m_cSettlementTextures[SettlementSize.Hamlet][5] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][5] = LoadModel("content/fbx/village_T4");
+            m_cSettlementTextures[SettlementSize.Village][5] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T5_big");
+            m_cSettlementModels[SettlementSize.Town][5] = LoadModel("content/fbx/town_T5");
+            m_cSettlementTextures[SettlementSize.Town][5] = pTexture;
+            m_cSettlementModels[SettlementSize.City][5] = LoadModel("content/fbx/city_T5");
+            m_cSettlementTextures[SettlementSize.City][5] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][5] = LoadModel("content/fbx/city_T5");
+            m_cSettlementTextures[SettlementSize.Capital][5] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][5] = LoadModel("content/fbx/fort_T5");
+            m_cSettlementTextures[SettlementSize.Fort][5] = LibContent.Load<Texture2D>("content/dds/Fort_T5");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6_hamlet");
+            m_cSettlementModels[SettlementSize.Hamlet][6] = LoadModel("content/fbx/hamlet_T6");
+            m_cSettlementTextures[SettlementSize.Hamlet][6] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6_village");
+            m_cSettlementModels[SettlementSize.Village][6] = LoadModel("content/fbx/village_T6");
+            m_cSettlementTextures[SettlementSize.Village][6] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6");
+            m_cSettlementModels[SettlementSize.Town][6] = LoadModel("content/fbx/town_T6");
+            m_cSettlementTextures[SettlementSize.Town][6] = pTexture;
+            m_cSettlementModels[SettlementSize.City][6] = LoadModel("content/fbx/city_T6");
+            m_cSettlementTextures[SettlementSize.City][6] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][6] = LoadModel("content/fbx/city_T6");
+            m_cSettlementTextures[SettlementSize.Capital][6] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][6] = LoadModel("content/fbx/fort_T6");
+            m_cSettlementTextures[SettlementSize.Fort][6] = LibContent.Load<Texture2D>("content/dds/Fort_T6");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T7");
+            m_cSettlementModels[SettlementSize.Hamlet][7] = LoadModel("content/fbx/hamlet_T7");
+            m_cSettlementTextures[SettlementSize.Hamlet][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][7] = LoadModel("content/fbx/village_T7");
+            m_cSettlementTextures[SettlementSize.Village][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][7] = LoadModel("content/fbx/town_T7");
+            m_cSettlementTextures[SettlementSize.Town][7] = pTexture;
+            m_cSettlementModels[SettlementSize.City][7] = LoadModel("content/fbx/city_T7");
+            m_cSettlementTextures[SettlementSize.City][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][7] = LoadModel("content/fbx/city_T7");
+            m_cSettlementTextures[SettlementSize.Capital][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][7] = LoadModel("content/fbx/fort_T7");
+            m_cSettlementTextures[SettlementSize.Fort][7] = LibContent.Load<Texture2D>("content/dds/Fort_T7");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T8");
+            m_cSettlementModels[SettlementSize.Hamlet][8] = LoadModel("content/fbx/hamlet_T8");
+            m_cSettlementTextures[SettlementSize.Hamlet][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][8] = LoadModel("content/fbx/village_T8");
+            m_cSettlementTextures[SettlementSize.Village][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][8] = LoadModel("content/fbx/town_T8");
+            m_cSettlementTextures[SettlementSize.Town][8] = pTexture;
+            m_cSettlementModels[SettlementSize.City][8] = LoadModel("content/fbx/city_T8");
+            m_cSettlementTextures[SettlementSize.City][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][8] = LoadModel("content/fbx/city_T8");
+            m_cSettlementTextures[SettlementSize.Capital][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][8] = LoadModel("content/fbx/fort_T7");
+            m_cSettlementTextures[SettlementSize.Fort][8] = LibContent.Load<Texture2D>("content/dds/Fort_T7");
+        }
+
+        /// <summary>
+        /// Initializes the control.
+        /// </summary>
+        protected override void Initialize()
+        {
+            LibContent = new ContentManager(Services);
+
+            // Create our effect.
+            LoadTerrainTextures();
+
+            effect2 = LibContent.Load<Effect>("content/Effect1");
+            BindEffectParameters();
 
             effect2.CurrentTechnique = effect2.Techniques["LandRingworld"];
             pEffectWorld.SetValue(Matrix.Identity);
@@ -1412,49 +1617,10 @@ namespace MapDrawXNAEngine
             else
                 m_pCamera = new PlainCamera(GraphicsDevice);
 
-            LoadTree(0, "content/tree1");
-            LoadTree(1, "content/tree2");
-            LoadTree(2, "content/tree3");
-            LoadTree(3, "content/tree4");
-            LoadTree(4, "content/tree6");
-            LoadTree(5, "content/tree7");
-            LoadTree(6, "content/tree8");
-            LoadTree(7, "content/tree9");
-            LoadTree(8, "content/tree10");
-            LoadTree(9, "content/tree11");
-            LoadTree(10, "content/tree12");
-            LoadTree(11, "content/tree15");
-            LoadTree(12, "content/tree16");
 
-            LoadPalm(0, "content/palm1");
-            LoadPalm(1, "content/palm2");
-            LoadPalm(2, "content/palm3");
-            LoadPalm(3, "content/palm4");
+            LoadTrees();
 
-            LoadPine(0, "content/tree5");
-            LoadPine(1, "content/tree13");
-            LoadPine(2, "content/tree14");
-            LoadPine(3, "content/tree16");
-
-            cityModel = LibContent.Load<Model>("content/city");
-            foreach (ModelMesh mesh in cityModel.Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect2.Clone();
-
-            villageModel = LibContent.Load<Model>("content/village");
-            foreach (ModelMesh mesh in villageModel.Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect2.Clone();
-
-            fortModel = LibContent.Load<Model>("content/fort");
-            foreach (ModelMesh mesh in fortModel.Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect2.Clone();
-
-            townModel = LibContent.Load<Model>("content/town");
-            foreach (ModelMesh mesh in townModel.Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect2.Clone();
+            LoadSettlements();
 
             // Start the animation timer.
             timer = Stopwatch.StartNew();
@@ -1464,28 +1630,19 @@ namespace MapDrawXNAEngine
             Application.Idle += delegate { Invalidate(); };
         }
 
-        private void LoadTree(int index, string sPath)
+        /// <summary>
+        /// effect2 должен уже быть создан и настроен!
+        /// </summary>
+        /// <param name="sPath"></param>
+        /// <returns></returns>
+        private Model LoadModel(string sPath)
         {
-            treeModel[index] = LibContent.Load<Model>(sPath);
-            foreach (ModelMesh mesh in treeModel[index].Meshes)
+            Model pModel = LibContent.Load<Model>(sPath);
+            foreach (ModelMesh mesh in pModel.Meshes)
                 foreach (ModelMeshPart meshPart in mesh.MeshParts)
                     meshPart.Effect = effect2.Clone();
-        }
 
-        private void LoadPalm(int index, string sPath)
-        {
-            palmModel[index] = LibContent.Load<Model>(sPath);
-            foreach (ModelMesh mesh in palmModel[index].Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect2.Clone();
-        }
-
-        private void LoadPine(int index, string sPath)
-        {
-            pineModel[index] = LibContent.Load<Model>(sPath);
-            foreach (ModelMesh mesh in pineModel[index].Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect2.Clone();
+            return pModel;
         }
 
         private Microsoft.Xna.Framework.Color ConvertColor(System.Drawing.Color Value)
@@ -1682,7 +1839,7 @@ namespace MapDrawXNAEngine
                 // facing, and even if there is other geometry in front of it.
                 RasterizerState rs = new RasterizerState();
                 rs.CullMode = CullMode.CullCounterClockwiseFace;
-                //rs.FillMode = FillMode.WireFrame;
+                rs.FillMode = FillMode.WireFrame;
                 GraphicsDevice.RasterizerState = rs; 
                 GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
