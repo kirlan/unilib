@@ -108,27 +108,30 @@ namespace VQMapTest2
             switch (tabControl1.SelectedIndex)
             {
                 case 0:
-                    mapDraw3d1.Mode = MapMode.Areas;
+                    mapDraw3d1.Mode = MapMode.Sattelite;
                     break;
                 case 1:
-                    mapDraw3d1.Mode = MapMode.Humidity;
+                    mapDraw3d1.Mode = MapMode.Areas;
                     break;
                 case 2:
-                    mapDraw3d1.Mode = MapMode.Elevation;
+                    mapDraw3d1.Mode = MapMode.Humidity;
                     break;
                 case 3:
-                    mapDraw3d1.Mode = MapMode.Natives;
+                    mapDraw3d1.Mode = MapMode.Elevation;
                     break;
                 case 4:
-                    mapDraw3d1.Mode = MapMode.Nations;
+                    mapDraw3d1.Mode = MapMode.Natives;
                     break;
                 case 5:
-                    mapDraw3d1.Mode = MapMode.TechLevel;
+                    mapDraw3d1.Mode = MapMode.Nations;
                     break;
                 case 6:
-                    mapDraw3d1.Mode = MapMode.PsiLevel;
+                    mapDraw3d1.Mode = MapMode.TechLevel;
                     break;
                 case 7:
+                    mapDraw3d1.Mode = MapMode.PsiLevel;
+                    break;
+                case 8:
                     mapDraw3d1.Mode = MapMode.Infrastructure;
                     break;
             }

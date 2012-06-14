@@ -88,6 +88,7 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.label3 = new System.Windows.Forms.Label();
             this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.tabPage11 = new System.Windows.Forms.TabPage();
             this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
             this.groupBox4.SuspendLayout();
             this.tabControl2.SuspendLayout();
@@ -215,6 +216,7 @@
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.tabControl1.Appearance = System.Windows.Forms.TabAppearance.Buttons;
+            this.tabControl1.Controls.Add(this.tabPage11);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage10);
@@ -234,54 +236,54 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(538, 4);
+            this.tabPage1.Location = new System.Drawing.Point(148, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(0, 699);
+            this.tabPage1.Size = new System.Drawing.Size(298, 699);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Land types";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(538, 4);
+            this.tabPage2.Location = new System.Drawing.Point(214, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(0, 699);
+            this.tabPage2.Size = new System.Drawing.Size(232, 699);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Humidity";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage10
             // 
-            this.tabPage10.Location = new System.Drawing.Point(538, 4);
+            this.tabPage10.Location = new System.Drawing.Point(283, 4);
             this.tabPage10.Name = "tabPage10";
-            this.tabPage10.Size = new System.Drawing.Size(0, 699);
+            this.tabPage10.Size = new System.Drawing.Size(163, 699);
             this.tabPage10.TabIndex = 7;
             this.tabPage10.Text = "Elevation";
             this.tabPage10.UseVisualStyleBackColor = true;
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(538, 4);
+            this.tabPage3.Location = new System.Drawing.Point(342, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(0, 699);
+            this.tabPage3.Size = new System.Drawing.Size(104, 699);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Natives";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(538, 4);
+            this.tabPage4.Location = new System.Drawing.Point(401, 4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(0, 699);
+            this.tabPage4.Size = new System.Drawing.Size(45, 699);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Nations";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(538, 4);
+            this.tabPage5.Location = new System.Drawing.Point(475, 4);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(0, 699);
             this.tabPage5.TabIndex = 4;
@@ -290,7 +292,7 @@
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(538, 4);
+            this.tabPage6.Location = new System.Drawing.Point(529, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 699);
             this.tabPage6.TabIndex = 5;
@@ -299,7 +301,7 @@
             // 
             // tabPage9
             // 
-            this.tabPage9.Location = new System.Drawing.Point(538, 4);
+            this.tabPage9.Location = new System.Drawing.Point(607, 4);
             this.tabPage9.Name = "tabPage9";
             this.tabPage9.Size = new System.Drawing.Size(0, 699);
             this.tabPage9.TabIndex = 6;
@@ -652,6 +654,15 @@
             this.timer3.Interval = 1000;
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
+            // tabPage11
+            // 
+            this.tabPage11.Location = new System.Drawing.Point(607, 4);
+            this.tabPage11.Name = "tabPage11";
+            this.tabPage11.Size = new System.Drawing.Size(0, 699);
+            this.tabPage11.TabIndex = 8;
+            this.tabPage11.Text = "Bird View";
+            this.tabPage11.UseVisualStyleBackColor = true;
+            // 
             // mapDraw3d1
             // 
             this.mapDraw3d1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -771,6 +782,7 @@
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Timer timer3;
+        private System.Windows.Forms.TabPage tabPage11;
     }
 }
 

@@ -110,6 +110,10 @@
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
       <Name>Random</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\UniLibControls\UniLibControls.csproj">
+      <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
+      <Name>UniLibControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Content\Content.contentproj">
       <Project>{9696E015-7C8A-4AA9-9BBE-E0B2BA3F159B}</Project>
       <Name>Content</Name>
