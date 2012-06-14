@@ -18,6 +18,9 @@ using UniLibXNA;
 using System.IO;
 using Random;
 using Socium.Settlements;
+using Socium.Nations;
+using Socium.Languages;
+using nsUniLibControls;
 
 namespace MapDrawXNAEngine
 {
@@ -33,6 +36,10 @@ namespace MapDrawXNAEngine
 
     public enum MapMode
     {
+        /// <summary>
+        /// фотореалистичный пейзаж
+        /// </summary>
+        Sattelite,
         /// <summary>
         /// физическая карта
         /// </summary>
@@ -138,13 +145,20 @@ namespace MapDrawXNAEngine
             }
         }
 
+        protected class MapModeData
+        { 
+            public VertexPositionColorNormal[] m_aVertices = new VertexPositionColorNormal[0];
+            public int[] m_aIndices = new int[0];
+            public int m_iTrianglesCount = 0;
+        }
+
         /// <summary>
         /// мир, карту которого мы рисуем
         /// </summary>
         internal World m_pWorld = null;
 
-        //BasicEffect effect;
-        Effect effect2;
+        BasicEffect m_pBasicEffect;
+        Effect m_pMyEffect;
         Stopwatch timer;
 
         VertexMultitextured[] m_aLandVertices;
@@ -159,71 +173,73 @@ namespace MapDrawXNAEngine
         int[] m_aWaterIndices;
         int m_iWaterTrianglesCount = 0;
 
+        Dictionary<MapMode, MapModeData> m_cMapModeData = new Dictionary<MapMode, MapModeData>();
+
         private float m_fLandHeightMultiplier = 0.1f;
 
-        private void FillPrimitivesFake()
-        {
-            m_aLandVertices = new VertexMultitextured[5];
+        //private void FillPrimitivesFake()
+        //{
+        //    m_aLandVertices = new VertexMultitextured[5];
 
-            m_aLandVertices[0] = new VertexMultitextured();
-            m_aLandVertices[0].Position = new Vector3(-m_pWorld.m_pGrid.RX, 0, -m_pWorld.m_pGrid.RY);
-            //userPrimitives[0].Color = Microsoft.Xna.Framework.Color.White;
-            m_aLandVertices[0].TextureCoordinate.X = 0;
-            m_aLandVertices[0].TextureCoordinate.Y = 0;
-            m_aLandVertices[0].TexWeights = new Vector4(1, 0, 0, 0);
-            m_aLandVertices[0].TexWeights2 = new Vector4(0);
+        //    m_aLandVertices[0] = new VertexMultitextured();
+        //    m_aLandVertices[0].Position = new Vector3(-m_pWorld.m_pGrid.RX, 0, -m_pWorld.m_pGrid.RY);
+        //    //userPrimitives[0].Color = Microsoft.Xna.Framework.Color.White;
+        //    m_aLandVertices[0].TextureCoordinate.X = 0;
+        //    m_aLandVertices[0].TextureCoordinate.Y = 0;
+        //    m_aLandVertices[0].TexWeights = new Vector4(1, 0, 0, 0);
+        //    m_aLandVertices[0].TexWeights2 = new Vector4(0);
 
-            m_aLandVertices[1] = new VertexMultitextured();
-            m_aLandVertices[1].Position = new Vector3(m_pWorld.m_pGrid.RX, 0, -m_pWorld.m_pGrid.RY);
-            //userPrimitives[1].Color = Microsoft.Xna.Framework.Color.Red;
-            m_aLandVertices[1].TextureCoordinate.X = 200;
-            m_aLandVertices[1].TextureCoordinate.Y = 0;
-            m_aLandVertices[1].TexWeights = new Vector4(0, 1, 0, 0);
-            m_aLandVertices[1].TexWeights2 = new Vector4(0);
+        //    m_aLandVertices[1] = new VertexMultitextured();
+        //    m_aLandVertices[1].Position = new Vector3(m_pWorld.m_pGrid.RX, 0, -m_pWorld.m_pGrid.RY);
+        //    //userPrimitives[1].Color = Microsoft.Xna.Framework.Color.Red;
+        //    m_aLandVertices[1].TextureCoordinate.X = 200;
+        //    m_aLandVertices[1].TextureCoordinate.Y = 0;
+        //    m_aLandVertices[1].TexWeights = new Vector4(0, 1, 0, 0);
+        //    m_aLandVertices[1].TexWeights2 = new Vector4(0);
 
-            m_aLandVertices[2] = new VertexMultitextured();
-            m_aLandVertices[2].Position = new Vector3(m_pWorld.m_pGrid.RX, 0, m_pWorld.m_pGrid.RY);
-            //userPrimitives[2].Color = Microsoft.Xna.Framework.Color.Blue;
-            m_aLandVertices[2].TextureCoordinate.X = 200;
-            m_aLandVertices[2].TextureCoordinate.Y = 200;
-            m_aLandVertices[2].TexWeights = new Vector4(0, 0, 1, 0);
-            m_aLandVertices[2].TexWeights2 = new Vector4(0); 
+        //    m_aLandVertices[2] = new VertexMultitextured();
+        //    m_aLandVertices[2].Position = new Vector3(m_pWorld.m_pGrid.RX, 0, m_pWorld.m_pGrid.RY);
+        //    //userPrimitives[2].Color = Microsoft.Xna.Framework.Color.Blue;
+        //    m_aLandVertices[2].TextureCoordinate.X = 200;
+        //    m_aLandVertices[2].TextureCoordinate.Y = 200;
+        //    m_aLandVertices[2].TexWeights = new Vector4(0, 0, 1, 0);
+        //    m_aLandVertices[2].TexWeights2 = new Vector4(0); 
 
-            m_aLandVertices[3] = new VertexMultitextured();
-            m_aLandVertices[3].Position = new Vector3(-m_pWorld.m_pGrid.RX, 0, m_pWorld.m_pGrid.RY);
-            //userPrimitives[3].Color = Microsoft.Xna.Framework.Color.Green;
-            m_aLandVertices[3].TextureCoordinate.X = 0;
-            m_aLandVertices[3].TextureCoordinate.Y = 200;
-            m_aLandVertices[3].TexWeights = new Vector4(0, 0, 0, 1);
-            m_aLandVertices[3].TexWeights2 = new Vector4(0);
+        //    m_aLandVertices[3] = new VertexMultitextured();
+        //    m_aLandVertices[3].Position = new Vector3(-m_pWorld.m_pGrid.RX, 0, m_pWorld.m_pGrid.RY);
+        //    //userPrimitives[3].Color = Microsoft.Xna.Framework.Color.Green;
+        //    m_aLandVertices[3].TextureCoordinate.X = 0;
+        //    m_aLandVertices[3].TextureCoordinate.Y = 200;
+        //    m_aLandVertices[3].TexWeights = new Vector4(0, 0, 0, 1);
+        //    m_aLandVertices[3].TexWeights2 = new Vector4(0);
 
-            m_aLandVertices[4] = new VertexMultitextured();
-            m_aLandVertices[4].Position = new Vector3(0, 0, 0);
-            //userPrimitives[4].Color = Microsoft.Xna.Framework.Color.Black;
-            m_aLandVertices[4].TextureCoordinate.X = 100;
-            m_aLandVertices[4].TextureCoordinate.Y = 100;
-            m_aLandVertices[4].TexWeights = new Vector4(0.25f);
-            m_aLandVertices[4].TexWeights2 = new Vector4(0);
+        //    m_aLandVertices[4] = new VertexMultitextured();
+        //    m_aLandVertices[4].Position = new Vector3(0, 0, 0);
+        //    //userPrimitives[4].Color = Microsoft.Xna.Framework.Color.Black;
+        //    m_aLandVertices[4].TextureCoordinate.X = 100;
+        //    m_aLandVertices[4].TextureCoordinate.Y = 100;
+        //    m_aLandVertices[4].TexWeights = new Vector4(0.25f);
+        //    m_aLandVertices[4].TexWeights2 = new Vector4(0);
 
-            m_iLandTrianglesCount = 4;
-            m_aLandIndices = new int[m_iLandTrianglesCount * 3];
+        //    m_iLandTrianglesCount = 4;
+        //    m_aLandIndices = new int[m_iLandTrianglesCount * 3];
 
-            m_aLandIndices[0] = 4;
-            m_aLandIndices[1] = 0;
-            m_aLandIndices[2] = 1;
+        //    m_aLandIndices[0] = 4;
+        //    m_aLandIndices[1] = 0;
+        //    m_aLandIndices[2] = 1;
 
-            m_aLandIndices[3] = 4;
-            m_aLandIndices[4] = 1;
-            m_aLandIndices[5] = 2;
+        //    m_aLandIndices[3] = 4;
+        //    m_aLandIndices[4] = 1;
+        //    m_aLandIndices[5] = 2;
 
-            m_aLandIndices[6] = 4;
-            m_aLandIndices[7] = 2;
-            m_aLandIndices[8] = 3;
+        //    m_aLandIndices[6] = 4;
+        //    m_aLandIndices[7] = 2;
+        //    m_aLandIndices[8] = 3;
 
-            m_aLandIndices[9] = 4;
-            m_aLandIndices[10] = 3;
-            m_aLandIndices[11] = 0;
-        }
+        //    m_aLandIndices[9] = 4;
+        //    m_aLandIndices[10] = 3;
+        //    m_aLandIndices[11] = 0;
+        //}
 
         private TreeModel[] m_aTrees = new TreeModel[0];
 
@@ -231,16 +247,38 @@ namespace MapDrawXNAEngine
 
         private float m_fTextureScale = 50000;
 
+        /// <summary>
+        /// Вычисляет реальные 3d координаты вертекса с учётом его собственной высоты над сеткой и формы мира
+        /// </summary>
+        /// <param name="pVertex">вертекс</param>
+        /// <param name="eShape">форма мира</param>
+        /// <param name="fMultiplier">множитель высоты</param>
+        /// <returns></returns>
         private static Vector3 GetPosition(Vertex pVertex, WorldShape eShape, float fMultiplier)
         {
             return GetPosition(pVertex, eShape, pVertex.m_fHeight, fMultiplier);
         }
 
+        /// <summary>
+        /// Вычисляет реальные 3d координаты центра локации с учётом её собственной высоты над сеткой и формы мира
+        /// </summary>
+        /// <param name="pLoc">локация</param>
+        /// <param name="eShape">форма мира</param>
+        /// <param name="fMultiplier">множитель высоты</param>
+        /// <returns></returns>
         private static Vector3 GetPosition(LocationX pLoc, WorldShape eShape, float fMultiplier)
         {
             return GetPosition(pLoc, eShape, pLoc.m_fHeight, fMultiplier);
         }
 
+        /// <summary>
+        /// Вычисляет реальные 3d координаты вертекса с учётом указанной высоты над сеткой и формы мира
+        /// </summary>
+        /// <param name="pVertex">вертекс</param>
+        /// <param name="eShape">форма мира</param>
+        /// <param name="fHeight">высота</param>
+        /// <param name="fMultiplier">множитель высоты</param>
+        /// <returns></returns>
         private static Vector3 GetPosition(Vertex pVertex, WorldShape eShape, float fHeight, float fMultiplier)
         {
             Vector3 pPosition = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
@@ -252,6 +290,14 @@ namespace MapDrawXNAEngine
             return pPosition;
         }
 
+        /// <summary>
+        /// Вычисляет реальные 3d координаты центра локации с учётом указанной высоты над сеткой и формы мира
+        /// </summary>
+        /// <param name="pLoc">локация</param>
+        /// <param name="eShape">форма мира</param>
+        /// <param name="fHeight">высота</param>
+        /// <param name="fMultiplier">множитель высоты</param>
+        /// <returns></returns>
         private static Vector3 GetPosition(LocationX pLoc, WorldShape eShape, float fHeight, float fMultiplier)
         {
             Vector3 pPosition = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
@@ -264,7 +310,7 @@ namespace MapDrawXNAEngine
         }
 
         /// <summary>
-        /// набор примитивов без дублирования вертексов, с плавным переходом цвета между разноцветными примитивами
+        /// текстурированная поверхность всего ландшафта
         /// </summary>
         private void BuildLand()
         {
@@ -533,6 +579,9 @@ namespace MapDrawXNAEngine
             return texWeights;
         }
 
+        /// <summary>
+        /// текстурированная поверхность подводной части ландшафта. нужна для построения водной глади
+        /// </summary>
         private void BuildUnderWater()
         {
             int iPrimitivesCount = 0;
@@ -686,6 +735,10 @@ namespace MapDrawXNAEngine
                 while (pLine != pLoc.m_pFirstLine);
             }
         }
+
+        /// <summary>
+        /// текстурированная поверхность водной глади
+        /// </summary>
         private void BuildWater()
         {
             int iPrimitivesCount = 0;
@@ -827,23 +880,173 @@ namespace MapDrawXNAEngine
             }
         }
 
+        private Microsoft.Xna.Framework.Color GetMapModeColor(LocationX pLoc, MapMode pMode)
+        {
+            if (!pLoc.Forbidden && pLoc.Owner != null)
+            {
+                switch (pMode)
+                {
+                    case MapMode.Areas:
+                        {
+                            if (pLoc.m_eType == RegionType.Peak)
+                                return Microsoft.Xna.Framework.Color.White;
+                            if (pLoc.m_eType == RegionType.Volcano)
+                                return Microsoft.Xna.Framework.Color.Red;
+
+                            return ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
+                        }
+                    case MapMode.Natives:
+                        {
+                            if ((pLoc.Owner as LandX).Area != null)
+                            { 
+                                Nation pNation = ((pLoc.Owner as LandX).Area as AreaX).m_pNation;
+                                if (pNation != null)
+                                    return m_cNationColorsID[pNation];
+                            }
+                        }
+                        break;
+                    case MapMode.Nations:
+                        {
+                            if ((pLoc.Owner as LandX).m_pProvince != null)
+                            {
+                                Nation pNation = (pLoc.Owner as LandX).m_pProvince.m_pNation;
+                                if (pNation != null)
+                                    return m_cNationColorsID[pNation];
+                            }
+                        }
+                        break;
+                    case MapMode.Humidity:
+                        {
+                            if (!(pLoc.Owner as LandX).IsWater)
+                            {
+                                KColor color = new KColor();
+                                color.RGB = System.Drawing.Color.LightBlue;
+                                color.Lightness = 1.0 - (double)(pLoc.Owner as LandX).Humidity / 200;
+
+                                return ConvertColor(color.RGB);
+                            }
+                        }
+                        break;
+                    case MapMode.Elevation:
+                        {
+                            KColor color = new KColor();
+                            color.RGB = System.Drawing.Color.Cyan;
+
+                            if (pLoc.m_fHeight < 0)
+                            {
+                                color.RGB = System.Drawing.Color.Green;
+                                color.Hue = 200 + 40 * pLoc.m_fHeight / m_pWorld.m_fMaxDepth;
+                            }
+                            if (pLoc.m_fHeight > 0)
+                            {
+                                color.RGB = System.Drawing.Color.Goldenrod;
+                                color.Hue = 100 - 100 * pLoc.m_fHeight / m_pWorld.m_fMaxHeight;
+                            }
+
+                            return ConvertColor(color.RGB);
+                        }
+                    case MapMode.TechLevel:
+                        {
+                            if ((pLoc.Owner as LandX).m_pProvince != null)
+                            {
+                                KColor background = new KColor();
+                                background.RGB = System.Drawing.Color.ForestGreen;
+                                background.Lightness = 1.0 - (double)((pLoc.Owner as LandX).m_pProvince.Owner as State).GetEffectiveTech() / 10;
+
+                                //KColor foreground = new KColor();
+                                //foreground.RGB = Color.ForestGreen;
+                                //foreground.Lightness = 1.0 - (double)iUsedTechLevel / 10;
+                                return ConvertColor(background.RGB);
+                            }
+                        }
+                        break;
+                    case MapMode.PsiLevel:
+                        {
+                            if ((pLoc.Owner as LandX).m_pProvince != null)
+                            {
+                                KColor background = new KColor();
+                                background.RGB = System.Drawing.Color.Orchid;
+                                //color2.Saturation = (double)iUsedTechLevel / 8;
+                                background.Lightness = 0.9 - (double)(pLoc.Owner as LandX).m_pProvince.m_pNation.m_iMagicLimit / 10;
+                                //switch (ePrevalence)
+                                //{
+                                //    case Customs.Magic.Magic_Praised:
+                                //        return new SolidBrush(background.RGB);
+                                //    case Customs.Magic.Magic_Allowed:
+                                //        return new HatchBrush(HatchStyle.DottedDiamond, Color.Gray, background.RGB);
+                                //    case Customs.Magic.Magic_Feared:
+                                //        return new HatchBrush(HatchStyle.DiagonalCross, Color.Red, background.RGB);
+                                //    default:
+                                //        throw new ArgumentException();
+                                //} 
+                                
+                                return ConvertColor(background.RGB);
+                            }
+                        }
+                        break;
+                    case MapMode.Infrastructure:
+                        {
+                            if ((pLoc.Owner as LandX).m_pProvince != null)
+                            {
+                                KColor background = new KColor();
+                                background.RGB = System.Drawing.Color.Red;
+                                //color1.Saturation = (double)iBaseTechLevel / 8;
+                                //background.Lightness = 0.9-(double)iInfrastructureLevel / 12;
+                                background.Hue += ((pLoc.Owner as LandX).m_pProvince.Owner as State).m_iCultureLevel * 16;
+
+                                //KColor foreground = new KColor();
+                                //foreground.RGB = Color.Gray;
+
+                                //// 0 - На преступников и диссидентов власти никакого внимания не обращают, спасение утопающих - дело рук самих утопающих.
+                                //// 1 - Власти занимаются только самыми вопиющими преступлениями.
+                                //// 2 - Есть законы, их надо соблюдать, кто не соблюдает - тот преступник, а вор должен сидеть в тюрьме.
+                                //// 3 - Законы крайне строги, широко используется смертная казнь.
+                                //// 4 - Все граждане, кроме правящей верхушки, попадают под презумпцию виновности.
+                                //switch (iControl)
+                                //{
+                                //    case 0:
+                                //        return new SolidBrush(background.RGB);
+                                //    case 1:
+                                //        return new HatchBrush(HatchStyle.Percent05, foreground.RGB, background.RGB);
+                                //    case 2:
+                                //        return new HatchBrush(HatchStyle.DottedDiamond, foreground.RGB, background.RGB);
+                                //    case 3:
+                                //        return new HatchBrush(HatchStyle.OutlinedDiamond, foreground.RGB, background.RGB);
+                                //    case 4:
+                                //        return new HatchBrush(HatchStyle.DiagonalCross, foreground.RGB, background.RGB);
+                                //    default:
+                                //        throw new ArgumentException();
+                                //}
+
+                                return ConvertColor(background.RGB);
+                            }
+                        }
+                        break;
+                }
+            }
+            return Microsoft.Xna.Framework.Color.DarkBlue;
+        }
+
         /// <summary>
         /// набор примитивов с дублированием вершин на границе разноцветных регионов, так чтобы образовывалась чёткая граница цвета
         /// </summary>
-        private void FillPrimitives2()
+        private void BuildMapModeData(MapMode pMode)
         {
+            if (pMode == MapMode.Sattelite)
+                return;
+
             int iPrimitivesCount = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
-                List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
+                List<Microsoft.Xna.Framework.Color> cColors = new List<Microsoft.Xna.Framework.Color>();
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
-                    if (!cTypes.Contains((pLoc.Owner as LandX).Type))
+                    if (!cColors.Contains(GetMapModeColor(pLoc, pMode)))
                     {
-                        cTypes.Add((pLoc.Owner as LandX).Type);
+                        cColors.Add(GetMapModeColor(pLoc, pMode));
                         iPrimitivesCount++;
                     }
                 }
@@ -851,99 +1054,61 @@ namespace MapDrawXNAEngine
             }
 
             // Create the verticies for our triangle
-            m_aLandVertices = new VertexMultitextured[iPrimitivesCount + m_pWorld.m_pGrid.m_aLocations.Length];
+            m_cMapModeData[pMode].m_aVertices = new VertexPositionColorNormal[iPrimitivesCount + m_pWorld.m_pGrid.m_aLocations.Length];
 
-            Dictionary<long, Dictionary<LandTypeInfoX, int>> cVertexes = new Dictionary<long, Dictionary<LandTypeInfoX, int>>();
+            Dictionary<long, Dictionary<Microsoft.Xna.Framework.Color, int>> cVertexes = new Dictionary<long, Dictionary<Microsoft.Xna.Framework.Color, int>>();
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
 
             int iCounter = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
-                cVertexes[pVertex.m_iID] = new Dictionary<LandTypeInfoX, int>();
+                cVertexes[pVertex.m_iID] = new Dictionary<Microsoft.Xna.Framework.Color, int>();
 
-                //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
-                //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                Vector3 pPosition = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
+                Vector3 pPosition = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, pVertex.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fLandHeightMultiplier / 10);
 
-                List<LandTypeInfoX> cTypes = new List<LandTypeInfoX>();
+                List<object> cColors = new List<object>();
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
-                    if (!cTypes.Contains((pLoc.Owner as LandX).Type))
+                    if (!cColors.Contains(GetMapModeColor(pLoc, pMode)))
                     {
-                        cTypes.Add((pLoc.Owner as LandX).Type);
-                        m_aLandVertices[iCounter] = new VertexMultitextured();
-                        m_aLandVertices[iCounter].Position = pPosition;
-                        //userPrimitives[iCounter].Color = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
+                        cColors.Add(GetMapModeColor(pLoc, pMode));
+                        m_cMapModeData[pMode].m_aVertices[iCounter] = new VertexPositionColorNormal();
+                        m_cMapModeData[pMode].m_aVertices[iCounter].Position = pPosition;
+                        m_cMapModeData[pMode].m_aVertices[iCounter].Color = GetMapModeColor(pLoc, pMode);
 
-                        if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                        {
-                            float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
-
-                            m_aLandVertices[iCounter].TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                        }
-                        else
-                        {
-                            m_aLandVertices[iCounter].TextureCoordinate.X = pVertex.m_fX / m_fTextureScale;
-                        }
-                        m_aLandVertices[iCounter].TextureCoordinate.Y = pVertex.m_fY / m_fTextureScale;
-                        LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
-                        m_aLandVertices[iCounter].TexWeights = GetTexWeights(eLT);
-                        m_aLandVertices[iCounter].TexWeights2 = GetTexWeights2(eLT);
-
-                        cVertexes[pVertex.m_iID][(pLoc.Owner as LandX).Type] = iCounter;
+                        cVertexes[pVertex.m_iID][GetMapModeColor(pLoc, pMode)] = iCounter;
 
                         iCounter++;
                     }
                 }
             }
 
-            m_iLandTrianglesCount = 0;
+            m_cMapModeData[pMode].m_iTrianglesCount = 0;
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
-                m_aLandVertices[iCounter] = new VertexMultitextured();
-                float fHeight = m_fLandHeightMultiplier;
-                if (pLoc.m_eType == RegionType.Peak)
-                    fHeight *= 1.1f;
-                if (pLoc.m_eType == RegionType.Volcano)
-                    fHeight *= 0.8f;
-
-                m_aLandVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
-
+                m_cMapModeData[pMode].m_aVertices[iCounter] = new VertexPositionColorNormal();
+                float fHeight = pLoc.m_fHeight;
                 //if (pLoc.m_eType == RegionType.Peak)
-                //    userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.White;
-                //if (pLoc.m_eType == RegionType.Volcano)
-                //    userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.Red;
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pLoc.X, pLoc.Z);
+                //    fHeight += 0.5f * m_fLandHeightMultiplier;
+                if (pLoc.m_eType == RegionType.Volcano)
+                    fHeight -= 10;
 
-                    m_aLandVertices[iCounter].TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                }
-                else
-                {
-                    m_aLandVertices[iCounter].TextureCoordinate.X = pLoc.X / m_fTextureScale;
-                }
-                m_aLandVertices[iCounter].TextureCoordinate.Y = pLoc.Y / m_fTextureScale;
-                LandType eLT = LandType.Ocean;
-                if (pLoc.Owner != null)
-                    eLT = (pLoc.Owner as LandX).Type.m_eType;
-                m_aLandVertices[iCounter].TexWeights.X = (eLT == LandType.Coastral || eLT == LandType.Desert) ? 1 : 0;
-                m_aLandVertices[iCounter].TexWeights.Y = (eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Plains || eLT == LandType.Savanna || eLT == LandType.Swamp || eLT == LandType.Taiga) ? 1 : 0;
-                m_aLandVertices[iCounter].TexWeights.Z = (eLT == LandType.Mountains || eLT == LandType.Ocean) ? 1 : 0;
-                m_aLandVertices[iCounter].TexWeights.W = (eLT == LandType.Tundra) ? 1 : 0;
+                m_cMapModeData[pMode].m_aVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, pLoc.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fLandHeightMultiplier / 10);
+
+                m_cMapModeData[pMode].m_aVertices[iCounter].Color = GetMapModeColor(pLoc, pMode);
 
                 cLocations[pLoc.m_iID] = iCounter;
 
-                m_iLandTrianglesCount += pLoc.m_aBorderWith.Length;
+                m_cMapModeData[pMode].m_iTrianglesCount += pLoc.m_aBorderWith.Length;
 
                 iCounter++;
             }
 
             // Create the indices used for each triangle
-            m_aLandIndices = new int[m_iLandTrianglesCount * 3];
+            m_cMapModeData[pMode].m_aIndices = new int[m_cMapModeData[pMode].m_iTrianglesCount * 3];
 
             iCounter = 0;
 
@@ -952,34 +1117,84 @@ namespace MapDrawXNAEngine
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
-                bool bError = false;
-
+                float fMinHeight = float.MaxValue;
                 Line pLine = pLoc.m_pFirstLine;
                 //последовательно перебирает все связанные линии, пока круг не замкнётся.
                 do
                 {
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cLocations[pLoc.m_iID];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][GetMapModeColor(pLoc, pMode)];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID][GetMapModeColor(pLoc, pMode)];
 
-                    m_aLandIndices[iCounter++] = cLocations[pLoc.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][(pLoc.Owner as LandX).Type];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID][(pLoc.Owner as LandX).Type];
-
-                    int index2 = m_aLandIndices[iCounter - 2];
-                    int index3 = m_aLandIndices[iCounter - 1];
-
-                    if ((m_aLandVertices[index2].Position.X == m_aLandVertices[index3].Position.X) && (m_aLandVertices[index2].Position.Z == m_aLandVertices[index3].Position.Z))
-                        bError = true;
-
-                    Vector3 pProjection2 = Vector3.Transform(m_aLandVertices[index2].Position, Matrix.CreateScale(1, 0, 1));
-                    Vector3 pProjection3 = Vector3.Transform(m_aLandVertices[index3].Position, Matrix.CreateScale(1, 0, 1));
-
-                    float fDistanceProjection = Vector3.Distance(pProjection2, pProjection3);
-                    float fRealDistance = Vector3.Distance(m_aLandVertices[index2].Position, m_aLandVertices[index3].Position);
-                    if (fDistanceProjection * 5 < fRealDistance)
-                        bError = true;
+                    if (fMinHeight > pLine.m_pPoint1.m_fHeight)
+                        fMinHeight = pLine.m_pPoint1.m_fHeight;
 
                     pLine = pLine.m_pNext;
                 }
                 while (pLine != pLoc.m_pFirstLine);
+            
+                if (pLoc.m_pSettlement != null)
+                {
+                    m_cMapModeData[pMode].m_aVertices[cLocations[pLoc.m_iID]].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, (pLoc.m_fHeight + fMinHeight) / 2, m_fLandHeightMultiplier);
+                    pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        foreach (var pVert in cVertexes[pLine.m_pPoint1.m_iID])
+                        {
+                            m_cMapModeData[pMode].m_aVertices[pVert.Value].Position = GetPosition(pLine.m_pPoint1, m_pWorld.m_pGrid.m_eShape, (pLine.m_pPoint1.m_fHeight + fMinHeight) / 2, m_fLandHeightMultiplier);
+                        }
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Привязка цветов для конкретных рас
+        /// </summary>
+        private Dictionary<Nation, Microsoft.Xna.Framework.Color> m_cNationColorsID = new Dictionary<Nation, Microsoft.Xna.Framework.Color>();
+        //private Dictionary<Nation, Microsoft.Xna.Framework.Color> m_cAncientNationColorsID = new Dictionary<Nation, Microsoft.Xna.Framework.Color>();
+        //private Dictionary<Nation, Microsoft.Xna.Framework.Color> m_cHegemonNationColorsID = new Dictionary<Nation, Microsoft.Xna.Framework.Color>();
+
+        private void FillNationColors()
+        {
+            m_cNationColorsID.Clear();
+            List<int> cUsedColors = new List<int>();
+
+            //if (m_pWorld.m_aLocalRaces.Length > m_aRaceColorsTemplate.Length)
+            //    throw new Exception("Can't draw more then " + m_aRaceColorsTemplate.Length.ToString() + " races!");
+
+            Dictionary<Language, int> cLanguages = new Dictionary<Language, int>();
+            Dictionary<Language, int> cLanguageCounter = new Dictionary<Language, int>();
+            Dictionary<Language, int> cLanguageIndex = new Dictionary<Language, int>();
+            int iCount = 0;
+            foreach (Nation pNation in m_pWorld.m_aLocalNations)
+            {
+                int ik = 0;
+                if (!cLanguages.TryGetValue(pNation.m_pRace.m_pLanguage, out ik))
+                {
+                    cLanguageCounter[pNation.m_pRace.m_pLanguage] = 1;
+                    cLanguageIndex[pNation.m_pRace.m_pLanguage] = iCount++;
+                }
+                cLanguages[pNation.m_pRace.m_pLanguage] = ik + 1;
+            }
+
+            //Dictionary<Language, Dictionary<Race, KColor>> cColors = new Dictionary<Language, Dictionary<Race, KColor>>();
+            foreach (Nation pNation in m_pWorld.m_aLocalNations)
+            {
+                KColor color = new KColor();
+                color.Hue = 360 * cLanguageIndex[pNation.m_pRace.m_pLanguage] / cLanguages.Count;
+                float fK = ((float)cLanguageCounter[pNation.m_pRace.m_pLanguage]) / cLanguages[pNation.m_pRace.m_pLanguage];
+                float fF = fK * Rnd.Get(1f);
+                color.Lightness = 0.2 + 0.7 * fK;
+                color.Saturation = 0.2 + 0.7 * fK;
+
+                m_cNationColorsID[pNation] = ConvertColor(color.RGB);
+                //m_cAncientNationColorsID[pNation] = new HatchBrush(HatchStyle.DottedDiamond, System.Drawing.Color.Black, color.RGB);
+                //m_cHegemonNationColorsID[pNation] = new HatchBrush(HatchStyle.LargeConfetti, System.Drawing.Color.Black, color.RGB);
+                cLanguageCounter[pNation.m_pRace.m_pLanguage]++;
             }
         }
 
@@ -1020,9 +1235,36 @@ namespace MapDrawXNAEngine
         }
 
         /// <summary>
+        /// для всех вершин в списке вычисляем нормаль как нормализованный вектор суммы нормалей прилегающих граней
+        /// </summary>
+        private static void CalculateNormals(VertexPositionColorNormal[] vertexBuffer, int[] indexBuffer, int iTrianglesCount)
+        {
+            for (int i = 0; i < vertexBuffer.Length; i++)
+                vertexBuffer[i].Normal = new Vector3(0, 0, 0);
+
+            for (int i = 0; i < iTrianglesCount; i++)
+            {
+                int index1 = indexBuffer[i * 3];
+                int index2 = indexBuffer[i * 3 + 1];
+                int index3 = indexBuffer[i * 3 + 2];
+
+                if (index1 == 0 && index2 == 0 && index3 == 0)
+                    continue;
+
+                Vector3 side1 = vertexBuffer[index1].Position - vertexBuffer[index3].Position;
+                Vector3 side2 = vertexBuffer[index1].Position - vertexBuffer[index2].Position;
+                Vector3 normal = Vector3.Cross(side1, side2);
+
+                vertexBuffer[index1].Normal += normal;
+                vertexBuffer[index2].Normal += normal;
+                vertexBuffer[index3].Normal += normal;
+            }
+        }
+
+        /// <summary>
         /// Режим отрисовки карты - физическая карта, карта влажности, этническая карта...
         /// </summary>
-        private MapMode m_eMode = MapMode.Areas;
+        private MapMode m_eMode = MapMode.Sattelite;
 
         /// <summary>
         /// Режим отрисовки карты - физическая карта, карта влажности, этническая карта...
@@ -1265,6 +1507,8 @@ namespace MapDrawXNAEngine
         public void Assign(World pWorld)
         {
             m_pWorld = pWorld;
+            
+            FillNationColors();
 
             if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 m_fLandHeightMultiplier = 7f / m_pWorld.m_fMaxHeight;
@@ -1274,9 +1518,16 @@ namespace MapDrawXNAEngine
             BuildLand();
             BuildUnderWater();
             BuildWater();
+
             //FillPrimitivesFake();
             CalculateNormals(m_aLandVertices, m_aLandIndices, m_iLandTrianglesCount);
             CalculateNormals(m_aUnderwaterVertices, m_aUnderwaterIndices, m_iUnderwaterTrianglesCount);
+
+            foreach (MapMode pMode in Enum.GetValues(typeof(MapMode)))
+            {
+                BuildMapModeData(pMode);
+                CalculateNormals(m_cMapModeData[pMode].m_aVertices, m_cMapModeData[pMode].m_aIndices, m_cMapModeData[pMode].m_iTrianglesCount);
+            }
 
             if (GraphicsDevice != null)
             {
@@ -1286,13 +1537,13 @@ namespace MapDrawXNAEngine
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
                     m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
-                    effect2.CurrentTechnique = effect2.Techniques["LandRingworld"];
+                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
                     pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
                 }
                 else
                 {
                     m_pCamera = new PlainCamera(GraphicsDevice);
-                    effect2.CurrentTechnique = effect2.Techniques["Land"];
+                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                     pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
                 }
             }
@@ -1350,36 +1601,36 @@ namespace MapDrawXNAEngine
 
         private void BindEffectParameters()
         {
-            pEffectWorld = effect2.Parameters["World"];
-            pEffectView = effect2.Parameters["View"];
-            pEffectProjection = effect2.Parameters["Projection"];
+            pEffectWorld = m_pMyEffect.Parameters["World"];
+            pEffectView = m_pMyEffect.Parameters["View"];
+            pEffectProjection = m_pMyEffect.Parameters["Projection"];
 
-            pEffectCameraPosition = effect2.Parameters["CameraPosition"];
+            pEffectCameraPosition = m_pMyEffect.Parameters["CameraPosition"];
 
-            pEffectAmbientLightColor = effect2.Parameters["AmbientLightColor"];
-            pEffectAmbientLightIntensity = effect2.Parameters["AmbientLightIntensity"];
+            pEffectAmbientLightColor = m_pMyEffect.Parameters["AmbientLightColor"];
+            pEffectAmbientLightIntensity = m_pMyEffect.Parameters["AmbientLightIntensity"];
 
-            pEffectDirectionalLightDirection = effect2.Parameters["DirectionalLightDirection"];
-            pEffectDirectionalLightColor = effect2.Parameters["DirectionalLightColor"];
-            pEffectDirectionalLightIntensity = effect2.Parameters["DirectionalLightIntensity"];
+            pEffectDirectionalLightDirection = m_pMyEffect.Parameters["DirectionalLightDirection"];
+            pEffectDirectionalLightColor = m_pMyEffect.Parameters["DirectionalLightColor"];
+            pEffectDirectionalLightIntensity = m_pMyEffect.Parameters["DirectionalLightIntensity"];
 
-            pEffectSpecularColor = effect2.Parameters["SpecularColor"];
+            pEffectSpecularColor = m_pMyEffect.Parameters["SpecularColor"];
 
-            pEffectFogColor = effect2.Parameters["FogColor"];
-            pEffectFogDensity = effect2.Parameters["FogDensity"];
+            pEffectFogColor = m_pMyEffect.Parameters["FogColor"];
+            pEffectFogDensity = m_pMyEffect.Parameters["FogDensity"];
 
-            pEffectBlendDistance = effect2.Parameters["BlendDistance"];
-            pEffectBlendWidth = effect2.Parameters["BlendWidth"];
+            pEffectBlendDistance = m_pMyEffect.Parameters["BlendDistance"];
+            pEffectBlendWidth = m_pMyEffect.Parameters["BlendWidth"];
 
-            pEffectTexture0 = effect2.Parameters["xTexture0"];
-            pEffectTexture1 = effect2.Parameters["xTexture1"];
-            pEffectTexture2 = effect2.Parameters["xTexture2"];
-            pEffectTexture3 = effect2.Parameters["xTexture3"];
-            pEffectTexture4 = effect2.Parameters["xTexture4"];
-            pEffectTexture5 = effect2.Parameters["xTexture5"];
-            pEffectTexture6 = effect2.Parameters["xTexture6"];
-            pEffectTexture7 = effect2.Parameters["xTexture7"];
-            pEffectTextureModel = effect2.Parameters["xTextureModel"];
+            pEffectTexture0 = m_pMyEffect.Parameters["xTexture0"];
+            pEffectTexture1 = m_pMyEffect.Parameters["xTexture1"];
+            pEffectTexture2 = m_pMyEffect.Parameters["xTexture2"];
+            pEffectTexture3 = m_pMyEffect.Parameters["xTexture3"];
+            pEffectTexture4 = m_pMyEffect.Parameters["xTexture4"];
+            pEffectTexture5 = m_pMyEffect.Parameters["xTexture5"];
+            pEffectTexture6 = m_pMyEffect.Parameters["xTexture6"];
+            pEffectTexture7 = m_pMyEffect.Parameters["xTexture7"];
+            pEffectTextureModel = m_pMyEffect.Parameters["xTextureModel"];
         }
 
         private void LoadTerrainTextures()
@@ -1569,15 +1820,21 @@ namespace MapDrawXNAEngine
         /// </summary>
         protected override void Initialize()
         {
+            foreach (MapMode pMode in Enum.GetValues(typeof(MapMode)))
+                m_cMapModeData[pMode] = new MapModeData();
+
+            m_pBasicEffect = new BasicEffect(GraphicsDevice);
+            m_pBasicEffect.VertexColorEnabled = true;
+
             LibContent = new ContentManager(Services);
 
             // Create our effect.
             LoadTerrainTextures();
 
-            effect2 = LibContent.Load<Effect>("content/Effect1");
+            m_pMyEffect = LibContent.Load<Effect>("content/Effect1");
             BindEffectParameters();
 
-            effect2.CurrentTechnique = effect2.Techniques["LandRingworld"];
+            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
             pEffectWorld.SetValue(Matrix.Identity);
 
             pEffectAmbientLightColor.SetValue(eSkyColor.ToVector4());
@@ -1640,7 +1897,7 @@ namespace MapDrawXNAEngine
             Model pModel = LibContent.Load<Model>(sPath);
             foreach (ModelMesh mesh in pModel.Meshes)
                 foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = effect2.Clone();
+                    meshPart.Effect = m_pMyEffect.Clone();
 
             return pModel;
         }
@@ -1710,33 +1967,56 @@ namespace MapDrawXNAEngine
 
             pEffectWorld.SetValue(Matrix.Identity);
 
-            // Set renderstates.
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.CullCounterClockwiseFace;
-            //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
-            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                effect2.CurrentTechnique = effect2.Techniques["LandRingworld"]; 
+            if(m_eMode == MapMode.Sattelite)
+            {
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
+                else
+                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
+                m_pMyEffect.CurrentTechnique.Passes[0].Apply();
+
+                GraphicsDevice.SetRenderTarget(refractionRenderTarget);
+                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Microsoft.Xna.Framework.Color.Black, 1.0f, 0);
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
+                                                    m_aUnderwaterVertices, 0, m_aUnderwaterVertices.Length - 1, m_aUnderwaterIndices, 0, m_iUnderwaterTrianglesCount);
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.Clear(eSkyColor);
+
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
+                                                    m_aLandVertices, 0, m_aLandVertices.Length - 1, m_aLandIndices, 0, m_iLandTrianglesCount);
+                DrawWater(time);
+
+                for (int i = 0; i < m_aTrees.Length; i++)
+                    DrawTree(m_aTrees[i]);
+            }
             else
-                effect2.CurrentTechnique = effect2.Techniques["Land"];
-            effect2.CurrentTechnique.Passes[0].Apply();
+            {
+                GraphicsDevice.Clear(eSkyColor);
 
-            GraphicsDevice.SetRenderTarget(refractionRenderTarget);
-            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Microsoft.Xna.Framework.Color.Black, 1.0f, 0);
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
-                                              m_aUnderwaterVertices, 0, m_aUnderwaterVertices.Length - 1, m_aUnderwaterIndices, 0, m_iUnderwaterTrianglesCount);
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(eSkyColor);
+                m_pBasicEffect.View = m_pCamera.View;
+                m_pBasicEffect.Projection = m_pCamera.Projection;
 
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
-                                              m_aLandVertices, 0, m_aLandVertices.Length - 1, m_aLandIndices, 0, m_iLandTrianglesCount);
-            //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
-            //                                  m_aUnderwaterVertices, 0, m_aUnderwaterVertices.Length - 1, m_aUnderwaterIndices, 0, m_iUnderwaterTrianglesCount);
-            DrawWater(time);
+                m_pBasicEffect.LightingEnabled = true;
+                m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, -1, -1));
+                m_pBasicEffect.AmbientLightColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.2f).ToVector3();
 
-            for (int i = 0; i < m_aTrees.Length; i++)
-                DrawTree(m_aTrees[i]);
+                m_pBasicEffect.PreferPerPixelLighting = true;
+                        
+                RasterizerState rs1 = new RasterizerState();
+                rs1.CullMode = CullMode.CullCounterClockwiseFace;
+                //rs.FillMode = FillMode.WireFrame;
+                GraphicsDevice.RasterizerState = rs1;
+
+                m_pBasicEffect.World = Matrix.Identity;
+                m_pBasicEffect.CurrentTechnique.Passes[0].Apply();
+
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
+                                                    m_cMapModeData[m_eMode].m_aVertices, 0, m_cMapModeData[m_eMode].m_aVertices.Length - 1, m_cMapModeData[m_eMode].m_aIndices, 0, m_cMapModeData[m_eMode].m_iTrianglesCount);
+            }
 
             for (int i = 0; i < m_aSettlements.Length; i++)
                 DrawSettlement(m_aSettlements[i]);
@@ -1747,12 +2027,12 @@ namespace MapDrawXNAEngine
 
         private void DrawWater(float time)
         {
-            effect2.CurrentTechnique = effect2.Techniques["Water"];
+            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
             //effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
             //effect.Parameters["xReflectionMap"].SetValue(reflectionMap);
-            effect2.Parameters["xRefractionMap"].SetValue(refractionRenderTarget);
+            m_pMyEffect.Parameters["xRefractionMap"].SetValue(refractionRenderTarget);
 
-            effect2.CurrentTechnique.Passes[0].Apply();
+            m_pMyEffect.CurrentTechnique.Passes[0].Apply();
 
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList,
                                                 m_aWaterVertices, 0, m_aWaterVertices.Length - 1, m_aWaterIndices, 0, m_iWaterTrianglesCount);
