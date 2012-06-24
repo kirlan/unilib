@@ -165,6 +165,10 @@ namespace LandscapeGeneration
                 throw new ArgumentException(string.Format("Grid type '{0}' is not implemented yet!", eGridType));
         }
 
+        /// <summary>
+        /// Строит сетку/диаграмму Вороного НА ПЛОСКОСТИ. Переход в 3D будет осуществлён позже.
+        /// </summary>
+        /// <returns></returns>
         private bool CalculateVoronoi()
         {
             Dictionary<BTVector, LOC> cData = new Dictionary<BTVector, LOC>();
@@ -174,12 +178,13 @@ namespace LandscapeGeneration
             //Строим диаграмму вороного - определяем границы локаций
             VoronoiGraph graph = Fortune.ComputeVoronoiGraph(cData.Keys);
             Dictionary<BTVector, Vertex> cVertexes = new Dictionary<BTVector, Vertex>();
+            List<Vertex> cMidPoints = new List<Vertex>();
 
             //Переводим данные из диаграммы Вороного в наш формат
             try
             {
                 foreach (VoronoiEdge pEdge in graph.Edges)
-                    AddEdge(cData, cVertexes, pEdge);
+                    AddEdge(cData, cVertexes, cMidPoints, pEdge);
             }
             catch (Exception ex)
             {
@@ -188,7 +193,8 @@ namespace LandscapeGeneration
                 return false;
             }
 
-            m_aVertexes = new List<Vertex>(cVertexes.Values).ToArray();
+            cMidPoints.AddRange(cVertexes.Values);
+            m_aVertexes = cMidPoints.ToArray();
 
             foreach (LOC pLoc in m_aLocations)
                 pLoc.FillBorderWithKeys();
@@ -337,7 +343,7 @@ namespace LandscapeGeneration
             }
         }
 
-        private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, Vertex> cVertexes, VoronoiEdge pEdge)
+        private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, Vertex> cVertexes, List<Vertex> cMidPoints, VoronoiEdge pEdge)
         {
             LOC pLoc1 = null;
             LOC pLoc2 = null;
@@ -423,16 +429,36 @@ namespace LandscapeGeneration
             if (!pVertexB.m_cVertexes.Contains(pVertexA))
                 pVertexB.m_cVertexes.Add(pVertexA);
 
+            Vertex pMidPoint = new Vertex((pVertexA.X + pVertexB.X)/2, (pVertexA.Y + pVertexB.Y)/2, (pVertexA.Z + pVertexB.Z)/2);
+            pMidPoint.m_cVertexes.Add(pVertexA);
+            pMidPoint.m_cVertexes.Add(pVertexB);
+
+            Vertex pLoc1Point = (pLoc1 != null && pLoc1.m_pOrigin == null) ? 
+                new Vertex((pLoc1.X + pMidPoint.X) / 2, (pLoc1.Y + pMidPoint.Y) / 2, (pLoc1.Z + pMidPoint.Z) / 2) : 
+                new Vertex(pMidPoint.X, pMidPoint.Y, pMidPoint.Z);
+
+            Vertex pLoc2Point = (pLoc2 != null && pLoc2.m_pOrigin == null) ? 
+                new Vertex((pLoc2.X + pMidPoint.X) / 2, (pLoc2.Y + pMidPoint.Y) / 2, (pLoc2.Z + pMidPoint.Z) / 2) : 
+                new Vertex(pMidPoint.X, pMidPoint.Y, pMidPoint.Z);
+
+            cMidPoints.Add(pMidPoint);
+            cMidPoints.Add(pLoc1Point);
+            cMidPoints.Add(pLoc2Point);
+
             if (pLoc1 != null && pLoc1.m_pOrigin == null)
             {
                 if (!pVertexA.m_cLocations.Contains(pLoc1))
                     pVertexA.m_cLocations.Add(pLoc1);
                 if (!pVertexB.m_cLocations.Contains(pLoc1))
                     pVertexB.m_cLocations.Add(pLoc1);
+                if (!pMidPoint.m_cLocations.Contains(pLoc1))
+                    pMidPoint.m_cLocations.Add(pLoc1);
+                if (!pLoc1Point.m_cLocations.Contains(pLoc1))
+                    pLoc1Point.m_cLocations.Add(pLoc1);
 
                 if (pLoc2 != null)
                 {
-                    Line pLine = new Line(pVertexA, pVertexB);
+                    Line pLine = new Line(pVertexA, pVertexB, pMidPoint, pLoc1Point);
                     if (pLine.m_fLength > 0)
                     {
                         foreach (List<Line> cLines in pLoc1.BorderWith.Values)
@@ -449,8 +475,6 @@ namespace LandscapeGeneration
                             pLoc1.BorderWith[(LOC)pLoc2.m_pOrigin] = new List<Line>();
                             pLoc1.BorderWith[(LOC)pLoc2.m_pOrigin].Add(pLine);
                         }
-                        //else
-                        //    pLoc1.m_cBorderWith[pLoc2] = new Line(pVertexB, pVertexA);
                     }
                 }
             }
@@ -461,16 +485,19 @@ namespace LandscapeGeneration
                     pVertexA.m_cLocations.Add(pLoc2);
                 if (!pVertexB.m_cLocations.Contains(pLoc2))
                     pVertexB.m_cLocations.Add(pLoc2);
+                if (!pMidPoint.m_cLocations.Contains(pLoc2))
+                    pMidPoint.m_cLocations.Add(pLoc2);
+                if (!pLoc2Point.m_cLocations.Contains(pLoc2))
+                    pLoc2Point.m_cLocations.Add(pLoc2);
 
                 if (pLoc1 != null)
                 {
-                    Line pLine = new Line(pVertexB, pVertexA);
+                    Line pLine = new Line(pVertexB, pVertexA, pMidPoint, pLoc2Point);
                     if (pLine.m_fLength > 0)
                     {
                         foreach (List<Line> cLines in pLoc2.m_cBorderWith.Values)
                             if (cLines[0].m_pPoint1 == pVertexB)
                                 throw new Exception("Wrong edge!");
-                        //if (!bTwin)
                         if (pLoc1.m_pOrigin == null)
                         {
                             pLoc2.BorderWith[pLoc1] = new List<Line>();
@@ -481,8 +508,6 @@ namespace LandscapeGeneration
                             pLoc2.BorderWith[(LOC)pLoc1.m_pOrigin] = new List<Line>();
                             pLoc2.BorderWith[(LOC)pLoc1.m_pOrigin].Add(pLine);
                         }
-                        //else
-                        //    pLoc2.m_cBorderWith[pLoc1] = new Line(pVertexA, pVertexB);
                     }
                 }
             }
@@ -745,7 +770,7 @@ namespace LandscapeGeneration
             m_aLocations = cLocations.ToArray();
         }
 
-        private static int s_iVersion = 20;
+        private static int s_iVersion = 21;
         private static string s_sHeader = "DimensionX World Generator 3D Grid File.";
 
         public void Save(string sFilename)

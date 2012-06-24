@@ -12,35 +12,25 @@ namespace LandscapeGeneration
     {
         public Vertex m_pPoint1;
         public Vertex m_pPoint2;
+        public Vertex m_pMidPoint;
+        public Vertex m_pInnerPoint;
 
-        public Line(Vertex pPoint1, Vertex pPoint2)
+        public Line(Vertex pPoint1, Vertex pPoint2, Vertex pMidPoint, Vertex pInnerPoint)
         {
             m_pPoint1 = pPoint1;
             m_pPoint2 = pPoint2;
+            m_pMidPoint = pMidPoint;
+            m_pInnerPoint = pInnerPoint;
 
             m_fLength = (float)Math.Sqrt((pPoint1.m_fX - pPoint2.m_fX)*(pPoint1.m_fX - pPoint2.m_fX) + (pPoint1.m_fY - pPoint2.m_fY)*(pPoint1.m_fY - pPoint2.m_fY));
-        }
-
-        private void CalcLength(float fCycle)
-        {
-            float fPoint1X = m_pPoint1.m_fX;
-            float fPoint1Y = m_pPoint1.m_fY;
-
-            float fPoint2X = m_pPoint2.m_fX;
-            float fPoint2Y = m_pPoint2.m_fY;
-
-            if (fPoint2X + fCycle / 2 < fPoint1X)
-                fPoint2X += fCycle;
-            if (fPoint2X - fCycle / 2 > fPoint1X)
-                fPoint2X -= fCycle;
-
-            m_fLength = (float)Math.Sqrt((fPoint1X - fPoint2X) * (fPoint1X - fPoint2X) + (fPoint1Y - fPoint2Y) * (fPoint1Y - fPoint2Y));
         }
 
         public Line(Line pOriginal)
         {
             m_pPoint1 = pOriginal.m_pPoint1;
             m_pPoint2 = pOriginal.m_pPoint2;
+            m_pMidPoint = pOriginal.m_pMidPoint;
+            m_pInnerPoint = pOriginal.m_pInnerPoint;
 
             m_fLength = pOriginal.m_fLength;
         }
@@ -49,6 +39,8 @@ namespace LandscapeGeneration
         {
             m_pPoint1 = cVertexes[binReader.ReadInt64()];
             m_pPoint2 = cVertexes[binReader.ReadInt64()];
+            m_pMidPoint = cVertexes[binReader.ReadInt64()];
+            m_pInnerPoint = cVertexes[binReader.ReadInt64()];
 
             m_fLength = (float)Math.Sqrt((m_pPoint1.m_fX - m_pPoint2.m_fX) * (m_pPoint1.m_fX - m_pPoint2.m_fX) + (m_pPoint1.m_fY - m_pPoint2.m_fY) * (m_pPoint1.m_fY - m_pPoint2.m_fY));
         }
@@ -57,6 +49,8 @@ namespace LandscapeGeneration
         {
             binWriter.Write(m_pPoint1.m_iID);
             binWriter.Write(m_pPoint2.m_iID);
+            binWriter.Write(m_pMidPoint.m_iID);
+            binWriter.Write(m_pInnerPoint.m_iID);
         }
 
         public Line m_pPrevious = null;
@@ -276,6 +270,23 @@ namespace LandscapeGeneration
             m_pCenter.X = fX / fLength;
             m_pCenter.Y = fY / fLength;
             m_pCenter.Z = fZ / fLength;
+
+            List<Line> cTotalBorder = new List<Line>();
+
+            foreach (var cLines in m_cBorderWith)
+                cTotalBorder.AddRange(cLines.Value);
+
+            Line[] aTotalBorder = cTotalBorder.ToArray();
+            foreach (Line pLne in aTotalBorder)
+            {
+                pLne.m_pMidPoint.X = (pLne.m_pPoint1.X + pLne.m_pPoint2.X) / 2;
+                pLne.m_pMidPoint.Y = (pLne.m_pPoint1.Y + pLne.m_pPoint2.Y) / 2;
+                pLne.m_pMidPoint.Z = (pLne.m_pPoint1.Z + pLne.m_pPoint2.Z) / 2;
+
+                pLne.m_pInnerPoint.X = (pLne.m_pMidPoint.X + m_pCenter.X) / 2;
+                pLne.m_pInnerPoint.Y = (pLne.m_pMidPoint.Y + m_pCenter.Y) / 2;
+                pLne.m_pInnerPoint.Z = (pLne.m_pMidPoint.Z + m_pCenter.Z) / 2;
+            }
         }
 
         public string GetStringID()
