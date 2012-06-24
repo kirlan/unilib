@@ -281,6 +281,8 @@ namespace MapDrawXNAEngine
         /// <returns></returns>
         private static Vector3 GetPosition(Vertex pVertex, WorldShape eShape, float fHeight, float fMultiplier)
         {
+            //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
+            //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота            
             Vector3 pPosition = new Vector3(pVertex.m_fX / 1000, pVertex.m_fZ / 1000, pVertex.m_fY / 1000);
             if (eShape == WorldShape.Ringworld)
                 pPosition -= Vector3.Normalize(pPosition) * fHeight * fMultiplier;
@@ -314,15 +316,20 @@ namespace MapDrawXNAEngine
         /// </summary>
         private void BuildLand()
         {
-            int iPrimitivesCount = 0;
+            //это - количество вершин треугольников для отрисовки. 
+            //вычисляется как сумма количества узлов диаграммы Вороного (включая дополнительно построенные промежуточные точки) и количества локаций, за вычетом запретных.
+            int iVertexesCount = 0; 
+
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
+                //считаем только те узлы диаграммы Вороного, которые соприкасаются хотя бы с одной разрешённой локацией
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
-                    if (pLoc.Forbidden || pLoc.Owner == null)
-                        continue;
+                    //if (pLoc.Forbidden || pLoc.Owner == null)
+                    //    continue;
 
-                    iPrimitivesCount++;
+                    iVertexesCount++;
+                    break;
                 }
 
             }
@@ -331,20 +338,22 @@ namespace MapDrawXNAEngine
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
 
-                iPrimitivesCount++;
+                iVertexesCount++;
             }
 
             // Create the verticies for our triangle
-            m_aLandVertices = new VertexMultitextured[iPrimitivesCount];
+            m_aLandVertices = new VertexMultitextured[iVertexesCount];
 
             Dictionary<long, int> cVertexes = new Dictionary<long, int>();
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
 
+            //добавляем в вершинный буффер узлы диаграммы Вороного
             int iCounter = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
                 VertexMultitextured pVM = new VertexMultitextured();
 
+                bool bForbidden = true;
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
                     if (pLoc.Forbidden || pLoc.Owner == null)
@@ -356,10 +365,14 @@ namespace MapDrawXNAEngine
                     LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
                     pVM.TexWeights += GetTexWeights(eLT);
                     pVM.TexWeights2 += GetTexWeights2(eLT);
+
+                    bForbidden = false;
                 }
 
-                //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
-                //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
+                //если в окрестностях вершины нет ни одной разрешённой локации - пролетаем мимо.
+                //if (bForbidden)
+                //    continue;
+
                 pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
@@ -380,6 +393,7 @@ namespace MapDrawXNAEngine
                 iCounter++;
             }
 
+            //добавляем в вершинный буффер центры локаций
             m_iLandTrianglesCount = 0;
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
@@ -415,7 +429,7 @@ namespace MapDrawXNAEngine
 
                 cLocations[pLoc.m_iID] = iCounter;
 
-                m_iLandTrianglesCount += pLoc.m_aBorderWith.Length;
+                m_iLandTrianglesCount += pLoc.m_aBorderWith.Length * 4;
 
                 iCounter++;
             }
@@ -428,6 +442,11 @@ namespace MapDrawXNAEngine
             List<TreeModel> cTrees = new List<TreeModel>();
             List<SettlementModel> cSettlements = new List<SettlementModel>();
 
+            //TODO
+            //Мы уже имеем все нужные дополнительные точки на сетке, и у них даже выставлена правильная высота... 
+            //Осталось только построить на них треугольники...
+
+            //заполняем индексный буффер
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
@@ -441,9 +460,21 @@ namespace MapDrawXNAEngine
                 Line pLine = pLoc.m_pFirstLine;
                 do
                 {
-                    m_aLandIndices[iCounter++] = cLocations[pLoc.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID];
                     m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID];
+
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID];
+
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID];
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
+
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    m_aLandIndices[iCounter++] = cLocations[pLoc.m_iID];
+                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID];
 
                     if (fMinHeight > pLine.m_pPoint1.m_fHeight)
                         fMinHeight = pLine.m_pPoint1.m_fHeight;
@@ -452,18 +483,18 @@ namespace MapDrawXNAEngine
                 }
                 while (pLine != pLoc.m_pFirstLine);
 
-                if (pLoc.m_pSettlement != null)
-                {
-                    m_aLandVertices[cLocations[pLoc.m_iID]].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, (pLoc.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
-                    pLine = pLoc.m_pFirstLine;
-                    do
-                    {
-                        m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position = GetPosition(pLine.m_pPoint1, m_pWorld.m_pGrid.m_eShape, (pLine.m_pPoint1.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
+                //if (pLoc.m_pSettlement != null)
+                //{
+                //    m_aLandVertices[cLocations[pLoc.m_iID]].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, (pLoc.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
+                //    pLine = pLoc.m_pFirstLine;
+                //    do
+                //    {
+                //        m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position = GetPosition(pLine.m_pPoint1, m_pWorld.m_pGrid.m_eShape, (pLine.m_pPoint1.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
 
-                        pLine = pLine.m_pNext;
-                    }
-                    while (pLine != pLoc.m_pFirstLine);
-                }
+                //        pLine = pLine.m_pNext;
+                //    }
+                //    while (pLine != pLoc.m_pFirstLine);
+                //}
 
                 //последовательно перебирает все связанные линии, пока круг не замкнётся.
                 pLine = pLoc.m_pFirstLine; 
@@ -539,6 +570,8 @@ namespace MapDrawXNAEngine
                     cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
                                             Rnd.Get((float)Math.PI * 2), fScale*2,
                                             pModel, m_pWorld.m_pGrid.m_eShape, pTexture));
+                
+                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
                 }
 
                 if (pLoc.m_eType == RegionType.Peak)
@@ -882,6 +915,17 @@ namespace MapDrawXNAEngine
 
         private Microsoft.Xna.Framework.Color GetMapModeColor(LocationX pLoc, MapMode pMode)
         {
+            //if (m_cColorsCache.ContainsKey(pLoc))
+            //{
+            //    if (m_cColorsCache[pLoc].ContainsKey(pMode))
+            //        return m_cColorsCache[pLoc][pMode];
+            //}
+            //else
+            //{
+            //    m_cColorsCache[pLoc] = new Dictionary<MapMode, Microsoft.Xna.Framework.Color>();
+            //}
+            Microsoft.Xna.Framework.Color pResult = Microsoft.Xna.Framework.Color.DarkBlue; 
+            
             if (!pLoc.Forbidden && pLoc.Owner != null)
             {
                 switch (pMode)
@@ -889,19 +933,20 @@ namespace MapDrawXNAEngine
                     case MapMode.Areas:
                         {
                             if (pLoc.m_eType == RegionType.Peak)
-                                return Microsoft.Xna.Framework.Color.White;
+                                pResult = Microsoft.Xna.Framework.Color.White;
                             if (pLoc.m_eType == RegionType.Volcano)
-                                return Microsoft.Xna.Framework.Color.Red;
+                                pResult = Microsoft.Xna.Framework.Color.Red;
 
-                            return ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
+                            pResult = ConvertColor((pLoc.Owner as LandX).Type.m_pColor);
                         }
+                        break;
                     case MapMode.Natives:
                         {
                             if ((pLoc.Owner as LandX).Area != null)
                             { 
                                 Nation pNation = ((pLoc.Owner as LandX).Area as AreaX).m_pNation;
                                 if (pNation != null)
-                                    return m_cNationColorsID[pNation];
+                                    pResult = m_cNationColorsID[pNation];
                             }
                         }
                         break;
@@ -911,7 +956,7 @@ namespace MapDrawXNAEngine
                             {
                                 Nation pNation = (pLoc.Owner as LandX).m_pProvince.m_pNation;
                                 if (pNation != null)
-                                    return m_cNationColorsID[pNation];
+                                    pResult = m_cNationColorsID[pNation];
                             }
                         }
                         break;
@@ -923,7 +968,7 @@ namespace MapDrawXNAEngine
                                 color.RGB = System.Drawing.Color.LightBlue;
                                 color.Lightness = 1.0 - (double)(pLoc.Owner as LandX).Humidity / 200;
 
-                                return ConvertColor(color.RGB);
+                                pResult = ConvertColor(color.RGB);
                             }
                         }
                         break;
@@ -943,8 +988,9 @@ namespace MapDrawXNAEngine
                                 color.Hue = 100 - 100 * pLoc.m_fHeight / m_pWorld.m_fMaxHeight;
                             }
 
-                            return ConvertColor(color.RGB);
+                            pResult = ConvertColor(color.RGB);
                         }
+                        break;
                     case MapMode.TechLevel:
                         {
                             if ((pLoc.Owner as LandX).m_pProvince != null)
@@ -956,7 +1002,7 @@ namespace MapDrawXNAEngine
                                 //KColor foreground = new KColor();
                                 //foreground.RGB = Color.ForestGreen;
                                 //foreground.Lightness = 1.0 - (double)iUsedTechLevel / 10;
-                                return ConvertColor(background.RGB);
+                                pResult = ConvertColor(background.RGB);
                             }
                         }
                         break;
@@ -979,8 +1025,8 @@ namespace MapDrawXNAEngine
                                 //    default:
                                 //        throw new ArgumentException();
                                 //} 
-                                
-                                return ConvertColor(background.RGB);
+
+                                pResult = ConvertColor(background.RGB);
                             }
                         }
                         break;
@@ -1018,13 +1064,13 @@ namespace MapDrawXNAEngine
                                 //        throw new ArgumentException();
                                 //}
 
-                                return ConvertColor(background.RGB);
+                                pResult = ConvertColor(background.RGB);
                             }
                         }
                         break;
                 }
             }
-            return Microsoft.Xna.Framework.Color.DarkBlue;
+            return pResult;
         }
 
         /// <summary>
@@ -1035,6 +1081,10 @@ namespace MapDrawXNAEngine
             if (pMode == MapMode.Sattelite)
                 return;
 
+            Dictionary<LocationX, Microsoft.Xna.Framework.Color> cColorsCache = new Dictionary<LocationX, Microsoft.Xna.Framework.Color>();
+            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+                cColorsCache[pLoc] = GetMapModeColor(pLoc, pMode);
+
             int iPrimitivesCount = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
@@ -1044,9 +1094,11 @@ namespace MapDrawXNAEngine
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
-                    if (!cColors.Contains(GetMapModeColor(pLoc, pMode)))
+                    Microsoft.Xna.Framework.Color pColor = cColorsCache[pLoc];
+
+                    if (!cColors.Contains(pColor))
                     {
-                        cColors.Add(GetMapModeColor(pLoc, pMode));
+                        cColors.Add(pColor);
                         iPrimitivesCount++;
                     }
                 }
@@ -1072,14 +1124,16 @@ namespace MapDrawXNAEngine
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
-                    if (!cColors.Contains(GetMapModeColor(pLoc, pMode)))
+                    Microsoft.Xna.Framework.Color pColor = cColorsCache[pLoc];
+
+                    if (!cColors.Contains(pColor))
                     {
-                        cColors.Add(GetMapModeColor(pLoc, pMode));
+                        cColors.Add(pColor);
                         m_cMapModeData[pMode].m_aVertices[iCounter] = new VertexPositionColorNormal();
                         m_cMapModeData[pMode].m_aVertices[iCounter].Position = pPosition;
-                        m_cMapModeData[pMode].m_aVertices[iCounter].Color = GetMapModeColor(pLoc, pMode);
+                        m_cMapModeData[pMode].m_aVertices[iCounter].Color = pColor;
 
-                        cVertexes[pVertex.m_iID][GetMapModeColor(pLoc, pMode)] = iCounter;
+                        cVertexes[pVertex.m_iID][pColor] = iCounter;
 
                         iCounter++;
                     }
@@ -1098,7 +1152,7 @@ namespace MapDrawXNAEngine
 
                 m_cMapModeData[pMode].m_aVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, pLoc.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fLandHeightMultiplier / 10);
 
-                m_cMapModeData[pMode].m_aVertices[iCounter].Color = GetMapModeColor(pLoc, pMode);
+                m_cMapModeData[pMode].m_aVertices[iCounter].Color = cColorsCache[pLoc];
 
                 cLocations[pLoc.m_iID] = iCounter;
 
@@ -1117,14 +1171,16 @@ namespace MapDrawXNAEngine
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
+                Microsoft.Xna.Framework.Color pColor = cColorsCache[pLoc];
+
                 float fMinHeight = float.MaxValue;
                 Line pLine = pLoc.m_pFirstLine;
                 //последовательно перебирает все связанные линии, пока круг не замкнётся.
                 do
                 {
                     m_cMapModeData[pMode].m_aIndices[iCounter++] = cLocations[pLoc.m_iID];
-                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][GetMapModeColor(pLoc, pMode)];
-                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID][GetMapModeColor(pLoc, pMode)];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID][pColor];
 
                     if (fMinHeight > pLine.m_pPoint1.m_fHeight)
                         fMinHeight = pLine.m_pPoint1.m_fHeight;
@@ -1969,6 +2025,7 @@ namespace MapDrawXNAEngine
 
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.CullCounterClockwiseFace;
+            //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
             if(m_eMode == MapMode.Sattelite)
