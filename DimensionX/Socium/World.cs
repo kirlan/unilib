@@ -510,6 +510,29 @@ namespace Socium
                 BeginStep("Simulating history - " + pEpoch.m_sName + " (" + pEpoch.m_iLength.ToString() + ")...", 8);
                 PopulateWorld(pEpoch, iCounter == 0, BeginStep, ProgressStep);
             }
+
+            CorrectElevation();
+        }
+
+        /// <summary>
+        /// Выравнивает центральные области локаций с поселениями
+        /// </summary>
+        private void CorrectElevation()
+        {
+            foreach (LocationX pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.Owner == null || pLoc.m_pSettlement == null)// || pLoc.m_pBuilding == null)
+                    continue;
+
+                Line pLine = pLoc.m_pFirstLine;
+                do
+                {
+                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pInnerPoint.m_fHeight + 2*pLoc.m_fHeight) / 3;
+
+                    pLine = pLine.m_pNext;
+                }
+                while (pLine != pLoc.m_pFirstLine);
+            }
         }
 
         private void PopulateWorld(Epoch pEpoch, bool bFinalize,
