@@ -1068,6 +1068,26 @@ namespace LandscapeGeneration
                 if (bOcean && bLand)
                     pVertex.m_fHeight = 0;
             }
+
+            //коррекция высот средних и внутренних точек границ локаций:
+            //выста средних точек должна учитывать не только высоты смежных локаций, но так же и высоты смежных вершин,
+            //а высота внутренних точек должны быть где-то между высотами центральной точки и средней точки, ближе к центральной
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    continue;
+
+                Line pLine = pLoc.m_pFirstLine;
+                do
+                {
+                    pLine.m_pMidPoint.m_fHeight = (4*pLine.m_pMidPoint.m_fHeight + pLine.m_pPoint1.m_fHeight + pLine.m_pPoint2.m_fHeight)/6;
+
+                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pMidPoint.m_fHeight + pLine.m_pInnerPoint.m_fHeight + pLoc.m_fHeight) / 3;
+
+                    pLine = pLine.m_pNext;
+                }
+                while (pLine != pLoc.m_pFirstLine);
+            }
         }
 
         private void SmoothVertexes()

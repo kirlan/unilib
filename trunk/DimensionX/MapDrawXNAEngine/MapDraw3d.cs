@@ -90,13 +90,13 @@ namespace MapDrawXNAEngine
             public readonly Model m_pModel;
             public readonly Matrix worldMatrix;
 
-            public TreeModel(Vector3 pPosition, float fAngle, Model pModel, WorldShape eWorldShape, Texture2D pTexture)
+            public TreeModel(Vector3 pPosition, float fAngle, float fScale, Model pModel, WorldShape eWorldShape, Texture2D pTexture)
             {
                 m_pPosition = pPosition;
                 m_fAngle = fAngle;
                 m_pModel = pModel;
 
-                worldMatrix = Matrix.CreateScale(0.2f, 0.2f, 0.2f) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
+                worldMatrix = Matrix.CreateScale(fScale*10) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
 
                 foreach (ModelMesh mesh in m_pModel.Meshes)
                 {
@@ -314,10 +314,17 @@ namespace MapDrawXNAEngine
         /// <summary>
         /// текстурированная поверхность всего ландшафта
         /// </summary>
-        private void BuildLand()
+        /// <param name="bOceanOnly">если true, то строится только подводная часть</param>
+        /// <param name="aVertices">вершинный буфер</param>
+        /// <param name="iTrianglesCount">количество треугольников</param>
+        /// <param name="aIndices">индексный буфер</param>
+        /// <param name="aTrees">массив моделей деревьев для отрисовки</param>
+        /// <param name="aSettlements">массив моделей поселений для отрисовки</param>
+        private void BuildLand(bool bOceanOnly, out VertexMultitextured[] aVertices, out int iTrianglesCount, out int[] aIndices, out TreeModel[] aTrees, out SettlementModel[] aSettlements)
         {
             //это - количество вершин треугольников для отрисовки. 
-            //вычисляется как сумма количества узлов диаграммы Вороного (включая дополнительно построенные промежуточные точки) и количества локаций, за вычетом запретных.
+            //вычисляется как сумма количества узлов диаграммы Вороного (включая дополнительно построенные промежуточные точки) 
+            //и количества локаций, за вычетом запретных.
             int iVertexesCount = 0; 
 
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
@@ -325,24 +332,33 @@ namespace MapDrawXNAEngine
                 //считаем только те узлы диаграммы Вороного, которые соприкасаются хотя бы с одной разрешённой локацией
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
-                    //if (pLoc.Forbidden || pLoc.Owner == null)
-                    //    continue;
+                    if (pLoc.Forbidden || pLoc.Owner == null)
+                        continue;
 
-                    iVertexesCount++;
-                    break;
+                    if (!bOceanOnly || 
+                        (pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
+                        (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral)
+                    {
+                        iVertexesCount++;
+                        break;
+                    }
                 }
-
             }
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
 
-                iVertexesCount++;
+                if (!bOceanOnly ||
+                    (pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
+                    (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral)
+                {
+                    iVertexesCount++;
+                }
             }
 
             // Create the verticies for our triangle
-            m_aLandVertices = new VertexMultitextured[iVertexesCount];
+            aVertices = new VertexMultitextured[iVertexesCount];
 
             Dictionary<long, int> cVertexes = new Dictionary<long, int>();
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
@@ -353,25 +369,39 @@ namespace MapDrawXNAEngine
             {
                 VertexMultitextured pVM = new VertexMultitextured();
 
+                pVM.TexWeights = new Vector4(0);
+                pVM.TexWeights2 = new Vector4(0);
+
+                //List<LandType> cUsedLT = new List<LandType>();
+
                 bool bForbidden = true;
+                bool bOcean = false;
                 foreach (LocationX pLoc in pVertex.m_cLocations)
                 {
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
-                    pVM.TexWeights = new Vector4(0);
-                    pVM.TexWeights2 = new Vector4(0);
-
                     LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
-                    pVM.TexWeights += GetTexWeights(eLT);
-                    pVM.TexWeights2 += GetTexWeights2(eLT);
+                    //if (!cUsedLT.Contains(eLT))
+                    //{
+                    //    pVM.TexWeights += GetTexWeights(eLT);
+                    //    pVM.TexWeights2 += GetTexWeights2(eLT);
+
+                    //    cUsedLT.Add(eLT);
+                    //}
+                    UpdateTexWeight(ref pVM.TexWeights, GetTexWeights(eLT));
+                    UpdateTexWeight(ref pVM.TexWeights2, GetTexWeights2(eLT));
+
+                    if ((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
+                        (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral)
+                        bOcean = true;
 
                     bForbidden = false;
                 }
 
                 //если в окрестностях вершины нет ни одной разрешённой локации - пролетаем мимо.
-                //if (bForbidden)
-                //    continue;
+                if (bForbidden || (bOceanOnly && !bOcean))
+                    continue;
 
                 pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
@@ -387,64 +417,65 @@ namespace MapDrawXNAEngine
                 }
                 pVM.TextureCoordinate.Y = pVertex.m_fY / m_fTextureScale;
 
-                m_aLandVertices[iCounter] = pVM;
+                aVertices[iCounter] = pVM;
                 cVertexes[pVertex.m_iID] = iCounter;
 
                 iCounter++;
             }
 
             //добавляем в вершинный буффер центры локаций
-            m_iLandTrianglesCount = 0;
+            iTrianglesCount = 0;
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
 
-                m_aLandVertices[iCounter] = new VertexMultitextured();
+                if (bOceanOnly &&
+                    (pLoc.Owner as LandX).Type.m_eType != LandType.Ocean &&
+                    (pLoc.Owner as LandX).Type.m_eType != LandType.Coastral)
+                    continue;
+
+                aVertices[iCounter] = new VertexMultitextured();
                 float fHeight = pLoc.m_fHeight * m_fLandHeightMultiplier;
                 //if (pLoc.m_eType == RegionType.Peak)
                 //    fHeight += 0.5f * m_fLandHeightMultiplier;
                 if (pLoc.m_eType == RegionType.Volcano)
                     fHeight -= 10 * m_fLandHeightMultiplier;
 
-                m_aLandVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
+                aVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
                     float fPhi = (float)Math.Atan2(pLoc.X, pLoc.Z);
 
-                    m_aLandVertices[iCounter].TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
+                    aVertices[iCounter].TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
                 }
                 else
                 {
-                    m_aLandVertices[iCounter].TextureCoordinate.X = pLoc.X / m_fTextureScale;
+                    aVertices[iCounter].TextureCoordinate.X = pLoc.X / m_fTextureScale;
                 }
-                m_aLandVertices[iCounter].TextureCoordinate.Y = pLoc.Y / m_fTextureScale;
+                aVertices[iCounter].TextureCoordinate.Y = pLoc.Y / m_fTextureScale;
 
                 LandType eLT = LandType.Ocean;
                 if (pLoc.Owner != null)
                     eLT = (pLoc.Owner as LandX).Type.m_eType;
-                m_aLandVertices[iCounter].TexWeights = GetTexWeights(eLT);
-                m_aLandVertices[iCounter].TexWeights2 = GetTexWeights2(eLT);
+                aVertices[iCounter].TexWeights = GetTexWeights(eLT);
+                aVertices[iCounter].TexWeights2 = GetTexWeights2(eLT);
 
                 cLocations[pLoc.m_iID] = iCounter;
 
-                m_iLandTrianglesCount += pLoc.m_aBorderWith.Length * 4;
+                iTrianglesCount += pLoc.m_aBorderWith.Length * 4;
 
                 iCounter++;
             }
 
             // Create the indices used for each triangle
-            m_aLandIndices = new int[m_iLandTrianglesCount * 3];
+            aIndices = new int[iTrianglesCount * 3];
 
             iCounter = 0;
 
             List<TreeModel> cTrees = new List<TreeModel>();
             List<SettlementModel> cSettlements = new List<SettlementModel>();
-
-            //TODO
-            //Мы уже имеем все нужные дополнительные точки на сетке, и у них даже выставлена правильная высота... 
-            //Осталось только построить на них треугольники...
 
             //заполняем индексный буффер
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
@@ -452,29 +483,72 @@ namespace MapDrawXNAEngine
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
+                if (bOceanOnly &&
+                    (pLoc.Owner as LandX).Type.m_eType != LandType.Ocean &&
+                    (pLoc.Owner as LandX).Type.m_eType != LandType.Coastral)
+                    continue; 
+                
                 LandType eLT = LandType.Ocean;
                 if (pLoc.Owner != null)
                     eLT = (pLoc.Owner as LandX).Type.m_eType;
+
+                //добавляем на горы снежные шапки в зависимости от высоты
+                if (pLoc.m_fHeight > m_pWorld.m_fMaxHeight/3)
+                    aVertices[cLocations[pLoc.m_iID]].TexWeights.W = 2 * (float)Math.Pow((pLoc.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
 
                 float fMinHeight = float.MaxValue;
                 Line pLine = pLoc.m_pFirstLine;
                 do
                 {
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID];
+                    if (eLT == LandType.Mountains)
+                    {
+                        aVertices[cVertexes[pLine.m_pMidPoint.m_iID]].TexWeights = aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights;
+                        aVertices[cVertexes[pLine.m_pMidPoint.m_iID]].TexWeights2 = aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2;
 
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID];
+                        aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights = aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights;
+                        aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights2 = aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2;
 
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
+                        aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights = aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights;
+                        aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2 = aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2;
 
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
-                    m_aLandIndices[iCounter++] = cLocations[pLoc.m_iID];
-                    m_aLandIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID];
+                    }
+                    else
+                    {
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += aVertices[cVertexes[pLine.m_pMidPoint.m_iID]].TexWeights;///2;
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += aVertices[cVertexes[pLine.m_pMidPoint.m_iID]].TexWeights2;///2;
+
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights / 2;
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights2 / 2;
+
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights / 2;
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2 / 2;
+                    }
+
+                    //добавляем на горы снежные шапки в зависимости от высоты
+                    if (pLine.m_pPoint1.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pPoint1.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+                    if (pLine.m_pPoint2.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pPoint2.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+                    if (pLine.m_pMidPoint.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        aVertices[cVertexes[pLine.m_pMidPoint.m_iID]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pMidPoint.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+                    if (pLine.m_pInnerPoint.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pInnerPoint.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+
+                    aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID];
+
+                    aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID];
+
+                    aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
+
+                    aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID];
+                    aIndices[iCounter++] = cLocations[pLoc.m_iID];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID];
 
                     if (fMinHeight > pLine.m_pPoint1.m_fHeight)
                         fMinHeight = pLine.m_pPoint1.m_fHeight;
@@ -483,120 +557,96 @@ namespace MapDrawXNAEngine
                 }
                 while (pLine != pLoc.m_pFirstLine);
 
-                //if (pLoc.m_pSettlement != null)
-                //{
-                //    m_aLandVertices[cLocations[pLoc.m_iID]].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, (pLoc.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
-                //    pLine = pLoc.m_pFirstLine;
-                //    do
-                //    {
-                //        m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position = GetPosition(pLine.m_pPoint1, m_pWorld.m_pGrid.m_eShape, (pLine.m_pPoint1.m_fHeight + fMinHeight)/2, m_fLandHeightMultiplier);
-
-                //        pLine = pLine.m_pNext;
-                //    }
-                //    while (pLine != pLoc.m_pFirstLine);
-                //}
-
-                //последовательно перебирает все связанные линии, пока круг не замкнётся.
-                pLine = pLoc.m_pFirstLine; 
-                do
+                //считаем, что ни деревьев, ни поселений под водой не бывает
+                if (!bOceanOnly)
                 {
-                    Model pTree = null;
-                    switch (eLT)
+                    float fScale = 0.02f; //0.015f;
+
+                    fScale *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
+
+                    //последовательно перебирает все связанные линии, пока круг не замкнётся.
+                    pLine = pLoc.m_pFirstLine;
+                    do
                     {
-                        case LandType.Forest:
-                            pTree = treeModel[Rnd.Get(treeModel.Length)];
-                            break;
-                        case LandType.Jungle:
-                            pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : palmModel[Rnd.Get(palmModel.Length)];
-                            break;
-                        case LandType.Taiga:
-                            pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)];
-                            break;
-                    }
-
-                    if(pTree != null)
-                    {
-                        Vector3 pCenter = (m_aLandVertices[cLocations[pLoc.m_iID]].Position +
-                                            m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
-                                            m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3;
-
-                        if (pLoc.m_pSettlement == null)
-                            cTrees.Add(new TreeModel(pCenter, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
-
-                        if (pLoc.m_pSettlement == null ||
-                            pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
-                            pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village)
+                        Model pTree = null;
+                        switch (eLT)
                         {
-                            cTrees.Add(new TreeModel((pCenter + m_aLandVertices[cLocations[pLoc.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
-                            cTrees.Add(new TreeModel((pCenter + m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
-                            cTrees.Add(new TreeModel((pCenter + m_aLandVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                            case LandType.Forest:
+                                pTree = treeModel[Rnd.Get(treeModel.Length)];
+                                break;
+                            case LandType.Jungle:
+                                pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : palmModel[Rnd.Get(palmModel.Length)];
+                                break;
+                            case LandType.Taiga:
+                                pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)];
+                                break;
                         }
+
+                        if (pTree != null)
+                        {
+                            Vector3 pCenter = (aVertices[cLocations[pLoc.m_iID]].Position +
+                                                aVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
+                                                aVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3;
+
+                            if (pLoc.m_pSettlement == null)
+                                cTrees.Add(new TreeModel(pCenter, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+
+                            if (pLoc.m_pSettlement == null ||
+                                pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
+                                pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village)
+                            {
+                                cTrees.Add(new TreeModel((pCenter + aVertices[cLocations[pLoc.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                                cTrees.Add(new TreeModel((pCenter + aVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                                cTrees.Add(new TreeModel((pCenter + aVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                            }
+                        }
+
+                        //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights/4;
+                        //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2/4;
+
+                        pLine = pLine.m_pNext;
                     }
+                    while (pLine != pLoc.m_pFirstLine);
 
-                    //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights/4;
-                    //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2/4;
+                    if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
+                    {
+                        Texture2D pTexture = m_cSettlementTextures[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
+                        Model pModel = m_cSettlementModels[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
 
-                    pLine = pLine.m_pNext;
-                }
-                while (pLine != pLoc.m_pFirstLine);
+                        cSettlements.Add(new SettlementModel(aVertices[cLocations[pLoc.m_iID]].Position,
+                                                Rnd.Get((float)Math.PI * 2), fScale,
+                                                pModel, m_pWorld.m_pGrid.m_eShape, pTexture));
 
-                if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
-                {
-                    Texture2D pTexture = m_cSettlementTextures[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
-                    Model pModel = m_cSettlementModels[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
-                    float fScale = 0.01f; //0.015f;
-                    //switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
-                    //{
-                    //    case Socium.Settlements.SettlementSize.Hamlet:
-                    //        fScale = 0.01f;
-                    //        break;
-                    //    case Socium.Settlements.SettlementSize.Village:
-                    //        fScale = 0.01f;
-                    //        break;
-                    //    case Socium.Settlements.SettlementSize.Fort:
-                    //        fScale = 0.015f;
-                    //        break;
-                    //    case Socium.Settlements.SettlementSize.Town:
-                    //        fScale = 0.015f;
-                    //        break;
-                    //    case Socium.Settlements.SettlementSize.City:
-                    //        fScale = 0.015f;
-                    //        break;
-                    //    case Socium.Settlements.SettlementSize.Capital:
-                    //        fScale = 0.015f;
-                    //        break;
-                    //}
-
-                    cSettlements.Add(new SettlementModel(m_aLandVertices[cLocations[pLoc.m_iID]].Position,
-                                            Rnd.Get((float)Math.PI * 2), fScale*2,
-                                            pModel, m_pWorld.m_pGrid.m_eShape, pTexture));
-                
-                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
+                        aVertices[cLocations[pLoc.m_iID]].TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
+                    }
                 }
 
-                if (pLoc.m_eType == RegionType.Peak)
-                {
-                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights = new Vector4(0, 0, 1, 1);
-                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 = new Vector4(0, 0, 0, 0);
-                }
                 if (pLoc.m_eType == RegionType.Volcano)
                 {
-                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights = new Vector4(0, 0, 0, 0);
-                    m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 = new Vector4(0, 0, 0, 1);
+                    aVertices[cLocations[pLoc.m_iID]].TexWeights = new Vector4(0, 0, 0, 0);
+                    aVertices[cLocations[pLoc.m_iID]].TexWeights2 = new Vector4(0, 0, 0, 1);
                 }
             }
 
-            m_aTrees = cTrees.ToArray();
-            m_aSettlements = cSettlements.ToArray();
+            aTrees = cTrees.ToArray();
+            aSettlements = cSettlements.ToArray();
+        }
+
+        private void UpdateTexWeight(ref Vector4 pOriginal, Vector4 pAddon)
+        {
+            pOriginal.X = Math.Max(pOriginal.X, pAddon.X);
+            pOriginal.Y = Math.Max(pOriginal.Y, pAddon.Y);
+            pOriginal.Z = Math.Max(pOriginal.Z, pAddon.Z);
+            pOriginal.W = Math.Max(pOriginal.W, pAddon.W);
         }
 
         private Vector4 GetTexWeights(LandType eLT)
         {
             Vector4 texWeights = new Vector4();
-            texWeights.X = (eLT == LandType.Savanna || eLT == LandType.Coastral || eLT == LandType.Desert) ? 1 : 0;
-            texWeights.Y = (eLT == LandType.Tundra || eLT == LandType.Savanna || eLT == LandType.Plains || eLT == LandType.Coastral || eLT == LandType.Ocean) ? 1 : 0;
-            texWeights.Z = (eLT == LandType.Mountains || eLT == LandType.Coastral || eLT == LandType.Ocean) ? 1 : 0;
-            texWeights.W = (eLT == LandType.Tundra) ? 1 : 0;
+            texWeights.X = (eLT == LandType.Savanna || eLT == LandType.Coastral || eLT == LandType.Desert) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.2f);
+            texWeights.Y = (eLT == LandType.Tundra || eLT == LandType.Savanna || eLT == LandType.Plains || eLT == LandType.Coastral || eLT == LandType.Ocean) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.2f);
+            texWeights.Z = (eLT == LandType.Mountains || eLT == LandType.Coastral || eLT == LandType.Ocean) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.2f);
+            texWeights.W = (eLT == LandType.Tundra) ? 0.7f + Rnd.Get(0.6f) : 0;
 
             return texWeights;
         }
@@ -604,173 +654,18 @@ namespace MapDrawXNAEngine
         private Vector4 GetTexWeights2(LandType eLT)
         {
             Vector4 texWeights = new Vector4();
-            texWeights.X = (eLT == LandType.Swamp || eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Taiga) ? 1 : 0;
+            texWeights.X = (eLT == LandType.Swamp || eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Taiga) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.2f);
             texWeights.Y = 0;// (eLT == LandType.Savanna) ? 1 : 0;
-            texWeights.Z = (eLT == LandType.Swamp) ? 1 : 0;
+            texWeights.Z = (eLT == LandType.Swamp) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.1f);
             texWeights.W = 0;
 
             return texWeights;
         }
 
         /// <summary>
-        /// текстурированная поверхность подводной части ландшафта. нужна для построения водной глади
-        /// </summary>
-        private void BuildUnderWater()
-        {
-            int iPrimitivesCount = 0;
-            foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
-            {
-                foreach (LocationX pLoc in pVertex.m_cLocations)
-                {
-                    if (pLoc.Forbidden || pLoc.Owner == null)
-                        continue;
-
-                    if ((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
-                        (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral)
-                    {
-                        iPrimitivesCount++;
-                        break;
-                    }
-                }
-
-            }
-            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
-            {
-                if (pLoc.Forbidden || pLoc.Owner == null)
-                    continue;
-
-                if ((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
-                    (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral)
-                {
-                    iPrimitivesCount++;
-                }
-            }
-
-            // Create the verticies for our triangle
-            m_aUnderwaterVertices = new VertexMultitextured[iPrimitivesCount];
-
-            Dictionary<long, int> cVertexes = new Dictionary<long, int>();
-            Dictionary<long, int> cLocations = new Dictionary<long, int>();
-
-            int iCounter = 0;
-            foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
-            {
-                VertexMultitextured pVM = new VertexMultitextured();
-
-                bool bOcean = false;
-                foreach (LocationX pLoc in pVertex.m_cLocations)
-                {
-                    if (pLoc.Forbidden || pLoc.Owner == null)
-                        continue;
-
-                    pVM.TexWeights = new Vector4(0);
-                    pVM.TexWeights2 = new Vector4(0);
-
-                    LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
-                    pVM.TexWeights += GetTexWeights(eLT);
-                    pVM.TexWeights2 += GetTexWeights2(eLT);
-
-                    if ((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
-                        (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral)
-                        bOcean = true;
-                }
-
-                if (!bOcean)
-                    continue;
-
-                //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
-                //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
-
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
-
-                    pVM.TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                }
-                else
-                {
-                    pVM.TextureCoordinate.X = pVertex.m_fX / m_fTextureScale;
-                }
-                pVM.TextureCoordinate.Y = pVertex.m_fY / m_fTextureScale;
-
-                m_aUnderwaterVertices[iCounter] = pVM;
-                cVertexes[pVertex.m_iID] = iCounter;
-
-                iCounter++;
-            }
-
-            m_iUnderwaterTrianglesCount = 0;
-            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
-            {
-                if (pLoc.Forbidden || pLoc.Owner == null)
-                    continue;
-
-                if ((pLoc.Owner as LandX).Type.m_eType != LandType.Ocean &&
-                    (pLoc.Owner as LandX).Type.m_eType != LandType.Coastral)
-                    continue;
-
-                m_aUnderwaterVertices[iCounter] = new VertexMultitextured();
-                float fHeight = pLoc.m_fHeight * m_fLandHeightMultiplier;
-
-                m_aUnderwaterVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
-
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pLoc.X, pLoc.Z);
-
-                    m_aUnderwaterVertices[iCounter].TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                }
-                else
-                {
-                    m_aUnderwaterVertices[iCounter].TextureCoordinate.X = pLoc.X / m_fTextureScale;
-                }
-                m_aUnderwaterVertices[iCounter].TextureCoordinate.Y = pLoc.Y / m_fTextureScale;
-
-                LandType eLT = LandType.Ocean;
-                if (pLoc.Owner != null)
-                    eLT = (pLoc.Owner as LandX).Type.m_eType;
-                m_aUnderwaterVertices[iCounter].TexWeights = GetTexWeights(eLT);
-                m_aUnderwaterVertices[iCounter].TexWeights2 = GetTexWeights2(eLT);
-
-                cLocations[pLoc.m_iID] = iCounter;
-
-                m_iUnderwaterTrianglesCount += pLoc.m_aBorderWith.Length;
-
-                iCounter++;
-            }
-
-            // Create the indices used for each triangle
-            m_aUnderwaterIndices = new int[m_iUnderwaterTrianglesCount * 3];
-
-            iCounter = 0;
-
-            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
-            {
-                if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
-                    continue;
-
-                if ((pLoc.Owner as LandX).Type.m_eType != LandType.Ocean &&
-                    (pLoc.Owner as LandX).Type.m_eType != LandType.Coastral)
-                    continue;
-
-                Line pLine = pLoc.m_pFirstLine;
-                //последовательно перебирает все связанные линии, пока круг не замкнётся.
-                do
-                {
-
-                    m_aUnderwaterIndices[iCounter++] = cLocations[pLoc.m_iID];
-                    m_aUnderwaterIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID];
-                    m_aUnderwaterIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID];
-
-                    pLine = pLine.m_pNext;
-                }
-                while (pLine != pLoc.m_pFirstLine);
-            }
-        }
-
-        /// <summary>
-        /// текстурированная поверхность водной глади
+        /// текстурированная поверхность водной глади.
+        /// поскольку у нас миры могут быть разными и водная поверхность - не обязательно плоскость, приходится строить воду по локациям.
+        /// с другой стороны, коль скоро оно гладкая, то мы можем обойтись без средних и внутренних точек.
         /// </summary>
         private void BuildWater()
         {
@@ -915,15 +810,6 @@ namespace MapDrawXNAEngine
 
         private Microsoft.Xna.Framework.Color GetMapModeColor(LocationX pLoc, MapMode pMode)
         {
-            //if (m_cColorsCache.ContainsKey(pLoc))
-            //{
-            //    if (m_cColorsCache[pLoc].ContainsKey(pMode))
-            //        return m_cColorsCache[pLoc][pMode];
-            //}
-            //else
-            //{
-            //    m_cColorsCache[pLoc] = new Dictionary<MapMode, Microsoft.Xna.Framework.Color>();
-            //}
             Microsoft.Xna.Framework.Color pResult = Microsoft.Xna.Framework.Color.DarkBlue; 
             
             if (!pLoc.Forbidden && pLoc.Owner != null)
@@ -1156,7 +1042,7 @@ namespace MapDrawXNAEngine
 
                 cLocations[pLoc.m_iID] = iCounter;
 
-                m_cMapModeData[pMode].m_iTrianglesCount += pLoc.m_aBorderWith.Length;
+                m_cMapModeData[pMode].m_iTrianglesCount += pLoc.m_aBorderWith.Length * 4;
 
                 iCounter++;
             }
@@ -1178,9 +1064,21 @@ namespace MapDrawXNAEngine
                 //последовательно перебирает все связанные линии, пока круг не замкнётся.
                 do
                 {
-                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cLocations[pLoc.m_iID];
-                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID][pColor];
                     m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint1.m_iID][pColor];
+
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint.m_iID][pColor];
+
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2.m_iID][pColor];
+
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint.m_iID][pColor];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cLocations[pLoc.m_iID];
+                    m_cMapModeData[pMode].m_aIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint.m_iID][pColor];
 
                     if (fMinHeight > pLine.m_pPoint1.m_fHeight)
                         fMinHeight = pLine.m_pPoint1.m_fHeight;
@@ -1189,21 +1087,21 @@ namespace MapDrawXNAEngine
                 }
                 while (pLine != pLoc.m_pFirstLine);
             
-                if (pLoc.m_pSettlement != null)
-                {
-                    m_cMapModeData[pMode].m_aVertices[cLocations[pLoc.m_iID]].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, (pLoc.m_fHeight + fMinHeight) / 2, m_fLandHeightMultiplier);
-                    pLine = pLoc.m_pFirstLine;
-                    do
-                    {
-                        foreach (var pVert in cVertexes[pLine.m_pPoint1.m_iID])
-                        {
-                            m_cMapModeData[pMode].m_aVertices[pVert.Value].Position = GetPosition(pLine.m_pPoint1, m_pWorld.m_pGrid.m_eShape, (pLine.m_pPoint1.m_fHeight + fMinHeight) / 2, m_fLandHeightMultiplier);
-                        }
+                //if (pLoc.m_pSettlement != null)
+                //{
+                //    m_cMapModeData[pMode].m_aVertices[cLocations[pLoc.m_iID]].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, (pLoc.m_fHeight + fMinHeight) / 2, m_fLandHeightMultiplier);
+                //    pLine = pLoc.m_pFirstLine;
+                //    do
+                //    {
+                //        foreach (var pVert in cVertexes[pLine.m_pPoint1.m_iID])
+                //        {
+                //            m_cMapModeData[pMode].m_aVertices[pVert.Value].Position = GetPosition(pLine.m_pPoint1, m_pWorld.m_pGrid.m_eShape, (pLine.m_pPoint1.m_fHeight + fMinHeight) / 2, m_fLandHeightMultiplier);
+                //        }
 
-                        pLine = pLine.m_pNext;
-                    }
-                    while (pLine != pLoc.m_pFirstLine);
-                }
+                //        pLine = pLine.m_pNext;
+                //    }
+                //    while (pLine != pLoc.m_pFirstLine);
+                //}
             }
         }
 
@@ -1567,12 +1465,12 @@ namespace MapDrawXNAEngine
             FillNationColors();
 
             if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                m_fLandHeightMultiplier = 7f / m_pWorld.m_fMaxHeight;
+                m_fLandHeightMultiplier = 7f / 60;//m_pWorld.m_fMaxHeight;
             else
-                m_fLandHeightMultiplier = 3.5f / m_pWorld.m_fMaxHeight;
+                m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
 
-            BuildLand();
-            BuildUnderWater();
+            BuildLand(true, out m_aUnderwaterVertices, out m_iUnderwaterTrianglesCount, out m_aUnderwaterIndices, out m_aTrees, out m_aSettlements);
+            BuildLand(false, out m_aLandVertices, out m_iLandTrianglesCount, out m_aLandIndices, out m_aTrees, out m_aSettlements);
             BuildWater();
 
             //FillPrimitivesFake();

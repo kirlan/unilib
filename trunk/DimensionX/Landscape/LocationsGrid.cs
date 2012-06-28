@@ -59,7 +59,7 @@ namespace LandscapeGeneration
             get { return m_iRY; }
         }
 
-        private int m_iRX = 62500;
+        private int m_iRX = 625000;
 
         /// <summary>
         /// Половина длины экватора
@@ -105,6 +105,16 @@ namespace LandscapeGeneration
                 {
                     ImproveGrid();
                     bOK = CalculateVoronoi();
+                    if (bOK)
+                    {
+                        ImproveGrid();
+                        bOK = CalculateVoronoi();
+                        if (bOK)
+                        {
+                            ImproveGrid();
+                            bOK = CalculateVoronoi();
+                        }
+                    }
                 }
             }
             while (!bOK);
@@ -398,7 +408,7 @@ namespace LandscapeGeneration
             Vertex pVertexB = cVertexes[pEdge.VVertexB];
 
             if (pVertexA == pVertexB)
-                return false;
+                throw new Exception("Vertexes too close!");
 
             //Для определения того, лежат ли точки A и B относительно центра локации L1 по часовой стрелке
             //или против, рассчитаем z-координату векторного произведения векторов (L1, A) и (L1, B).
