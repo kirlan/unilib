@@ -117,7 +117,7 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 	farColor += tex2D(TextureSampler6, input.TextureCoords)*input.TextureWeights2.z;
 	farColor += tex2D(TextureSampler7, input.TextureCoords)*input.TextureWeights2.w;
 
-    float2 nearTextureCoords = input.TextureCoords*50;
+    float2 nearTextureCoords = input.TextureCoords*5;
     float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*input.TextureWeights.x;
     nearColor += tex2D(TextureSampler1, nearTextureCoords)*input.TextureWeights.y;
     nearColor += tex2D(TextureSampler2, nearTextureCoords)*input.TextureWeights.z;
@@ -171,7 +171,7 @@ float4 PixelShaderFunctionPoint(VertexShaderOutput input) : COLOR0
 	farColor += tex2D(TextureSampler6, input.TextureCoords)*input.TextureWeights2.z;
 	farColor += tex2D(TextureSampler7, input.TextureCoords)*input.TextureWeights2.w;
 
-    float2 nearTextureCoords = input.TextureCoords*50;
+    float2 nearTextureCoords = input.TextureCoords*5;
     float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*input.TextureWeights.x;
     nearColor += tex2D(TextureSampler1, nearTextureCoords)*input.TextureWeights.y;
     nearColor += tex2D(TextureSampler2, nearTextureCoords)*input.TextureWeights.z;

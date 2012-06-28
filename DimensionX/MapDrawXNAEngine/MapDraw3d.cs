@@ -245,7 +245,7 @@ namespace MapDrawXNAEngine
 
         private SettlementModel[] m_aSettlements = new SettlementModel[0];
 
-        private float m_fTextureScale = 50000;
+        private float m_fTextureScale = 5000;
 
         /// <summary>
         /// Вычисляет реальные 3d координаты вертекса с учётом его собственной высоты над сеткой и формы мира
@@ -645,6 +645,7 @@ namespace MapDrawXNAEngine
             Vector4 texWeights = new Vector4();
             texWeights.X = (eLT == LandType.Savanna || eLT == LandType.Coastral || eLT == LandType.Desert) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.2f);
             texWeights.Y = (eLT == LandType.Tundra || eLT == LandType.Savanna || eLT == LandType.Plains || eLT == LandType.Coastral || eLT == LandType.Ocean) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.2f);
+            texWeights.Y = (eLT == LandType.Forest || eLT == LandType.Jungle || eLT == LandType.Taiga) ? 0.1f + Rnd.Get(0.2f) : texWeights.Y;
             texWeights.Z = (eLT == LandType.Mountains || eLT == LandType.Coastral || eLT == LandType.Ocean) ? 0.7f + Rnd.Get(0.6f) : Rnd.Get(0.2f);
             texWeights.W = (eLT == LandType.Tundra) ? 0.7f + Rnd.Get(0.6f) : 0;
 
