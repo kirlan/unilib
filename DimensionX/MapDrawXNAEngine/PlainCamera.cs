@@ -41,7 +41,7 @@ namespace MapDrawXNAEngine
 
         public override void ZoomIn(float fDistance)
         {
-            fDistance *= m_fDistance / 1000;
+            fDistance *= m_fDistance / 10000;
 
             m_fDistance -= fDistance;
 

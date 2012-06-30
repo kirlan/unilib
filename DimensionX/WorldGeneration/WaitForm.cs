@@ -18,7 +18,7 @@ namespace WorldGeneration
         /// <summary>
         /// Показывает диалог ожидания.
         /// </summary>
-        public static void StartWait(IWin32Window pOwner)
+        public static void StartWait(IWin32Window pOwner, string sCaption)
         {
             Monitor.Enter(m_pWaitFormLock);
 
@@ -27,6 +27,7 @@ namespace WorldGeneration
 
             m_pWaitForm = new WaitForm();
 
+            m_pWaitForm.Text = sCaption;
             m_pWaitForm.Show(pOwner);
             m_pWaitForm.Refresh();
         }
