@@ -318,14 +318,16 @@ namespace MapDrawXNAEngine
         /// <param name="aVertices">вершинный буфер</param>
         /// <param name="iTrianglesCount">количество треугольников</param>
         /// <param name="aIndices">индексный буфер</param>
-        /// <param name="aTrees">массив моделей деревьев для отрисовки</param>
-        /// <param name="aSettlements">массив моделей поселений для отрисовки</param>
-        private void BuildLand(bool bOceanOnly, out VertexMultitextured[] aVertices, out int iTrianglesCount, out int[] aIndices, out TreeModel[] aTrees, out SettlementModel[] aSettlements)
+        /// <param name="aTrees">массив моделей деревьев для отрисовки, при bOceanOnly = true возвращается пустой!</param>
+        /// <param name="aSettlements">массив моделей поселений для отрисовки, при bOceanOnly = true возвращается пустой!</param>
+        private void BuildLand(bool bOceanOnly, out VertexMultitextured[] aVertices, out int iTrianglesCount, out int[] aIndices, out TreeModel[] aTrees, out SettlementModel[] aSettlements,
+                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
             //это - количество вершин треугольников для отрисовки. 
             //вычисляется как сумма количества узлов диаграммы Вороного (включая дополнительно построенные промежуточные точки) 
             //и количества локаций, за вычетом запретных.
-            int iVertexesCount = 0; 
+            int iVertexesCount = 0;
 
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
@@ -363,6 +365,14 @@ namespace MapDrawXNAEngine
             Dictionary<long, int> cVertexes = new Dictionary<long, int>();
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
 
+            if (BeginStep != null)
+            {
+                if (bOceanOnly)
+                    BeginStep("Building textured underwater map data...", iVertexesCount + m_pWorld.m_pGrid.m_aLocations.Length);
+                else
+                    BeginStep("Building textured land map data...", iVertexesCount + m_pWorld.m_pGrid.m_aLocations.Length);
+            } 
+            
             //добавляем в вершинный буффер узлы диаграммы Вороного
             int iCounter = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
@@ -421,6 +431,9 @@ namespace MapDrawXNAEngine
                 cVertexes[pVertex.m_iID] = iCounter;
 
                 iCounter++;
+            
+                if (ProgressStep != null)
+                    ProgressStep();
             }
 
             //добавляем в вершинный буффер центры локаций
@@ -436,13 +449,13 @@ namespace MapDrawXNAEngine
                     continue;
 
                 aVertices[iCounter] = new VertexMultitextured();
-                float fHeight = pLoc.m_fHeight * m_fLandHeightMultiplier;
-                //if (pLoc.m_eType == RegionType.Peak)
-                //    fHeight += 0.5f * m_fLandHeightMultiplier;
+                float fHeight = pLoc.m_fHeight;
+                if (pLoc.m_eType == RegionType.Peak)
+                    fHeight += 2 + Rnd.Get(1f);
                 if (pLoc.m_eType == RegionType.Volcano)
-                    fHeight -= 10 * m_fLandHeightMultiplier;
+                    fHeight -= 4;
 
-                aVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
+                aVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, fHeight, m_fLandHeightMultiplier);
 
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
@@ -467,6 +480,9 @@ namespace MapDrawXNAEngine
                 iTrianglesCount += pLoc.m_aBorderWith.Length * 4;
 
                 iCounter++;
+
+                if (ProgressStep != null)
+                    ProgressStep();
             }
 
             // Create the indices used for each triangle
@@ -476,10 +492,13 @@ namespace MapDrawXNAEngine
 
             List<TreeModel> cTrees = new List<TreeModel>();
             List<SettlementModel> cSettlements = new List<SettlementModel>();
-
+            
             //заполняем индексный буффер
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
+                if (ProgressStep != null)
+                    ProgressStep(); 
+                
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
@@ -493,8 +512,12 @@ namespace MapDrawXNAEngine
                     eLT = (pLoc.Owner as LandX).Type.m_eType;
 
                 //добавляем на горы снежные шапки в зависимости от высоты
-                if (pLoc.m_fHeight > m_pWorld.m_fMaxHeight/3)
-                    aVertices[cLocations[pLoc.m_iID]].TexWeights.W = 2 * (float)Math.Pow((pLoc.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+                float fHeight = pLoc.m_fHeight;
+                if (pLoc.m_eType == RegionType.Peak)
+                    fHeight += 2.5f;
+
+                if (fHeight > m_pWorld.m_fMaxHeight / 3)
+                    aVertices[cLocations[pLoc.m_iID]].TexWeights.W = 2 * (float)Math.Pow((fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
 
                 float fMinHeight = float.MaxValue;
                 Line pLine = pLoc.m_pFirstLine;
@@ -564,49 +587,27 @@ namespace MapDrawXNAEngine
 
                     fScale *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
 
-                    //последовательно перебирает все связанные линии, пока круг не замкнётся.
-                    pLine = pLoc.m_pFirstLine;
-                    do
+                    if (eLT == LandType.Forest || eLT == LandType.Taiga || eLT == LandType.Jungle)
                     {
-                        Model pTree = null;
-                        switch (eLT)
+                        bool bEdge = false;
+                        foreach (LocationX pLink in pLoc.m_aBorderWith)
                         {
-                            case LandType.Forest:
-                                pTree = treeModel[Rnd.Get(treeModel.Length)];
-                                break;
-                            case LandType.Jungle:
-                                pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : palmModel[Rnd.Get(palmModel.Length)];
-                                break;
-                            case LandType.Taiga:
-                                pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)];
-                                break;
-                        }
+                            if (pLink.Forbidden)
+                                continue;
+                        
+                            LandType eLinkLT = LandType.Ocean;
+                            if (pLink.Owner != null)
+                                eLinkLT = (pLink.Owner as LandX).Type.m_eType;
 
-                        if (pTree != null)
-                        {
-                            Vector3 pCenter = (aVertices[cLocations[pLoc.m_iID]].Position +
-                                                aVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position +
-                                                aVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 3;
-
-                            if (pLoc.m_pSettlement == null)
-                                cTrees.Add(new TreeModel(pCenter, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
-
-                            if (pLoc.m_pSettlement == null ||
-                                pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
-                                pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village)
+                            if (eLinkLT != LandType.Forest && eLinkLT != LandType.Taiga && eLinkLT != LandType.Jungle)
                             {
-                                cTrees.Add(new TreeModel((pCenter + aVertices[cLocations[pLoc.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
-                                cTrees.Add(new TreeModel((pCenter + aVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
-                                cTrees.Add(new TreeModel((pCenter + aVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 2, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                                if (eLinkLT != LandType.Ocean && eLinkLT != LandType.Coastral)
+                                    AddTreeModels(pLink, ref eLT, ref aVertices, ref cLocations, ref cVertexes, ref cTrees, fScale, 0.1f);
+                                bEdge = true;
                             }
                         }
-
-                        //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights/4;
-                        //m_aLandVertices[cLocations[pLoc.m_iID]].TexWeights2 += m_aLandVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2/4;
-
-                        pLine = pLine.m_pNext;
+                        AddTreeModels(pLoc, ref eLT, ref aVertices, ref cLocations, ref cVertexes, ref cTrees, fScale, bEdge ? 0.75f:1f);
                     }
-                    while (pLine != pLoc.m_pFirstLine);
 
                     if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
                     {
@@ -625,11 +626,92 @@ namespace MapDrawXNAEngine
                 {
                     aVertices[cLocations[pLoc.m_iID]].TexWeights = new Vector4(0, 0, 0, 0);
                     aVertices[cLocations[pLoc.m_iID]].TexWeights2 = new Vector4(0, 0, 0, 1);
+
+                    pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += new Vector4(0, 0, 0, 0);
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += new Vector4(0, 0, 0, 0.5f);
+
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].Position = GetPosition(pLine.m_pInnerPoint, m_pWorld.m_pGrid.m_eShape, pLine.m_pInnerPoint.m_fHeight + 4 + Rnd.Get(2f), m_fLandHeightMultiplier);
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].Position = (aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].Position + aVertices[cLocations[pLoc.m_iID]].Position) / 2;
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
+
+                if (pLoc.m_eType == RegionType.Peak)
+                {
+                    pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].Position = GetPosition(pLine.m_pInnerPoint, m_pWorld.m_pGrid.m_eShape, pLine.m_pInnerPoint.m_fHeight + 1.5f + Rnd.Get(1f), m_fLandHeightMultiplier);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
                 }
             }
 
             aTrees = cTrees.ToArray();
             aSettlements = cSettlements.ToArray();
+        }
+
+        private void AddTreeModels(LocationX pLoc, ref LandType eLT, ref VertexMultitextured[] aVertices, ref Dictionary<long, int> cLocations, ref Dictionary<long, int> cVertexes, ref List<TreeModel> cTrees, float fScale, float fProbability)
+        {
+            //последовательно перебирает все связанные линии, пока круг не замкнётся.
+            Line pLine = pLoc.m_pFirstLine;
+            do
+            {
+                Vector3 pCenter = aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].Position;
+
+                if (pLoc.m_pSettlement == null && Rnd.Get(1f) < fProbability)
+                    AddTreeModel((pCenter + aVertices[cLocations[pLoc.m_iID]].Position) / 2, ref eLT, ref cTrees, fScale);
+
+                if (pLoc.m_pSettlement == null ||
+                    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
+                    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village ||
+                    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Town ||
+                    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Fort)
+                {
+                    if (Rnd.Get(1f) < fProbability)
+                        AddTreeModel(pCenter, ref eLT, ref cTrees, fScale);
+                    if (Rnd.Get(1f) < fProbability)
+                        AddTreeModel((pCenter + aVertices[cVertexes[pLine.m_pPoint2.m_iID]].Position) / 2, ref eLT, ref cTrees, fScale);
+                    if (Rnd.Get(1f) < fProbability)
+                        AddTreeModel((pCenter + aVertices[cVertexes[pLine.m_pPoint1.m_iID]].Position) / 2, ref eLT, ref cTrees, fScale);
+                }
+
+                pLine = pLine.m_pNext;
+            }
+            while (pLine != pLoc.m_pFirstLine);
+        }
+
+        private void AddTreeModel(Vector3 pPos, ref LandType eLT, ref List<TreeModel> cTrees, float fScale)
+        {
+            Model pTree = null;
+            switch (eLT)
+            {
+                case LandType.Forest:
+                    pTree = treeModel[Rnd.Get(treeModel.Length)];
+                    break;
+                case LandType.Jungle:
+                    if (Rnd.OneChanceFrom(3))
+                        pTree = treeModel[Rnd.Get(treeModel.Length)];
+                    else
+                    {
+                        pTree = palmModel[Rnd.Get(palmModel.Length)];
+                        fScale *= 1.75f;
+                    }
+                    break;
+                case LandType.Taiga:
+                    pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)];
+                    break;
+            }
+
+            if (pTree != null)
+                cTrees.Add(new TreeModel(pPos, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
         }
 
         private void UpdateTexWeight(ref Vector4 pOriginal, Vector4 pAddon)
@@ -963,7 +1045,9 @@ namespace MapDrawXNAEngine
         /// <summary>
         /// набор примитивов с дублированием вершин на границе разноцветных регионов, так чтобы образовывалась чёткая граница цвета
         /// </summary>
-        private void BuildMapModeData(MapMode pMode)
+        private void BuildMapModeData(MapMode pMode,
+                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
             if (pMode == MapMode.Sattelite)
                 return;
@@ -998,6 +1082,9 @@ namespace MapDrawXNAEngine
             Dictionary<long, Dictionary<Microsoft.Xna.Framework.Color, int>> cVertexes = new Dictionary<long, Dictionary<Microsoft.Xna.Framework.Color, int>>();
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
 
+            if (BeginStep != null)
+                BeginStep(string.Format("Building {0} map data...", pMode.ToString()), iPrimitivesCount + m_pWorld.m_pGrid.m_aLocations.Length + m_pWorld.m_pGrid.m_aLocations.Length); 
+            
             int iCounter = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
@@ -1023,6 +1110,9 @@ namespace MapDrawXNAEngine
                         cVertexes[pVertex.m_iID][pColor] = iCounter;
 
                         iCounter++;
+
+                        if (ProgressStep != null)
+                            ProgressStep();
                     }
                 }
             }
@@ -1046,15 +1136,21 @@ namespace MapDrawXNAEngine
                 m_cMapModeData[pMode].m_iTrianglesCount += pLoc.m_aBorderWith.Length * 4;
 
                 iCounter++;
+
+                if (ProgressStep != null)
+                    ProgressStep();
             }
 
             // Create the indices used for each triangle
             m_cMapModeData[pMode].m_aIndices = new int[m_cMapModeData[pMode].m_iTrianglesCount * 3];
 
             iCounter = 0;
-
+            
             foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
             {
+                if (ProgressStep != null)
+                    ProgressStep(); 
+                
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
@@ -1459,7 +1555,9 @@ namespace MapDrawXNAEngine
         /// и раскидываем их по квадрантам
         /// </summary>
         /// <param name="pWorld">мир</param>
-        public void Assign(World pWorld)
+        public void Assign(World pWorld,
+                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
             m_pWorld = pWorld;
             
@@ -1470,8 +1568,8 @@ namespace MapDrawXNAEngine
             else
                 m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
 
-            BuildLand(true, out m_aUnderwaterVertices, out m_iUnderwaterTrianglesCount, out m_aUnderwaterIndices, out m_aTrees, out m_aSettlements);
-            BuildLand(false, out m_aLandVertices, out m_iLandTrianglesCount, out m_aLandIndices, out m_aTrees, out m_aSettlements);
+            BuildLand(true, out m_aUnderwaterVertices, out m_iUnderwaterTrianglesCount, out m_aUnderwaterIndices, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
+            BuildLand(false, out m_aLandVertices, out m_iLandTrianglesCount, out m_aLandIndices, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
             BuildWater();
 
             //FillPrimitivesFake();
@@ -1480,7 +1578,7 @@ namespace MapDrawXNAEngine
 
             foreach (MapMode pMode in Enum.GetValues(typeof(MapMode)))
             {
-                BuildMapModeData(pMode);
+                BuildMapModeData(pMode, BeginStep, ProgressStep);
                 CalculateNormals(m_cMapModeData[pMode].m_aVertices, m_cMapModeData[pMode].m_aIndices, m_cMapModeData[pMode].m_iTrianglesCount);
             }
 
@@ -1597,7 +1695,7 @@ namespace MapDrawXNAEngine
             forestTexture = LibContent.Load<Texture2D>("content/dds/grass");
             savannaTexture = LibContent.Load<Texture2D>("content/dds/plain");
             swampTexture = LibContent.Load<Texture2D>("content/dds/river");
-            lavaTexture = LibContent.Load<Texture2D>("content/dds/1-lava");
+            lavaTexture = LibContent.Load<Texture2D>("content/dds/2-lava");
         }
 
         private void LoadTrees()
@@ -1905,7 +2003,6 @@ namespace MapDrawXNAEngine
                 m_pCamera.ZoomIn(m_fScaling * (float)fElapsedTime);
                 m_fScaling = 0;
             }
-            m_pCamera.Update();
             if (m_bPanMode && m_pCurrentPicking != null)
             {
                 if (m_pLastPicking != null)
@@ -1914,6 +2011,7 @@ namespace MapDrawXNAEngine
                // m_pLastPicking = m_pCurrentPicking;
                 m_pCurrentPicking = null;
             }
+            m_pCamera.Update();
 
             pEffectView.SetValue(m_pCamera.View);
             pEffectProjection.SetValue(m_pCamera.Projection);

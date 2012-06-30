@@ -81,7 +81,13 @@ namespace VQMapTest2
 
         private void ShowWorld()
         {
-            mapDraw3d1.Assign(m_pWorld);
+            WaitForm.StartWait(this, "Initializing 3D engine...");
+
+            mapDraw3d1.Assign(m_pWorld,
+                WaitForm.BeginStep,
+                WaitForm.ProgressStep);
+
+            WaitForm.CloseWait(); 
 
             label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", State.GetTechString(m_pWorld.m_iTechLevel, Socium.Psichology.Customs.Progressiveness.Moderate_Science), m_pWorld.m_iTechLevel);
             if (m_pWorld.m_iMagicLimit > 0)
