@@ -158,6 +158,12 @@ namespace MapDrawXNAEngine
             public int m_iTrianglesCount = 0;
         }
 
+        protected class MapLayersData
+        {
+            public VertexPositionColorNormal[] m_aVertices = new VertexPositionColorNormal[0];
+            public Dictionary<MapLayer, int[]> m_aIndices = new Dictionary<MapLayer,int[]>();
+        }
+
         /// <summary>
         /// мир, карту которого мы рисуем
         /// </summary>
@@ -167,6 +173,8 @@ namespace MapDrawXNAEngine
         Effect m_pMyEffect;
         Stopwatch timer;
 
+        MapLayersData m_pLayers = new MapLayersData();
+        
         MapModeData<VertexMultitextured> m_pLand = new MapModeData<VertexMultitextured>();
         MapModeData<VertexMultitextured> m_pUnderwater = new MapModeData<VertexMultitextured>();
         MapModeData<VertexPositionTexture> m_pWater = new MapModeData<VertexPositionTexture>();
@@ -387,6 +395,269 @@ namespace MapDrawXNAEngine
             Vector3 side1 = v1 - v3;
             Vector3 side2 = v1 - v2;
             return Vector3.Cross(side1, side2);
+        }
+
+        /// <summary>
+        /// границы локаций
+        /// </summary>
+        /// <param name="aVertices">вершинный буфер</param>
+        /// <param name="iTrianglesCount">количество треугольников</param>
+        /// <param name="aIndices">индексный буфер</param>
+        /// <param name="aTrees">массив моделей деревьев для отрисовки, при bOceanOnly = true возвращается пустой!</param>
+        /// <param name="aSettlements">массив моделей поселений для отрисовки, при bOceanOnly = true возвращается пустой!</param>
+        private void BuildLayers(out MapLayersData pData,
+                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+        {
+            // Create the verticies for our triangle
+            pData = new MapLayersData();
+            pData.m_aVertices = new VertexPositionColorNormal[m_cGeoVData.Length];
+
+            Dictionary<Vertex, int> cVertexes = new Dictionary<Vertex, int>();
+            Dictionary<LocationX, int> cLocations = new Dictionary<LocationX, int>();
+
+            if (BeginStep != null)
+            {
+                BeginStep("Building layers grid data...", m_cGeoVData.Length + m_cGeoLData.Length);
+            }
+
+            //добавляем в вершинный буффер узлы диаграммы Вороного
+            int iCounter = 0;
+            for (int k = 0; k < m_cGeoVData.Length; k++)
+            {
+                Vertex pVertex = m_cGeoVData[k].m_pOwner;
+                VertexPositionColorNormal pVM = new VertexPositionColorNormal();
+
+                pVM.Color = Microsoft.Xna.Framework.Color.Red;
+
+                pVM.Position = m_cGeoVData[k].m_pPosition;
+                pVM.Normal = m_cGeoVData[k].m_pNormal;
+
+                pData.m_aVertices[iCounter] = pVM;
+                cVertexes[pVertex] = iCounter;
+
+                iCounter++;
+
+                if (ProgressStep != null)
+                    ProgressStep();
+            }
+
+            // Create the indices used for each triangle
+            pData.m_aIndices[MapLayer.Locations] = BuildLocationsIndices(ref cVertexes);
+            pData.m_aIndices[MapLayer.Lands] = BuildLandsIndices(ref cVertexes);
+            pData.m_aIndices[MapLayer.LandMasses] = BuildLandMassesIndices(ref cVertexes);
+            pData.m_aIndices[MapLayer.Continents] = BuildContinentsIndices(ref cVertexes);
+            pData.m_aIndices[MapLayer.Provincies] = BuildProvincesIndices(ref cVertexes);
+            pData.m_aIndices[MapLayer.States] = BuildStatesIndices(ref cVertexes);
+        }
+
+        private int[] BuildLocationsIndices(ref Dictionary<Vertex, int> cVertexes)
+        {
+            //добавляем в вершинный буффер центры локаций
+            int m_iLinesCount = 0;
+            for (int i = 0; i < m_cGeoLData.Length; i++)
+            {
+                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+
+                m_iLinesCount += pLoc.m_aBorderWith.Length * 2;
+
+                //if (ProgressStep != null)
+                //    ProgressStep();
+            }
+
+            // Create the indices used for each triangle
+            int[] aIndices = new int[m_iLinesCount * 2];
+
+            int iCounter = 0;
+
+            //заполняем индексный буффер
+            for (int i = 0; i < m_cGeoLData.Length; i++)
+            {
+                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                //if (ProgressStep != null)
+                //    ProgressStep();
+
+                Line pLine = pLoc.m_pFirstLine;
+                do
+                {
+                    aIndices[iCounter++] = cVertexes[pLine.m_pPoint1];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint];
+
+                    aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint];
+                    aIndices[iCounter++] = cVertexes[pLine.m_pPoint2];
+
+                    pLine = pLine.m_pNext;
+                }
+                while (pLine != pLoc.m_pFirstLine);
+
+            }
+
+            return aIndices;
+        }
+        private int[] BuildLandsIndices(ref Dictionary<Vertex, int> cVertexes)
+        {
+            List<int> cIndices = new List<int>();
+
+            //заполняем индексный буффер
+            for (int i = 0; i < m_pWorld.m_aLands.Length; i++)
+            {
+                LandX pLand = m_pWorld.m_aLands[i];
+                if (pLand.Forbidden)
+                    continue;
+                //if (ProgressStep != null)
+                //    ProgressStep();
+
+                foreach (Line pFirstLine in pLand.m_cFirstLines)
+                {
+                    Line pLine = pFirstLine;
+                    do
+                    {
+                        cIndices.Add(cVertexes[pLine.m_pPoint1]);
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+                        cIndices.Add(cVertexes[pLine.m_pPoint2]);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pFirstLine);
+                }
+
+            }
+
+            return cIndices.ToArray();
+        }
+        private int[] BuildLandMassesIndices(ref Dictionary<Vertex, int> cVertexes)
+        {
+            List<int> cIndices = new List<int>();
+
+            //заполняем индексный буффер
+            for (int i = 0; i < m_pWorld.m_aLandMasses.Length; i++)
+            {
+                LandMass<LandX> pLandMass = m_pWorld.m_aLandMasses[i];
+                if (pLandMass.Forbidden)
+                    continue;
+                //if (ProgressStep != null)
+                //    ProgressStep();
+
+                foreach (Line pFirstLine in pLandMass.m_cFirstLines)
+                {
+                    Line pLine = pFirstLine;
+                    do
+                    {
+                        cIndices.Add(cVertexes[pLine.m_pPoint1]);
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+                        cIndices.Add(cVertexes[pLine.m_pPoint2]);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pFirstLine);
+                }
+
+            }
+
+            return cIndices.ToArray();
+        }
+        private int[] BuildContinentsIndices(ref Dictionary<Vertex, int> cVertexes)
+        {
+            List<int> cIndices = new List<int>();
+
+            //заполняем индексный буффер
+            for (int i = 0; i < m_pWorld.m_aContinents.Length; i++)
+            {
+                ContinentX pContinent = m_pWorld.m_aContinents[i];
+                if (pContinent.Forbidden)
+                    continue;
+                //if (ProgressStep != null)
+                //    ProgressStep();
+
+                foreach (Line pFirstLine in pContinent.m_cFirstLines)
+                {
+                    Line pLine = pFirstLine;
+                    do
+                    {
+                        cIndices.Add(cVertexes[pLine.m_pPoint1]);
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+                        cIndices.Add(cVertexes[pLine.m_pPoint2]);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pFirstLine);
+                }
+
+            }
+
+            return cIndices.ToArray();
+        }
+        private int[] BuildProvincesIndices(ref Dictionary<Vertex, int> cVertexes)
+        {
+            List<int> cIndices = new List<int>();
+
+            //заполняем индексный буффер
+            for (int i = 0; i < m_pWorld.m_aProvinces.Length; i++)
+            {
+                Province pProvince = m_pWorld.m_aProvinces[i];
+                if (pProvince.Forbidden)
+                    continue;
+                //if (ProgressStep != null)
+                //    ProgressStep();
+
+                foreach (Line pFirstLine in pProvince.m_cFirstLines)
+                {
+                    Line pLine = pFirstLine;
+                    do
+                    {
+                        cIndices.Add(cVertexes[pLine.m_pPoint1]);
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+                        cIndices.Add(cVertexes[pLine.m_pPoint2]);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pFirstLine);
+                }
+
+            }
+
+            return cIndices.ToArray();
+        }
+        private int[] BuildStatesIndices(ref Dictionary<Vertex, int> cVertexes)
+        {
+            List<int> cIndices = new List<int>();
+
+            //заполняем индексный буффер
+            for (int i = 0; i < m_pWorld.m_aStates.Length; i++)
+            {
+                State pState = m_pWorld.m_aStates[i];
+                if (pState.Forbidden)
+                    continue;
+                //if (ProgressStep != null)
+                //    ProgressStep();
+
+                foreach (Line pFirstLine in pState.m_cFirstLines)
+                {
+                    Line pLine = pFirstLine;
+                    do
+                    {
+                        cIndices.Add(cVertexes[pLine.m_pPoint1]);
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+
+                        cIndices.Add(cVertexes[pLine.m_pMidPoint]);
+                        cIndices.Add(cVertexes[pLine.m_pPoint2]);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pFirstLine);
+                }
+
+            }
+
+            return cIndices.ToArray();
         }
 
         /// <summary>
@@ -1639,6 +1910,8 @@ namespace MapDrawXNAEngine
 
             BuildGeometry(BeginStep, ProgressStep);
 
+            BuildLayers(out m_pLayers, BeginStep, ProgressStep);
+
             BuildLand(true, out m_pUnderwater, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
             BuildLand(false, out m_pLand, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
             BuildWater();
@@ -2002,6 +2275,13 @@ namespace MapDrawXNAEngine
             pEffectTexture6.SetValue(swampTexture);
             pEffectTexture7.SetValue(lavaTexture);
 
+            m_pMyEffect.Parameters["GridColor1"].SetValue(Microsoft.Xna.Framework.Color.Black.ToVector4());
+            m_pMyEffect.Parameters["GridColor2"].SetValue(Microsoft.Xna.Framework.Color.Pink.ToVector4());
+            m_pMyEffect.Parameters["GridColor3"].SetValue(Microsoft.Xna.Framework.Color.White.ToVector4());
+            m_pMyEffect.Parameters["GridColor4"].SetValue(Microsoft.Xna.Framework.Color.Goldenrod.ToVector4());
+            m_pMyEffect.Parameters["GridColor5"].SetValue(Microsoft.Xna.Framework.Color.Yellow.ToVector4());
+            m_pMyEffect.Parameters["GridColor6"].SetValue(Microsoft.Xna.Framework.Color.Black.ToVector4());     
+            
             // create the effect and vertex declaration for drawing the
             // picked triangle.
             lineEffect = new BasicEffect(GraphicsDevice);
@@ -2029,7 +2309,7 @@ namespace MapDrawXNAEngine
         }
 
         /// <summary>
-        /// effect2 должен уже быть создан и настроен!
+        /// m_pMyEffect должен уже быть создан и настроен!
         /// </summary>
         /// <param name="sPath"></param>
         /// <returns></returns>
@@ -2078,17 +2358,25 @@ namespace MapDrawXNAEngine
 
             if (m_eMode == MapMode.Sattelite)
             {
+                if (myVertexBuffer != null)
+                    myVertexBuffer.Dispose();
                 myVertexBuffer = new VertexBuffer(GraphicsDevice, VertexMultitextured.VertexDeclaration, m_pLand.m_aVertices.Length, BufferUsage.WriteOnly);
                 myVertexBuffer.SetData(m_pLand.m_aVertices);
 
+                if (myIndexBuffer != null)
+                    myIndexBuffer.Dispose();
                 myIndexBuffer = new IndexBuffer(GraphicsDevice, typeof(int), m_pLand.m_aIndices.Length, BufferUsage.WriteOnly);
                 myIndexBuffer.SetData(m_pLand.m_aIndices);
             }
             else
             {
+                if (myVertexBuffer != null)
+                    myVertexBuffer.Dispose();
                 myVertexBuffer = new VertexBuffer(GraphicsDevice, VertexPositionColorNormal.VertexDeclaration, m_cMapModeData[m_eMode].m_aVertices.Length, BufferUsage.WriteOnly);
                 myVertexBuffer.SetData(m_cMapModeData[m_eMode].m_aVertices);
 
+                if (myIndexBuffer != null)
+                    myIndexBuffer.Dispose();
                 myIndexBuffer = new IndexBuffer(GraphicsDevice, typeof(int), m_cMapModeData[m_eMode].m_aIndices.Length, BufferUsage.WriteOnly);
                 myIndexBuffer.SetData(m_cMapModeData[m_eMode].m_aIndices);
             }
@@ -2191,9 +2479,21 @@ namespace MapDrawXNAEngine
                 //                                    m_cMapModeData[m_eMode].m_aVertices, 0, m_cMapModeData[m_eMode].m_aVertices.Length - 1, m_cMapModeData[m_eMode].m_aIndices, 0, m_cMapModeData[m_eMode].m_iTrianglesCount);
             }
 
-            for (int i = 0; i < m_aSettlements.Length; i++)
-                DrawSettlement(m_aSettlements[i]);
+            if (m_bShowLocations)
+                for (int i = 0; i < m_aSettlements.Length; i++)
+                    DrawSettlement(m_aSettlements[i]);
 
+            if (m_bShowLocationsBorders)
+                DrawLayer(MapLayer.Locations);
+            if (m_bShowLands)
+                DrawLayer(MapLayer.Lands);
+            if (m_bShowLandMasses)
+                DrawLayer(MapLayer.LandMasses);
+            if (m_bShowProvincies)
+                DrawLayer(MapLayer.Provincies);
+            if (m_bShowStates)
+                DrawLayer(MapLayer.States);
+            
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
         }
@@ -2209,6 +2509,52 @@ namespace MapDrawXNAEngine
 
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList,
                                                 m_pWater.m_aVertices, 0, m_pWater.m_aVertices.Length - 1, m_pWater.m_aIndices, 0, m_pWater.m_iTrianglesCount);
+        }
+
+        private void DrawLayer(MapLayer eLayer)
+        {
+            RasterizerState rs = new RasterizerState();
+            rs.CullMode = CullMode.CullCounterClockwiseFace;
+            //rs.FillMode = FillMode.WireFrame;
+            GraphicsDevice.RasterizerState = rs;
+            //GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+
+            m_pMyEffect.Parameters["GridFog"].SetValue(m_eMode == MapMode.Sattelite);
+            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Grid"];
+
+            // Draw the triangle.
+            int[] aIndices = m_pLayers.m_aIndices[eLayer];
+            switch (eLayer)
+            {
+                case MapLayer.Locations:
+                    m_pMyEffect.CurrentTechnique.Passes[0].Apply();
+                    break;
+                case MapLayer.Lands:
+                    m_pMyEffect.CurrentTechnique.Passes[1].Apply();
+                    break;
+                case MapLayer.LandMasses:
+                    m_pMyEffect.CurrentTechnique.Passes[2].Apply();
+                    break;
+                case MapLayer.Provincies:
+                    m_pMyEffect.CurrentTechnique.Passes[3].Apply();
+                    break;
+                case MapLayer.States:
+                    m_pMyEffect.CurrentTechnique.Passes[4].Apply();
+                    break;
+                case MapLayer.Continents:
+                    m_pMyEffect.CurrentTechnique.Passes[5].Apply();
+                    break;
+                default:
+                    throw new Exception("Unknown map layer!");
+            }
+
+
+            GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
+                                      m_pLayers.m_aVertices, 0, m_pLayers.m_aVertices.Length - 1, aIndices, 0, aIndices.Length/2);
+
+            // Reset renderstates to their default values.
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
 
         private void DrawTrees()
