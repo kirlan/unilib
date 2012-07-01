@@ -211,6 +211,21 @@ technique LandRingworld
 }
 
 //------- Technique: Model --------
+struct InstancedModelVertexShaderInput
+{
+    float4 Position : POSITION0;
+    float3 Normal : NORMAL0;
+    float2 TextureCoordinate : TEXCOORD0;
+};
+
+
+struct InstancedModelVertexShaderOutput
+{
+    float4 Position : POSITION0;
+    float4 Color : COLOR0;
+    float2 TextureCoordinate : TEXCOORD0;
+};
+
 struct ModelVertexShaderInput
 {
     float4 Position : POSITION0;
@@ -225,13 +240,46 @@ struct ModelVertexShaderOutput
     float3 Normal : TEXCOORD1;
     float3 View : TEXCOORD2;
     float2 TextureCoords: TEXCOORD3;
+	//float Fog : FOG0;
 };
+
+// Vertex shader helper function shared between the two techniques.
+ModelVertexShaderOutput InstancedModelVSCommon(InstancedModelVertexShaderInput input, float4x4 instanceTransform)
+{
+    ModelVertexShaderOutput output;
+
+    // Apply the world and camera matrices to compute the output position.
+    float4 worldPosition = mul(input.Position, instanceTransform);
+	output.Position3D = worldPosition;
+    float4 viewPosition = mul(worldPosition, View);
+    output.Position = mul(viewPosition, Projection);
+
+    // Compute lighting, using a simple Lambert model.
+    float3 worldNormal = mul(input.Normal, instanceTransform);
+	output.Normal = worldNormal;
+
+	output.View = normalize(float4(CameraPosition,1.0) - worldPosition);
+    
+	//float d = length(worldPosition - CameraPosition);
+	//float l = exp( - pow( d * FogDensity , 2 ) );
+	//output.Fog = saturate(1 - l);
+
+    // Copy across the input texture coordinate.
+    output.TextureCoords = input.TextureCoordinate;
+
+    return output;
+}
+
+// Hardware instancing reads the per-instance world transform from a secondary vertex stream.
+ModelVertexShaderOutput HardwareInstancingVertexShader(InstancedModelVertexShaderInput input,
+                                                  float4x4 instanceTransform : BLENDWEIGHT)
+{
+    return InstancedModelVSCommon(input, mul(World, transpose(instanceTransform)));
+}
 
 ModelVertexShaderOutput ModelVS(ModelVertexShaderInput input, float3 Normal : NORMAL)
 {
     ModelVertexShaderOutput output;
-	//output.Position3D = input.Position;
-	//output.Color = input.Color;
 
     float4 worldPosition = mul(input.Position, World);
 	output.Position3D = worldPosition;
@@ -245,6 +293,8 @@ ModelVertexShaderOutput ModelVS(ModelVertexShaderInput input, float3 Normal : NO
 
 	output.TextureCoords = input.TextureCoords;
     
+	//output.Fog = 0;
+
     return output;
 }
 
@@ -259,10 +309,12 @@ float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
-	float d = length(input.Position3D - CameraPosition);
+	float d = length(input.Position3D - CameraPosition)* 1.5;
 	float l = exp( - pow( d * FogDensity , 2 ) );
 	l = saturate(1 - l);
-     
+    
+	//float l = d / 20;
+	 
     float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
 
 	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
@@ -274,10 +326,6 @@ float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 	output.rgb = lerp(texColor.rgb*AmbientLightColor.rgb*AmbientLightIntensity + 
 		   texColor.rgb*DirectionalLightIntensity*DirectionalLightColor.rgb*diffuse + 
 		   texColor.rgb*SpecularColor.rgb*specular, FogColor.rgb, l)*output.a;
-
-	//if(output.r == 1 && output.g == 1 && output.b == 1 && output.a == 1)
-	//	output = 0;
-	//output = 0;
 
 	return output;
 }
@@ -354,8 +402,11 @@ technique Tree
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 ModelVS();
-        PixelShader = compile ps_2_0 TreePSPlain();
+        //VertexShader = compile vs_2_0 ModelVS();
+        PixelShader = compile ps_3_0 TreePSPlain();
+     
+	    VertexShader = compile vs_3_0 HardwareInstancingVertexShader();
+        //PixelShader = compile ps_3_0 InstancedModelPS();
     }
 }
 
