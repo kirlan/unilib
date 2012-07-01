@@ -84,6 +84,7 @@ namespace LandscapeGeneration
             m_fAverageX = 0;
             m_fAverageY = 0;
             m_fAverageZ = 0;
+            m_fAverageH = 0;
             float fPerimeter = 0;
             foreach (Line pLine in aTotalBorder)
             {
@@ -93,11 +94,13 @@ namespace LandscapeGeneration
                 m_fAverageX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
                 m_fAverageY += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
                 m_fAverageZ += pLine.m_fLength * (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2;
+                m_fAverageH += pLine.m_fLength * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
                 fPerimeter += pLine.m_fLength;
             }
             m_fAverageX /= fPerimeter;
             m_fAverageY /= fPerimeter;
             m_fAverageZ /= fPerimeter;
+            m_fAverageH /= fPerimeter;
 
             m_cFirstLines.Clear();
 
@@ -168,6 +171,7 @@ namespace LandscapeGeneration
         private float m_fAverageX = 0;
         private float m_fAverageY = 0;
         private float m_fAverageZ = 0;
+        private float m_fAverageH = 0;
 
         public override float X
         {
@@ -185,6 +189,12 @@ namespace LandscapeGeneration
         {
             get { return m_fAverageZ; }
             set { m_fAverageZ = value; }
+        }
+
+        public override float H
+        {
+            get { return m_fAverageH; }
+            set { m_fAverageH = value; }
         }
     }
 }

@@ -219,7 +219,7 @@ namespace LandscapeGeneration
         /// <param name="pTo">этот останется</param>
         private void MergeVertex(Vertex pFrom, Vertex pTo)
         {
-            foreach (Location pLoc in pFrom.m_cLocations)
+            foreach (Location pLoc in pFrom.m_cLocationsBuild)
             {
                 foreach (var vLine in pLoc.m_cBorderWith)
                 {
@@ -232,8 +232,8 @@ namespace LandscapeGeneration
                     }
                 }
 
-                if (!pTo.m_cLocations.Contains(pLoc))
-                    pTo.m_cLocations.Add(pLoc);
+                if (!pTo.m_cLocationsBuild.Contains(pLoc))
+                    pTo.m_cLocationsBuild.Add(pLoc);
             }
 
             foreach (Vertex pLink in pFrom.m_cVertexes)
@@ -337,9 +337,9 @@ namespace LandscapeGeneration
                 float fRo = (float)Math.PI * (float)(m_iRY - pLoc.Y) / (m_iRY * 2);
                 float fPhy = (float)Math.PI * pLoc.X / m_iRX;
 
-                pLoc.m_pCenter.X = (float)((float)m_iRY * Math.Sin(fRo) * Math.Cos(fPhy));
-                pLoc.m_pCenter.Y = (float)((float)m_iRY * Math.Sin(fRo) * Math.Sin(fPhy));
-                pLoc.m_fHeight = (float)((float)m_iRY * Math.Cos(fRo));
+                pLoc.X = (float)((float)m_iRY * Math.Sin(fRo) * Math.Cos(fPhy));
+                pLoc.Y = (float)((float)m_iRY * Math.Sin(fRo) * Math.Sin(fPhy));
+                pLoc.H = (float)((float)m_iRY * Math.Cos(fRo));
             }
 
             foreach (Vertex pVertex in m_aVertexes)
@@ -457,14 +457,14 @@ namespace LandscapeGeneration
 
             if (pLoc1 != null && pLoc1.m_pOrigin == null)
             {
-                if (!pVertexA.m_cLocations.Contains(pLoc1))
-                    pVertexA.m_cLocations.Add(pLoc1);
-                if (!pVertexB.m_cLocations.Contains(pLoc1))
-                    pVertexB.m_cLocations.Add(pLoc1);
-                if (!pMidPoint.m_cLocations.Contains(pLoc1))
-                    pMidPoint.m_cLocations.Add(pLoc1);
-                if (!pLoc1Point.m_cLocations.Contains(pLoc1))
-                    pLoc1Point.m_cLocations.Add(pLoc1);
+                if (!pVertexA.m_cLocationsBuild.Contains(pLoc1))
+                    pVertexA.m_cLocationsBuild.Add(pLoc1);
+                if (!pVertexB.m_cLocationsBuild.Contains(pLoc1))
+                    pVertexB.m_cLocationsBuild.Add(pLoc1);
+                if (!pMidPoint.m_cLocationsBuild.Contains(pLoc1))
+                    pMidPoint.m_cLocationsBuild.Add(pLoc1);
+                if (!pLoc1Point.m_cLocationsBuild.Contains(pLoc1))
+                    pLoc1Point.m_cLocationsBuild.Add(pLoc1);
 
                 if (pLoc2 != null)
                 {
@@ -491,14 +491,14 @@ namespace LandscapeGeneration
 
             if (pLoc2 != null && pLoc2.m_pOrigin == null)
             {
-                if (!pVertexA.m_cLocations.Contains(pLoc2))
-                    pVertexA.m_cLocations.Add(pLoc2);
-                if (!pVertexB.m_cLocations.Contains(pLoc2))
-                    pVertexB.m_cLocations.Add(pLoc2);
-                if (!pMidPoint.m_cLocations.Contains(pLoc2))
-                    pMidPoint.m_cLocations.Add(pLoc2);
-                if (!pLoc2Point.m_cLocations.Contains(pLoc2))
-                    pLoc2Point.m_cLocations.Add(pLoc2);
+                if (!pVertexA.m_cLocationsBuild.Contains(pLoc2))
+                    pVertexA.m_cLocationsBuild.Add(pLoc2);
+                if (!pVertexB.m_cLocationsBuild.Contains(pLoc2))
+                    pVertexB.m_cLocationsBuild.Add(pLoc2);
+                if (!pMidPoint.m_cLocationsBuild.Contains(pLoc2))
+                    pMidPoint.m_cLocationsBuild.Add(pLoc2);
+                if (!pLoc2Point.m_cLocationsBuild.Contains(pLoc2))
+                    pLoc2Point.m_cLocationsBuild.Add(pLoc2);
 
                 if (pLoc1 != null)
                 {
@@ -993,9 +993,11 @@ namespace LandscapeGeneration
                     //Восстанавливаем словарь соседей для вертексов
                     foreach (Vertex pVertex in m_aVertexes)
                     {
+                        pVertex.m_aLocations = new Location[pVertex.m_cLocationsTmp.Count];
+                        int iIndex = 0;
                         foreach (long iID in pVertex.m_cLocationsTmp)
                         {
-                            pVertex.m_cLocations.Add(cTempDic[iID]);
+                            pVertex.m_aLocations[iIndex++] = cTempDic[iID];
                         }
                         pVertex.m_cLocationsTmp.Clear();
                     }

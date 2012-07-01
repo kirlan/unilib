@@ -58,6 +58,12 @@ namespace LandscapeGeneration.PathFind
             set;
         }
 
+        public abstract float H
+        {
+            get;
+            set;
+        }
+
         #endregion
     }
 }
