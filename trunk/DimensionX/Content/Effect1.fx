@@ -19,6 +19,14 @@ float FogDensity;
 float BlendDistance;
 float BlendWidth;
 
+bool GridFog;
+float4 GridColor1;
+float4 GridColor2;
+float4 GridColor3;
+float4 GridColor4;
+float4 GridColor5;
+float4 GridColor6;
+
 Texture xTextureModel;
 sampler TextureSamplerModel = sampler_state { texture = <xTextureModel> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
 
@@ -207,6 +215,161 @@ technique LandRingworld
 
         VertexShader = compile vs_2_0 VertexShaderFunction();
         PixelShader = compile ps_2_0 PixelShaderFunctionPoint();
+    }
+}
+//------- Technique: Grid --------
+struct GridVertexShaderInput
+{
+    float4 Position : POSITION0;
+    float4 Color        : COLOR0;
+};
+
+struct GridVertexShaderOutput
+{
+    float4 Position : POSITION0;
+    //float4 Color        : COLOR0;
+    float3 Position3D    : TEXCOORD0;
+    float3 View : TEXCOORD2;
+};
+
+GridVertexShaderOutput GridVSCommon(GridVertexShaderInput input, float3 Normal, float GridLayer)
+{
+    GridVertexShaderOutput output;
+	output.Position3D = input.Position;
+	//output.Color = input.Color;
+
+    //float4 fakeNormal = float4(0, 0, 0, 0);
+
+	float4 layerPos = input.Position + float4(Normal, 0)*GridLayer;
+
+    float4 worldPosition = mul(layerPos, World);
+    float3 worldNormal = mul(Normal, World);
+	float4 viewPosition = mul(worldPosition, View);
+    
+	output.Position = mul(viewPosition, Projection);
+
+	output.View = normalize(float4(CameraPosition,1.0) - worldPosition);
+
+    return output;
+}
+
+GridVertexShaderOutput GridVS1(GridVertexShaderInput input, float3 Normal : NORMAL)
+{
+	return GridVSCommon(input, Normal, 0.001);
+}
+
+GridVertexShaderOutput GridVS2(GridVertexShaderInput input, float3 Normal : NORMAL)
+{
+	return GridVSCommon(input, Normal, 0.002);
+}
+
+GridVertexShaderOutput GridVS3(GridVertexShaderInput input, float3 Normal : NORMAL)
+{
+	return GridVSCommon(input, Normal, 0.003);
+}
+
+GridVertexShaderOutput GridVS4(GridVertexShaderInput input, float3 Normal : NORMAL)
+{
+	return GridVSCommon(input, Normal, 0.004);
+}
+
+GridVertexShaderOutput GridVS5(GridVertexShaderInput input, float3 Normal : NORMAL)
+{
+	return GridVSCommon(input, Normal, 0.005);
+}
+
+GridVertexShaderOutput GridVS6(GridVertexShaderInput input, float3 Normal : NORMAL)
+{
+	return GridVSCommon(input, Normal, 0.006);
+}
+
+float4 GridPSCommon(GridVertexShaderOutput input, float4 GridColor)
+{
+    // TODO: add your pixel shader code here.
+	if(GridFog) 
+	{
+		float d = length(input.Position3D - CameraPosition);
+		float l = exp( - pow( d * FogDensity , 2 ) );
+		l = saturate(1 - l);
+		return lerp(GridColor, FogColor, l);
+	}
+	else
+		return GridColor;
+}
+
+float4 GridPS1(GridVertexShaderOutput input) : COLOR0
+{
+	return GridPSCommon(input, GridColor1);
+}
+
+float4 GridPS2(GridVertexShaderOutput input) : COLOR0
+{
+	return GridPSCommon(input, GridColor2);
+}
+
+float4 GridPS3(GridVertexShaderOutput input) : COLOR0
+{
+	return GridPSCommon(input, GridColor3);
+}
+
+float4 GridPS4(GridVertexShaderOutput input) : COLOR0
+{
+	return GridPSCommon(input, GridColor4);
+}
+
+float4 GridPS5(GridVertexShaderOutput input) : COLOR0
+{
+	return GridPSCommon(input, GridColor5);
+}
+
+float4 GridPS6(GridVertexShaderOutput input) : COLOR0
+{
+	return GridPSCommon(input, GridColor6);
+}
+
+technique Grid
+{
+    pass Pass1
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 GridVS1();
+        PixelShader = compile ps_2_0 GridPS1();
+    }
+    pass Pass2
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 GridVS2();
+        PixelShader = compile ps_2_0 GridPS2();
+    }
+    pass Pass3
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 GridVS3();
+        PixelShader = compile ps_2_0 GridPS3();
+    }
+    pass Pass4
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 GridVS4();
+        PixelShader = compile ps_2_0 GridPS4();
+    }
+    pass Pass5
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 GridVS5();
+        PixelShader = compile ps_2_0 GridPS5();
+    }
+    pass Pass6
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 GridVS6();
+        PixelShader = compile ps_2_0 GridPS6();
     }
 }
 
