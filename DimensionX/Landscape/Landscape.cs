@@ -159,7 +159,7 @@ namespace LandscapeGeneration
                             continue;
 
                         if ((pLink.Owner as LAND).Type != LandTypes<LTI>.Mountains ||
-                            pLink.m_fHeight >= pLoc.m_fHeight)
+                            pLink.H >= pLoc.H)
                         {
                             bPeak = false;
                         }
@@ -893,7 +893,7 @@ namespace LandscapeGeneration
                 {
                     foreach (LOC pLoc in pLand.m_cContents)
                     {
-                        pLoc.m_fHeight = -1;
+                        pLoc.H = -1;
 
                         ProgressStep();
 
@@ -949,12 +949,12 @@ namespace LandscapeGeneration
                 cWaveFront.Clear();
                 foreach (LOC pLoc in cOcean)
                 {
-                    pLoc.m_fHeight = m_fMaxDepth;
+                    pLoc.H = m_fMaxDepth;
                     ProgressStep();
 
                     foreach (LOC pLink in pLoc.m_aBorderWith)
                     {
-                        if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
+                        if (pLink.Forbidden || pLink.Owner == null || !float.IsNaN(pLink.H))
                             continue;
 
                         //if (cWaveFront.Contains(pLink))
@@ -963,7 +963,7 @@ namespace LandscapeGeneration
                         if ((pLink.Owner as LAND).Type == LandTypes<LTI>.Ocean)
                         {
                             cWaveFront.Add(pLink);
-                            pLink.m_fHeight = -1;
+                            pLink.H = -1;
                         }
                     }
                 }
@@ -992,7 +992,7 @@ namespace LandscapeGeneration
                     }
                     while (cUnfinished.ContainsKey(fNewHeight));
 
-                    pLoc.m_fHeight = fNewHeight;
+                    pLoc.H = fNewHeight;
                     cHeights.Add(fNewHeight);
                     cUnfinished.Add(fNewHeight, pLoc);
                     ProgressStep();
@@ -1006,14 +1006,14 @@ namespace LandscapeGeneration
 
                     foreach (LOC pLink in pLoc.m_aBorderWith)
                     {
-                        if (pLink.Forbidden || pLink.Owner == null || pLink.m_fHeight != 0)
+                        if (pLink.Forbidden || pLink.Owner == null || !float.IsNaN(pLink.H))
                             continue;
 
                         cLand.Add(pLink);
-                        pLink.m_fHeight = 1;
+                        pLink.H = 1;
                     }
-                    cHeights.Remove(pLoc.m_fHeight);
-                    cUnfinished.Remove(pLoc.m_fHeight);
+                    cHeights.Remove(pLoc.H);
+                    cUnfinished.Remove(pLoc.H);
                 }
 
                 if (cHeights.Count > 0)
@@ -1047,18 +1047,18 @@ namespace LandscapeGeneration
                 float fTotalWeight = 0;
                 bool bOcean = false;
                 bool bLand = false;
-                foreach (LOC pLoc in pVertex.m_cLocations)
+                foreach (LOC pLoc in pVertex.m_aLocations)
                 {
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
                     float fLinkElevation = (pLoc.Owner as LAND).Type.m_fElevation;
-                    pVertex.m_fHeight += pLoc.m_fHeight / fLinkElevation;
+                    pVertex.m_fHeight += pLoc.H / fLinkElevation;
                     fTotalWeight += 1 / fLinkElevation;
 
-                    if (pLoc.m_fHeight > 0)
+                    if (pLoc.H > 0)
                         bLand = true;
-                    if (pLoc.m_fHeight < 0)
+                    if (pLoc.H < 0)
                         bOcean = true;
                 }
 
@@ -1082,7 +1082,7 @@ namespace LandscapeGeneration
                 {
                     pLine.m_pMidPoint.m_fHeight = (4*pLine.m_pMidPoint.m_fHeight + pLine.m_pPoint1.m_fHeight + pLine.m_pPoint2.m_fHeight)/6;
 
-                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pMidPoint.m_fHeight + pLine.m_pInnerPoint.m_fHeight + pLoc.m_fHeight) / 3;
+                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pMidPoint.m_fHeight + pLine.m_pInnerPoint.m_fHeight + pLoc.H) / 3;
 
                     pLine = pLine.m_pNext;
                 }
@@ -1153,7 +1153,7 @@ namespace LandscapeGeneration
 
                 if (fLokElevation <= fMaxElevation)
                 {
-                    float fTotal = pLoc.m_fHeight;
+                    float fTotal = pLoc.H;
                     float fTotalWeight = 1;
                     foreach (LOC pLink in pLoc.m_aBorderWith)
                     {
@@ -1178,14 +1178,14 @@ namespace LandscapeGeneration
                         //        pLink.m_fHeight = Math.Min(-0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
                         //}
 
-                        fTotal += pLink.m_fHeight*fWeight;
+                        fTotal += pLink.H*fWeight;
                         fTotalWeight += fWeight;
                     }
 
-                    if (pLoc.m_fHeight > 0)
-                        pLoc.m_fHeight = Math.Max(0.1f, fTotal / fTotalWeight);
+                    if (pLoc.H > 0)
+                        pLoc.H = Math.Max(0.1f, fTotal / fTotalWeight);
                     else
-                        pLoc.m_fHeight = Math.Min(-0.1f, fTotal / fTotalWeight);
+                        pLoc.H = Math.Min(-0.1f, fTotal / fTotalWeight);
                 }
             }
         }
@@ -1201,7 +1201,7 @@ namespace LandscapeGeneration
             float vMax = 0;
             foreach (LOC pLoc in m_pGrid.m_aLocations)
             {
-                if (pLoc.Forbidden || pLoc.m_fHeight < 0)
+                if (pLoc.Forbidden || pLoc.H < 0)
                     continue;
 
                 // Note that the result from the noise function is in the range -1 to 1, but I want it in the range of 0 to 1
@@ -1224,16 +1224,16 @@ namespace LandscapeGeneration
                 v = Math.Min(1, Math.Max(-1, v*5));
 
                 //float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
-                if (pLoc.m_fHeight > 0)
+                if (pLoc.H > 0)
                 {
-                    float fLinkElevation = Math.Min(pLoc.m_fHeight - 0.5f, 10);
-                    pLoc.m_fHeight += v * fLinkElevation;
+                    float fLinkElevation = Math.Min(pLoc.H - 0.5f, 10);
+                    pLoc.H += v * fLinkElevation;
                     //pLoc.m_fHeight = 10 + v * 10;
                 }
                 else
                 {
-                    float fLinkElevation = Math.Max(pLoc.m_fHeight + 0.5f, -10);
-                    pLoc.m_fHeight -= v * fLinkElevation;
+                    float fLinkElevation = Math.Max(pLoc.H + 0.5f, -10);
+                    pLoc.H -= v * fLinkElevation;
                     //pLoc.m_fHeight = 10 + v * 10;
                 }
             }

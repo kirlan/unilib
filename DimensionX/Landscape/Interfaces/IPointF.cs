@@ -6,5 +6,6 @@ namespace LandscapeGeneration
         float X { get; set; }
         float Y { get; set; }
         float Z { get; set; }
+        float H { get; set; }
     }
 }

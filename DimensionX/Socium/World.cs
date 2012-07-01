@@ -527,7 +527,7 @@ namespace Socium
                 Line pLine = pLoc.m_pFirstLine;
                 do
                 {
-                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pInnerPoint.m_fHeight + 2*pLoc.m_fHeight) / 3;
+                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pInnerPoint.m_fHeight + 2*pLoc.H) / 3;
 
                     pLine = pLine.m_pNext;
                 }

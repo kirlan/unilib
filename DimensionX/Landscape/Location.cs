@@ -80,11 +80,6 @@ namespace LandscapeGeneration
 
         public RegionType m_eType = RegionType.Empty;
 
-        /// <summary>
-        /// Высота над уровнем моря
-        /// </summary>
-        public float m_fHeight = 0;
-
         #region IXY Members
 
         public override float X
@@ -103,6 +98,12 @@ namespace LandscapeGeneration
         {
             get { return m_pCenter.Z; }
             set { m_pCenter.Z = value; }
+        }
+
+        public override float H
+        {
+            get { return m_pCenter.H; }
+            set { m_pCenter.H = value; }
         }
 
         #endregion

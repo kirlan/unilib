@@ -35,6 +35,12 @@ namespace LandscapeGeneration
             set { m_fZ = value; }
         }
 
+        public float H
+        {
+            get { return m_fHeight; }
+            set { m_fHeight = value; }
+        }
+
         private static long s_iCounter = 0;
 
         public long m_iID = s_iCounter++;
@@ -43,7 +49,9 @@ namespace LandscapeGeneration
 
         public List<long> m_cLinksTmp = new List<long>();
 
-        public List<Location> m_cLocations = new List<Location>();
+        public Location[] m_aLocations;
+
+        internal List<Location> m_cLocationsBuild = new List<Location>();
 
         public List<long> m_cLocationsTmp = new List<long>();
 
@@ -91,8 +99,8 @@ namespace LandscapeGeneration
             foreach (Vertex pVertex in m_cVertexes)
                 binWriter.Write(pVertex.m_iID);
 
-            binWriter.Write(m_cLocations.Count);
-            foreach (Location pLocation in m_cLocations)
+            binWriter.Write(m_cLocationsBuild.Count);
+            foreach (Location pLocation in m_cLocationsBuild)
                 binWriter.Write(pLocation.m_iID);
         }
 
