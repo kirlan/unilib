@@ -1803,7 +1803,7 @@ namespace MapDrawXNAEngine
             pineModel[0] = LoadModel("content/fbx/tree5");
             pineModel[1] = LoadModel("content/fbx/tree13");
             pineModel[2] = LoadModel("content/fbx/tree14");
-            pineModel[3] = LoadModel("content/fbx/tree16");
+            pineModel[3] = LoadModel("content/fbx/tree16"); 
 
             foreach (Model pModel in treeModel)
                 m_aTrees[pModel] = new TreeModel[0];
@@ -2211,82 +2211,109 @@ namespace MapDrawXNAEngine
                                                 m_pWater.m_aVertices, 0, m_pWater.m_aVertices.Length - 1, m_pWater.m_aIndices, 0, m_pWater.m_iTrianglesCount);
         }
 
-        //более крутая оптимизация вывода большого числа одинаковых моделей:
-        //http://create.msdn.com/en-US/education/catalog/sample/mesh_instancing
         private void DrawTrees()
         {
             float fMaxDistanceSquared = 2500;
             //fMaxDistanceSquared *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
-           
+            
             foreach (var vTree in m_aTrees)
             {
                 Model pTreeModel = vTree.Key;
-                foreach (ModelMesh mesh in pTreeModel.Meshes)
+
+                Matrix[] instancedModelBones = new Matrix[pTreeModel.Bones.Count];
+                pTreeModel.CopyAbsoluteBoneTransformsTo(instancedModelBones);
+
+                List<Matrix> instances = new List<Matrix>();
+                for (int i = 0; i < vTree.Value.Length; i++)
                 {
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        GraphicsDevice.SetVertexBuffer(meshPart.VertexBuffer, meshPart.VertexOffset);
-                        GraphicsDevice.Indices = meshPart.IndexBuffer;
+                    TreeModel pTree = vTree.Value[i];
 
-                        Effect effect = meshPart.Effect;
+                    Vector3 pViewVector = pTree.m_pPosition - m_pCamera.Position;
 
-                        effect.Parameters["View"].SetValue(m_pCamera.View);
-                        effect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
-                        effect.Parameters["Projection"].SetValue(m_pCamera.Projection);
+                    float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
+                    if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
+                        continue;
 
-                        EffectParameter transformParameter = effect.Parameters["World"];
+                    if (pViewVector.LengthSquared() > fMaxDistanceSquared)
+                        continue;
 
-                        for (int i = 0; i < vTree.Value.Length; i++)
-                        {
-                            TreeModel pTree = vTree.Value[i];
-
-                            Vector3 pViewVector = pTree.m_pPosition - m_pCamera.Position;
-
-                            float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
-                            if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
-                                continue;
-
-                            if (pViewVector.LengthSquared() > fMaxDistanceSquared)
-                                continue;
-
-                            transformParameter.SetValue(pTree.boneTransforms[mesh.ParentBone.Index] * pTree.worldMatrix);
-
-                            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                            {
-                                pass.Apply();
-
-                                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                                                                     meshPart.NumVertices, meshPart.StartIndex,
-                                                                     meshPart.PrimitiveCount);
-                            }
-                        }
-                    }
-
-                    //for (int i = 0; i < vTree.Value.Length; i++)
-                    //{
-                    //    TreeModel pTree = vTree.Value[i];
-                    //    Vector3 pViewVector = pTree.m_pPosition - m_pCamera.Position;
-
-                    //    //float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
-                    //    //if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
-                    //    //    return;
-
-                    //    //if (pViewVector.LengthSquared() > 2500)
-                    //    //    return;
-
-                    //    foreach (Effect currentEffect in mesh.Effects)
-                    //    {
-                    //        currentEffect.Parameters["World"].SetValue(pTree.boneTransforms[mesh.ParentBone.Index] * pTree.worldMatrix);
-                    //        currentEffect.Parameters["View"].SetValue(m_pCamera.View);
-                    //        currentEffect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
-                    //        currentEffect.Parameters["Projection"].SetValue(m_pCamera.Projection);
-                    //    }
-                    //    mesh.Draw();
-                    //}
+                    instances.Add(pTree.worldMatrix);
                 }
+
+                DrawModelHardwareInstancing(pTreeModel, instancedModelBones,
+                                         instances.ToArray(), m_pCamera.View, m_pCamera.Projection);
             }
         }
 
+        // To store instance transform matrices in a vertex buffer, we use this custom
+        // vertex type which encodes 4x4 matrices as a set of four Vector4 values.
+        static VertexDeclaration instanceVertexDeclaration = new VertexDeclaration
+        (
+            new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 0),
+            new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 1),
+            new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 2),
+            new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 3)
+        );
+        private DynamicVertexBuffer instanceVertexBuffer;
+
+        /// <summary>
+        /// Efficiently draws several copies of a piece of geometry using hardware instancing.
+        /// </summary>
+        private void DrawModelHardwareInstancing(Model model, Matrix[] modelBones,
+                                         Matrix[] instances, Matrix view, Matrix projection)
+        {
+            if (instances.Length == 0)
+                return;
+
+            // If we have more instances than room in our vertex buffer, grow it to the neccessary size.
+            if ((instanceVertexBuffer == null) ||
+                (instances.Length > instanceVertexBuffer.VertexCount))
+            {
+                if (instanceVertexBuffer != null)
+                    instanceVertexBuffer.Dispose();
+
+                instanceVertexBuffer = new DynamicVertexBuffer(GraphicsDevice, instanceVertexDeclaration,
+                                                               instances.Length, BufferUsage.WriteOnly);
+            }
+
+            // Transfer the latest instance transform matrices into the instanceVertexBuffer.
+            instanceVertexBuffer.SetData(instances, 0, instances.Length, SetDataOptions.Discard);
+
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                {
+                    // Tell the GPU to read from both the model vertex buffer plus our instanceVertexBuffer.
+                    GraphicsDevice.SetVertexBuffers(
+                        new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset, 0),
+                        new VertexBufferBinding(instanceVertexBuffer, 0, 1)
+                    );
+
+                    GraphicsDevice.Indices = meshPart.IndexBuffer;
+
+                    // Set up the instance rendering effect.
+                    Effect effect = meshPart.Effect;
+
+                    //effect.CurrentTechnique = effect.Techniques["HardwareInstancing"];
+
+                    effect.Parameters["World"].SetValue(modelBones[mesh.ParentBone.Index]);
+                    effect.Parameters["View"].SetValue(view);
+                    effect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
+                    effect.Parameters["Projection"].SetValue(projection);
+
+                    // Draw all the instance copies in a single call.
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+
+                        GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                                                               meshPart.NumVertices, meshPart.StartIndex,
+                                                               meshPart.PrimitiveCount, instances.Length);
+                    }
+                }
+            }
+        }
+        
         private void DrawSettlement(SettlementModel pSettlement)
         {
             Vector3 pViewVector = pSettlement.m_pPosition - m_pCamera.Position;
