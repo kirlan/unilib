@@ -61,7 +61,7 @@ namespace UniLibXNA
     /// a Windows Form. Derived classes can override the Initialize and Draw
     /// methods to add their own drawing code.
     /// </summary>
-    abstract public class GraphicsDeviceControl : Control
+    public class GraphicsDeviceControl : Control
     {
         #region Fields
 
@@ -323,13 +323,13 @@ namespace UniLibXNA
         /// <summary>
         /// Derived classes override this to initialize their drawing code.
         /// </summary>
-        protected abstract void Initialize();
+        protected virtual void Initialize() {}
 
 
         /// <summary>
         /// Derived classes override this to draw themselves using the GraphicsDevice.
         /// </summary>
-        protected abstract void Draw();
+        protected virtual void Draw() { }
 
 
         #endregion
@@ -417,51 +417,6 @@ namespace UniLibXNA
         /// if there is no intersection.
         /// </summary>
         static protected float? RayIntersectsLandscape(CullMode culling, Ray ray, VertexPositionNormalTexture[] vertexBuffer, int[] indexBuffer,
-                                         out Vector3 vertex1, out Vector3 vertex2,
-                                         out Vector3 vertex3)
-        {
-            vertex1 = vertex2 = vertex3 = Vector3.Zero;
-
-            if (indexBuffer == null || indexBuffer.Length < 3)
-                return null;
-
-            float? closestIntersection = null;
-
-            for (int i = 0; i < indexBuffer.Length; i += 3)
-            {
-                float? intersection;
-
-                RayIntersectsTriangle(ref culling, ref ray,
-                                        ref vertexBuffer[indexBuffer[i]].Position,
-                                        ref vertexBuffer[indexBuffer[i + 1]].Position,
-                                        ref vertexBuffer[indexBuffer[i + 2]].Position,
-                                        out intersection);
-
-                if (intersection != null)
-                {
-                    if ((closestIntersection == null) ||
-                        (intersection < closestIntersection))
-                    {
-                        closestIntersection = intersection;
-
-                        vertex1 = vertexBuffer[indexBuffer[i]].Position;
-                        vertex2 = vertexBuffer[indexBuffer[i + 1]].Position;
-                        vertex3 = vertexBuffer[indexBuffer[i + 2]].Position;
-                    }
-                }
-            }
-
-            return closestIntersection;
-        }
-
-        /// <summary>
-        /// Checks whether a ray intersects a model. This method needs to access
-        /// the model vertex data, so the model must have been built using the
-        /// custom TrianglePickingProcessor provided as part of this sample.
-        /// Returns the distance along the ray to the point of intersection, or null
-        /// if there is no intersection.
-        /// </summary>
-        static protected float? RayIntersectsLandscape(CullMode culling, Ray ray, VertexMultitextured[] vertexBuffer, int[] indexBuffer,
                                          out Vector3 vertex1, out Vector3 vertex2,
                                          out Vector3 vertex3)
         {

@@ -83,6 +83,10 @@ namespace MapDrawXNAEngine
     /// </summary>
     public class MapDraw3d : GraphicsDeviceControl
     {
+        public MapDraw3d()
+//            : base()
+        { }
+
         protected class TreeModel
         {
             public readonly Vector3 m_pPosition;
@@ -162,6 +166,7 @@ namespace MapDrawXNAEngine
         {
             public VertexPositionColorNormal[] m_aVertices = new VertexPositionColorNormal[0];
             public Dictionary<MapLayer, int[]> m_aIndices = new Dictionary<MapLayer,int[]>();
+            public Dictionary<LocationX, int[]> m_aLocations = new Dictionary<LocationX, int[]>();
         }
 
         /// <summary>
@@ -186,6 +191,7 @@ namespace MapDrawXNAEngine
         private Dictionary<Model, TreeModel[]> m_aTrees = new Dictionary<Model,TreeModel[]>();
 
         private SettlementModel[] m_aSettlements = new SettlementModel[0];
+        private System.ComponentModel.IContainer components;
 
         private float m_fTextureScale = 5000;
 
@@ -443,6 +449,11 @@ namespace MapDrawXNAEngine
             }
 
             // Create the indices used for each triangle
+            for (int i = 0; i < m_cGeoLData.Length; i++)
+            {
+                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                pData.m_aLocations[pLoc] = BuildLocationReferencesIndices(pLoc, ref cVertexes);
+            }
             pData.m_aIndices[MapLayer.Locations] = BuildLocationsIndices(ref cVertexes);
             pData.m_aIndices[MapLayer.Lands] = BuildLandsIndices(ref cVertexes);
             pData.m_aIndices[MapLayer.LandMasses] = BuildLandMassesIndices(ref cVertexes);
@@ -451,6 +462,32 @@ namespace MapDrawXNAEngine
             pData.m_aIndices[MapLayer.States] = BuildStatesIndices(ref cVertexes);
         }
 
+        private int[] BuildLocationReferencesIndices(LocationX pLoc, ref Dictionary<Vertex, int> cVertexes)
+        {
+            //добавляем в вершинный буффер центры локаций
+            int m_iLinesCount = pLoc.m_aBorderWith.Length * 2;
+
+            // Create the indices used for each triangle
+            int[] aIndices = new int[m_iLinesCount * 2];
+
+            int iCounter = 0;
+
+            //заполняем индексный буффер
+            Line pLine = pLoc.m_pFirstLine;
+            do
+            {
+                aIndices[iCounter++] = cVertexes[pLine.m_pPoint1];
+                aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint];
+
+                aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint];
+                aIndices[iCounter++] = cVertexes[pLine.m_pPoint2];
+
+                pLine = pLine.m_pNext;
+            }
+            while (pLine != pLoc.m_pFirstLine);
+
+            return aIndices;
+        }
         private int[] BuildLocationsIndices(ref Dictionary<Vertex, int> cVertexes)
         {
             //добавляем в вершинный буффер центры локаций
@@ -669,7 +706,7 @@ namespace MapDrawXNAEngine
         /// <param name="aIndices">индексный буфер</param>
         /// <param name="aTrees">массив моделей деревьев для отрисовки, при bOceanOnly = true возвращается пустой!</param>
         /// <param name="aSettlements">массив моделей поселений для отрисовки, при bOceanOnly = true возвращается пустой!</param>
-        private void BuildLand(bool bOceanOnly, out MapModeData<VertexMultitextured> pData, out Dictionary<Model, TreeModel[]> aTrees, out SettlementModel[] aSettlements,
+        private void BuildLand(bool bOceanOnly, out MapModeData<VertexMultitextured> pData, out LocationX[] aLocationReference, out Dictionary<Model, TreeModel[]> aTrees, out SettlementModel[] aSettlements,
                      LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                      LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
@@ -832,12 +869,15 @@ namespace MapDrawXNAEngine
 
             // Create the indices used for each triangle
             pData.m_aIndices = new int[pData.m_iTrianglesCount * 3];
+            aLocationReference = new LocationX[pData.m_iTrianglesCount];
 
             iCounter = 0;
 
             Dictionary<Model, List<TreeModel>> cTrees = new Dictionary<Model, List<TreeModel>>();
             List<SettlementModel> cSettlements = new List<SettlementModel>();
-            
+
+            int iReferenceCounter = 0;
+
             //заполняем индексный буффер
             for (int i=0; i< m_cGeoLData.Length; i++)
             {
@@ -898,18 +938,22 @@ namespace MapDrawXNAEngine
                     if (pLine.m_pInnerPoint.m_fHeight > m_pWorld.m_fMaxHeight / 3)
                         pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pInnerPoint.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
 
+                    aLocationReference[iReferenceCounter++] = pLoc;
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint1];
 
+                    aLocationReference[iReferenceCounter++] = pLoc;
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint];
 
+                    aLocationReference[iReferenceCounter++] = pLoc;
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pPoint2];
 
+                    aLocationReference[iReferenceCounter++] = pLoc;
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint];
                     pData.m_aIndices[iCounter++] = cLocations[pLoc];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pNext.m_pInnerPoint];
@@ -1780,9 +1824,66 @@ namespace MapDrawXNAEngine
         }
 
         /// <summary>
+        /// Континент, над которым находится указатель мыши.
+        /// </summary>
+        private ContinentX m_pFocusedContinent = null;
+
+        private LandMass<LandX> m_pFocusedLandMass = null;
+
+        /// <summary>
+        /// Континент, над которым находится указатель мыши.
+        /// </summary>
+        public ContinentX ContinentInFocus
+        {
+            get { return m_pFocusedContinent; }
+        }
+
+        /// <summary>
+        /// Провинция, над которой находится указатель мыши.
+        /// </summary>
+        private Province m_pFocusedProvince = null;
+
+        /// <summary>
+        /// Государство, над которым находится указатель мыши.
+        /// </summary>
+        private State m_pFocusedState = null;
+
+        /// <summary>
+        /// Земля, над которой находится указатель мыши.
+        /// </summary>
+        private LandX m_pFocusedLand = null;
+
+        /// <summary>
+        /// Земля, над которой находится указатель мыши.
+        /// </summary>
+        public LandX LandInFocus
+        {
+            get { return m_pFocusedLand; }
+        }
+
+        /// <summary>
+        /// Локация, над которой находится указатель мыши.
+        /// </summary>
+        private LocationX m_pFocusedLocation = null;
+
+        /// <summary>
+        /// Локация, над которой находится указатель мыши.
+        /// </summary>
+        public LocationX LocationInFocus
+        {
+            get { return m_pFocusedLocation; }
+        }
+
+        /// <summary>
         /// Выбранное на карте государство
         /// </summary>
         private State m_pSelectedState = null;
+
+        public void SelectState()
+        {
+            if (m_pFocusedState != null)
+                SelectedState = m_pFocusedState;
+        }
 
         /// <summary>
         /// Выбранное на карте государство
@@ -1889,6 +1990,51 @@ namespace MapDrawXNAEngine
         private GeoData<Vertex, LocationX>[] m_cGeoVData;
         private GeoData<LocationX>[] m_cGeoLData;
 
+
+        /// <summary>
+        /// Checks whether a ray intersects a model. This method needs to access
+        /// the model vertex data, so the model must have been built using the
+        /// custom TrianglePickingProcessor provided as part of this sample.
+        /// Returns the distance along the ray to the point of intersection, or null
+        /// if there is no intersection.
+        /// </summary>
+        public float? RayIntersectsLandscape(CullMode culling, Ray ray,
+                                         out LocationX pLoc)
+        {
+            pLoc = null;
+
+            if (m_pLand.m_aIndices == null || m_pLand.m_aIndices.Length < 3)
+                return null;
+
+            float? closestIntersection = null;
+
+            for (int i = 0; i < m_pLand.m_aIndices.Length; i += 3)
+            {
+                float? intersection;
+
+                RayIntersectsTriangle(ref culling, ref ray,
+                                        ref m_pLand.m_aVertices[m_pLand.m_aIndices[i]].Position,
+                                        ref m_pLand.m_aVertices[m_pLand.m_aIndices[i + 1]].Position,
+                                        ref m_pLand.m_aVertices[m_pLand.m_aIndices[i + 2]].Position,
+                                        out intersection);
+
+                if (intersection != null)
+                {
+                    if ((closestIntersection == null) ||
+                        (intersection < closestIntersection))
+                    {
+                        closestIntersection = intersection;
+
+                        pLoc = m_aLocationReferences[i / 3];
+                    }
+                }
+            }
+
+            return closestIntersection;
+        }
+
+        private LocationX[] m_aLocationReferences;
+
         /// <summary>
         /// Привязать карту к миру.
         /// Строим контуры всего, что придётся рисовать в ОРИГИНАЛЬНЫХ координатах
@@ -1899,6 +2045,13 @@ namespace MapDrawXNAEngine
                      LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                      LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
+            m_pSelectedState = null;
+            m_pFocusedLocation = null;
+            m_pFocusedLand = null;
+            m_pFocusedLandMass = null;
+            m_pFocusedContinent = null;
+            m_pFocusedProvince = null;
+            m_pFocusedState = null;
             m_pWorld = pWorld;
             
             FillNationColors();
@@ -1912,8 +2065,8 @@ namespace MapDrawXNAEngine
 
             BuildLayers(out m_pLayers, BeginStep, ProgressStep);
 
-            BuildLand(true, out m_pUnderwater, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
-            BuildLand(false, out m_pLand, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
+            BuildLand(true, out m_pUnderwater, out m_aLocationReferences, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
+            BuildLand(false, out m_pLand, out m_aLocationReferences, out m_aTrees, out m_aSettlements, BeginStep, ProgressStep);
             BuildWater();
 
             //FillPrimitivesFake();
@@ -2688,17 +2841,10 @@ namespace MapDrawXNAEngine
 
         public void FocusSelectedState()
         {
-            m_pCamera.Target = new Vector3(m_pSelectedState.X, m_pSelectedState.Y, m_pSelectedState.Z);
+            m_pCamera.Target = GetPosition(m_pSelectedState, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
         }
 
         // Vertex array that stores exactly which triangle was picked.
-        VertexPositionColor[] pickedTriangle =
-        {
-            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
-            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
-            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
-        };
-
         // Effect and vertex declaration for drawing the picked triangle.
         BasicEffect lineEffect;
         
@@ -2707,7 +2853,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         void DrawPickedTriangle()
         {
-            if (m_bPicked)
+            if (m_bPicked && m_pFocusedLocation != null)
             {
                 // Set line drawing renderstates. We disable backface culling
                 // and turn off the depth buffer because we want to be able to
@@ -2726,8 +2872,8 @@ namespace MapDrawXNAEngine
                 lineEffect.CurrentTechnique.Passes[0].Apply();
 
                 // Draw the triangle.
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
-                                          pickedTriangle, 0, 1);
+                GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
+                                          m_pLayers.m_aVertices, 0, m_pLayers.m_aVertices.Length - 1, m_pLayers.m_aLocations[m_pFocusedLocation], 0, m_pLayers.m_aLocations[m_pFocusedLocation].Length/2);
 
                 // Reset renderstates to their default values.
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -2754,12 +2900,11 @@ namespace MapDrawXNAEngine
             // choose the closest one if there are several models under the cursor.
             float closestIntersection = float.MaxValue;
 
-            Vector3 vertex1, vertex2, vertex3;
+            LocationX pLoc;
 
             // Perform the ray to model intersection test.
-            float? intersection = RayIntersectsLandscape(CullMode.CullCounterClockwiseFace, cursorRay, m_pLand.m_aVertices, m_pLand.m_aIndices,
-                                                        out vertex1, out vertex2,
-                                                        out vertex3);
+            float? intersection = RayIntersectsLandscape(CullMode.CullCounterClockwiseFace, cursorRay, 
+                                                        out pLoc);
             m_bPicked = false;
 
             // Do we have a per-triangle intersection with this model?
@@ -2773,9 +2918,8 @@ namespace MapDrawXNAEngine
                     closestIntersection = intersection.Value;
 
                     // Store vertex positions so we can display the picked triangle.
-                    pickedTriangle[0].Position = vertex1;
-                    pickedTriangle[1].Position = vertex2;
-                    pickedTriangle[2].Position = vertex3;
+                    if(UpdateFocus(pLoc))
+                        UpdateTooltipString();
 
                     m_bPicked = true;
 
@@ -2784,6 +2928,130 @@ namespace MapDrawXNAEngine
             }
             else
                 m_pCurrentPicking = null;
+        }
+
+        /// <summary>
+        /// Определяет, что находится под курсором.
+        /// </summary>
+        /// <returns>true - если какая-то суша, false - если просто океан</returns>
+        private bool UpdateFocus(LocationX pLoc)
+        {
+            if (m_pWorld == null)
+                return false;
+
+            if (m_pFocusedLocation == pLoc)
+                return false;
+
+            m_pFocusedLocation = pLoc;
+            m_pFocusedLand = null;
+            m_pFocusedLandMass = null;
+            m_pFocusedContinent = null;
+            m_pFocusedProvince = null;
+            m_pFocusedState = null;
+
+            if (m_pFocusedLocation != null)
+            {
+                m_pFocusedLand = m_pFocusedLocation.Owner as LandX;
+                if (m_pFocusedLand != null)
+                {
+                    m_pFocusedLandMass = m_pFocusedLand.Owner as LandMass<LandX>;
+                    if(m_pFocusedLandMass != null)
+                        m_pFocusedContinent = m_pFocusedLandMass.Owner as ContinentX;
+
+                    m_pFocusedProvince = m_pFocusedLand.m_pProvince;
+                    if (m_pFocusedProvince != null)
+                        m_pFocusedState = m_pFocusedProvince.Owner as State;
+                }
+            }
+
+            return true;
+        }
+
+        public string sToolTip = "";
+
+        private void UpdateTooltipString()
+        {
+            sToolTip = "";
+
+            if (m_pFocusedContinent != null)
+                sToolTip += m_pFocusedContinent.ToString();
+
+            if (m_pFocusedLand != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n - ";
+
+                sToolTip += m_pFocusedLand.ToString();
+            }
+
+            if (m_pFocusedState != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n   - ";
+
+                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pInfo.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pNation);
+            }
+
+            if (m_pFocusedProvince != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n     - ";
+
+                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pNation);
+
+                //sToolTip += "\n          [";
+
+                //foreach(var pNation in m_pFocusedProvince.m_cNationsCount)
+                //sToolTip += string.Format("{0}: {1}, ", pNation.Key, pNation.Value);
+                //sToolTip += "]";
+            }
+
+            if (m_pFocusedLocation != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n       - ";
+
+                sToolTip += m_pFocusedLocation.ToString();
+
+                if (m_pFocusedLocation.m_pSettlement != null && m_pFocusedLocation.m_pSettlement.m_cBuildings.Count > 0)
+                {
+                    Dictionary<string, int> cBuildings = new Dictionary<string, int>();
+
+                    foreach (Building pBuilding in m_pFocusedLocation.m_pSettlement.m_cBuildings)
+                    {
+                        int iCount = 0;
+                        cBuildings.TryGetValue(pBuilding.ToString(), out iCount);
+                        cBuildings[pBuilding.ToString()] = iCount + 1;
+                    }
+
+                    foreach (var vBuilding in cBuildings)
+                        sToolTip += "\n         - " + vBuilding.Key + "  x" + vBuilding.Value.ToString();
+                }
+
+                if (m_pFocusedLocation.m_cHaveRoadTo.Count > 0)
+                {
+                    sToolTip += "\nHave roads to:";
+                    foreach (var pRoad in m_pFocusedLocation.m_cHaveRoadTo)
+                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_eLevel.ToString() + "]";
+                }
+
+                if (m_pFocusedLocation.m_cHaveSeaRouteTo.Count > 0)
+                {
+                    sToolTip += "\nHave sea routes to:";
+                    foreach (LocationX pRoute in m_pFocusedLocation.m_cHaveSeaRouteTo)
+                        sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName;
+                }
+            }
+
+            //if (toolTip1.GetToolTip(this) != sToolTip)
+            //    toolTip1.SetToolTip(this, sToolTip);
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            this.ResumeLayout(false);
+
         }
     }
 }

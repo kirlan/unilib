@@ -39,6 +39,7 @@
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage11 = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage10 = new System.Windows.Forms.TabPage();
@@ -88,7 +89,6 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.label3 = new System.Windows.Forms.Label();
             this.timer3 = new System.Windows.Forms.Timer(this.components);
-            this.tabPage11 = new System.Windows.Forms.TabPage();
             this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
             this.groupBox4.SuspendLayout();
             this.tabControl2.SuspendLayout();
@@ -233,6 +233,15 @@
             this.tabControl1.Size = new System.Drawing.Size(450, 707);
             this.tabControl1.TabIndex = 13;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.MapModeChanged);
+            // 
+            // tabPage11
+            // 
+            this.tabPage11.Location = new System.Drawing.Point(607, 4);
+            this.tabPage11.Name = "tabPage11";
+            this.tabPage11.Size = new System.Drawing.Size(0, 699);
+            this.tabPage11.TabIndex = 8;
+            this.tabPage11.Text = "Bird View";
+            this.tabPage11.UseVisualStyleBackColor = true;
             // 
             // tabPage1
             // 
@@ -654,15 +663,6 @@
             this.timer3.Interval = 1000;
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
-            // tabPage11
-            // 
-            this.tabPage11.Location = new System.Drawing.Point(607, 4);
-            this.tabPage11.Name = "tabPage11";
-            this.tabPage11.Size = new System.Drawing.Size(0, 699);
-            this.tabPage11.TabIndex = 8;
-            this.tabPage11.Text = "Bird View";
-            this.tabPage11.UseVisualStyleBackColor = true;
-            // 
             // mapDraw3d1
             // 
             this.mapDraw3d1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -682,6 +682,9 @@
             this.mapDraw3d1.Size = new System.Drawing.Size(719, 697);
             this.mapDraw3d1.TabIndex = 22;
             this.mapDraw3d1.Text = "mapDraw3d1";
+            this.toolTip1.SetToolTip(this.mapDraw3d1, "test");
+            this.mapDraw3d1.SelectedStateChanged += new System.EventHandler<MapDrawXNAEngine.MapDraw3d.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
+            this.mapDraw3d1.DoubleClick += new System.EventHandler(this.mapDraw3d1_DoubleClick);
             this.mapDraw3d1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseDown);
             this.mapDraw3d1.MouseEnter += new System.EventHandler(this.mapDraw3d1_MouseEnter);
             this.mapDraw3d1.MouseLeave += new System.EventHandler(this.mapDraw3d1_MouseLeave);

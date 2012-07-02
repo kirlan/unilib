@@ -623,6 +623,12 @@ namespace VQMapTest2
     //            mapDraw3d1.m_pCamera.Rotate(0, p.Y * 0.01f, p.X * 0.01f);
     //            mapDraw3d1.m_pCamera.Rotate(p.X * 0.01f, p.Y * 0.01f, 0);
                 mapDraw3d1.m_pCamera.Orbit(p.X * 0.01f, p.Y * 0.01f, 0);
+
+            if (toolTip1.GetToolTip(mapDraw3d1) != mapDraw3d1.sToolTip)
+            {
+                toolTip1.SetToolTip(mapDraw3d1, mapDraw3d1.sToolTip);
+                toolTip1.Active = true;
+            }
         }
 
         private bool m_bMouseMapAllowed = true;
@@ -637,6 +643,11 @@ namespace VQMapTest2
             label3.Text = Math.Min(999, mapDraw3d1.m_iFrame).ToString();
             timer2.Interval = Math.Max(100, 800 / (mapDraw3d1.m_iFrame+1));
             mapDraw3d1.m_iFrame = 0;
+        }
+
+        private void mapDraw3d1_DoubleClick(object sender, EventArgs e)
+        {
+            mapDraw3d1.SelectState();
         }
     }
 }
