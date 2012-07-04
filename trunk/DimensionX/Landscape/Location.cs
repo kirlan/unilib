@@ -76,37 +76,7 @@ namespace LandscapeGeneration
     {
         public Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
 
-        public Vertex m_pCenter = new Vertex(0, 0, 0);
-
         public RegionType m_eType = RegionType.Empty;
-
-        #region IXY Members
-
-        public override float X
-        {
-            get { return m_pCenter.X; }
-            set { m_pCenter.X = value; }
-        }
-
-        public override float Y
-        {
-            get { return m_pCenter.Y; }
-            set { m_pCenter.Y = value; }
-        }
-
-        public override float Z
-        {
-            get { return m_pCenter.Z; }
-            set { m_pCenter.Z = value; }
-        }
-
-        public override float H
-        {
-            get { return m_pCenter.H; }
-            set { m_pCenter.H = value; }
-        }
-
-        #endregion
 
         #region ITerritory Members
 
@@ -165,13 +135,17 @@ namespace LandscapeGeneration
 
         public void Create(long iID, float x, float y, float z)
         {
-            m_pCenter = new Vertex(x, y, z);
+            X = x;
+            Y = y;
+            Z = z;
             m_iID = iID;
         }
 
         public void Create(long iID, float x, float y, float z, int iGridX, int iGridY)
         {
-            m_pCenter = new Vertex(x, y, z);
+            X = x;
+            Y = y;
+            Z = z;
             m_iID = iID;
             m_iGridX = iGridX;
             m_iGridY = iGridY;
@@ -179,7 +153,9 @@ namespace LandscapeGeneration
 
         public void Create(long iID, float x, float y, float z, Location pOrigin)
         {
-            m_pCenter = new Vertex(x, y, z);
+            X = x;
+            Y = y;
+            Z = z;
             m_iID = iID;
 
             m_pOrigin = pOrigin;
@@ -268,9 +244,9 @@ namespace LandscapeGeneration
             }
             while (pLine != m_pFirstLine);
 
-            m_pCenter.X = fX / fLength;
-            m_pCenter.Y = fY / fLength;
-            m_pCenter.Z = fZ / fLength;
+            X = fX / fLength;
+            Y = fY / fLength;
+            Z = fZ / fLength;
 
             List<Line> cTotalBorder = new List<Line>();
 
@@ -284,9 +260,9 @@ namespace LandscapeGeneration
                 pLne.m_pMidPoint.Y = (pLne.m_pPoint1.Y + pLne.m_pPoint2.Y) / 2;
                 pLne.m_pMidPoint.Z = (pLne.m_pPoint1.Z + pLne.m_pPoint2.Z) / 2;
 
-                pLne.m_pInnerPoint.X = (pLne.m_pMidPoint.X + m_pCenter.X) / 2;
-                pLne.m_pInnerPoint.Y = (pLne.m_pMidPoint.Y + m_pCenter.Y) / 2;
-                pLne.m_pInnerPoint.Z = (pLne.m_pMidPoint.Z + m_pCenter.Z) / 2;
+                pLne.m_pInnerPoint.X = (pLne.m_pMidPoint.X + X) / 2;
+                pLne.m_pInnerPoint.Y = (pLne.m_pMidPoint.Y + Y) / 2;
+                pLne.m_pInnerPoint.Z = (pLne.m_pMidPoint.Z + Z) / 2;
             }
         }
 
@@ -297,11 +273,6 @@ namespace LandscapeGeneration
                 sID = string.Format("{0}, {1}", m_iGridX, m_iGridY);
 
             return string.Format("{1}[{0}]", sID, m_bBorder || m_bUnclosed ? "x" : " ");
-        }
-
-        public override string ToString()
-        {
-            return m_pCenter.ToString();
         }
 
         public override float GetMovementCost()
@@ -317,9 +288,9 @@ namespace LandscapeGeneration
         {
             binWriter.Write(m_iID);
 
-            binWriter.Write((double)m_pCenter.X);
-            binWriter.Write((double)m_pCenter.Y);
-            binWriter.Write((double)m_pCenter.Z);
+            binWriter.Write((double)X);
+            binWriter.Write((double)Y);
+            binWriter.Write((double)Z);
 
             binWriter.Write(m_bBorder ? 1 : 0);
             binWriter.Write(m_bUnclosed ? 1 : 0);
@@ -361,9 +332,9 @@ namespace LandscapeGeneration
 
             m_iID = binReader.ReadInt64();
 
-            m_pCenter.X = (float)binReader.ReadDouble();
-            m_pCenter.Y = (float)binReader.ReadDouble();
-            m_pCenter.Z = (float)binReader.ReadDouble();
+            X = (float)binReader.ReadDouble();
+            Y = (float)binReader.ReadDouble();
+            Z = (float)binReader.ReadDouble();
 
             m_bBorder = binReader.ReadInt32() == 1;
             m_bUnclosed = binReader.ReadInt32() == 1;
