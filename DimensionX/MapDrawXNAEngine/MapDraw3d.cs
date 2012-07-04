@@ -21,6 +21,7 @@ using Socium.Settlements;
 using Socium.Nations;
 using Socium.Languages;
 using nsUniLibControls;
+using LandscapeGeneration.PathFind;
 
 namespace MapDrawXNAEngine
 {
@@ -229,11 +230,11 @@ namespace MapDrawXNAEngine
         private void BuildGeometry(LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                      LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
-            Dictionary<LocationX, GeoData<LocationX>> cGeoLData = new Dictionary<LocationX, GeoData<LocationX>>();
-            Dictionary<Vertex, GeoData<Vertex, LocationX>> cGeoVData = new Dictionary<Vertex, GeoData<Vertex, LocationX>>();
+            Dictionary<LocationX, GeoData> cGeoLData = new Dictionary<LocationX, GeoData>();
+            Dictionary<Vertex, GeoData2> cGeoVData = new Dictionary<Vertex, GeoData2>();
 
             if (BeginStep != null)
-                BeginStep("Building geometry...", (m_pWorld.m_pGrid.m_aVertexes.Length * 2 + m_pWorld.m_pGrid.m_aLocations.Length * 2) / 1000);
+                BeginStep("Building geometry...", (m_pWorld.m_pGrid.m_aVertexes.Length * 2 + m_pWorld.m_pGrid.m_aLocations.Length * 2 + m_pWorld.m_cTransportGrid.Count) / 1000);
 
             int iUpdateCounter = 0;
             //добавляем в вершинный буффер узлы диаграммы Вороного
@@ -244,13 +245,22 @@ namespace MapDrawXNAEngine
                     iUpdateCounter = 0;
                     if (ProgressStep != null)
                         ProgressStep();
-                } 
-                
+                }
+
                 Vertex pVertex = m_pWorld.m_pGrid.m_aVertexes[k];
+
+                GeoData2 pData = new GeoData2(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
+
                 bool bForbidden = true;
                 for (int i = 0; i < pVertex.m_aLocations.Length; i++)
                 {
                     LocationX pLoc = (LocationX)pVertex.m_aLocations[i];
+
+                    LandType eLT = LandType.Ocean;
+                    if (pLoc.Owner != null)
+                        eLT = (pLoc.Owner as LandX).Type.m_eType; 
+                    UpdateTexWeight(ref pData.TexWeights, GetTexWeights(eLT));
+                    UpdateTexWeight(ref pData.TexWeights2, GetTexWeights2(eLT));
 
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
@@ -262,7 +272,19 @@ namespace MapDrawXNAEngine
                 if (bForbidden)
                     continue;
 
-                cGeoVData[pVertex] = new GeoData<Vertex, LocationX>(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                {
+                    float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
+
+                    pData.TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
+                }
+                else
+                {
+                    pData.TextureCoordinate.X = pVertex.m_fX / m_fTextureScale;
+                }
+                pData.TextureCoordinate.Y = pVertex.m_fY / m_fTextureScale; 
+                
+                cGeoVData[pVertex] = pData;
             }
 
             //добавляем в вершинный буффер центры локаций
@@ -285,8 +307,27 @@ namespace MapDrawXNAEngine
                 if (pLoc.m_eType == RegionType.Volcano)
                     fHeight -= 4;
 
-                cGeoLData[pLoc] = new GeoData<LocationX, Vertex>(pLoc, m_pWorld.m_pGrid.m_eShape, fHeight, m_fLandHeightMultiplier);
+                GeoData2 pData = new GeoData2(pLoc, m_pWorld.m_pGrid.m_eShape, fHeight, m_fLandHeightMultiplier);
+                cGeoLData[pLoc] = pData;
 
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                {
+                    float fPhi = (float)Math.Atan2(pLoc.X, pLoc.Z);
+
+                    pData.TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
+                }
+                else
+                {
+                    pData.TextureCoordinate.X = pLoc.X / m_fTextureScale;
+                }
+                pData.TextureCoordinate.Y = pLoc.Y / m_fTextureScale;
+
+                LandType eLT = LandType.Ocean;
+                if (pLoc.Owner != null)
+                    eLT = (pLoc.Owner as LandX).Type.m_eType;
+                pData.TexWeights = GetTexWeights(eLT);
+                pData.TexWeights2 = GetTexWeights2(eLT); 
+                
                 if (pLoc.m_eType == RegionType.Volcano || pLoc.m_eType == RegionType.Peak)
                 {
                     Line pLine = pLoc.m_pFirstLine;
@@ -318,7 +359,7 @@ namespace MapDrawXNAEngine
 
                 Vertex pVertex = m_pWorld.m_pGrid.m_aVertexes[k];
                 
-                List<GeoData<LocationX>> cAllowed = new List<GeoData<LocationX>>();
+                List<GeoData> cAllowed = new List<GeoData>();
                 for (int i = 0; i < pVertex.m_aLocations.Length; i++)
                 {
                     LocationX pLoc = (LocationX)pVertex.m_aLocations[i];
@@ -350,9 +391,53 @@ namespace MapDrawXNAEngine
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
 
+                LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
+
+                //добавляем на горы снежные шапки в зависимости от высоты
+                float fHeight = pLoc.H;
+                if (pLoc.m_eType == RegionType.Peak)
+                    fHeight += 2.5f;
+
+                if (fHeight > m_pWorld.m_fMaxHeight / 3)
+                    cGeoLData[pLoc].TexWeights.W = 2 * (float)Math.Pow((fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+
                 Line pLine = pLoc.m_pFirstLine;
                 do
                 {
+                    if (eLT == LandType.Mountains)
+                    {
+                        cGeoVData[pLine.m_pMidPoint].TexWeights = cGeoVData[pLine.m_pInnerPoint].TexWeights;
+                        cGeoVData[pLine.m_pMidPoint].TexWeights2 = cGeoVData[pLine.m_pInnerPoint].TexWeights2;
+
+                        cGeoVData[pLine.m_pPoint1].TexWeights = cGeoVData[pLine.m_pInnerPoint].TexWeights;
+                        cGeoVData[pLine.m_pPoint1].TexWeights2 = cGeoVData[pLine.m_pInnerPoint].TexWeights2;
+
+                        cGeoVData[pLine.m_pPoint2].TexWeights = cGeoVData[pLine.m_pInnerPoint].TexWeights;
+                        cGeoVData[pLine.m_pPoint2].TexWeights2 = cGeoVData[pLine.m_pInnerPoint].TexWeights2;
+
+                    }
+                    else
+                    {
+                        cGeoVData[pLine.m_pInnerPoint].TexWeights += cGeoVData[pLine.m_pMidPoint].TexWeights;///2;
+                        cGeoVData[pLine.m_pInnerPoint].TexWeights2 += cGeoVData[pLine.m_pMidPoint].TexWeights2;///2;
+
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights / 2;
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights2 / 2;
+
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights / 2;
+                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2 / 2;
+                    }
+
+                    //добавляем на горы снежные шапки в зависимости от высоты
+                    if (pLine.m_pPoint1.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        cGeoVData[pLine.m_pPoint1].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pPoint1.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+                    if (pLine.m_pPoint2.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        cGeoVData[pLine.m_pPoint2].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pPoint2.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+                    if (pLine.m_pMidPoint.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        cGeoVData[pLine.m_pMidPoint].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pMidPoint.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+                    if (pLine.m_pInnerPoint.m_fHeight > m_pWorld.m_fMaxHeight / 3)
+                        cGeoVData[pLine.m_pInnerPoint].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pInnerPoint.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
+
                     Vector3 n1 = GetNormal(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pMidPoint].m_pPosition, cGeoVData[pLine.m_pPoint1].m_pPosition);
                     cGeoVData[pLine.m_pInnerPoint].m_pNormal += n1;
                     cGeoVData[pLine.m_pMidPoint].m_pNormal += n1;
@@ -376,10 +461,87 @@ namespace MapDrawXNAEngine
                     pLine = pLine.m_pNext;
                 }
                 while (pLine != pLoc.m_pFirstLine);
+
+                if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
+                {
+                    //cGeoLData[pLoc].TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
+                    cGeoLData[pLoc].TexWeights2.Y = 1;
+                } 
+                
+                if (pLoc.m_eType == RegionType.Volcano)
+                {
+                    cGeoLData[pLoc].TexWeights = new Vector4(0, 0, 0, 0);
+                    cGeoLData[pLoc].TexWeights2 = new Vector4(0, 0, 0, 1);
+
+                    pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        cGeoVData[pLine.m_pInnerPoint].TexWeights += new Vector4(0, 0, 0, 0);
+                        cGeoVData[pLine.m_pInnerPoint].TexWeights2 += new Vector4(0, 0, 0, 0.5f);
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
             }
 
-            m_cGeoVData = new GeoData<Vertex, LocationX>[cGeoVData.Count];
-            m_cGeoLData = new GeoData<LocationX, Vertex>[cGeoLData.Count];
+            List<RoadData> cRoads = new List<RoadData>();
+            //вычислим дорожную сетку
+            foreach (TransportationLinkBase pRoad in m_pWorld.m_cTransportGrid)
+            {
+                if (iUpdateCounter++ > 1000)
+                {
+                    iUpdateCounter = 0;
+                    if (ProgressStep != null)
+                        ProgressStep();
+                } 
+                
+                if (pRoad.RoadLevel == RoadQuality.None)
+                    continue;
+
+                RoadData pRoadData = new RoadData();
+
+                switch (pRoad.RoadLevel)
+                {
+                    case RoadQuality.Country:
+                        if (!pRoad.Sea && !pRoad.Embark)
+                            pRoadData.m_eType = RoadType.LandRoad1;
+                        //else
+                        //    eRoadType = RoadType.SeaRoute1;
+                        break;
+                    case RoadQuality.Normal:
+                        if (!pRoad.Sea && !pRoad.Embark)
+                            pRoadData.m_eType = RoadType.LandRoad2;
+                        //else
+                        //    eRoadType = RoadType.SeaRoute2;
+                        break;
+                    case RoadQuality.Good:
+                        if (!pRoad.Sea && !pRoad.Embark)
+                            pRoadData.m_eType = RoadType.LandRoad3;
+                        //else
+                        //    eRoadType = RoadType.SeaRoute3;
+                        break;
+                }
+
+                if (pRoadData.m_eType == RoadType.None)
+                    continue;
+
+                List<GeoData> cRoadLine = new List<GeoData>();
+                foreach (Vertex pVertex in pRoad.m_aPoints)
+                {
+                    if(pVertex is LocationX)
+                        cRoadLine.Add(cGeoLData[(LocationX)pVertex]);
+                    else
+                        cRoadLine.Add(cGeoVData[pVertex]);
+                }
+                pRoadData.m_aShape = cRoadLine.ToArray();
+
+                cRoads.Add(pRoadData);
+            }
+            m_aRoads = cRoads.ToArray();
+            
+            m_cGeoVData = new GeoData2[cGeoVData.Count];
+            m_cGeoLData = new GeoData[cGeoLData.Count];
 
             int iIndex = 0;
             foreach (var vVNorm in cGeoVData)
@@ -404,7 +566,7 @@ namespace MapDrawXNAEngine
         }
 
         /// <summary>
-        /// границы локаций
+        /// дополнительные слои - границы локаций, земель, провинций, государств...
         /// </summary>
         /// <param name="aVertices">вершинный буфер</param>
         /// <param name="iTrianglesCount">количество треугольников</param>
@@ -451,7 +613,7 @@ namespace MapDrawXNAEngine
             // Create the indices used for each triangle
             for (int i = 0; i < m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
                 pData.m_aLocations[pLoc] = BuildLocationReferencesIndices(pLoc, ref cVertexes);
             }
             pData.m_aIndices[MapLayer.Locations] = BuildLocationsIndices(ref cVertexes);
@@ -462,6 +624,17 @@ namespace MapDrawXNAEngine
             pData.m_aIndices[MapLayer.States] = BuildStatesIndices(ref cVertexes);
         }
 
+        internal enum RoadType
+        {
+            None,
+            LandRoad1,
+            LandRoad2,
+            LandRoad3,
+            SeaRoute1,
+            SeaRoute2,
+            SeaRoute3,
+        }
+        
         private int[] BuildLocationReferencesIndices(LocationX pLoc, ref Dictionary<Vertex, int> cVertexes)
         {
             //добавляем в вершинный буффер центры локаций
@@ -494,7 +667,7 @@ namespace MapDrawXNAEngine
             int m_iLinesCount = 0;
             for (int i = 0; i < m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
 
                 m_iLinesCount += pLoc.m_aBorderWith.Length * 2;
 
@@ -510,7 +683,7 @@ namespace MapDrawXNAEngine
             //заполняем индексный буффер
             for (int i = 0; i < m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
                 //if (ProgressStep != null)
                 //    ProgressStep();
 
@@ -721,7 +894,7 @@ namespace MapDrawXNAEngine
                 //считаем только те узлы диаграммы Вороного, которые соприкасаются хотя бы с одной разрешённой локацией
                 for (int i = 0; i < m_cGeoVData[k].m_aLinked.Length; i++)
                 {
-                    LocationX pLoc = m_cGeoVData[k].m_aLinked[i].m_pOwner;
+                    LocationX pLoc = (LocationX)m_cGeoVData[k].m_aLinked[i].m_pOwner;
 
                     if (!bOceanOnly || 
                         (pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
@@ -734,7 +907,7 @@ namespace MapDrawXNAEngine
             }
             for (int i=0; i<m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
 
                 if (!bOceanOnly ||
                     (pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
@@ -764,25 +937,16 @@ namespace MapDrawXNAEngine
             for (int k=0; k<m_cGeoVData.Length; k++)
             {
                 Vertex pVertex = m_cGeoVData[k].m_pOwner;
-                VertexMultitextured pVM = new VertexMultitextured();
-
-                pVM.TexWeights = new Vector4(0);
-                pVM.TexWeights2 = new Vector4(0);
-
-                //List<LandType> cUsedLT = new List<LandType>();
 
                 bool bForbidden = true;
                 bool bOcean = false;
                 for (int i = 0; i < m_cGeoVData[k].m_aLinked.Length; i++)
                 {
-                    LocationX pLoc = m_cGeoVData[k].m_aLinked[i].m_pOwner;
+                    LocationX pLoc = (LocationX)m_cGeoVData[k].m_aLinked[i].m_pOwner;
 
                     LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
-                    UpdateTexWeight(ref pVM.TexWeights, GetTexWeights(eLT));
-                    UpdateTexWeight(ref pVM.TexWeights2, GetTexWeights2(eLT));
 
-                    if ((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean ||
-                        (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral)
+                    if (eLT == LandType.Ocean || eLT == LandType.Coastral)
                         bOcean = true;
 
                     bForbidden = false;
@@ -792,20 +956,14 @@ namespace MapDrawXNAEngine
                 if (bForbidden || (bOceanOnly && !bOcean))
                     continue;
 
+                VertexMultitextured pVM = new VertexMultitextured();
+
+                pVM.TexWeights = m_cGeoVData[k].TexWeights;
+                pVM.TexWeights2 = m_cGeoVData[k].TexWeights2;
+
                 pVM.Position = m_cGeoVData[k].m_pPosition;
                 pVM.Normal = m_cGeoVData[k].m_pNormal;
-
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
-
-                    pVM.TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                }
-                else
-                {
-                    pVM.TextureCoordinate.X = pVertex.m_fX / m_fTextureScale;
-                }
-                pVM.TextureCoordinate.Y = pVertex.m_fY / m_fTextureScale;
+                pVM.TextureCoordinate = m_cGeoVData[k].TextureCoordinate;
 
                 pData.m_aVertices[iCounter] = pVM;
                 cVertexes[pVertex] = iCounter;
@@ -820,7 +978,7 @@ namespace MapDrawXNAEngine
             pData.m_iTrianglesCount = 0;
             for (int i = 0; i<m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
 
@@ -830,32 +988,11 @@ namespace MapDrawXNAEngine
                     continue;
 
                 pData.m_aVertices[iCounter] = new VertexMultitextured();
-                float fHeight = pLoc.H;
-                if (pLoc.m_eType == RegionType.Peak)
-                    fHeight += 2 + Rnd.Get(1f);
-                if (pLoc.m_eType == RegionType.Volcano)
-                    fHeight -= 4;
-
                 pData.m_aVertices[iCounter].Position = m_cGeoLData[i].m_pPosition;
                 pData.m_aVertices[iCounter].Normal = m_cGeoLData[i].m_pNormal;
-
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pLoc.X, pLoc.Z);
-
-                    pData.m_aVertices[iCounter].TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                }
-                else
-                {
-                    pData.m_aVertices[iCounter].TextureCoordinate.X = pLoc.X / m_fTextureScale;
-                }
-                pData.m_aVertices[iCounter].TextureCoordinate.Y = pLoc.Y / m_fTextureScale;
-
-                LandType eLT = LandType.Ocean;
-                if (pLoc.Owner != null)
-                    eLT = (pLoc.Owner as LandX).Type.m_eType;
-                pData.m_aVertices[iCounter].TexWeights = GetTexWeights(eLT);
-                pData.m_aVertices[iCounter].TexWeights2 = GetTexWeights2(eLT);
+                pData.m_aVertices[iCounter].TextureCoordinate = m_cGeoLData[i].TextureCoordinate;
+                pData.m_aVertices[iCounter].TexWeights = m_cGeoLData[i].TexWeights;
+                pData.m_aVertices[iCounter].TexWeights2 = m_cGeoLData[i].TexWeights2;
 
                 cLocations[pLoc] = iCounter;
 
@@ -881,7 +1018,7 @@ namespace MapDrawXNAEngine
             //заполняем индексный буффер
             for (int i=0; i< m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
                 if (ProgressStep != null)
                     ProgressStep(); 
                 
@@ -890,54 +1027,10 @@ namespace MapDrawXNAEngine
                     (pLoc.Owner as LandX).Type.m_eType != LandType.Coastral)
                     continue; 
                 
-                LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
-
-                //добавляем на горы снежные шапки в зависимости от высоты
-                float fHeight = pLoc.H;
-                if (pLoc.m_eType == RegionType.Peak)
-                    fHeight += 2.5f;
-
-                if (fHeight > m_pWorld.m_fMaxHeight / 3)
-                    pData.m_aVertices[cLocations[pLoc]].TexWeights.W = 2 * (float)Math.Pow((fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
-
                 float fMinHeight = float.MaxValue;
                 Line pLine = pLoc.m_pFirstLine;
                 do
                 {
-                    if (eLT == LandType.Mountains)
-                    {
-                        pData.m_aVertices[cVertexes[pLine.m_pMidPoint]].TexWeights = pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights;
-                        pData.m_aVertices[cVertexes[pLine.m_pMidPoint]].TexWeights2 = pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights2;
-
-                        pData.m_aVertices[cVertexes[pLine.m_pPoint1]].TexWeights = pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights;
-                        pData.m_aVertices[cVertexes[pLine.m_pPoint1]].TexWeights2 = pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights2;
-
-                        pData.m_aVertices[cVertexes[pLine.m_pPoint2]].TexWeights = pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights;
-                        pData.m_aVertices[cVertexes[pLine.m_pPoint2]].TexWeights2 = pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights2;
-
-                    }
-                    else
-                    {
-                        pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights += pData.m_aVertices[cVertexes[pLine.m_pMidPoint]].TexWeights;///2;
-                        pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights2 += pData.m_aVertices[cVertexes[pLine.m_pMidPoint]].TexWeights2;///2;
-
-                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights / 2;
-                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += aVertices[cVertexes[pLine.m_pPoint1.m_iID]].TexWeights2 / 2;
-
-                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights += aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights / 2;
-                        //aVertices[cVertexes[pLine.m_pInnerPoint.m_iID]].TexWeights2 += aVertices[cVertexes[pLine.m_pPoint2.m_iID]].TexWeights2 / 2;
-                    }
-
-                    //добавляем на горы снежные шапки в зависимости от высоты
-                    if (pLine.m_pPoint1.m_fHeight > m_pWorld.m_fMaxHeight / 3)
-                        pData.m_aVertices[cVertexes[pLine.m_pPoint1]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pPoint1.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
-                    if (pLine.m_pPoint2.m_fHeight > m_pWorld.m_fMaxHeight / 3)
-                        pData.m_aVertices[cVertexes[pLine.m_pPoint2]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pPoint2.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
-                    if (pLine.m_pMidPoint.m_fHeight > m_pWorld.m_fMaxHeight / 3)
-                        pData.m_aVertices[cVertexes[pLine.m_pMidPoint]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pMidPoint.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
-                    if (pLine.m_pInnerPoint.m_fHeight > m_pWorld.m_fMaxHeight / 3)
-                        pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights.W = 2 * (float)Math.Pow((pLine.m_pInnerPoint.m_fHeight * 3 - m_pWorld.m_fMaxHeight) / m_pWorld.m_fMaxHeight, 3);
-
                     aLocationReference[iReferenceCounter++] = pLoc;
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pInnerPoint];
                     pData.m_aIndices[iCounter++] = cVertexes[pLine.m_pMidPoint];
@@ -966,6 +1059,7 @@ namespace MapDrawXNAEngine
                 while (pLine != pLoc.m_pFirstLine);
 
                 //считаем, что ни деревьев, ни поселений под водой не бывает
+                LandType eLT = (pLoc.Owner as LandX).Type.m_eType;
                 if (!bOceanOnly)
                 {
                     float fScale = 0.02f; //0.015f;
@@ -1002,25 +1096,7 @@ namespace MapDrawXNAEngine
                         cSettlements.Add(new SettlementModel(pData.m_aVertices[cLocations[pLoc]].Position,
                                                 Rnd.Get((float)Math.PI * 2), fScale,
                                                 pModel, m_pWorld.m_pGrid.m_eShape, pTexture));
-
-                        pData.m_aVertices[cLocations[pLoc]].TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
                     }
-                }
-
-                if (pLoc.m_eType == RegionType.Volcano)
-                {
-                    pData.m_aVertices[cLocations[pLoc]].TexWeights = new Vector4(0, 0, 0, 0);
-                    pData.m_aVertices[cLocations[pLoc]].TexWeights2 = new Vector4(0, 0, 0, 1);
-
-                    pLine = pLoc.m_pFirstLine;
-                    do
-                    {
-                        pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights += new Vector4(0, 0, 0, 0);
-                        pData.m_aVertices[cVertexes[pLine.m_pInnerPoint]].TexWeights2 += new Vector4(0, 0, 0, 0.5f);
-
-                        pLine = pLine.m_pNext;
-                    }
-                    while (pLine != pLoc.m_pFirstLine);
                 }
             }
 
@@ -1439,7 +1515,7 @@ namespace MapDrawXNAEngine
                 return;
 
             for (int i=0; i<m_cGeoLData.Length; i++)
-                m_cGeoLData[i].m_pColor = GetMapModeColor(m_cGeoLData[i].m_pOwner, pMode);
+                m_cGeoLData[i].m_pColor = GetMapModeColor((LocationX)m_cGeoLData[i].m_pOwner, pMode);
 
             int iPrimitivesCount = 0;
             for (int k=0; k<m_cGeoVData.Length; k++)
@@ -1519,7 +1595,7 @@ namespace MapDrawXNAEngine
             m_cMapModeData[pMode].m_iTrianglesCount = 0;
             for (int i=0; i<m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
 
                 VertexPositionColorNormal pVPCN = new VertexPositionColorNormal();
                 pVPCN.Position = m_cGeoLData[i].m_pPosition;//GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, pLoc.m_fHeight > 0 ? m_fLandHeightMultiplier : m_fLandHeightMultiplier / 10);
@@ -1548,7 +1624,7 @@ namespace MapDrawXNAEngine
 
             for (int i = 0; i < m_cGeoLData.Length; i++)
             {
-                LocationX pLoc = m_cGeoLData[i].m_pOwner;
+                LocationX pLoc = (LocationX)m_cGeoLData[i].m_pOwner;
 
                 if (iUpdateCounter++ > 1000)
                 {
@@ -1949,47 +2025,258 @@ namespace MapDrawXNAEngine
         /// </summary>
         public event EventHandler<SelectedStateChangedEventArgs> SelectedStateChanged;
 
-        private class GeoData<T> where T : IPointF
+        private class GeoData
         {
-            public T m_pOwner;
+            public Vertex m_pOwner;
 
             public Vector3 m_pPosition = new Vector3(0);
             public Vector3 m_pNormal = new Vector3(0);
+            
+            public Vector4 TexWeights = new Vector4(0);
+            public Vector4 TexWeights2 = new Vector4(0);
+            public Vector4 TextureCoordinate = new Vector4(0);
+            
             public Microsoft.Xna.Framework.Color m_pColor = Microsoft.Xna.Framework.Color.Black;
 
-            public GeoData(T pOwner, WorldShape eShape, float fMultiplier)
+            public GeoData(Vertex pOwner, WorldShape eShape, float fMultiplier)
             {
                 m_pOwner = pOwner;
                 m_pPosition = GetPosition(pOwner, eShape, fMultiplier);
             }
 
-            public GeoData(T pOwner, WorldShape eShape, float fHeight, float fMultiplier)
+            public GeoData(Vertex pOwner, WorldShape eShape, float fHeight, float fMultiplier)
             {
                 m_pOwner = pOwner;
                 m_pPosition = GetPosition(pOwner, eShape, fHeight, fMultiplier);
             }
         }
 
-        private class GeoData<T, R> : GeoData<T>
-            where T : IPointF 
-            where R : IPointF
+        private class GeoData2 : GeoData
         {
-            public GeoData<R>[] m_aLinked;
+            public GeoData[] m_aLinked;
 
-            public GeoData(T pOwner, WorldShape eShape, float fMultiplier)
+            public GeoData2(Vertex pOwner, WorldShape eShape, float fMultiplier)
                 : base(pOwner, eShape, fMultiplier)
             {
             }
 
-            public GeoData(T pOwner, WorldShape eShape, float fHeight, float fMultiplier)
+            public GeoData2(Vertex pOwner, WorldShape eShape, float fHeight, float fMultiplier)
                 : base(pOwner, eShape, fHeight, fMultiplier)
             {
             }
         }
 
-        private GeoData<Vertex, LocationX>[] m_cGeoVData;
-        private GeoData<LocationX>[] m_cGeoLData;
+        private GeoData2[] m_cGeoVData;
+        private GeoData[] m_cGeoLData;
 
+        private class RoadData
+        {
+            public RoadType m_eType = RoadType.None;
+            public GeoData[] m_aShape;
+
+            public VertexMultitextured[] m_aVertices = new VertexMultitextured[0];
+            public int[] m_aIndices = new int[0];
+
+            public void Build3D(WorldShape eShape, int RX, float fTextureScale)
+            {
+                float fScale = 0.1f;
+                switch (m_eType)
+                {
+                    case RoadType.LandRoad1:
+                        fScale = 0.1f;
+                        break;
+                    case RoadType.LandRoad2:
+                        fScale = 0.3f;
+                        break;
+                    case RoadType.LandRoad3:
+                        fScale = 0.4f;
+                        break;
+                }
+
+                Vector3? pCrossOld = null;
+
+                m_aVertices = new VertexMultitextured[m_aShape.Length * 3 + 2];
+                m_aIndices = new int[((m_aShape.Length - 1) * 4 + 4) * 3];
+
+                int iCounterV = 1;
+                int iCounterI = 0;
+
+                ///TODO: надо делать дорогу не в 3 вертекса в ширину, а хотя бы в 4, а лучше в 5... Чтобы форма была более выпуклая
+
+                for (int i = 0; i < m_aShape.Length; i++)
+                {
+                    Vector3 pCross;
+                    if (i == m_aShape.Length - 1)
+                        pCross = (Vector3)pCrossOld;
+                    else
+                        pCross = Vector3.Normalize(Vector3.Cross(m_aShape[i + 1].m_pPosition - m_aShape[i].m_pPosition, m_aShape[i].m_pNormal)) / 5;
+
+                    Vector3 pCrossAverage = pCross;
+                    if (pCrossOld != null)
+                        pCrossAverage = ((Vector3)pCrossOld + pCross) / 2;
+
+                    pCrossOld = pCross;
+
+                    VertexMultitextured pLeft = new VertexMultitextured();
+                    pLeft.Position = m_aShape[i].m_pPosition + pCrossAverage * fScale;
+                    pLeft.Normal = m_aShape[i].m_pNormal;
+                    //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
+                    pLeft.TexWeights = m_aShape[i].TexWeights;
+                    pLeft.TexWeights2 = m_aShape[i].TexWeights2;
+                    pLeft.TextureCoordinate = m_aShape[i].TextureCoordinate;
+                    if (eShape == WorldShape.Ringworld)
+                    {
+                        float fPhi = (float)Math.Atan2(pLeft.Position.X, pLeft.Position.Y);
+
+                        pLeft.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
+                    }
+                    else
+                    {
+                        pLeft.TextureCoordinate.X = pLeft.Position.X * 1000 / fTextureScale;
+                    }
+                    pLeft.TextureCoordinate.Y = pLeft.Position.Z * 1000 / fTextureScale; 
+
+                    VertexMultitextured pRight = new VertexMultitextured();
+                    pRight.Position = m_aShape[i].m_pPosition - pCrossAverage * fScale;
+                    pRight.Normal = m_aShape[i].m_pNormal;
+                    //pRight.Color = Microsoft.Xna.Framework.Color.Tan;
+                    pRight.TexWeights = m_aShape[i].TexWeights;
+                    pRight.TexWeights2 = m_aShape[i].TexWeights2;
+                    pRight.TextureCoordinate = m_aShape[i].TextureCoordinate;
+                    if (eShape == WorldShape.Ringworld)
+                    {
+                        float fPhi = (float)Math.Atan2(pRight.Position.X, pRight.Position.Y);
+
+                        pRight.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
+                    }
+                    else
+                    {
+                        pRight.TextureCoordinate.X = pRight.Position.X * 1000 / fTextureScale;
+                    }
+                    pRight.TextureCoordinate.Y = pRight.Position.Z * 1000 / fTextureScale; 
+
+                    VertexMultitextured pCenter = new VertexMultitextured();
+                    pCenter.Position = m_aShape[i].m_pPosition + m_aShape[i].m_pNormal * fScale / 500;
+                    pCenter.Normal = m_aShape[i].m_pNormal;
+                    //pCenter.Color = Microsoft.Xna.Framework.Color.Tan;
+                    pCenter.TexWeights = m_aShape[i].TexWeights;
+                    pCenter.TexWeights2 = m_aShape[i].TexWeights2;
+                    pCenter.TextureCoordinate = m_aShape[i].TextureCoordinate;
+                    if (i == 0 || i == m_aShape.Length - 1)
+                        pCenter.TexWeights2.Y = fScale*2;
+                    else
+                        pCenter.TexWeights2.Y = fScale*0.75f + Rnd.Get(fScale);//0.5f + Rnd.Get(1f);// fScale + Rnd.Get(fScale * 2);
+                    //pCenter.TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
+
+                    m_aVertices[iCounterV++] = pLeft;
+                    m_aVertices[iCounterV++] = pCenter;
+                    m_aVertices[iCounterV++] = pRight;
+                    
+                    if (i > 0)
+                    {
+                        m_aIndices[iCounterI++] = iCounterV - 5;
+                        m_aIndices[iCounterI++] = iCounterV - 3;
+                        m_aIndices[iCounterI++] = iCounterV - 6;
+
+                        m_aIndices[iCounterI++] = iCounterV - 5;
+                        m_aIndices[iCounterI++] = iCounterV - 2;
+                        m_aIndices[iCounterI++] = iCounterV - 3;
+
+                        m_aIndices[iCounterI++] = iCounterV - 5;
+                        m_aIndices[iCounterI++] = iCounterV - 1;
+                        m_aIndices[iCounterI++] = iCounterV - 2;
+
+                        m_aIndices[iCounterI++] = iCounterV - 5;
+                        m_aIndices[iCounterI++] = iCounterV - 4;
+                        m_aIndices[iCounterI++] = iCounterV - 1;
+                    }
+
+
+                    if (i == 1)
+                    {
+                        VertexMultitextured pStart = new VertexMultitextured();
+                        Vector3 pDirection = m_aShape[0].m_pPosition - m_aShape[1].m_pPosition;
+                        pDirection.Normalize();
+                        pStart.Position = m_aShape[0].m_pPosition + pDirection * pCrossAverage.Length() * fScale;
+                        pStart.Normal = m_aShape[i].m_pNormal;
+                        //pStart.Color = Microsoft.Xna.Framework.Color.Tan;
+                        pStart.TexWeights = m_aShape[i].TexWeights;
+                        pStart.TexWeights2 = m_aShape[i].TexWeights2;
+                        pStart.TextureCoordinate = m_aShape[i].TextureCoordinate;
+                        if (eShape == WorldShape.Ringworld)
+                        {
+                            float fPhi = (float)Math.Atan2(pStart.Position.X, pStart.Position.Y);
+
+                            pStart.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
+                        }
+                        else
+                        {
+                            pStart.TextureCoordinate.X = pStart.Position.X / fTextureScale;
+                        }
+                        pStart.TextureCoordinate.Y = pStart.Position.Z / fTextureScale; 
+
+                        m_aVertices[0] = pStart;
+
+                        m_aIndices[iCounterI++] = 2;
+                        m_aIndices[iCounterI++] = 1;
+                        m_aIndices[iCounterI++] = 0;
+
+                        m_aIndices[iCounterI++] = 2;
+                        m_aIndices[iCounterI++] = 0;
+                        m_aIndices[iCounterI++] = 3;
+                    }
+
+                    if (i == m_aShape.Length - 1)
+                    {
+                        VertexMultitextured pFinish = new VertexMultitextured();
+                        Vector3 pDirection = m_aShape[i].m_pPosition - m_aShape[i - 1].m_pPosition;
+                        pDirection.Normalize();
+                        pFinish.Position = m_aShape[i].m_pPosition + pDirection * pCrossAverage.Length() * fScale;
+                        pFinish.Normal = m_aShape[i].m_pNormal;
+                        //pFinish.Color = Microsoft.Xna.Framework.Color.Tan;
+                        pFinish.TexWeights = m_aShape[i].TexWeights;
+                        pFinish.TexWeights2 = m_aShape[i].TexWeights2;
+                        pFinish.TextureCoordinate = m_aShape[i].TextureCoordinate;
+                        if (eShape == WorldShape.Ringworld)
+                        {
+                            float fPhi = (float)Math.Atan2(pFinish.Position.X, pFinish.Position.Y);
+
+                            pFinish.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
+                        }
+                        else
+                        {
+                            pFinish.TextureCoordinate.X = pFinish.Position.X / fTextureScale;
+                        }
+                        pFinish.TextureCoordinate.Y = pFinish.Position.Z / fTextureScale; 
+
+                        m_aVertices[m_aVertices.Length - 1] = pFinish;
+
+                        m_aIndices[iCounterI++] = iCounterV - 2;
+                        m_aIndices[iCounterI++] = iCounterV;
+                        m_aIndices[iCounterI++] = iCounterV - 3;
+
+                        m_aIndices[iCounterI++] = iCounterV - 2;
+                        m_aIndices[iCounterI++] = iCounterV - 1;
+                        m_aIndices[iCounterI++] = iCounterV;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// для всех вершин в списке вычисляем нормаль как нормализованный вектор суммы нормалей прилегающих граней
+            /// </summary>
+            public void NormalizeTextureWeights()
+            {
+                for (int i = 0; i < m_aVertices.Length; i++)
+                {
+                    float fD = (float)Math.Sqrt(m_aVertices[i].TexWeights.LengthSquared() + m_aVertices[i].TexWeights2.LengthSquared());
+                    m_aVertices[i].TexWeights /= fD;
+                    m_aVertices[i].TexWeights2 /= fD;
+                }
+            }
+        }
+
+        private RoadData[] m_aRoads;
 
         /// <summary>
         /// Checks whether a ray intersects a model. This method needs to access
@@ -2062,6 +2349,12 @@ namespace MapDrawXNAEngine
                 m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
 
             BuildGeometry(BeginStep, ProgressStep);
+
+            for (int i = 0; i < m_aRoads.Length; i++)
+            {
+                m_aRoads[i].Build3D(m_pWorld.m_pGrid.m_eShape, m_pWorld.m_pGrid.RX, m_fTextureScale);
+                m_aRoads[i].NormalizeTextureWeights();
+            }
 
             BuildLayers(out m_pLayers, BeginStep, ProgressStep);
 
@@ -2144,7 +2437,7 @@ namespace MapDrawXNAEngine
         Texture2D rockTexture;
         Texture2D snowTexture;
         Texture2D forestTexture;
-        Texture2D savannaTexture;
+        Texture2D roadTexture;
         Texture2D swampTexture;
         Texture2D lavaTexture;
 
@@ -2198,7 +2491,7 @@ namespace MapDrawXNAEngine
             rockTexture = LibContent.Load<Texture2D>("content/dds/rock");
             snowTexture = LibContent.Load<Texture2D>("content/dds/snow");
             forestTexture = LibContent.Load<Texture2D>("content/dds/grass");
-            savannaTexture = LibContent.Load<Texture2D>("content/dds/plain");
+            roadTexture = LibContent.Load<Texture2D>("content/dds/sand");
             swampTexture = LibContent.Load<Texture2D>("content/dds/river");
             lavaTexture = LibContent.Load<Texture2D>("content/dds/2-lava");
         }
@@ -2424,7 +2717,7 @@ namespace MapDrawXNAEngine
             pEffectTexture2.SetValue(rockTexture);
             pEffectTexture3.SetValue(snowTexture);
             pEffectTexture4.SetValue(forestTexture);
-            pEffectTexture5.SetValue(savannaTexture);
+            pEffectTexture5.SetValue(roadTexture);
             pEffectTexture6.SetValue(swampTexture);
             pEffectTexture7.SetValue(lavaTexture);
 
@@ -2580,7 +2873,7 @@ namespace MapDrawXNAEngine
             //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
-            if(m_eMode == MapMode.Sattelite)
+            if (m_eMode == MapMode.Sattelite)
             {
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                     m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
@@ -2615,7 +2908,7 @@ namespace MapDrawXNAEngine
                 m_pBasicEffect.AmbientLightColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.2f).ToVector3();
 
                 m_pBasicEffect.PreferPerPixelLighting = true;
-                        
+
                 RasterizerState rs1 = new RasterizerState();
                 rs1.CullMode = CullMode.CullCounterClockwiseFace;
                 //rs.FillMode = FillMode.WireFrame;
@@ -2626,8 +2919,8 @@ namespace MapDrawXNAEngine
 
                 GraphicsDevice.Indices = myIndexBuffer;
                 GraphicsDevice.SetVertexBuffer(myVertexBuffer);
-                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, m_cMapModeData[m_eMode].m_aVertices.Length, 0, m_cMapModeData[m_eMode].m_iTrianglesCount); 
-                
+                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, m_cMapModeData[m_eMode].m_aVertices.Length, 0, m_cMapModeData[m_eMode].m_iTrianglesCount);
+
                 //GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList,
                 //                                    m_cMapModeData[m_eMode].m_aVertices, 0, m_cMapModeData[m_eMode].m_aVertices.Length - 1, m_cMapModeData[m_eMode].m_aIndices, 0, m_cMapModeData[m_eMode].m_iTrianglesCount);
             }
@@ -2635,6 +2928,9 @@ namespace MapDrawXNAEngine
             if (m_bShowLocations)
                 for (int i = 0; i < m_aSettlements.Length; i++)
                     DrawSettlement(m_aSettlements[i]);
+
+            if (m_bShowRoads)
+                DrawRoads();
 
             if (m_bShowLocationsBorders)
                 DrawLayer(MapLayer.Locations);
@@ -2662,6 +2958,36 @@ namespace MapDrawXNAEngine
 
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList,
                                                 m_pWater.m_aVertices, 0, m_pWater.m_aVertices.Length - 1, m_pWater.m_aIndices, 0, m_pWater.m_iTrianglesCount);
+        }
+
+        VertexPositionColorNormal pLeft = new VertexPositionColorNormal();
+        VertexPositionColorNormal pRight = new VertexPositionColorNormal();
+        VertexPositionColorNormal pCenter = new VertexPositionColorNormal();
+
+        private void DrawRoads()
+        {
+            RasterizerState rs = new RasterizerState();
+            rs.CullMode = CullMode.CullCounterClockwiseFace;
+            //rs.FillMode = FillMode.WireFrame;
+            GraphicsDevice.RasterizerState = rs;
+
+            //m_pMyEffect.Parameters["GridFog"].SetValue(m_eMode == MapMode.Sattelite);
+            //m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Grid"];
+            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
+            else
+                m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
+            m_pMyEffect.CurrentTechnique.Passes[0].Apply();
+
+            //m_pMyEffect.CurrentTechnique.Passes[6].Apply();
+
+            for (int i = 0; i < m_aRoads.Length; i++)
+                GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,
+                                          m_aRoads[i].m_aVertices, 0, m_aRoads[i].m_aVertices.Length, m_aRoads[i].m_aIndices, 0, m_aRoads[i].m_aIndices.Length / 3);
+
+            // Reset renderstates to their default values.
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
 
         private void DrawLayer(MapLayer eLayer)
@@ -2703,7 +3029,7 @@ namespace MapDrawXNAEngine
 
 
             GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
-                                      m_pLayers.m_aVertices, 0, m_pLayers.m_aVertices.Length - 1, aIndices, 0, aIndices.Length/2);
+                                      m_pLayers.m_aVertices, 0, m_pLayers.m_aVertices.Length, aIndices, 0, aIndices.Length/2);
 
             // Reset renderstates to their default values.
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;

@@ -227,7 +227,7 @@ struct GridVertexShaderInput
 struct GridVertexShaderOutput
 {
     float4 Position : POSITION0;
-    //float4 Color        : COLOR0;
+    float4 Color        : COLOR0;
     float3 Position3D    : TEXCOORD0;
     float3 View : TEXCOORD2;
 };
@@ -236,7 +236,7 @@ GridVertexShaderOutput GridVSCommon(GridVertexShaderInput input, float3 Normal, 
 {
     GridVertexShaderOutput output;
 	output.Position3D = input.Position;
-	//output.Color = input.Color;
+	output.Color = input.Color;
 
     //float4 fakeNormal = float4(0, 0, 0, 0);
 
@@ -283,6 +283,11 @@ GridVertexShaderOutput GridVS6(GridVertexShaderInput input, float3 Normal : NORM
 	return GridVSCommon(input, Normal, 0.006);
 }
 
+GridVertexShaderOutput GridVS7(GridVertexShaderInput input, float3 Normal : NORMAL)
+{
+	return GridVSCommon(input, Normal, 0.0005);
+}
+
 float4 GridPSCommon(GridVertexShaderOutput input, float4 GridColor)
 {
     // TODO: add your pixel shader code here.
@@ -325,6 +330,11 @@ float4 GridPS5(GridVertexShaderOutput input) : COLOR0
 float4 GridPS6(GridVertexShaderOutput input) : COLOR0
 {
 	return GridPSCommon(input, GridColor6);
+}
+
+float4 GridPS7(GridVertexShaderOutput input) : COLOR0
+{
+	return GridPSCommon(input, input.Color);
 }
 
 technique Grid
@@ -370,6 +380,14 @@ technique Grid
 
         VertexShader = compile vs_2_0 GridVS6();
         PixelShader = compile ps_2_0 GridPS6();
+    }
+
+    pass Pass7
+    {
+        // TODO: set renderstates here.
+
+        VertexShader = compile vs_2_0 GridVS7();
+        PixelShader = compile ps_2_0 GridPS7();
     }
 }
 

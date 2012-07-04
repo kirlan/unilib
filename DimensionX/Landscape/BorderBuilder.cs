@@ -81,26 +81,26 @@ namespace LandscapeGeneration
             Line[] aTotalBorder = cTotalBorder.ToArray();
             int iTotalCount = aTotalBorder.Length;
 
-            m_fAverageX = 0;
-            m_fAverageY = 0;
-            m_fAverageZ = 0;
-            m_fAverageH = 0;
+            X = 0;
+            Y = 0;
+            Z = 0;
+            H = 0;
             float fPerimeter = 0;
             foreach (Line pLine in aTotalBorder)
             {
                 pLine.m_pNext = null;
                 pLine.m_pPrevious = null;
 
-                m_fAverageX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
-                m_fAverageY += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
-                m_fAverageZ += pLine.m_fLength * (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2;
-                m_fAverageH += pLine.m_fLength * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
+                X += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
+                Y += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                Z += pLine.m_fLength * (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2;
+                H += pLine.m_fLength * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
                 fPerimeter += pLine.m_fLength;
             }
-            m_fAverageX /= fPerimeter;
-            m_fAverageY /= fPerimeter;
-            m_fAverageZ /= fPerimeter;
-            m_fAverageH /= fPerimeter;
+            X /= fPerimeter;
+            Y /= fPerimeter;
+            Z /= fPerimeter;
+            H /= fPerimeter;
 
             m_cFirstLines.Clear();
 
@@ -166,35 +166,6 @@ namespace LandscapeGeneration
 
                 m_pOrdered.Add(cVertexes);
             }
-        }
-
-        private float m_fAverageX = 0;
-        private float m_fAverageY = 0;
-        private float m_fAverageZ = 0;
-        private float m_fAverageH = 0;
-
-        public override float X
-        {
-            get { return m_fAverageX; }
-            set { m_fAverageX = value; }
-        }
-
-        public override float Y
-        {
-            get { return m_fAverageY; }
-            set { m_fAverageY = value; }
-        }
-
-        public override float Z
-        {
-            get { return m_fAverageZ; }
-            set { m_fAverageZ = value; }
-        }
-
-        public override float H
-        {
-            get { return m_fAverageH; }
-            set { m_fAverageH = value; }
         }
     }
 }

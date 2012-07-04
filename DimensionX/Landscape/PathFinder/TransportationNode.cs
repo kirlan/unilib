@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LandscapeGeneration.PathFind
 {
-    public abstract class TransportationNode : ITransportationNode
+    public abstract class TransportationNode : Vertex, ITransportationNode
     {
         public int m_iPassword = 0;
 
@@ -37,33 +37,5 @@ namespace LandscapeGeneration.PathFind
         }
 
         public abstract float GetMovementCost();
-
-        #region IPointF Members
-
-        public abstract float X
-        {
-            get;
-            set;
-        }
-
-        public abstract float Y
-        {
-            get;
-            set;
-        }
-
-        public abstract float Z
-        {
-            get;
-            set;
-        }
-
-        public abstract float H
-        {
-            get;
-            set;
-        }
-
-        #endregion
     }
 }

@@ -55,6 +55,13 @@ namespace LandscapeGeneration
 
         public List<long> m_cLocationsTmp = new List<long>();
 
+        public Vertex()
+        {
+            m_fX = 0f;
+            m_fY = 0f;
+            m_fZ = 0f;
+        }
+
         public Vertex(float fX, float fY, float fZ)
         {
             m_fX = fX;

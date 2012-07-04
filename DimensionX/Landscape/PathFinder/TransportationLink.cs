@@ -275,65 +275,65 @@ namespace LandscapeGeneration.PathFind
             }
         }
 
-        public Vertex[] m_aPoints = new Vertex[3];
+        public IPointF[] m_aPoints = new IPointF[3];
 
-        private static float GetDist(Vertex pPoint1, Vertex pPoint2)
-        {
-            return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y) + (pPoint1.Z - pPoint2.Z) * (pPoint1.Z - pPoint2.Z));
-        }
-
-        private static float GetDist(TransportationNode pPoint1, Vertex pPoint2)
+        private static float GetDist(IPointF pPoint1, IPointF pPoint2)
         {
             return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y) + (pPoint1.Z - pPoint2.Z) * (pPoint1.Z - pPoint2.Z));
         }
 
         public TransportationLinkBase(Location pLoc1, Location pLoc2)
         {
-            m_aPoints[0] = new Vertex(pLoc1.X, pLoc1.Y, pLoc1.Z);
-            m_aPoints[2] = new Vertex(pLoc2.X, pLoc2.Y, pLoc2.Z);
+            m_aPoints = new IPointF[5]; 
+            
+            m_aPoints[0] = pLoc1;
 
             Line pLine = pLoc1.BorderWith[pLoc2][0];
 
-            m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2, (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2);
+            m_aPoints[1] = pLine.m_pInnerPoint;
+            m_aPoints[2] = pLine.m_pMidPoint;
 
-            float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
-            float fDist2 = GetDist(m_aPoints[2], m_aPoints[1]);
+            //float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
+            //float fDist2 = GetDist(m_aPoints[2], m_aPoints[1]);
 
-            float fDist11 = GetDist(m_aPoints[0], pLine.m_pPoint1);
-            float fDist21 = GetDist(m_aPoints[2], pLine.m_pPoint1);
+            //float fDist11 = GetDist(m_aPoints[0], pLine.m_pPoint1);
+            //float fDist21 = GetDist(m_aPoints[2], pLine.m_pPoint1);
 
-            float fDist12 = GetDist(m_aPoints[0], pLine.m_pPoint2);
-            float fDist22 = GetDist(m_aPoints[2], pLine.m_pPoint2);
+            //float fDist12 = GetDist(m_aPoints[0], pLine.m_pPoint2);
+            //float fDist22 = GetDist(m_aPoints[2], pLine.m_pPoint2);
 
-            if (fDist1 + fDist2 < fDist11 + fDist21 &&
-                fDist1 + fDist2 < fDist12 + fDist22)
-            {
-                {
-                    m_aPoints[1].X = (m_aPoints[0].X + m_aPoints[2].X) / 2;
-                    m_aPoints[1].Y = (m_aPoints[0].Y + m_aPoints[2].Y) / 2;
-                    m_aPoints[1].Z = (m_aPoints[0].Z + m_aPoints[2].Z) / 2;
-                }
-            }
-            else
-            {
-                if (fDist11 + fDist21 < fDist12 + fDist22)
-                {
-                    m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint1.X) / 3;
-                    m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint1.Y) / 3;
-                    m_aPoints[1].Z = (m_aPoints[1].Z + 2 * pLine.m_pPoint1.Z) / 3;
-                }
-                else
-                {
-                    m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint2.X) / 3;
-                    m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint2.Y) / 3;
-                    m_aPoints[1].Z = (m_aPoints[1].Z + 2 * pLine.m_pPoint2.Z) / 3;
-                }
-            }
+            pLine = pLoc2.BorderWith[pLoc1][0];
+            m_aPoints[3] = pLine.m_pInnerPoint;
+
+            m_aPoints[4] = pLoc2;
+
+            //if (fDist1 + fDist2 < fDist11 + fDist21 &&
+            //    fDist1 + fDist2 < fDist12 + fDist22)
+            //{
+            //    {
+            //        m_aPoints[1].X = (m_aPoints[0].X + m_aPoints[2].X) / 2;
+            //        m_aPoints[1].Y = (m_aPoints[0].Y + m_aPoints[2].Y) / 2;
+            //        m_aPoints[1].Z = (m_aPoints[0].Z + m_aPoints[2].Z) / 2;
+            //    }
+            //}
+            //else
+            //{
+            //    if (fDist11 + fDist21 < fDist12 + fDist22)
+            //    {
+            //        m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint1.X) / 3;
+            //        m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint1.Y) / 3;
+            //        m_aPoints[1].Z = (m_aPoints[1].Z + 2 * pLine.m_pPoint1.Z) / 3;
+            //    }
+            //    else
+            //    {
+            //        m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint2.X) / 3;
+            //        m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint2.Y) / 3;
+            //        m_aPoints[1].Z = (m_aPoints[1].Z + 2 * pLine.m_pPoint2.Z) / 3;
+            //    }
+            //}
 
             float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2final = GetDist(m_aPoints[2], m_aPoints[1]);
-
-            m_aPoints[2].X = pLoc2.X;
 
             m_fBaseCost = fDist1final * pLoc1.GetMovementCost() + fDist2final * pLoc2.GetMovementCost();
             RecalcFinalCost();
@@ -341,15 +341,15 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(ILand pLand1, ILand pLand2)
         {
-            m_aPoints[0] = new Vertex(pLand1.X, pLand1.Y, pLand1.Z);
-            m_aPoints[2] = new Vertex(pLand2.X, pLand2.Y, pLand2.Z);
+            m_aPoints[0] = pLand1;
+            m_aPoints[2] = pLand2;
 
             Line pBestLine = null;
             float fShortest = float.MaxValue;
             Line[] cLines = pLand1.BorderWith[pLand2].ToArray();
             foreach (Line pLine in cLines)
             {
-                m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2, (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2);
+                m_aPoints[1] = pLine.m_pMidPoint;
 
                 float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
                 float fDist2 = GetDist(m_aPoints[2], m_aPoints[1]);
@@ -360,12 +360,10 @@ namespace LandscapeGeneration.PathFind
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new Vertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2, (pBestLine.m_pPoint1.Z + pBestLine.m_pPoint2.Z) / 2);
+            m_aPoints[1] = pBestLine.m_pMidPoint;
 
             float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2final = GetDist(m_aPoints[2], m_aPoints[1]); 
-
-            m_aPoints[2].X = pLand2.X;
 
             m_fBaseCost = fDist1final * pLand1.GetMovementCost() + fDist2final * pLand2.GetMovementCost();
             RecalcFinalCost();
@@ -373,15 +371,15 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(ILandMass pLandMass1, ILandMass pLandMass2)
         {
-            m_aPoints[0] = new Vertex(pLandMass1.X, pLandMass1.Y, pLandMass1.Z);
-            m_aPoints[2] = new Vertex(pLandMass2.X, pLandMass2.Y, pLandMass2.Z);
+            m_aPoints[0] = pLandMass1;
+            m_aPoints[2] = pLandMass2;
 
             Line pBestLine = null;
             float fShortest = float.MaxValue;
             Line[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
             foreach (Line pLine in cLines)
             {
-                m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2, (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2);
+                m_aPoints[1] = pLine.m_pMidPoint;
 
                 float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
                 float fDist2 = GetDist(m_aPoints[2], m_aPoints[1]); 
@@ -392,12 +390,10 @@ namespace LandscapeGeneration.PathFind
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new Vertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2, (pBestLine.m_pPoint1.Z + pBestLine.m_pPoint2.Z) / 2);
+            m_aPoints[1] = pBestLine.m_pMidPoint;
 
             float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2final = GetDist(m_aPoints[2], m_aPoints[1]);
-
-            m_aPoints[2].X = pLandMass2.X;
 
             m_fBaseCost = fDist1final * pLandMass1.GetMovementCost() + fDist2final * pLandMass2.GetMovementCost();
             RecalcFinalCost();
@@ -405,8 +401,8 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(TransportationNode[] aPath)
         {
-            List<Vertex> cPoints = new List<Vertex>();
-            cPoints.Add(new Vertex(aPath[0].X, aPath[0].Y, aPath[0].Z));
+            List<IPointF> cPoints = new List<IPointF>();
+            cPoints.Add(aPath[0]);
 
             m_fBaseCost = 0;
 
@@ -416,8 +412,7 @@ namespace LandscapeGeneration.PathFind
                 if (pLastNode != null)
                 {
                     TransportationLinkBase pLink = pLastNode.m_cLinks[pNode];
-                    if (pLink.m_aPoints[0].X == pLastNode.X &&
-                        pLink.m_aPoints[0].Y == pLastNode.Y)
+                    if (pLink.m_aPoints[0] == pLastNode)
                     {
                         for (int i = 1; i < pLink.m_aPoints.Length; i++)
                             cPoints.Add(pLink.m_aPoints[i]);

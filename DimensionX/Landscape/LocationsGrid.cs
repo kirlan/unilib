@@ -183,7 +183,7 @@ namespace LandscapeGeneration
         {
             Dictionary<BTVector, LOC> cData = new Dictionary<BTVector, LOC>();
             foreach (LOC pLoc in m_aLocations)
-                cData[new BTVector(pLoc.m_pCenter.X, pLoc.m_pCenter.Y)] = pLoc;
+                cData[new BTVector(pLoc.X, pLoc.Y)] = pLoc;
 
             //Строим диаграмму вороного - определяем границы локаций
             VoronoiGraph graph = Fortune.ComputeVoronoiGraph(cData.Keys);
@@ -309,11 +309,11 @@ namespace LandscapeGeneration
                 float fRo = (float)pLoc.Y / m_iRY;
                 float fPhy = (float)Math.PI * pLoc.X / m_iRX;
 
-                pLoc.m_iGridX = (int)pLoc.m_pCenter.X;
+                pLoc.m_iGridX = (int)pLoc.X;
 
-                pLoc.m_pCenter.X = (float)((float)fTrueR * Math.Cos(fPhy));
-                pLoc.m_pCenter.Z = (float)((float)fTrueR * Math.Sin(fPhy));
-                pLoc.m_pCenter.Y = (float)((float)m_iRY * fRo);
+                pLoc.X = (float)((float)fTrueR * Math.Cos(fPhy));
+                pLoc.Z = (float)((float)fTrueR * Math.Sin(fPhy));
+                pLoc.Y = (float)((float)m_iRY * fRo);
             }
 
             foreach (Vertex pVertex in m_aVertexes)
