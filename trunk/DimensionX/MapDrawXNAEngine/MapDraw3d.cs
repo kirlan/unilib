@@ -196,7 +196,6 @@ namespace MapDrawXNAEngine
         private Dictionary<Model, TreeModel[]> m_aTrees = new Dictionary<Model,TreeModel[]>();
 
         private SettlementModel[] m_aSettlements = new SettlementModel[0];
-        private System.ComponentModel.IContainer components;
 
         private float m_fTextureScale = 5000;
 
@@ -2126,13 +2125,31 @@ namespace MapDrawXNAEngine
             public VertexMultitextured[] m_aVertices = new VertexMultitextured[0];
             public int[] m_aIndices = new int[0];
 
+            private Vector4 GetTextureCoordinate(Vector3 pPos, WorldShape eShape, int RX, float fTextureScale)
+            {
+                Vector4 pResult = new Vector4();
+                if (eShape == WorldShape.Ringworld)
+                {
+                    float fPhi = (float)Math.Atan2(pPos.X, pPos.Y);
+
+                    pResult.X = fPhi * RX / ((float)Math.PI * fTextureScale);
+                }
+                else
+                {
+                    pResult.X = pPos.X * 1000 / fTextureScale;
+                }
+                pResult.Y = pPos.Z * 1000 / fTextureScale;
+
+                return pResult;
+            }
+
             public void Build3D(WorldShape eShape, int RX, float fTextureScale)
             {
                 float fScale = 0.1f;
                 switch (m_eType)
                 {
                     case RoadType.LandRoad1:
-                        fScale = 0.1f;
+                        fScale = 0.2f;
                         break;
                     case RoadType.LandRoad2:
                         fScale = 0.3f;
@@ -2144,8 +2161,8 @@ namespace MapDrawXNAEngine
 
                 Vector3? pCrossOld = null;
 
-                m_aVertices = new VertexMultitextured[m_aShape.Length * 3 + 2];
-                m_aIndices = new int[((m_aShape.Length - 1) * 4 + 4) * 3];
+                m_aVertices = new VertexMultitextured[m_aShape.Length * 5 + 2];
+                m_aIndices = new int[m_aShape.Length * 8 * 3];
 
                 int iCounterV = 1;
                 int iCounterI = 0;
@@ -2154,11 +2171,23 @@ namespace MapDrawXNAEngine
 
                 for (int i = 0; i < m_aShape.Length; i++)
                 {
+                    Vector3 pUplift;
+                    if (eShape == WorldShape.Ringworld)
+                        pUplift = -Vector3.Normalize(m_aShape[i].m_pPosition);
+                    else
+                        pUplift = Vector3.Up;
+
+                    //pUplift = (pUplift + m_aShape[i].m_pNormal) / 2;
+                    pUplift *= fScale / 75;
+
+                    //Vector3 pUplift = m_aShape[i].m_pNormal * fScale / 100;
+
                     Vector3 pCross;
                     if (i == m_aShape.Length - 1)
                         pCross = (Vector3)pCrossOld;
                     else
-                        pCross = Vector3.Normalize(Vector3.Cross(m_aShape[i + 1].m_pPosition - m_aShape[i].m_pPosition, m_aShape[i].m_pNormal)) / 5;
+                        pCross = Vector3.Normalize(Vector3.Cross(m_aShape[i + 1].m_pPosition - m_aShape[i].m_pPosition, pUplift)) / 5;
+                        //pCross = Vector3.Normalize(Vector3.Cross(m_aShape[i + 1].m_pPosition - m_aShape[i].m_pPosition, m_aShape[i].m_pNormal)) / 5;
 
                     Vector3 pCrossAverage = pCross * fScale;
                     if (pCrossOld != null)
@@ -2166,79 +2195,102 @@ namespace MapDrawXNAEngine
 
                     pCrossOld = pCross;
 
-                    Vector3 pUplift = m_aShape[i].m_pNormal * fScale / 500;
-
                     VertexMultitextured pLeft = new VertexMultitextured();
-                    pLeft.Position = m_aShape[i].m_pPosition + pCrossAverage + pUplift;
+                    pLeft.Position = m_aShape[i].m_pPosition + pCrossAverage*2 - pUplift*30;
                     pLeft.Normal = m_aShape[i].m_pNormal;
                     //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
                     pLeft.TexWeights = m_aShape[i].TexWeights;
                     pLeft.TexWeights2 = m_aShape[i].TexWeights2;
-                    pLeft.TextureCoordinate = m_aShape[i].TextureCoordinate;
-                    if (eShape == WorldShape.Ringworld)
-                    {
-                        float fPhi = (float)Math.Atan2(pLeft.Position.X, pLeft.Position.Y);
+                    pLeft.TextureCoordinate = GetTextureCoordinate(pLeft.Position, eShape, RX, fTextureScale);
 
-                        pLeft.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
-                    }
-                    else
-                    {
-                        pLeft.TextureCoordinate.X = pLeft.Position.X * 1000 / fTextureScale;
-                    }
-                    pLeft.TextureCoordinate.Y = pLeft.Position.Z * 1000 / fTextureScale; 
+                    VertexMultitextured pLeftInner = new VertexMultitextured();
+                    pLeftInner.Position = m_aShape[i].m_pPosition + pCrossAverage/2 + pUplift*0.5f;
+                    pLeftInner.Normal = m_aShape[i].m_pNormal;
+                    //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
+                    pLeftInner.TexWeights = m_aShape[i].TexWeights;
+                    pLeftInner.TexWeights2 = m_aShape[i].TexWeights2;
+                    pLeftInner.TextureCoordinate = GetTextureCoordinate(pLeftInner.Position, eShape, RX, fTextureScale);
+                    //if (i == 0 || i == m_aShape.Length - 1)
+                    //    pLeftInner.TexWeights2.Y = fScale;
+                    //else
+                    //    pLeftInner.TexWeights2.Y = fScale /2 + Rnd.Get(fScale/2);//0.5f + Rnd.Get(1f);// fScale + Rnd.Get(fScale * 2);
 
                     VertexMultitextured pRight = new VertexMultitextured();
-                    pRight.Position = m_aShape[i].m_pPosition - pCrossAverage + pUplift;
+                    pRight.Position = m_aShape[i].m_pPosition - pCrossAverage*2 - pUplift * 30;
                     pRight.Normal = m_aShape[i].m_pNormal;
                     //pRight.Color = Microsoft.Xna.Framework.Color.Tan;
                     pRight.TexWeights = m_aShape[i].TexWeights;
                     pRight.TexWeights2 = m_aShape[i].TexWeights2;
-                    pRight.TextureCoordinate = m_aShape[i].TextureCoordinate;
-                    if (eShape == WorldShape.Ringworld)
-                    {
-                        float fPhi = (float)Math.Atan2(pRight.Position.X, pRight.Position.Y);
+                    pRight.TextureCoordinate = GetTextureCoordinate(pRight.Position, eShape, RX, fTextureScale);
 
-                        pRight.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
-                    }
-                    else
-                    {
-                        pRight.TextureCoordinate.X = pRight.Position.X * 1000 / fTextureScale;
-                    }
-                    pRight.TextureCoordinate.Y = pRight.Position.Z * 1000 / fTextureScale; 
+                    VertexMultitextured pRightInner = new VertexMultitextured();
+                    pRightInner.Position = m_aShape[i].m_pPosition - pCrossAverage / 2 + pUplift * 0.5f;
+                    pRightInner.Normal = m_aShape[i].m_pNormal;
+                    //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
+                    pRightInner.TexWeights = m_aShape[i].TexWeights;
+                    pRightInner.TexWeights2 = m_aShape[i].TexWeights2;
+                    pRightInner.TextureCoordinate = GetTextureCoordinate(pRightInner.Position, eShape, RX, fTextureScale);
+                    //if (i == 0 || i == m_aShape.Length - 1)
+                    //    pRightInner.TexWeights2.Y = fScale;
+                    //else
+                    //    pRightInner.TexWeights2.Y = fScale /2 + Rnd.Get(fScale/2);//0.5f + Rnd.Get(1f);// fScale + Rnd.Get(fScale * 2);
 
                     VertexMultitextured pCenter = new VertexMultitextured();
                     pCenter.Position = m_aShape[i].m_pPosition + pUplift;
                     pCenter.Normal = m_aShape[i].m_pNormal;
                     //pCenter.Color = Microsoft.Xna.Framework.Color.Tan;
+                    pCenter.TextureCoordinate = m_aShape[i].TextureCoordinate;
                     pCenter.TexWeights = m_aShape[i].TexWeights;
                     pCenter.TexWeights2 = m_aShape[i].TexWeights2;
-                    pCenter.TextureCoordinate = m_aShape[i].TextureCoordinate;
                     if (i == 0 || i == m_aShape.Length - 1)
-                        pCenter.TexWeights2.Y = fScale*2;
+                        pCenter.TexWeights2.Y = fScale * 8;
                     else
-                        pCenter.TexWeights2.Y = fScale*0.75f + Rnd.Get(fScale);//0.5f + Rnd.Get(1f);// fScale + Rnd.Get(fScale * 2);
-                    //pCenter.TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
+                    {
+                        //pCenter.TexWeights = new Vector4(0);
+                        //pCenter.TexWeights2 = new Vector4(0);
+                        pCenter.TexWeights2.Y = fScale * 6 + Rnd.Get(fScale*4);//0.5f + Rnd.Get(1f);// fScale + Rnd.Get(fScale * 2);
+                    }
+                    //pCenter.TexWeights2.Y = 1;
 
                     m_aVertices[iCounterV++] = pLeft;
+                    m_aVertices[iCounterV++] = pLeftInner;
                     m_aVertices[iCounterV++] = pCenter;
+                    m_aVertices[iCounterV++] = pRightInner;
                     m_aVertices[iCounterV++] = pRight;
                     
                     if (i > 0)
                     {
+                        m_aIndices[iCounterI++] = iCounterV - 9;
                         m_aIndices[iCounterI++] = iCounterV - 5;
-                        m_aIndices[iCounterI++] = iCounterV - 3;
-                        m_aIndices[iCounterI++] = iCounterV - 6;
+                        m_aIndices[iCounterI++] = iCounterV - 10;
 
+                        m_aIndices[iCounterI++] = iCounterV - 9;
+                        m_aIndices[iCounterI++] = iCounterV - 4;
                         m_aIndices[iCounterI++] = iCounterV - 5;
+
+                        m_aIndices[iCounterI++] = iCounterV - 9;
+                        m_aIndices[iCounterI++] = iCounterV - 3;
+                        m_aIndices[iCounterI++] = iCounterV - 4;
+
+                        m_aIndices[iCounterI++] = iCounterV - 9;
+                        m_aIndices[iCounterI++] = iCounterV - 8;
+                        m_aIndices[iCounterI++] = iCounterV - 3; 
+                        
+                        
+                        m_aIndices[iCounterI++] = iCounterV - 7;
+                        m_aIndices[iCounterI++] = iCounterV - 3;
+                        m_aIndices[iCounterI++] = iCounterV - 8;
+
+                        m_aIndices[iCounterI++] = iCounterV - 7;
                         m_aIndices[iCounterI++] = iCounterV - 2;
                         m_aIndices[iCounterI++] = iCounterV - 3;
 
-                        m_aIndices[iCounterI++] = iCounterV - 5;
+                        m_aIndices[iCounterI++] = iCounterV - 7;
                         m_aIndices[iCounterI++] = iCounterV - 1;
                         m_aIndices[iCounterI++] = iCounterV - 2;
 
-                        m_aIndices[iCounterI++] = iCounterV - 5;
-                        m_aIndices[iCounterI++] = iCounterV - 4;
+                        m_aIndices[iCounterI++] = iCounterV - 7;
+                        m_aIndices[iCounterI++] = iCounterV - 6;
                         m_aIndices[iCounterI++] = iCounterV - 1;
                     }
 
@@ -2248,33 +2300,30 @@ namespace MapDrawXNAEngine
                         VertexMultitextured pStart = new VertexMultitextured();
                         Vector3 pBackward = m_aShape[0].m_pPosition - m_aShape[1].m_pPosition;
                         pBackward.Normalize();
-                        pStart.Position = m_aShape[0].m_pPosition + pBackward * pCrossAverage.Length() + pUplift;
+                        pStart.Position = m_aShape[0].m_pPosition + pBackward * pCrossAverage.Length() - pUplift*5;
                         pStart.Normal = m_aShape[i].m_pNormal;
                         //pStart.Color = Microsoft.Xna.Framework.Color.Tan;
                         pStart.TexWeights = m_aShape[i].TexWeights;
                         pStart.TexWeights2 = m_aShape[i].TexWeights2;
-                        pStart.TextureCoordinate = m_aShape[i].TextureCoordinate;
-                        if (eShape == WorldShape.Ringworld)
-                        {
-                            float fPhi = (float)Math.Atan2(pStart.Position.X, pStart.Position.Y);
-
-                            pStart.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
-                        }
-                        else
-                        {
-                            pStart.TextureCoordinate.X = pStart.Position.X / fTextureScale;
-                        }
-                        pStart.TextureCoordinate.Y = pStart.Position.Z / fTextureScale; 
+                        pStart.TextureCoordinate = GetTextureCoordinate(pStart.Position, eShape, RX, fTextureScale); 
 
                         m_aVertices[0] = pStart;
 
+                        m_aIndices[iCounterI++] = 0;
                         m_aIndices[iCounterI++] = 2;
                         m_aIndices[iCounterI++] = 1;
-                        m_aIndices[iCounterI++] = 0;
 
-                        m_aIndices[iCounterI++] = 2;
                         m_aIndices[iCounterI++] = 0;
                         m_aIndices[iCounterI++] = 3;
+                        m_aIndices[iCounterI++] = 2;
+
+                        m_aIndices[iCounterI++] = 0;
+                        m_aIndices[iCounterI++] = 4;
+                        m_aIndices[iCounterI++] = 3;
+
+                        m_aIndices[iCounterI++] = 0;
+                        m_aIndices[iCounterI++] = 5;
+                        m_aIndices[iCounterI++] = 4;
                     }
 
                     if (i == m_aShape.Length - 1)
@@ -2282,33 +2331,30 @@ namespace MapDrawXNAEngine
                         VertexMultitextured pFinish = new VertexMultitextured();
                         Vector3 pForward = m_aShape[i].m_pPosition - m_aShape[i - 1].m_pPosition;
                         pForward.Normalize();
-                        pFinish.Position = m_aShape[i].m_pPosition + pForward * pCrossAverage.Length() + pUplift;
+                        pFinish.Position = m_aShape[i].m_pPosition + pForward * pCrossAverage.Length() - pUplift *5;
                         pFinish.Normal = m_aShape[i].m_pNormal;
                         //pFinish.Color = Microsoft.Xna.Framework.Color.Tan;
                         pFinish.TexWeights = m_aShape[i].TexWeights;
                         pFinish.TexWeights2 = m_aShape[i].TexWeights2;
-                        pFinish.TextureCoordinate = m_aShape[i].TextureCoordinate;
-                        if (eShape == WorldShape.Ringworld)
-                        {
-                            float fPhi = (float)Math.Atan2(pFinish.Position.X, pFinish.Position.Y);
-
-                            pFinish.TextureCoordinate.X = fPhi * RX / ((float)Math.PI * fTextureScale);
-                        }
-                        else
-                        {
-                            pFinish.TextureCoordinate.X = pFinish.Position.X / fTextureScale;
-                        }
-                        pFinish.TextureCoordinate.Y = pFinish.Position.Z / fTextureScale; 
+                        pFinish.TextureCoordinate = GetTextureCoordinate(pFinish.Position, eShape, RX, fTextureScale); 
 
                         m_aVertices[m_aVertices.Length - 1] = pFinish;
 
-                        m_aIndices[iCounterI++] = iCounterV - 2;
                         m_aIndices[iCounterI++] = iCounterV;
+                        m_aIndices[iCounterI++] = iCounterV - 5;
+                        m_aIndices[iCounterI++] = iCounterV - 4;
+
+                        m_aIndices[iCounterI++] = iCounterV;
+                        m_aIndices[iCounterI++] = iCounterV - 4;
                         m_aIndices[iCounterI++] = iCounterV - 3;
 
+                        m_aIndices[iCounterI++] = iCounterV;
+                        m_aIndices[iCounterI++] = iCounterV - 3;
+                        m_aIndices[iCounterI++] = iCounterV - 2;
+
+                        m_aIndices[iCounterI++] = iCounterV;
                         m_aIndices[iCounterI++] = iCounterV - 2;
                         m_aIndices[iCounterI++] = iCounterV - 1;
-                        m_aIndices[iCounterI++] = iCounterV;
                     }
                 }
             }
@@ -3230,7 +3276,7 @@ namespace MapDrawXNAEngine
 
         private void DrawSettlementNames()
         {
-            m_pSpriteBatch.Begin();
+            m_pSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, DepthStencilState.DepthRead, null);
             for (int i = 0; i < m_aSettlements.Length; i++)
             {
                 SettlementModel pSettlement = m_aSettlements[i];
@@ -3243,11 +3289,17 @@ namespace MapDrawXNAEngine
                 if (pSettlement.m_iSize < 2 && pViewVector.Length() * 2f / (pSettlement.m_iSize + 1) > 40)
                     continue;
 
+                Vector3 pUplift;
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                    pUplift = -Vector3.Normalize(pSettlement.m_pPosition);
+                else
+                    pUplift = Vector3.Up;
+
                 // calculate screenspace of text3d space position
                 Vector3 screenSpace = GraphicsDevice.Viewport.Project(Vector3.Zero,
                                                                         m_pCamera.Projection,
                                                                         m_pCamera.View,
-                                                                        Matrix.CreateTranslation(pSettlement.m_pPosition + m_pCamera.Top / 3));
+                                                                        Matrix.CreateTranslation(pSettlement.m_pPosition + pUplift / 3 + m_pCamera.Top / 10));
                 //                                                                         Matrix.CreateTranslation(s.position + shipTagOffset));
 
                 Vector2 textPosition;
@@ -3282,7 +3334,7 @@ namespace MapDrawXNAEngine
                 m_pSpriteBatch.DrawString(pFont,
                                             pSettlement.m_sName,
                                             textPosition,
-                                            Microsoft.Xna.Framework.Color.Yellow, 0, stringCenter, l, SpriteEffects.None, 0);
+                                            Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Yellow, Microsoft.Xna.Framework.Color.DarkGoldenrod, 1 - l), 0, stringCenter, l, SpriteEffects.None, screenSpace.Z);
             }
             m_pSpriteBatch.End();
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
