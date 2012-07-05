@@ -379,7 +379,7 @@ namespace VQMapTest2
             }
             //richTextBox2.AppendText("Total : " + iTotal + "\r\n");
 
-            comboBox1.Focus();
+            //comboBox1.Focus();
         }
         
         private GenerationForm m_pGenerationForm = new GenerationForm();
