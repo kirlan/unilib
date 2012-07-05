@@ -17,7 +17,7 @@ namespace MapDrawXNAEngine
         public PlainCamera(GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
         {
-            this.Position = new Vector3(0, 100000 / 1000, 0);
+            this.Position = new Vector3(0, 75000 / 1000, 0);
             this.Yaw = MathHelper.ToRadians(0);
             this.Pitch = MathHelper.ToRadians(270);
             this.Roll = MathHelper.ToRadians(0);
@@ -64,8 +64,8 @@ namespace MapDrawXNAEngine
             Vector3 cameraPos = Target - Direction * m_fDistance;
             Position = cameraPos;
 
-            Vector3 cameraUp = Vector3.Transform(Vector3.Up, cameraRotation);
-            View = Matrix.CreateLookAt(Position, Target, cameraUp);
+            Top = Vector3.Transform(Vector3.Up, cameraRotation);
+            View = Matrix.CreateLookAt(Position, Target, Top);
         }
     }
 }

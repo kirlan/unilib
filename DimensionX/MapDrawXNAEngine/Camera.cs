@@ -14,6 +14,7 @@ namespace MapDrawXNAEngine
         public Vector3 Direction { get; protected set; }
         public Matrix View { get; set; }
         public Matrix Projection { get; set; }
+        public Vector3 Top { get; protected set; }
 
         public float m_fDistance;
         
