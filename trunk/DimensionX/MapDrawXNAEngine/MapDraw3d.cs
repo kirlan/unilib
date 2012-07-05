@@ -130,13 +130,17 @@ namespace MapDrawXNAEngine
             public readonly Model m_pModel;
             public readonly float m_fScale;
             public readonly Matrix worldMatrix;
+            public readonly string m_sName;
+            public readonly int m_iSize;
 
-            public SettlementModel(Vector3 pPosition, float fAngle, float fScale, Model pModel, WorldShape eWorldShape, Texture2D pTexture)
+            public SettlementModel(Vector3 pPosition, float fAngle, float fScale, Model pModel, WorldShape eWorldShape, Texture2D pTexture, string sName, int iSize)
             {
                 m_pPosition = pPosition;
                 m_fAngle = fAngle;
                 m_fScale = fScale;
                 m_pModel = pModel;
+                m_sName = sName;
+                m_iSize = iSize;
 
 //                worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationX(-(float)Math.PI / 2) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
                 worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
@@ -465,7 +469,29 @@ namespace MapDrawXNAEngine
                 if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
                 {
                     //cGeoLData[pLoc].TexWeights += new Vector4(0.25f, 0, 0.5f, 0);
-                    cGeoLData[pLoc].TexWeights2.Y = 1;
+                    float fScale = 0.1f;
+                    switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                    {
+                        case SettlementSize.Hamlet:
+                            fScale = 0.1f;
+                            break;
+                        case SettlementSize.Village:
+                            fScale = 0.1f;
+                            break;
+                        case SettlementSize.Fort:
+                            fScale = 0.3f;
+                            break;
+                        case SettlementSize.Town:
+                            fScale = 0.3f;
+                            break;
+                        case SettlementSize.City:
+                            fScale = 0.4f;
+                            break;
+                        case SettlementSize.Capital:
+                            fScale = 0.4f;
+                            break;
+                    }
+                    cGeoLData[pLoc].TexWeights2.Y = fScale*2;
                 } 
                 
                 if (pLoc.m_eType == RegionType.Volcano)
@@ -1093,9 +1119,32 @@ namespace MapDrawXNAEngine
                         Texture2D pTexture = m_cSettlementTextures[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
                         Model pModel = m_cSettlementModels[pLoc.m_pSettlement.m_pInfo.m_eSize][pLoc.m_pSettlement.m_iTechLevel];
 
+                        int iSize = 0;
+                        switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                        {
+                            case SettlementSize.Hamlet:
+                                iSize = 0;
+                                break;
+                            case SettlementSize.Village:
+                                iSize = 0;
+                                break;
+                            case SettlementSize.Fort:
+                                iSize = 1;
+                                break;
+                            case SettlementSize.Town:
+                                iSize = 1;
+                                break;
+                            case SettlementSize.City:
+                                iSize = 2;
+                                break;
+                            case SettlementSize.Capital:
+                                iSize = 2;
+                                break;
+                        }
+
                         cSettlements.Add(new SettlementModel(pData.m_aVertices[cLocations[pLoc]].Position,
                                                 Rnd.Get((float)Math.PI * 2), fScale,
-                                                pModel, m_pWorld.m_pGrid.m_eShape, pTexture));
+                                                pModel, m_pWorld.m_pGrid.m_eShape, pTexture, pLoc.m_pSettlement.m_sName, iSize));
                     }
                 }
             }
@@ -2111,14 +2160,16 @@ namespace MapDrawXNAEngine
                     else
                         pCross = Vector3.Normalize(Vector3.Cross(m_aShape[i + 1].m_pPosition - m_aShape[i].m_pPosition, m_aShape[i].m_pNormal)) / 5;
 
-                    Vector3 pCrossAverage = pCross;
+                    Vector3 pCrossAverage = pCross * fScale;
                     if (pCrossOld != null)
-                        pCrossAverage = ((Vector3)pCrossOld + pCross) / 2;
+                        pCrossAverage = ((Vector3)pCrossOld + pCross) * fScale / 2;
 
                     pCrossOld = pCross;
 
+                    Vector3 pUplift = m_aShape[i].m_pNormal * fScale / 500;
+
                     VertexMultitextured pLeft = new VertexMultitextured();
-                    pLeft.Position = m_aShape[i].m_pPosition + pCrossAverage * fScale;
+                    pLeft.Position = m_aShape[i].m_pPosition + pCrossAverage + pUplift;
                     pLeft.Normal = m_aShape[i].m_pNormal;
                     //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
                     pLeft.TexWeights = m_aShape[i].TexWeights;
@@ -2137,7 +2188,7 @@ namespace MapDrawXNAEngine
                     pLeft.TextureCoordinate.Y = pLeft.Position.Z * 1000 / fTextureScale; 
 
                     VertexMultitextured pRight = new VertexMultitextured();
-                    pRight.Position = m_aShape[i].m_pPosition - pCrossAverage * fScale;
+                    pRight.Position = m_aShape[i].m_pPosition - pCrossAverage + pUplift;
                     pRight.Normal = m_aShape[i].m_pNormal;
                     //pRight.Color = Microsoft.Xna.Framework.Color.Tan;
                     pRight.TexWeights = m_aShape[i].TexWeights;
@@ -2156,7 +2207,7 @@ namespace MapDrawXNAEngine
                     pRight.TextureCoordinate.Y = pRight.Position.Z * 1000 / fTextureScale; 
 
                     VertexMultitextured pCenter = new VertexMultitextured();
-                    pCenter.Position = m_aShape[i].m_pPosition + m_aShape[i].m_pNormal * fScale / 500;
+                    pCenter.Position = m_aShape[i].m_pPosition + pUplift;
                     pCenter.Normal = m_aShape[i].m_pNormal;
                     //pCenter.Color = Microsoft.Xna.Framework.Color.Tan;
                     pCenter.TexWeights = m_aShape[i].TexWeights;
@@ -2195,9 +2246,9 @@ namespace MapDrawXNAEngine
                     if (i == 1)
                     {
                         VertexMultitextured pStart = new VertexMultitextured();
-                        Vector3 pDirection = m_aShape[0].m_pPosition - m_aShape[1].m_pPosition;
-                        pDirection.Normalize();
-                        pStart.Position = m_aShape[0].m_pPosition + pDirection * pCrossAverage.Length() * fScale;
+                        Vector3 pBackward = m_aShape[0].m_pPosition - m_aShape[1].m_pPosition;
+                        pBackward.Normalize();
+                        pStart.Position = m_aShape[0].m_pPosition + pBackward * pCrossAverage.Length() + pUplift;
                         pStart.Normal = m_aShape[i].m_pNormal;
                         //pStart.Color = Microsoft.Xna.Framework.Color.Tan;
                         pStart.TexWeights = m_aShape[i].TexWeights;
@@ -2229,9 +2280,9 @@ namespace MapDrawXNAEngine
                     if (i == m_aShape.Length - 1)
                     {
                         VertexMultitextured pFinish = new VertexMultitextured();
-                        Vector3 pDirection = m_aShape[i].m_pPosition - m_aShape[i - 1].m_pPosition;
-                        pDirection.Normalize();
-                        pFinish.Position = m_aShape[i].m_pPosition + pDirection * pCrossAverage.Length() * fScale;
+                        Vector3 pForward = m_aShape[i].m_pPosition - m_aShape[i - 1].m_pPosition;
+                        pForward.Normalize();
+                        pFinish.Position = m_aShape[i].m_pPosition + pForward * pCrossAverage.Length() + pUplift;
                         pFinish.Normal = m_aShape[i].m_pNormal;
                         //pFinish.Color = Microsoft.Xna.Framework.Color.Tan;
                         pFinish.TexWeights = m_aShape[i].TexWeights;
@@ -2675,6 +2726,11 @@ namespace MapDrawXNAEngine
             m_cSettlementTextures[SettlementSize.Fort][8] = LibContent.Load<Texture2D>("content/dds/Fort_T7");
         }
 
+        SpriteFont villageNameFont;
+        SpriteFont townNameFont;
+        SpriteFont cityNameFont;
+        SpriteBatch m_pSpriteBatch;
+
         /// <summary>
         /// Initializes the control.
         /// </summary>
@@ -2685,11 +2741,16 @@ namespace MapDrawXNAEngine
 
             m_pBasicEffect = new BasicEffect(GraphicsDevice);
             m_pBasicEffect.VertexColorEnabled = true;
+            m_pSpriteBatch = new SpriteBatch(GraphicsDevice);
 
             LibContent = new ContentManager(Services);
 
             // Create our effect.
             LoadTerrainTextures();
+
+            villageNameFont = LibContent.Load<SpriteFont>("content/villagename");
+            townNameFont = LibContent.Load<SpriteFont>("content/townname");
+            cityNameFont = LibContent.Load<SpriteFont>("content/cityname");
 
             m_pMyEffect = LibContent.Load<Effect>("content/Effect1");
             BindEffectParameters();
@@ -2745,6 +2806,8 @@ namespace MapDrawXNAEngine
             LoadTrees();
 
             LoadSettlements();
+
+            textEffect = new BasicEffect(GraphicsDevice);
 
             // Start the animation timer.
             timer = Stopwatch.StartNew();
@@ -2827,7 +2890,7 @@ namespace MapDrawXNAEngine
                 myIndexBuffer.SetData(m_cMapModeData[m_eMode].m_aIndices);
             }
         }
-        
+
         /// <summary>
         /// Draws the control.
         /// </summary>
@@ -2925,12 +2988,12 @@ namespace MapDrawXNAEngine
                 //                                    m_cMapModeData[m_eMode].m_aVertices, 0, m_cMapModeData[m_eMode].m_aVertices.Length - 1, m_cMapModeData[m_eMode].m_aIndices, 0, m_cMapModeData[m_eMode].m_iTrianglesCount);
             }
 
+            if (m_bShowRoads)
+                DrawRoads();
+
             if (m_bShowLocations)
                 for (int i = 0; i < m_aSettlements.Length; i++)
                     DrawSettlement(m_aSettlements[i]);
-
-            if (m_bShowRoads)
-                DrawRoads();
 
             if (m_bShowLocationsBorders)
                 DrawLayer(MapLayer.Locations);
@@ -2945,6 +3008,10 @@ namespace MapDrawXNAEngine
             
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
+
+            if (m_bShowLocations)
+                DrawSettlementNames();
+
         }
 
         private void DrawWater(float time)
@@ -2959,10 +3026,6 @@ namespace MapDrawXNAEngine
             GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList,
                                                 m_pWater.m_aVertices, 0, m_pWater.m_aVertices.Length - 1, m_pWater.m_aIndices, 0, m_pWater.m_iTrianglesCount);
         }
-
-        VertexPositionColorNormal pLeft = new VertexPositionColorNormal();
-        VertexPositionColorNormal pRight = new VertexPositionColorNormal();
-        VertexPositionColorNormal pCenter = new VertexPositionColorNormal();
 
         private void DrawRoads()
         {
@@ -3138,7 +3201,7 @@ namespace MapDrawXNAEngine
                 }
             }
         }
-        
+
         private void DrawSettlement(SettlementModel pSettlement)
         {
             Vector3 pViewVector = pSettlement.m_pPosition - m_pCamera.Position;
@@ -3165,6 +3228,68 @@ namespace MapDrawXNAEngine
             }
         }
 
+        private void DrawSettlementNames()
+        {
+            m_pSpriteBatch.Begin();
+            for (int i = 0; i < m_aSettlements.Length; i++)
+            {
+                SettlementModel pSettlement = m_aSettlements[i];
+                Vector3 pViewVector = pSettlement.m_pPosition - m_pCamera.Position;
+
+                float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
+                if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
+                    continue;
+
+                if (pSettlement.m_iSize < 2 && pViewVector.Length() * 2f / (pSettlement.m_iSize + 1) > 40)
+                    continue;
+
+                // calculate screenspace of text3d space position
+                Vector3 screenSpace = GraphicsDevice.Viewport.Project(Vector3.Zero,
+                                                                        m_pCamera.Projection,
+                                                                        m_pCamera.View,
+                                                                        Matrix.CreateTranslation(pSettlement.m_pPosition + m_pCamera.Top / 3));
+                //                                                                         Matrix.CreateTranslation(s.position + shipTagOffset));
+
+                Vector2 textPosition;
+                // get 2D position from screenspace vector
+                textPosition.X = screenSpace.X;
+                textPosition.Y = screenSpace.Y;
+
+                SpriteFont pFont = townNameFont;
+                switch (pSettlement.m_iSize)
+                {
+                    case 0:
+                        pFont = villageNameFont;
+                        break;
+                    case 1:
+                        pFont = townNameFont;
+                        break;
+                    case 2:
+                        pFont = cityNameFont;
+                        break;
+                }
+
+                // we want to draw the text centered around textPosition, so we'll
+                // calculate the center of the string, and use that as the origin
+                // argument to spriteBatch.DrawString. DrawString automatically
+                // centers text around the vector specified by the origin argument.
+                Vector2 stringCenter = pFont.MeasureString(pSettlement.m_sName) * 0.5f;
+
+                float d = pViewVector.Length() * 3f / (pSettlement.m_iSize + 1);
+                float l = (float)Math.Exp(-Math.Pow(d * 0.018, 2));
+
+                // draw text
+                m_pSpriteBatch.DrawString(pFont,
+                                            pSettlement.m_sName,
+                                            textPosition,
+                                            Microsoft.Xna.Framework.Color.Yellow, 0, stringCenter, l, SpriteEffects.None, 0);
+            }
+            m_pSpriteBatch.End();
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque; 
+        }
+
         public void FocusSelectedState()
         {
             m_pCamera.Target = GetPosition(m_pSelectedState, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
@@ -3173,6 +3298,8 @@ namespace MapDrawXNAEngine
         // Vertex array that stores exactly which triangle was picked.
         // Effect and vertex declaration for drawing the picked triangle.
         BasicEffect lineEffect;
+
+        BasicEffect textEffect;
         
         /// <summary>
         /// Helper for drawing the outline of the triangle currently under the cursor.
