@@ -518,7 +518,7 @@ float4 TreePSPoint(ModelVertexShaderOutput input) : COLOR0
 
 	float3 lightDirection = normalize(input.Position3D - DirectionalLightDirection);
 
-	float4 diffuse = saturate(dot(-lightDirection,normal));
+	float4 diffuse = 1;//saturate(dot(-lightDirection,normal));
 	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
@@ -530,9 +530,18 @@ float4 TreePSPoint(ModelVertexShaderOutput input) : COLOR0
 
 	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
 
-	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
-		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   texColor*SpecularColor*specular, FogColor, l);
+	float4 output = texColor;
+
+	clip(output.a - alphaReference); 	 
+
+	output.rgb = lerp(texColor.rgb*AmbientLightColor.rgb*AmbientLightIntensity + 
+		   texColor.rgb*DirectionalLightIntensity*DirectionalLightColor.rgb*diffuse + 
+		   texColor.rgb*SpecularColor.rgb*specular, FogColor.rgb, l)*output.a;
+
+	return output;
+	//return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
+	//	   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
+	//	   texColor*SpecularColor*specular, FogColor, l);
 }
 
 float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
@@ -581,13 +590,9 @@ technique Tree
 {
     pass Pass1
     {
-        // TODO: set renderstates here.
-
-        //VertexShader = compile vs_2_0 ModelVS();
-        PixelShader = compile ps_3_0 TreePSPlain();
-     
 	    VertexShader = compile vs_3_0 HardwareInstancingVertexShader();
         //PixelShader = compile ps_3_0 InstancedModelPS();
+        PixelShader = compile ps_3_0 TreePSPlain();
     }
 }
 
@@ -595,10 +600,9 @@ technique TreeRingworld
 {
     pass Pass1
     {
-        // TODO: set renderstates here.
-
-        VertexShader = compile vs_2_0 ModelVS();
-        PixelShader = compile ps_2_0 TreePSPoint();
+	    VertexShader = compile vs_3_0 HardwareInstancingVertexShader();
+//        VertexShader = compile vs_2_0 ModelVS();
+        PixelShader = compile ps_3_0 TreePSPoint();
     }
 }
 
