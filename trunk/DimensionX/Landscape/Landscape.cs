@@ -261,6 +261,17 @@ namespace LandscapeGeneration
                     ordered[ordered.Count - 1].PointOnCurve(ordered[ordered.Count - 3], ordered[ordered.Count - 2], ordered[0],
                                                  ordered[1], 0.5f);
                 }
+
+                float fTrueR = m_pGrid.RX / (float)Math.PI;
+                for (int i = 0; i < ordered.Count; i++)
+                {
+                    if (m_pGrid.m_eShape == WorldShape.Ringworld)
+                    { 
+                        float fDist = (float)Math.Sqrt(ordered[i].X*ordered[i].X + ordered[i].Z*ordered[i].Z);
+                        ordered[i].X = fTrueR * ordered[i].X / fDist;
+                        ordered[i].Z = fTrueR * ordered[i].Z / fDist;
+                    }
+                }
             }
         }
 
@@ -1036,6 +1047,56 @@ namespace LandscapeGeneration
             CalculateVertexes();
             SmoothVertexes();
             SmoothVertexes();
+
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    continue;
+
+                if (pLoc.H < 0)
+                {
+                    Line pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        if (pLine.m_pPoint1.m_fHeight > 0)
+                            pLine.m_pPoint1.m_fHeight = 0;
+
+                        if (pLine.m_pPoint2.m_fHeight > 0)
+                            pLine.m_pPoint2.m_fHeight = 0;
+
+                        if (pLine.m_pMidPoint.m_fHeight > 0)
+                            pLine.m_pMidPoint.m_fHeight = 0;
+
+                        if (pLine.m_pInnerPoint.m_fHeight > 0)
+                            pLine.m_pInnerPoint.m_fHeight = 0;
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
+
+                if (pLoc.H > 0)
+                {
+                    Line pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        if (pLine.m_pPoint1.m_fHeight < 0)
+                            pLine.m_pPoint1.m_fHeight = 0;
+
+                        if (pLine.m_pPoint2.m_fHeight < 0)
+                            pLine.m_pPoint2.m_fHeight = 0;
+
+                        if (pLine.m_pMidPoint.m_fHeight < 0)
+                            pLine.m_pMidPoint.m_fHeight = 0;
+
+                        if (pLine.m_pInnerPoint.m_fHeight < 0)
+                            pLine.m_pInnerPoint.m_fHeight = 0;
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
+            }
         }
 
         private void CalculateVertexes()
@@ -1112,29 +1173,6 @@ namespace LandscapeGeneration
                     }
                 }
             }
-            //foreach (Vertex pVertex in m_pGrid.m_aVertexes)
-            //{
-            //    float fTotalWeight = 1;
-            //    float fSum = pVertex.m_fZ;
-            //    foreach (Vertex pLink in pVertex.m_cVertexes)
-            //    {
-            //        fSum += pLink.m_fZ;
-            //        fTotalWeight++;
-            //    }
-            //    foreach (LOC pLoc in pVertex.m_cLocations)
-            //    {
-            //        if (pLoc.Forbidden || pLoc.Owner == null)
-            //            continue;
-
-            //        fSum += pLoc.m_fHeight;
-            //        fTotalWeight++;
-            //    }
-
-            //    if (pVertex.m_fZ > 0)
-            //        pVertex.m_fZ = Math.Max(0.01f, fSum / fTotalWeight);
-            //    else
-            //        pVertex.m_fZ = Math.Min(-0.01f, fSum / fTotalWeight);
-            //}
         }
 
         /// <summary>

@@ -53,6 +53,18 @@ namespace LandscapeGeneration
             binWriter.Write(m_pInnerPoint.m_iID);
         }
 
+        public void Merge(Vertex pFrom, Vertex pTo)
+        {
+            if (m_pPoint1 == pFrom)
+                m_pPoint1 = pTo;
+            if (m_pPoint2 == pFrom)
+                m_pPoint2 = pTo;
+            if (m_pMidPoint == pFrom)
+                m_pMidPoint = pTo;
+            if (m_pInnerPoint == pFrom)
+                m_pInnerPoint = pTo;
+        }
+
         public Line m_pPrevious = null;
         public Line m_pNext = null;
 

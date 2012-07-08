@@ -100,7 +100,17 @@ namespace MapDrawXNAEngine
                 m_pPosition = pPosition;
                 m_pModel = pModel;
 
-                worldMatrix = Matrix.CreateScale(fScale*10) * Matrix.CreateRotationY(fAngle) * Matrix.CreateTranslation(pPosition);
+                if (eWorldShape == WorldShape.Ringworld)
+                {
+                    Vector3 pUp = Vector3.Transform(-Vector3.Normalize(m_pPosition), Matrix.CreateScale(1, 1, 0));
+//                    Vector3 pUp = -Vector3.Normalize(m_pPosition);
+                    Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
+                    pAxis.Normalize();
+                    float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
+                    worldMatrix = Matrix.CreateScale(fScale * 10) * Matrix.CreateRotationY(fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(pPosition);
+                }
+                else
+                    worldMatrix = Matrix.CreateScale(fScale * 10) * Matrix.CreateRotationY(fAngle) * Matrix.CreateTranslation(pPosition);
 
                 boneTransforms = new Matrix[m_pModel.Bones.Count];
                 m_pModel.CopyAbsoluteBoneTransformsTo(boneTransforms); 
@@ -142,8 +152,17 @@ namespace MapDrawXNAEngine
                 m_sName = sName;
                 m_iSize = iSize;
 
-//                worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationX(-(float)Math.PI / 2) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
-                worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
+                if (eWorldShape == WorldShape.Ringworld)
+                {
+                    Vector3 pUp = Vector3.Transform(-Vector3.Normalize(m_pPosition), Matrix.CreateScale(1, 1, 0));
+//                    Vector3 pUp = -Vector3.Normalize(m_pPosition);
+                    Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
+                    pAxis.Normalize();
+                    float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
+                    worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(m_pPosition);
+                }
+                else
+                    worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateTranslation(m_pPosition);
 
                 foreach (ModelMesh mesh in m_pModel.Meshes)
                 {
@@ -222,10 +241,11 @@ namespace MapDrawXNAEngine
         private static Vector3 GetPosition(IPointF pLoc, WorldShape eShape, float fHeight, float fMultiplier)
         {
             Vector3 pPosition = new Vector3(pLoc.X / 1000, pLoc.Z / 1000, pLoc.Y / 1000);
+            Vector3 pUp = Vector3.Up;
             if (eShape == WorldShape.Ringworld)
-                pPosition -= Vector3.Normalize(pPosition) * fHeight * fMultiplier;
-            else
-                pPosition += Vector3.Up * fHeight * fMultiplier;
+                pUp = Vector3.Transform(-Vector3.Normalize(pPosition), Matrix.CreateScale(1, 1, 0));
+
+            pPosition += pUp * fHeight * fMultiplier;
 
             return pPosition;
         }
@@ -1606,9 +1626,13 @@ namespace MapDrawXNAEngine
                 List<object> cColors = new List<object>();
                 for (int i = 0; i < m_cGeoVData[k].m_aLinked.Length; i++)
                 {
-                    LocationX pLoc = (LocationX)pVertex.m_aLocations[i];
+                    LocationX pLoc = (LocationX)m_cGeoVData[k].m_aLinked[i].m_pOwner;
 
                     Microsoft.Xna.Framework.Color pColor = m_cGeoVData[k].m_aLinked[i].m_pColor;
+
+                    if (((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean || (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral) &&
+                        pVertex.m_fHeight > 0)
+                        pColor = Microsoft.Xna.Framework.Color.Red;
 
                     if (!cColors.Contains(pColor))
                     {
@@ -2445,6 +2469,7 @@ namespace MapDrawXNAEngine
             else
                 m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
 
+            //m_fLandHeightMultiplier = 0;
             BuildGeometry(BeginStep, ProgressStep);
 
             for (int i = 0; i < m_aRoads.Length; i++)
