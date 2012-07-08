@@ -222,15 +222,8 @@ namespace LandscapeGeneration
             foreach (Location pLoc in pFrom.m_cLocationsBuild)
             {
                 foreach (var vLine in pLoc.m_cBorderWith)
-                {
                     foreach (Line pLine in vLine.Value)
-                    {
-                        if (pLine.m_pPoint1 == pFrom)
-                            pLine.m_pPoint1 = pTo;
-                        if (pLine.m_pPoint2 == pFrom)
-                            pLine.m_pPoint2 = pTo;
-                    }
-                }
+                        pLine.Merge(pFrom, pTo);
 
                 if (!pTo.m_cLocationsBuild.Contains(pLoc))
                     pTo.m_cLocationsBuild.Add(pLoc);
@@ -266,6 +259,18 @@ namespace LandscapeGeneration
                         {
                             MergeVertex(pVertex, pDouble);
                             cOutspace.Add(pVertex);
+                            //foreach (Vertex pTest in m_aVertexes)
+                            //{
+                            //    if (cOutspace.Contains(pTest))
+                            //        continue;
+
+                            //    if (pTest.m_cVertexes.Contains(pVertex))
+                            //    {
+                            //        MergeVertex(pVertex, pDouble);
+                            //        cOutspace.Add(pVertex);
+                            //        break;
+                            //    }
+                            //}
                             break;
                         }
                     }
@@ -278,6 +283,18 @@ namespace LandscapeGeneration
                         {
                             MergeVertex(pVertex, pDouble);
                             cOutspace.Add(pVertex);
+                            //foreach (Vertex pTest in m_aVertexes)
+                            //{
+                            //    if (cOutspace.Contains(pTest))
+                            //        continue;
+
+                            //    if (pTest.m_cVertexes.Contains(pVertex))
+                            //    {
+                            //        MergeVertex(pVertex, pDouble);
+                            //        cOutspace.Add(pVertex);
+                            //        break;
+                            //    }
+                            //} 
                             break;
                         }
                     }
@@ -440,8 +457,10 @@ namespace LandscapeGeneration
                 pVertexB.m_cVertexes.Add(pVertexA);
 
             Vertex pMidPoint = new Vertex((pVertexA.X + pVertexB.X)/2, (pVertexA.Y + pVertexB.Y)/2, (pVertexA.Z + pVertexB.Z)/2);
-            pMidPoint.m_cVertexes.Add(pVertexA);
-            pMidPoint.m_cVertexes.Add(pVertexB);
+            //pMidPoint.m_cVertexes.Add(pVertexA);
+            //pMidPoint.m_cVertexes.Add(pVertexB);
+            //pVertexA.m_cVertexes.Add(pMidPoint);
+            //pVertexB.m_cVertexes.Add(pMidPoint);
 
             Vertex pLoc1Point = (pLoc1 != null && pLoc1.m_pOrigin == null) ? 
                 new Vertex((pLoc1.X + pMidPoint.X) / 2, (pLoc1.Y + pMidPoint.Y) / 2, (pLoc1.Z + pMidPoint.Z) / 2) : 
@@ -461,8 +480,10 @@ namespace LandscapeGeneration
                     pVertexA.m_cLocationsBuild.Add(pLoc1);
                 if (!pVertexB.m_cLocationsBuild.Contains(pLoc1))
                     pVertexB.m_cLocationsBuild.Add(pLoc1);
+                
                 if (!pMidPoint.m_cLocationsBuild.Contains(pLoc1))
                     pMidPoint.m_cLocationsBuild.Add(pLoc1);
+                
                 if (!pLoc1Point.m_cLocationsBuild.Contains(pLoc1))
                     pLoc1Point.m_cLocationsBuild.Add(pLoc1);
 
