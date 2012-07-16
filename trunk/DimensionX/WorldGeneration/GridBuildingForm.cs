@@ -57,15 +57,21 @@ namespace WorldGeneration
             GridPanel.Enabled = false;
             NoGridPanel.Enabled = false;
             panel1.Enabled = false;
-            Looped.Enabled = false;
+            tableLayoutPanel2.Enabled = false;
 
             button1.Enabled = false;
             button1.Text = "... Please wait ...";
 
             Refresh();
-        
+
+            WorldShape eShape = WorldShape.Plain;
+            if (radioButton5.Checked)
+                eShape = WorldShape.Ringworld;
+            if (radioButton6.Checked)
+                eShape = WorldShape.Planet;
+
             if (radioButton2.Checked)
-                m_pLocationsGrid = new LocationsGrid<LocationX>(int.Parse(GridWidth.Text), int.Parse(GridHeight.Text), GridType.Hex, textBox1.Text, Looped.Checked);
+                m_pLocationsGrid = new LocationsGrid<LocationX>(int.Parse(GridWidth.Text), int.Parse(GridHeight.Text), GridType.Hex, textBox1.Text, eShape);
 
             if (radioButton3.Checked)
             {
@@ -85,7 +91,7 @@ namespace WorldGeneration
                         iLocationsCount = 50000;
                         break;
                 }
-                m_pLocationsGrid = new LocationsGrid<LocationX>(iLocationsCount, (int)NoGridWidth.Value, (int)NoGridHeight.Value, textBox1.Text, Looped.Checked ? WorldShape.Ringworld : WorldShape.Plain);
+                m_pLocationsGrid = new LocationsGrid<LocationX>(iLocationsCount, (int)NoGridWidth.Value, (int)NoGridHeight.Value, textBox1.Text, eShape);
             }
 
             Cursor = Cursors.Arrow;
@@ -94,7 +100,7 @@ namespace WorldGeneration
             GridPanel.Enabled = true;
             NoGridPanel.Enabled = true;
             panel1.Enabled = true;
-            Looped.Enabled = true;
+            tableLayoutPanel2.Enabled = true;
 
             button1.Enabled = true;
             button1.Text = "Build grid";
@@ -175,20 +181,24 @@ namespace WorldGeneration
         {
             if (radioButton3.Checked)
             {
-                if(Looped.Checked)
-                    textBox1.Text = string.Format("Looped random points grid {0}x{1}, {2} points.", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text);
+                if(radioButton6.Checked)
+                    textBox1.Text = string.Format("Sphere random points grid {0}x{1}, {2} points.", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text);
+                else if (radioButton5.Checked)
+                    textBox1.Text = string.Format("Ring random points grid {0}x{1}, {2} points.", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text);
                 else
                     textBox1.Text = string.Format("Random points grid {0}x{1}, {2} points.", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text);
-                m_sFilename = string.Format("Rnd_{2}_{0}x{1}{3}", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text, Looped.Checked ? "_loop":"");
+                m_sFilename = string.Format("Rnd_{2}_{0}x{1}{3}", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text, radioButton6.Checked ? "_sphere" : radioButton5.Checked ? "_ring" : "");
             }
 
             if (radioButton2.Checked)
             {
-                if (Looped.Checked)
-                    textBox1.Text = string.Format("Looped hexagonal grid {0}x{1}, {2} points.", GridWidth.Text, GridHeight.Text, int.Parse(GridWidth.Text) * int.Parse(GridHeight.Text) / 2);
+                if (radioButton6.Checked)
+                    textBox1.Text = string.Format("Sphere hexagonal grid {0}x{1}, {2} points.", GridWidth.Text, GridHeight.Text, int.Parse(GridWidth.Text) * int.Parse(GridHeight.Text) / 2);
+                else if (radioButton5.Checked)
+                    textBox1.Text = string.Format("Ring hexagonal grid {0}x{1}, {2} points.", GridWidth.Text, GridHeight.Text, int.Parse(GridWidth.Text) * int.Parse(GridHeight.Text) / 2);
                 else
                     textBox1.Text = string.Format("Hexagonal grid {0}x{1}, {2} points.", GridWidth.Text, GridHeight.Text, int.Parse(GridWidth.Text) * int.Parse(GridHeight.Text) / 2);
-                m_sFilename = string.Format("Hex_{0}x{1}{2}", GridWidth.Text, GridHeight.Text, Looped.Checked ? "_loop" : "");
+                m_sFilename = string.Format("Hex_{0}x{1}{2}", GridWidth.Text, GridHeight.Text, radioButton6.Checked ? "_sphere" : radioButton5.Checked ? "_ring" : "");
             }
         }
 

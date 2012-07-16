@@ -45,11 +45,11 @@ namespace WorldGeneration
                 if (m_cLocationsGrid == null)
                     return;
 
-                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_cLocationsGrid.m_eShape == WorldShape.Ringworld))
+                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_cLocationsGrid.m_eShape != WorldShape.Plain))
                 {
                     MapPresets.Items.Clear();
 
-                    if (m_cLocationsGrid.m_eShape == WorldShape.Ringworld)
+                    if (m_cLocationsGrid.m_eShape == WorldShape.Ringworld || m_cLocationsGrid.m_eShape == WorldShape.Planet)
                         MapPresets.Items.AddRange(m_aWorldMaps);
                     else
                         MapPresets.Items.AddRange(m_aPartialMaps);

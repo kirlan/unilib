@@ -101,9 +101,9 @@
     <Compile Include="MapDraw3d.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PlanetCamera.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RingworldCamera.cs" />
-    <Compile Include="TargetCamera.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Random\Random.csproj">

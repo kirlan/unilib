@@ -5,6 +5,7 @@ using System.Text;
 using BenTools.Mathematics;
 using Random;
 using System.IO;
+using MIConvexHull;
 
 namespace LandscapeGeneration
 {
@@ -84,6 +85,338 @@ namespace LandscapeGeneration
 
         public WorldShape m_eShape = WorldShape.Plain;
 
+        class VertexCH : IVertex
+        {
+            public double[] Position { get; set; }
+
+            public VertexCH(double x, double y, double z)
+            {
+                Position = new double[] { x, y, z };
+            }
+        }
+
+        class FaceCH : ConvexFace<VertexCH, FaceCH>
+        {
+
+        }
+        
+        private bool CreateSphereCH()
+        {
+            float fTrueR = m_iRY;
+
+            VertexCH[] pSphere = new VertexCH[m_iLocationsCount];
+
+            for (int i = 0; i < m_iLocationsCount; i++)
+            {
+                float fX3d, fY3d, fZ3d;
+                float fD, fD2;
+
+                do
+                {
+                    fX3d = (float)(fTrueR - Rnd.Get(fTrueR * 2));
+                    fY3d = (float)(fTrueR - Rnd.Get(fTrueR * 2));
+                    fZ3d = (float)(fTrueR - Rnd.Get(fTrueR * 2));
+
+                    fD2 = (float)Math.Sqrt(fX3d * fX3d + fY3d * fY3d);
+                    fD = (float)Math.Sqrt(fD2 * fD2 + fZ3d * fZ3d);
+                }
+                while (fD > fTrueR || fD < fTrueR * 3 / 4);
+
+                VertexCH pSV = new VertexCH(fX3d * fTrueR / fD, fY3d * fTrueR / fD, fZ3d * fTrueR / fD);
+
+                pSphere[i] = pSV;
+            }
+
+            // calculate the triangulation
+            var convexHull = ConvexHull.Create<VertexCH, FaceCH>(pSphere);
+            var convexHullVertices = convexHull.Points.ToList();
+            var faces = convexHull.Faces.ToList();
+
+            List<LOC> cLocations = new List<LOC>();
+            Dictionary<VertexCH, LOC> cLocationsCH = new Dictionary<VertexCH, LOC>();
+            foreach (var pVertex in convexHullVertices)
+            {
+                LOC pLocation = new LOC();
+                pLocation.Create(cLocations.Count, pVertex.Position[0], pVertex.Position[1], pVertex.Position[2]);
+                cLocationsCH[pVertex] = pLocation;
+                cLocations.Add(pLocation);
+            }
+            m_aLocations = cLocations.ToArray();
+
+            Dictionary<LOC, List<LOC[]>> cFacesDic = new Dictionary<LOC, List<LOC[]>>();
+
+            foreach (var pFace in faces)
+            {
+                LOC pLoc1 = cLocationsCH[pFace.Vertices[0]];
+                LOC pLoc2 = cLocationsCH[pFace.Vertices[1]];
+                LOC pLoc3 = cLocationsCH[pFace.Vertices[2]];
+
+                if (!cFacesDic.ContainsKey(pLoc1))
+                    cFacesDic[pLoc1] = new List<LOC[]>();
+                if (!cFacesDic.ContainsKey(pLoc2))
+                    cFacesDic[pLoc2] = new List<LOC[]>();
+                if (!cFacesDic.ContainsKey(pLoc3))
+                    cFacesDic[pLoc3] = new List<LOC[]>();
+
+                cFacesDic[pLoc1].Add(new LOC[] { pLoc2, pLoc3 });
+                cFacesDic[pLoc2].Add(new LOC[] { pLoc1, pLoc3 });
+                cFacesDic[pLoc3].Add(new LOC[] { pLoc1, pLoc2 });
+
+                if (!pLoc1.BorderWith.ContainsKey(pLoc2))
+                    pLoc1.BorderWith[pLoc2] = new List<Line>();
+                if (!pLoc1.BorderWith.ContainsKey(pLoc3))
+                    pLoc1.BorderWith[pLoc3] = new List<Line>();
+
+                if (!pLoc2.BorderWith.ContainsKey(pLoc1))
+                    pLoc2.BorderWith[pLoc1] = new List<Line>();
+                if (!pLoc2.BorderWith.ContainsKey(pLoc3))
+                    pLoc2.BorderWith[pLoc3] = new List<Line>();
+
+                if (!pLoc3.BorderWith.ContainsKey(pLoc1))
+                    pLoc3.BorderWith[pLoc1] = new List<Line>();
+                if (!pLoc3.BorderWith.ContainsKey(pLoc2))
+                    pLoc3.BorderWith[pLoc2] = new List<Line>();
+            }
+            foreach (LOC pLoc in m_aLocations)
+                pLoc.FillBorderWithKeys();
+
+            List<Vertex> cVertexes = new List<Vertex>();
+            RestoreVoronoi(ref cVertexes, ref cFacesDic);
+
+            m_aVertexes = cVertexes.ToArray();
+
+            foreach (LOC pLoc in m_aLocations)
+                pLoc.FillBorderWithKeys();
+
+            return true;
+        }
+
+        private bool RestoreVoronoi(ref List<Vertex> cVertexes, ref Dictionary<LOC, List<LOC[]>> cFacesDic)
+        {
+            float fTrueR = m_iRX / (float)Math.PI;
+
+            foreach (LOC pLoc1 in m_aLocations)
+            {
+                List<LOC[]> cPairs = cFacesDic[pLoc1];
+
+                Dictionary<LOC, List<LOC>> cWheel = new Dictionary<LOC, List<LOC>>();
+                LOC pStarter = null;
+                foreach (LOC pLoc2 in pLoc1.m_cBorderWith.Keys)
+                {
+                    List<LOC> cLinks = new List<LOC>();
+
+                    foreach (LOC pLink in pLoc2.m_cBorderWith.Keys)
+                        if (pLink.m_cBorderWith.ContainsKey(pLoc1))
+                            cLinks.Add(pLink);
+
+                    cWheel[pLoc2] = cLinks;
+
+                    if (pStarter == null)
+                        pStarter = pLoc2;
+                }
+
+                foreach (var pSpoke in cWheel)
+                {
+                    if (pSpoke.Value.Count < 2)
+                        throw new Exception("Unchained location border!");
+
+                    if (pSpoke.Value.Count > 2)
+                    {
+                        List<LOC> cFalseOnes = new List<LOC>();
+                        foreach (var pLink in pSpoke.Value)
+                        {
+                            bool bTrueOne = false;
+                            foreach (var pPair in cPairs)
+                            {
+                                if ((pPair[0] == pSpoke.Key && pPair[1] == pLink) ||
+                                    (pPair[1] == pSpoke.Key && pPair[0] == pLink))
+                                {
+                                    bTrueOne = true;
+                                    break;
+                                }
+                            }
+                            if (!bTrueOne)
+                                cFalseOnes.Add(pLink);
+                        }
+                        foreach (var pFalseOne in cFalseOnes)
+                            pSpoke.Value.Remove(pFalseOne);
+                    }
+                }
+
+                LOC[] aWheel = new LOC[cWheel.Count];
+                int iCounter = 0;
+                aWheel[iCounter++] = pStarter;
+                aWheel[iCounter++] = cWheel[pStarter][0];
+                do
+                {
+                    if (cWheel[aWheel[iCounter - 1]][0] == aWheel[iCounter - 2])
+                        aWheel[iCounter] = cWheel[aWheel[iCounter - 1]][1];
+                    else
+                        aWheel[iCounter] = cWheel[aWheel[iCounter - 1]][0];
+
+                    iCounter++;
+                }
+                while (iCounter < aWheel.Length);
+
+                int iSwap = 0;
+                for (int i = 0; i < aWheel.Length; i++)
+                {
+                    LOC pNext;
+                    if (i == aWheel.Length - 1)
+                        pNext = aWheel[0];
+                    else
+                        pNext = aWheel[i + 1];
+
+                    LOC pCurrent = aWheel[i];
+
+                    //Для определения того, лежат ли локации pLeft и pRight относительно центра локации pLoc по часовой стрелке
+                    //или против, рассчитаем векторное произведение векторов (pLoc1, pLeft) и (pLoc1, pRight).
+                    //Если результирующий вектор будет направлен от центра сферы, то все три вектора (направления на вершины из центра локации и 
+                    //их векторное произведение) составляют "правую тройку", т.е. точки pLeft и pRight лежат против часовой 
+                    //стрелки относительно центра.
+                    //Мы же, для определённости будем все вектора границы локации приводить к направлению "по часовой стрелке"
+
+                    float fAx = pCurrent.X - pLoc1.X;
+                    float fAy = pCurrent.Y - pLoc1.Y;
+                    float fAz = pCurrent.Z - pLoc1.Z;
+                    float fBx = pNext.X - pLoc1.X;
+                    float fBy = pNext.Y - pLoc1.Y;
+                    float fBz = pNext.Z - pLoc1.Z;
+
+                    float fCrossX = fAy * fBz - fAz * fBy;
+                    float fCrossY = fAz * fBx - fAx * fBz;
+                    float fCrossZ = fAx * fBy - fAy * fBx;
+
+                    //чтобы определить направление результирующего вектора относительно центра сферы, вычислим скалярное произведение.
+                    //скалярное произведение > 0, если угол между векторами острый, и < 0, если угол между векторами тупой.
+                    if (fCrossX * pLoc1.X + fCrossY * pLoc1.Y + fCrossZ * pLoc1.Z > 0)
+                        iSwap++;
+                    else
+                        iSwap--;
+                }
+                if (iSwap > 0)
+                {
+                    LOC[] aWheelNew = new LOC[cWheel.Count];
+
+                    iCounter = 0;
+                    for (int i = aWheel.Length - 1; i >= 0; i--)
+                        aWheelNew[iCounter++] = aWheel[i];
+
+                    aWheel = aWheelNew;
+                }
+
+                for (int i = 0; i < aWheel.Length; i++)
+                {
+                    LOC pLoc2 = aWheel[i];
+                    //Найдём пару других локаций, так же связанных и с pLoc, и с pLink. Все 4 локации вместе образуют 2 треугольника,
+                    //центры которых и будут вершинами нашей диаграммы Вороного
+                    LOC pLeft, pRight;
+                    if (i == 0)
+                        pLeft = aWheel[aWheel.Length - 1];
+                    else
+                        pLeft = aWheel[i - 1];
+
+                    if (i == aWheel.Length - 1)
+                        pRight = aWheel[0];
+                    else
+                        pRight = aWheel[i + 1];
+
+                    Vertex pVertexA = null;
+                    Vertex pVertexB = null;
+
+                    //проверим, возможно эти вершины у нас уже вычислены
+                    if (pLoc1.BorderWith.ContainsKey(pLeft) && pLoc1.BorderWith[pLeft].Count > 0)
+                    {
+                        Line pLine = pLoc1.BorderWith[pLeft][0];
+                        if (pLine.m_pPoint1.m_cLocationsBuild.Contains(pLoc2))
+                            pVertexA = pLine.m_pPoint1;
+                        else if (pLine.m_pPoint2.m_cLocationsBuild.Contains(pLoc2))
+                            pVertexA = pLine.m_pPoint2;
+                    }
+
+                    if (pLoc1.BorderWith.ContainsKey(pRight) && pLoc1.BorderWith[pRight].Count > 0)
+                    {
+                        Line pLine = pLoc1.BorderWith[pRight][0];
+                        if (pLine.m_pPoint1.m_cLocationsBuild.Contains(pLoc2))
+                            pVertexB = pLine.m_pPoint1;
+                        else if (pLine.m_pPoint2.m_cLocationsBuild.Contains(pLoc2))
+                            pVertexB = pLine.m_pPoint2;
+                    }
+
+                    if (pVertexA == null)
+                    {
+                        pVertexA = new Vertex((pLoc1.X + pLoc2.X + pLeft.X) / 3, (pLoc1.Y + pLoc2.Y + pLeft.Y) / 3, (pLoc1.Z + pLoc2.Z + pLeft.Z) / 3);
+                        cVertexes.Add(pVertexA);
+                    }
+                    if (pVertexB == null)
+                    {
+                        pVertexB = new Vertex((pLoc1.X + pLoc2.X + pRight.X) / 3, (pLoc1.Y + pLoc2.Y + pRight.Y) / 3, (pLoc1.Z + pLoc2.Z + pRight.Z) / 3);
+                        cVertexes.Add(pVertexB);
+                    }
+
+
+                    //добавим вертексам ссылки друг на друга
+                    if (!pVertexA.m_cVertexes.Contains(pVertexB))
+                        pVertexA.m_cVertexes.Add(pVertexB);
+                    if (!pVertexB.m_cVertexes.Contains(pVertexA))
+                        pVertexB.m_cVertexes.Add(pVertexA);
+
+                    Vertex pMidPoint = new Vertex((pVertexA.X + pVertexB.X) / 2, (pVertexA.Y + pVertexB.Y) / 2, (pVertexA.Z + pVertexB.Z) / 2);
+                    Vertex pLoc1Point = new Vertex((pLoc1.X + pMidPoint.X) / 2, (pLoc1.Y + pMidPoint.Y) / 2, (pLoc1.Z + pMidPoint.Z) / 2);
+                    Vertex pLoc2Point = new Vertex((pLoc2.X + pMidPoint.X) / 2, (pLoc2.Y + pMidPoint.Y) / 2, (pLoc2.Z + pMidPoint.Z) / 2);
+
+                    cVertexes.Add(pMidPoint);
+                    cVertexes.Add(pLoc1Point);
+                    cVertexes.Add(pLoc2Point);
+
+                    if (!pVertexA.m_cLocationsBuild.Contains(pLeft))
+                        pVertexA.m_cLocationsBuild.Add(pLeft);
+                    if (!pVertexB.m_cLocationsBuild.Contains(pRight))
+                        pVertexB.m_cLocationsBuild.Add(pRight);
+
+                    if (!pVertexA.m_cLocationsBuild.Contains(pLoc1))
+                        pVertexA.m_cLocationsBuild.Add(pLoc1);
+                    if (!pVertexB.m_cLocationsBuild.Contains(pLoc1))
+                        pVertexB.m_cLocationsBuild.Add(pLoc1);
+
+                    pMidPoint.m_cLocationsBuild.Add(pLoc1);
+                    pMidPoint.m_cLocationsBuild.Add(pLoc2);
+
+                    pLoc1Point.m_cLocationsBuild.Add(pLoc1);
+                    pLoc2Point.m_cLocationsBuild.Add(pLoc2);
+
+                    Line pLine1 = new Line(pVertexA, pVertexB, pMidPoint, pLoc1Point);
+                    if (pLine1.m_fLength > 0 && pLoc1.BorderWith[pLoc2].Count == 0)
+                    {
+                        //foreach (List<Line> cLines in pLoc1.BorderWith.Values)
+                        //    if (cLines[0].m_pPoint1 == pVertexA)
+                        //        throw new Exception("Wrong edge!");
+
+                        pLoc1.BorderWith[pLoc2].Add(pLine1);
+                    }
+
+                    if (!pVertexA.m_cLocationsBuild.Contains(pLoc2))
+                        pVertexA.m_cLocationsBuild.Add(pLoc2);
+                    if (!pVertexB.m_cLocationsBuild.Contains(pLoc2))
+                        pVertexB.m_cLocationsBuild.Add(pLoc2);
+
+                    Line pLine2 = new Line(pVertexB, pVertexA, pMidPoint, pLoc2Point);
+                    if (pLine2.m_fLength > 0 && pLoc2.BorderWith[pLoc1].Count == 0)
+                    {
+                        //foreach (List<Line> cLines in pLoc2.m_cBorderWith.Values)
+                        //    if (cLines[0].m_pPoint1 == pVertexB)
+                        //        throw new Exception("Wrong edge!");
+
+                        pLoc2.BorderWith[pLoc1].Add(pLine2);
+                    }
+                }
+                pLoc1.BuildBorder();
+                pLoc1.CorrectCenter();
+            }
+
+            return true;
+        }
+        
         /// <summary>
         /// Создание сетки из случайных точек
         /// </summary>
@@ -99,11 +432,15 @@ namespace LandscapeGeneration
             bool bOK = true;
             do
             {
-                BuildRandomGrid();
-                bOK = CalculateVoronoi();
-                if (bOK)
+                if (eShape == WorldShape.Planet)
                 {
-                    ImproveGrid();
+                    m_iRX = (int)(m_iRY * Math.PI);
+
+                    bOK = CreateSphereCH();
+                }
+                else
+                {
+                    BuildPlainRandomGrid();
                     bOK = CalculateVoronoi();
                     if (bOK)
                     {
@@ -113,24 +450,29 @@ namespace LandscapeGeneration
                         {
                             ImproveGrid();
                             bOK = CalculateVoronoi();
+                            if (bOK)
+                            {
+                                ImproveGrid();
+                                bOK = CalculateVoronoi();
+                            }
                         }
+                    }
+
+                    //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
+                    foreach (LOC pLoc in m_aLocations)
+                    {
+                        pLoc.BuildBorder();
+                        pLoc.CorrectCenter();
+                    }
+
+                    if (m_eShape == WorldShape.Ringworld)
+                    {
+                        MergeVertexes();
+                        MakeRingWorld();
                     }
                 }
             }
             while (!bOK);
-
-            //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-            foreach (LOC pLoc in m_aLocations)
-            {
-                pLoc.BuildBorder();
-                pLoc.CorrectCenter();
-            }
-            
-            if (m_eShape == WorldShape.Ringworld)
-            {
-                MergeVertexes();
-                MakeRingWorld();
-            }
 
             m_sDescription = sDescription;
             m_bLoaded = true;
@@ -142,9 +484,9 @@ namespace LandscapeGeneration
         /// <param name="iWidth">ширина</param>
         /// <param name="iHeight">высота</param>
         /// <param name="eGridType">тип сетки</param>
-        public LocationsGrid(int iWidth, int iHeight, GridType eGridType, string sDescription, bool bCycled)
+        public LocationsGrid(int iWidth, int iHeight, GridType eGridType, string sDescription, WorldShape eShape)
         {
-            m_eShape = bCycled ? WorldShape.Ringworld : WorldShape.Plain;
+            m_eShape = eShape;
 
             if (eGridType == GridType.Hex)
             {
@@ -344,32 +686,6 @@ namespace LandscapeGeneration
             }
         }
 
-        /// <summary>
-        /// Преобразует плоскую развёртку в трёхмерную планету
-        /// </summary>
-        private void MakeSphere()
-        {
-            foreach (LOC pLoc in m_aLocations)
-            {
-                float fRo = (float)Math.PI * (float)(m_iRY - pLoc.Y) / (m_iRY * 2);
-                float fPhy = (float)Math.PI * pLoc.X / m_iRX;
-
-                pLoc.X = (float)((float)m_iRY * Math.Sin(fRo) * Math.Cos(fPhy));
-                pLoc.Y = (float)((float)m_iRY * Math.Sin(fRo) * Math.Sin(fPhy));
-                pLoc.H = (float)((float)m_iRY * Math.Cos(fRo));
-            }
-
-            foreach (Vertex pVertex in m_aVertexes)
-            {
-                float fRo = (float)Math.PI * (float)(m_iRY - pVertex.Y) / (m_iRY * 2);
-                float fPhy = (float)Math.PI * pVertex.X / m_iRX;
-
-                pVertex.m_fX = (float)((float)m_iRY * Math.Sin(fRo) * Math.Cos(fPhy));
-                pVertex.m_fY = (float)((float)m_iRY * Math.Sin(fRo) * Math.Sin(fPhy));
-                pVertex.m_fHeight = (float)((float)m_iRY * Math.Cos(fRo));
-            }
-        }
-
         private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, Vertex> cVertexes, List<Vertex> cMidPoints, VoronoiEdge pEdge)
         {
             LOC pLoc1 = null;
@@ -546,6 +862,11 @@ namespace LandscapeGeneration
             return true;
         }
 
+        /// <summary>
+        /// не умеет строить сферу, всё-равно надо полностью перписывать, чтобы зря не гонять вороного
+        /// </summary>
+        /// <param name="iWidth"></param>
+        /// <param name="iHeight"></param>
         private void BuildHexGrid(int iWidth, int iHeight)
         {
             List<LOC> cLocations = new List<LOC>();
@@ -642,7 +963,7 @@ namespace LandscapeGeneration
                         pImprovedLoc.m_bBorder = false;
                         cLocations.Add(pImprovedLoc);
 
-                        if (m_eShape == WorldShape.Ringworld)
+                        if (m_eShape == WorldShape.Ringworld || m_eShape == WorldShape.Planet)
                         {
                             LOC pGhostLocation = new LOC();
 
@@ -666,6 +987,9 @@ namespace LandscapeGeneration
         private List<LOC> BuildRandomGridFrame()
         {
             List<LOC> cLocations = new List<LOC>();
+
+            if (m_eShape == WorldShape.Planet)
+                return cLocations;
 
             float kx = (int)(Math.Sqrt((float)RX * m_iLocationsCount / RY));
             float ky = m_iLocationsCount / kx;
@@ -765,8 +1089,14 @@ namespace LandscapeGeneration
             return cLocations;
         }
 
-        private void BuildRandomGrid()
+        /// <summary>
+        /// используется только для построения плоских и цилиндрических сеток!
+        /// </summary>
+        private void BuildPlainRandomGrid()
         {
+            if (m_eShape == WorldShape.Planet)
+                throw new Exception("Use BuildSphererandomGrid() !!!");
+
             List<LOC> cLocations = BuildRandomGridFrame();
 
             float kx = (int)(Math.Sqrt((float)RX * m_iLocationsCount / RY));
@@ -781,7 +1111,7 @@ namespace LandscapeGeneration
                 LOC pLocation = new LOC();
                 pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
                 cLocations.Add(pLocation);
-            
+
                 if (m_eShape == WorldShape.Ringworld)
                 {
                     LOC pGhostLocation = new LOC();

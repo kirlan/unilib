@@ -50,13 +50,17 @@
             this.label5 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.Looped = new System.Windows.Forms.CheckBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.radioButton5 = new System.Windows.Forms.RadioButton();
+            this.radioButton6 = new System.Windows.Forms.RadioButton();
             this.NoGridPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NoGridHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NoGridWidth)).BeginInit();
             this.GridPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // NoGridPanel
@@ -276,6 +280,7 @@
             this.radioButton1.Size = new System.Drawing.Size(103, 37);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.Text = "Square\r\n(Not yet)";
+            this.radioButton1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
             // 
@@ -289,6 +294,7 @@
             this.radioButton3.TabIndex = 2;
             this.radioButton3.TabStop = true;
             this.radioButton3.Text = "No grid \r\n(random points)";
+            this.radioButton3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
             // 
@@ -301,6 +307,7 @@
             this.radioButton2.Size = new System.Drawing.Size(103, 37);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.Text = "Hexagonal\r\n(Atlantis type)";
+            this.radioButton2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
             // 
@@ -315,9 +322,9 @@
             // 
             // button1
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(113, 172);
+            this.button1.Location = new System.Drawing.Point(113, 198);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(125, 34);
             this.button1.TabIndex = 7;
@@ -341,11 +348,11 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label5);
-            this.panel1.Location = new System.Drawing.Point(20, 133);
+            this.panel1.Location = new System.Drawing.Point(20, 159);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(311, 31);
             this.panel1.TabIndex = 11;
@@ -357,26 +364,67 @@
             this.textBox1.Size = new System.Drawing.Size(232, 20);
             this.textBox1.TabIndex = 11;
             // 
-            // Looped
+            // tableLayoutPanel2
             // 
-            this.Looped.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Looped.Location = new System.Drawing.Point(117, 112);
-            this.Looped.Name = "Looped";
-            this.Looped.Size = new System.Drawing.Size(117, 17);
-            this.Looped.TabIndex = 12;
-            this.Looped.Text = "Looped horisontally";
-            this.Looped.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.Looped.UseVisualStyleBackColor = true;
-            this.Looped.CheckedChanged += new System.EventHandler(this.Looped_CheckedChanged);
+            this.tableLayoutPanel2.ColumnCount = 3;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.Controls.Add(this.radioButton4, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.radioButton5, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.radioButton6, 2, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(12, 112);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(327, 41);
+            this.tableLayoutPanel2.TabIndex = 12;
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.Checked = true;
+            this.radioButton4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton4.Location = new System.Drawing.Point(3, 3);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(103, 35);
+            this.radioButton4.TabIndex = 0;
+            this.radioButton4.TabStop = true;
+            this.radioButton4.Text = "Plain square";
+            this.radioButton4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.radioButton4.UseVisualStyleBackColor = true;
+            this.radioButton4.CheckedChanged += new System.EventHandler(this.Looped_CheckedChanged);
+            // 
+            // radioButton5
+            // 
+            this.radioButton5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton5.Location = new System.Drawing.Point(112, 3);
+            this.radioButton5.Name = "radioButton5";
+            this.radioButton5.Size = new System.Drawing.Size(103, 35);
+            this.radioButton5.TabIndex = 1;
+            this.radioButton5.Text = "Ringworld";
+            this.radioButton5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.radioButton5.UseVisualStyleBackColor = true;
+            this.radioButton5.CheckedChanged += new System.EventHandler(this.Looped_CheckedChanged);
+            // 
+            // radioButton6
+            // 
+            this.radioButton6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton6.Location = new System.Drawing.Point(221, 3);
+            this.radioButton6.Name = "radioButton6";
+            this.radioButton6.Size = new System.Drawing.Size(103, 35);
+            this.radioButton6.TabIndex = 2;
+            this.radioButton6.Text = "Planet";
+            this.radioButton6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.radioButton6.UseVisualStyleBackColor = true;
+            this.radioButton6.CheckedChanged += new System.EventHandler(this.Looped_CheckedChanged);
             // 
             // GridBuildingForm
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(351, 216);
-            this.Controls.Add(this.Looped);
+            this.ClientSize = new System.Drawing.Size(351, 241);
+            this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
@@ -400,6 +448,7 @@
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -429,6 +478,9 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.CheckBox Looped;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.RadioButton radioButton5;
+        private System.Windows.Forms.RadioButton radioButton6;
     }
 }

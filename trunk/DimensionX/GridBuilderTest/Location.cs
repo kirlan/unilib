@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.IO;
+//using LandscapeGeneration.PathFind;
 
 namespace GridBuilderTest
 {
@@ -11,35 +12,25 @@ namespace GridBuilderTest
     {
         public Vertex m_pPoint1;
         public Vertex m_pPoint2;
+        public Vertex m_pMidPoint;
+        public Vertex m_pInnerPoint;
 
-        public Line(Vertex pPoint1, Vertex pPoint2)
+        public Line(Vertex pPoint1, Vertex pPoint2, Vertex pMidPoint, Vertex pInnerPoint)
         {
             m_pPoint1 = pPoint1;
             m_pPoint2 = pPoint2;
+            m_pMidPoint = pMidPoint;
+            m_pInnerPoint = pInnerPoint;
 
             m_fLength = (float)Math.Sqrt((pPoint1.m_fX - pPoint2.m_fX)*(pPoint1.m_fX - pPoint2.m_fX) + (pPoint1.m_fY - pPoint2.m_fY)*(pPoint1.m_fY - pPoint2.m_fY));
-        }
-
-        private void CalcLength(float fCycle)
-        {
-            float fPoint1X = m_pPoint1.m_fX;
-            float fPoint1Y = m_pPoint1.m_fY;
-
-            float fPoint2X = m_pPoint2.m_fX;
-            float fPoint2Y = m_pPoint2.m_fY;
-
-            if (fPoint2X + fCycle / 2 < fPoint1X)
-                fPoint2X += fCycle;
-            if (fPoint2X - fCycle / 2 > fPoint1X)
-                fPoint2X -= fCycle;
-
-            m_fLength = (float)Math.Sqrt((fPoint1X - fPoint2X) * (fPoint1X - fPoint2X) + (fPoint1Y - fPoint2Y) * (fPoint1Y - fPoint2Y));
         }
 
         public Line(Line pOriginal)
         {
             m_pPoint1 = pOriginal.m_pPoint1;
             m_pPoint2 = pOriginal.m_pPoint2;
+            m_pMidPoint = pOriginal.m_pMidPoint;
+            m_pInnerPoint = pOriginal.m_pInnerPoint;
 
             m_fLength = pOriginal.m_fLength;
         }
@@ -48,6 +39,8 @@ namespace GridBuilderTest
         {
             m_pPoint1 = cVertexes[binReader.ReadInt64()];
             m_pPoint2 = cVertexes[binReader.ReadInt64()];
+            m_pMidPoint = cVertexes[binReader.ReadInt64()];
+            m_pInnerPoint = cVertexes[binReader.ReadInt64()];
 
             m_fLength = (float)Math.Sqrt((m_pPoint1.m_fX - m_pPoint2.m_fX) * (m_pPoint1.m_fX - m_pPoint2.m_fX) + (m_pPoint1.m_fY - m_pPoint2.m_fY) * (m_pPoint1.m_fY - m_pPoint2.m_fY));
         }
@@ -56,6 +49,27 @@ namespace GridBuilderTest
         {
             binWriter.Write(m_pPoint1.m_iID);
             binWriter.Write(m_pPoint2.m_iID);
+            binWriter.Write(m_pMidPoint.m_iID);
+            binWriter.Write(m_pInnerPoint.m_iID);
+        }
+
+        public void Flip()
+        {
+            Vertex pTemp = m_pPoint1;
+            m_pPoint1 = m_pPoint2;
+            m_pPoint2 = pTemp;
+        }
+
+        public void Merge(Vertex pFrom, Vertex pTo)
+        {
+            if (m_pPoint1 == pFrom)
+                m_pPoint1 = pTo;
+            if (m_pPoint2 == pFrom)
+                m_pPoint2 = pTo;
+            if (m_pMidPoint == pFrom)
+                m_pMidPoint = pTo;
+            if (m_pInnerPoint == pFrom)
+                m_pInnerPoint = pTo;
         }
 
         public Line m_pPrevious = null;
@@ -77,29 +91,22 @@ namespace GridBuilderTest
         Volcano
     }
 
-    public class Location : ITerritory
+    public interface ITerritory
+    {
+        /// <summary>
+        /// Границы с другими такими же объектами
+        /// </summary>
+        Dictionary<object, List<Line>> BorderWith { get; }
+        bool Forbidden { get; }
+        object Owner { get; set; }
+        float PerimeterLength { get; }
+    }
+    
+    public class Location : TransportationNode, ITerritory
     {
         public Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
 
-        public PointF m_pCenter = new PointF(0,0);
-
         public RegionType m_eType = RegionType.Empty;
-
-        public float m_fHeight = 0;
-
-        #region IXY Members
-
-        public float X
-        {
-            get { return m_pCenter.X; }
-        }
-
-        public float Y
-        {
-            get { return m_pCenter.Y; }
-        }
-
-        #endregion
 
         #region ITerritory Members
 
@@ -136,9 +143,14 @@ namespace GridBuilderTest
         #endregion
 
         /// <summary>
-        /// Для "призрачных" локаций - ссылка на оригинал.
+        /// Для "призрачных" локаций экваториального пояса - ссылка на оригинал.
         /// </summary>
-        internal Location m_pOrigin = null;
+        internal Location m_pEquatorOrigin = null;
+
+        /// <summary>
+        /// Для "призрачных" локаций хемисферы (не важно, северной или южной - они не пересекаются) - ссылка на оригинал.
+        /// </summary>
+        internal Location m_pHemisphereOrigin = null;
 
         /// <summary>
         /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
@@ -151,31 +163,38 @@ namespace GridBuilderTest
         public int m_iGridX = -1;
         public int m_iGridY = -1;
 
-        public void Create(long iID, double x, double y)
+        public void Create(long iID, double x, double y, double z)
         {
-            Create(iID, (float)x, (float)y);
+            Create(iID, (float)x, (float)y, (float)z);
         }
 
-        public void Create(long iID, float x, float y)
+        public void Create(long iID, float x, float y, float z)
         {
-            m_pCenter = new PointF(x, y);
+            X = x;
+            Y = y;
+            Z = z;
             m_iID = iID;
         }
 
-        public void Create(long iID, float x, float y, int iGridX, int iGridY)
+        public void Create(long iID, float x, float y, float z, int iGridX, int iGridY)
         {
-            m_pCenter = new PointF(x, y);
+            X = x;
+            Y = y;
+            Z = z;
             m_iID = iID;
             m_iGridX = iGridX;
             m_iGridY = iGridY;
         }
 
-        public void Create(long iID, float x, float y, Location pOrigin)
+        public void Create(long iID, float x, float y, float z, Location pEquator, Location pHemisphere)
         {
-            m_pCenter = new PointF(x, y);
+            X = x;
+            Y = y;
+            Z = z;
             m_iID = iID;
 
-            m_pOrigin = pOrigin;
+            m_pEquatorOrigin = pEquator;
+            m_pHemisphereOrigin = pHemisphere;
         }
 
         public Line m_pFirstLine = null;
@@ -190,9 +209,9 @@ namespace GridBuilderTest
         /// <summary>
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
         /// </summary>
-        public void BuildBorder(float fCycleShift)
+        public void BuildBorder()
         {
-            if (m_bUnclosed || m_bBorder)
+            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0)
                 return;
 
             m_pFirstLine = m_cBorderWith[m_aBorderWith[0]][0];
@@ -216,10 +235,7 @@ namespace GridBuilderTest
                 bool bFound = false;
                 foreach (Line pLine in aTotalBorder)
                 {
-                    if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
-                        (pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY &&
-                         (pLine.m_pPoint1.m_fX == pCurrentLine.m_pPoint2.m_fX ||
-                          Math.Abs(pLine.m_pPoint1.m_fX - pCurrentLine.m_pPoint2.m_fX) == fCycleShift)))
+                    if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2)
                     {
                         pCurrentLine.m_pNext = pLine;
                         pLine.m_pPrevious = pCurrentLine;
@@ -247,24 +263,43 @@ namespace GridBuilderTest
         /// </summary>
         public void CorrectCenter()
         {
-            if (m_bUnclosed || m_bBorder)
+            if (m_bUnclosed || m_bBorder || m_pFirstLine == null)
                 return;
 
-            float fX = 0, fY = 0, fLength = 0;
+            float fX = 0, fY = 0, fZ = 0, fLength = 0;
 
             Line pLine = m_pFirstLine;
             do
             {
                 fX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
                 fY += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                fZ += pLine.m_fLength * (pLine.m_pPoint1.Z + pLine.m_pPoint2.Z) / 2;
                 fLength += pLine.m_fLength;
 
                 pLine = pLine.m_pNext;
             }
             while (pLine != m_pFirstLine);
 
-            m_pCenter.X = fX / fLength;
-            m_pCenter.Y = fY / fLength;
+            X = fX / fLength;
+            Y = fY / fLength;
+            Z = fZ / fLength;
+
+            List<Line> cTotalBorder = new List<Line>();
+
+            foreach (var cLines in m_cBorderWith)
+                cTotalBorder.AddRange(cLines.Value);
+
+            Line[] aTotalBorder = cTotalBorder.ToArray();
+            foreach (Line pLne in aTotalBorder)
+            {
+                pLne.m_pMidPoint.X = (pLne.m_pPoint1.X + pLne.m_pPoint2.X) / 2;
+                pLne.m_pMidPoint.Y = (pLne.m_pPoint1.Y + pLne.m_pPoint2.Y) / 2;
+                pLne.m_pMidPoint.Z = (pLne.m_pPoint1.Z + pLne.m_pPoint2.Z) / 2;
+
+                pLne.m_pInnerPoint.X = (pLne.m_pMidPoint.X + X) / 2;
+                pLne.m_pInnerPoint.Y = (pLne.m_pMidPoint.Y + Y) / 2;
+                pLne.m_pInnerPoint.Z = (pLne.m_pMidPoint.Z + Z) / 2;
+            }
         }
 
         public string GetStringID()
@@ -278,15 +313,21 @@ namespace GridBuilderTest
 
         public override string ToString()
         {
-            return m_pCenter.ToString();
+            return string.Format("{0} - {1}", GetStringID(), base.ToString());
+        }
+
+        public override float GetMovementCost()
+        {
+            return 0;
         }
 
         public void Save(BinaryWriter binWriter)
         {
             binWriter.Write(m_iID);
 
-            binWriter.Write((double)m_pCenter.X);
-            binWriter.Write((double)m_pCenter.Y);
+            binWriter.Write((double)X);
+            binWriter.Write((double)Y);
+            binWriter.Write((double)Z);
 
             binWriter.Write(m_bBorder ? 1 : 0);
             binWriter.Write(m_bUnclosed ? 1 : 0);
@@ -321,14 +362,16 @@ namespace GridBuilderTest
         /// <param name="binReader"></param>
         public void Load(BinaryReader binReader, Dictionary<long, Vertex> cVertexes)
         {
+            //m_cLinks.Clear();
             m_cBorderWith.Clear();
             m_eType = RegionType.Empty;
             m_pOwner = null;
 
             m_iID = binReader.ReadInt64();
 
-            m_pCenter.X = (float)binReader.ReadDouble();
-            m_pCenter.Y = (float)binReader.ReadDouble();
+            X = (float)binReader.ReadDouble();
+            Y = (float)binReader.ReadDouble();
+            Z = (float)binReader.ReadDouble();
 
             m_bBorder = binReader.ReadInt32() == 1;
             m_bUnclosed = binReader.ReadInt32() == 1;
@@ -349,6 +392,7 @@ namespace GridBuilderTest
 
         public virtual void Reset()
         {
+            //m_cLinks.Clear();
             m_eType = RegionType.Empty;
             m_pOwner = null;
         }
