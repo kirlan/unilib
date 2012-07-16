@@ -128,9 +128,10 @@ namespace Random
             return rnd.NextDouble() < Gau;
         }
 
-                public static bool ChooseOne(double iChances1, double iChances2)
+        public static bool ChooseOne(double iChances1, double iChances2)
         {
-            return rnd.Next((int)(iChances1*10000 + iChances2*10000)) < (int)(iChances1*10000);
+            //return rnd.Next((int)(iChances1 * 10000 + iChances2 * 10000)) < (int)(iChances1 * 10000);
+            return rnd.NextDouble()*(iChances1 * 10000 + iChances2 * 10000) < iChances1 * 10000;
         }
 
         public static bool ChooseOne(int iChances1, int iChances2)
