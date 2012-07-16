@@ -79,6 +79,10 @@
       <Project>{9D04A744-D09B-4B4E-B843-1763A47339A5}</Project>
       <Name>SimpleVectors</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MIConvexHull\MIConvexHull.csproj">
+      <Project>{2337776D-7D0C-40AA-A439-C26C3CE24FAB}</Project>
+      <Name>MIConvexHull</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

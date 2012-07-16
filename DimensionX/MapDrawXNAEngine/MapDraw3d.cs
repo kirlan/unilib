@@ -103,7 +103,15 @@ namespace MapDrawXNAEngine
                 if (eWorldShape == WorldShape.Ringworld)
                 {
                     Vector3 pUp = Vector3.Transform(-Vector3.Normalize(m_pPosition), Matrix.CreateScale(1, 1, 0));
-//                    Vector3 pUp = -Vector3.Normalize(m_pPosition);
+                    //                    Vector3 pUp = -Vector3.Normalize(m_pPosition);
+                    Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
+                    pAxis.Normalize();
+                    float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
+                    worldMatrix = Matrix.CreateScale(fScale * 10) * Matrix.CreateRotationY(fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(pPosition);
+                }
+                else if (eWorldShape == WorldShape.Planet)
+                {
+                    Vector3 pUp = Vector3.Normalize(m_pPosition);
                     Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
                     pAxis.Normalize();
                     float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
@@ -155,7 +163,14 @@ namespace MapDrawXNAEngine
                 if (eWorldShape == WorldShape.Ringworld)
                 {
                     Vector3 pUp = Vector3.Transform(-Vector3.Normalize(m_pPosition), Matrix.CreateScale(1, 1, 0));
-//                    Vector3 pUp = -Vector3.Normalize(m_pPosition);
+                    Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
+                    pAxis.Normalize();
+                    float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
+                    worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(m_pPosition);
+                }
+                else if (eWorldShape == WorldShape.Planet)
+                {
+                    Vector3 pUp = Vector3.Normalize(m_pPosition);
                     Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
                     pAxis.Normalize();
                     float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
@@ -244,6 +259,8 @@ namespace MapDrawXNAEngine
             Vector3 pUp = Vector3.Up;
             if (eShape == WorldShape.Ringworld)
                 pUp = Vector3.Transform(-Vector3.Normalize(pPosition), Matrix.CreateScale(1, 1, 0));
+            if (eShape == WorldShape.Planet)
+                pUp = Vector3.Normalize(pPosition);
 
             pPosition += pUp * fHeight * fMultiplier;
 
@@ -295,17 +312,7 @@ namespace MapDrawXNAEngine
                 if (bForbidden)
                     continue;
 
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
-
-                    pData.TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                }
-                else
-                {
-                    pData.TextureCoordinate.X = pVertex.m_fX / m_fTextureScale;
-                }
-                pData.TextureCoordinate.Y = pVertex.m_fY / m_fTextureScale; 
+                pData.TextureCoordinate = new Vector4(GetTexture(pVertex), 0, 0); 
                 
                 cGeoVData[pVertex] = pData;
             }
@@ -333,17 +340,7 @@ namespace MapDrawXNAEngine
                 GeoData2 pData = new GeoData2(pLoc, m_pWorld.m_pGrid.m_eShape, fHeight, m_fLandHeightMultiplier);
                 cGeoLData[pLoc] = pData;
 
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pLoc.X, pLoc.Z);
-
-                    pData.TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * m_fTextureScale);
-                }
-                else
-                {
-                    pData.TextureCoordinate.X = pLoc.X / m_fTextureScale;
-                }
-                pData.TextureCoordinate.Y = pLoc.Y / m_fTextureScale;
+                pData.TextureCoordinate = new Vector4(GetTexture(pLoc), 0, 0); 
 
                 LandType eLT = LandType.Ocean;
                 if (pLoc.Owner != null)
@@ -1340,17 +1337,7 @@ namespace MapDrawXNAEngine
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
                 pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, 0);
 
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
-
-                    pVM.TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
-                }
-                else
-                {
-                    pVM.TextureCoordinate.X = pVertex.m_fX / 100000;
-                }
-                pVM.TextureCoordinate.Y = pVertex.m_fY / 100000;
+                pVM.TextureCoordinate = GetTexture(pVertex);
 
                 m_pWater.m_aVertices[iCounter] = pVM;
                 cVertexes[pVertex.m_iID] = iCounter;
@@ -1373,17 +1360,7 @@ namespace MapDrawXNAEngine
 
                 m_pWater.m_aVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, 0);
 
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                {
-                    float fPhi = (float)Math.Atan2(pLoc.X, pLoc.Z);
-
-                    m_pWater.m_aVertices[iCounter].TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
-                }
-                else
-                {
-                    m_pWater.m_aVertices[iCounter].TextureCoordinate.X = pLoc.X / 100000;
-                }
-                m_pWater.m_aVertices[iCounter].TextureCoordinate.Y = pLoc.Y / 100000;
+                m_pWater.m_aVertices[iCounter].TextureCoordinate = GetTexture(pLoc);
 
                 cLocations[pLoc.m_iID] = iCounter;
 
@@ -1419,6 +1396,59 @@ namespace MapDrawXNAEngine
                 }
                 while (pLine != pLoc.m_pFirstLine);
             }
+        }
+
+        private Vector2 GetTexture(Vertex pVertex)
+        {
+            Vector2 TextureCoordinate = new Vector2(0);
+            
+            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+            {
+                float fRo = (float)Math.Atan2(pVertex.m_fY, Math.Sqrt(pVertex.m_fX * pVertex.m_fX + pVertex.m_fZ * pVertex.m_fZ));
+                float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
+
+                float fPhi4 = (float)(fPhi % (Math.PI / 2));
+
+                //чтобы был гладкий переход, нужно чтобы в RX/2 укладывалось целое количество тайлов текстуры!
+                //или нужно вводить нормирующий коэффициент, чтобы на четверть экватора получалась координата текстуры кратная размеру тайла.
+                if (fRo < -Math.PI / 4 && fRo > -Math.PI * 3 / 4)
+                {
+                    float fH = (float)(-Math.PI / 4 - fRo);
+                    float fPhiRel = (float)(fH - fPhi4 * (4 * fH - Math.PI) / Math.PI);
+
+                    TextureCoordinate.X = fPhiRel * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
+                    TextureCoordinate.Y = fRo * 2 * m_pWorld.m_pGrid.RY / ((float)Math.PI * 100000);
+                }
+                else if (fRo > Math.PI / 4 && fRo < Math.PI * 3 / 4)
+                {
+                    float fH = (float)(fRo - Math.PI / 4);
+                    float fPhiRel = (float)(fH - fPhi4 * (4 * fH - Math.PI) / Math.PI);
+
+                    TextureCoordinate.X = fPhiRel * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
+                    TextureCoordinate.Y = fRo * 2 * m_pWorld.m_pGrid.RY / ((float)Math.PI * 100000);
+                }
+                else
+                {
+                    TextureCoordinate.X = fPhi4 * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
+                    TextureCoordinate.Y = fRo * 2 * m_pWorld.m_pGrid.RY / ((float)Math.PI * 100000);
+                }
+            }
+            else
+            {
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                {
+                    float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
+
+                    TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
+                }
+                else
+                {
+                    TextureCoordinate.X = pVertex.m_fX / 100000;
+                }
+                TextureCoordinate.Y = pVertex.m_fY / 100000;
+            }
+
+            return TextureCoordinate;
         }
 
         private Microsoft.Xna.Framework.Color GetMapModeColor(LocationX pLoc, MapMode pMode)
@@ -1630,9 +1660,9 @@ namespace MapDrawXNAEngine
 
                     Microsoft.Xna.Framework.Color pColor = m_cGeoVData[k].m_aLinked[i].m_pColor;
 
-                    if (((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean || (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral) &&
-                        pVertex.m_fHeight > 0)
-                        pColor = Microsoft.Xna.Framework.Color.Red;
+                    //if (((pLoc.Owner as LandX).Type.m_eType == LandType.Ocean || (pLoc.Owner as LandX).Type.m_eType == LandType.Coastral) &&
+                    //    pVertex.m_fHeight > 0)
+                    //    pColor = Microsoft.Xna.Framework.Color.Red;
 
                     if (!cColors.Contains(pColor))
                     {
@@ -2149,25 +2179,59 @@ namespace MapDrawXNAEngine
             public VertexMultitextured[] m_aVertices = new VertexMultitextured[0];
             public int[] m_aIndices = new int[0];
 
-            private Vector4 GetTextureCoordinate(Vector3 pPos, WorldShape eShape, int RX, float fTextureScale)
+            private Vector4 GetTextureCoordinate(Vector3 pPos, WorldShape eShape, int RX, int RY, float fTextureScale)
             {
                 Vector4 pResult = new Vector4();
-                if (eShape == WorldShape.Ringworld)
+                if (eShape == WorldShape.Planet)
                 {
+                    float fRo = (float)Math.Atan2(pPos.Z, Math.Sqrt(pPos.X * pPos.X + pPos.Y * pPos.Y));
                     float fPhi = (float)Math.Atan2(pPos.X, pPos.Y);
 
-                    pResult.X = fPhi * RX / ((float)Math.PI * fTextureScale);
+                    float fPhi4 = (float)(fPhi % (Math.PI / 2));
+
+                    //чтобы был гладкий переход, нужно чтобы в RX/2 укладывалось целое количество тайлов текстуры!
+                    //или нужно вводить нормирующий коэффициент, чтобы на четверть экватора получалась координата текстуры кратная размеру тайла.
+                    if (fRo < -Math.PI / 4 && fRo > -Math.PI * 3 / 4)
+                    {
+                        float fH = (float)(-Math.PI / 4 - fRo);
+                        float fPhiRel = (float)(fH - fPhi4 * (4 * fH - Math.PI) / Math.PI);
+
+                        pResult.X = fPhiRel * RX / ((float)Math.PI * fTextureScale);
+                        pResult.Y = fRo * 2 * RY / ((float)Math.PI * fTextureScale);
+                    }
+                    else if (fRo > Math.PI / 4 && fRo < Math.PI * 3 / 4)
+                    {
+                        float fH = (float)(fRo - Math.PI / 4);
+                        float fPhiRel = (float)(fH - fPhi4 * (4 * fH - Math.PI) / Math.PI);
+
+                        pResult.X = fPhiRel * RX / ((float)Math.PI * fTextureScale);
+                        pResult.Y = fRo * 2 * RY / ((float)Math.PI * fTextureScale);
+                    }
+                    else
+                    {
+                        pResult.X = fPhi4 * RX / ((float)Math.PI * fTextureScale);
+                        pResult.Y = fRo * 2 * RY / ((float)Math.PI * fTextureScale);
+                    }
                 }
                 else
                 {
-                    pResult.X = pPos.X * 1000 / fTextureScale;
-                }
-                pResult.Y = pPos.Z * 1000 / fTextureScale;
+                    if (eShape == WorldShape.Ringworld)
+                    {
+                        float fPhi = (float)Math.Atan2(pPos.X, pPos.Y);
+
+                        pResult.X = fPhi * RX / ((float)Math.PI * fTextureScale);
+                    }
+                    else
+                    {
+                        pResult.X = pPos.X * 1000 / fTextureScale;
+                    }
+                    pResult.Y = pPos.Z * 1000 / fTextureScale;
+                } 
 
                 return pResult;
             }
 
-            public void Build3D(WorldShape eShape, int RX, float fTextureScale)
+            public void Build3D(WorldShape eShape, int RX, int RY, float fTextureScale)
             {
                 float fScale = 0.1f;
                 switch (m_eType)
@@ -2196,8 +2260,10 @@ namespace MapDrawXNAEngine
                 for (int i = 0; i < m_aShape.Length; i++)
                 {
                     Vector3 pUplift;
-                    if (eShape == WorldShape.Ringworld)
-                        pUplift = -Vector3.Normalize(m_aShape[i].m_pPosition);
+                    if (eShape == WorldShape.Planet)
+                        pUplift = Vector3.Normalize(m_aShape[i].m_pPosition);
+                    else if (eShape == WorldShape.Ringworld)
+                        pUplift = Vector3.Transform(-Vector3.Normalize(m_aShape[i].m_pPosition), Matrix.CreateScale(1, 0, 1));
                     else
                         pUplift = Vector3.Up;
 
@@ -2225,7 +2291,7 @@ namespace MapDrawXNAEngine
                     //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
                     pLeft.TexWeights = m_aShape[i].TexWeights;
                     pLeft.TexWeights2 = m_aShape[i].TexWeights2;
-                    pLeft.TextureCoordinate = GetTextureCoordinate(pLeft.Position, eShape, RX, fTextureScale);
+                    pLeft.TextureCoordinate = GetTextureCoordinate(pLeft.Position, eShape, RX, RY, fTextureScale);
 
                     VertexMultitextured pLeftInner = new VertexMultitextured();
                     pLeftInner.Position = m_aShape[i].m_pPosition + pCrossAverage/2 + pUplift*0.5f;
@@ -2233,7 +2299,7 @@ namespace MapDrawXNAEngine
                     //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
                     pLeftInner.TexWeights = m_aShape[i].TexWeights;
                     pLeftInner.TexWeights2 = m_aShape[i].TexWeights2;
-                    pLeftInner.TextureCoordinate = GetTextureCoordinate(pLeftInner.Position, eShape, RX, fTextureScale);
+                    pLeftInner.TextureCoordinate = GetTextureCoordinate(pLeftInner.Position, eShape, RX, RY, fTextureScale);
                     //if (i == 0 || i == m_aShape.Length - 1)
                     //    pLeftInner.TexWeights2.Y = fScale;
                     //else
@@ -2245,7 +2311,7 @@ namespace MapDrawXNAEngine
                     //pRight.Color = Microsoft.Xna.Framework.Color.Tan;
                     pRight.TexWeights = m_aShape[i].TexWeights;
                     pRight.TexWeights2 = m_aShape[i].TexWeights2;
-                    pRight.TextureCoordinate = GetTextureCoordinate(pRight.Position, eShape, RX, fTextureScale);
+                    pRight.TextureCoordinate = GetTextureCoordinate(pRight.Position, eShape, RX, RY, fTextureScale);
 
                     VertexMultitextured pRightInner = new VertexMultitextured();
                     pRightInner.Position = m_aShape[i].m_pPosition - pCrossAverage / 2 + pUplift * 0.5f;
@@ -2253,7 +2319,7 @@ namespace MapDrawXNAEngine
                     //pLeft.Color = Microsoft.Xna.Framework.Color.Tan;
                     pRightInner.TexWeights = m_aShape[i].TexWeights;
                     pRightInner.TexWeights2 = m_aShape[i].TexWeights2;
-                    pRightInner.TextureCoordinate = GetTextureCoordinate(pRightInner.Position, eShape, RX, fTextureScale);
+                    pRightInner.TextureCoordinate = GetTextureCoordinate(pRightInner.Position, eShape, RX, RY, fTextureScale);
                     //if (i == 0 || i == m_aShape.Length - 1)
                     //    pRightInner.TexWeights2.Y = fScale;
                     //else
@@ -2329,7 +2395,7 @@ namespace MapDrawXNAEngine
                         //pStart.Color = Microsoft.Xna.Framework.Color.Tan;
                         pStart.TexWeights = m_aShape[i].TexWeights;
                         pStart.TexWeights2 = m_aShape[i].TexWeights2;
-                        pStart.TextureCoordinate = GetTextureCoordinate(pStart.Position, eShape, RX, fTextureScale); 
+                        pStart.TextureCoordinate = GetTextureCoordinate(pStart.Position, eShape, RX, RY, fTextureScale); 
 
                         m_aVertices[0] = pStart;
 
@@ -2360,7 +2426,7 @@ namespace MapDrawXNAEngine
                         //pFinish.Color = Microsoft.Xna.Framework.Color.Tan;
                         pFinish.TexWeights = m_aShape[i].TexWeights;
                         pFinish.TexWeights2 = m_aShape[i].TexWeights2;
-                        pFinish.TextureCoordinate = GetTextureCoordinate(pFinish.Position, eShape, RX, fTextureScale); 
+                        pFinish.TextureCoordinate = GetTextureCoordinate(pFinish.Position, eShape, RX, RY, fTextureScale); 
 
                         m_aVertices[m_aVertices.Length - 1] = pFinish;
 
@@ -2466,6 +2532,8 @@ namespace MapDrawXNAEngine
 
             if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 m_fLandHeightMultiplier = 7f / 60;//m_pWorld.m_fMaxHeight;
+            else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                m_fLandHeightMultiplier = 3.5f / 60;//m_pWorld.m_fMaxHeight;
             else
                 m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
 
@@ -2474,7 +2542,7 @@ namespace MapDrawXNAEngine
 
             for (int i = 0; i < m_aRoads.Length; i++)
             {
-                m_aRoads[i].Build3D(m_pWorld.m_pGrid.m_eShape, m_pWorld.m_pGrid.RX, m_fTextureScale);
+                m_aRoads[i].Build3D(m_pWorld.m_pGrid.m_eShape, m_pWorld.m_pGrid.RX, m_pWorld.m_pGrid.RY, m_fTextureScale);
                 m_aRoads[i].NormalizeTextureWeights();
             }
 
@@ -2510,6 +2578,12 @@ namespace MapDrawXNAEngine
                     m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
                     m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
                     pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
+                }
+                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                {
+                    m_pCamera = new PlanetCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
+                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
+                    pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
                 }
                 else
                 {
@@ -2867,9 +2941,11 @@ namespace MapDrawXNAEngine
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             refractionRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, pp.DepthStencilFormat);
-            
+
             if (m_pWorld != null && m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
+            else if (m_pWorld != null && m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                m_pCamera = new PlanetCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
             else
                 m_pCamera = new PlainCamera(GraphicsDevice);
 
@@ -3315,8 +3391,10 @@ namespace MapDrawXNAEngine
                     continue;
 
                 Vector3 pUplift;
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    pUplift = -Vector3.Normalize(pSettlement.m_pPosition);
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                    pUplift = Vector3.Normalize(pSettlement.m_pPosition);
+                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                    pUplift = Vector3.Transform(-Vector3.Normalize(pSettlement.m_pPosition), Matrix.CreateScale(1, 0, 1));
                 else
                     pUplift = Vector3.Up;
 

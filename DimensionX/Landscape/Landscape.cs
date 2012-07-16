@@ -235,6 +235,10 @@ namespace LandscapeGeneration
 
                 Line pLine = pFistLine;
 
+                float fTrueR = m_pGrid.RX / (float)Math.PI;
+                if(m_pGrid.m_eShape == WorldShape.Planet)
+                    fTrueR = (float)Math.Sqrt(pLine.m_pPoint2.X * pLine.m_pPoint2.X + pLine.m_pPoint2.Y * pLine.m_pPoint2.Y + pLine.m_pPoint2.Z * pLine.m_pPoint2.Z);
+
                 do
                 {
                     ordered.Add(pLine.m_pPoint2);
@@ -262,13 +266,20 @@ namespace LandscapeGeneration
                                                  ordered[1], 0.5f);
                 }
 
-                float fTrueR = m_pGrid.RX / (float)Math.PI;
                 for (int i = 0; i < ordered.Count; i++)
                 {
                     if (m_pGrid.m_eShape == WorldShape.Ringworld)
-                    { 
-                        float fDist = (float)Math.Sqrt(ordered[i].X*ordered[i].X + ordered[i].Z*ordered[i].Z);
+                    {
+                        float fDist = (float)Math.Sqrt(ordered[i].X * ordered[i].X + ordered[i].Z * ordered[i].Z);
                         ordered[i].X = fTrueR * ordered[i].X / fDist;
+                        ordered[i].Z = fTrueR * ordered[i].Z / fDist;
+                    } 
+                    
+                    if (m_pGrid.m_eShape == WorldShape.Planet)
+                    {
+                        float fDist = (float)Math.Sqrt(ordered[i].X * ordered[i].X + ordered[i].Y * ordered[i].Y + ordered[i].Z * ordered[i].Z);
+                        ordered[i].X = fTrueR * ordered[i].X / fDist;
+                        ordered[i].Y = fTrueR * ordered[i].Y / fDist;
                         ordered[i].Z = fTrueR * ordered[i].Z / fDist;
                     }
                 }

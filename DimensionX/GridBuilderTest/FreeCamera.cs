@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace XNAEngine
+namespace GridBuilderTest
 {
     public class FreeCamera : Camera
     {
@@ -55,15 +55,15 @@ namespace XNAEngine
 
         public override void ZoomIn(float fDistance)
         {
-            fDistance *= m_fDistance / 1000;
+            fDistance *= m_fDistance / 10000;
 
             m_fDistance -= fDistance;
 
             if (m_fDistance < 1)
                 m_fDistance = 1;
 
-            if (m_fDistance > m_fR-1)
-                m_fDistance = m_fR-1;
+            if (m_fDistance > 10*m_fR-1)
+                m_fDistance = 10*m_fR-1;
         }
 
         public override void Update()

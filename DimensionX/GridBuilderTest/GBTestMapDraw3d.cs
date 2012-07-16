@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Media;
 using GridBuilderTest;
 using UniLibXNA;
 
-namespace XNAEngine
+namespace GridBuilderTest
 {
     /// <summary>
     /// Example control inherits from GraphicsDeviceControl, which allows it to
@@ -76,7 +76,7 @@ namespace XNAEngine
                 userPrimitives[iCounter] = new VertexPositionColorNormal();
                 float fHeight = pLoc.m_fHeight > 0 ? pLoc.m_fHeight * m_fHeightMultiplier : pLoc.m_fHeight;
 
-                userPrimitives[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Y / 1000, fHeight / 1000);
+                userPrimitives[iCounter].Position = new Vector3(pLoc.X / 1000, pLoc.Y / 1000, pLoc.Z / 1000);
                 userPrimitives[iCounter].Color = Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Pink, Microsoft.Xna.Framework.Color.Lime, (float)(m_pGrid.RX - pLoc.m_iGridX) / (m_pGrid.RX * 2));
 
                 cLocations[pLoc.m_iID] = iCounter;
