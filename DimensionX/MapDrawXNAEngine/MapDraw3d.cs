@@ -1404,34 +1404,38 @@ namespace MapDrawXNAEngine
             
             if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
             {
-                float fRo = (float)Math.Atan2(pVertex.m_fY, Math.Sqrt(pVertex.m_fX * pVertex.m_fX + pVertex.m_fZ * pVertex.m_fZ));
-                float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
+                float fLongitude = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
+                float fLat = 0;
 
-                float fPhi4 = (float)(fPhi % (Math.PI / 2));
+                if (fLongitude > -Math.PI / 4 && fLongitude < Math.PI / 4)
+                    fLat = (float)Math.Atan2(pVertex.m_fY, pVertex.m_fZ);
 
-                //чтобы был гладкий переход, нужно чтобы в RX/2 укладывалось целое количество тайлов текстуры!
-                //или нужно вводить нормирующий коэффициент, чтобы на четверть экватора получалась координата текстуры кратная размеру тайла.
-                if (fRo < -Math.PI / 4 && fRo > -Math.PI * 3 / 4)
+                if (fLongitude > Math.PI / 4 && fLongitude < Math.PI * 3 / 4)
+                    fLat = (float)Math.Atan2(pVertex.m_fY, pVertex.m_fX);
+
+                if (fLongitude > Math.PI * 3 / 4 || fLongitude < -Math.PI * 3 / 4)
+                    fLat = (float)Math.Atan2(pVertex.m_fY, -pVertex.m_fZ);
+
+                if (fLongitude > -Math.PI * 3 / 4 && fLongitude < -Math.PI / 4)
+                    fLat = (float)Math.Atan2(pVertex.m_fY, -pVertex.m_fX);
+
+                if (fLat > Math.PI / 4 || fLat < -Math.PI / 4)
                 {
-                    float fH = (float)(-Math.PI / 4 - fRo);
-                    float fPhiRel = (float)(fH - fPhi4 * (4 * fH - Math.PI) / Math.PI);
+                    fLongitude = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fY);
+                    if (fLat > Math.PI / 4)
+                        fLat = (float)Math.Atan2(pVertex.m_fZ, pVertex.m_fY);
+                    else if (fLat < -Math.PI / 4)
+                        fLat = (float)Math.Atan2(pVertex.m_fZ, -pVertex.m_fY);
+                }
 
-                    TextureCoordinate.X = fPhiRel * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
-                    TextureCoordinate.Y = fRo * 2 * m_pWorld.m_pGrid.RY / ((float)Math.PI * 100000);
-                }
-                else if (fRo > Math.PI / 4 && fRo < Math.PI * 3 / 4)
-                {
-                    float fH = (float)(fRo - Math.PI / 4);
-                    float fPhiRel = (float)(fH - fPhi4 * (4 * fH - Math.PI) / Math.PI);
+                float fLongitude4 = (float)(fLongitude % (Math.PI / 2));
 
-                    TextureCoordinate.X = fPhiRel * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
-                    TextureCoordinate.Y = fRo * 2 * m_pWorld.m_pGrid.RY / ((float)Math.PI * 100000);
-                }
-                else
-                {
-                    TextureCoordinate.X = fPhi4 * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
-                    TextureCoordinate.Y = fRo * 2 * m_pWorld.m_pGrid.RY / ((float)Math.PI * 100000);
-                }
+                //сколько раз тайл текстуры укладывается в грань куба по горизонтали или вертикали.
+                //для лучшего наложения должно быть чётным.
+                int iTilesPerQuadrant = 8;
+
+                TextureCoordinate.X = fLongitude4 * 2 * iTilesPerQuadrant / (float)Math.PI;
+                TextureCoordinate.Y = fLat * 2 * iTilesPerQuadrant / (float)Math.PI;
             }
             else
             {
@@ -1439,13 +1443,13 @@ namespace MapDrawXNAEngine
                 {
                     float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
 
-                    TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * 100000);
+                    TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * 10000);
                 }
                 else
                 {
-                    TextureCoordinate.X = pVertex.m_fX / 100000;
+                    TextureCoordinate.X = pVertex.m_fX / 10000;
                 }
-                TextureCoordinate.Y = pVertex.m_fY / 100000;
+                TextureCoordinate.Y = pVertex.m_fY / 10000;
             }
 
             return TextureCoordinate;
@@ -2533,7 +2537,7 @@ namespace MapDrawXNAEngine
             if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 m_fLandHeightMultiplier = 7f / 60;//m_pWorld.m_fMaxHeight;
             else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
-                m_fLandHeightMultiplier = 3.5f / 60;//m_pWorld.m_fMaxHeight;
+                m_fLandHeightMultiplier = 1.75f / 60;//m_pWorld.m_fMaxHeight;
             else
                 m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
 
