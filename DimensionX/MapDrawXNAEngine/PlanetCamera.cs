@@ -24,7 +24,7 @@ namespace MapDrawXNAEngine
             Target = new Vector3(0, m_fR*2, 0);
 
             Yaw = MathHelper.ToRadians(0);
-            Pitch = MathHelper.ToRadians(-91);
+            Pitch = MathHelper.ToRadians(270);
             Roll = MathHelper.ToRadians(0);
             
             m_fDistance = Vector3.Distance(Position, Target);
@@ -33,9 +33,9 @@ namespace MapDrawXNAEngine
         public override void Orbit(float YawChange, float PitchChange, float RollChange)
         {
             this.Yaw += YawChange;
-            this.Pitch += PitchChange;
-
-            //this.Pitch = Math.Max(MathHelper.ToRadians(271), Math.Min(MathHelper.ToRadians(359), this.Pitch)); 
+            this.Pitch -= PitchChange;
+            
+            this.Pitch = Math.Max(MathHelper.ToRadians(270), Math.Min(MathHelper.ToRadians(359), this.Pitch));
             //this.Pitch = Math.Max(MathHelper.ToRadians(91), Math.Min(MathHelper.ToRadians(269), this.Pitch));
 
             this.Roll += RollChange;
@@ -64,7 +64,7 @@ namespace MapDrawXNAEngine
 
             Matrix cameraRotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
 
-            //float fPhi = (float)Math.Atan2(Target.X, Target.Y);
+            //вычисляем ось и угол поворота, которые могли бы привести Vector3.Backward в Vector3.Normalize(Target)
             Vector3 pTargetOriginal = Vector3.Normalize(Target);
             Vector3 pAxis = Vector3.Cross(Vector3.Backward, pTargetOriginal);
             pAxis.Normalize();
@@ -75,7 +75,9 @@ namespace MapDrawXNAEngine
             Target = Vector3.Normalize(Target);
             Target *= m_fR;
 
+            //вычислим направление камеры, как если бы мишень никуда не смещалась, т.е. была бы Vector3.Backward
             Direction = Vector3.Transform(Vector3.Forward, cameraRotation);
+            //а теперь повернём вектор направления так, чтобы совместить Vector3.Backward с Vector3.Normalize(Target)
             Direction = Vector3.Transform(Direction, Matrix.CreateFromAxisAngle(pAxis, fRotAngle));
 
             Position = Target - Direction * m_fDistance;

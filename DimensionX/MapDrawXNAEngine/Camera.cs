@@ -34,7 +34,7 @@ namespace MapDrawXNAEngine
         }
         public void UpdateAspectRatio()
         {
-            generatePerspectiveProjectionMatrix(MathHelper.ToRadians(75));
+            generatePerspectiveProjectionMatrix(MathHelper.ToRadians(45));
         }
         public virtual void Update()
         {
