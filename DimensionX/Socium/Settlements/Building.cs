@@ -19,169 +19,169 @@ namespace Socium.Settlements
     
     public class BuildingInfo
     {
-        public static readonly BuildingInfo LoafersHut          = new BuildingInfo("Hut", "loafer", "loafer", BuildingSize.Small);
+        public static readonly BuildingInfo LoafersHut = new BuildingInfo("Hut", ProfessionInfo.Loafer, ProfessionInfo.Loafer, BuildingSize.Small);
+
+        public static readonly BuildingInfo SlavePensSmall = new BuildingInfo("Slave Pens", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Small);
+        public static readonly BuildingInfo SlavePensMedium = new BuildingInfo("Slave Pens", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Medium);
+        public static readonly BuildingInfo SlavePensLarge = new BuildingInfo("Slave Pens", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Large);
+        public static readonly BuildingInfo SlavePensHuge = new BuildingInfo("Slave Pens", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Huge);
+
+        public static readonly BuildingInfo SlaveMarketMedium = new BuildingInfo("Slave Market", ProfessionInfo.Slaver, ProfessionInfo.Slaver, BuildingSize.Medium);
         
-        public static readonly BuildingInfo SlavePensSmall      = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Small);
-        public static readonly BuildingInfo SlavePensMedium     = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Medium);
-        public static readonly BuildingInfo SlavePensLarge      = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Large);
-        public static readonly BuildingInfo SlavePensHuge       = new BuildingInfo("Slave Pens", "slave", "slave", BuildingSize.Huge);
+        public static readonly BuildingInfo WarriorsHutSmall    = new BuildingInfo("Warriors Hut", ProfessionInfo.Warrior, ProfessionInfo.Warrior, BuildingSize.Small);
+
+        public static readonly BuildingInfo GuardTowerSmall     = new BuildingInfo("Guard Tower", ProfessionInfo.Guard, ProfessionInfo.Guard, BuildingSize.Small);
+        public static readonly BuildingInfo GuardBarracksSmall = new BuildingInfo("Guard Barracks", ProfessionInfo.Guard, ProfessionInfo.Guard, BuildingSize.Small);
+        public static readonly BuildingInfo GuardBarracksMedium = new BuildingInfo("Guard Barracks", ProfessionInfo.Guard, ProfessionInfo.Guard, BuildingSize.Medium);
+        public static readonly BuildingInfo PrisonSmall = new BuildingInfo("Prison", ProfessionInfo.Guard, ProfessionInfo.Guard, BuildingSize.Small);
+        public static readonly BuildingInfo PrisonMedium = new BuildingInfo("Prison", ProfessionInfo.Guard, ProfessionInfo.Guard, BuildingSize.Medium);
+
+        public static readonly BuildingInfo EmergencyPostSmall = new BuildingInfo("Emergency Post", ProfessionInfo.Watcher, ProfessionInfo.Watcher, BuildingSize.Small);
+        public static readonly BuildingInfo HoldingSmall = new BuildingInfo("Holding", ProfessionInfo.Watcher, ProfessionInfo.Watcher, BuildingSize.Small);
+        public static readonly BuildingInfo HoldingMedium = new BuildingInfo("Holding", ProfessionInfo.Watcher, ProfessionInfo.Watcher, BuildingSize.Medium);
+
+        public static readonly BuildingInfo PoliceStationSmall = new BuildingInfo("Police Station", ProfessionInfo.Policeman, ProfessionInfo.Policeman, BuildingSize.Small);
+        public static readonly BuildingInfo PoliceStationMedium = new BuildingInfo("Police Department", ProfessionInfo.Policeman, ProfessionInfo.Policeman, BuildingSize.Medium);
+        public static readonly BuildingInfo PrisonPoliceSmall = new BuildingInfo("Prison", ProfessionInfo.Policeman, ProfessionInfo.Policeman, BuildingSize.Small);
+        public static readonly BuildingInfo PrisonPoliceMedium = new BuildingInfo("Prison", ProfessionInfo.Policeman, ProfessionInfo.Policeman, BuildingSize.Medium);
+
+        public static readonly BuildingInfo FishingBoatMedium = new BuildingInfo("Fishing boat", ProfessionInfo.Fisher, ProfessionInfo.Fisher, BuildingSize.Medium);
+        public static readonly BuildingInfo FishingBoatLarge = new BuildingInfo("Fishing Trawler", ProfessionInfo.Fisher, ProfessionInfo.Fisher, BuildingSize.Large);
+
+        public static readonly BuildingInfo FarmMedium = new BuildingInfo("Farm", ProfessionInfo.Farmer, ProfessionInfo.Farmer, BuildingSize.Medium);
+        public static readonly BuildingInfo FarmLarge = new BuildingInfo("Ranch", ProfessionInfo.Farmer, ProfessionInfo.Farmer, BuildingSize.Large);
+
+        public static readonly BuildingInfo PeasantsHutMedium = new BuildingInfo("Peasants' Hut", ProfessionInfo.Peasant, ProfessionInfo.Peasant, BuildingSize.Medium);
+        public static readonly BuildingInfo PeasantsHutLarge = new BuildingInfo("Plantation", ProfessionInfo.Peasant, ProfessionInfo.Peasant, BuildingSize.Large);
+
+        public static readonly BuildingInfo HuntersHutMedium = new BuildingInfo("Hunters Hut", ProfessionInfo.Hunter, ProfessionInfo.Hunter, BuildingSize.Medium);
+        public static readonly BuildingInfo HuntersHutLarge = new BuildingInfo("Hunters Lodge", ProfessionInfo.Hunter, ProfessionInfo.Hunter, BuildingSize.Large);
+
+        public static readonly BuildingInfo MineMedium = new BuildingInfo("Quarry", ProfessionInfo.Miner, ProfessionInfo.Miner, BuildingSize.Medium);
+        public static readonly BuildingInfo MineLarge = new BuildingInfo("Mine", ProfessionInfo.Miner, ProfessionInfo.Miner, BuildingSize.Large);
+
+        public static readonly BuildingInfo LumberjacksHutMedium = new BuildingInfo("Lumberjacks Hut", ProfessionInfo.Lumberjack, ProfessionInfo.Lumberjack, BuildingSize.Medium);
+        public static readonly BuildingInfo LumberjacksHutLarge = new BuildingInfo("Sawmill", ProfessionInfo.Lumberjack, ProfessionInfo.Lumberjack, BuildingSize.Large);
+
+        public static readonly BuildingInfo ShamansHutSmall     = new BuildingInfo("Shamans Hut", ProfessionInfo.Shaman, ProfessionInfo.Shaman, BuildingSize.Small);
+
+        public static readonly BuildingInfo ChurchSmall = new BuildingInfo("Church", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Small);
+        public static readonly BuildingInfo ChurchMedium = new BuildingInfo("Temple", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Medium);
+        public static readonly BuildingInfo ChurchLarge = new BuildingInfo("Cathedral", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Large);
+
+        public static readonly BuildingInfo TavernSmall = new BuildingInfo("Tavern", ProfessionInfo.Barman, ProfessionInfo.Barman, BuildingSize.Small);
+        public static readonly BuildingInfo BarSmall = new BuildingInfo("Bar", ProfessionInfo.Barman, ProfessionInfo.Barman, BuildingSize.Small);
+        public static readonly BuildingInfo NightClubMedium = new BuildingInfo("Night Club", ProfessionInfo.Barman, ProfessionInfo.Barman, BuildingSize.Medium);
+
+        public static readonly BuildingInfo RoguesDenSmall = new BuildingInfo("Rogue's Den", ProfessionInfo.Rogue, ProfessionInfo.Rogue, BuildingSize.Small);
+        public static readonly BuildingInfo RoguesDenMedium = new BuildingInfo("Rogue's Den", ProfessionInfo.Rogue, ProfessionInfo.Rogue, BuildingSize.Medium);
+
+        public static readonly BuildingInfo GamblingSmall = new BuildingInfo("Gambling Den", ProfessionInfo.Gambler, ProfessionInfo.Gambler, BuildingSize.Small);
+        public static readonly BuildingInfo GamblingMedium = new BuildingInfo("Casino", ProfessionInfo.Gambler, ProfessionInfo.Gambler, BuildingSize.Medium);
+
+        public static readonly BuildingInfo BrothelMedium       = new BuildingInfo("Brothel", ProfessionInfo.Prostitute, ProfessionInfo.Prostitute, BuildingSize.Medium);
+
+        public static readonly BuildingInfo StripClubSmall      = new BuildingInfo("Strip Club", ProfessionInfo.Stripper, ProfessionInfo.Stripper, BuildingSize.Small);
+
+        public static readonly BuildingInfo CultureMeduim = new BuildingInfo("Concert Hall", ProfessionInfo.Musician, ProfessionInfo.Musician, BuildingSize.Medium);
+        public static readonly BuildingInfo CultureLarge = new BuildingInfo("Conservatoire", ProfessionInfo.Musician, ProfessionInfo.Musician, BuildingSize.Large);
+
+        public static readonly BuildingInfo TheatreMedium = new BuildingInfo("Theatre", ProfessionInfo.Actor, ProfessionInfo.Actor, BuildingSize.Medium);
+        public static readonly BuildingInfo CinemaLarge = new BuildingInfo("Film Studio", ProfessionInfo.Actor, ProfessionInfo.Actor, BuildingSize.Large);
+
+        public static readonly BuildingInfo CircusMedium        = new BuildingInfo("Circus", ProfessionInfo.Gladiator, ProfessionInfo.Gladiator, BuildingSize.Medium);
+
+        public static readonly BuildingInfo TraderMedium = new BuildingInfo("Merchant ship", ProfessionInfo.Sailor, ProfessionInfo.Sailor, BuildingSize.Medium);
+        public static readonly BuildingInfo TraderLarge = new BuildingInfo("Freighter", ProfessionInfo.Sailor, ProfessionInfo.Sailor, BuildingSize.Large);
+        public static readonly BuildingInfo NavalAcademyHuge = new BuildingInfo("Nautical School", ProfessionInfo.Sailor, ProfessionInfo.Sailor, BuildingSize.Huge);
+        public static readonly BuildingInfo NavalVessel = new BuildingInfo("Naval Vessel", ProfessionInfo.Sailor, ProfessionInfo.Sailor, BuildingSize.Medium);
         
-        public static readonly BuildingInfo SlaveMarketMedium   = new BuildingInfo("Slave Market", "slaver", "slaver", BuildingSize.Medium);
+        public static readonly BuildingInfo TailorWorkshopSmall = new BuildingInfo("Tailoring Shop", ProfessionInfo.Tailor, ProfessionInfo.Tailor, BuildingSize.Small);
+
+        public static readonly BuildingInfo JevellerWorkshopSmall = new BuildingInfo("Jewellery Workshop", ProfessionInfo.Jeveller, ProfessionInfo.Jeveller, BuildingSize.Small);
         
-        public static readonly BuildingInfo WarriorsHutSmall    = new BuildingInfo("Warriors Hut", "warrior", "warrior", BuildingSize.Small);
-
-        public static readonly BuildingInfo GuardTowerSmall     = new BuildingInfo("Guard Tower", "guard", "guard", BuildingSize.Small);
-        public static readonly BuildingInfo GuardBarracksSmall  = new BuildingInfo("Guard Barracks", "guard", "guard", BuildingSize.Small);
-        public static readonly BuildingInfo GuardBarracksMedium = new BuildingInfo("Guard Barracks", "guard", "guard", BuildingSize.Medium);
-        public static readonly BuildingInfo PrisonSmall         = new BuildingInfo("Prison", "guard", "guard", BuildingSize.Small);
-        public static readonly BuildingInfo PrisonMedium        = new BuildingInfo("Prison", "guard", "guard", BuildingSize.Medium);
+        public static readonly BuildingInfo SmithySmall         = new BuildingInfo("Smithy", ProfessionInfo.Blacksmith, ProfessionInfo.Blacksmith, BuildingSize.Small);
         
-        public static readonly BuildingInfo EmergencyPostSmall  = new BuildingInfo("Emergency Post", "watcher", "watcher", BuildingSize.Small);
-        public static readonly BuildingInfo HoldingSmall        = new BuildingInfo("Holding", "watcher", "watcher", BuildingSize.Small);
-        public static readonly BuildingInfo HoldingMedium       = new BuildingInfo("Holding", "watcher", "watcher", BuildingSize.Medium);
-        
-        public static readonly BuildingInfo PoliceStationSmall  = new BuildingInfo("Police Station", "policeman", "policeman", BuildingSize.Small);
-        public static readonly BuildingInfo PoliceStationMedium = new BuildingInfo("Police Department", "policeman", "policeman", BuildingSize.Medium);
-        public static readonly BuildingInfo PrisonPoliceSmall   = new BuildingInfo("Prison", "policeman", "policeman", BuildingSize.Small);
-        public static readonly BuildingInfo PrisonPoliceMedium  = new BuildingInfo("Prison", "policeman", "policeman", BuildingSize.Medium);
-        
-        public static readonly BuildingInfo FishingBoatMedium   = new BuildingInfo("Fishing boat", "fisher", "fisher", BuildingSize.Medium);
-        public static readonly BuildingInfo FishingBoatLarge    = new BuildingInfo("Fishing Trawler", "fisher", "fisher", BuildingSize.Large);
-        
-        public static readonly BuildingInfo FarmMedium          = new BuildingInfo("Farm", "farmer", "farmer", BuildingSize.Medium);
-        public static readonly BuildingInfo FarmLarge           = new BuildingInfo("Ranch", "farmer", "farmer", BuildingSize.Large);
+        public static readonly BuildingInfo CarpentrySmall      = new BuildingInfo("Carpentry Workshop", ProfessionInfo.Carpenter, ProfessionInfo.Carpenter, BuildingSize.Small);
 
-        public static readonly BuildingInfo PeasantsHutMedium   = new BuildingInfo("Peasants' Hut", "peasant", "peasant", BuildingSize.Medium);
-        public static readonly BuildingInfo PeasantsHutLarge    = new BuildingInfo("Plantation", "peasant", "peasant", BuildingSize.Large);
-        
-        public static readonly BuildingInfo HuntersHutMedium    = new BuildingInfo("Hunters Hut", "hunter", "hunter", BuildingSize.Medium);
-        public static readonly BuildingInfo HuntersHutLarge     = new BuildingInfo("Hunters Lodge", "hunter", "hunter", BuildingSize.Large);
-        
-        public static readonly BuildingInfo MineMedium          = new BuildingInfo("Quarry", "miner", "miner", BuildingSize.Medium);
-        public static readonly BuildingInfo MineLarge           = new BuildingInfo("Mine", "miner", "miner", BuildingSize.Large);
-        
-        public static readonly BuildingInfo LumberjacksHutMedium = new BuildingInfo("Lumberjacks Hut", "lumberjack", "lumberjack", BuildingSize.Medium);
-        public static readonly BuildingInfo LumberjacksHutLarge = new BuildingInfo("Sawmill", "lumberjack", "lumberjack", BuildingSize.Large);
+        public static readonly BuildingInfo IronworksSmall = new BuildingInfo("Ironworks", ProfessionInfo.Worker, ProfessionInfo.Worker, BuildingSize.Medium);
+        public static readonly BuildingInfo IronworksMedium = new BuildingInfo("Metallurgical Plant", ProfessionInfo.Worker, ProfessionInfo.Worker, BuildingSize.Large);
+        public static readonly BuildingInfo FurnitureSmall = new BuildingInfo("Woodworking Factory", ProfessionInfo.Worker, ProfessionInfo.Worker, BuildingSize.Medium);
+        public static readonly BuildingInfo FurnitureMedium = new BuildingInfo("Woodworking Factory", ProfessionInfo.Worker, ProfessionInfo.Worker, BuildingSize.Large);
+        public static readonly BuildingInfo ClothesFactorySmall = new BuildingInfo("Sewing Workshop", ProfessionInfo.Worker, ProfessionInfo.Worker, BuildingSize.Medium);
+        public static readonly BuildingInfo ClothesFactoryMedium = new BuildingInfo("Textile Factory", ProfessionInfo.Worker, ProfessionInfo.Worker, BuildingSize.Large);
+        public static readonly BuildingInfo JevellerWorkshopMedium = new BuildingInfo("Jewellery Factory", ProfessionInfo.Worker, ProfessionInfo.Worker, BuildingSize.Large);
 
-        public static readonly BuildingInfo ShamansHutSmall     = new BuildingInfo("Shamans Hut", "shaman", "shaman", BuildingSize.Small);
+        public static readonly BuildingInfo IronworksSlvSmall = new BuildingInfo("Ironworks", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Medium);
+        public static readonly BuildingInfo IronworksSlvMedium = new BuildingInfo("Metallurgical Plant", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Large);
+        public static readonly BuildingInfo FurnitureSlvSmall = new BuildingInfo("Woodworking Factory", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Medium);
+        public static readonly BuildingInfo FurnitureSlvMedium = new BuildingInfo("Woodworking Factory", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Large);
+        public static readonly BuildingInfo ClothesFactorySlvSmall = new BuildingInfo("Sewing Workshop", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Medium);
+        public static readonly BuildingInfo ClothesFactorySlvMedium = new BuildingInfo("Textile Factory", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Large);
+        public static readonly BuildingInfo JevellerWorkshopSlvMedium = new BuildingInfo("Jewellery Factory", ProfessionInfo.Slave, ProfessionInfo.Slave, BuildingSize.Large);
 
-        public static readonly BuildingInfo ChurchSmall         = new BuildingInfo("Church", "priest", "priest", BuildingSize.Small);
-        public static readonly BuildingInfo ChurchMedium        = new BuildingInfo("Temple", "priest", "priest", BuildingSize.Medium);
-        public static readonly BuildingInfo ChurchLarge         = new BuildingInfo("Cathedral", "priest", "priest", BuildingSize.Large);
-        
-        public static readonly BuildingInfo TavernSmall         = new BuildingInfo("Tavern", "barman", "barmaid", BuildingSize.Small);
-        public static readonly BuildingInfo BarSmall            = new BuildingInfo("Bar", "barman", "barmaid", BuildingSize.Small);
-        public static readonly BuildingInfo NightClubMedium     = new BuildingInfo("Night Club", "barman", "barmaid", BuildingSize.Medium);
+        public static readonly BuildingInfo PirateShip = new BuildingInfo("Pirate ship", ProfessionInfo.Pirate, ProfessionInfo.Pirate, BuildingSize.Small);
 
-        public static readonly BuildingInfo RoguesDenSmall      = new BuildingInfo("Rogue's Den", "rogue", "rogue", BuildingSize.Small);
-        public static readonly BuildingInfo RoguesDenMedium     = new BuildingInfo("Rogue's Den", "rogue", "rogue", BuildingSize.Medium);
+        public static readonly BuildingInfo BanditsBarracks     = new BuildingInfo("Barracks", ProfessionInfo.Bandit, ProfessionInfo.Bandit, BuildingSize.Small);
 
-        public static readonly BuildingInfo GamblingSmall       = new BuildingInfo("Gambling Den", "gambler", "gambler", BuildingSize.Small);
-        public static readonly BuildingInfo GamblingMedium      = new BuildingInfo("Casino", "gambler", "gambler", BuildingSize.Medium);
+        public static readonly BuildingInfo BarracksSmall       = new BuildingInfo("Barracks", ProfessionInfo.Soldier, ProfessionInfo.Soldier, BuildingSize.Small);
+        public static readonly BuildingInfo BarracksHuge        = new BuildingInfo("Barracks", ProfessionInfo.Soldier, ProfessionInfo.Soldier, BuildingSize.Huge);
 
-        public static readonly BuildingInfo BrothelMedium       = new BuildingInfo("Brothel", "prostitute", "prostitute", BuildingSize.Medium);
+        public static readonly BuildingInfo ScienceSmall        = new BuildingInfo("Laboratory", ProfessionInfo.Scientiest, ProfessionInfo.Scientiest, BuildingSize.Small);
+        public static readonly BuildingInfo ScienceMedium       = new BuildingInfo("University", ProfessionInfo.Scientiest, ProfessionInfo.Scientiest, BuildingSize.Medium);
+        public static readonly BuildingInfo ScienceLarge        = new BuildingInfo("Academy", ProfessionInfo.Scientiest, ProfessionInfo.Scientiest, BuildingSize.Large);
 
-        public static readonly BuildingInfo StripClubSmall      = new BuildingInfo("Strip Club", "stripper", "stripper", BuildingSize.Small);
+        public static readonly BuildingInfo SchoolSmall         = new BuildingInfo("School", ProfessionInfo.Teacher, ProfessionInfo.Teacher, BuildingSize.Small);
+        public static readonly BuildingInfo SchoolMedium        = new BuildingInfo("College", ProfessionInfo.Teacher, ProfessionInfo.Teacher, BuildingSize.Medium);
 
-        public static readonly BuildingInfo CultureMeduim       = new BuildingInfo("Concert Hall", "musician", "musician", BuildingSize.Medium);
-        public static readonly BuildingInfo CultureLarge        = new BuildingInfo("Conservatoire", "musician", "musician", BuildingSize.Large);
+        public static readonly BuildingInfo InnSmall            = new BuildingInfo("Inn", ProfessionInfo.Innkeeper, ProfessionInfo.Innkeeper, BuildingSize.Small);
 
-        public static readonly BuildingInfo TheatreMedium       = new BuildingInfo("Theatre", "actor", "actor", BuildingSize.Medium);
-        public static readonly BuildingInfo CinemaLarge         = new BuildingInfo("Film Studio", "actor", "actor", BuildingSize.Large);
+        public static readonly BuildingInfo MarketSmall         = new BuildingInfo("Marketplace", ProfessionInfo.Merchant, ProfessionInfo.Merchant, BuildingSize.Small);
+        public static readonly BuildingInfo MarketMedium        = new BuildingInfo("Bazaar", ProfessionInfo.Merchant, ProfessionInfo.Merchant, BuildingSize.Large);
 
-        public static readonly BuildingInfo CircusMedium        = new BuildingInfo("Circus", "gladiator", "gladiator", BuildingSize.Medium);
+        public static readonly BuildingInfo CourtSmall          = new BuildingInfo("Courthouse", ProfessionInfo.Scribe, ProfessionInfo.Scribe, BuildingSize.Small);
+        public static readonly BuildingInfo CourtMedium         = new BuildingInfo("Administration", ProfessionInfo.Scribe, ProfessionInfo.Scribe, BuildingSize.Medium);
 
-        public static readonly BuildingInfo TraderMedium        = new BuildingInfo("Merchant ship", "sailor", "sailor", BuildingSize.Medium);
-        public static readonly BuildingInfo TraderLarge         = new BuildingInfo("Freighter", "sailor", "sailor", BuildingSize.Large);
-        public static readonly BuildingInfo NavalAcademyHuge    = new BuildingInfo("Nautical School", "sailor", "sailor", BuildingSize.Huge);
-        public static readonly BuildingInfo NavalVessel         = new BuildingInfo("Naval Vessel", "sailor", "sailor", BuildingSize.Medium);
-        
-        public static readonly BuildingInfo TailorWorkshopSmall = new BuildingInfo("Tailoring Shop", "tailor", "tailor", BuildingSize.Small);
+        public static readonly BuildingInfo AdministrationSmall = new BuildingInfo("Courthouse", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Small);
+        public static readonly BuildingInfo AdministrationMedium = new BuildingInfo("Administration", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Medium);
 
-        public static readonly BuildingInfo JevellerWorkshopSmall = new BuildingInfo("Jewellery Workshop", "jeveller", "jeveller", BuildingSize.Small);
-        
-        public static readonly BuildingInfo SmithySmall         = new BuildingInfo("Smithy", "blacksmith", "blacksmith", BuildingSize.Small);
-        
-        public static readonly BuildingInfo CarpentrySmall      = new BuildingInfo("Carpentry Workshop", "carpenter", "carpenter", BuildingSize.Small);
+        public static readonly BuildingInfo HotelSmall = new BuildingInfo("Motel", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Small);
+        public static readonly BuildingInfo HotelMedium = new BuildingInfo("Hotel", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Medium);
+        public static readonly BuildingInfo HotelLarge = new BuildingInfo("Resort", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Large);
 
-        public static readonly BuildingInfo IronworksSmall      = new BuildingInfo("Ironworks", "worker", "worker", BuildingSize.Medium);
-        public static readonly BuildingInfo IronworksMedium     = new BuildingInfo("Metallurgical Plant", "worker", "worker", BuildingSize.Large);
-        public static readonly BuildingInfo FurnitureSmall      = new BuildingInfo("Woodworking Factory", "worker", "worker", BuildingSize.Medium);
-        public static readonly BuildingInfo FurnitureMedium     = new BuildingInfo("Woodworking Factory", "worker", "worker", BuildingSize.Large);
-        public static readonly BuildingInfo ClothesFactorySmall = new BuildingInfo("Sewing Workshop", "worker", "worker", BuildingSize.Medium);
-        public static readonly BuildingInfo ClothesFactoryMedium = new BuildingInfo("Textile Factory", "worker", "worker", BuildingSize.Large);
-        public static readonly BuildingInfo JevellerWorkshopMedium = new BuildingInfo("Jewellery Factory", "worker", "worker", BuildingSize.Large);
+        public static readonly BuildingInfo OfficeSmall = new BuildingInfo("Company", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Small);
+        public static readonly BuildingInfo OfficeMedium = new BuildingInfo("Agency", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Medium);
+        public static readonly BuildingInfo OfficeLarge = new BuildingInfo("Corporation", ProfessionInfo.Clerk, ProfessionInfo.Clerk, BuildingSize.Medium);
 
-        public static readonly BuildingInfo IronworksSlvSmall   = new BuildingInfo("Ironworks", "slave", "slave", BuildingSize.Medium);
-        public static readonly BuildingInfo IronworksSlvMedium  = new BuildingInfo("Metallurgical Plant", "slave", "slave", BuildingSize.Large);
-        public static readonly BuildingInfo FurnitureSlvSmall   = new BuildingInfo("Woodworking Factory", "slave", "slave", BuildingSize.Medium);
-        public static readonly BuildingInfo FurnitureSlvMedium  = new BuildingInfo("Woodworking Factory", "slave", "slave", BuildingSize.Large);
-        public static readonly BuildingInfo ClothesFactorySlvSmall = new BuildingInfo("Sewing Workshop", "slave", "slave", BuildingSize.Medium);
-        public static readonly BuildingInfo ClothesFactorySlvMedium = new BuildingInfo("Textile Factory", "slave", "slave", BuildingSize.Large);
-        public static readonly BuildingInfo JevellerWorkshopSlvMedium = new BuildingInfo("Jewellery Factory", "slave", "slave", BuildingSize.Large);
+        public static readonly BuildingInfo CastleSmall = new BuildingInfo("Castle", ProfessionInfo.Noble, ProfessionInfo.Noble, BuildingSize.Medium);
+        public static readonly BuildingInfo EstateSmall = new BuildingInfo("Estate", ProfessionInfo.Noble, ProfessionInfo.Noble, BuildingSize.Medium);
+        public static readonly BuildingInfo MansionSmall = new BuildingInfo("Mansion", ProfessionInfo.Noble, ProfessionInfo.Noble, BuildingSize.Small);
+        public static readonly BuildingInfo MansionMedium = new BuildingInfo("Palace", ProfessionInfo.Noble, ProfessionInfo.Noble, BuildingSize.Medium);
 
-        public static readonly BuildingInfo PirateShip = new BuildingInfo("Pirate ship", "pirate", "pirate", BuildingSize.Small);
+        public static readonly BuildingInfo MedicineSmall       = new BuildingInfo("Chemist Shop", ProfessionInfo.Chemist, ProfessionInfo.Chemist, BuildingSize.Medium);
+        public static readonly BuildingInfo MedicineMedium      = new BuildingInfo("Clinic", ProfessionInfo.Doctor, ProfessionInfo.Doctor, BuildingSize.Medium);
+        public static readonly BuildingInfo MedicineLarge       = new BuildingInfo("Hospital", ProfessionInfo.Doctor, ProfessionInfo.Doctor, BuildingSize.Large);
 
-        public static readonly BuildingInfo BanditsBarracks     = new BuildingInfo("Barracks", "bandit", "bandit", BuildingSize.Small);
-
-        public static readonly BuildingInfo BarracksSmall       = new BuildingInfo("Barracks", "soldier", "soldier", BuildingSize.Small);
-        public static readonly BuildingInfo BarracksHuge        = new BuildingInfo("Barracks", "soldier", "soldier", BuildingSize.Huge);
-
-        public static readonly BuildingInfo ScienceSmall        = new BuildingInfo("Laboratory", "scientiest", "scientiest", BuildingSize.Small);
-        public static readonly BuildingInfo ScienceMedium       = new BuildingInfo("University", "scientiest", "scientiest", BuildingSize.Medium);
-        public static readonly BuildingInfo ScienceLarge        = new BuildingInfo("Academy", "scientiest", "scientiest", BuildingSize.Large);
-
-        public static readonly BuildingInfo SchoolSmall         = new BuildingInfo("School", "teacher", "teacher", BuildingSize.Small);
-        public static readonly BuildingInfo SchoolMedium        = new BuildingInfo("College", "teacher", "teacher", BuildingSize.Medium);
-
-        public static readonly BuildingInfo InnSmall            = new BuildingInfo("Inn", "innkeeper", "barmaid", BuildingSize.Small);
-
-        public static readonly BuildingInfo MarketSmall         = new BuildingInfo("Marketplace", "merchant", "merchant", BuildingSize.Small);
-        public static readonly BuildingInfo MarketMedium        = new BuildingInfo("Bazaar", "merchant", "merchant", BuildingSize.Large);
-
-        public static readonly BuildingInfo CourtSmall          = new BuildingInfo("Courthouse", "scribe", "scribe", BuildingSize.Small);
-        public static readonly BuildingInfo CourtMedium         = new BuildingInfo("Administration", "scribe", "scribe", BuildingSize.Medium);
-
-        public static readonly BuildingInfo AdministrationSmall = new BuildingInfo("Courthouse", "clerk", "clerk", BuildingSize.Small);
-        public static readonly BuildingInfo AdministrationMedium = new BuildingInfo("Administration", "clerk", "clerk", BuildingSize.Medium);
-
-        public static readonly BuildingInfo HotelSmall          = new BuildingInfo("Motel", "clerk", "clerk", BuildingSize.Small);
-        public static readonly BuildingInfo HotelMedium         = new BuildingInfo("Hotel", "clerk", "clerk", BuildingSize.Medium);
-        public static readonly BuildingInfo HotelLarge          = new BuildingInfo("Resort", "clerk", "clerk", BuildingSize.Large);
-
-        public static readonly BuildingInfo OfficeSmall         = new BuildingInfo("Company", "clerk", "clerk", BuildingSize.Small);
-        public static readonly BuildingInfo OfficeMedium        = new BuildingInfo("Agency", "clerk", "clerk", BuildingSize.Medium);
-        public static readonly BuildingInfo OfficeLarge         = new BuildingInfo("Corporation", "clerk", "clerk", BuildingSize.Medium);
-
-        public static readonly BuildingInfo CastleSmall         = new BuildingInfo("Castle", "noble", "noble", BuildingSize.Medium);
-        public static readonly BuildingInfo EstateSmall         = new BuildingInfo("Estate", "noble", "noble", BuildingSize.Medium);
-        public static readonly BuildingInfo MansionSmall        = new BuildingInfo("Mansion", "noble", "noble", BuildingSize.Small);
-        public static readonly BuildingInfo MansionMedium       = new BuildingInfo("Palace", "noble", "noble", BuildingSize.Medium);
-
-        public static readonly BuildingInfo MedicineSmall       = new BuildingInfo("Chemist Shop", "chemist", "chemist", BuildingSize.Medium);
-        public static readonly BuildingInfo MedicineMedium      = new BuildingInfo("Clinic", "doctor", "doctor", BuildingSize.Medium);
-        public static readonly BuildingInfo MedicineLarge       = new BuildingInfo("Hospital", "doctor", "doctor", BuildingSize.Large);
-
-        public static readonly BuildingInfo AlchemyShopSmall    = new BuildingInfo("Alchemy Shop", "alchemist", "alchemist", BuildingSize.Small);
+        public static readonly BuildingInfo AlchemyShopSmall    = new BuildingInfo("Alchemy Shop", ProfessionInfo.Alchemist, ProfessionInfo.Alchemist, BuildingSize.Small);
       
-        public static readonly BuildingInfo MagicSmall          = new BuildingInfo("Mage Tower", "mage", "mage", BuildingSize.Small);
-        public static readonly BuildingInfo MagicMedium         = new BuildingInfo("Magic University", "mage", "mage", BuildingSize.Medium);
-        public static readonly BuildingInfo MagicLarge          = new BuildingInfo("Magic Academy", "mage", "mage", BuildingSize.Large);
+        public static readonly BuildingInfo MagicSmall          = new BuildingInfo("Mage Tower", ProfessionInfo.Mage, ProfessionInfo.Mage, BuildingSize.Small);
+        public static readonly BuildingInfo MagicMedium         = new BuildingInfo("Magic University", ProfessionInfo.Mage, ProfessionInfo.Mage, BuildingSize.Medium);
+        public static readonly BuildingInfo MagicLarge          = new BuildingInfo("Magic Academy", ProfessionInfo.Mage, ProfessionInfo.Mage, BuildingSize.Large);
         
         public string m_sName;
-        public string m_sOwnerM;
-        public string m_sOwnerF;
+        public ProfessionInfo m_pOwner;
+        public ProfessionInfo m_pWorkers;
 
         public int m_iMinPop;
         public int m_iMaxPop;
 
         public BuildingSize m_eSize;
-        
-        public BuildingInfo(string sName, string sOwnerM, string sOwnerF, BuildingSize eSize)
+
+        public BuildingInfo(string sName, ProfessionInfo pOwner, ProfessionInfo pWorkers, BuildingSize eSize)
         {
             m_sName = sName;
-            m_sOwnerM = sOwnerM;
-            m_sOwnerF = sOwnerF;
+            m_pOwner = pOwner;
+            m_pWorkers = pWorkers;
 
             m_eSize = eSize;
 

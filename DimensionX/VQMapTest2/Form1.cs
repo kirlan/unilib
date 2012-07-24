@@ -362,8 +362,8 @@ namespace VQMapTest2
                             continue;
 
                         int iPop = 0;
-                        cPop.TryGetValue(pBuilding.m_pInfo.m_sOwnerM, out iPop);
-                        cPop[pBuilding.m_pInfo.m_sOwnerM] = iPop + pBuilding.m_pInfo.m_iMinPop;
+                        cPop.TryGetValue(pBuilding.m_pInfo.m_pOwner.m_sNameM, out iPop);
+                        cPop[pBuilding.m_pInfo.m_pOwner.m_sNameM] = iPop + pBuilding.m_pInfo.m_iMinPop;
                     }
                 }
 
