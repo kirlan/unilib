@@ -106,11 +106,11 @@ namespace Socium.Settlements
                 if (m_cInfo.Count == 0)
                 {
                     m_cInfo[SettlementSize.Hamlet] = new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, null);
-                    m_cInfo[SettlementSize.Village] = new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Village hall", "Elder", "Elder", BuildingSize.Unique));
-                    m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Town hall", "Mayor", "Mayor", BuildingSize.Unique));
-                    m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("City hall", "Mayor", "Mayor", BuildingSize.Unique));
-                    m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, new BuildingInfo("City hall", "Mayor", "Mayor", BuildingSize.Unique));
-                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, 7, new BuildingInfo("Headquarters", "General", "General", BuildingSize.Unique));
+                    m_cInfo[SettlementSize.Village] = new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Village hall", ProfessionInfo.Elder, ProfessionInfo.Elder, BuildingSize.Unique));
+                    m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Town hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
+                    m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("City hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
+                    m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, new BuildingInfo("City hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
+                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, 7, new BuildingInfo("Headquarters", ProfessionInfo.General, ProfessionInfo.General, BuildingSize.Unique));
                 }
                 return Settlement.m_cInfo;
             }
