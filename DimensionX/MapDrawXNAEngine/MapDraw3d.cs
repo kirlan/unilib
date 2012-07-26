@@ -2326,7 +2326,7 @@ namespace MapDrawXNAEngine
                     pCenter.Position = m_aShape[i].m_pPosition + pUplift;
                     pCenter.Normal = m_aShape[i].m_pNormal;
                     //pCenter.Color = Microsoft.Xna.Framework.Color.Tan;
-                    pCenter.TextureCoordinate = m_aShape[i].TextureCoordinate;
+                    pCenter.TextureCoordinate = GetTextureCoordinate(pCenter.Position, eShape, RX, RY, fTextureScale); //m_aShape[i].TextureCoordinate;
                     pCenter.TexWeights = m_aShape[i].TexWeights;
                     pCenter.TexWeights2 = m_aShape[i].TexWeights2;
                     if (i == 0 || i == m_aShape.Length - 1)
