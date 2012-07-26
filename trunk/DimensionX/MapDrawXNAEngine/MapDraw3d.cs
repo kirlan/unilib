@@ -126,10 +126,7 @@ namespace MapDrawXNAEngine
                 {
                     foreach (Effect currentEffect in mesh.Effects)
                     {
-                        if (eWorldShape == WorldShape.Ringworld)
-                            currentEffect.CurrentTechnique = currentEffect.Techniques["TreeRingworld"];
-                        else
-                            currentEffect.CurrentTechnique = currentEffect.Techniques["Tree"];
+                        currentEffect.CurrentTechnique = currentEffect.Techniques["Tree"];
                         currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
                     }
                 }
@@ -183,11 +180,7 @@ namespace MapDrawXNAEngine
                 {
                     foreach (Effect currentEffect in mesh.Effects)
                     {
-                        if (eWorldShape == WorldShape.Ringworld)
-                            currentEffect.CurrentTechnique = currentEffect.Techniques["ModelRingworld"];
-                        else
-                            currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
-
+                        currentEffect.CurrentTechnique = currentEffect.Techniques["Model"];
                         currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
                     }
                 }
@@ -2537,7 +2530,7 @@ namespace MapDrawXNAEngine
             if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 m_fLandHeightMultiplier = 7f / 60;//m_pWorld.m_fMaxHeight;
             else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
-                m_fLandHeightMultiplier = 1.75f / 60;//m_pWorld.m_fMaxHeight;
+                m_fLandHeightMultiplier = 3.5f / 60;//1.75f / 60;//m_pWorld.m_fMaxHeight;
             else
                 m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
 
@@ -2577,22 +2570,20 @@ namespace MapDrawXNAEngine
                 //pEffectFogNear.SetValue(m_pWorld.m_pGrid.RY / 1000);
                 //pEffectFogFar.SetValue(2 * m_pWorld.m_pGrid.RY / 1000);
 
+                m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
                     m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
-                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
                     pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
                 }
                 else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
                 {
                     m_pCamera = new PlanetCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
-                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                     pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
                 }
                 else
                 {
                     m_pCamera = new PlainCamera(GraphicsDevice);
-                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                     pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
                 }
             }
@@ -2904,7 +2895,7 @@ namespace MapDrawXNAEngine
             m_pMyEffect = LibContent.Load<Effect>("content/Effect1");
             BindEffectParameters();
 
-            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
+            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             pEffectWorld.SetValue(Matrix.Identity);
 
             pEffectAmbientLightColor.SetValue(eSkyColor.ToVector4());
@@ -3090,9 +3081,22 @@ namespace MapDrawXNAEngine
             if (m_eMode == MapMode.Sattelite)
             {
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
+                {
+                    pEffectDirectionalLightDirection.SetValue(m_pCamera.Target);
+                    pEffectDirectionalLightIntensity.SetValue(0.8f);
+                }
+                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                {
+                    pEffectDirectionalLightDirection.SetValue(-m_pCamera.Target);
+                    pEffectDirectionalLightIntensity.SetValue(0.8f);
+                }
                 else
-                    m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
+                {
+                    pEffectDirectionalLightDirection.SetValue(new Vector3(1, -1, -1));
+                    pEffectDirectionalLightIntensity.SetValue(1f);
+                }
+                
+                m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                 m_pMyEffect.CurrentTechnique.Passes[0].Apply();
 
                 GraphicsDevice.SetRenderTarget(refractionRenderTarget);
@@ -3187,10 +3191,7 @@ namespace MapDrawXNAEngine
 
             //m_pMyEffect.Parameters["GridFog"].SetValue(m_eMode == MapMode.Sattelite);
             //m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Grid"];
-            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["LandRingworld"];
-            else
-                m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
+            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
 
             //m_pMyEffect.CurrentTechnique.Passes[6].Apply();
