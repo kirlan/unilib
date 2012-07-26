@@ -5,47 +5,72 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MapDrawXNAEngine
+namespace SphereCameraTest
 {
-    class PlanetCamera : Camera
+    public class FreeCamera
     {
+        protected GraphicsDevice GraphicsDevice { get; set; }
+        
+        /// <summary>
+        /// Поворот вокруг оси Y
+        /// </summary>
         public float Yaw { get; set; }
         public float Pitch { get; set; }
         public float Roll { get; set; }
 
-        private float m_fR;
+        public Vector3 Target { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Direction { get; protected set; }
+        public Vector3 Top { get; set; }
 
-        public PlanetCamera(float fR, GraphicsDevice graphicsDevice)
-            : base(graphicsDevice)
+        public Matrix View { get; set; }
+        public Matrix Projection { get; set; }
+        
+        private float m_fR;
+        public float m_fDistance;
+
+        public FreeCamera(float fR, GraphicsDevice graphicsDevice)
         {
+            this.GraphicsDevice = graphicsDevice;
+            UpdateAspectRatio(); 
+            
             m_fR = fR;
 
             Position = new Vector3(0, m_fR, 0);
-            Target = new Vector3(0, m_fR*2, 0);
+            Target = new Vector3(0, m_fR * 2, 0);
 
             Yaw = MathHelper.ToRadians(0);
             Pitch = MathHelper.ToRadians(359);
             Roll = MathHelper.ToRadians(0);
-            
+
             m_fDistance = Vector3.Distance(Position, Target);
         }
 
-        public override void Orbit(float YawChange, float PitchChange, float RollChange)
+        private void generatePerspectiveProjectionMatrix(float FieldOfView)
         {
-            this.Yaw += YawChange;
-            this.Pitch -= PitchChange;
-            
-            //this.Pitch = Math.Max(MathHelper.ToRadians(270), Math.Min(MathHelper.ToRadians(359), this.Pitch));
+            PresentationParameters pp = GraphicsDevice.PresentationParameters;
+            //float aspectRatio = (float)pp.BackBufferWidth /
+            //(float)pp.BackBufferHeight;
+            this.Projection = Matrix.CreatePerspectiveFieldOfView(
+            FieldOfView, GraphicsDevice.Viewport.AspectRatio, 0.1f, float.MaxValue);
+        }
+        public void UpdateAspectRatio()
+        {
+            generatePerspectiveProjectionMatrix(MathHelper.ToRadians(45));
+        }
+
+        public void Orbit(float YawChange, float PitchChange, float RollChange)
+        {
+            this.Yaw += MathHelper.ToRadians(YawChange);
+            this.Pitch -= MathHelper.ToRadians(PitchChange);
+
+            this.Pitch = Math.Max(MathHelper.ToRadians(270), Math.Min(MathHelper.ToRadians(359), this.Pitch));
             //this.Pitch = Math.Max(MathHelper.ToRadians(91), Math.Min(MathHelper.ToRadians(269), this.Pitch));
 
-            this.Roll += RollChange;
+            //this.Roll += MathHelper.ToRadians(RollChange);
         }
 
-        public override void Pan(float fLeft, float fUp)
-        {
-        }
-
-        public override void ZoomIn(float fDistance)
+        internal void ZoomIn(float fDistance)
         {
             fDistance *= m_fDistance / 10000;
 
@@ -58,7 +83,7 @@ namespace MapDrawXNAEngine
                 m_fDistance = 1000;
         }
 
-        public override void Update()
+        internal void Update()
         {
             UpdateAspectRatio();
 
@@ -78,7 +103,7 @@ namespace MapDrawXNAEngine
             //вычислим направление камеры, как если бы мишень никуда не смещалась, т.е. была бы Vector3.Backward
             Direction = Vector3.Transform(Vector3.Down, cameraRotation);
             //а теперь повернём вектор направления так, чтобы совместить Vector3.Backward с Vector3.Normalize(Target)
-            if (!float.IsNaN(pAxis.X) && !float.IsNaN(pAxis.Y) && !float.IsNaN(pAxis.Z))
+            if(!float.IsNaN(pAxis.X) && !float.IsNaN(pAxis.Y) && !float.IsNaN(pAxis.Z))
                 Direction = Vector3.Transform(Direction, Matrix.CreateFromAxisAngle(pAxis, fRotAngle));
 
             Position = Target - Direction * m_fDistance;
