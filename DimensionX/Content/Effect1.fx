@@ -153,49 +153,6 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 		   texColor*SpecularColor*specular, FogColor, l);
 }
 
-float4 PixelShaderFunctionPoint(VertexShaderOutput input) : COLOR0
-{
-    // TODO: add your pixel shader code here.
-	float4 normal = float4(input.Normal, 1.0);
-
-	float3 lightDirection = normalize(input.Position3D - DirectionalLightDirection);
-
-	float4 diffuse = saturate(dot(-lightDirection,normal));
-	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	float4 specular = pow(saturate(dot(reflect,input.View)),15);
-
-	float d = length(input.Position3D - CameraPosition);
-	float l = exp( - pow( d * FogDensity , 2 ) );
-	l = saturate(1 - l);
-
-    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
-
-	float4 farColor = tex2D(TextureSampler0, input.TextureCoords)*input.TextureWeights.x;
-	farColor += tex2D(TextureSampler1, input.TextureCoords)*input.TextureWeights.y;
-	farColor += tex2D(TextureSampler2, input.TextureCoords)*input.TextureWeights.z;
-	farColor += tex2D(TextureSampler3, input.TextureCoords)*input.TextureWeights.w;
-	farColor += tex2D(TextureSampler4, input.TextureCoords)*input.TextureWeights2.x;
-	farColor += tex2D(TextureSampler5, input.TextureCoords)*input.TextureWeights2.y;
-	farColor += tex2D(TextureSampler6, input.TextureCoords)*input.TextureWeights2.z;
-	farColor += tex2D(TextureSampler7, input.TextureCoords)*input.TextureWeights2.w;
-
-    float2 nearTextureCoords = input.TextureCoords*5;
-    float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*input.TextureWeights.x;
-    nearColor += tex2D(TextureSampler1, nearTextureCoords)*input.TextureWeights.y;
-    nearColor += tex2D(TextureSampler2, nearTextureCoords)*input.TextureWeights.z;
-    nearColor += tex2D(TextureSampler3, nearTextureCoords)*input.TextureWeights.w;
-    nearColor += tex2D(TextureSampler4, nearTextureCoords)*input.TextureWeights2.x;
-    nearColor += tex2D(TextureSampler5, nearTextureCoords)*input.TextureWeights2.y;
-    nearColor += tex2D(TextureSampler6, nearTextureCoords)*input.TextureWeights2.z;
-    nearColor += tex2D(TextureSampler7, nearTextureCoords)*input.TextureWeights2.w;
-
-    float4 texColor = lerp(nearColor, farColor, blendFactor);
-
-	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
-		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   texColor*SpecularColor*specular, FogColor, l);
-}
-
 technique Land
 {
     pass Pass1
@@ -207,16 +164,6 @@ technique Land
     }
 }
 
-technique LandRingworld
-{
-    pass Pass1
-    {
-        // TODO: set renderstates here.
-
-        VertexShader = compile vs_2_0 VertexShaderFunction();
-        PixelShader = compile ps_2_0 PixelShaderFunctionPoint();
-    }
-}
 //------- Technique: Grid --------
 struct GridVertexShaderInput
 {
@@ -511,39 +458,6 @@ float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 	return output;
 }
 
-float4 TreePSPoint(ModelVertexShaderOutput input) : COLOR0
-{
-    // TODO: add your pixel shader code here.
-	float4 normal = float4(input.Normal, 1.0);
-
-	float3 lightDirection = normalize(input.Position3D - DirectionalLightDirection);
-
-	float4 diffuse = 1;//saturate(dot(-lightDirection,normal));
-	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	float4 specular = pow(saturate(dot(reflect,input.View)),15);
-
-	float d = length(input.Position3D - CameraPosition);
-	float l = exp( - pow( d * FogDensity , 2 ) );
-	l = saturate(1 - l);
-
-    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
-
-	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
-
-	float4 output = texColor;
-
-	clip(output.a - alphaReference); 	 
-
-	output.rgb = lerp(texColor.rgb*AmbientLightColor.rgb*AmbientLightIntensity + 
-		   texColor.rgb*DirectionalLightIntensity*DirectionalLightColor.rgb*diffuse + 
-		   texColor.rgb*SpecularColor.rgb*specular, FogColor.rgb, l)*output.a;
-
-	return output;
-	//return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
-	//	   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-	//	   texColor*SpecularColor*specular, FogColor, l);
-}
-
 float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
@@ -562,30 +476,6 @@ float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
 		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse, FogColor, l);//*output.a;
 }
 
-float4 ModelPSPoint(ModelVertexShaderOutput input) : COLOR0
-{
-    // TODO: add your pixel shader code here.
-	float4 normal = float4(input.Normal, 1.0);
-
-	float3 lightDirection = normalize(input.Position3D - DirectionalLightDirection);
-
-	float4 diffuse = saturate(dot(-lightDirection,normal));
-	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	float4 specular = pow(saturate(dot(reflect,input.View)),15);
-
-	float d = length(input.Position3D - CameraPosition);
-	float l = exp( - pow( d * FogDensity , 2 ) );
-	l = saturate(1 - l);
-
-    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
-
-	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
-
-	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
-		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   texColor*SpecularColor*specular, FogColor, l);
-}
-
 technique Tree
 {
     pass Pass1
@@ -593,16 +483,6 @@ technique Tree
 	    VertexShader = compile vs_3_0 HardwareInstancingVertexShader();
         //PixelShader = compile ps_3_0 InstancedModelPS();
         PixelShader = compile ps_3_0 TreePSPlain();
-    }
-}
-
-technique TreeRingworld
-{
-    pass Pass1
-    {
-	    VertexShader = compile vs_3_0 HardwareInstancingVertexShader();
-//        VertexShader = compile vs_2_0 ModelVS();
-        PixelShader = compile ps_3_0 TreePSPoint();
     }
 }
 
@@ -614,17 +494,6 @@ technique Model
 
         VertexShader = compile vs_2_0 ModelVS();
         PixelShader = compile ps_2_0 ModelPSPlain();
-    }
-}
-
-technique ModelRingworld
-{
-    pass Pass1
-    {
-        // TODO: set renderstates here.
-
-        VertexShader = compile vs_2_0 ModelVS();
-        PixelShader = compile ps_2_0 ModelPSPoint();
     }
 }
 
