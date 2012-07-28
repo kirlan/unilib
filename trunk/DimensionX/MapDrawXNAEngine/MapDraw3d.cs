@@ -214,7 +214,7 @@ namespace MapDrawXNAEngine
         
         MapModeData<VertexMultitextured> m_pLand = new MapModeData<VertexMultitextured>();
         MapModeData<VertexMultitextured> m_pUnderwater = new MapModeData<VertexMultitextured>();
-        MapModeData<VertexPositionTexture> m_pWater = new MapModeData<VertexPositionTexture>();
+        MapModeData<VertexPositionNormalTexture> m_pWater = new MapModeData<VertexPositionNormalTexture>();
 
         Dictionary<MapMode, MapModeData<VertexPositionColorNormal>> m_cMapModeData = new Dictionary<MapMode, MapModeData<VertexPositionColorNormal>>();
 
@@ -1300,7 +1300,7 @@ namespace MapDrawXNAEngine
             }
 
             // Create the verticies for our triangle
-            m_pWater.m_aVertices = new VertexPositionTexture[iPrimitivesCount];
+            m_pWater.m_aVertices = new VertexPositionNormalTexture[iPrimitivesCount];
 
             Dictionary<long, int> cVertexes = new Dictionary<long, int>();
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
@@ -1308,7 +1308,7 @@ namespace MapDrawXNAEngine
             int iCounter = 0;
             foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
             {
-                VertexPositionTexture pVM = new VertexPositionTexture();
+                VertexPositionNormalTexture pVM = new VertexPositionNormalTexture();
 
                 bool bOcean = false;
                 for (int i = 0; i < pVertex.m_aLocations.Length; i++)
@@ -1330,6 +1330,16 @@ namespace MapDrawXNAEngine
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
                 pVM.Position = GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, 0);
 
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                    pVM.Normal = Vector3.Normalize(pVM.Position);
+                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                {
+                    pVM.Normal = Vector3.Transform(pVM.Position, Matrix.CreateScale(0, 1, 1));
+                    pVM.Normal.Normalize();
+                }
+                else
+                    pVM.Normal = new Vector3(0, 1, 0);
+
                 pVM.TextureCoordinate = GetTexture(pVertex);
 
                 m_pWater.m_aVertices[iCounter] = pVM;
@@ -1348,11 +1358,21 @@ namespace MapDrawXNAEngine
                     (pLoc.Owner as LandX).Type.m_eType != LandType.Coastral)
                     continue;
 
-                m_pWater.m_aVertices[iCounter] = new VertexPositionTexture();
+                m_pWater.m_aVertices[iCounter] = new VertexPositionNormalTexture();
                 float fHeight = pLoc.H * m_fLandHeightMultiplier;
 
                 m_pWater.m_aVertices[iCounter].Position = GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, 0);
 
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                    m_pWater.m_aVertices[iCounter].Normal = Vector3.Normalize(m_pWater.m_aVertices[iCounter].Position);
+                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                {
+                    m_pWater.m_aVertices[iCounter].Normal = Vector3.Transform(m_pWater.m_aVertices[iCounter].Position, Matrix.CreateScale(0, 1, 1));
+                    m_pWater.m_aVertices[iCounter].Normal.Normalize();
+                }
+                else
+                    m_pWater.m_aVertices[iCounter].Normal = new Vector3(0, 1, 0); 
+                
                 m_pWater.m_aVertices[iCounter].TextureCoordinate = GetTexture(pLoc);
 
                 cLocations[pLoc.m_iID] = iCounter;
@@ -1425,7 +1445,7 @@ namespace MapDrawXNAEngine
 
                 //сколько раз тайл текстуры укладывается в грань куба по горизонтали или вертикали.
                 //для лучшего наложения должно быть чётным.
-                int iTilesPerQuadrant = 8;
+                int iTilesPerQuadrant = 24;// 8;
 
                 TextureCoordinate.X = fLongitude4 * 2 * iTilesPerQuadrant / (float)Math.PI;
                 TextureCoordinate.Y = fLat * 2 * iTilesPerQuadrant / (float)Math.PI;
@@ -3178,7 +3198,7 @@ namespace MapDrawXNAEngine
 
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
 
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList,
+            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList,
                                                 m_pWater.m_aVertices, 0, m_pWater.m_aVertices.Length - 1, m_pWater.m_aIndices, 0, m_pWater.m_iTrianglesCount);
         }
 

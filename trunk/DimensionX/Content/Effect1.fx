@@ -501,12 +501,13 @@ technique Model
 struct WVertexToPixel
 {
     float4 Position                 : POSITION;
-    //float4 ReflectionMapSamplingPos    : TEXCOORD1;
+    float3 Normal : TEXCOORD1;
+    //float4 ReflectionMapSamplingPos    : TEXCOORD2;
     float4 RefractionMapSamplingPos : TEXCOORD3;
     float4 Position3D                : TEXCOORD4;
 };
 
-WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD)
+WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD, float3 Normal : NORMAL)
 {    
     WVertexToPixel Output = (WVertexToPixel)0;
 
@@ -516,6 +517,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD)
 	float4 worldPosition = mul(inPos, World);
     float4 viewPosition = mul(worldPosition, View);
     Output.Position = mul(viewPosition, Projection);
+	Output.Normal = Normal;
 
     //Output.ReflectionMapSamplingPos = mul(inPos, preWorldReflectionViewProjection);
      
@@ -545,9 +547,9 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
     float4 refractiveColor = tex2D(RefractionSampler, perturbatedRefrTexCoords);
      
     float3 eyeVector = normalize(CameraPosition - PSIn.Position3D);
-    float3 normalVector = float3(0,1,0);
-    float fresnelTerm = dot(eyeVector, normalVector);    
-    float4 combinedColor = lerp(reflectiveColor, refractiveColor, fresnelTerm);
+    //float3 normalVector = float3(0,1,0);
+    float fresnelTerm = dot(eyeVector, PSIn.Normal);    
+    float4 combinedColor = lerp(reflectiveColor, refractiveColor, fresnelTerm*fresnelTerm*fresnelTerm);
      
     //float4 dullColor = float4(0.3f, 0.3f, 0.5f, 1.0f);
      
