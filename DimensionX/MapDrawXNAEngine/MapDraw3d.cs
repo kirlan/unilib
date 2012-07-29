@@ -2590,22 +2590,73 @@ namespace MapDrawXNAEngine
                 //pEffectFogNear.SetValue(m_pWorld.m_pGrid.RY / 1000);
                 //pEffectFogFar.SetValue(2 * m_pWorld.m_pGrid.RY / 1000);
 
+                float fFogDensity = 0.025f;
+                float fFogHeight = 10;
+                int iFogMode = 0;
+
                 m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
                     m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
                     pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
+                    fFogHeight = (m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000)) - 10;
+                    iFogMode = 2;
+                    fFogDensity = 0.05f;
                 }
                 else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
                 {
                     m_pCamera = new PlanetCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
                     pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
+                    fFogHeight = (m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000)) + 10;
+                    iFogMode = 2;
+                    fFogDensity = 0.07f;
                 }
                 else
                 {
                     m_pCamera = new PlainCamera(GraphicsDevice);
                     pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
                 }
+
+                foreach (Model pModel in treeModel)
+                    foreach (ModelMesh mesh in pModel.Meshes)
+                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                        {
+                            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                            meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                            meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
+                        }
+
+                foreach (Model pModel in palmModel)
+                    foreach (ModelMesh mesh in pModel.Meshes)
+                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                        {
+                            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                            meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                            meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
+                        }
+
+                foreach (Model pModel in pineModel)
+                    foreach (ModelMesh mesh in pModel.Meshes)
+                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                        {
+                            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                            meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                            meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
+                        }
+
+                foreach (var vSettlementSize in m_cSettlementModels)
+                    foreach (var vSettlement in vSettlementSize.Value)
+                        foreach (ModelMesh mesh in vSettlement.Value.Meshes)
+                            foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                            {
+                                meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                                meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                                meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
+                            }
+
+                pEffectFogHeight.SetValue(fFogHeight);
+                pEffectFogMode.SetValue(iFogMode);
+                pEffectFogDensity.SetValue(fFogDensity);
             }
 
             CopyToBuffers();
@@ -2629,6 +2680,8 @@ namespace MapDrawXNAEngine
         EffectParameter pEffectSpecularColor;
         EffectParameter pEffectFogColor;
         EffectParameter pEffectFogDensity;
+        EffectParameter pEffectFogHeight;
+        EffectParameter pEffectFogMode;
         EffectParameter pEffectBlendDistance;
         EffectParameter pEffectBlendWidth; 
 
@@ -2680,6 +2733,8 @@ namespace MapDrawXNAEngine
 
             pEffectFogColor = m_pMyEffect.Parameters["FogColor"];
             pEffectFogDensity = m_pMyEffect.Parameters["FogDensity"];
+            pEffectFogHeight = m_pMyEffect.Parameters["FogHeight"];
+            pEffectFogMode = m_pMyEffect.Parameters["FogMode"];
 
             pEffectBlendDistance = m_pMyEffect.Parameters["BlendDistance"];
             pEffectBlendWidth = m_pMyEffect.Parameters["BlendWidth"];
@@ -2928,7 +2983,9 @@ namespace MapDrawXNAEngine
             pEffectSpecularColor.SetValue(0);
 
             pEffectFogColor.SetValue(eSkyColor.ToVector4());
-            pEffectFogDensity.SetValue(0.018f);
+            pEffectFogDensity.SetValue(0.07f);
+            pEffectFogHeight.SetValue(10);
+            pEffectFogMode.SetValue(0);
 
             pEffectBlendDistance.SetValue(2);
             pEffectBlendWidth.SetValue(9);
@@ -3102,12 +3159,12 @@ namespace MapDrawXNAEngine
             {
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
                 {
-                    pEffectDirectionalLightDirection.SetValue(m_pCamera.Target);
+                    pEffectDirectionalLightDirection.SetValue(m_pCamera.Position);
                     pEffectDirectionalLightIntensity.SetValue(0.8f);
                 }
                 else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
                 {
-                    pEffectDirectionalLightDirection.SetValue(-m_pCamera.Target);
+                    pEffectDirectionalLightDirection.SetValue(-m_pCamera.Position);
                     pEffectDirectionalLightIntensity.SetValue(0.8f);
                 }
                 else
@@ -3423,11 +3480,27 @@ namespace MapDrawXNAEngine
                 else
                     pUplift = Vector3.Up;
 
+                float fScale = 0.33f; //0.015f;
+                switch (pSettlement.m_iSize)
+                {
+                    case 0:
+                        fScale = 0.25f;
+                        break;
+                    case 1:
+                        fScale = 0.33f;
+                        break;
+                    case 2:
+                        fScale = 0.5f;
+                        break;
+                }
+
+                fScale *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
+                
                 // calculate screenspace of text3d space position
                 Vector3 screenSpace = GraphicsDevice.Viewport.Project(Vector3.Zero,
                                                                         m_pCamera.Projection,
                                                                         m_pCamera.View,
-                                                                        Matrix.CreateTranslation(pSettlement.m_pPosition + pUplift / 3 + m_pCamera.Top / 10));
+                                                                        Matrix.CreateTranslation(pSettlement.m_pPosition + pUplift * fScale + m_pCamera.Top / 10));
                 //                                                                         Matrix.CreateTranslation(s.position + shipTagOffset));
 
                 Vector2 textPosition;
@@ -3456,13 +3529,32 @@ namespace MapDrawXNAEngine
                 Vector2 stringCenter = pFont.MeasureString(pSettlement.m_sName) * 0.5f;
 
                 float d = pViewVector.Length() * 3f / (pSettlement.m_iSize + 1);
-                float l = (float)Math.Exp(-Math.Pow(d * 0.018, 2));
+                float fTextScale = (float)Math.Exp(-Math.Pow(d * 0.018, 2));
+                float fTextBlend = (float)Math.Exp(-Math.Pow(pViewVector.Length() * 0.018, 2));
+
+                float fOutline = 0.75f;
 
                 // draw text
                 m_pSpriteBatch.DrawString(pFont,
                                             pSettlement.m_sName,
+                                            textPosition + new Vector2(fOutline * fTextScale, fOutline * fTextScale),
+                                            Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Black, eSkyColor, 1 - fTextBlend), 0, stringCenter, fTextScale, SpriteEffects.None, screenSpace.Z + 0.00001f);
+                m_pSpriteBatch.DrawString(pFont,
+                                            pSettlement.m_sName,
+                                            textPosition + new Vector2(-fOutline * fTextScale, -fOutline * fTextScale),
+                                            Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Black, eSkyColor, 1 - fTextBlend), 0, stringCenter, fTextScale, SpriteEffects.None, screenSpace.Z + 0.00001f);
+                m_pSpriteBatch.DrawString(pFont,
+                                            pSettlement.m_sName,
+                                            textPosition + new Vector2(-fOutline * fTextScale, fOutline * fTextScale),
+                                            Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Black, eSkyColor, 1 - fTextBlend), 0, stringCenter, fTextScale, SpriteEffects.None, screenSpace.Z + 0.00001f);
+                m_pSpriteBatch.DrawString(pFont,
+                                            pSettlement.m_sName,
+                                            textPosition + new Vector2(fOutline * fTextScale, -fOutline * fTextScale),
+                                            Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Black, eSkyColor, 1 - fTextBlend), 0, stringCenter, fTextScale, SpriteEffects.None, screenSpace.Z + 0.00001f);
+                m_pSpriteBatch.DrawString(pFont,
+                                            pSettlement.m_sName,
                                             textPosition,
-                                            Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Yellow, Microsoft.Xna.Framework.Color.DarkGoldenrod, 1 - l), 0, stringCenter, l, SpriteEffects.None, screenSpace.Z);
+                                            Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.White, Microsoft.Xna.Framework.Color.LightGray, 1 - fTextBlend), 0, stringCenter, fTextScale, SpriteEffects.None, screenSpace.Z);
             }
             m_pSpriteBatch.End();
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
