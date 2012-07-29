@@ -15,6 +15,8 @@ float4 SpecularColor;
 
 float4 FogColor;
 float FogDensity;
+float FogHeight;
+int FogMode;
 	
 float BlendDistance;
 float BlendWidth;
@@ -56,6 +58,66 @@ sampler TextureSampler7 = sampler_state { texture = <xTexture7> ; magfilter = LI
 
 Texture xRefractionMap;
 sampler RefractionSampler = sampler_state { texture = <xRefractionMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+
+float4 ApplyFogPlain(float4 Color, float3 Position, float koeff)
+{
+	float d = length(Position - CameraPosition);
+	//заморачиваемся только, если камера НАД границей атмосферы
+	if(CameraPosition.y > FogHeight)
+	{
+		d = (FogHeight - Position.y) * d / (CameraPosition.y - Position.y);
+	}
+	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
+	l = saturate(1 - l);
+
+	return lerp(Color, FogColor, l);
+}
+
+float4 ApplyFogRingworld(float4 Color, float3 Position, float koeff)
+{
+	float HCam = length(CameraPosition.yz);
+
+	float d = length(Position - CameraPosition);
+	//заморачиваемся только, если камера НАД границей атмосферы
+	//на кольце атмосфера расположена на внутренней стороне кольца, т.е. "выше" - это значит ближе к центру кольца
+	if(HCam < FogHeight)
+	{
+		float HPos = length(Position.yz);
+		d = (FogHeight - HPos) * d / (HCam - HPos);
+	}
+	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
+	l = saturate(1 - l);
+
+	return lerp(Color, FogColor, l);
+}
+
+float4 ApplyFogSphere(float4 Color, float3 Position, float koeff)
+{
+	float HCam = length(CameraPosition);
+
+	float d = length(Position - CameraPosition);
+	//заморачиваемся только, если камера НАД границей атмосферы
+	if(HCam > FogHeight)
+	{
+		float HPos = length(Position);
+		d = (FogHeight - HPos) * d / (HCam - HPos);
+	}
+	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
+	l = saturate(1 - l);
+
+	return lerp(Color, FogColor, l);
+}
+
+float4 ApplyFog(float4 Color, float3 Position, float koeff)
+{
+	if(FogMode == 1)
+		return ApplyFogRingworld(Color, Position, koeff);
+
+	if(FogMode == 2)
+		return ApplyFogSphere(Color, Position, koeff);
+
+	return ApplyFogPlain(Color, Position, koeff);
+}
 
 //------- Technique: Land --------
 struct VertexShaderInput
@@ -110,8 +172,6 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 	float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
 	float d = length(input.Position3D - CameraPosition);
-	float l = exp( - pow( d * FogDensity , 2 ) );
-	l = saturate(1 - l);
      
     float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
     //float blendFactor2 = clamp((d-BlendDistance/10)/(BlendDistance/10), 0, 1);
@@ -148,9 +208,9 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
     float4 texColor = lerp(nearColor, farColor, blendFactor);
 	//texColor = lerp(closeColor, texColor, blendFactor2);
  	 
-	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
+	return ApplyFog(texColor*AmbientLightColor*AmbientLightIntensity + 
 		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   texColor*SpecularColor*specular, FogColor, l);
+		   texColor*SpecularColor*specular, input.Position3D, 1);
 }
 
 technique Land
@@ -159,8 +219,8 @@ technique Land
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 VertexShaderFunction();
-        PixelShader = compile ps_2_0 PixelShaderFunctionPlain();
+        VertexShader = compile vs_3_0 VertexShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPlain();
     }
 }
 
@@ -239,12 +299,7 @@ float4 GridPSCommon(GridVertexShaderOutput input, float4 GridColor)
 {
     // TODO: add your pixel shader code here.
 	if(GridFog) 
-	{
-		float d = length(input.Position3D - CameraPosition);
-		float l = exp( - pow( d * FogDensity , 2 ) );
-		l = saturate(1 - l);
-		return lerp(GridColor, FogColor, l);
-	}
+		return ApplyFog(GridColor, input.Position3D, 1);
 	else
 		return GridColor;
 }
@@ -290,51 +345,51 @@ technique Grid
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 GridVS1();
-        PixelShader = compile ps_2_0 GridPS1();
+        VertexShader = compile vs_3_0 GridVS1();
+        PixelShader = compile ps_3_0 GridPS1();
     }
     pass Pass2
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 GridVS2();
-        PixelShader = compile ps_2_0 GridPS2();
+        VertexShader = compile vs_3_0 GridVS2();
+        PixelShader = compile ps_3_0 GridPS2();
     }
     pass Pass3
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 GridVS3();
-        PixelShader = compile ps_2_0 GridPS3();
+        VertexShader = compile vs_3_0 GridVS3();
+        PixelShader = compile ps_3_0 GridPS3();
     }
     pass Pass4
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 GridVS4();
-        PixelShader = compile ps_2_0 GridPS4();
+        VertexShader = compile vs_3_0 GridVS4();
+        PixelShader = compile ps_3_0 GridPS4();
     }
     pass Pass5
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 GridVS5();
-        PixelShader = compile ps_2_0 GridPS5();
+        VertexShader = compile vs_3_0 GridVS5();
+        PixelShader = compile ps_3_0 GridPS5();
     }
     pass Pass6
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 GridVS6();
-        PixelShader = compile ps_2_0 GridPS6();
+        VertexShader = compile vs_3_0 GridVS6();
+        PixelShader = compile ps_3_0 GridPS6();
     }
 
     pass Pass7
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 GridVS7();
-        PixelShader = compile ps_2_0 GridPS7();
+        VertexShader = compile vs_3_0 GridVS7();
+        PixelShader = compile ps_3_0 GridPS7();
     }
 }
 
@@ -426,7 +481,7 @@ ModelVertexShaderOutput ModelVS(ModelVertexShaderInput input, float3 Normal : NO
     return output;
 }
 
-float alphaReference = .8f;
+float alphaReference = .9f;
 
 float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 {
@@ -437,23 +492,19 @@ float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
-	float d = length(input.Position3D - CameraPosition)* 1.5;
-	float l = exp( - pow( d * FogDensity , 2 ) );
-	l = saturate(1 - l);
-    
 	//float l = d / 20;
 	 
-    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
-
 	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
 
 	float4 output = texColor;
 
-	clip(output.a - alphaReference); 	 
+	clip(output.a < alphaReference ? -1:1); 	 
 
-	output.rgb = lerp(texColor.rgb*AmbientLightColor.rgb*AmbientLightIntensity + 
+	float3 lightColor = texColor.rgb*AmbientLightColor.rgb*AmbientLightIntensity + 
 		   texColor.rgb*DirectionalLightIntensity*DirectionalLightColor.rgb*diffuse + 
-		   texColor.rgb*SpecularColor.rgb*specular, FogColor.rgb, l)*output.a;
+		   texColor.rgb*SpecularColor.rgb*specular;
+
+	output.rgb = ApplyFog(float4(lightColor, FogColor.a), input.Position3D, 1.2).rgb*output.a;
 
 	return output;
 }
@@ -466,14 +517,10 @@ float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
 	//float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	//float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
-	float d = length(input.Position3D - CameraPosition);
-	float l = exp( - pow( d * FogDensity , 2 ) );
-	l = saturate(1 - l);
-     
 	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
 
-	return lerp(texColor*AmbientLightColor*AmbientLightIntensity + 
-		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse, FogColor, l);//*output.a;
+	return ApplyFog(texColor*AmbientLightColor*AmbientLightIntensity + 
+		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse, input.Position3D, 1);//*output.a;
 }
 
 technique Tree
@@ -492,8 +539,8 @@ technique Model
     {
         // TODO: set renderstates here.
 
-        VertexShader = compile vs_2_0 ModelVS();
-        PixelShader = compile ps_2_0 ModelPSPlain();
+        VertexShader = compile vs_3_0 ModelVS();
+        PixelShader = compile ps_3_0 ModelPSPlain();
     }
 }
 
@@ -555,18 +602,14 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
      
 //    Output.Color = lerp(combinedColor, dullColor, 0.2f);
 	
-	float d = length(PSIn.Position3D - CameraPosition);
-	float l = exp( - pow( d * FogDensity , 2 ) );
-	l = saturate(1 - l);
-		 
-	return lerp(lerp(combinedColor, FogColor, 0.2f), FogColor, l);
+	return ApplyFog(lerp(combinedColor, FogColor, 0.2f), PSIn.Position3D, 1);
 }
 
 technique Water
 {
     pass Pass0
     {
-        VertexShader = compile vs_1_1 WaterVS();
-        PixelShader = compile ps_2_0 WaterPS();
+        VertexShader = compile vs_3_0 WaterVS();
+        PixelShader = compile ps_3_0 WaterPS();
     }
 }
