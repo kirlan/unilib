@@ -39,7 +39,7 @@ Texture xTexture1;
 sampler TextureSampler1 = sampler_state { texture = <xTexture1> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
 
 Texture xTexture2;
-sampler TextureSampler2 = sampler_state { texture = <xTexture2> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+sampler TextureSampler2 = sampler_state { texture = <xTexture2> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
 
 Texture xTexture3;
 sampler TextureSampler3 = sampler_state { texture = <xTexture3> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
@@ -174,7 +174,7 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 	float d = length(input.Position3D - CameraPosition);
      
     float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
-    //float blendFactor2 = clamp((d-BlendDistance/10)/(BlendDistance/10), 0, 1);
+    float blendFactor2 = clamp((d-BlendDistance/10)/(BlendDistance/5), 0, 1);
 
 	float4 farColor = tex2D(TextureSampler0, input.TextureCoords)*input.TextureWeights.x;
 	farColor += tex2D(TextureSampler1, input.TextureCoords)*input.TextureWeights.y;
@@ -195,18 +195,18 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
     nearColor += tex2D(TextureSampler6, nearTextureCoords)*input.TextureWeights2.z;
     nearColor += tex2D(TextureSampler7, nearTextureCoords)*input.TextureWeights2.w;
 
-    //float2 closeTextureCoords = input.TextureCoords*100;
-    //float4 closeColor = tex2D(TextureSampler0, closeTextureCoords)*input.TextureWeights.x;
-    //closeColor += tex2D(TextureSampler1, closeTextureCoords)*input.TextureWeights.y;
-    //closeColor += tex2D(TextureSampler2, closeTextureCoords)*input.TextureWeights.z;
-    //closeColor += tex2D(TextureSampler3, closeTextureCoords)*input.TextureWeights.w;
-    //closeColor += tex2D(TextureSampler4, closeTextureCoords)*input.TextureWeights2.x;
-    //closeColor += tex2D(TextureSampler5, closeTextureCoords)*input.TextureWeights2.y;
-    //closeColor += tex2D(TextureSampler6, closeTextureCoords)*input.TextureWeights2.z;
-    //closeColor += tex2D(TextureSampler7, closeTextureCoords)*input.TextureWeights2.w;
+    float2 closeTextureCoords = input.TextureCoords*15;
+    float4 closeColor = tex2D(TextureSampler0, closeTextureCoords)*input.TextureWeights.x;
+    closeColor += tex2D(TextureSampler1, closeTextureCoords)*input.TextureWeights.y;
+    closeColor += tex2D(TextureSampler2, closeTextureCoords)*input.TextureWeights.z;
+    closeColor += tex2D(TextureSampler3, closeTextureCoords)*input.TextureWeights.w;
+    closeColor += tex2D(TextureSampler4, closeTextureCoords)*input.TextureWeights2.x;
+    closeColor += tex2D(TextureSampler5, closeTextureCoords)*input.TextureWeights2.y;
+    closeColor += tex2D(TextureSampler6, closeTextureCoords)*input.TextureWeights2.z;
+    closeColor += tex2D(TextureSampler7, closeTextureCoords)*input.TextureWeights2.w;
 
     float4 texColor = lerp(nearColor, farColor, blendFactor);
-	//texColor = lerp(closeColor, texColor, blendFactor2);
+	texColor = lerp(closeColor, texColor, blendFactor2);
  	 
 	return ApplyFog(texColor*AmbientLightColor*AmbientLightIntensity + 
 		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
