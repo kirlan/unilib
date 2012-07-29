@@ -40,6 +40,7 @@ namespace UniLibXNA
         public Vector4 TextureCoordinate;
         public Vector4 TexWeights;
         public Vector4 TexWeights2;
+        public Vector3 Tangent; 
 
         public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
          (
@@ -47,8 +48,9 @@ namespace UniLibXNA
              new VertexElement( sizeof(float) * 3, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0 ),
              new VertexElement( sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0 ),
              new VertexElement( sizeof(float) * 10, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1 ),
-             new VertexElement( sizeof(float) * 14, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2 )
-         );
+             new VertexElement( sizeof(float) * 14, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2 ),
+             new VertexElement( sizeof(float) * 18, VertexElementFormat.Vector3, VertexElementUsage.Tangent, 0 )
+        );
 
         VertexDeclaration IVertexType.VertexDeclaration
         {

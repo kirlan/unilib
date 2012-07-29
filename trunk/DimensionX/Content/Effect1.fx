@@ -59,6 +59,17 @@ sampler TextureSampler7 = sampler_state { texture = <xTexture7> ; magfilter = LI
 Texture xRefractionMap;
 sampler RefractionSampler = sampler_state { texture = <xRefractionMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
 
+Texture BumpMap0; 
+sampler BumpMap0Sampler = sampler_state 
+{ 
+   texture = <BumpMap0>; 
+   minfilter = LINEAR; 
+   magfilter = LINEAR; 
+   mipfilter = LINEAR; 
+   AddressU = mirror; 
+   AddressV = mirror; 
+}; 
+
 float4 ApplyFogPlain(float4 Color, float3 Position, float koeff)
 {
 	float d = length(Position - CameraPosition);
@@ -139,9 +150,11 @@ struct VertexShaderOutput
     float2 TextureCoords: TEXCOORD3;
     float4 TextureWeights    : TEXCOORD4;
     float4 TextureWeights2    : TEXCOORD5;
+    float3 Tangent : TEXCOORD6;
+    float3 Binormal : TEXCOORD7;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal : NORMAL)
+VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal : NORMAL, float3 Tangent : TANGENT)
 {
     VertexShaderOutput output;
 	output.Position3D = input.Position;
@@ -154,6 +167,21 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal :
 	float3 normal = normalize(mul(Normal, World));
 	output.Normal = normal;
 
+	float3 tangent = normalize(mul(Tangent, World));
+	output.Tangent = tangent;
+
+	float3 binormal = normalize(mul(cross(Tangent,Normal), World));
+	output.Binormal = binormal;
+   
+    // Calculate tangent space. 
+    //float4x4 worldToTangentSpace; 
+    //worldToTangentSpace[0] = mul(Tangent,World); 
+    //worldToTangentSpace[1] = mul(cross(Tangent,Normal),World); 
+    //worldToTangentSpace[2] = mul(Normal,World); 
+    //worldToTangentSpace[3] = float4(0, 0, 0, 1); 
+    
+    //output.View = normalize(mul(worldToTangentSpace,float4(CameraPosition,1.0) - worldPosition));    
+
 	output.View = normalize(float4(CameraPosition,1.0) - worldPosition);
 
 	output.TextureCoords = input.TextureCoords;
@@ -165,7 +193,13 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal :
 
 float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 {
-    // TODO: add your pixel shader code here.
+    // Calculate the normal, including the information in the bump map
+    //float3 bump = tex2D(BumpMap0Sampler, input.TextureCoords*5);
+    //float3 bumpNormal = input.Normal + (bump.x * input.Tangent + bump.y * input.Binormal);
+    //bumpNormal = normalize(bumpNormal);
+	//bump = 2 * bump - 1.0;  
+
+	//float4 normal = float4(normalize(input.Normal + bump/5), 1.0);
 	float4 normal = float4(input.Normal, 1.0);
 	float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
 	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
@@ -552,6 +586,7 @@ struct WVertexToPixel
     //float4 ReflectionMapSamplingPos    : TEXCOORD2;
     float4 RefractionMapSamplingPos : TEXCOORD3;
     float4 Position3D                : TEXCOORD4;
+    float3 View : TEXCOORD5;
 };
 
 WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD, float3 Normal : NORMAL)
@@ -570,6 +605,8 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD, float3 N
      
 	Output.RefractionMapSamplingPos = mul(viewPosition, Projection);
     Output.Position3D = mul(inPos, World);
+	
+	Output.View = normalize(float4(CameraPosition,1.0) - worldPosition);
 
     return Output;
 }
@@ -585,7 +622,15 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
     //float2 perturbatedTexCoords = ProjectedTexCoords + perturbation;
     //float4 reflectiveColor = tex2D(ReflectionSampler, perturbatedTexCoords);   
 
+	float4 normal = float4(PSIn.Normal, 1.0);
+	float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
+	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
+	float4 specular = pow(saturate(dot(reflect,PSIn.View)),15);
+	
 	float4 reflectiveColor = float4(0.3f, 0.3f, 0.5f, 0.5f);
+	reflectiveColor = reflectiveColor*AmbientLightColor*AmbientLightIntensity + 
+		   reflectiveColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
+		   reflectiveColor*SpecularColor*specular;
 
     float2 ProjectedRefrTexCoords;
     ProjectedRefrTexCoords.x = -PSIn.RefractionMapSamplingPos.x/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;

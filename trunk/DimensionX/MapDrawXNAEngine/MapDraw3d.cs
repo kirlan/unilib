@@ -455,21 +455,37 @@ namespace MapDrawXNAEngine
                     cGeoVData[pLine.m_pInnerPoint].m_pNormal += n1;
                     cGeoVData[pLine.m_pMidPoint].m_pNormal += n1;
                     cGeoVData[pLine.m_pPoint1].m_pNormal += n1;
+                    Vector3 t1 = GetTangent(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pMidPoint].m_pPosition, cGeoVData[pLine.m_pPoint1].m_pPosition, cGeoVData[pLine.m_pInnerPoint].TextureCoordinate, cGeoVData[pLine.m_pMidPoint].TextureCoordinate, cGeoVData[pLine.m_pPoint1].TextureCoordinate);
+                    cGeoVData[pLine.m_pInnerPoint].m_pTangent += t1;
+                    cGeoVData[pLine.m_pMidPoint].m_pTangent += t1;
+                    cGeoVData[pLine.m_pPoint1].m_pTangent += t1;
 
                     Vector3 n2 = GetNormal(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pPoint2].m_pPosition, cGeoVData[pLine.m_pMidPoint].m_pPosition);
                     cGeoVData[pLine.m_pInnerPoint].m_pNormal += n2;
                     cGeoVData[pLine.m_pPoint2].m_pNormal += n2;
                     cGeoVData[pLine.m_pMidPoint].m_pNormal += n2;
+                    Vector3 t2 = GetTangent(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pPoint2].m_pPosition, cGeoVData[pLine.m_pMidPoint].m_pPosition, cGeoVData[pLine.m_pInnerPoint].TextureCoordinate, cGeoVData[pLine.m_pPoint2].TextureCoordinate, cGeoVData[pLine.m_pMidPoint].TextureCoordinate);
+                    cGeoVData[pLine.m_pInnerPoint].m_pTangent += t2;
+                    cGeoVData[pLine.m_pPoint2].m_pTangent += t2;
+                    cGeoVData[pLine.m_pMidPoint].m_pTangent += t2;
 
                     Vector3 n3 = GetNormal(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pPoint2].m_pPosition);
                     cGeoVData[pLine.m_pInnerPoint].m_pNormal += n3;
                     cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pNormal += n3;
                     cGeoVData[pLine.m_pPoint2].m_pNormal += n3;
+                    Vector3 t3 = GetTangent(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pPoint2].m_pPosition, cGeoVData[pLine.m_pInnerPoint].TextureCoordinate, cGeoVData[pLine.m_pNext.m_pInnerPoint].TextureCoordinate, cGeoVData[pLine.m_pPoint2].TextureCoordinate);
+                    cGeoVData[pLine.m_pInnerPoint].m_pTangent += t3;
+                    cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pTangent += t3;
+                    cGeoVData[pLine.m_pPoint2].m_pTangent += t3;
 
                     Vector3 n4 = GetNormal(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoLData[pLoc].m_pPosition, cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pPosition);
                     cGeoVData[pLine.m_pInnerPoint].m_pNormal += n4;
                     cGeoLData[pLoc].m_pNormal += n4;
                     cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pNormal += n4;
+                    Vector3 t4 = GetTangent(cGeoVData[pLine.m_pInnerPoint].m_pPosition, cGeoLData[pLoc].m_pPosition, cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pPosition, cGeoVData[pLine.m_pInnerPoint].TextureCoordinate, cGeoLData[pLoc].TextureCoordinate, cGeoVData[pLine.m_pNext.m_pInnerPoint].TextureCoordinate);
+                    cGeoVData[pLine.m_pInnerPoint].m_pTangent += t4;
+                    cGeoLData[pLoc].m_pTangent += t4;
+                    cGeoVData[pLine.m_pNext.m_pInnerPoint].m_pTangent += t4;
 
                     pLine = pLine.m_pNext;
                 }
@@ -513,6 +529,8 @@ namespace MapDrawXNAEngine
                     {
                         cGeoVData[pLine.m_pInnerPoint].TexWeights += new Vector4(0, 0, 0, 0);
                         cGeoVData[pLine.m_pInnerPoint].TexWeights2 += new Vector4(0, 0, 0, 0.5f);
+
+                        cGeoVData[pLine.m_pInnerPoint].TexWeights.W = 0;
 
                         pLine = pLine.m_pNext;
                     }
@@ -582,6 +600,7 @@ namespace MapDrawXNAEngine
             foreach (var vVNorm in cGeoVData)
             {
                 vVNorm.Value.m_pNormal.Normalize();
+                vVNorm.Value.m_pTangent.Normalize();
                 m_cGeoVData[iIndex++] = vVNorm.Value;
             }
 
@@ -589,6 +608,7 @@ namespace MapDrawXNAEngine
             foreach (var vLNorm in cGeoLData)
             {
                 vLNorm.Value.m_pNormal.Normalize();
+                vLNorm.Value.m_pTangent.Normalize();
                 m_cGeoLData[iIndex++] = vLNorm.Value;
             }
         }
@@ -598,6 +618,35 @@ namespace MapDrawXNAEngine
             Vector3 side1 = v1 - v3;
             Vector3 side2 = v1 - v2;
             return Vector3.Cross(side1, side2);
+        }
+
+        private Vector3 GetTangent(Vector3 v1, Vector3 v2, Vector3 v3, Vector4 t1, Vector4 t2, Vector4 t3)
+        {
+            Vector3 side1 = v1 - v3;
+            Vector3 side2 = v1 - v2;
+
+            Vector2 lT1 = new Vector2(t1.X - t2.X, t1.Y - t2.Y);
+            Vector2 lT2 = new Vector2(t1.X - t3.X, t1.Y - t3.Y);
+
+            float tmp = 0.0f;
+            if (Math.Abs(lT1.X * lT2.Y - lT2.X * lT1.Y) <= 0.0001f)
+            {
+                tmp = 1.0f;
+            }
+            else
+            {
+                tmp = 1.0f / (lT1.X * lT2.Y - lT2.X * lT1.Y);
+            }
+
+            Vector3 tangent = new Vector3();
+            tangent.X = (lT1.Y * side1.X - lT2.Y * side2.X);
+            tangent.Y = (lT1.Y * side1.Y - lT2.Y * side2.Y);
+            tangent.Z = (lT1.Y * side1.Z - lT2.Y * side2.Z);
+
+            tangent = -tangent * tmp;
+            tangent.Normalize();
+
+            return tangent;
         }
 
         /// <summary>
@@ -993,12 +1042,12 @@ namespace MapDrawXNAEngine
 
                 VertexMultitextured pVM = new VertexMultitextured();
 
-                pVM.TexWeights = m_cGeoVData[k].TexWeights;
-                pVM.TexWeights2 = m_cGeoVData[k].TexWeights2;
-
                 pVM.Position = m_cGeoVData[k].m_pPosition;
                 pVM.Normal = m_cGeoVData[k].m_pNormal;
+                pVM.Tangent = m_cGeoVData[k].m_pTangent;
                 pVM.TextureCoordinate = m_cGeoVData[k].TextureCoordinate;
+                pVM.TexWeights = m_cGeoVData[k].TexWeights;
+                pVM.TexWeights2 = m_cGeoVData[k].TexWeights2;
 
                 pData.m_aVertices[iCounter] = pVM;
                 cVertexes[pVertex] = iCounter;
@@ -1025,6 +1074,7 @@ namespace MapDrawXNAEngine
                 pData.m_aVertices[iCounter] = new VertexMultitextured();
                 pData.m_aVertices[iCounter].Position = m_cGeoLData[i].m_pPosition;
                 pData.m_aVertices[iCounter].Normal = m_cGeoLData[i].m_pNormal;
+                pData.m_aVertices[iCounter].Tangent = m_cGeoLData[i].m_pTangent;
                 pData.m_aVertices[iCounter].TextureCoordinate = m_cGeoLData[i].TextureCoordinate;
                 pData.m_aVertices[iCounter].TexWeights = m_cGeoLData[i].TexWeights;
                 pData.m_aVertices[iCounter].TexWeights2 = m_cGeoLData[i].TexWeights2;
@@ -1448,7 +1498,11 @@ namespace MapDrawXNAEngine
                 int iTilesPerQuadrant = 8;
 
                 TextureCoordinate.X = fLongitude4 * 2 * iTilesPerQuadrant / (float)Math.PI;
+                if (TextureCoordinate.X < 0)
+                    TextureCoordinate.X = -TextureCoordinate.X - 0.12f;
                 TextureCoordinate.Y = fLat * 2 * iTilesPerQuadrant / (float)Math.PI;
+                if (TextureCoordinate.Y < 0)
+                    TextureCoordinate.Y = -TextureCoordinate.Y - 0.12f;
             }
             else
             {
@@ -2150,6 +2204,7 @@ namespace MapDrawXNAEngine
 
             public Vector3 m_pPosition = new Vector3(0);
             public Vector3 m_pNormal = new Vector3(0);
+            public Vector3 m_pTangent = new Vector3(0);
             
             public Vector4 TexWeights = new Vector4(0);
             public Vector4 TexWeights2 = new Vector4(0);
@@ -2694,6 +2749,8 @@ namespace MapDrawXNAEngine
         EffectParameter pEffectTexture6;
         EffectParameter pEffectTexture7;
 
+        EffectParameter pEffectBumpMap0;
+
         EffectParameter pEffectTextureModel;
 
         Texture2D grassTexture;
@@ -2703,7 +2760,16 @@ namespace MapDrawXNAEngine
         Texture2D forestTexture;
         Texture2D roadTexture;
         Texture2D swampTexture;
-        Texture2D lavaTexture;
+        Texture2D lavaTexture; 
+        
+        Texture2D grassBump;
+        Texture2D sandBump;
+        Texture2D rockBump;
+        Texture2D snowBump;
+        Texture2D forestBump;
+        Texture2D roadBump;
+        Texture2D swampBump;
+        Texture2D lavaBump;
 
         Texture2D treeTexture;
 
@@ -2748,6 +2814,8 @@ namespace MapDrawXNAEngine
             pEffectTexture6 = m_pMyEffect.Parameters["xTexture6"];
             pEffectTexture7 = m_pMyEffect.Parameters["xTexture7"];
             pEffectTextureModel = m_pMyEffect.Parameters["xTextureModel"];
+
+            pEffectBumpMap0 = m_pMyEffect.Parameters["BumpMap0"];
         }
 
         private void LoadTerrainTextures()
@@ -2761,6 +2829,8 @@ namespace MapDrawXNAEngine
             roadTexture = LibContent.Load<Texture2D>("content/dds/sand");
             swampTexture = LibContent.Load<Texture2D>("content/dds/river");
             lavaTexture = LibContent.Load<Texture2D>("content/dds/2-lava");
+
+            rockBump = LibContent.Load<Texture2D>("content/dds/bump-rock");
         }
 
         private void LoadTrees()
@@ -2975,7 +3045,7 @@ namespace MapDrawXNAEngine
             pEffectWorld.SetValue(Matrix.Identity);
 
             pEffectAmbientLightColor.SetValue(eSkyColor.ToVector4());
-            pEffectAmbientLightIntensity.SetValue(0.2f);
+            pEffectAmbientLightIntensity.SetValue(0.02f);
 
             pEffectDirectionalLightColor.SetValue(eSkyColor.ToVector4());
             pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
@@ -2999,6 +3069,8 @@ namespace MapDrawXNAEngine
             pEffectTexture5.SetValue(roadTexture);
             pEffectTexture6.SetValue(swampTexture);
             pEffectTexture7.SetValue(lavaTexture);
+
+            pEffectBumpMap0.SetValue(rockBump);
 
             m_pMyEffect.Parameters["GridColor1"].SetValue(Microsoft.Xna.Framework.Color.Black.ToVector4());
             m_pMyEffect.Parameters["GridColor2"].SetValue(Microsoft.Xna.Framework.Color.Pink.ToVector4());
@@ -3165,8 +3237,9 @@ namespace MapDrawXNAEngine
                 }
                 else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
                 {
+                    //pEffectDirectionalLightDirection.SetValue(-m_pCamera.Top/5 + m_pCamera.Direction);
                     pEffectDirectionalLightDirection.SetValue(-m_pCamera.Position);
-                    pEffectDirectionalLightIntensity.SetValue(0.8f);
+                    pEffectDirectionalLightIntensity.SetValue(0.8f);//0.8f
                 }
                 else
                 {
@@ -3201,6 +3274,21 @@ namespace MapDrawXNAEngine
 
                 m_pBasicEffect.LightingEnabled = true;
                 m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, -1, -1));
+                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                {
+                    m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(m_pCamera.Position);
+                }
+                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                {
+                    //pEffectDirectionalLightDirection.SetValue(-m_pCamera.Top/5 + m_pCamera.Direction);
+                    m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(-m_pCamera.Position);
+                    m_pBasicEffect.DirectionalLight0.SpecularColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.2f).ToVector3();
+                    m_pBasicEffect.DirectionalLight0.DiffuseColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.8f).ToVector3();
+                }
+                else
+                {
+                    m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, -1, -1));
+                } 
                 m_pBasicEffect.AmbientLightColor = Microsoft.Xna.Framework.Color.Multiply(eSkyColor, 0.2f).ToVector3();
 
                 m_pBasicEffect.PreferPerPixelLighting = true;
