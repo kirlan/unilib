@@ -1445,7 +1445,7 @@ namespace MapDrawXNAEngine
 
                 //сколько раз тайл текстуры укладывается в грань куба по горизонтали или вертикали.
                 //для лучшего наложения должно быть чётным.
-                int iTilesPerQuadrant = 24;// 8;
+                int iTilesPerQuadrant = 8;
 
                 TextureCoordinate.X = fLongitude4 * 2 * iTilesPerQuadrant / (float)Math.PI;
                 TextureCoordinate.Y = fLat * 2 * iTilesPerQuadrant / (float)Math.PI;
@@ -2754,6 +2754,7 @@ namespace MapDrawXNAEngine
         {
             grassTexture = LibContent.Load<Texture2D>("content/dds/1-plain");
             sandTexture = LibContent.Load<Texture2D>("content/dds/1-desert");
+//            rockTexture = LibContent.Load<Texture2D>("content/dds/mountain");
             rockTexture = LibContent.Load<Texture2D>("content/dds/rock");
             snowTexture = LibContent.Load<Texture2D>("content/dds/snow");
             forestTexture = LibContent.Load<Texture2D>("content/dds/grass");
@@ -2987,8 +2988,8 @@ namespace MapDrawXNAEngine
             pEffectFogHeight.SetValue(10);
             pEffectFogMode.SetValue(0);
 
-            pEffectBlendDistance.SetValue(2);
-            pEffectBlendWidth.SetValue(9);
+            pEffectBlendDistance.SetValue(20);//2
+            pEffectBlendWidth.SetValue(40);
 
             pEffectTexture0.SetValue(sandTexture);
             pEffectTexture1.SetValue(grassTexture);
