@@ -336,6 +336,16 @@ namespace UniLibXNA
 
         #endregion
 
+        protected Microsoft.Xna.Framework.Color ConvertColor(System.Drawing.Color Value)
+        {
+            return new Microsoft.Xna.Framework.Color(Value.R, Value.G, Value.B, Value.A);
+        }
+
+        protected System.Drawing.Color ConvertColor(Microsoft.Xna.Framework.Color Value)
+        {
+            return System.Drawing.Color.FromArgb(Value.A, Value.R, Value.G, Value.B);
+        }
+
         // CalculateCursorRay Calculates a world space ray starting at the camera's
         // "eye" and pointing in the direction of the cursor. Viewport.Unproject is used
         // to accomplish this. see the accompanying documentation for more explanation
