@@ -247,6 +247,25 @@ namespace MiscControls
 
         #region " Fields and Properties "
 
+        private bool m_bInverse = false;
+        /// <summary>
+        /// Gets or sets the grow direction of progress.
+        /// </summary>
+        /// <returns>False is common direction (to right or top), true is inversed (to left or bottom).</returns>
+        [DefaultValue(typeof(bool), "false"), Category("Appearance"), Description("The grow direction of progress.")]
+        public bool Inverse
+        {
+            get { return m_bInverse; }
+            set
+            {
+                if (m_bInverse != value)
+                {
+                    m_bInverse = value;
+                    MyRepaint();
+                }
+            }
+        }
+
         private string m_sToolTip = "";
         public string ToolTip
         {
@@ -690,6 +709,9 @@ namespace MiscControls
             if (rect.Height <= rHeight)
                 rHeight = rect.Height / 2;
 
+            int iTotalWidth = rect.Width;
+            int iTotalHeight = rect.Height;
+
             int iShouldBeValue = 0;
             double fIntervalLength = 0;
             if (m_eOrientation == Orientation.Horizontal)
@@ -768,7 +790,10 @@ namespace MiscControls
 
             if (m_eOrientation == Orientation.Horizontal)
             {
-                rect.X += 1;
+                if (m_bInverse)
+                    rect.X += rect.Width - (rWidth + iShouldBeValue - 1);
+                else
+                    rect.X += 1;
                 rect.Y += 1;
                 rect.Width = rWidth + iShouldBeValue - 2;
                 rect.Height -= 2;
@@ -776,9 +801,15 @@ namespace MiscControls
             else
             {
                 rect.X += 1;
-                rect.Y += rect.Height - (rHeight + iShouldBeValue - 1);
+                if (m_bInverse)
+                    rect.Y += 1;
+                else
+                    rect.Y += rect.Height - (rHeight + iShouldBeValue - 1);
                 rect.Width -= 2;
                 rect.Height = rHeight + iShouldBeValue - 2;
+
+                if (m_bInverse)
+                    rect.Y += iTotalHeight - rect.Height;
             }
 
             rect2 = rect;
