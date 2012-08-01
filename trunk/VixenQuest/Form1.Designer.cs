@@ -115,13 +115,17 @@
             this.label6 = new System.Windows.Forms.Label();
             this.EncumbranceBar = new System.Windows.Forms.ProgressBar();
             this.label5 = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.label2 = new System.Windows.Forms.Label();
             this.PlotListBox = new System.Windows.Forms.CheckedListBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.PlotBar = new System.Windows.Forms.ProgressBar();
             this.QuestsListBox = new System.Windows.Forms.CheckedListBox();
             this.QuestBar = new System.Windows.Forms.ProgressBar();
             this.label3 = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.JournalTextBox = new System.Windows.Forms.RichTextBox();
             this.ActionBar = new System.Windows.Forms.ProgressBar();
             this.ActionLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -134,16 +138,10 @@
             this.storyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.worldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.VixenPotencyBar = new System.Windows.Forms.ProgressBar();
-            this.TargetPotencyBar = new System.Windows.Forms.ProgressBar();
-            this.VixenPotency = new System.Windows.Forms.Label();
-            this.TargetPotency = new System.Windows.Forms.Label();
+            this.VixenPotency = new VixenQuest.HPBar();
+            this.TargetPotency = new VixenQuest.HPBar();
             this.saveVixenFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.JournalTextBox = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -160,15 +158,15 @@
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -202,7 +200,7 @@
             // splitContainer5
             // 
             this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer5.Location = new System.Drawing.Point(3, 347);
+            this.splitContainer5.Location = new System.Drawing.Point(3, 364);
             this.splitContainer5.Name = "splitContainer5";
             this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -215,7 +213,8 @@
             // 
             this.splitContainer5.Panel2.Controls.Add(this.CursesListView);
             this.splitContainer5.Panel2.Controls.Add(this.label15);
-            this.splitContainer5.Size = new System.Drawing.Size(229, 110);
+            this.splitContainer5.Size = new System.Drawing.Size(229, 93);
+            this.splitContainer5.SplitterDistance = 46;
             this.splitContainer5.TabIndex = 11;
             // 
             // SpellsListView
@@ -229,7 +228,7 @@
             this.SpellsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.SpellsListView.Location = new System.Drawing.Point(0, 18);
             this.SpellsListView.Name = "SpellsListView";
-            this.SpellsListView.Size = new System.Drawing.Size(229, 32);
+            this.SpellsListView.Size = new System.Drawing.Size(229, 28);
             this.SpellsListView.TabIndex = 7;
             this.SpellsListView.UseCompatibleStateImageBehavior = false;
             this.SpellsListView.View = System.Windows.Forms.View.Details;
@@ -265,7 +264,7 @@
             this.CursesListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.CursesListView.Location = new System.Drawing.Point(0, 18);
             this.CursesListView.Name = "CursesListView";
-            this.CursesListView.Size = new System.Drawing.Size(229, 38);
+            this.CursesListView.Size = new System.Drawing.Size(229, 25);
             this.CursesListView.TabIndex = 1;
             this.CursesListView.UseCompatibleStateImageBehavior = false;
             this.CursesListView.View = System.Windows.Forms.View.Details;
@@ -293,7 +292,7 @@
             // ExperienceBar
             // 
             this.ExperienceBar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ExperienceBar.Location = new System.Drawing.Point(3, 330);
+            this.ExperienceBar.Location = new System.Drawing.Point(3, 347);
             this.ExperienceBar.MarqueeAnimationSpeed = 0;
             this.ExperienceBar.Name = "ExperienceBar";
             this.ExperienceBar.Size = new System.Drawing.Size(229, 17);
@@ -305,7 +304,7 @@
             this.label8.BackColor = System.Drawing.Color.GhostWhite;
             this.label8.Dock = System.Windows.Forms.DockStyle.Top;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label8.Location = new System.Drawing.Point(3, 312);
+            this.label8.Location = new System.Drawing.Point(3, 329);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(229, 18);
             this.label8.TabIndex = 3;
@@ -330,7 +329,7 @@
             this.SkillsListView.Location = new System.Drawing.Point(3, 244);
             this.SkillsListView.Name = "SkillsListView";
             this.SkillsListView.Scrollable = false;
-            this.SkillsListView.Size = new System.Drawing.Size(229, 68);
+            this.SkillsListView.Size = new System.Drawing.Size(229, 85);
             this.SkillsListView.TabIndex = 10;
             this.SkillsListView.UseCompatibleStateImageBehavior = false;
             this.SkillsListView.View = System.Windows.Forms.View.Details;
@@ -706,6 +705,29 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Inventory";
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(338, 460);
+            this.tabControl1.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.splitContainer3);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(330, 434);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Quests";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
             // splitContainer3
             // 
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -732,16 +754,6 @@
             this.splitContainer3.SplitterDistance = 217;
             this.splitContainer3.TabIndex = 0;
             // 
-            // label2
-            // 
-            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(3, 3);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(324, 18);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Plot Development";
-            // 
             // PlotListBox
             // 
             this.PlotListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -752,6 +764,16 @@
             this.PlotListBox.Name = "PlotListBox";
             this.PlotListBox.Size = new System.Drawing.Size(324, 176);
             this.PlotListBox.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Location = new System.Drawing.Point(3, 3);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(324, 18);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Plot Development";
             // 
             // PlotBar
             // 
@@ -795,6 +817,30 @@
             this.label3.Size = new System.Drawing.Size(324, 18);
             this.label3.TabIndex = 0;
             this.label3.Text = "Quests";
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.JournalTextBox);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(330, 434);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Journal";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // JournalTextBox
+            // 
+            this.JournalTextBox.BackColor = System.Drawing.Color.White;
+            this.JournalTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.JournalTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.JournalTextBox.Location = new System.Drawing.Point(0, 0);
+            this.JournalTextBox.Margin = new System.Windows.Forms.Padding(0);
+            this.JournalTextBox.Name = "JournalTextBox";
+            this.JournalTextBox.ReadOnly = true;
+            this.JournalTextBox.Size = new System.Drawing.Size(330, 434);
+            this.JournalTextBox.TabIndex = 0;
+            this.JournalTextBox.Text = "";
             // 
             // ActionBar
             // 
@@ -906,8 +952,6 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.ActionBar, 2, 3);
             this.tableLayoutPanel1.Controls.Add(this.ActionLabel, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.VixenPotencyBar, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.TargetPotencyBar, 5, 1);
             this.tableLayoutPanel1.Controls.Add(this.VixenPotency, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.TargetPotency, 4, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -923,49 +967,33 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(924, 100);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
-            // VixenPotencyBar
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.VixenPotencyBar, 2);
-            this.VixenPotencyBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.VixenPotencyBar.Location = new System.Drawing.Point(3, 23);
-            this.VixenPotencyBar.Name = "VixenPotencyBar";
-            this.VixenPotencyBar.Size = new System.Drawing.Size(257, 14);
-            this.VixenPotencyBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.VixenPotencyBar.TabIndex = 3;
-            // 
-            // TargetPotencyBar
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.TargetPotencyBar, 2);
-            this.TargetPotencyBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TargetPotencyBar.Location = new System.Drawing.Point(662, 23);
-            this.TargetPotencyBar.Name = "TargetPotencyBar";
-            this.TargetPotencyBar.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.TargetPotencyBar.RightToLeftLayout = true;
-            this.TargetPotencyBar.Size = new System.Drawing.Size(258, 14);
-            this.TargetPotencyBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.TargetPotencyBar.TabIndex = 4;
-            // 
             // VixenPotency
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.VixenPotency, 3);
+            this.VixenPotency.Critical = false;
             this.VixenPotency.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.VixenPotency.Location = new System.Drawing.Point(3, 0);
+            this.VixenPotency.Inverse = false;
+            this.VixenPotency.Location = new System.Drawing.Point(0, 0);
+            this.VixenPotency.Margin = new System.Windows.Forms.Padding(0);
             this.VixenPotency.Name = "VixenPotency";
-            this.VixenPotency.Size = new System.Drawing.Size(389, 20);
-            this.VixenPotency.TabIndex = 5;
-            this.VixenPotency.Text = "label16";
-            this.VixenPotency.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.tableLayoutPanel1.SetRowSpan(this.VixenPotency, 2);
+            this.VixenPotency.Size = new System.Drawing.Size(395, 40);
+            this.VixenPotency.TabIndex = 7;
+            this.VixenPotency.LoseShowEnds += new System.EventHandler<System.EventArgs>(this.Potency_LoseShowEnds);
             // 
             // TargetPotency
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.TargetPotency, 3);
+            this.TargetPotency.Critical = false;
             this.TargetPotency.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TargetPotency.Location = new System.Drawing.Point(530, 0);
+            this.TargetPotency.Inverse = true;
+            this.TargetPotency.Location = new System.Drawing.Point(527, 0);
+            this.TargetPotency.Margin = new System.Windows.Forms.Padding(0);
             this.TargetPotency.Name = "TargetPotency";
-            this.TargetPotency.Size = new System.Drawing.Size(390, 20);
-            this.TargetPotency.TabIndex = 6;
-            this.TargetPotency.Text = "label17";
-            this.TargetPotency.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.tableLayoutPanel1.SetRowSpan(this.TargetPotency, 2);
+            this.TargetPotency.Size = new System.Drawing.Size(396, 40);
+            this.TargetPotency.TabIndex = 8;
+            this.TargetPotency.LoseShowEnds += new System.EventHandler<System.EventArgs>(this.Potency_LoseShowEnds);
             // 
             // saveVixenFileDialog
             // 
@@ -975,52 +1003,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(338, 460);
-            this.tabControl1.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.splitContainer3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(330, 434);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Quests";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.JournalTextBox);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(330, 434);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Journal";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // JournalTextBox
-            // 
-            this.JournalTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.JournalTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.JournalTextBox.Location = new System.Drawing.Point(0, 0);
-            this.JournalTextBox.Margin = new System.Windows.Forms.Padding(0);
-            this.JournalTextBox.Name = "JournalTextBox";
-            this.JournalTextBox.ReadOnly = true;
-            this.JournalTextBox.Size = new System.Drawing.Size(330, 434);
-            this.JournalTextBox.TabIndex = 0;
-            this.JournalTextBox.Text = "";
             // 
             // Form1
             // 
@@ -1049,16 +1031,16 @@
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1125,10 +1107,6 @@
         private System.Windows.Forms.Label LocationLabel;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ProgressBar VixenPotencyBar;
-        private System.Windows.Forms.ProgressBar TargetPotencyBar;
-        private System.Windows.Forms.Label VixenPotency;
-        private System.Windows.Forms.Label TargetPotency;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem vixenToolStripMenuItem;
@@ -1140,6 +1118,8 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.RichTextBox JournalTextBox;
+        private HPBar VixenPotency;
+        private HPBar TargetPotency;
     }
 }
 

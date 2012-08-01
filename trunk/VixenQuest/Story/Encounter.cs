@@ -310,10 +310,11 @@ namespace VixenQuest.Story
                 cChances.Add(pVixen.Skills[VixenSkill.Oral]);
             
             //анальный секс
-            if (!pVixen.HaveDick)
+            //у нас - активный анальный секс это ДАТЬ в жопу
+            if (!m_pTarget.HaveDick)
                 cChances.Add(0);
             else
-                cChances.Add(pVixen.Skills[VixenSkill.Traditional]);
+                cChances.Add(pVixen.Skills[VixenSkill.Anal]);
             
             //садо-мазо
             //животные не знают, что такое садо-мазо
@@ -328,11 +329,12 @@ namespace VixenQuest.Story
             if (!m_pTarget.HaveCunt)
                 cChances.Add(0);
             else
-                cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
+                cChances.Add(pVixen.Skills[VixenSkill.Foreplay]);
 
             //анальный фистинг
+            //в отличие от секса, активный фистинг - это всё же делать фистинг, а не получать его
             //животные делать фистинг не обучены
-            cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
+            cChances.Add(pVixen.Skills[VixenSkill.Foreplay]);
 
             int iChoosen = Rnd.ChooseOne(cChances, 3);
 
@@ -382,7 +384,8 @@ namespace VixenQuest.Story
             cChances.Add(m_pTarget.Skills[VixenSkill.Oral]);
             
             //анальный секс
-            if (!m_pTarget.HaveDick)
+            //у нас - активный анальный секс это ДАТЬ в жопу
+            if (!pVixen.HaveDick)
                 cChances.Add(0);
             else
                 cChances.Add(m_pTarget.Skills[VixenSkill.Anal]);
@@ -400,14 +403,14 @@ namespace VixenQuest.Story
             if (!pVixen.HaveCunt || m_pTarget.m_pRace.m_eSapience == Sapience.Animal)
                 cChances.Add(0);
             else
-                cChances.Add(m_pTarget.Skills[VixenSkill.Traditional]);
+                cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
 
             //анальный фистинг
             //животные делать фистинг не обучены
             if (m_pTarget.m_pRace.m_eSapience == Sapience.Animal)
                 cChances.Add(0);
             else
-                cChances.Add(m_pTarget.Skills[VixenSkill.Anal]);
+                cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
 
             int iChoosen = Rnd.ChooseOne(cChances, 3);
 
