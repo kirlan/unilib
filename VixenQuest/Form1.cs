@@ -10,6 +10,7 @@ using Random;
 using VixenQuest.World;
 using VixenQuest.People;
 using VixenQuest.Story;
+using System.Threading;
 
 namespace VixenQuest
 {
@@ -59,12 +60,10 @@ namespace VixenQuest
             ActionBar.Maximum = ActionBar.ClientRectangle.Width;
             ActionBar.Value = 0;
 
-            VixenPotencyBar.Value = 0;
-            VixenPotencyBar.Maximum = VixenPotencyBar.ClientRectangle.Width;
-            VixenPotencyBar.Value = VixenPotencyBar.Maximum;
-            m_iShouldBeValueVP = VixenPotencyBar.Maximum;
+            VixenPotency.SetFighter(m_pVixen.Name, m_pVixen.EffectiveStats[Stat.Potency]);
+            VixenPotency.Visible = true;
 
-            TargetPotencyBar.Maximum = VixenPotencyBar.Maximum;
+            TargetPotency.Visible = false;
 
             timer1.Enabled = true;
         }
@@ -383,12 +382,17 @@ namespace VixenQuest
                 newItem = new ListViewItem("BDSM");
                 newItem.SubItems.Add("");
                 SkillsListView.Items.Add(newItem);
+
+                newItem = new ListViewItem("Foreplay");
+                newItem.SubItems.Add("");
+                SkillsListView.Items.Add(newItem);
             }
 
             SkillsListView.Items[0].SubItems[1].Text = m_pVixen.Skills[VixenSkill.Traditional].ToString();
             SkillsListView.Items[1].SubItems[1].Text = m_pVixen.Skills[VixenSkill.Anal].ToString();
             SkillsListView.Items[2].SubItems[1].Text = m_pVixen.Skills[VixenSkill.Oral].ToString();
             SkillsListView.Items[3].SubItems[1].Text = m_pVixen.Skills[VixenSkill.SM].ToString();
+            SkillsListView.Items[4].SubItems[1].Text = m_pVixen.Skills[VixenSkill.Foreplay].ToString();
         }
 
         private void ShowStats(bool bRecreate)
@@ -533,16 +537,10 @@ namespace VixenQuest
 
         }
 
-        int m_iOldValueVP = 0;
-        int m_iShouldBeValueVP;
-        int m_iShouldBeValueTP = 100;
         int m_iOldValue = 0;
         int m_iShouldBeValue = 100;
         int m_iCurrentStep = 0;
         int m_iTotalSteps = 40;
-
-        bool m_bBlink = false;
-        int m_iBlinkCounter = 0;
 
         bool m_bShowViktoryMode = false;
 
@@ -556,6 +554,9 @@ namespace VixenQuest
             if (m_pVixen == null || m_pStoryLine == null)
                 return;
 
+            if (m_bShowViktoryMode)
+                return;
+
             //if (m_pStoryLine.CurrentAction.m_eType == ActionType.Move)
             //    LocationLabel.Text = "- ? -";
             //else
@@ -565,220 +566,119 @@ namespace VixenQuest
             if (m_pStoryLine.CurrentAction.m_pTarget != null)
             {
                 TargetPotency.Visible = true;
-                string sEncounterName = m_pStoryLine.CurrentAction.m_pTarget.LongEncounterName;
-                sEncounterName = sEncounterName.Substring(0, 1).ToUpper() + sEncounterName.Substring(1);
-                TargetPotency.Text = sEncounterName;
+                //string sEncounterName = m_pStoryLine.CurrentAction.m_pTarget.LongEncounterName;
+                //sEncounterName = sEncounterName.Substring(0, 1).ToUpper() + sEncounterName.Substring(1);
+                //TargetPotency.Text = sEncounterName;
             }
             else
-            {
                 TargetPotency.Visible = false;
-                TargetPotencyBar.Visible = false;
-            }
 
-            if (m_pStoryLine.CurrentAction.m_pTarget != null)
+            ActionLabel.Text = "   " + m_pStoryLine.CurrentAction.m_sName;
+            m_iShouldBeValue = ActionBar.Maximum;
+
+            //m_iShouldBeValue = m_pStoryLine.CurrentAction.m_iProgressPercent * ActionBar.Maximum / 100 + delta;
+            //if (m_iShouldBeValue < 0)
+            //    m_iShouldBeValue = 0;
+            //if (m_iShouldBeValue > ActionBar.Maximum)
+            //    m_iShouldBeValue = ActionBar.Maximum;
+
+            //delta += deltaInc;
+            //if (delta > Math.Sqrt(m_iShouldBeValue))
+            //    deltaInc = -1;
+            //if (delta < -Math.Sqrt(m_iShouldBeValue))
+            //    deltaInc = 1;
+
+            ActionBar.Value = m_iOldValue + (m_iShouldBeValue - m_iOldValue) * m_iCurrentStep / m_iTotalSteps;
+
+            if (m_iCurrentStep >= m_iTotalSteps)
+            //            if (ActionBar.Value == m_iShouldBeValue)
             {
-                VixenPotencyBar.Value = (VixenPotencyBar.Value * 3 + m_iShouldBeValueVP) / 4;
-                TargetPotencyBar.Value = (TargetPotencyBar.Value * 3 + m_iShouldBeValueTP) / 4;
-            }
+                string sLoot = m_pVixen.Complete(m_pStoryLine.CurrentAction);
 
-            if (!m_bShowViktoryMode)
-            {
-                ActionLabel.Text = "   " + m_pStoryLine.CurrentAction.m_sName;
+                if (m_pStoryLine.CurrentAction.m_iVixenPotency != -1)
+                    VixenPotency.LoseHP(m_pStoryLine.CurrentAction.m_iVixenPotency);
 
-                if (VixenPotencyBar.Value > 0)
-                    VixenPotencyBar.Visible = true;
-                else
-                    VixenPotencyBar.Visible = m_bBlink;
                 if (m_pStoryLine.CurrentAction.m_pTarget != null)
+                    TargetPotency.LoseHP(m_pStoryLine.CurrentAction.m_iTargetPotency);
+
+                ShowInventory(sLoot);
+                UpdateTraits();
+                ShowSkills(false);
+                ShowStats(false);
+                ShowClothes(false);
+                ShowJevelry(false);
+
+                if (m_pStoryLine.CurrentAction.m_pTarget != null && m_pStoryLine.CurrentEncounter.LastAction)
+                    m_iTotalSteps = 40;
+                else
+                    m_iTotalSteps = 0;
+                m_iCurrentStep = 0;
+
+                m_bLastActionSuccess = m_pStoryLine.CurrentAction.m_iTargetPotency < m_pStoryLine.CurrentAction.m_iVixenPotency;
+
+                bool bLastEncounterSuccess = m_pStoryLine.CurrentEncounter.Succcess;
+                bool bEvade = m_pStoryLine.CurrentAction.m_eType == ActionType.Evade;
+                string sTargetName = "";
+                if (m_pStoryLine.CurrentEncounter.m_pTarget != null)
                 {
-                    if (TargetPotencyBar.Value > 0)
-                        TargetPotencyBar.Visible = true;
-                    else
-                        TargetPotencyBar.Visible = m_bBlink;
+                    sTargetName = m_pStoryLine.CurrentEncounter.m_pTarget.LongEncounterName;
+                    sTargetName = sTargetName.Substring(0, 1).ToUpper() + sTargetName.Substring(1);
                 }
 
-                if (m_iBlinkCounter++ > 10)
+                //Переходим к следующему действию.
+                m_pStoryLine.Advance();
+
+                if (m_pStoryLine.CurrentEncounter.FirstAction)
                 {
-                    m_iBlinkCounter = 0;
-                    m_bBlink = !m_bBlink;
+                    if (!bLastEncounterSuccess && sTargetName != "")
+                    {
+                        if (m_pVixen.m_sLastLoss != "")
+                            AddToJournal(sTargetName + " wins and takes " + m_pVixen.m_sLastLoss.ToLower() + ".");
+                        else
+                            AddToJournal("...Failed.");
+                    }
+                    if (bLastEncounterSuccess && sTargetName != "")
+                    {
+                        if (bEvade)
+                            AddToJournal("...Successfull!");
+                        else
+                        {
+                            if (m_pVixen.m_sLastLoot != "")
+                                AddToJournal(sTargetName + " begs for mercy and offers " + m_pVixen.m_sLastLoot.ToLower() + ".");
+                            else
+                                AddToJournal(sTargetName + " begs for mercy!");
+                        }
+                    }
                 }
 
-                m_iShouldBeValue = ActionBar.Maximum;
-                //m_iShouldBeValue = m_pStoryLine.CurrentAction.m_iProgressPercent * ActionBar.Maximum / 100 + delta;
-                //if (m_iShouldBeValue < 0)
-                //    m_iShouldBeValue = 0;
-                //if (m_iShouldBeValue > ActionBar.Maximum)
-                //    m_iShouldBeValue = ActionBar.Maximum;
+                ShowInventory(m_pVixen.m_sLastLoot);
+                UpdateTraits();
+                ShowStats(false);
+                ShowSkills(false);
+                ShowClothes(false);
+                ShowJevelry(false);
 
-                //delta += deltaInc;
-                //if (delta > Math.Sqrt(m_iShouldBeValue))
-                //    deltaInc = -1;
-                //if (delta < -Math.Sqrt(m_iShouldBeValue))
-                //    deltaInc = 1;
-
-                ActionBar.Value = m_iOldValue + (m_iShouldBeValue - m_iOldValue) * m_iCurrentStep / m_iTotalSteps;
-                if (m_pStoryLine.CurrentAction.m_eType == ActionType.Rest)
-                    VixenPotencyBar.Value = m_iOldValueVP + (m_iShouldBeValueVP - m_iOldValueVP) * m_iCurrentStep / m_iTotalSteps;
-
-                if (m_iCurrentStep >= m_iTotalSteps)
-                //            if (ActionBar.Value == m_iShouldBeValue)
+                if (m_bLastActionSuccess)// VixenPotencyBar.Value > TargetPotencyBar.Value)
                 {
-                    string sLoot = m_pVixen.Complete(m_pStoryLine.CurrentAction);
-
-                    if (m_pStoryLine.CurrentAction.m_iVixenPotency != -1)
-                    {
-                        //VixenPotencyBar.Value = 0;
-                        int iVixenPotencyMaximum = m_pVixen.EffectiveStats[Stat.Potency];
-                        m_iShouldBeValueVP = m_pStoryLine.CurrentAction.m_iVixenPotency * VixenPotencyBar.Maximum / iVixenPotencyMaximum;
-                    }
-
-                    if (m_pStoryLine.CurrentAction.m_pTarget != null)
-                    {
-                        //TargetPotencyBar.Value = 0;
-                        int iTargetPotencyMaximum = m_pStoryLine.CurrentAction.m_pTarget.Stats[Stat.Potency];
-                        m_iShouldBeValueTP = m_pStoryLine.CurrentAction.m_iTargetPotency * TargetPotencyBar.Maximum / iTargetPotencyMaximum;
-                    }
-                    ShowInventory(sLoot);
-                    UpdateTraits();
-                    ShowSkills(false);
-                    ShowStats(false);
-                    ShowClothes(false);
-                    ShowJevelry(false);
-
-                    if (m_pStoryLine.CurrentAction.m_pTarget != null && m_pStoryLine.CurrentEncounter.LastAction)
-                        m_iTotalSteps = 40;
+                    if (m_pStoryLine.CurrentAction.m_eType == ActionType.Evade)
+                        ActionLabel.Text = "   Successfully escaped...";
                     else
-                        m_iTotalSteps = 0;
-                    m_iCurrentStep = 0;
+                        ActionLabel.Text = "   Departing - tired, but triumphant...";
 
-                    m_bShowViktoryMode = true;
+                    TargetPotency.ShowLose();
                 }
                 else
                 {
-                    m_iCurrentStep++;
+                    ActionLabel.Text = "   Left lying completely drained...";
+
+                    VixenPotency.ShowLose();
                 }
+
+                m_bShowViktoryMode = true;
             }
             else
             {
-                if (m_iCurrentStep > m_iTotalSteps)
-                {
-                    ActionBar.Value = 0;
-                    m_iOldValueVP = VixenPotencyBar.Value;
-
-                    if (m_pStoryLine.CurrentEncounter.m_pTarget != null && m_pStoryLine.CurrentEncounter.FirstAction)
-                    {
-                        TargetPotencyBar.Value = TargetPotencyBar.Maximum;
-                        m_iShouldBeValueTP = TargetPotencyBar.Value;
-                    }
-
-                    if (m_pStoryLine.CurrentAction.m_eType == ActionType.Rest)
-                    {
-                        m_iShouldBeValueVP = VixenPotencyBar.Maximum;
-                    }
-
-                    if (m_pStoryLine.CurrentEncounter.m_pTarget != null)
-                        ActionBar.RightToLeft = m_pStoryLine.CurrentAction.Passive ? RightToLeft.Yes : RightToLeft.No;
-                    else
-                        ActionBar.RightToLeft = RightToLeft.No;
-
-                    m_iOldValue = ActionBar.Value;
-                    m_iTotalSteps = m_pVixen.ActionDifficulty(m_pStoryLine.CurrentAction);
-                    m_iCurrentStep = 0;
-                    ShowPlot(false);
-                    ShowQuests(false);
-                    ShowLog(false);
-
-                    if (m_pStoryLine.CurrentAction.m_eType == ActionType.Rest ||
-                        m_pStoryLine.CurrentAction.m_eType == ActionType.Move)
-                        m_iDayTime++;
-                    if (m_iDayTime >= 3)
-                    {
-                        m_iDayTime = 0;
-                        m_iDay++;
-                        AddToJournal("\nDay " + m_iDay.ToString() + ".");
-                    }
-                    AddToJournal(m_pStoryLine.CurrentAction.GetDescription());
-
-                    m_bShowViktoryMode = false;
-                }
-                else 
-                {
-                    if (m_iCurrentStep == 0)
-                    {
-                        m_bLastActionSuccess = m_pStoryLine.CurrentAction.m_iTargetPotency < m_pStoryLine.CurrentAction.m_iVixenPotency;
-
-                        bool bLastEncounterSuccess = m_pStoryLine.CurrentEncounter.Succcess;
-                        bool bEvade = m_pStoryLine.CurrentAction.m_eType == ActionType.Evade;
-                        string sTargetName = "";
-                        if (m_pStoryLine.CurrentEncounter.m_pTarget != null)
-                        {
-                            sTargetName = m_pStoryLine.CurrentEncounter.m_pTarget.LongEncounterName;
-                            sTargetName = sTargetName.Substring(0, 1).ToUpper() + sTargetName.Substring(1);
-                        }
-
-                        //Переходим к следующему действию.
-                        m_pStoryLine.Advance();
-
-                        if (m_pStoryLine.CurrentEncounter.FirstAction)
-                        {
-                            if (!bLastEncounterSuccess && sTargetName != "")
-                            {
-                                if (m_pVixen.m_sLastLoss != "")
-                                    AddToJournal(sTargetName + " wins and takes " + m_pVixen.m_sLastLoss.ToLower() + ".");
-                                else
-                                    AddToJournal("...Failed.");
-                            }
-                            if (bLastEncounterSuccess && sTargetName != "")
-                            {
-                                if (bEvade)
-                                    AddToJournal("...Successfull!");
-                                else
-                                {
-                                    if (m_pVixen.m_sLastLoot != "")
-                                        AddToJournal(sTargetName + " begs for mercy and offers " + m_pVixen.m_sLastLoot.ToLower() + ".");
-                                    else
-                                        AddToJournal(sTargetName + " begs for mercy!");
-                                }
-                            }
-                        }
-
-                        ShowInventory(m_pVixen.m_sLastLoot);
-                        UpdateTraits();
-                        ShowStats(false);
-                        ShowSkills(false);
-                        ShowClothes(false);
-                        ShowJevelry(false);
-                    }
-
-                    if (m_bLastActionSuccess)// VixenPotencyBar.Value > TargetPotencyBar.Value)
-                    {
-                        if (m_pStoryLine.CurrentAction.m_eType == ActionType.Evade)
-                            ActionLabel.Text = "   Successfully escaped...";
-                        else
-                            ActionLabel.Text = "   Departing - tired, but triumphant...";
-
-                        TargetPotencyBar.Visible = m_bBlink;
-                        VixenPotencyBar.Visible = true;
-                    }
-                    else
-                    {
-                        ActionLabel.Text = "   Left lying completely drained...";
-
-                        VixenPotencyBar.Visible = m_bBlink;
-                        TargetPotencyBar.Visible = true;
-                    }
-
-                    if (m_iBlinkCounter++ > 0)
-                    {
-                        m_iBlinkCounter = 0;
-                        m_bBlink = !m_bBlink;
-                    }
-
-                    //VixenPotencyBar.Value = (VixenPotencyBar.Value + m_iShouldBeValueVP) / 2;
-                    //TargetPotencyBar.Value = (TargetPotencyBar.Value + m_iShouldBeValueTP) / 2;
-
-                    m_iCurrentStep++;
-                }
+                m_iCurrentStep++;
             }
         }
 
@@ -817,6 +717,47 @@ namespace VixenQuest
             {
                 m_pVixen.SaveXML(saveVixenFileDialog.FileName);
             }
+        }
+
+        private void Potency_LoseShowEnds(object sender, EventArgs e)
+        {
+            ActionBar.Value = 0;
+
+            if (m_pStoryLine.CurrentEncounter.m_pTarget != null && m_pStoryLine.CurrentEncounter.FirstAction)
+            {
+                string sEncounterName = m_pStoryLine.CurrentEncounter.m_pTarget.LongEncounterName;
+                sEncounterName = sEncounterName.Substring(0, 1).ToUpper() + sEncounterName.Substring(1);
+                TargetPotency.SetFighter(sEncounterName, m_pStoryLine.CurrentEncounter.m_pTarget.Stats[Stat.Potency]);
+            }
+
+            if (m_pStoryLine.CurrentEncounter.m_pTarget != null)
+                ActionBar.RightToLeft = m_pStoryLine.CurrentAction.Passive ? RightToLeft.Yes : RightToLeft.No;
+            else
+                ActionBar.RightToLeft = RightToLeft.No;
+
+            m_iOldValue = ActionBar.Value;
+            m_iTotalSteps = m_pVixen.ActionDifficulty(m_pStoryLine.CurrentAction);
+
+            if (m_pStoryLine.CurrentAction.m_eType == ActionType.Rest)
+                VixenPotency.RestoreHP(m_iTotalSteps);
+
+            m_iCurrentStep = 0;
+            ShowPlot(false);
+            ShowQuests(false);
+            ShowLog(false);
+
+            if (m_pStoryLine.CurrentAction.m_eType == ActionType.Rest ||
+                m_pStoryLine.CurrentAction.m_eType == ActionType.Move)
+                m_iDayTime++;
+            if (m_iDayTime >= 3)
+            {
+                m_iDayTime = 0;
+                m_iDay++;
+                AddToJournal("\nDay " + m_iDay.ToString() + ".");
+            }
+            AddToJournal(m_pStoryLine.CurrentAction.GetDescription());
+
+            m_bShowViktoryMode = false;
         }
     }
 }

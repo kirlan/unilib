@@ -1,7 +1,6 @@
 ﻿To Do:
  Core:
  - add graf of planes and portal points in places to trawel between planes
- - fix loot names to not contain victim's name - only mood, race, gender, orientation and profession
  - random name generator for main hero
  - toys
    - which sex actions affects
@@ -46,6 +45,16 @@
 
 
 What's new:
+
+ver. 0.12.0
+ - fixed loot names to not contain victim's name - only race, gender, orientation and profession
+ - new algorithm of locations grid generation - now it uses Voronoi diagrams
+ - generating of events journal of hero adventures
+ - added new skill - foreplay, used for dildo play and fisting
+ - skills are now assimetrical - for example, ass-fucking now not anal vs. anal, but anal vs. traditional
+ - sex encounter now always contains at least one sex action, except failed pursue attempts
+ - sex encounters again could contain more then one sex action
+ - active anal sex now not "fuck into ass", but "fuck by ass"
 
 ver. 0.11.1
  - added connecting grid of lands inside plane, now travelling from one land to another is calculated according to that grid
