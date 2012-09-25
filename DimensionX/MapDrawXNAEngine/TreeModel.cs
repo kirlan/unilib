@@ -8,7 +8,7 @@ using LandscapeGeneration;
 
 namespace MapDrawXNAEngine
 {
-    protected class TreeModel
+    internal class TreeModel
     {
         public readonly Vector3 m_pPosition;
         public readonly Model m_pModel;

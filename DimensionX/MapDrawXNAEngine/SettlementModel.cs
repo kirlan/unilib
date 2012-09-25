@@ -8,9 +8,10 @@ using LandscapeGeneration;
 
 namespace MapDrawXNAEngine
 {
-    protected class SettlementModel
+    internal class SettlementModel
     {
         public readonly Vector3 m_pPosition;
+        public readonly Vector3 m_pUp;
         public readonly float m_fAngle;
         public readonly Model m_pModel;
         public readonly float m_fScale;
@@ -27,20 +28,22 @@ namespace MapDrawXNAEngine
             m_sName = sName;
             m_iSize = iSize;
 
+            m_pUp = Vector3.Up; 
+            
             if (eWorldShape == WorldShape.Ringworld)
             {
-                Vector3 pUp = Vector3.Transform(-Vector3.Normalize(m_pPosition), Matrix.CreateScale(1, 1, 0));
-                Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
+                m_pUp = Vector3.Transform(-Vector3.Normalize(m_pPosition), Matrix.CreateScale(1, 1, 0));
+                Vector3 pAxis = Vector3.Cross(Vector3.Up, m_pUp);
                 pAxis.Normalize();
-                float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
+                float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, m_pUp));
                 worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(m_pPosition);
             }
             else if (eWorldShape == WorldShape.Planet)
             {
-                Vector3 pUp = Vector3.Normalize(m_pPosition);
-                Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
+                m_pUp = Vector3.Normalize(pPosition);
+                Vector3 pAxis = Vector3.Cross(Vector3.Up, m_pUp);
                 pAxis.Normalize();
-                float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
+                float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, m_pUp));
                 worldMatrix = Matrix.CreateScale(m_fScale) * Matrix.CreateRotationY(m_fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(m_pPosition);
             }
             else
