@@ -123,7 +123,7 @@ namespace MapDrawXNAEngine
         }
     }
 
-    private class GeoData2 : GeoData
+    internal class GeoData2 : GeoData
     {
         public GeoData[] m_aLinked;
 

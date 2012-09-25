@@ -9,7 +9,7 @@ using Random;
 
 namespace MapDrawXNAEngine
 {
-    private class RoadData
+    internal class RoadData
     {
         internal enum RoadType
         {

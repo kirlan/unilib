@@ -134,6 +134,10 @@ namespace LandscapeGeneration
         /// </summary>
         public bool m_bBorder = false;
         public bool m_bGhost = false;
+        /// <summary>
+        /// Координаты центра локации нельзя смещать при вычислении сетки, т.к. она используется для формирования ровного края плоской карты
+        /// </summary>
+        public bool m_bFixed = false;
 
         public long m_iID = 0;
 
