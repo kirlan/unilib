@@ -205,6 +205,15 @@ namespace Random
                 index++;
             }
 
+            index = 0;
+            foreach (float fChance in cChances)
+            {
+                if (fChance > 0.0f)
+                    return index;
+
+                index++;
+            } 
+            
             return -1;
         }
     }
