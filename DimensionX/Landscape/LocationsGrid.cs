@@ -454,21 +454,24 @@ namespace LandscapeGeneration
                             {
                                 ImproveGrid();
                                 bOK = CalculateVoronoi();
+
+                                if (bOK)
+                                {
+                                    //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
+                                    foreach (LOC pLoc in m_aLocations)
+                                    {
+                                        pLoc.BuildBorder();
+                                        pLoc.CorrectCenter();
+                                    }
+
+                                    if (m_eShape == WorldShape.Ringworld)
+                                    {
+                                        MergeVertexes();
+                                        MakeRingWorld();
+                                    }
+                                }
                             }
                         }
-                    }
-
-                    //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                    foreach (LOC pLoc in m_aLocations)
-                    {
-                        pLoc.BuildBorder();
-                        pLoc.CorrectCenter();
-                    }
-
-                    if (m_eShape == WorldShape.Ringworld)
-                    {
-                        MergeVertexes();
-                        MakeRingWorld();
                     }
                 }
             }
