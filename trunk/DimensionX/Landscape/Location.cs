@@ -243,8 +243,11 @@ namespace LandscapeGeneration
         /// </summary>
         public void CorrectCenter()
         {
+            if (m_pFirstLine == null)
+                m_bUnclosed = true;
+            
             if (m_bUnclosed || m_bBorder)
-                return;
+                    return;
 
             float fX = 0, fY = 0, fZ = 0, fLength = 0;
 
