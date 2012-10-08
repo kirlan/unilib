@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Socium
 {
-    class Stratum
+    class Strata
     {
         public string m_sName;
     }
