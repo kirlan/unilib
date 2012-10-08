@@ -35,7 +35,7 @@ namespace Socium.Nations
                                                 EyesGenetix.Human,
                                                 HairsGenetix.HumanWhite),
                 new CultureTemplate(AdvancementRate.UniformlyPrecise, AdvancementRate.Leap, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise)),
-            new Race("imperial", 1, Language.Latin, 
+            new Race("latini", 1, Language.Latin, 
                 //new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Plains}, 
                 //new LandTypeInfoX[] {LandTypes<LandTypeInfoX>.Desert, LandTypes<LandTypeInfoX>.Jungle, LandTypes<LandTypeInfoX>.Tundra},
                 new Fenotype<LandTypeInfoX>(BodyGenetix.Human,
