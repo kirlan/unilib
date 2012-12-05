@@ -323,6 +323,8 @@
       <Name>hamlet_T6</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
+      <ProcessorParameters_Scale>0.02</ProcessorParameters_Scale>
+      <ProcessorParameters_RotationX>-90</ProcessorParameters_RotationX>
     </Compile>
     <Compile Include="fbx\hamlet_T7.fbx">
       <Name>hamlet_T7</Name>
@@ -402,6 +404,7 @@
       <Name>village_T6</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
+      <ProcessorParameters_RotationX>-90</ProcessorParameters_RotationX>
     </Compile>
     <Compile Include="fbx\village_T7.fbx">
       <Name>village_T7</Name>

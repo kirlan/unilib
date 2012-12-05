@@ -652,20 +652,20 @@ namespace VQMapTest2
 
         private void villagesHamletsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mapDraw3d1.ShowLabelVillages = villagesHamletsToolStripMenuItem.Checked;
             villagesHamletsToolStripMenuItem.Checked = !villagesHamletsToolStripMenuItem.Checked;
+            mapDraw3d1.ShowLabelVillages = villagesHamletsToolStripMenuItem.Checked;
         }
 
         private void townsFortsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mapDraw3d1.ShowLabelTowns = townsFortsToolStripMenuItem.Checked;
             townsFortsToolStripMenuItem.Checked = !townsFortsToolStripMenuItem.Checked;
+            mapDraw3d1.ShowLabelTowns = townsFortsToolStripMenuItem.Checked;
         }
 
         private void citiesCapitalsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mapDraw3d1.ShowLabelCapital = citiesCapitalsToolStripMenuItem.Checked;
             citiesCapitalsToolStripMenuItem.Checked = !citiesCapitalsToolStripMenuItem.Checked;
+            mapDraw3d1.ShowLabelCapital = citiesCapitalsToolStripMenuItem.Checked;
         }
 
         private void showAllToolStripMenuItem_Click(object sender, EventArgs e)
