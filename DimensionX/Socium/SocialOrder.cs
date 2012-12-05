@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Socium
 {
-    internal class SocialOrder
+    public class SocialOrder
     {
         public string[] m_aElite;
         public string[] m_aMiddle;
