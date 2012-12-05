@@ -1990,13 +1990,34 @@ namespace MapDrawXNAEngine
         /// <param name="fProbability">частота деревьев (0..1). Всего будет высажено примерно [число вершин в периметре локации]*3*[частота деревьев] деревьев</param>
         private void AddTreeModels(LocationX pLoc, ref LandType eLT, ref VertexMultitextured[] aVertices, ref Dictionary<LocationX, int> cLocations, ref Dictionary<Vertex, int> cVertexes, ref Dictionary<Model, List<TreeModel>> cTrees, float fScale, float fProbability)
         {
+            //fProbability /= 1 + (pLoc.m_cRoads[RoadQuality.Country].Count + pLoc.m_cRoads[RoadQuality.Normal].Count + pLoc.m_cRoads[RoadQuality.Good].Count)/2;
+
+            List<LocationX> cHaveRoadsTo = new List<LocationX>();
+            foreach(Road pRoad in pLoc.m_cRoads[RoadQuality.Country])
+                cHaveRoadsTo.AddRange(pRoad.Locations);
+            foreach(Road pRoad in pLoc.m_cRoads[RoadQuality.Normal])
+                cHaveRoadsTo.AddRange(pRoad.Locations);
+            foreach(Road pRoad in pLoc.m_cRoads[RoadQuality.Good])
+                cHaveRoadsTo.AddRange(pRoad.Locations);
+
+            while(cHaveRoadsTo.Remove(pLoc)) {};
+
             //последовательно перебирает все связанные линии, пока круг не замкнётся.
             Line pLine = pLoc.m_pFirstLine;
             do
             {
+                bool bHaveRoad = false;
+                foreach (LocationX pLocP2 in pLine.m_pMidPoint.m_aLocations)
+                    if (cHaveRoadsTo.Contains(pLocP2))
+                        bHaveRoad = true;
+
                 Vector3 pCenter = aVertices[cVertexes[pLine.m_pInnerPoint]].Position;
 
-                if (pLoc.m_pSettlement == null && Rnd.Get(1f) < fProbability)
+                if (pLoc.m_pSettlement == null &&
+                    pLoc.m_cRoads[RoadQuality.Country].Count == 0 &&
+                    pLoc.m_cRoads[RoadQuality.Normal].Count == 0 &&
+                    pLoc.m_cRoads[RoadQuality.Good].Count == 0 &&
+                    Rnd.Get(1f) < fProbability)
                     AddTreeModel((pCenter + aVertices[cLocations[pLoc]].Position) / 2, ref eLT, ref cTrees, fScale);
 
                 if (pLoc.m_pSettlement == null ||
@@ -2005,7 +2026,7 @@ namespace MapDrawXNAEngine
                     pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Town ||
                     pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Fort)
                 {
-                    if (Rnd.Get(1f) < fProbability)
+                    if (Rnd.Get(1f) < fProbability && !bHaveRoad)
                         AddTreeModel(pCenter, ref eLT, ref cTrees, fScale);
                     if (Rnd.Get(1f) < fProbability)
                         AddTreeModel((pCenter + aVertices[cVertexes[pLine.m_pPoint2]].Position) / 2, ref eLT, ref cTrees, fScale);
@@ -2402,6 +2423,30 @@ namespace MapDrawXNAEngine
                     //Draw();
                 }
             }
+        }
+
+        private bool m_bShowLabelCapital = true;
+
+        public bool ShowLabelCapital
+        {
+            get { return m_bShowLabelCapital; }
+            set { m_bShowLabelCapital = value; }
+        }
+
+        private bool m_bShowLabelTowns = true;
+
+        public bool ShowLabelTowns
+        {
+            get { return m_bShowLabelTowns; }
+            set { m_bShowLabelTowns = value; }
+        }
+
+        private bool m_bShowLabelVillages = true;
+
+        public bool ShowLabelVillages
+        {
+            get { return m_bShowLabelVillages; }
+            set { m_bShowLabelVillages = value; }
         }
 
         /// <summary>
@@ -3309,10 +3354,23 @@ namespace MapDrawXNAEngine
 
         private void DrawSettlementNames()
         {
+            if (!m_bShowLabelCapital &&
+                !m_bShowLabelTowns &&
+                !m_bShowLabelVillages)
+                return;
+
             m_pSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, DepthStencilState.DepthRead, null);
             for (int i = 0; i < m_aSettlements.Length; i++)
             {
                 SettlementModel pSettlement = m_aSettlements[i];
+
+                if (pSettlement.m_iSize == 2 && !m_bShowLabelCapital)
+                    continue;
+                if (pSettlement.m_iSize == 1 && !m_bShowLabelTowns)
+                    continue;
+                if (pSettlement.m_iSize == 0 && !m_bShowLabelVillages)
+                    continue;
+
                 Vector3 pViewVector = pSettlement.m_pPosition - m_pCamera.Position;
 
                 float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
