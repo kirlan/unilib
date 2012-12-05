@@ -993,7 +993,7 @@ namespace Socium
             //в обществе абсолютных пацифистов (агрессивность < 1/3) не может быть даже капитализма (2), т.е. только 3 и выше
             if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] < 0.33)
                 m_iSocialEquality = Math.Max(3, m_iSocialEquality);            
-            //в обществе абсолютного самоотречения (агрессивность < 1/3) не может быть капитализма (2) - только или социализм, или феодализм
+            //в обществе абсолютного самоотречения (эгоизм < 1/3) не может быть капитализма (2) - только или социализм, или феодализм
             if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] < 0.33)
                 if(m_pInfo.m_bDinasty)
                     m_iSocialEquality = Math.Min(1, m_iSocialEquality);
