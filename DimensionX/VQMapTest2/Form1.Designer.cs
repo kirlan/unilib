@@ -60,11 +60,19 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showLabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.villagesHamletsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.townsFortsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.citiesCapitalsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.showAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.showLandmarksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showRoadsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showStateBordersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showProvinciesBordersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.debugToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.showLocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,10 +94,10 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.label3 = new System.Windows.Forms.Label();
             this.timer3 = new System.Windows.Forms.Timer(this.components);
-            this.mapDraw3d1 = new MapDrawXNAEngine.MapDraw3d();
             this.groupBox4.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage7.SuspendLayout();
@@ -245,54 +253,54 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(148, 4);
+            this.tabPage1.Location = new System.Drawing.Point(607, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(298, 699);
+            this.tabPage1.Size = new System.Drawing.Size(0, 699);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Land types";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(214, 4);
+            this.tabPage2.Location = new System.Drawing.Point(607, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(232, 699);
+            this.tabPage2.Size = new System.Drawing.Size(0, 699);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Humidity";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage10
             // 
-            this.tabPage10.Location = new System.Drawing.Point(283, 4);
+            this.tabPage10.Location = new System.Drawing.Point(607, 4);
             this.tabPage10.Name = "tabPage10";
-            this.tabPage10.Size = new System.Drawing.Size(163, 699);
+            this.tabPage10.Size = new System.Drawing.Size(0, 699);
             this.tabPage10.TabIndex = 7;
             this.tabPage10.Text = "Elevation";
             this.tabPage10.UseVisualStyleBackColor = true;
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(342, 4);
+            this.tabPage3.Location = new System.Drawing.Point(607, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(104, 699);
+            this.tabPage3.Size = new System.Drawing.Size(0, 699);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Natives";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(401, 4);
+            this.tabPage4.Location = new System.Drawing.Point(607, 4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(45, 699);
+            this.tabPage4.Size = new System.Drawing.Size(0, 699);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Nations";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(475, 4);
+            this.tabPage5.Location = new System.Drawing.Point(607, 4);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(0, 699);
             this.tabPage5.TabIndex = 4;
@@ -301,7 +309,7 @@
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(529, 4);
+            this.tabPage6.Location = new System.Drawing.Point(607, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 699);
             this.tabPage6.TabIndex = 5;
@@ -424,15 +432,81 @@
             // debugToolStripMenuItem
             // 
             this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showLabelsToolStripMenuItem,
+            this.toolStripMenuItem2,
             this.showLandmarksToolStripMenuItem,
             this.showRoadsToolStripMenuItem,
             this.showStateBordersToolStripMenuItem,
             this.showProvinciesBordersToolStripMenuItem,
-            this.toolStripMenuItem2,
+            this.toolStripSeparator2,
             this.debugToolStripMenuItem1});
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
             this.debugToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.debugToolStripMenuItem.Text = "View";
+            // 
+            // showLabelsToolStripMenuItem
+            // 
+            this.showLabelsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.villagesHamletsToolStripMenuItem,
+            this.townsFortsToolStripMenuItem,
+            this.citiesCapitalsToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.showAllToolStripMenuItem,
+            this.hideAllToolStripMenuItem});
+            this.showLabelsToolStripMenuItem.Name = "showLabelsToolStripMenuItem";
+            this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.showLabelsToolStripMenuItem.Text = "Show Labels";
+            // 
+            // villagesHamletsToolStripMenuItem
+            // 
+            this.villagesHamletsToolStripMenuItem.Checked = true;
+            this.villagesHamletsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.villagesHamletsToolStripMenuItem.Name = "villagesHamletsToolStripMenuItem";
+            this.villagesHamletsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.villagesHamletsToolStripMenuItem.Text = "Villages && Hamlets";
+            this.villagesHamletsToolStripMenuItem.Click += new System.EventHandler(this.villagesHamletsToolStripMenuItem_Click);
+            // 
+            // townsFortsToolStripMenuItem
+            // 
+            this.townsFortsToolStripMenuItem.Checked = true;
+            this.townsFortsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.townsFortsToolStripMenuItem.Name = "townsFortsToolStripMenuItem";
+            this.townsFortsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.townsFortsToolStripMenuItem.Text = "Towns && Forts";
+            this.townsFortsToolStripMenuItem.Click += new System.EventHandler(this.townsFortsToolStripMenuItem_Click);
+            // 
+            // citiesCapitalsToolStripMenuItem
+            // 
+            this.citiesCapitalsToolStripMenuItem.Checked = true;
+            this.citiesCapitalsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.citiesCapitalsToolStripMenuItem.Name = "citiesCapitalsToolStripMenuItem";
+            this.citiesCapitalsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.citiesCapitalsToolStripMenuItem.Text = "Cities && Capitals";
+            this.citiesCapitalsToolStripMenuItem.Click += new System.EventHandler(this.citiesCapitalsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(171, 6);
+            // 
+            // showAllToolStripMenuItem
+            // 
+            this.showAllToolStripMenuItem.Name = "showAllToolStripMenuItem";
+            this.showAllToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.showAllToolStripMenuItem.Text = "Show All";
+            this.showAllToolStripMenuItem.Click += new System.EventHandler(this.showAllToolStripMenuItem_Click);
+            // 
+            // hideAllToolStripMenuItem
+            // 
+            this.hideAllToolStripMenuItem.Name = "hideAllToolStripMenuItem";
+            this.hideAllToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.hideAllToolStripMenuItem.Text = "Hide All";
+            this.hideAllToolStripMenuItem.Click += new System.EventHandler(this.hideAllToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(200, 6);
             // 
             // showLandmarksToolStripMenuItem
             // 
@@ -470,10 +544,10 @@
             this.showProvinciesBordersToolStripMenuItem.Text = "Show Provincies Borders";
             this.showProvinciesBordersToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
             // 
-            // toolStripMenuItem2
+            // toolStripSeparator2
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(200, 6);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(200, 6);
             // 
             // debugToolStripMenuItem1
             // 
@@ -639,30 +713,6 @@
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
             // 
-            // timer2
-            // 
-            this.timer2.Enabled = true;
-            this.timer2.Interval = 500;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(718, 32);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 13);
-            this.label3.TabIndex = 23;
-            this.label3.Text = "999";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // timer3
-            // 
-            this.timer3.Enabled = true;
-            this.timer3.Interval = 1000;
-            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
-            // 
             // mapDraw3d1
             // 
             this.mapDraw3d1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -690,6 +740,30 @@
             this.mapDraw3d1.MouseLeave += new System.EventHandler(this.mapDraw3d1_MouseLeave);
             this.mapDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseMove);
             this.mapDraw3d1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseUp);
+            // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 500;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.Location = new System.Drawing.Point(718, 32);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(29, 13);
+            this.label3.TabIndex = 23;
+            this.label3.Text = "999";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // timer3
+            // 
+            this.timer3.Enabled = true;
+            this.timer3.Interval = 1000;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
             // Form1
             // 
@@ -786,6 +860,14 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Timer timer3;
         private System.Windows.Forms.TabPage tabPage11;
+        private System.Windows.Forms.ToolStripMenuItem showLabelsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem villagesHamletsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem townsFortsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem citiesCapitalsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem showAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideAllToolStripMenuItem;
     }
 }
 

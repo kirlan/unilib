@@ -17,6 +17,11 @@ namespace MapDrawXNAEngine
         public readonly float m_fScale;
         public readonly Matrix worldMatrix;
         public readonly string m_sName;
+        /// <summary>
+        /// 0 - деревни и хутора
+        /// 1 - города и форты
+        /// 2 - большие города и столицы
+        /// </summary>
         public readonly int m_iSize;
 
         public SettlementModel(Vector3 pPosition, float fAngle, float fScale, Model pModel, WorldShape eWorldShape, Texture2D pTexture, string sName, int iSize)

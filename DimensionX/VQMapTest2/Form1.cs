@@ -649,5 +649,45 @@ namespace VQMapTest2
         {
             mapDraw3d1.SelectState();
         }
+
+        private void villagesHamletsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mapDraw3d1.ShowLabelVillages = villagesHamletsToolStripMenuItem.Checked;
+            villagesHamletsToolStripMenuItem.Checked = !villagesHamletsToolStripMenuItem.Checked;
+        }
+
+        private void townsFortsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mapDraw3d1.ShowLabelTowns = townsFortsToolStripMenuItem.Checked;
+            townsFortsToolStripMenuItem.Checked = !townsFortsToolStripMenuItem.Checked;
+        }
+
+        private void citiesCapitalsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mapDraw3d1.ShowLabelCapital = citiesCapitalsToolStripMenuItem.Checked;
+            citiesCapitalsToolStripMenuItem.Checked = !citiesCapitalsToolStripMenuItem.Checked;
+        }
+
+        private void showAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mapDraw3d1.ShowLabelVillages = true;
+            mapDraw3d1.ShowLabelTowns = true;
+            mapDraw3d1.ShowLabelCapital = true;
+
+            villagesHamletsToolStripMenuItem.Checked = true;
+            townsFortsToolStripMenuItem.Checked = true;
+            citiesCapitalsToolStripMenuItem.Checked = true;
+        }
+
+        private void hideAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mapDraw3d1.ShowLabelVillages = false;
+            mapDraw3d1.ShowLabelTowns = false;
+            mapDraw3d1.ShowLabelCapital = false;
+
+            villagesHamletsToolStripMenuItem.Checked = false;
+            townsFortsToolStripMenuItem.Checked = false;
+            citiesCapitalsToolStripMenuItem.Checked = false;
+        }
     }
 }
