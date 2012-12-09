@@ -176,7 +176,7 @@ namespace WorldGeneration
 
             foreach (FileInfo fi in fileNames)
             {
-                if (fi.Extension == ".dxg")
+                if (fi.Extension == ".dxz")
                 {
                     try
                     {
