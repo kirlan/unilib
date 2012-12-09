@@ -6,6 +6,7 @@ using BenTools.Mathematics;
 using Random;
 using System.IO;
 using MIConvexHull;
+using Zipp;
 
 namespace LandscapeGeneration
 {
@@ -444,16 +445,16 @@ namespace LandscapeGeneration
                     bOK = CalculateVoronoi();
                     if (bOK)
                     {
-                        ImproveGrid();
-                        bOK = CalculateVoronoi();
+                        //ImproveGrid();
+                        //bOK = CalculateVoronoi();
                         if (bOK)
                         {
-                            ImproveGrid();
-                            bOK = CalculateVoronoi();
+                            //ImproveGrid();
+                            //bOK = CalculateVoronoi();
                             if (bOK)
                             {
-                                ImproveGrid();
-                                bOK = CalculateVoronoi();
+                                //ImproveGrid();
+                                //bOK = CalculateVoronoi();
 
                                 if (bOK)
                                 {
@@ -1153,29 +1154,36 @@ namespace LandscapeGeneration
 
         public void Save(string sFilename)
         {
-            using (BinaryWriter binWriter =
-                new BinaryWriter(File.Open(sFilename, FileMode.Create)))
+            var fil = new FileStream(sFilename, FileMode.Create);
+            using (var arc = ZipArchive.OpenOnStream(fil))
             {
-                m_sFilename = sFilename;
-                binWriter.Write(s_sHeader);
-                binWriter.Write(s_iVersion);
-                binWriter.Write(m_sDescription);
-                binWriter.Write(m_iLocationsCount);
-                binWriter.Write(m_iRX);
-                binWriter.Write((int)m_eShape);
+                var fs = arc.AddFile("grid", ZipArchive.CompressionMethodEnum.Deflated, ZipArchive.DeflateOptionEnum.Maximum);
 
-                binWriter.Write(m_aVertexes.Length);
-                foreach (Vertex pVertex in m_aVertexes)
+                using (BinaryWriter binWriter =
+                    new BinaryWriter(fs.GetStream(FileMode.OpenOrCreate, FileAccess.Write)))
                 {
-                    pVertex.Save(binWriter);
-                }
-                
-                binWriter.Write(m_aLocations.Length);
-                foreach (LOC pLoc in m_aLocations)
-                {
-                    pLoc.Save(binWriter);
+                    m_sFilename = sFilename;
+                    binWriter.Write(s_sHeader);
+                    binWriter.Write(s_iVersion);
+                    binWriter.Write(m_sDescription);
+                    binWriter.Write(m_iLocationsCount);
+                    binWriter.Write(m_iRX);
+                    binWriter.Write((int)m_eShape);
+
+                    binWriter.Write(m_aVertexes.Length);
+                    foreach (Vertex pVertex in m_aVertexes)
+                    {
+                        pVertex.Save(binWriter);
+                    }
+
+                    binWriter.Write(m_aLocations.Length);
+                    foreach (LOC pLoc in m_aLocations)
+                    {
+                        pLoc.Save(binWriter);
+                    }
                 }
             }
+            fil.Dispose();
 
             m_sFilename = sFilename;
         }
@@ -1189,46 +1197,50 @@ namespace LandscapeGeneration
             if (!File.Exists(sFilename))
                 return false;
 
-            BinaryReader binReader =
-                new BinaryReader(File.Open(sFilename, FileMode.Open));
-            
-            try
+            var fil = new FileStream(sFilename, FileMode.Open); 
+            using (var arc = ZipArchive.OpenOnStream(fil))
             {
-                // If the file is not empty,
-                // read the application settings.
-                // First read 4 bytes into a buffer to
-                // determine if the file is empty.
-                byte[] testArray = new byte[3];
-                int count = binReader.Read(testArray, 0, 3);
+                BinaryReader binReader =
+                    new BinaryReader(arc.GetFile("grid").GetStream());
 
-                if (count != 0)
+                try
                 {
-                    // Reset the position in the stream to zero.
-                    binReader.BaseStream.Seek(0, SeekOrigin.Begin);
+                    // If the file is not empty,
+                    // read the application settings.
+                    // First read 4 bytes into a buffer to
+                    // determine if the file is empty.
+                    byte[] testArray = new byte[3];
+                    int count = binReader.Read(testArray, 0, 3);
 
-                    string sHeader = binReader.ReadString();
-                    if (sHeader != s_sHeader)
-                        return false;
+                    if (count != 0)
+                    {
+                        // Reset the position in the stream to zero.
+                        binReader.BaseStream.Seek(0, SeekOrigin.Begin);
 
-                    int iVersion = binReader.ReadInt32();
-                    if (iVersion != s_iVersion)
-                        return false;
+                        string sHeader = binReader.ReadString();
+                        if (sHeader != s_sHeader)
+                            return false;
 
-                    sDescription = binReader.ReadString();
-                    iLocationsCount = binReader.ReadInt32();
-                    int iRX = binReader.ReadInt32();
-                    eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
+                        int iVersion = binReader.ReadInt32();
+                        if (iVersion != s_iVersion)
+                            return false;
+
+                        sDescription = binReader.ReadString();
+                        iLocationsCount = binReader.ReadInt32();
+                        int iRX = binReader.ReadInt32();
+                        eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
+                    }
+                }
+                catch (EndOfStreamException e)
+                {
+                    return false;
+                }
+                finally
+                {
+                    binReader.Close();
                 }
             }
-            catch (EndOfStreamException e)
-            {
-                return false;
-            }
-            finally
-            {
-                binReader.Close();
-            }
-
+            fil.Dispose();
             return true;
         }
 
@@ -1262,141 +1274,146 @@ namespace LandscapeGeneration
             if (m_bLoaded)
                 return;
 
-            BinaryReader binReader =
-                new BinaryReader(File.Open(m_sFilename, FileMode.Open));
-
-            try
+            var fil = new FileStream(m_sFilename, FileMode.Open);
+            using (var arc = ZipArchive.OpenOnStream(fil))
             {
-                // If the file is not empty,
-                // read the application settings.
-                // First read 4 bytes into a buffer to
-                // determine if the file is empty.
-                byte[] testArray = new byte[3];
-                int count = binReader.Read(testArray, 0, 3);
+                BinaryReader binReader =
+                    new BinaryReader(arc.GetFile("grid").GetStream());
 
-                if (count != 0)
+                try
                 {
-                    if(BeginStep != null)
-                        BeginStep("Loading grid...", 1);
+                    // If the file is not empty,
+                    // read the application settings.
+                    // First read 4 bytes into a buffer to
+                    // determine if the file is empty.
+                    byte[] testArray = new byte[3];
+                    int count = binReader.Read(testArray, 0, 3);
 
-                    // Reset the position in the stream to zero.
-                    binReader.BaseStream.Seek(0, SeekOrigin.Begin);
-
-                    string sHeader = binReader.ReadString();
-                    if (sHeader != s_sHeader)
-                        throw new Exception("Header mismatch!");
-
-                    int iVersion = binReader.ReadInt32();
-                    if (iVersion != s_iVersion)
-                        throw new Exception("Version mismatch!");
-
-                    m_sDescription = binReader.ReadString();
-                    m_iLocationsCount = binReader.ReadInt32();
-                    m_iRX = binReader.ReadInt32();
-                    m_eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
-
-                    if(ProgressStep != null)
-                        ProgressStep();
-
-                    Dictionary<long, Vertex> cTempDicVertex = new Dictionary<long, Vertex>();
-                    int iVertexesCount = binReader.ReadInt32();
-                    if (BeginStep != null)
-                        BeginStep("Loading vertexes...", iVertexesCount * 2);
-                    for (int i = 0; i < iVertexesCount; i++)
+                    if (count != 0)
                     {
-                        Vertex pVertexLoc = new Vertex(binReader);
+                        if (BeginStep != null)
+                            BeginStep("Loading grid...", 1);
 
-                        cTempDicVertex[pVertexLoc.m_iID] = pVertexLoc;
+                        // Reset the position in the stream to zero.
+                        binReader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                        string sHeader = binReader.ReadString();
+                        if (sHeader != s_sHeader)
+                            throw new Exception("Header mismatch!");
+
+                        int iVersion = binReader.ReadInt32();
+                        if (iVersion != s_iVersion)
+                            throw new Exception("Version mismatch!");
+
+                        m_sDescription = binReader.ReadString();
+                        m_iLocationsCount = binReader.ReadInt32();
+                        m_iRX = binReader.ReadInt32();
+                        m_eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
 
                         if (ProgressStep != null)
                             ProgressStep();
-                    }
 
-                    m_aVertexes = new List<Vertex>(cTempDicVertex.Values).ToArray();
-
-                    //Восстанавливаем словарь соседей
-                    foreach (Vertex pVertex in m_aVertexes)
-                    {
-                        foreach (long iID in pVertex.m_cLinksTmp)
+                        Dictionary<long, Vertex> cTempDicVertex = new Dictionary<long, Vertex>();
+                        int iVertexesCount = binReader.ReadInt32();
+                        if (BeginStep != null)
+                            BeginStep("Loading vertexes...", iVertexesCount * 2);
+                        for (int i = 0; i < iVertexesCount; i++)
                         {
-                            pVertex.m_cVertexes.Add(cTempDicVertex[iID]);
+                            Vertex pVertexLoc = new Vertex(binReader);
+
+                            cTempDicVertex[pVertexLoc.m_iID] = pVertexLoc;
+
+                            if (ProgressStep != null)
+                                ProgressStep();
                         }
-                        pVertex.m_cLinksTmp.Clear();
 
-                        if (ProgressStep != null)
-                            ProgressStep();
-                    }
+                        m_aVertexes = new List<Vertex>(cTempDicVertex.Values).ToArray();
 
-                    Dictionary<long, LOC> cTempDic = new Dictionary<long, LOC>();
-                    int iLocationsCount = binReader.ReadInt32();
-                    if (BeginStep != null)
-                        BeginStep("Loading locations...", iLocationsCount * 2);
-                    for (int i = 0; i < iLocationsCount; i++)
-                    {
-                        LOC pLoc = new LOC();
-                        pLoc.Load(binReader, cTempDicVertex);
-
-                        cTempDic[pLoc.m_iID] = pLoc;
-
-                        if (ProgressStep != null)
-                            ProgressStep();
-                    }
-
-                    m_aLocations = new List<LOC>(cTempDic.Values).ToArray();
-
-                    //Восстанавливаем словарь соседей
-                    foreach (LOC pLoc in m_aLocations)
-                    {
-                        foreach (var ID in pLoc.m_cBorderWithID)
+                        //Восстанавливаем словарь соседей
+                        foreach (Vertex pVertex in m_aVertexes)
                         {
-                            pLoc.m_cBorderWith[cTempDic[ID.Key]] = ID.Value;
+                            foreach (long iID in pVertex.m_cLinksTmp)
+                            {
+                                pVertex.m_cVertexes.Add(cTempDicVertex[iID]);
+                            }
+                            pVertex.m_cLinksTmp.Clear();
+
+                            if (ProgressStep != null)
+                                ProgressStep();
                         }
-                        pLoc.m_cBorderWithID.Clear();
-                        pLoc.FillBorderWithKeys();
 
-                        if (ProgressStep != null)
-                            ProgressStep();
-                    }
-
-                    //Восстанавливаем словарь соседей для вертексов
-                    foreach (Vertex pVertex in m_aVertexes)
-                    {
-                        pVertex.m_aLocations = new Location[pVertex.m_cLocationsTmp.Count];
-                        int iIndex = 0;
-                        foreach (long iID in pVertex.m_cLocationsTmp)
+                        Dictionary<long, LOC> cTempDic = new Dictionary<long, LOC>();
+                        int iLocationsCount = binReader.ReadInt32();
+                        if (BeginStep != null)
+                            BeginStep("Loading locations...", iLocationsCount * 2);
+                        for (int i = 0; i < iLocationsCount; i++)
                         {
-                            pVertex.m_aLocations[iIndex++] = cTempDic[iID];
+                            LOC pLoc = new LOC();
+                            pLoc.Load(binReader, cTempDicVertex);
+
+                            cTempDic[pLoc.m_iID] = pLoc;
+
+                            if (ProgressStep != null)
+                                ProgressStep();
                         }
-                        pVertex.m_cLocationsTmp.Clear();
+
+                        m_aLocations = new List<LOC>(cTempDic.Values).ToArray();
+
+                        //Восстанавливаем словарь соседей
+                        foreach (LOC pLoc in m_aLocations)
+                        {
+                            foreach (var ID in pLoc.m_cBorderWithID)
+                            {
+                                pLoc.m_cBorderWith[cTempDic[ID.Key]] = ID.Value;
+                            }
+                            pLoc.m_cBorderWithID.Clear();
+                            pLoc.FillBorderWithKeys();
+
+                            if (ProgressStep != null)
+                                ProgressStep();
+                        }
+
+                        //Восстанавливаем словарь соседей для вертексов
+                        foreach (Vertex pVertex in m_aVertexes)
+                        {
+                            pVertex.m_aLocations = new Location[pVertex.m_cLocationsTmp.Count];
+                            int iIndex = 0;
+                            foreach (long iID in pVertex.m_cLocationsTmp)
+                            {
+                                pVertex.m_aLocations[iIndex++] = cTempDic[iID];
+                            }
+                            pVertex.m_cLocationsTmp.Clear();
+                        }
+
+                        cTempDicVertex.Clear();
+                        cTempDic.Clear();
+
+                        if (BeginStep != null)
+                            BeginStep("Recalculating grid edges...", m_aLocations.Length);
+                        //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
+                        foreach (LOC pLoc in m_aLocations)
+                        {
+                            if (pLoc.Forbidden)
+                                continue;
+
+                            pLoc.BuildBorder();
+                            if (ProgressStep != null)
+                                ProgressStep();
+                        }
+
+                        m_bLoaded = true;
                     }
-
-                    cTempDicVertex.Clear();
-                    cTempDic.Clear();
-
-                    if (BeginStep != null)
-                        BeginStep("Recalculating grid edges...", m_aLocations.Length);
-                    //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                    foreach (LOC pLoc in m_aLocations)
-                    {
-                        if (pLoc.Forbidden)
-                            continue;
-
-                        pLoc.BuildBorder();
-                        if (ProgressStep != null)
-                            ProgressStep();
-                    }
-
-                    m_bLoaded = true;
+                }
+                catch (EndOfStreamException e)
+                {
+                    throw new Exception("Wrong file format!", e);
+                }
+                finally
+                {
+                    binReader.Close();
                 }
             }
-            catch (EndOfStreamException e)
-            {
-                throw new Exception("Wrong file format!", e);
-            }
-            finally
-            {
-                binReader.Close();
-            }
+            fil.Dispose();
         }
 
         public void Reset()

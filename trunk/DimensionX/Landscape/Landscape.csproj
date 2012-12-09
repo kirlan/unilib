@@ -67,6 +67,10 @@
     <Compile Include="VoronoiVertex.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Zipp\Zipp.csproj">
+      <Project>{29BE5D9C-F163-41CC-957A-3D2829664C84}</Project>
+      <Name>Zipp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FortuneVoronoi\Fortune.csproj">
       <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
       <Name>Fortune</Name>
