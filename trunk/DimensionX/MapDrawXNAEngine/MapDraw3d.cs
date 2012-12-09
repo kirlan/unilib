@@ -3023,32 +3023,35 @@ namespace MapDrawXNAEngine
             m_pCamera.Update();
 
             //Убедимся, что камера достаточно высоко над землёй
-            float fMinHeight = 0.1f;
-            Ray downRay = new Ray(m_pCamera.Position, Vector3.Down);
-            LocationX pInterLoc;
-            float? intersection = RayIntersectsLandscape(CullMode.CullCounterClockwiseFace, downRay,
-                                                        out pInterLoc);
-            if (intersection != null)
+            if (m_pCamera.Position.Y < m_pWorld.m_fMaxHeight)
             {
-                if (intersection < fMinHeight)
-                {
-                    //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
-                    Vector3? pPicking = downRay.Position + Vector3.Normalize(downRay.Direction) * intersection + Vector3.Up * fMinHeight;
-                    m_pCamera.Position = pPicking.Value;
-                    m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.Target, m_pCamera.Top);
-                }
-            }
-            else
-            {
-                downRay = new Ray(m_pCamera.Position, Vector3.Up);
-                intersection = RayIntersectsLandscape(CullMode.CullCounterClockwiseFace, downRay,
-                                                        out pInterLoc);
+                float fMinHeight = 0.1f;
+                Ray downRay = new Ray(m_pCamera.Position, Vector3.Down);
+                LocationX pInterLoc;
+                float? intersection = RayIntersectsLandscape(CullMode.CullCounterClockwiseFace, downRay,
+                                                            out pInterLoc);
                 if (intersection != null)
                 {
-                    //камера вообще под землёй - принудительно поднимаем её на минимальную допустимую высоту
-                    Vector3? pPicking = downRay.Position + Vector3.Normalize(downRay.Direction) * intersection + Vector3.Up * fMinHeight;
-                    m_pCamera.Position = pPicking.Value;
-                    m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.Target, m_pCamera.Top);
+                    if (intersection < fMinHeight)
+                    {
+                        //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
+                        Vector3? pPicking = downRay.Position + Vector3.Normalize(downRay.Direction) * intersection + Vector3.Up * fMinHeight;
+                        m_pCamera.Position = pPicking.Value;
+                        m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.Target, m_pCamera.Top);
+                    }
+                }
+                else
+                {
+                    downRay = new Ray(m_pCamera.Position, Vector3.Up);
+                    intersection = RayIntersectsLandscape(CullMode.CullCounterClockwiseFace, downRay,
+                                                            out pInterLoc);
+                    if (intersection != null)
+                    {
+                        //камера вообще под землёй - принудительно поднимаем её на минимальную допустимую высоту
+                        Vector3? pPicking = downRay.Position + Vector3.Normalize(downRay.Direction) * intersection + Vector3.Up * fMinHeight;
+                        m_pCamera.Position = pPicking.Value;
+                        m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.Target, m_pCamera.Top);
+                    }
                 }
             }
 
