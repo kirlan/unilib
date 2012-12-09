@@ -334,8 +334,8 @@
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.DefaultExt = "grd";
-            this.saveFileDialog1.Filter = "Grid files|*.dxg|All files|*.*";
+            this.saveFileDialog1.DefaultExt = "dxz";
+            this.saveFileDialog1.Filter = "Grid files|*.dxz|All files|*.*";
             // 
             // label5
             // 

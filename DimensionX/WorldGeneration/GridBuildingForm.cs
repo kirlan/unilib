@@ -119,7 +119,7 @@ namespace WorldGeneration
                 bAvailable = FileNameAvailable(string.Format("{0}_{1}", m_sFilename, iCounter));
             }
 
-            m_pLocationsGrid.Save(iCounter > 0 ? string.Format("{2}\\{0}_{1}.dxg", m_sFilename, iCounter, m_sWorkingFolder) : string.Format("{1}\\{0}.dxg", m_sFilename, m_sWorkingFolder));
+            m_pLocationsGrid.Save(iCounter > 0 ? string.Format("{2}\\{0}_{1}.dxz", m_sFilename, iCounter, m_sWorkingFolder) : string.Format("{1}\\{0}.dxz", m_sFilename, m_sWorkingFolder));
 
             DialogResult = DialogResult.OK;
         }
@@ -158,7 +158,7 @@ namespace WorldGeneration
                 string sDescription;
                 int iLocationsCount;
                 WorldShape eShape;
-                if (fi.Name == sFileName + ".dxg" && LocationsGrid<LocationX>.CheckFile(fi.FullName, out sDescription, out iLocationsCount, out eShape))
+                if (fi.Name == sFileName + ".dxz" && LocationsGrid<LocationX>.CheckFile(fi.FullName, out sDescription, out iLocationsCount, out eShape))
                 {
                     return false;
                 }
