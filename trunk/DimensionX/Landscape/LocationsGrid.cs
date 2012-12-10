@@ -446,33 +446,17 @@ namespace LandscapeGeneration
                     bOK = CalculateVoronoi();
                     if (bOK)
                     {
-                        //ImproveGrid();
-                        //bOK = CalculateVoronoi();
-                        if (bOK)
+                        //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
+                        foreach (LOC pLoc in m_aLocations)
                         {
-                            //ImproveGrid();
-                            //bOK = CalculateVoronoi();
-                            if (bOK)
-                            {
-                                //ImproveGrid();
-                                //bOK = CalculateVoronoi();
+                            pLoc.BuildBorder();
+                            pLoc.CorrectCenter();
+                        }
 
-                                if (bOK)
-                                {
-                                    //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                                    foreach (LOC pLoc in m_aLocations)
-                                    {
-                                        pLoc.BuildBorder();
-                                        pLoc.CorrectCenter();
-                                    }
-
-                                    if (m_eShape == WorldShape.Ringworld)
-                                    {
-                                        MergeVertexes();
-                                        MakeRingWorld();
-                                    }
-                                }
-                            }
+                        if (m_eShape == WorldShape.Ringworld)
+                        {
+                            MergeVertexes();
+                            MakeRingWorld();
                         }
                     }
                 }
@@ -1124,15 +1108,33 @@ namespace LandscapeGeneration
             float dkx = RX / (kx * 2);
             float dky = RY / (ky * 2);
 
-            var cPoints = UniformPoissonDiskSampler.SampleRectangle(new SimpleVector3d(-RX, -RY, 0),
-                                                    new SimpleVector3d(RX, RY, 0),
-                                                    30);
+            float Sbig = (float)RX * (float)RY * 4;
+            var S1 = Sbig / m_iLocationsCount;
+            var h = Math.Sqrt(S1 / (4 * Math.Sqrt(3)));
+            var R = Math.Sqrt(S1 / (3 * Math.Sqrt(3)));
+
+            R = (R + h) / 2;
+
+            int c = 0;
+            List<SimpleVector3d> cPoints = new List<SimpleVector3d>();
+            do
+            {
+                cPoints = UniformPoissonDiskSampler.SampleRectangle(new SimpleVector3d(-RX + dkx * 2, -RY + dky * 2, 0),
+                                                    new SimpleVector3d(RX - dkx * 2, RY - dky * 2, 0),
+                                                        (float)R * 2);
+                R *= 0.99f;
+                c++;
+            }
+            while (cPoints.Count < m_iLocationsCount);
+
+            m_iLocationsCount = cPoints.Count;
 
             //Добавляем центры остальных локаций в случайные позиции внутри периметра.
             for (int i = 0; i < m_iLocationsCount; i++)
             {
                 LOC pLocation = new LOC();
-                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
+//                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
+                pLocation.Create(cLocations.Count, cPoints[i].X, cPoints[i].Y, 0);
                 cLocations.Add(pLocation);
 
                 if (m_eShape == WorldShape.Ringworld)
