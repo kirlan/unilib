@@ -3023,7 +3023,7 @@ namespace MapDrawXNAEngine
             m_pCamera.Update();
 
             //Убедимся, что камера достаточно высоко над землёй
-            if (m_pCamera.Position.Y < m_pWorld.m_fMaxHeight)
+            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Plain && m_pCamera.Position.Y < m_pWorld.m_fMaxHeight)
             {
                 float fMinHeight = 0.1f;
                 Ray downRay = new Ray(m_pCamera.Position, Vector3.Down);
