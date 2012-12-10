@@ -84,17 +84,31 @@ namespace SimpleVectors
                         u.X * v.Y - u.Y * v.X );
         }
 
-        public static double operator ! (SimpleVector3d v) 
-        { 
-            return Math.Sqrt( v.X*v.X + v.Y*v.Y + v.Z*v.Z ); 
+        public static double operator !(SimpleVector3d v)
+        {
+            return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
-        public static bool operator < ( SimpleVector3d v, double f ) 
+        public static double operator ~(SimpleVector3d v)
+        {
+            return v.X * v.X + v.Y * v.Y + v.Z * v.Z;
+        }
+        public static bool operator <(SimpleVector3d v, double f) 
         {
             return v.X < f && v.Y < f && v.Z < f; 
         }
         public static bool operator > ( SimpleVector3d v, double f ) 
         {
             return v.X > f && v.Y > f && v.Z > f; 
+        }
+
+        public static double Distance(SimpleVector3d simpleVector3d, SimpleVector3d q)
+        {
+            return !(simpleVector3d - q);
+        }
+
+        public static double DistanceSquared(SimpleVector3d simpleVector3d, SimpleVector3d q)
+        {
+            return ~(simpleVector3d - q);
         }
     }
 }

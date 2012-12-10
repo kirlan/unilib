@@ -45,6 +45,19 @@ namespace Random
         }
 
         /// <summary>
+        /// Returns nonnegative double, lesser then val
+        /// </summary>
+        /// <param name="val">max (can't be returned)</param>
+        /// <returns>random double</returns>
+        public static double Get(double val)
+        {
+            if (val <= 0.0)
+                return 0.0;
+
+            return val * rnd.NextDouble();
+        }
+
+        /// <summary>
         /// Returns random element of given enum
         /// </summary>
         /// <param name="enumType">Enum type (by typeof(EnumName))</param>

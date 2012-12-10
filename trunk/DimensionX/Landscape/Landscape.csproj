@@ -54,6 +54,7 @@
     <Compile Include="PathFinder\TransportationLink.cs" />
     <Compile Include="PathFinder\TransportationNode.cs" />
     <Compile Include="Perlin.cs" />
+    <Compile Include="Poisson.cs" />
     <Compile Include="Territory.cs" />
     <Compile Include="Continent.cs" />
     <Compile Include="Interfaces\ITerritory.cs" />

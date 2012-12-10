@@ -7,6 +7,7 @@ using Random;
 using System.IO;
 using MIConvexHull;
 using Zipp;
+using SimpleVectors;
 
 namespace LandscapeGeneration
 {
@@ -1122,6 +1123,10 @@ namespace LandscapeGeneration
 
             float dkx = RX / (kx * 2);
             float dky = RY / (ky * 2);
+
+            var cPoints = UniformPoissonDiskSampler.SampleRectangle(new SimpleVector3d(-RX, -RY, 0),
+                                                    new SimpleVector3d(RX, RY, 0),
+                                                    30);
 
             //Добавляем центры остальных локаций в случайные позиции внутри периметра.
             for (int i = 0; i < m_iLocationsCount; i++)
