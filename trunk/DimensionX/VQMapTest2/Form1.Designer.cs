@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -563,7 +564,7 @@
             // 
             this.showLocationsToolStripMenuItem.CheckOnClick = true;
             this.showLocationsToolStripMenuItem.Name = "showLocationsToolStripMenuItem";
-            this.showLocationsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.showLocationsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.showLocationsToolStripMenuItem.Text = "Show Locations";
             this.showLocationsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
             // 
@@ -571,7 +572,7 @@
             // 
             this.showLandsToolStripMenuItem.CheckOnClick = true;
             this.showLandsToolStripMenuItem.Name = "showLandsToolStripMenuItem";
-            this.showLandsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.showLandsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.showLandsToolStripMenuItem.Text = "Show Lands";
             this.showLandsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
             // 
@@ -579,8 +580,8 @@
             // 
             this.showLandMassesToolStripMenuItem.CheckOnClick = true;
             this.showLandMassesToolStripMenuItem.Name = "showLandMassesToolStripMenuItem";
-            this.showLandMassesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.showLandMassesToolStripMenuItem.Text = "Show LandMasses";
+            this.showLandMassesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.showLandMassesToolStripMenuItem.Text = "Show Tectonic Plates";
             this.showLandMassesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
             // 
             // optionsToolStripMenuItem
@@ -722,6 +723,9 @@
             this.mapDraw3d1.Mode = MapDrawXNAEngine.MapMode.Areas;
             this.mapDraw3d1.Name = "mapDraw3d1";
             this.mapDraw3d1.SelectedState = null;
+            this.mapDraw3d1.ShowLabelCapital = true;
+            this.mapDraw3d1.ShowLabelTowns = true;
+            this.mapDraw3d1.ShowLabelVillages = true;
             this.mapDraw3d1.ShowLandMasses = false;
             this.mapDraw3d1.ShowLands = false;
             this.mapDraw3d1.ShowLocations = true;
@@ -779,6 +783,7 @@
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(100, 100);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";

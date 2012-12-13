@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapProperties));
             this.PresetsPanel = new System.Windows.Forms.Panel();
             this.MapPresetDescription = new System.Windows.Forms.Label();
             this.MapPresets = new System.Windows.Forms.ListBox();
@@ -219,6 +220,8 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "Lands count:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label3, "Number of lands.\r\nLand is a group of adjacent locations, which has one territory " +
+        "type and name.");
             // 
             // label14
             // 
@@ -333,11 +336,11 @@
             // LandMassesCountBar
             // 
             this.LandMassesCountBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LandMassesCountBar.Location = new System.Drawing.Point(100, 0);
+            this.LandMassesCountBar.Location = new System.Drawing.Point(77, 0);
             this.LandMassesCountBar.Maximum = 300;
             this.LandMassesCountBar.Minimum = 30;
             this.LandMassesCountBar.Name = "LandMassesCountBar";
-            this.LandMassesCountBar.Size = new System.Drawing.Size(139, 19);
+            this.LandMassesCountBar.Size = new System.Drawing.Size(162, 19);
             this.LandMassesCountBar.TabIndex = 28;
             this.LandMassesCountBar.Value = 150;
             this.LandMassesCountBar.ValueChanged += new System.EventHandler(this.ScrollBar_ValueChanged);
@@ -347,10 +350,11 @@
             this.label5.Dock = System.Windows.Forms.DockStyle.Left;
             this.label5.Location = new System.Drawing.Point(0, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 19);
+            this.label5.Size = new System.Drawing.Size(77, 19);
             this.label5.TabIndex = 3;
-            this.label5.Text = "LandMasses count:";
+            this.label5.Text = "Plates count:";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label5, resources.GetString("label5.ToolTip"));
             // 
             // groupBox4
             // 

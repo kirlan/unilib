@@ -40,6 +40,11 @@ namespace WorldGeneration
             GridPanel.Visible = !radioButton3.Checked;
             NoGridPanel.Visible = radioButton3.Checked;
 
+            if (!radioButton3.Checked && radioButton6.Checked)
+                radioButton4.Checked = true;
+
+            radioButton6.Enabled = radioButton3.Checked;
+
             UpdateDescription();
         }
 
@@ -182,18 +187,22 @@ namespace WorldGeneration
             if (radioButton3.Checked)
             {
                 if(radioButton6.Checked)
-                    textBox1.Text = string.Format("Sphere random points grid {0}x{1}, {2} points.", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text);
+                    textBox1.Text = string.Format("Sphere random points grid {0} points.", PointsCount.Text);
                 else if (radioButton5.Checked)
                     textBox1.Text = string.Format("Ring random points grid {0}x{1}, {2} points.", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text);
                 else
                     textBox1.Text = string.Format("Random points grid {0}x{1}, {2} points.", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text);
-                m_sFilename = string.Format("Rnd_{2}_{0}x{1}{3}", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text, radioButton6.Checked ? "_sphere" : radioButton5.Checked ? "_ring" : "");
+                
+                if (radioButton6.Checked)
+                    m_sFilename = string.Format("Rnd_{0}_sphere", PointsCount.Text);
+                else
+                    m_sFilename = string.Format("Rnd_{2}_{0}x{1}{3}", NoGridWidth.Value, NoGridHeight.Value, PointsCount.Text, radioButton5.Checked ? "_ring" : "");
             }
 
             if (radioButton2.Checked)
             {
                 if (radioButton6.Checked)
-                    textBox1.Text = string.Format("Sphere hexagonal grid {0}x{1}, {2} points.", GridWidth.Text, GridHeight.Text, int.Parse(GridWidth.Text) * int.Parse(GridHeight.Text) / 2);
+                    textBox1.Text = string.Format("Sphere hexagonal grid {0} points.", int.Parse(GridWidth.Text) * int.Parse(GridHeight.Text) / 2);
                 else if (radioButton5.Checked)
                     textBox1.Text = string.Format("Ring hexagonal grid {0}x{1}, {2} points.", GridWidth.Text, GridHeight.Text, int.Parse(GridWidth.Text) * int.Parse(GridHeight.Text) / 2);
                 else
@@ -224,6 +233,11 @@ namespace WorldGeneration
 
         private void Looped_CheckedChanged(object sender, EventArgs e)
         {
+            label10.Enabled = !radioButton6.Checked;
+            label11.Enabled = !radioButton6.Checked;
+            NoGridWidth.Enabled = !radioButton6.Checked;
+            NoGridHeight.Enabled = !radioButton6.Checked;
+
             UpdateDescription();
         }
     }

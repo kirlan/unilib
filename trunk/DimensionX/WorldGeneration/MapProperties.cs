@@ -30,32 +30,32 @@ namespace WorldGeneration
             new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 300, 15, 90, 50, 100),
         };
 
-        private LocationsGrid<LocationX> m_cLocationsGrid = null;
+        private LocationsGrid<LocationX> m_pLocationsGrid = null;
 
         [Browsable(false)]
         public LocationsGrid<LocationX> LocationsGrid
         {
-            get { return m_cLocationsGrid; }
+            get { return m_pLocationsGrid; }
             set 
             {
-                m_cLocationsGrid = value;
+                m_pLocationsGrid = value;
 
-                Enabled = m_cLocationsGrid != null;
+                Enabled = m_pLocationsGrid != null;
 
-                if (m_cLocationsGrid == null)
+                if (m_pLocationsGrid == null)
                     return;
 
-                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_cLocationsGrid.m_eShape != WorldShape.Plain))
+                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_pLocationsGrid.m_eShape != WorldShape.Plain))
                 {
                     MapPresets.Items.Clear();
 
-                    if (m_cLocationsGrid.m_eShape == WorldShape.Ringworld || m_cLocationsGrid.m_eShape == WorldShape.Planet)
+                    if (m_pLocationsGrid.m_eShape == WorldShape.Ringworld || m_pLocationsGrid.m_eShape == WorldShape.Planet)
                         MapPresets.Items.AddRange(m_aWorldMaps);
                     else
                         MapPresets.Items.AddRange(m_aPartialMaps);
                 }
 
-                CalculateLimits(m_cLocationsGrid.m_iLocationsCount);
+                CalculateLimits(m_pLocationsGrid.m_iLocationsCount);
 
                 if (MapPresets.Items.Count > 0)
                     MapPresets.SelectedIndex = 0;
