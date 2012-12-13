@@ -3089,11 +3089,29 @@ namespace MapDrawXNAEngine
                 m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                 m_pMyEffect.CurrentTechnique.Passes[0].Apply();
 
+                //PresentationParameters pp = GraphicsDevice.PresentationParameters;
+                //refractionRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, pp.DepthStencilFormat);
+
+                Viewport pPort = GraphicsDevice.Viewport;
+
                 GraphicsDevice.SetRenderTarget(refractionRenderTarget);
                 GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Microsoft.Xna.Framework.Color.Black, 1.0f, 0);
                 GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
                                                     m_pUnderwater.m_aVertices, 0, m_pUnderwater.m_aVertices.Length - 1, m_pUnderwater.m_aIndices, 0, m_pUnderwater.m_iTrianglesCount);
+                if (m_bShowLocationsBorders)
+                    DrawLayer(MapLayer.Locations);
+                if (m_bShowLands)
+                    DrawLayer(MapLayer.Lands);
+                if (m_bShowLandMasses)
+                    DrawLayer(MapLayer.LandMasses);
+
                 GraphicsDevice.SetRenderTarget(null);
+
+                GraphicsDevice.Viewport = pPort;
+
+                m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
+                m_pMyEffect.CurrentTechnique.Passes[0].Apply(); 
+                
                 GraphicsDevice.Clear(eSkyColor);
 
                 GraphicsDevice.Indices = myIndexBuffer;
