@@ -13,10 +13,14 @@ float DirectionalLightIntensity;
 
 float4 SpecularColor;
 
-float4 FogColor;
-float FogDensity;
-float FogHeight;
-int FogMode;
+float4 FogColor = float4(0, 0, 0, 0);
+float FogDensity = 0.025;
+float FogHeight = 10;
+
+//int FogMode = 0;
+bool FogModePlain = true;
+bool FogModeRing = false;
+bool FogModeSphere = false;
 	
 float BlendDistance;
 float BlendWidth;
@@ -70,40 +74,43 @@ sampler BumpMap0Sampler = sampler_state
    AddressV = mirror; 
 }; 
 
-float4 ApplyFogPlain(float4 Color, float3 Position, float koeff)
+float DistFogPlain(float3 Position)
 {
+	//return 1;
+
 	float d = length(Position - CameraPosition);
 	//заморачиваемся только, если камера НАД границей атмосферы
-	if(CameraPosition.y > FogHeight)
+	if(CameraPosition.y > FogHeight && CameraPosition.y != Position.y)
 	{
 		d = (FogHeight - Position.y) * d / (CameraPosition.y - Position.y);
 	}
-	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
-	l = saturate(1 - l);
 
-	return lerp(Color, FogColor, l);
+	return d;
 }
 
-float4 ApplyFogRingworld(float4 Color, float3 Position, float koeff)
+float DistFogRingworld(float3 Position)
 {
-	float HCam = length(CameraPosition.yz);
+	//return 1;
+
+	float HCam = length(CameraPosition.xy);
 
 	float d = length(Position - CameraPosition);
 	//заморачиваемся только, если камера НАД границей атмосферы
 	//на кольце атмосфера расположена на внутренней стороне кольца, т.е. "выше" - это значит ближе к центру кольца
 	if(HCam < FogHeight)
 	{
-		float HPos = length(Position.yz);
-		d = (FogHeight - HPos) * d / (HCam - HPos);
+		float HPos = length(Position.xy);
+		if(HPos != HCam)
+			d = (HPos - FogHeight) * d / (HPos - HCam);
 	}
-	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
-	l = saturate(1 - l);
 
-	return lerp(Color, FogColor, l);
+	return d;
 }
 
-float4 ApplyFogSphere(float4 Color, float3 Position, float koeff)
+float DistFogSphere(float3 Position)
 {
+	//return 1;
+
 	float HCam = length(CameraPosition);
 
 	float d = length(Position - CameraPosition);
@@ -111,23 +118,30 @@ float4 ApplyFogSphere(float4 Color, float3 Position, float koeff)
 	if(HCam > FogHeight)
 	{
 		float HPos = length(Position);
-		d = (FogHeight - HPos) * d / (HCam - HPos);
+		if(HPos != HCam)
+			d = (FogHeight - HPos) * d / (HCam - HPos);
 	}
-	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
-	l = saturate(1 - l);
 
-	return lerp(Color, FogColor, l);
+	return d;
 }
 
 float4 ApplyFog(float4 Color, float3 Position, float koeff)
 {
-	if(FogMode == 1)
-		return ApplyFogRingworld(Color, Position, koeff);
+	float d = 0;
 
-	if(FogMode == 2)
-		return ApplyFogSphere(Color, Position, koeff);
+	if(FogModePlain)
+		d = DistFogPlain(Position);
 
-	return ApplyFogPlain(Color, Position, koeff);
+	if(FogModeRing)
+		d = DistFogRingworld(Position);
+
+	if(FogModeSphere)
+		d = DistFogSphere(Position);
+
+	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
+	l = saturate(1 - l);
+
+	return lerp(Color, FogColor, l);
 }
 
 //------- Technique: Land --------
@@ -614,7 +628,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD, float3 N
 float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 {
     //float4 bumpColor = tex2D(WaterBumpMapSampler, PSIn.BumpMapSamplingPos);
-    float2 perturbation = 1;//xWaveHeight*(bumpColor.rg - 0.5f)*2.0f;
+    float2 perturbation = (float2)1;//xWaveHeight*(bumpColor.rg - 0.5f)*2.0f;
 	
     //float2 ProjectedTexCoords;
     //ProjectedTexCoords.x = PSIn.ReflectionMapSamplingPos.x/PSIn.ReflectionMapSamplingPos.w/2.0f + 0.5f;
@@ -628,11 +642,11 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 	float4 specular = pow(saturate(dot(reflect,PSIn.View)),15);
 	
 	float4 reflectiveColor = float4(0.3f, 0.3f, 0.5f, 0.5f);
-	reflectiveColor = reflectiveColor*AmbientLightColor*AmbientLightIntensity + 
-		   reflectiveColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   reflectiveColor*SpecularColor*specular;
+	//reflectiveColor = reflectiveColor*AmbientLightColor*AmbientLightIntensity + 
+	//	   reflectiveColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
+	//	   reflectiveColor*SpecularColor*specular;
 
-    float2 ProjectedRefrTexCoords;
+    float2 ProjectedRefrTexCoords = (float2)0;
     ProjectedRefrTexCoords.x = -PSIn.RefractionMapSamplingPos.x/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;
     ProjectedRefrTexCoords.y = PSIn.RefractionMapSamplingPos.y/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;    
     float2 perturbatedRefrTexCoords = ProjectedRefrTexCoords + perturbation;    

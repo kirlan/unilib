@@ -111,7 +111,9 @@ namespace MapDrawXNAEngine
         EffectParameter pEffectFogColor;
         EffectParameter pEffectFogDensity;
         EffectParameter pEffectFogHeight;
-        EffectParameter pEffectFogMode;
+        EffectParameter pEffectFogModePlain;
+        EffectParameter pEffectFogModeRing;
+        EffectParameter pEffectFogModeSphere;
         EffectParameter pEffectBlendDistance;
         EffectParameter pEffectBlendWidth;
 
@@ -196,7 +198,9 @@ namespace MapDrawXNAEngine
             pEffectFogColor.SetValue(eSkyColor.ToVector4());
             pEffectFogDensity.SetValue(0.07f);
             pEffectFogHeight.SetValue(10);
-            pEffectFogMode.SetValue(0);
+            pEffectFogModePlain.SetValue(true);
+            pEffectFogModeRing.SetValue(false);
+            pEffectFogModeSphere.SetValue(false);
 
             pEffectBlendDistance.SetValue(20);//2
             pEffectBlendWidth.SetValue(40);
@@ -269,7 +273,9 @@ namespace MapDrawXNAEngine
             pEffectFogColor = m_pMyEffect.Parameters["FogColor"];
             pEffectFogDensity = m_pMyEffect.Parameters["FogDensity"];
             pEffectFogHeight = m_pMyEffect.Parameters["FogHeight"];
-            pEffectFogMode = m_pMyEffect.Parameters["FogMode"];
+            pEffectFogModePlain = m_pMyEffect.Parameters["FogModePlain"];
+            pEffectFogModeRing = m_pMyEffect.Parameters["FogModeRing"];
+            pEffectFogModeSphere = m_pMyEffect.Parameters["FogModeSphere"];
 
             pEffectBlendDistance = m_pMyEffect.Parameters["BlendDistance"];
             pEffectBlendWidth = m_pMyEffect.Parameters["BlendWidth"];
@@ -578,8 +584,8 @@ namespace MapDrawXNAEngine
                     m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
                     pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
                     fFogHeight = (m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000)) - 10;
-                    iFogMode = 2;
-                    fFogDensity = 0.05f;
+                    iFogMode = 1;
+                    fFogDensity = 0.025f;
                 }
                 else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
                 {
@@ -600,7 +606,9 @@ namespace MapDrawXNAEngine
                         foreach (ModelMeshPart meshPart in mesh.MeshParts)
                         {
                             meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                            meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                            meshPart.Effect.Parameters["FogModePlain"].SetValue(iFogMode == 0);
+                            meshPart.Effect.Parameters["FogModeRing"].SetValue(iFogMode == 1);
+                            meshPart.Effect.Parameters["FogModeSphere"].SetValue(iFogMode == 2);
                             meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
                         }
 
@@ -609,7 +617,9 @@ namespace MapDrawXNAEngine
                         foreach (ModelMeshPart meshPart in mesh.MeshParts)
                         {
                             meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                            meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                            meshPart.Effect.Parameters["FogModePlain"].SetValue(iFogMode == 0);
+                            meshPart.Effect.Parameters["FogModeRing"].SetValue(iFogMode == 1);
+                            meshPart.Effect.Parameters["FogModeSphere"].SetValue(iFogMode == 2);
                             meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
                         }
 
@@ -618,7 +628,9 @@ namespace MapDrawXNAEngine
                         foreach (ModelMeshPart meshPart in mesh.MeshParts)
                         {
                             meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                            meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                            meshPart.Effect.Parameters["FogModePlain"].SetValue(iFogMode == 0);
+                            meshPart.Effect.Parameters["FogModeRing"].SetValue(iFogMode == 1);
+                            meshPart.Effect.Parameters["FogModeSphere"].SetValue(iFogMode == 2);
                             meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
                         }
 
@@ -628,12 +640,16 @@ namespace MapDrawXNAEngine
                             foreach (ModelMeshPart meshPart in mesh.MeshParts)
                             {
                                 meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                                meshPart.Effect.Parameters["FogMode"].SetValue(iFogMode);
+                                meshPart.Effect.Parameters["FogModePlain"].SetValue(iFogMode == 0);
+                                meshPart.Effect.Parameters["FogModeRing"].SetValue(iFogMode == 1);
+                                meshPart.Effect.Parameters["FogModeSphere"].SetValue(iFogMode == 2);
                                 meshPart.Effect.Parameters["FogDensity"].SetValue(fFogDensity);
                             }
 
                 pEffectFogHeight.SetValue(fFogHeight);
-                pEffectFogMode.SetValue(iFogMode);
+                pEffectFogModePlain.SetValue(iFogMode == 0);
+                pEffectFogModeRing.SetValue(iFogMode == 1);
+                pEffectFogModeSphere.SetValue(iFogMode == 2);
                 pEffectFogDensity.SetValue(fFogDensity);
             }
 

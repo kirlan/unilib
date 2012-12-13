@@ -83,8 +83,7 @@
             this.PointsCount.Items.AddRange(new object[] {
             "5K",
             "10K",
-            "25K",
-            "50K"});
+            "25K"});
             this.PointsCount.Location = new System.Drawing.Point(78, 6);
             this.PointsCount.Name = "PointsCount";
             this.PointsCount.Size = new System.Drawing.Size(66, 21);
@@ -128,7 +127,7 @@
             // 
             this.NoGridWidth.Location = new System.Drawing.Point(237, 7);
             this.NoGridWidth.Maximum = new decimal(new int[] {
-            9,
+            20,
             0,
             0,
             0});

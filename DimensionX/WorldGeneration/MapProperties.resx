@@ -120,4 +120,12 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="label5.ToolTip" xml:space="preserve">
+    <value>Number of tectonic plates. 
+Each continent or ocean should consist of one or more tectonic plates.
+At plates junction mountain chains could be formed.
+
+*In this simulation each plate сould be only completely ocean or completely land, 
+so total count of plates should be more, than in reality...</value>
+  </data>
 </root>
