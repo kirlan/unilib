@@ -134,55 +134,66 @@ namespace WorldGeneration
 
         public bool Preload()
         {
-            RegistryKey key;
-            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DimensionX", true);
-            if (key == null)
-                key = Registry.LocalMachine.CreateSubKey("SOFTWARE\\DimensionX");
-
-            string sPreset = (string)key.GetValue("preset1", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset2", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset3", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset4", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset5", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            foreach (string sPrset in m_cLastUsedPresets.ToArray())
-                if (!File.Exists(sPrset))
-                    m_cLastUsedPresets.Remove(sPrset);
-
-            m_sWorkingDir = (string)key.GetValue("WorkingPath", "");
-
-            if (m_sWorkingDir == "" && !GetNewWorkingDir(key))
+            RegistryKey key = null;
+            try
             {
+                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DimensionX", true);
+                if (key == null)
+                    key = Registry.LocalMachine.CreateSubKey("SOFTWARE\\DimensionX");
+
+                string sPreset = (string)key.GetValue("preset1", "");
+                if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
+                    m_cLastUsedPresets.Add(sPreset);
+
+                sPreset = (string)key.GetValue("preset2", "");
+                if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
+                    m_cLastUsedPresets.Add(sPreset);
+
+                sPreset = (string)key.GetValue("preset3", "");
+                if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
+                    m_cLastUsedPresets.Add(sPreset);
+
+                sPreset = (string)key.GetValue("preset4", "");
+                if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
+                    m_cLastUsedPresets.Add(sPreset);
+
+                sPreset = (string)key.GetValue("preset5", "");
+                if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
+                    m_cLastUsedPresets.Add(sPreset);
+
+                foreach (string sPrset in m_cLastUsedPresets.ToArray())
+                    if (!File.Exists(sPrset))
+                        m_cLastUsedPresets.Remove(sPrset);
+
+                m_sWorkingDir = (string)key.GetValue("WorkingPath", "");
+
+                if (m_sWorkingDir == "" && !GetNewWorkingDir(key))
+                {
+                    key.Close();
+                    return false;
+                }
+
+                DirectoryInfo dirInfo = new DirectoryInfo(m_sWorkingDir);
+                if (!dirInfo.Exists && !GetNewWorkingDir(key))
+                {
+                    key.Close();
+                    return false;
+                }
+
                 key.Close();
+
+                ScanWorkingDir();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                if(key != null)
+                    key.Close();
                 return false;
             }
 
-            DirectoryInfo dirInfo = new DirectoryInfo(m_sWorkingDir);
-            if(!dirInfo.Exists && !GetNewWorkingDir(key))
-            {
-                key.Close();
-                return false;
-            }
-
-            key.Close();
-
-            ScanWorkingDir();
-
-            return true;
         }
 
         private void ScanWorkingDir()

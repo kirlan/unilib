@@ -22,15 +22,22 @@ namespace VQMapTest2
     {
         public Form1()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            MapModeChanged(this, null);
-            MapLayersChanged(this, null);
+                MapModeChanged(this, null);
+                MapLayersChanged(this, null);
 
-            showLandmarksToolStripMenuItem.Checked = true;
-            showRoadsToolStripMenuItem.Checked = true;
+                showLandmarksToolStripMenuItem.Checked = true;
+                showRoadsToolStripMenuItem.Checked = true;
 
-            mapDraw3d1.MouseWheel += new MouseEventHandler(mapDraw3d1_MouseWheel);
+                mapDraw3d1.MouseWheel += new MouseEventHandler(mapDraw3d1_MouseWheel);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "/r/n----/r/n" + ex.InnerException.Message);
+            }
         }
 
         private World m_pWorld;
