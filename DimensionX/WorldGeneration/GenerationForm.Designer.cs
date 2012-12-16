@@ -86,14 +86,14 @@
             this.GridsManagerButton.TabIndex = 2;
             this.GridsManagerButton.Text = "Show grids manager...";
             this.toolTip1.SetToolTip(this.GridsManagerButton, "Build completely new grid to use it and - optional - save to file for future use." +
-                    "");
+        "");
             this.GridsManagerButton.UseVisualStyleBackColor = true;
             this.GridsManagerButton.Click += new System.EventHandler(this.GridsManagerButton_Click);
             // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.AgesView);
             this.groupBox5.Controls.Add(this.tableLayoutPanel1);
             this.groupBox5.Controls.Add(this.epochProperties1);
@@ -106,8 +106,8 @@
             // 
             // AgesView
             // 
-            this.AgesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.AgesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AgesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -148,8 +148,8 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 5;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -217,9 +217,9 @@
             // epochProperties1
             // 
             this.epochProperties1.AdvancedMode = false;
-            this.epochProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.epochProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.epochProperties1.BackColor = System.Drawing.Color.White;
             this.epochProperties1.Enabled = false;
             this.epochProperties1.Epoch = null;
@@ -267,8 +267,8 @@
             // mapProperties1
             // 
             this.mapProperties1.AdvancedMode = false;
-            this.mapProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.mapProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.mapProperties1.BackColor = System.Drawing.Color.White;
             this.mapProperties1.ContinentsCount = 5;
             this.mapProperties1.Enabled = false;
@@ -319,6 +319,10 @@
             this.saveFileDialog1.DefaultExt = "xml";
             this.saveFileDialog1.Filter = "XML files|*.xml|All files|*.*";
             this.saveFileDialog1.Title = "Save Dimension X world preset file";
+            // 
+            // folderBrowserDialog1
+            // 
+            this.folderBrowserDialog1.Description = "Please, select a folder for temporary app data (about 10-50Mb total):";
             // 
             // GenerationForm
             // 
