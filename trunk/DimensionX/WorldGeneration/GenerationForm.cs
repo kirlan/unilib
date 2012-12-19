@@ -70,6 +70,12 @@ namespace WorldGeneration
                 m_cLastUsedGrid.Unload();
             m_cLastUsedGrid = m_cLocationsGrid;
 
+            if (m_cLastUsedGrid == null)
+            {
+                MessageBox.Show("No grids in Grids Manager! Please, create some.");
+                return;
+            }
+
             List<Epoch> cEpoches = new List<Epoch>();
 
             foreach (ListViewItem pItem in AgesView.Items)

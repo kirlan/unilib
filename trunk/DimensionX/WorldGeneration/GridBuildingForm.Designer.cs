@@ -205,10 +205,7 @@
             "160",
             "200",
             "240",
-            "256",
-            "320",
-            "400",
-            "512"});
+            "256"});
             this.GridHeight.Location = new System.Drawing.Point(130, 6);
             this.GridHeight.Name = "GridHeight";
             this.GridHeight.Size = new System.Drawing.Size(47, 21);
@@ -231,10 +228,7 @@
             "160",
             "200",
             "240",
-            "256",
-            "320",
-            "400",
-            "512"});
+            "256"});
             this.GridWidth.Location = new System.Drawing.Point(59, 6);
             this.GridWidth.Name = "GridWidth";
             this.GridWidth.Size = new System.Drawing.Size(47, 21);
