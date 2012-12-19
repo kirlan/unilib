@@ -1162,6 +1162,8 @@ namespace LandscapeGeneration
         public void Save(string sFilename)
         {
             var fil = new FileStream(sFilename, FileMode.Create);
+            m_sFilename = sFilename;
+
             using (var arc = ZipArchive.OpenOnStream(fil))
             {
                 var fs = arc.AddFile("grid", ZipArchive.CompressionMethodEnum.Deflated, ZipArchive.DeflateOptionEnum.Maximum);
@@ -1169,14 +1171,6 @@ namespace LandscapeGeneration
                 using (BinaryWriter binWriter =
                     new BinaryWriter(fs.GetStream(FileMode.OpenOrCreate, FileAccess.Write)))
                 {
-                    m_sFilename = sFilename;
-                    binWriter.Write(s_sHeader);
-                    binWriter.Write(s_iVersion);
-                    binWriter.Write(m_sDescription);
-                    binWriter.Write(m_iLocationsCount);
-                    binWriter.Write(m_iRX);
-                    binWriter.Write((int)m_eShape);
-
                     binWriter.Write(m_aVertexes.Length);
                     foreach (Vertex pVertex in m_aVertexes)
                     {
@@ -1188,6 +1182,19 @@ namespace LandscapeGeneration
                     {
                         pLoc.Save(binWriter);
                     }
+                }
+
+                var fs2 = arc.AddFile("header", ZipArchive.CompressionMethodEnum.Deflated, ZipArchive.DeflateOptionEnum.Maximum);
+
+                using (BinaryWriter binWriter =
+                    new BinaryWriter(fs2.GetStream(FileMode.OpenOrCreate, FileAccess.Write)))
+                {
+                    binWriter.Write(s_sHeader);
+                    binWriter.Write(s_iVersion);
+                    binWriter.Write(m_sDescription);
+                    binWriter.Write(m_iLocationsCount);
+                    binWriter.Write(m_iRX);
+                    binWriter.Write((int)m_eShape);
                 }
             }
             fil.Dispose();
@@ -1204,50 +1211,60 @@ namespace LandscapeGeneration
             if (!File.Exists(sFilename))
                 return false;
 
-            var fil = new FileStream(sFilename, FileMode.Open); 
-            using (var arc = ZipArchive.OpenOnStream(fil))
+            using (var fil = new FileStream(sFilename, FileMode.Open))
             {
-                BinaryReader binReader =
-                    new BinaryReader(arc.GetFile("grid").GetStream());
-
-                try
+                using (var arc = ZipArchive.OpenOnStream(fil))
                 {
-                    // If the file is not empty,
-                    // read the application settings.
-                    // First read 4 bytes into a buffer to
-                    // determine if the file is empty.
-                    byte[] testArray = new byte[3];
-                    int count = binReader.Read(testArray, 0, 3);
+                    BinaryReader binReader = null;
 
-                    if (count != 0)
+                    try
                     {
-                        // Reset the position in the stream to zero.
-                        binReader.BaseStream.Seek(0, SeekOrigin.Begin);
-
-                        string sHeader = binReader.ReadString();
-                        if (sHeader != s_sHeader)
+                        ZipArchive.ZipFileInfo? pInfo = arc.GetFile("header");
+                        if (!pInfo.HasValue)
+                        {
                             return false;
+                        }
 
-                        int iVersion = binReader.ReadInt32();
-                        if (iVersion != s_iVersion)
-                            return false;
+                        binReader = new BinaryReader(pInfo.Value.GetStream());
 
-                        sDescription = binReader.ReadString();
-                        iLocationsCount = binReader.ReadInt32();
-                        int iRX = binReader.ReadInt32();
-                        eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
+                        // If the file is not empty,
+                        // read the application settings.
+                        // First read 4 bytes into a buffer to
+                        // determine if the file is empty.
+                        byte[] testArray = new byte[3];
+                        int count = binReader.Read(testArray, 0, 3);
+
+                        if (count != 0)
+                        {
+                            // Reset the position in the stream to zero.
+                            binReader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                            string sHeader = binReader.ReadString();
+                            if (sHeader != s_sHeader)
+                                return false;
+
+                            int iVersion = binReader.ReadInt32();
+                            if (iVersion != s_iVersion)
+                                return false;
+
+                            sDescription = binReader.ReadString();
+                            iLocationsCount = binReader.ReadInt32();
+                            int iRX = binReader.ReadInt32();
+                            eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
+                        }
+                    }
+                    catch (EndOfStreamException e)
+                    {
+                        return false;
+                    }
+                    finally
+                    {
+                        if (binReader != null)
+                            binReader.Close();
                     }
                 }
-                catch (EndOfStreamException e)
-                {
-                    return false;
-                }
-                finally
-                {
-                    binReader.Close();
-                }
             }
-            fil.Dispose();
+            //fil.Dispose();
             return true;
         }
 
@@ -1284,11 +1301,16 @@ namespace LandscapeGeneration
             var fil = new FileStream(m_sFilename, FileMode.Open);
             using (var arc = ZipArchive.OpenOnStream(fil))
             {
-                BinaryReader binReader =
-                    new BinaryReader(arc.GetFile("grid").GetStream());
+                BinaryReader binReader = null;
 
                 try
                 {
+                    ZipArchive.ZipFileInfo? pInfo = arc.GetFile("header");
+                    if (!pInfo.HasValue)
+                        throw new Exception("No header!");
+
+                    binReader = new BinaryReader(pInfo.Value.GetStream());
+
                     // If the file is not empty,
                     // read the application settings.
                     // First read 4 bytes into a buffer to
@@ -1319,7 +1341,35 @@ namespace LandscapeGeneration
 
                         if (ProgressStep != null)
                             ProgressStep();
+                    }
+                }
+                catch (EndOfStreamException e)
+                {
+                    throw new Exception("Wrong file format!", e);
+                }
+                finally
+                {
+                    if(binReader != null)
+                        binReader.Close();
+                }
+                
+                try
+                {
+                    ZipArchive.ZipFileInfo? pInfo = arc.GetFile("grid");
+                    if(!pInfo.HasValue)
+                        throw new Exception("No data!");
 
+                    binReader = new BinaryReader(pInfo.Value.GetStream());
+
+                    // If the file is not empty,
+                    // read the application settings.
+                    // First read 4 bytes into a buffer to
+                    // determine if the file is empty.
+                    byte[] testArray = new byte[3];
+                    int count = binReader.Read(testArray, 0, 3);
+
+                    if (count != 0)
+                    {
                         Dictionary<long, Vertex> cTempDicVertex = new Dictionary<long, Vertex>();
                         int iVertexesCount = binReader.ReadInt32();
                         if (BeginStep != null)
@@ -1417,7 +1467,8 @@ namespace LandscapeGeneration
                 }
                 finally
                 {
-                    binReader.Close();
+                    if (binReader != null)
+                        binReader.Close();
                 }
             }
             fil.Dispose();
