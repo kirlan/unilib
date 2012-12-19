@@ -1298,6 +1298,9 @@ namespace LandscapeGeneration
             if (m_bLoaded)
                 return;
 
+            if (!File.Exists(m_sFilename))
+                throw new Exception("File '" + m_sFilename + "' not exists!");
+
             var fil = new FileStream(m_sFilename, FileMode.Open);
             using (var arc = ZipArchive.OpenOnStream(fil))
             {
@@ -1370,6 +1373,9 @@ namespace LandscapeGeneration
 
                     if (count != 0)
                     {
+                        // Reset the position in the stream to zero.
+                        binReader.BaseStream.Seek(0, SeekOrigin.Begin);
+
                         Dictionary<long, Vertex> cTempDicVertex = new Dictionary<long, Vertex>();
                         int iVertexesCount = binReader.ReadInt32();
                         if (BeginStep != null)

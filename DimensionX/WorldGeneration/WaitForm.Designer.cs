@@ -87,7 +87,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "World generation...";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.WaitForm_Load);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);

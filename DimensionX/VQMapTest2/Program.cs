@@ -13,6 +13,9 @@ namespace VQMapTest2
         [STAThread]
         static void Main()
         {
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new Form1());
             try
             {
                 Application.EnableVisualStyles();
@@ -22,8 +25,6 @@ namespace VQMapTest2
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-//                MessageBox.Show(ex.Message + "/r/n----/r/n" + ex.InnerException.Message);
-                //Console.WriteLine("{0} Exception caught.", ex);
             }
         }
     }

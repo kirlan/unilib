@@ -566,7 +566,9 @@ namespace VQMapTest2
             
                 m_pWorld = m_pGenerationForm.World;
                 label1.Visible = false;
-                ShowWorld();
+                
+                if(m_pWorld != null)
+                    ShowWorld();
             }
         }
 
