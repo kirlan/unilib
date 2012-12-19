@@ -43,10 +43,18 @@ namespace Zipp
         {
             ((IDisposable)external).Dispose();
         }
-        public ZipFileInfo GetFile(string name)
+        public ZipFileInfo? GetFile(string name)
         {
-            var meth = external.GetType().GetMethod("GetFile", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            return new ZipFileInfo { external = meth.Invoke(external, new object[] { name }) };
+            try
+            {
+                var meth = external.GetType().GetMethod("GetFile", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                return new ZipFileInfo { external = meth.Invoke(external, new object[] { name }) };
+            }
+            catch (Exception ex)
+            {
+                //throw ex.InnerException;
+                return null;
+            }
         }
 
         public IEnumerable<ZipFileInfo> Files
