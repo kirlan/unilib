@@ -74,6 +74,15 @@ sampler BumpMap0Sampler = sampler_state
    AddressV = mirror; 
 }; 
 
+bool UseCelShading = true;
+
+texture CelMap;
+/* Cel Shader effect map
+ * Mapping to the cel shader texture is what
+ * gives us that classic cel shaded effect
+ */
+sampler2D CelMapSampler = sampler_state { Texture = <CelMap>; MinFilter = LINEAR; MagFilter = LINEAR; MipFilter = LINEAR; AddressU = mirror; AddressV = mirror; };
+
 float DistFogPlain(float3 Position)
 {
 	//return 1;
@@ -142,6 +151,27 @@ float4 ApplyFog(float4 Color, float3 Position, float koeff)
 	l = saturate(1 - l);
 
 	return lerp(Color, FogColor, l);
+}
+
+float4 GetLight(float3 inNormal, float3 inView)
+{
+	float4 normal = float4(inNormal, 1.0);
+
+	float diff = saturate(dot(-DirectionalLightDirection,normal));
+	float4 diffuse = diff;
+	
+	if(UseCelShading)
+	{
+		// Look up the cel shading light color
+		float2 celTexCoord = float2(diff, 0.0f);
+		diffuse = tex2D(CelMapSampler, celTexCoord);
+	}	
+	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
+	float4 specular = pow(saturate(dot(reflect,inView)),15);
+
+    return AmbientLightColor*AmbientLightIntensity + 
+		   DirectionalLightIntensity*DirectionalLightColor*diffuse + 
+		   SpecularColor*specular;
 }
 
 //------- Technique: Land --------
@@ -214,10 +244,12 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 	//bump = 2 * bump - 1.0;  
 
 	//float4 normal = float4(normalize(input.Normal + bump/5), 1.0);
-	float4 normal = float4(input.Normal, 1.0);
-	float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
-	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	float4 specular = pow(saturate(dot(reflect,input.View)),15);
+	//float4 normal = float4(input.Normal, 1.0);
+	//float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
+	//float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
+	//float4 specular = pow(saturate(dot(reflect,input.View)),15);
+
+    float4 light = GetLight(input.Normal, input.View);
 
 	float d = length(input.Position3D - CameraPosition);
      
@@ -256,9 +288,7 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
     float4 texColor = lerp(nearColor, farColor, blendFactor);
 	texColor = lerp(closeColor, texColor, blendFactor2);
  	 
-	return ApplyFog(texColor*AmbientLightColor*AmbientLightIntensity + 
-		   texColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   texColor*SpecularColor*specular, input.Position3D, 1);
+	return ApplyFog(texColor*light, input.Position3D, 1);
 }
 
 technique Land
@@ -636,15 +666,15 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
     //float2 perturbatedTexCoords = ProjectedTexCoords + perturbation;
     //float4 reflectiveColor = tex2D(ReflectionSampler, perturbatedTexCoords);   
 
-	float4 normal = float4(PSIn.Normal, 1.0);
-	float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
-	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	float4 specular = pow(saturate(dot(reflect,PSIn.View)),15);
+	//float4 normal = float4(PSIn.Normal, 1.0);
+	//float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
+	//float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
+	//float4 specular = pow(saturate(dot(reflect,PSIn.View)),15);
+
+    //float4 light = GetLight(input.Normal, input.View);
 	
 	float4 reflectiveColor = float4(0.3f, 0.3f, 0.5f, 0.5f);
-	//reflectiveColor = reflectiveColor*AmbientLightColor*AmbientLightIntensity + 
-	//	   reflectiveColor*DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-	//	   reflectiveColor*SpecularColor*specular;
+	//reflectiveColor = reflectiveColor*light;
 
     float2 ProjectedRefrTexCoords = (float2)0;
     ProjectedRefrTexCoords.x = -PSIn.RefractionMapSamplingPos.x/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;

@@ -81,6 +81,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.testPathFinding1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useCelshadingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
@@ -594,7 +595,8 @@
             // debugToolStripMenuItem2
             // 
             this.debugToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.testPathFinding1ToolStripMenuItem});
+            this.testPathFinding1ToolStripMenuItem,
+            this.useCelshadingToolStripMenuItem});
             this.debugToolStripMenuItem2.Name = "debugToolStripMenuItem2";
             this.debugToolStripMenuItem2.Size = new System.Drawing.Size(54, 20);
             this.debugToolStripMenuItem2.Text = "Debug";
@@ -605,6 +607,15 @@
             this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.testPathFinding1ToolStripMenuItem.Text = "Build random path";
             this.testPathFinding1ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding1_Click);
+            // 
+            // useCelshadingToolStripMenuItem
+            // 
+            this.useCelshadingToolStripMenuItem.Checked = true;
+            this.useCelshadingToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useCelshadingToolStripMenuItem.Name = "useCelshadingToolStripMenuItem";
+            this.useCelshadingToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.useCelshadingToolStripMenuItem.Text = "Use cel-shading";
+            this.useCelshadingToolStripMenuItem.Click += new System.EventHandler(this.useCelshadingToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -737,6 +748,7 @@
             this.mapDraw3d1.TabIndex = 22;
             this.mapDraw3d1.Text = "mapDraw3d1";
             this.toolTip1.SetToolTip(this.mapDraw3d1, "test");
+            this.mapDraw3d1.UseCelShading = true;
             this.mapDraw3d1.SelectedStateChanged += new System.EventHandler<MapDrawXNAEngine.MapDraw3d.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
             this.mapDraw3d1.DoubleClick += new System.EventHandler(this.mapDraw3d1_DoubleClick);
             this.mapDraw3d1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapDraw3d1_MouseDown);
@@ -873,6 +885,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem showAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem useCelshadingToolStripMenuItem;
     }
 }
 

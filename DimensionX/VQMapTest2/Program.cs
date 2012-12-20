@@ -13,9 +13,11 @@ namespace VQMapTest2
         [STAThread]
         static void Main()
         {
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
+#if DEBUG
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
+#else
             try
             {
                 Application.EnableVisualStyles();
@@ -26,6 +28,7 @@ namespace VQMapTest2
             {
                 MessageBox.Show(ex.ToString());
             }
+#endif
         }
     }
 }

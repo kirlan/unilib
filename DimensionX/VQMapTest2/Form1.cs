@@ -698,5 +698,11 @@ namespace VQMapTest2
             townsFortsToolStripMenuItem.Checked = false;
             citiesCapitalsToolStripMenuItem.Checked = false;
         }
+
+        private void useCelshadingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useCelshadingToolStripMenuItem.Checked = !useCelshadingToolStripMenuItem.Checked;
+            mapDraw3d1.UseCelShading = useCelshadingToolStripMenuItem.Checked;
+        }
     }
 }
