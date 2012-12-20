@@ -169,9 +169,11 @@ float4 GetLight(float3 inNormal, float3 inView)
 	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	float4 specular = pow(saturate(dot(reflect,inView)),15);
 
-    return AmbientLightColor*AmbientLightIntensity + 
+	float4 light = AmbientLightColor*AmbientLightIntensity + 
 		   DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   SpecularColor*specular;
+		   SpecularColor*specular; 
+
+    return float4(light.xyz, 1);
 }
 
 //------- Technique: Land --------
