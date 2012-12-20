@@ -159,6 +159,20 @@ namespace MapDrawXNAEngine
         SpriteFont cityNameFont;
         SpriteBatch m_pSpriteBatch;
 
+        Effect outlineShader;   // Outline shader effect
+        float defaultThickness = 1.5f;  // default outline thickness
+        float defaultThreshold = 0.2f;  // default edge detection threshold
+        float outlineThickness = 0.5f;  // current outline thickness
+        float outlineThreshold = 0.12f;  // current edge detection threshold
+        float tStep = 0.01f;    // Ammount to step the line thickness by
+        float hStep = 0.001f;   // Ammount to step the threshold by
+
+        /* Render target to capture cel-shaded render for edge detection
+         * post processing
+         */
+        Texture2D celMap;       // Texture map for cell shading
+        RenderTarget2D celTarget;       // render target for main game object
+
         /// <summary>
         /// Initializes the control.
         /// </summary>
@@ -183,6 +197,9 @@ namespace MapDrawXNAEngine
             m_pMyEffect = LibContent.Load<Effect>("content/Effect1");
             BindEffectParameters();
 
+            celMap = LibContent.Load<Texture2D>("content/celMap");
+            m_pMyEffect.Parameters["CelMap"].SetValue(celMap);
+            
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             pEffectWorld.SetValue(Matrix.Identity);
 
@@ -244,6 +261,25 @@ namespace MapDrawXNAEngine
             LoadSettlements();
 
             textEffect = new BasicEffect(GraphicsDevice);
+
+            /* Load and initialize the outline shader effect
+             */
+            outlineShader = LibContent.Load<Effect>("content/OutlineShader");
+            outlineShader.Parameters["Thickness"].SetValue(outlineThickness);
+            outlineShader.Parameters["Threshold"].SetValue(outlineThreshold);
+            outlineShader.Parameters["ScreenSize"].SetValue(
+                new Vector2(GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height));
+
+            /* Here is the first significant difference between XNA 3.0 and XNA 4.0
+             * Render targets have been significantly revamped in this version of XNA
+             * this constructor creates a render target with the given width and height, 
+             * no MipMap, the standard Color surface format and a depth format that provides
+             * space for depth information.  The key bit here is the depth format.  If
+             * we do not specify this here we will get the default DepthFormat for a render
+             * target which is None.  Without a depth buffer we will not get propper culling.
+             */
+            celTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
+                false, SurfaceFormat.Color, DepthFormat.Depth24);
 
             // Start the animation timer.
             timer = Stopwatch.StartNew();
@@ -2611,6 +2647,14 @@ namespace MapDrawXNAEngine
                 }
             }
         }
+
+        private bool m_bUseCelShading = true;
+
+        public bool UseCelShading
+        {
+            get { return m_bUseCelShading; }
+            set { m_bUseCelShading = value; }
+        }
 #endregion
 
 #region Обратная связь
@@ -3010,6 +3054,9 @@ namespace MapDrawXNAEngine
         /// </summary>
         protected override void Draw()
         {
+            if (timer == null)
+                return;
+
             m_iFrame++;
 
             double fElapsedTime = timer.Elapsed.TotalMilliseconds - lastTime;
@@ -3052,7 +3099,7 @@ namespace MapDrawXNAEngine
                     {
                         //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
                         Vector3? pPicking = downRay.Position + Vector3.Normalize(downRay.Direction) * intersection + Vector3.Up * fMinHeight;
-                        m_pCamera.Position = pPicking.Value;
+                       m_pCamera.Position = pPicking.Value;
                         m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.Target, m_pCamera.Top);
                     }
                 }
@@ -3083,6 +3130,16 @@ namespace MapDrawXNAEngine
             //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
+            Viewport pPort = GraphicsDevice.Viewport;
+
+            m_pMyEffect.Parameters["UseCelShading"].SetValue(m_bUseCelShading);
+            if (m_bUseCelShading)
+            {
+                if (GraphicsDevice.Viewport.Width != celTarget.Width || GraphicsDevice.Viewport.Height != celTarget.Height)
+                    celTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
+                        false, SurfaceFormat.Color, DepthFormat.Depth24);
+            }
+
             if (m_eMode == MapMode.Sattelite)
             {
                 if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
@@ -3108,8 +3165,6 @@ namespace MapDrawXNAEngine
                 //PresentationParameters pp = GraphicsDevice.PresentationParameters;
                 //refractionRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, pp.DepthStencilFormat);
 
-                Viewport pPort = GraphicsDevice.Viewport;
-
                 GraphicsDevice.SetRenderTarget(refractionRenderTarget);
                 GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Microsoft.Xna.Framework.Color.Black, 1.0f, 0);
                 GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
@@ -3121,9 +3176,37 @@ namespace MapDrawXNAEngine
                 if (m_bShowLandMasses)
                     DrawLayer(MapLayer.LandMasses);
 
-                GraphicsDevice.SetRenderTarget(null);
-
-                GraphicsDevice.Viewport = pPort;
+                if (m_bUseCelShading)
+                {
+                    /* Set the render target to celTarget this will cause everything
+                     * that we draw to the graphics device to go here instead of to the
+                     * screen.  We will do this to capture the render of the game object
+                     * so we can do post processing edge detection.
+                     * 
+                     * For XNA 4.0 we do not need to worry about render target indexes
+                     * any more, just set the render target.
+                     */
+                    GraphicsDevice.SetRenderTarget(celTarget);
+                    /* Here is one of the big changes needed to get this working right
+                     * in XNA 4.0.  We need to set out GraphicsDevice.DepthStencilState
+                     * to default (this isn't done for us on a render target) otherwise
+                     * culling will be messed up.
+                     * 
+                     * An important thing to remember here in XNA 4.0 setting a state
+                     * is really cheep, creating a state is expensive.  The current
+                     * operations are just fine to call on every draw (infact that is
+                     * what Microsoft would recommend).  Creating new state objects on
+                     * the otherhand would not be a good idea.  Either use the built in
+                     * states like I am doing here, create your states somewhere else
+                     * and reuse them, or work up some mechanism to cache states for reuse.
+                     */
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                }
+                else
+                {
+                    GraphicsDevice.SetRenderTarget(null);
+                    GraphicsDevice.Viewport = pPort;
+                }
 
                 m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
                 m_pMyEffect.CurrentTechnique.Passes[0].Apply(); 
@@ -3140,6 +3223,25 @@ namespace MapDrawXNAEngine
             }
             else
             {
+                if (m_bUseCelShading)
+                {
+                    GraphicsDevice.SetRenderTarget(celTarget);
+                    /* Here is one of the big changes needed to get this working right
+                     * in XNA 4.0.  We need to set out GraphicsDevice.DepthStencilState
+                     * to default (this isn't done for us on a render target) otherwise
+                     * culling will be messed up.
+                     * 
+                     * An important thing to remember here in XNA 4.0 setting a state
+                     * is really cheep, creating a state is expensive.  The current
+                     * operations are just fine to call on every draw (infact that is
+                     * what Microsoft would recommend).  Creating new state objects on
+                     * the otherhand would not be a good idea.  Either use the built in
+                     * states like I am doing here, create your states somewhere else
+                     * and reuse them, or work up some mechanism to cache states for reuse.
+                     */
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                }
+
                 GraphicsDevice.Clear(eSkyColor);
 
                 m_pBasicEffect.View = m_pCamera.View;
@@ -3206,6 +3308,24 @@ namespace MapDrawXNAEngine
             if (m_bShowLocations)
                 DrawSettlementNames();
 
+            if (m_bUseCelShading)
+            {
+                /* We are done with the render target so set it back to null.
+                 * This will get us back to rendering to the default render target
+                 */
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.Viewport = pPort;
+
+                GraphicsDevice.Clear(eSkyColor);
+                /* Also in XNA 4.0 applying effects to a sprite is a little different
+                 * Use an overload of Begin that takes the effect as a parameter.  Also make
+                 * sure to set the sprite batch blend state to Opaque or we will not get black
+                 * outlines.
+                 */
+                m_pSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, outlineShader);
+                m_pSpriteBatch.Draw(celTarget, Vector2.Zero, Microsoft.Xna.Framework.Color.White);
+                m_pSpriteBatch.End();
+            }
         }
 
         private void DrawWater(float time)
