@@ -11,7 +11,7 @@ namespace TestCubePlanet
 {
     public class CellCH : TriangulationCell<VertexCH, CellCH>
     {
-        static Random rnd = new Random();
+        static System.Random rnd = new System.Random();
 
         Point GetCircumcenter()
         {

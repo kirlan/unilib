@@ -15,8 +15,6 @@ namespace TestCubePlanet
         {
         }
 
-        public bool m_bGhost;
-
         public enum EdgeSide
         {
             Inside,
@@ -27,20 +25,49 @@ namespace TestCubePlanet
             LeftTop,
             LeftBottom,
             RightTop,
-            RightBottom
+            RightBottom,
+            CornerTopLeft,
+            CornerTopRight,
+            CornerBottomLeft,
+            CornerBottomRight
         }
 
         public EdgeSide m_eSide;
+
+        public enum Transformation
+        {
+            Stright,
+            Rotate90CW,
+            Rotate90CCW,
+            Rotate180
+        }
+
+        public Dictionary<Transformation, VertexCH> m_cShadow = new Dictionary<Transformation, VertexCH>();
+
+        public enum Direction
+        {
+            CenterNone,
+            Up,
+            Down,
+            Left,
+            Right,
+            UpLeft,
+            UpRight,
+            DownLeft,
+            DownRight
+        }
+
+        public Direction m_eGhost;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Vertex"/> class.
         /// </summary>
         /// <param name="x">The x position.</param>
         /// <param name="y">The y position.</param>
-        public VertexCH(double x, double y, bool bGhost, EdgeSide eSide)
+        public VertexCH(double x, double y, Direction eGhost, EdgeSide eSide)
         {
             Position = new double[] { x, y };
-            m_bGhost = bGhost;
+            m_eGhost = eGhost;
             m_eSide = eSide;
         }
 
