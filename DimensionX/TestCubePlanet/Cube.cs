@@ -86,7 +86,7 @@ namespace TestCubePlanet
 
                 //Дальше считаем наружные точки. Наружные точки добаволяем всегда, но они могут быть отражением различных внутренних точек
                 
-                //Если это первый шаг, то наружная точка по часовой должна быть тенью внутренней по часовой
+                //Если это первый шаг, то наружная точка по часовой должна быть тенью внутренней по часовой, т.к. на первом шаге у нас нет внутренних против часовой
                 var v_1tl = new VertexCH(v2lb.Position[0], v2lb.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft);
                 if (i != 0 || !bCutOff) //иначе - внутренней против часовой
                     v_1tl = new VertexCH(v1bl.Position[0], v1bl.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft);
@@ -107,24 +107,17 @@ namespace TestCubePlanet
                     v_1lb = new VertexCH(v1rb.Position[0] - size, v1rb.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom);
                 locations.Add(v_1lb);
 
-                var v_2tr = new VertexCH(v1rb.Position[0], v1rb.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight);
-                //if (i != 0 || !bCutOff)
-                    v_2tr = new VertexCH(v2br.Position[0], v2br.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight);
+                //Для наружных точек против часовой всё проще, т.к. они являются тенями внутренних по часовой, которые у нас есть всегда
+                var v_2tr = new VertexCH(v2br.Position[0], v2br.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight);
                 locations.Add(v_2tr);
 
-                var v_2rb = new VertexCH(v1bl.Position[0] + size, v1bl.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightBottom);
-                //if (i != 0 || !bCutOff)
-                    v_2rb = new VertexCH(v2lb.Position[0] + size, v2lb.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightBottom);
+                var v_2rb = new VertexCH(v2lb.Position[0] + size, v2lb.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightBottom);
                 locations.Add(v_2rb);
 
-                var v_2bl = new VertexCH(v1lt.Position[0], v1lt.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft);
-                //if (i != 0 || !bCutOff)
-                    v_2bl = new VertexCH(v2tl.Position[0], v2tl.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft);
+                var v_2bl = new VertexCH(v2tl.Position[0], v2tl.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft);
                 locations.Add(v_2bl);
 
-                var v_2lt = new VertexCH(v1tr.Position[0] - size, v1tr.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftTop);
-                //if (i != 0 || !bCutOff)
-                    v_2lt = new VertexCH(v2rt.Position[0] - size, v2rt.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftTop);
+                var v_2lt = new VertexCH(v2rt.Position[0] - size, v2rt.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftTop);
                 locations.Add(v_2lt);
 
                 //теперь - угловые внешние точки
@@ -153,9 +146,12 @@ namespace TestCubePlanet
                     locations.Add(v222);
                 }
 
+                //Наконец, для всех наружных точек укажем, какой внутренней точке на соседнем квадрате они соответствуют с учётом возможных типов соединения
                 v_1tl.m_cShadow[VertexCH.Transformation.Stright] = v_1lb;
             }
 
+
+            //Территорию внутри построенной границы заполним случайными точками с распределением по Поиссону (чтобы случайно, но в общем равномерно).
             float Sbig = size * size;
             var S1 = Sbig / (locationsCount - locations.Count);
             var h = Math.Sqrt(S1 / (4 * Math.Sqrt(3)));
@@ -163,6 +159,7 @@ namespace TestCubePlanet
 
             R = (R + h) / 2;
 
+            //Придётся сделать несколько попыток, чтобы добиться оптимального заполнения всей территории
             int c = 0;
             List<SimpleVector3d> cPoints = new List<SimpleVector3d>();
             do
@@ -177,8 +174,7 @@ namespace TestCubePlanet
 
             locationsCount = locations.Count + cPoints.Count;
 
-            /****** Random Vertices ******/
-            //for (var i = locations.Count; i < locationsCount; i++)
+            //перенесём построенное облако Поиссона в основной рабочий массив
             for (var i = 0; i < cPoints.Count; i++)
             {
 //                var vi = new VertexCH(k + (size - 2 * k) * r.NextDouble(), k + (size - 2 * k) * r.NextDouble(), VertexCH.Direction.CenterNone, VertexCH.EdgeSide.Inside);
@@ -186,8 +182,10 @@ namespace TestCubePlanet
                 locations.Add(vi);
             }
 
+            //Наконец, строим диаграмму Вороного.
             VoronoiMesh<VertexCH, CellCH, VoronoiEdge<VertexCH, CellCH>> voronoiMesh = VoronoiMesh.Create<VertexCH, CellCH>(locations);
 
+            //Переведём результат в удобный нам формат.
             //Для каждого найденного ребра диаграммы Вороного найдём локации, которые оно разделяет
             foreach (var edge in voronoiMesh.Edges)
             {
