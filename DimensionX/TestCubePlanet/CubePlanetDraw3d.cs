@@ -48,7 +48,8 @@ namespace TestCubePlanet
                 foreach (var chunk in pFace.m_cChunk)
                 {
                     //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2,2];
-                    Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+                    Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.Cyan;
+
                     //if (chunk == pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
                     //    color = Microsoft.Xna.Framework.Color.Fuchsia;
                     //if (chunk == pFace.m_cChunk[0, 0])
@@ -59,6 +60,7 @@ namespace TestCubePlanet
                     //    color = Microsoft.Xna.Framework.Color.Blue;
                     //if (chunk == pFace.m_cChunk[CubeFace.Size - 1, 0])
                     //    color = Microsoft.Xna.Framework.Color.Gold;
+
                     //switch (chunk.Key)
                     //{
                     //    case VertexCH.Direction.UpLeft:
@@ -105,8 +107,10 @@ namespace TestCubePlanet
                         userPrimitives[index].Color = color;
 
                         if (loc.m_bGhost)
-                            //userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Red;
-                            continue;
+                            //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
+                                continue;
+                            //else
+                            //    userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Orange;
 
                         m_iTrianglesCount += loc.m_cEdges.Count;
 
@@ -126,7 +130,8 @@ namespace TestCubePlanet
                     //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2, 2];
                     foreach (var loc in chunk.m_cLocations)
                     {
-                        if (loc.m_bGhost)
+                        //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
+                            if (loc.m_bGhost)
                             continue;
 
                         foreach (var edge in loc.m_cEdges)
@@ -261,11 +266,15 @@ namespace TestCubePlanet
             effect.Projection = m_pCamera.Projection;
 
             // Set renderstates.
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            RasterizerState rs = new RasterizerState();
+            //rs.CullMode = CullMode.None;
+            rs.CullMode = CullMode.CullCounterClockwiseFace;
+            //rs.FillMode = FillMode.WireFrame;
+            GraphicsDevice.RasterizerState = rs;
 
-            // Draw the triangle.
             effect.CurrentTechnique.Passes[0].Apply();
-            foreach(var pFace in m_aFaces)
+            //var pFace = m_aFaces[2];
+            foreach (var pFace in m_aFaces)
                 GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
                                               pFace.userPrimitives, 0, pFace.userPrimitives.Length - 1, pFace.userPrimitivesIndices, 0, pFace.m_iTrianglesCount);
         
