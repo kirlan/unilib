@@ -32,121 +32,128 @@ namespace TestCubePlanet
 
         public Cube()
         {
-            var locationsCount = 500;// 2500;
+            var locationsCount = 2500;// 2500;
 
             var size = 1000;
 //            List<VertexCH> vertices = new List<VertexCH>();
             var r = new System.Random();
 
-            var k = 1.1 * size / Math.Sqrt(locationsCount);
+            var k = 1.2 * size / Math.Sqrt(locationsCount);
 //            var k = size / Math.Sqrt(locationsCount);
 
             int quanticSize = (int)(size / k);
 
-            bool bCutOff = false;
+            bool bCutOff = true;
 
             float fDelta = 0.4f;//0.25f;
 
             for (int i = 0; i <= quanticSize/2; i++)
             {
-                var x1 = k * 0.75 + i * k + k * (fDelta - fDelta * 2 * r.NextDouble());
+                var x1 = k * 0.5 + i * k + k * (fDelta - fDelta * 2 * r.NextDouble());
                 var y1 = -k * 0.5 + k * (fDelta - fDelta * 2 * r.NextDouble());
 
-                var x2 = k * 0.75 + i * k + k * (fDelta - fDelta * 2 * r.NextDouble());
+                var x2 = k * 0.5 + i * k + k * (fDelta - fDelta * 2 * r.NextDouble());
                 var y2 = k * 0.5 + k * (fDelta - fDelta * 2 * r.NextDouble());
 
-                if (i < 1)
-                {
-                    if (i != 0 || !bCutOff)
-                    {
-                        var v111 = new VertexCH(-x2, -y2, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft);
-                        locations.Add(v111);
-                    }
-                    var v112 = new VertexCH(size + x1, y1, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight);
-                    locations.Add(v112);
-                    if (i != 0 || !bCutOff)
-                    {
-                        var v121 = new VertexCH(size + x2, size + y2, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight);
-                        locations.Add(v121);
-                    }
-                    var v122 = new VertexCH(-x1, size - y1, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft);
-                    locations.Add(v122);
+                //Внутренние точки квадрата. Сначала - по часовой стрелке.
 
-                    var v211 = new VertexCH(-y2, -x2, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft);
-                    locations.Add(v211);
-                    if (i != 0 || !bCutOff)
-                    {
-                        var v212 = new VertexCH(size - y1, -x1, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight);
-                        locations.Add(v212);
-                    }
-                    var v221 = new VertexCH(size + y2, size + x2, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight);
-                    locations.Add(v221);
-                    if (i != 0 || !bCutOff)
-                    {
-                        var v222 = new VertexCH(y1, size + x1, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft);
-                        locations.Add(v222);
-                    }
-                }
+                var v2tl = new VertexCH(x2, y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopLeft);
+                var v2rt = new VertexCH(size - y2, x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightTop);
+                var v2br = new VertexCH(size - x2, size - y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomRight);
+                var v2lb = new VertexCH(y2, size - x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftBottom);
 
-                //верхняя грань квадрата - левая половина
-                var v_1tl = new VertexCH(x1, y1, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft);
-                locations.Add(v_1tl);
+                //Потом - против часовой.
+
+                var v1tr = new VertexCH(size - x1, -y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopRight);
+                var v1rb = new VertexCH(size + y1, size - x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightBottom);
+                var v1bl = new VertexCH(x1, size + y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomLeft);
+                var v1lt = new VertexCH(-y1, x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftTop);
+
+                //Те, которые по часовой - добавляем по любому.
+                locations.Add(v2tl);
+                locations.Add(v2br);
+                locations.Add(v2lb);
+                locations.Add(v2rt);
+
+                //Те, которые против часовой - на первом шаге пропускаем, т.к. они будут путаться в углах с теми, которые по часовой.
                 if (i != 0 || !bCutOff)
                 {
-                    var v2tl = new VertexCH(x2, y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopLeft);
-                    locations.Add(v2tl);
-                }
-
-                //верхняя грань квадрата - правая половина
-                if (i != 0 || !bCutOff)
-                {
-                    var v1tr = new VertexCH(size - x1, -y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopRight);
                     locations.Add(v1tr);
+                    locations.Add(v1bl);
+                    locations.Add(v1lt);
+                    locations.Add(v1rb);
                 }
-                var v_2tr = new VertexCH(size - x2, -y2, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight);
+
+                //Дальше считаем наружные точки. Наружные точки добаволяем всегда, но они могут быть отражением различных внутренних точек
+                
+                //Если это первый шаг, то наружная точка по часовой должна быть тенью внутренней по часовой
+                var v_1tl = new VertexCH(v2lb.Position[0], v2lb.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft);
+                if (i != 0 || !bCutOff) //иначе - внутренней против часовой
+                    v_1tl = new VertexCH(v1bl.Position[0], v1bl.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft);
+                locations.Add(v_1tl);
+
+                var v_1rt = new VertexCH(v2tl.Position[0] + size, v2tl.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop);
+                if (i != 0 || !bCutOff)
+                    v_1rt = new VertexCH(v1lt.Position[0] + size, v1lt.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop);
+                locations.Add(v_1rt);
+
+                var v_1br = new VertexCH(v2rt.Position[0], v2rt.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight);
+                if (i != 0 || !bCutOff)
+                    v_1br = new VertexCH(v1tr.Position[0], v1tr.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight);
+                locations.Add(v_1br);
+
+                var v_1lb = new VertexCH(v2br.Position[0] - size, v2br.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom);
+                if (i != 0 || !bCutOff)
+                    v_1lb = new VertexCH(v1rb.Position[0] - size, v1rb.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom);
+                locations.Add(v_1lb);
+
+                var v_2tr = new VertexCH(v1rb.Position[0], v1rb.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight);
+                //if (i != 0 || !bCutOff)
+                    v_2tr = new VertexCH(v2br.Position[0], v2br.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight);
                 locations.Add(v_2tr);
 
-                //нижняя грань квадрата - левая половина
-                if (i != 0 || !bCutOff)
-                {
-                    var v1bl = new VertexCH(x1, size + y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomLeft);
-                    locations.Add(v1bl);
-                }
-                var v_2bl = new VertexCH(x2, size + y2, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft);
+                var v_2rb = new VertexCH(v1bl.Position[0] + size, v1bl.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightBottom);
+                //if (i != 0 || !bCutOff)
+                    v_2rb = new VertexCH(v2lb.Position[0] + size, v2lb.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightBottom);
+                locations.Add(v_2rb);
+
+                var v_2bl = new VertexCH(v1lt.Position[0], v1lt.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft);
+                //if (i != 0 || !bCutOff)
+                    v_2bl = new VertexCH(v2tl.Position[0], v2tl.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft);
                 locations.Add(v_2bl);
 
-                //нижняя грань квадрата - правая половина
-                var v_1br = new VertexCH(size - x1, size - y1, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight);
-                locations.Add(v_1br);
-                if (i != 0 || !bCutOff)
+                var v_2lt = new VertexCH(v1tr.Position[0] - size, v1tr.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftTop);
+                //if (i != 0 || !bCutOff)
+                    v_2lt = new VertexCH(v2rt.Position[0] - size, v2rt.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftTop);
+                locations.Add(v_2lt);
+
+                //теперь - угловые внешние точки
+                if (i < 1)
                 {
-                    var v2br = new VertexCH(size - x2, size - y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomRight);
-                    locations.Add(v2br);
+                    var v111 = new VertexCH(v1rb.Position[0] - size, v1rb.Position[1] - size, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft);
+                    var v112 = new VertexCH(v1bl.Position[0] + size, v1bl.Position[1] - size, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight);
+                    var v121 = new VertexCH(v1lt.Position[0] + size, v1lt.Position[1] + size, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight);
+                    var v122 = new VertexCH(v1tr.Position[0] - size, v1tr.Position[1] + size, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft);
+                    if (i != 0 || !bCutOff)
+                    {
+                        locations.Add(v111);
+                        locations.Add(v112);
+                        locations.Add(v121);
+                        locations.Add(v122);
+                    }
+
+                    var v211 = new VertexCH(v2br.Position[0] - size, v2br.Position[1] - size, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft);
+                    var v212 = new VertexCH(v2lb.Position[0] + size, v2lb.Position[1] - size, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight);
+                    var v221 = new VertexCH(v2tl.Position[0] + size, v2tl.Position[1] + size, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight);
+                    var v222 = new VertexCH(v2rt.Position[0] - size, v2rt.Position[1] + size, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft);
+
+                    locations.Add(v211);
+                    locations.Add(v212);
+                    locations.Add(v221);
+                    locations.Add(v222);
                 }
 
-                //левая грань квадрата - верхняя половина
-                var v_1lt = new VertexCH(-y1, x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftTop);
-                locations.Add(v_1lt);
-                var v2lt = new VertexCH(-y2, x2, VertexCH.Direction.Left, VertexCH.EdgeSide.LeftTop);
-                locations.Add(v2lt);
-
-                //левая грань квадрата - нижняя половина
-                var v1lb = new VertexCH(y1, size - x1, VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom);
-                locations.Add(v1lb);
-                var v_2lb = new VertexCH(y2, size - x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftBottom);
-                locations.Add(v_2lb);
-
-                //правая грань квадрата - верхняя половина
-                var v1rt = new VertexCH(size - y1, x1, VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop);
-                locations.Add(v1rt);
-                var v_2rt = new VertexCH(size - y2, x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightTop);
-                locations.Add(v_2rt);
-
-                //правая грань квадрата - нижняя половина
-                var v_1rb = new VertexCH(size + y1, size - x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightBottom);
-                locations.Add(v_1rb);
-                var v2rb = new VertexCH(size + y2, size - x2, VertexCH.Direction.Right, VertexCH.EdgeSide.RightBottom);
-                locations.Add(v2rb);
+                v_1tl.m_cShadow[VertexCH.Transformation.Stright] = v_1lb;
             }
 
             float Sbig = size * size;
