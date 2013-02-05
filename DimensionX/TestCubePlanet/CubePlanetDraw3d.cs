@@ -27,59 +27,197 @@ namespace TestCubePlanet
     {
         BasicEffect effect;
 
-        VertexPositionColor[] userPrimitives;
-        int[] userPrimitivesIndices;
-        int m_iTrianglesCount = 0;
+        class Face
+        {
+            public VertexPositionColor[] userPrimitives;
+            public int[] userPrimitivesIndices;
+            public int m_iTrianglesCount = 0;
+
+            public Face(CubeFace pFace)
+            {
+                userPrimitives = new VertexPositionColor[(pFace.m_cChunk[0, 0].m_cLocations.Count +
+                    pFace.m_cChunk[0, 0].m_cVertexes.Count) * CubeFace.Size * CubeFace.Size];
+
+                Dictionary<Vertex, int> vertexIndex = new Dictionary<Vertex, int>();
+                Dictionary<Location, int> locationIndex = new Dictionary<Location, int>();
+
+                int index = 0;
+
+                m_iTrianglesCount = 0;
+
+                foreach (var chunk in pFace.m_cChunk)
+                {
+                    //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2,2];
+                    Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+                    //if (chunk == pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
+                    //    color = Microsoft.Xna.Framework.Color.Fuchsia;
+                    //if (chunk == pFace.m_cChunk[0, 0])
+                    //    color = Microsoft.Xna.Framework.Color.Red;
+                    //if (chunk == pFace.m_cChunk[0, CubeFace.Size - 1])
+                    //    color = Microsoft.Xna.Framework.Color.Green;
+                    //if (chunk == pFace.m_cChunk[CubeFace.Size - 1, CubeFace.Size - 1])
+                    //    color = Microsoft.Xna.Framework.Color.Blue;
+                    //if (chunk == pFace.m_cChunk[CubeFace.Size - 1, 0])
+                    //    color = Microsoft.Xna.Framework.Color.Gold;
+                    //switch (chunk.Key)
+                    //{
+                    //    case VertexCH.Direction.UpLeft:
+                    //        color = Microsoft.Xna.Framework.Color.Red;
+                    //        break;
+                    //    case VertexCH.Direction.Up:
+                    //        color = Microsoft.Xna.Framework.Color.Orange;
+                    //        break;
+                    //    case VertexCH.Direction.UpRight:
+                    //        color = Microsoft.Xna.Framework.Color.Gold;
+                    //        break;
+                    //    case VertexCH.Direction.Right:
+                    //        color = Microsoft.Xna.Framework.Color.Green;
+                    //        break;
+                    //    case VertexCH.Direction.DownRight:
+                    //        color = Microsoft.Xna.Framework.Color.Cyan;
+                    //        break;
+                    //    case VertexCH.Direction.Down:
+                    //        color = Microsoft.Xna.Framework.Color.Blue;
+                    //        break;
+                    //    case VertexCH.Direction.DownLeft:
+                    //        color = Microsoft.Xna.Framework.Color.Fuchsia;
+                    //        break;
+                    //    case VertexCH.Direction.Left:
+                    //        color = Microsoft.Xna.Framework.Color.Violet;
+                    //        break;
+                    //}
+
+                    foreach (var vertex in chunk.m_cVertexes)
+                    {
+                        userPrimitives[index] = new VertexPositionColor();
+                        userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fZ, vertex.m_fY);
+                        userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Black;
+
+                        vertexIndex[vertex] = index;
+
+                        index++;
+                    }
+
+                    foreach (var loc in chunk.m_cLocations)
+                    {
+                        userPrimitives[index] = new VertexPositionColor();
+                        userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fZ, loc.m_fY);
+                        userPrimitives[index].Color = color;
+
+                        if (loc.m_bGhost)
+                            //userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Red;
+                            continue;
+
+                        m_iTrianglesCount += loc.m_cEdges.Count;
+
+                        locationIndex[loc] = index;
+
+                        index++;
+                    }
+                }
+
+
+                userPrimitivesIndices = new int[m_iTrianglesCount * 3];
+
+                index = 0;
+
+                foreach (var chunk in pFace.m_cChunk)
+                {
+                    //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2, 2];
+                    foreach (var loc in chunk.m_cLocations)
+                    {
+                        if (loc.m_bGhost)
+                            continue;
+
+                        foreach (var edge in loc.m_cEdges)
+                        {
+                            userPrimitivesIndices[index++] = locationIndex[loc];
+                            userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pFrom];
+                            userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pTo];
+                        }
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Checks whether a ray intersects a model. This method needs to access
+            /// the model vertex data, so the model must have been built using the
+            /// custom TrianglePickingProcessor provided as part of this sample.
+            /// Returns the distance along the ray to the point of intersection, or null
+            /// if there is no intersection.
+            /// </summary>
+            public float? RayIntersectsLandscape(Ray ray, Matrix modelTransform,
+                                             out Vector3 vertex1, out Vector3 vertex2,
+                                             out Vector3 vertex3)
+            {
+                vertex1 = vertex2 = vertex3 = Vector3.Zero;
+
+                // The input ray is in world space, but our model data is stored in object
+                // space. We would normally have to transform all the model data by the
+                // modelTransform matrix, moving it into world space before we test it
+                // against the ray. That transform can be slow if there are a lot of
+                // triangles in the model, however, so instead we do the opposite.
+                // Transforming our ray by the inverse modelTransform moves it into object
+                // space, where we can test it directly against our model data. Since there
+                // is only one ray but typically many triangles, doing things this way
+                // around can be much faster.
+
+                Matrix inverseTransform = Matrix.Invert(modelTransform);
+
+                ray.Position = Vector3.Transform(ray.Position, inverseTransform);
+                ray.Direction = Vector3.TransformNormal(ray.Direction, inverseTransform);
+
+                // Keep track of the closest triangle we found so far,
+                // so we can always return the closest one.
+                float? closestIntersection = null;
+
+                for (int i = 0; i < userPrimitivesIndices.Length; i += 3)
+                {
+                    // Perform a ray to triangle intersection test.
+                    float? intersection;
+
+                    RayIntersectsTriangle(ref ray,
+                                            ref userPrimitives[userPrimitivesIndices[i]].Position,
+                                            ref userPrimitives[userPrimitivesIndices[i + 1]].Position,
+                                            ref userPrimitives[userPrimitivesIndices[i + 2]].Position,
+                                            out intersection);
+
+                    // Does the ray intersect this triangle?
+                    if (intersection != null)
+                    {
+                        // If so, is it closer than any other previous triangle?
+                        if ((closestIntersection == null) ||
+                            (intersection < closestIntersection))
+                        {
+                            // Store the distance to this triangle.
+                            closestIntersection = intersection;
+
+                            // Transform the three vertex positions into world space,
+                            // and store them into the output vertex parameters.
+                            Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i]].Position,
+                                                ref modelTransform, out vertex1);
+
+                            Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i + 1]].Position,
+                                                ref modelTransform, out vertex2);
+
+                            Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i + 2]].Position,
+                                                ref modelTransform, out vertex3);
+                        }
+                    }
+                }
+
+                return closestIntersection;
+            }
+        }
+
+        private Face[] m_aFaces = new Face[6];
 
         public void Assign(Cube pCube)
         {
-            userPrimitives = new VertexPositionColor[pCube.locations.Count + pCube.vertices.Count];
-
-            Dictionary<CellCH, int> vertexIndex = new Dictionary<CellCH, int>();
-            Dictionary<VertexCH, int> locationIndex = new Dictionary<VertexCH, int>();
-
             int index = 0;
-            foreach (var vertex in pCube.vertices)
+            foreach (var pFace in pCube.m_cFaces)
             {
-                userPrimitives[index] = new VertexPositionColor();
-                userPrimitives[index].Position = new Vector3((float)vertex.Circumcenter.X - 500, 0, (float)vertex.Circumcenter.Y - 500);
-                userPrimitives[index].Color = Microsoft.Xna.Framework.Color.White;
-
-                vertexIndex[vertex] = index;
-
-                index++;
-            }
-
-            m_iTrianglesCount = 0;
-
-            foreach (var loc in pCube.locations)
-            {
-                userPrimitives[index] = new VertexPositionColor();
-                userPrimitives[index].Position = new Vector3((float)loc.Position[0] - 500, 0, (float)loc.Position[1] - 500);
-                userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Blue;
-
-                if(loc.m_bGhost)
-                    userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Red;
-
-                m_iTrianglesCount += loc.m_cEdges.Count;
-
-                locationIndex[loc] = index;
-
-                index++;
-            }
-
-            userPrimitivesIndices = new int[m_iTrianglesCount * 3];
-
-            index = 0;
-
-            foreach (var loc in pCube.locations)
-            {
-                foreach(var edge in loc.m_cEdges)
-                {
-                    userPrimitivesIndices[index++] = locationIndex[loc];
-                    userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pFrom];
-                    userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pTo]; 
-                }
+                m_aFaces[index++] = new Face(pFace.Value);
             }
         }
 
@@ -107,7 +245,7 @@ namespace TestCubePlanet
             m_pCamera = new DumbCamera(GraphicsDevice);
         }
 
-        public bool m_bCamMode = false;
+        public bool m_bCamMode = true;
 
         /// <summary>
         /// Draws the control.
@@ -127,8 +265,9 @@ namespace TestCubePlanet
 
             // Draw the triangle.
             effect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                                              userPrimitives, 0, userPrimitives.Length - 1, userPrimitivesIndices, 0, m_iTrianglesCount);
+            foreach(var pFace in m_aFaces)
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                                              pFace.userPrimitives, 0, pFace.userPrimitives.Length - 1, pFace.userPrimitivesIndices, 0, pFace.m_iTrianglesCount);
         
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
@@ -251,33 +390,36 @@ namespace TestCubePlanet
             // choose the closest one if there are several models under the cursor.
             float closestIntersection = float.MaxValue;
 
-            Vector3 vertex1, vertex2, vertex3;
-
-            // Perform the ray to model intersection test.
-            float? intersection = RayIntersectsLandscape(cursorRay, Matrix.Identity,//CreateScale(0.5f),
-                                                        out vertex1, out vertex2,
-                                                        out vertex3);
-            m_bPicked = false;
-
-            // Do we have a per-triangle intersection with this model?
-            if (intersection != null)
+            foreach (var pFace in m_aFaces)
             {
-                // If so, is it closer than any other model we might have
-                // previously intersected?
-                if (intersection < closestIntersection)
+                Vector3 vertex1, vertex2, vertex3;
+
+                // Perform the ray to model intersection test.
+                float? intersection = pFace.RayIntersectsLandscape(cursorRay, Matrix.Identity,//CreateScale(0.5f),
+                                                            out vertex1, out vertex2,
+                                                            out vertex3);
+                m_bPicked = false;
+
+                // Do we have a per-triangle intersection with this model?
+                if (intersection != null)
                 {
-                    // Store information about this model.
-                    closestIntersection = intersection.Value;
+                    // If so, is it closer than any other model we might have
+                    // previously intersected?
+                    if (intersection < closestIntersection)
+                    {
+                        // Store information about this model.
+                        closestIntersection = intersection.Value;
 
-                    // Store vertex positions so we can display the picked triangle.
-                    pickedTriangle[0].Position = vertex1;
-                    pickedTriangle[1].Position = vertex2;
-                    pickedTriangle[2].Position = vertex3;
+                        // Store vertex positions so we can display the picked triangle.
+                        pickedTriangle[0].Position = vertex1;
+                        pickedTriangle[1].Position = vertex2;
+                        pickedTriangle[2].Position = vertex3;
 
-                    m_bPicked = true;
+                        m_bPicked = true;
 
-                    m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
-                    m_pPoints[3] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
+                        m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
+                        m_pPoints[3] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
+                    }
                 }
             }
         }
@@ -368,76 +510,6 @@ namespace TestCubePlanet
             }
 
             result = rayDistance;
-        }
-
-        /// <summary>
-        /// Checks whether a ray intersects a model. This method needs to access
-        /// the model vertex data, so the model must have been built using the
-        /// custom TrianglePickingProcessor provided as part of this sample.
-        /// Returns the distance along the ray to the point of intersection, or null
-        /// if there is no intersection.
-        /// </summary>
-        float? RayIntersectsLandscape(Ray ray, Matrix modelTransform,
-                                         out Vector3 vertex1, out Vector3 vertex2,
-                                         out Vector3 vertex3)
-        {
-            vertex1 = vertex2 = vertex3 = Vector3.Zero;
-
-            // The input ray is in world space, but our model data is stored in object
-            // space. We would normally have to transform all the model data by the
-            // modelTransform matrix, moving it into world space before we test it
-            // against the ray. That transform can be slow if there are a lot of
-            // triangles in the model, however, so instead we do the opposite.
-            // Transforming our ray by the inverse modelTransform moves it into object
-            // space, where we can test it directly against our model data. Since there
-            // is only one ray but typically many triangles, doing things this way
-            // around can be much faster.
-
-            Matrix inverseTransform = Matrix.Invert(modelTransform);
-
-            ray.Position = Vector3.Transform(ray.Position, inverseTransform);
-            ray.Direction = Vector3.TransformNormal(ray.Direction, inverseTransform);
-
-            // Keep track of the closest triangle we found so far,
-            // so we can always return the closest one.
-            float? closestIntersection = null;
-
-            for (int i = 0; i < userPrimitivesIndices.Length; i += 3)
-            {
-                // Perform a ray to triangle intersection test.
-                float? intersection;
-
-                RayIntersectsTriangle(ref ray,
-                                        ref userPrimitives[userPrimitivesIndices[i]].Position,
-                                        ref userPrimitives[userPrimitivesIndices[i+1]].Position,
-                                        ref userPrimitives[userPrimitivesIndices[i+2]].Position,
-                                        out intersection);
-
-                // Does the ray intersect this triangle?
-                if (intersection != null)
-                {
-                    // If so, is it closer than any other previous triangle?
-                    if ((closestIntersection == null) ||
-                        (intersection < closestIntersection))
-                    {
-                        // Store the distance to this triangle.
-                        closestIntersection = intersection;
-
-                        // Transform the three vertex positions into world space,
-                        // and store them into the output vertex parameters.
-                        Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i]].Position,
-                                            ref modelTransform, out vertex1);
-
-                        Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i+1]].Position,
-                                            ref modelTransform, out vertex2);
-
-                        Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i+2]].Position,
-                                            ref modelTransform, out vertex3);
-                    }
-                }
-            }
-
-            return closestIntersection;
         }
     }
 }
