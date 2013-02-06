@@ -7,12 +7,30 @@ namespace TestCubePlanet
 {
     public class Location: Vertex
     {
-        public bool m_bGhost = false;
+        public VertexCH.Direction m_eGhost;
 
-        public Location(float fX, float fY, float fR, Cube.Face3D eFace, bool bGhost)
+        public bool Ghost
+        {
+            get { return m_eGhost != VertexCH.Direction.CenterNone; }
+        }
+
+        private uint m_iID;
+
+        public Location(uint iID, float fX, float fY, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost)
             : base(fX, fY, fR, eFace)
         {
-            m_bGhost = bGhost;
+            m_iID = iID;
+            m_eGhost = eGhost;
+        }
+
+        public Dictionary<VertexCH.Transformation, uint> m_cShadow = new Dictionary<VertexCH.Transformation, uint>();
+
+        public void SetShadows(uint stright, uint r90ccw, uint r90cw, uint r180)
+        {
+            m_cShadow[VertexCH.Transformation.Stright] = stright;
+            m_cShadow[VertexCH.Transformation.Rotate90CCW] = r90ccw;
+            m_cShadow[VertexCH.Transformation.Rotate90CW] = r90cw;
+            m_cShadow[VertexCH.Transformation.Rotate180] = r180;
         }
 
         public class Edge
@@ -25,8 +43,37 @@ namespace TestCubePlanet
                 m_pFrom = pFrom;
                 m_pTo = pTo;
             }
+
+            public override string ToString()
+            {
+                return string.Format("{0} - {1}", m_pFrom, m_pTo);
+            }
         }
 
         public Dictionary<Location, Edge> m_cEdges = new Dictionary<Location, Edge>();
+
+        public void ReplaceVertex(Vertex pBad, Vertex pGood)
+        {
+            foreach (var pEdge in m_cEdges)
+            {
+                if (pEdge.Value.m_pFrom == pBad)
+                {
+                    pEdge.Value.m_pFrom = pGood;
+                    pGood.m_cLinked.Add(this);
+                    pBad.m_cLinked.Remove(this);
+                }
+                if (pEdge.Value.m_pTo == pBad)
+                {
+                    pEdge.Value.m_pTo = pGood;
+                    pGood.m_cLinked.Add(this);
+                    pBad.m_cLinked.Remove(this);
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}{4} ({1}, {2}, {3})", Ghost ? "x":"", m_fX, m_fY, m_fZ, m_iID);
+        }
     }
 }

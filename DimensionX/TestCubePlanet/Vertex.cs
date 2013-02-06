@@ -11,6 +11,8 @@ namespace TestCubePlanet
         public float m_fY;
         public float m_fZ;
 
+        public List<Vertex> m_cLinked = new List<Vertex>();
+
         public Vertex(float fX, float fY, float fR, Cube.Face3D eFace)
         {
             //Формула взята на http://mathproofs.blogspot.ru/2005/07/mapping-cube-to-sphere.html
@@ -50,9 +52,14 @@ namespace TestCubePlanet
                         z = fY / fR;
                     break;
             }
-            m_fX = fR * x * (float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
-            m_fY = fR * y * (float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
-            m_fZ = fR * z * (float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
+            m_fX = 1500 * x * (float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
+            m_fY = 1500 * y * (float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
+            m_fZ = 1500 * z * (float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}, {1}, {2}]", m_fX, m_fY, m_fZ);
         }
     }
 }

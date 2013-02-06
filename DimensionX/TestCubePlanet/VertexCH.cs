@@ -44,6 +44,14 @@ namespace TestCubePlanet
 
         public Dictionary<Transformation, VertexCH> m_cShadow = new Dictionary<Transformation, VertexCH>();
 
+        public void SetShadows(VertexCH stright, VertexCH r90ccw, VertexCH r90cw, VertexCH r180)
+        {
+            m_cShadow[VertexCH.Transformation.Stright] = stright;
+            m_cShadow[VertexCH.Transformation.Rotate90CCW] = r90ccw;
+            m_cShadow[VertexCH.Transformation.Rotate90CW] = r90cw;
+            m_cShadow[VertexCH.Transformation.Rotate180] = r180;
+        }
+
         public enum Direction
         {
             CenterNone,
@@ -59,6 +67,9 @@ namespace TestCubePlanet
 
         public Direction m_eGhost;
 
+        public static uint ID_counter = 0;
+        public uint m_iID = 0;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Vertex"/> class.
         /// </summary>
@@ -66,6 +77,8 @@ namespace TestCubePlanet
         /// <param name="y">The y position.</param>
         public VertexCH(double x, double y, Direction eGhost, EdgeSide eSide)
         {
+            m_iID = ID_counter++;
+
             Position = new double[] { x, y };
             m_eGhost = eGhost;
             m_eSide = eSide;
