@@ -40,16 +40,16 @@ namespace TestCubePlanet
             generatePerspectiveProjectionMatrix(Microsoft.Xna.Framework.MathHelper.ToRadians(45));
         }
 
-        public void Update(bool bMode)
+        public void Update(Vector3 pDir, Vector3 pUp)
         {
             UpdateAspectRatio();
 
             Matrix cameraRotation = Matrix.CreateFromYawPitchRoll(0, 0, 0);
 
-            Direction = Vector3.Transform(bMode? Vector3.Down : Vector3.Forward, cameraRotation);
+            Direction = Vector3.Transform(pDir, cameraRotation);
             Position = Vector3.Zero - Direction * m_fDistance;
 
-            Vector3 cameraRotatedUpVector = Vector3.Transform(bMode? Vector3.Forward : Vector3.Up, cameraRotation);
+            Vector3 cameraRotatedUpVector = Vector3.Transform(pUp, cameraRotation);
 
             View = Matrix.CreateLookAt(Position, Vector3.Zero, cameraRotatedUpVector);
         }

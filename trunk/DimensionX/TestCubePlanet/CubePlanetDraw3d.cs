@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using UniLibXNA;
+using Random;
 
 namespace TestCubePlanet
 {
@@ -27,16 +28,16 @@ namespace TestCubePlanet
     {
         BasicEffect effect;
 
-        class Face
-        {
+        class Square
+        { 
             public VertexPositionColor[] userPrimitives;
             public int[] userPrimitivesIndices;
             public int m_iTrianglesCount = 0;
 
-            public Face(CubeFace pFace)
+            public Square(Chunk pChunk, bool bColored)
             {
-                userPrimitives = new VertexPositionColor[(pFace.m_cChunk[0, 0].m_cLocations.Count +
-                    pFace.m_cChunk[0, 0].m_cVertexes.Count) * CubeFace.Size * CubeFace.Size];
+                userPrimitives = new VertexPositionColor[pChunk.m_aLocations.Length +
+                    pChunk.m_aVertexes.Length];
 
                 Dictionary<Vertex, int> vertexIndex = new Dictionary<Vertex, int>();
                 Dictionary<Location, int> locationIndex = new Dictionary<Location, int>();
@@ -45,79 +46,42 @@ namespace TestCubePlanet
 
                 m_iTrianglesCount = 0;
 
-                foreach (var chunk in pFace.m_cChunk)
+                //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2,2];
+                Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+
+                if (bColored)
+                    color = Microsoft.Xna.Framework.Color.FromNonPremultiplied(127 + Rnd.Get(100), 127 + Rnd.Get(100), 127 + Rnd.Get(100), 256);
+
+                for (int i=0; i<pChunk.m_aVertexes.Length; i++)
                 {
-                    //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2,2];
-                    Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.Cyan;
+                    var vertex = pChunk.m_aVertexes[i];
+                    userPrimitives[index] = new VertexPositionColor();
+                    userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fZ, vertex.m_fY);
+                    userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Lerp(color, Microsoft.Xna.Framework.Color.Black, 0.2f);
 
-                    //if (chunk == pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
-                    //    color = Microsoft.Xna.Framework.Color.Fuchsia;
-                    //if (chunk == pFace.m_cChunk[0, 0])
-                    //    color = Microsoft.Xna.Framework.Color.Red;
-                    //if (chunk == pFace.m_cChunk[0, CubeFace.Size - 1])
-                    //    color = Microsoft.Xna.Framework.Color.Green;
-                    //if (chunk == pFace.m_cChunk[CubeFace.Size - 1, CubeFace.Size - 1])
-                    //    color = Microsoft.Xna.Framework.Color.Blue;
-                    //if (chunk == pFace.m_cChunk[CubeFace.Size - 1, 0])
-                    //    color = Microsoft.Xna.Framework.Color.Gold;
+                    vertexIndex[vertex] = index;
 
-                    //switch (chunk.Key)
-                    //{
-                    //    case VertexCH.Direction.UpLeft:
-                    //        color = Microsoft.Xna.Framework.Color.Red;
-                    //        break;
-                    //    case VertexCH.Direction.Up:
-                    //        color = Microsoft.Xna.Framework.Color.Orange;
-                    //        break;
-                    //    case VertexCH.Direction.UpRight:
-                    //        color = Microsoft.Xna.Framework.Color.Gold;
-                    //        break;
-                    //    case VertexCH.Direction.Right:
-                    //        color = Microsoft.Xna.Framework.Color.Green;
-                    //        break;
-                    //    case VertexCH.Direction.DownRight:
-                    //        color = Microsoft.Xna.Framework.Color.Cyan;
-                    //        break;
-                    //    case VertexCH.Direction.Down:
-                    //        color = Microsoft.Xna.Framework.Color.Blue;
-                    //        break;
-                    //    case VertexCH.Direction.DownLeft:
-                    //        color = Microsoft.Xna.Framework.Color.Fuchsia;
-                    //        break;
-                    //    case VertexCH.Direction.Left:
-                    //        color = Microsoft.Xna.Framework.Color.Violet;
-                    //        break;
-                    //}
+                    index++;
+                }
 
-                    foreach (var vertex in chunk.m_cVertexes)
-                    {
-                        userPrimitives[index] = new VertexPositionColor();
-                        userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fZ, vertex.m_fY);
-                        userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Black;
+                for (int i=0; i<pChunk.m_aLocations.Length; i++)
+                {
+                    var loc = pChunk.m_aLocations[i];
+                    userPrimitives[index] = new VertexPositionColor();
+                    userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fZ, loc.m_fY);
+                    userPrimitives[index].Color = color;
 
-                        vertexIndex[vertex] = index;
+                    if (loc.Ghost)
+                        //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
+                            continue;
+                        //else
+                        //    userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Orange;
 
-                        index++;
-                    }
+                    m_iTrianglesCount += loc.m_cEdges.Count;
 
-                    foreach (var loc in chunk.m_cLocations)
-                    {
-                        userPrimitives[index] = new VertexPositionColor();
-                        userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fZ, loc.m_fY);
-                        userPrimitives[index].Color = color;
+                    locationIndex[loc] = index;
 
-                        if (loc.m_bGhost)
-                            //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
-                                continue;
-                            //else
-                            //    userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Orange;
-
-                        m_iTrianglesCount += loc.m_cEdges.Count;
-
-                        locationIndex[loc] = index;
-
-                        index++;
-                    }
+                    index++;
                 }
 
 
@@ -125,21 +89,19 @@ namespace TestCubePlanet
 
                 index = 0;
 
-                foreach (var chunk in pFace.m_cChunk)
+                //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2, 2];
+                for (int i = 0; i < pChunk.m_aLocations.Length; i++)
                 {
-                    //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2, 2];
-                    foreach (var loc in chunk.m_cLocations)
-                    {
-                        //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
-                            if (loc.m_bGhost)
-                            continue;
+                    var loc = pChunk.m_aLocations[i];
+                    //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
+                        if (loc.Ghost)
+                        continue;
 
-                        foreach (var edge in loc.m_cEdges)
-                        {
-                            userPrimitivesIndices[index++] = locationIndex[loc];
-                            userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pFrom];
-                            userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pTo];
-                        }
+                    foreach (var edge in loc.m_cEdges)
+                    {
+                        userPrimitivesIndices[index++] = locationIndex[loc];
+                        userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pFrom];
+                        userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pTo];
                     }
                 }
             }
@@ -215,15 +177,35 @@ namespace TestCubePlanet
             }
         }
 
+        class Face
+        {
+            public Square[] m_aSquares;
+
+            public Face(CubeFace pFace, bool bColored)
+            {
+                m_aSquares = new Square[pFace.Size * pFace.Size];
+
+                int index = 0;
+                foreach (var chunk in pFace.m_cChunk)
+                {
+                    m_aSquares[index++] = new Square(chunk, bColored);
+                }
+            }
+        }
+
         private Face[] m_aFaces = new Face[6];
 
-        public void Assign(Cube pCube)
+        bool m_bReady = false;
+
+        public void Assign(Cube pCube, bool bColored)
         {
             int index = 0;
             foreach (var pFace in pCube.m_cFaces)
             {
-                m_aFaces[index++] = new Face(pFace.Value);
+                m_aFaces[index++] = new Face(pFace.Value, bColored);
             }
+
+            m_bReady = true;
         }
 
         private Microsoft.Xna.Framework.Color eSkyColor = Microsoft.Xna.Framework.Color.Lavender;
@@ -250,7 +232,8 @@ namespace TestCubePlanet
             m_pCamera = new DumbCamera(GraphicsDevice);
         }
 
-        public bool m_bCamMode = true;
+        public Vector3 m_pCameraDir = Vector3.Forward;
+        public Vector3 m_pCameraUp = Vector3.Up;
 
         /// <summary>
         /// Draws the control.
@@ -259,7 +242,10 @@ namespace TestCubePlanet
         {
             GraphicsDevice.Clear(eSkyColor);
 
-            m_pCamera.Update(m_bCamMode);
+            if (!m_bReady)
+                return;
+
+            m_pCamera.Update(m_pCameraDir, m_pCameraUp);
 
             effect.World = Matrix.Identity;
             effect.View = m_pCamera.View;
@@ -275,8 +261,9 @@ namespace TestCubePlanet
             effect.CurrentTechnique.Passes[0].Apply();
             //var pFace = m_aFaces[2];
             foreach (var pFace in m_aFaces)
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                                              pFace.userPrimitives, 0, pFace.userPrimitives.Length - 1, pFace.userPrimitivesIndices, 0, pFace.m_iTrianglesCount);
+                foreach (var pSquare in pFace.m_aSquares)
+                    GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                                              pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndices, 0, pSquare.m_iTrianglesCount);
         
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
@@ -373,6 +360,9 @@ namespace TestCubePlanet
         /// </summary>
         public void UpdatePicking(int x, int y)
         {
+            if (!m_bReady)
+                return;
+
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
             Ray cursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
@@ -400,37 +390,38 @@ namespace TestCubePlanet
             float closestIntersection = float.MaxValue;
 
             foreach (var pFace in m_aFaces)
-            {
-                Vector3 vertex1, vertex2, vertex3;
-
-                // Perform the ray to model intersection test.
-                float? intersection = pFace.RayIntersectsLandscape(cursorRay, Matrix.Identity,//CreateScale(0.5f),
-                                                            out vertex1, out vertex2,
-                                                            out vertex3);
-                m_bPicked = false;
-
-                // Do we have a per-triangle intersection with this model?
-                if (intersection != null)
+                foreach (var pSquare in pFace.m_aSquares)
                 {
-                    // If so, is it closer than any other model we might have
-                    // previously intersected?
-                    if (intersection < closestIntersection)
+                    Vector3 vertex1, vertex2, vertex3;
+
+                    // Perform the ray to model intersection test.
+                    float? intersection = pSquare.RayIntersectsLandscape(cursorRay, Matrix.Identity,//CreateScale(0.5f),
+                                                                out vertex1, out vertex2,
+                                                                out vertex3);
+                    m_bPicked = false;
+
+                    // Do we have a per-triangle intersection with this model?
+                    if (intersection != null)
                     {
-                        // Store information about this model.
-                        closestIntersection = intersection.Value;
+                        // If so, is it closer than any other model we might have
+                        // previously intersected?
+                        if (intersection < closestIntersection)
+                        {
+                            // Store information about this model.
+                            closestIntersection = intersection.Value;
 
-                        // Store vertex positions so we can display the picked triangle.
-                        pickedTriangle[0].Position = vertex1;
-                        pickedTriangle[1].Position = vertex2;
-                        pickedTriangle[2].Position = vertex3;
+                            // Store vertex positions so we can display the picked triangle.
+                            pickedTriangle[0].Position = vertex1;
+                            pickedTriangle[1].Position = vertex2;
+                            pickedTriangle[2].Position = vertex3;
 
-                        m_bPicked = true;
+                            m_bPicked = true;
 
-                        m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
-                        m_pPoints[3] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
+                            m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
+                            m_pPoints[3] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
+                        }
                     }
                 }
-            }
         }
 
         /// <summary>
