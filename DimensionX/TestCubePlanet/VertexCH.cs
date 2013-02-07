@@ -115,6 +115,11 @@ namespace TestCubePlanet
                 m_pFrom = pFrom;
                 m_pTo = pTo;
             }
+
+            public override string ToString()
+            {
+                return string.Format("{0} - {1}", m_pFrom, m_pTo);
+            }
         }
 
         public Dictionary<VertexCH, Edge> m_cEdges = new Dictionary<VertexCH,Edge>();

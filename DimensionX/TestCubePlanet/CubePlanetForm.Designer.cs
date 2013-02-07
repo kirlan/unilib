@@ -29,11 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.radioButtonUP = new System.Windows.Forms.RadioButton();
             this.radioButtonFW = new System.Windows.Forms.RadioButton();
@@ -42,11 +38,15 @@
             this.radioButtonLF = new System.Windows.Forms.RadioButton();
             this.radioButtonBK = new System.Windows.Forms.RadioButton();
             this.radioButtonN = new System.Windows.Forms.RadioButton();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.cubePlanetDraw3d1 = new TestCubePlanet.CubePlanetDraw3d();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -64,69 +64,19 @@
             this.panel1.Size = new System.Drawing.Size(392, 81);
             this.panel1.TabIndex = 1;
             // 
-            // numericUpDown1
+            // checkBox1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(12, 6);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(58, 20);
-            this.numericUpDown1.TabIndex = 1;
-            this.numericUpDown1.Value = new decimal(new int[] {
-            2500,
-            0,
-            0,
-            0});
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "small",
-            "normal",
-            "big",
-            "giant"});
-            this.comboBox1.Location = new System.Drawing.Point(12, 32);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(58, 21);
-            this.comboBox1.TabIndex = 2;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(76, 6);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(52, 47);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "BUILD!";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 59);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Building time:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(190, 59);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Graphic init time:";
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(331, 58);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(49, 17);
+            this.checkBox1.TabIndex = 7;
+            this.checkBox1.Text = "color";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // tableLayoutPanel1
             // 
@@ -260,19 +210,69 @@
             this.radioButtonN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButtonN.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // label2
             // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(331, 58);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(49, 17);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "color";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(190, 59);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(85, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Graphic init time:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 59);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(69, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Building time:";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(76, 6);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(52, 47);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "BUILD!";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "small",
+            "normal",
+            "big",
+            "giant"});
+            this.comboBox1.Location = new System.Drawing.Point(12, 32);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(58, 21);
+            this.comboBox1.TabIndex = 2;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(12, 6);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(58, 20);
+            this.numericUpDown1.TabIndex = 1;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // cubePlanetDraw3d1
             // 
@@ -295,9 +295,9 @@
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
 
         }

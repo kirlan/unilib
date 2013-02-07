@@ -24,7 +24,13 @@ namespace TestCubePlanet
 
         static int IsLeft(Point a, Point b, Point c)
         {
-            return ((b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X)) > 0 ? 1 : -1;
+            decimal ax = (decimal)a.X;
+            decimal bx = (decimal)b.X;
+            decimal cx = (decimal)c.X;
+            decimal ay = (decimal)a.Y;
+            decimal by = (decimal)b.Y;
+            decimal cy = (decimal)c.Y;
+            return ((bx - ax) * (cy - ay) - (by - ay) * (cx - ax)) > 0 ? 1 : -1;
         }
 
         System.Random r = new System.Random();
@@ -209,12 +215,35 @@ namespace TestCubePlanet
             return cPoints;
         }
 
-        private void RebuildEdges(IEnumerable<VoronoiEdge<VertexCH, CellCH>> cEdges)
+        private Dictionary<CellCH, List<CellCH>> m_cZeroEdges = new Dictionary<CellCH, List<CellCH>>();
+
+        private void RebuildEdges(List<VertexCH> locations, IEnumerable<VoronoiEdge<VertexCH, CellCH>> cEdges)
         {
+            m_cZeroEdges.Clear();
+
             foreach (var edge in cEdges)
             {
                 var from = edge.Source;
                 var to = edge.Target;
+
+                if (Point.Subtract(from.Circumcenter, to.Circumcenter).Length < 0.0000001)
+                {
+                    List<CellCH> cFromList;
+                    if (!m_cZeroEdges.TryGetValue(from, out cFromList))
+                    {
+                        cFromList = new List<CellCH>();
+                        m_cZeroEdges[from] = cFromList;
+                    }
+                    cFromList.Add(to);
+                    List<CellCH> cToList;
+                    if (!m_cZeroEdges.TryGetValue(to, out cToList))
+                    {
+                        cToList = new List<CellCH>();
+                        m_cZeroEdges[to] = cToList;
+                    }
+                    cToList.Add(from);
+                    continue;
+                }
 
                 VertexCH pLeft = null;
                 VertexCH pRight = null;
@@ -256,6 +285,74 @@ namespace TestCubePlanet
                 pLeft.m_cEdges[pRight] = new VertexCH.Edge(from, to);
                 pRight.m_cEdges[pLeft] = new VertexCH.Edge(to, from);
             }
+
+            foreach (var pLoc in locations)
+            {
+                foreach (var pEdge in pLoc.m_cEdges)
+                {
+                    if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pFrom))
+                        pEdge.Value.m_pFrom = SkipZero(pEdge.Value.m_pFrom);
+                    if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pTo))
+                        pEdge.Value.m_pTo = SkipZero(pEdge.Value.m_pTo);
+                }
+
+                if (pLoc.m_eGhost != VertexCH.Direction.CenterNone)
+                    continue;
+
+                List<VertexCH.Edge> cSequence = new List<VertexCH.Edge>();
+
+                VertexCH.Edge pLast = pLoc.m_cEdges.Values.First();
+                cSequence.Add(pLast);
+                for (int j = 0; j < pLoc.m_cEdges.Count; j++)
+                {
+                    foreach (var pEdge in pLoc.m_cEdges)
+                    {
+                        if (pEdge.Value.m_pFrom == pLast.m_pTo && !cSequence.Contains(pEdge.Value))
+                        {
+                            pLast = pEdge.Value;
+                            cSequence.Add(pLast);
+                            break;
+                        }
+                    }
+                }
+
+                if (cSequence.Count != pLoc.m_cEdges.Count)
+                {
+                    foreach (var pEdge in pLoc.m_cEdges)
+                    {
+                        if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pFrom))
+                            pEdge.Value.m_pFrom = SkipZero(pEdge.Value.m_pFrom);
+                        if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pTo))
+                            pEdge.Value.m_pTo = SkipZero(pEdge.Value.m_pTo);
+                    }
+                    throw new Exception();
+                }
+            }
+        }
+
+        Dictionary<CellCH, CellCH> cChange = new Dictionary<CellCH, CellCH>();
+
+        private CellCH SkipZero(CellCH pFrom)
+        {
+            if (cChange.ContainsKey(pFrom))
+                return cChange[pFrom];
+
+            Claim(pFrom, pFrom);
+            return pFrom;
+        }
+
+        private void Claim(CellCH pAnchor, CellCH pNewValue)
+        {
+            cChange[pAnchor] = pNewValue;
+            if (m_cZeroEdges.ContainsKey(pAnchor))
+            {
+                foreach (var pPretender in m_cZeroEdges[pAnchor])
+                {
+                    if (cChange.ContainsKey(pPretender))
+                        continue;
+                    Claim(pPretender, pNewValue);
+                }
+            }
         }
 
         public Cube(int locationsCount, int iFaceSize)
@@ -282,7 +379,7 @@ namespace TestCubePlanet
 
             //Переведём результат в удобный нам формат.
             //Для каждого найденного ребра диаграммы Вороного найдём локации, которые оно разделяет
-            RebuildEdges(voronoiMesh.Edges);
+            RebuildEdges(locations, voronoiMesh.Edges);
 
             var locs = locations.ToArray();
             var verts = voronoiMesh.Vertices.ToArray();
