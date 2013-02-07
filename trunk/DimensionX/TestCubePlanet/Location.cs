@@ -16,11 +16,15 @@ namespace TestCubePlanet
 
         private uint m_iID;
 
-        public Location(uint iID, float fX, float fY, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost)
+        private bool m_bBorder = false;
+
+        public Location(uint iID, float fX, float fY, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost, bool bBorder)
             : base(fX, fY, fR, eFace)
         {
             m_iID = iID;
             m_eGhost = eGhost;
+
+            m_bBorder = bBorder;
         }
 
         public Dictionary<VertexCH.Transformation, uint> m_cShadow = new Dictionary<VertexCH.Transformation, uint>();
@@ -47,6 +51,11 @@ namespace TestCubePlanet
             public override string ToString()
             {
                 return string.Format("{0} - {1}", m_pFrom, m_pTo);
+            }
+
+            public Edge Reverse()
+            {
+                return new Edge(m_pTo, m_pFrom);
             }
         }
 

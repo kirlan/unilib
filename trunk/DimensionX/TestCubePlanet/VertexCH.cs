@@ -67,6 +67,8 @@ namespace TestCubePlanet
 
         public Direction m_eGhost;
 
+        public bool m_bBorder = false;
+
         public static uint ID_counter = 0;
         public uint m_iID = 0;
 
@@ -75,13 +77,15 @@ namespace TestCubePlanet
         /// </summary>
         /// <param name="x">The x position.</param>
         /// <param name="y">The y position.</param>
-        public VertexCH(double x, double y, Direction eGhost, EdgeSide eSide)
+        public VertexCH(double x, double y, Direction eGhost, EdgeSide eSide, bool bBorder)
         {
             m_iID = ID_counter++;
 
             Position = new double[] { x, y };
             m_eGhost = eGhost;
             m_eSide = eSide;
+
+            m_bBorder = bBorder;
         }
 
         public Point ToPoint()

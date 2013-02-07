@@ -13,6 +13,8 @@ namespace TestCubePlanet
 
         public List<Vertex> m_cLinked = new List<Vertex>();
 
+        public bool m_bForbidden = false;
+
         public Vertex(float fX, float fY, float fR, Cube.Face3D eFace)
         {
             //Формула взята на http://mathproofs.blogspot.ru/2005/07/mapping-cube-to-sphere.html
