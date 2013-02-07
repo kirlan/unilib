@@ -15,6 +15,8 @@ namespace TestCubePlanet
 
         public bool m_bForbidden = false;
 
+        public Microsoft.Xna.Framework.Color m_eColor = Microsoft.Xna.Framework.Color.White;
+        
         public Vertex(float fX, float fY, float fR, Cube.Face3D eFace)
         {
             //Формула взята на http://mathproofs.blogspot.ru/2005/07/mapping-cube-to-sphere.html

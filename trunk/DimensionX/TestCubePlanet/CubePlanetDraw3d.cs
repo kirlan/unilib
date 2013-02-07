@@ -49,15 +49,14 @@ namespace TestCubePlanet
                 //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2,2];
                 Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
 
-                if (bColored)
-                    color = Microsoft.Xna.Framework.Color.FromNonPremultiplied(127 + Rnd.Get(100), 127 + Rnd.Get(100), 127 + Rnd.Get(100), 256);
-
                 for (int i=0; i<pChunk.m_aVertexes.Length; i++)
                 {
                     var vertex = pChunk.m_aVertexes[i];
                     userPrimitives[index] = new VertexPositionColor();
                     userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fZ, vertex.m_fY);
                     userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Lerp(color, Microsoft.Xna.Framework.Color.Black, 0.2f);
+                    if (bColored)
+                        userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Lerp(vertex.m_eColor, Microsoft.Xna.Framework.Color.Black, 0.2f);
 
                     vertexIndex[vertex] = index;
 
@@ -70,6 +69,8 @@ namespace TestCubePlanet
                     userPrimitives[index] = new VertexPositionColor();
                     userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fZ, loc.m_fY);
                     userPrimitives[index].Color = color;
+                    if (bColored)
+                        userPrimitives[index].Color = loc.m_eColor;
 
                     if (loc.Ghost)
                         //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
