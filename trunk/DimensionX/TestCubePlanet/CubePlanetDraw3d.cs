@@ -207,6 +207,34 @@ namespace TestCubePlanet
             foreach (var pFace in pCube.m_cFaces)
             {
                 m_aFaces[index++] = new Face(pFace.Value, bColored);
+                Microsoft.Xna.Framework.Color pColor = Microsoft.Xna.Framework.Color.Black;
+                switch(pFace.Key)
+                {
+                    case Cube.Face3D.Backward:
+                        pColor = Microsoft.Xna.Framework.Color.Blue;
+                        break;
+                    case Cube.Face3D.Bottom:
+                        pColor = Microsoft.Xna.Framework.Color.Green;
+                        break;
+                    case Cube.Face3D.Forward:
+                        pColor = Microsoft.Xna.Framework.Color.Red;
+                        break;
+                    case Cube.Face3D.Left:
+                        pColor = Microsoft.Xna.Framework.Color.Cyan;
+                        break;
+                    case Cube.Face3D.Right:
+                        pColor = Microsoft.Xna.Framework.Color.Gold;
+                        break;
+                    case Cube.Face3D.Top:
+                        pColor = Microsoft.Xna.Framework.Color.OrangeRed;
+                        break;
+
+                }
+                foreach (var pSquare in m_aFaces[index - 1].m_aSquares)
+                {
+                    for (int i = 0; i < pSquare.userPrimitives.Length; i++ )
+                        pSquare.userPrimitives[i].Color = pColor;
+                }
             }
 
             m_bReady = true;
@@ -257,8 +285,8 @@ namespace TestCubePlanet
 
             // Set renderstates.
             RasterizerState rs = new RasterizerState();
-            //rs.CullMode = CullMode.None;
-            rs.CullMode = CullMode.CullCounterClockwiseFace;
+            rs.CullMode = CullMode.None;
+            //rs.CullMode = CullMode.CullCounterClockwiseFace;
             //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
