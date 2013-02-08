@@ -42,8 +42,8 @@ namespace TestCubePlanet
                         m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Left] = new Chunk.NeighbourInfo(m_cChunk[x - 1, y], VertexCH.Transformation.Stright);
                 }
 
-            //foreach (var pChunk in m_cChunk)
-            //    pChunk.Ghostbusters();
+            foreach (var pChunk in m_cChunk)
+                pChunk.Ghostbusters();
 
             //foreach (var pChunk in m_cChunk)
             //    pChunk.FixEdges();
