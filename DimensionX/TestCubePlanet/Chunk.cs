@@ -26,12 +26,76 @@ namespace TestCubePlanet
         public Location[] m_aLocations;
         public Vertex[] m_aVertexes;
 
+        public void RebuildVertexArray()
+        {
+            List<Vertex> cNewVertexes = new List<Vertex>();
+
+            for (int i = 0; i < m_aLocations.Length; i++)
+            {
+                var pLoc = m_aLocations[i];
+                if (pLoc.Ghost)
+                    continue;
+
+                foreach (var pEdge in pLoc.m_cEdges)
+                {
+                    if (pEdge.Value.m_pFrom.m_pChunkMarker != this)
+                    {
+                        cNewVertexes.Add(pEdge.Value.m_pFrom);
+                        pEdge.Value.m_pFrom.m_pChunkMarker = this;
+                    }
+                    pLoc.m_fX += pEdge.Value.m_pFrom.m_fX;
+                    pLoc.m_fY += pEdge.Value.m_pFrom.m_fY;
+                    pLoc.m_fZ += pEdge.Value.m_pFrom.m_fZ;
+                }
+
+                pLoc.m_fX /= pLoc.m_cEdges.Count + 1;
+                pLoc.m_fY /= pLoc.m_cEdges.Count + 1;
+                pLoc.m_fZ /= pLoc.m_cEdges.Count + 1;
+            }
+
+            m_aVertexes = cNewVertexes.ToArray();
+        }
+
+        public void ReplaceVertexes(Vertex pBad1, Vertex pGood1, Vertex pBad2, Vertex pGood2)
+        {
+            //List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
+           
+            if (pBad1 != pGood1)
+            {
+                pBad1.Replace(pGood1);
+                //cNewVertexes.Remove(pBad1);
+                //cNewVertexes.Add(pGood1);
+            }
+
+            if (pBad2 != pGood2)
+            {
+                pBad2.Replace(pGood2);
+                //cNewVertexes.Remove(pBad2);
+                //cNewVertexes.Add(pGood2);
+            }
+
+            //m_aVertexes = cNewVertexes.ToArray();
+
+            //if (!m_aVertexes.Contains(pGood1) ||
+            //    !m_aVertexes.Contains(pGood2))
+            //    throw new Exception();
+        }
+
         private Dictionary<uint, Location> m_cLocations = new Dictionary<uint, Location>();
+
+        private string m_sName;
+
+        public override string ToString()
+        {
+            return m_sName;
+        }
 
         public Chunk(ref VertexCH[] locations, ref CellCH[] vertices, float fDX, float fDY, float fR, Cube.Face3D eFace)
         {
             Microsoft.Xna.Framework.Color eColor = Microsoft.Xna.Framework.Color.White;
             eColor = Microsoft.Xna.Framework.Color.FromNonPremultiplied(127 + Rnd.Get(100), 127 + Rnd.Get(100), 127 + Rnd.Get(100), 256);
+
+            m_sName = string.Format("{0} ({1}, {2})", eFace, fDX, fDY);
 
             List<Location> cBorders = new List<Location>();
 
@@ -86,7 +150,7 @@ namespace TestCubePlanet
 
         public void Ghostbusters()
         {
-            List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
+            //List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
             //m_cResolvedBorder.Clear();
 
             //Перебираем все внутренние локации, лежащие на границах квадрата
@@ -141,46 +205,30 @@ namespace TestCubePlanet
                                         pShadow.m_cEdges.Remove(pShadowEdge.Key);
 
                                         //сливаем вершины
-                                        Vertex pBad1 = pLine.m_pFrom;
-                                        Vertex pGood1 = pShadowLine.m_pTo;
-                                        Vertex pBad2 = pLine.m_pTo;
-                                        Vertex pGood2 = pShadowLine.m_pFrom;
+                                        Vertex pGood1 = new Vertex(pLine.m_pFrom);
+                                        pGood1.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood1.m_eColor, pShadowLine.m_pTo.m_eColor, 0.5f);
+                                        Vertex pGood2 = new Vertex(pLine.m_pTo);
+                                        pGood2.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood2.m_eColor, pShadowLine.m_pFrom.m_eColor, 0.5f);
 
-                                        if (pBad1 != pGood1)
-                                        {
-                                            List<Vertex> cTemp = new List<Vertex>(pLine.m_pFrom.m_cLinked);
-                                            //проходим по всем локациям, связанным к "неправильной" вершиной
-                                            foreach (Location pLinkedLoc in cTemp)
-                                                pLinkedLoc.ReplaceVertex(pBad1, pGood1);
+                                        ReplaceVertexes(pLine.m_pFrom, pGood1, pLine.m_pTo, pGood2);
+                                        pNeighbourChunk.m_pChunk.ReplaceVertexes(pShadowLine.m_pTo, pGood1, pShadowLine.m_pFrom, pGood2);
 
-                                            pBad1.m_bForbidden = true;
-                                        }
+                                        //foreach (var pT in pInnerLoc.m_cEdges)
+                                        //{
+                                        //    if (pT.Key.Ghost)
+                                        //        continue;
 
-                                        if (pBad2 != pGood2)
-                                        {
-                                            List<Vertex> cTemp = new List<Vertex>(pLine.m_pTo.m_cLinked);
-                                            foreach (Location pLinkedLoc in cTemp)
-                                                pLinkedLoc.ReplaceVertex(pBad2, pGood2);
+                                        //    foreach(var pTT in pT.Key.m_cEdges)
+                                        //    {
+                                        //        if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
+                                        //            throw new Exception();
+                                        //    }
+                                        //}
 
-                                            pBad2.m_bForbidden = true;
-                                        }
-
-                                        foreach (var pT in pInnerLoc.m_cEdges)
-                                        {
-                                            if (pT.Key.Ghost)
-                                                continue;
-
-                                            foreach(var pTT in pT.Key.m_cEdges)
-                                            {
-                                                if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
-                                                    throw new Exception();
-                                            }
-                                        }
-
-                                        if (!cNewVertexes.Contains(pGood1))
-                                            cNewVertexes.Add(pGood1);
-                                        if (!cNewVertexes.Contains(pGood2))
-                                            cNewVertexes.Add(pGood2);
+                                        //if (!cNewVertexes.Contains(pGood1))
+                                        //    cNewVertexes.Add(pGood1);
+                                        //if (!cNewVertexes.Contains(pGood2))
+                                        //    cNewVertexes.Add(pGood2);
 
                                         break;
                                     }
@@ -198,7 +246,7 @@ namespace TestCubePlanet
                 //}
             }
 
-            m_aVertexes = cNewVertexes.ToArray();
+            //m_aVertexes = cNewVertexes.ToArray();
         }
 
      /* public void FixEdges()
