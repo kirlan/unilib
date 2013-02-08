@@ -61,20 +61,36 @@ namespace TestCubePlanet
 
         public Dictionary<Location, Edge> m_cEdges = new Dictionary<Location, Edge>();
 
+        /// <summary>
+        /// Во всех границах локации заменяет ссылку на "плохую" вершину ссылкой на "хорошую".
+        /// Убирает связь с этой локацией у "плохой" вершины.
+        /// Добавляет связь с этой локацией "хорошей" вершине
+        /// </summary>
+        /// <param name="pBad"></param>
+        /// <param name="pGood"></param>
         public void ReplaceVertex(Vertex pBad, Vertex pGood)
         {
+            if (pGood.m_bForbidden)
+                throw new Exception();
+
             foreach (var pEdge in m_cEdges)
             {
+                bool bGotIt = false;
                 if (pEdge.Value.m_pFrom == pBad)
                 {
                     pEdge.Value.m_pFrom = pGood;
-                    pGood.m_cLinked.Add(this);
-                    pBad.m_cLinked.Remove(this);
+                    bGotIt = true;
                 }
                 if (pEdge.Value.m_pTo == pBad)
                 {
                     pEdge.Value.m_pTo = pGood;
-                    pGood.m_cLinked.Add(this);
+                    bGotIt = true;
+                }
+
+                if (bGotIt)
+                {
+                    if (!pGood.m_cLinked.Contains(this))
+                        pGood.m_cLinked.Add(this);
                     pBad.m_cLinked.Remove(this);
                 }
             }

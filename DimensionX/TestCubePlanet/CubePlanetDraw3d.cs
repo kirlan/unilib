@@ -58,6 +58,9 @@ namespace TestCubePlanet
                     if (bColored)
                         userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Lerp(vertex.m_eColor, Microsoft.Xna.Framework.Color.Black, 0.2f);
 
+                    if (vertex.m_bForbidden)
+                        userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Black;
+
                     vertexIndex[vertex] = index;
 
                     index++;

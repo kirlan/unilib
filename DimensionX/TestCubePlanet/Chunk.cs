@@ -86,8 +86,8 @@ namespace TestCubePlanet
 
         public void Ghostbusters()
         {
-            //List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
-            m_cResolvedBorder.Clear();
+            List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
+            //m_cResolvedBorder.Clear();
 
             //Перебираем все внутренние локации, лежащие на границах квадрата
             for (int i = 0; i < m_aBorderLocations.Length; i++)
@@ -104,6 +104,8 @@ namespace TestCubePlanet
                     //раз призрачная - значит лежит за границей квадрата
                     var pOuterLoc = pEdge.Key;
 
+                    var pLine = pInnerLoc.m_cEdges[pOuterLoc];
+
                     VertexCH.Direction eDir = pOuterLoc.m_eGhost;
                     if (m_cNeighbours.ContainsKey(eDir))
                     { 
@@ -111,21 +113,83 @@ namespace TestCubePlanet
                         var pNeighbourChunk = m_cNeighbours[eDir];
                         Location pShadow = pNeighbourChunk.m_pChunk.m_cLocations[pOuterLoc.m_cShadow[pNeighbourChunk.m_eTransformation]];
 
-                        var pLine = pInnerLoc.m_cEdges[pOuterLoc];
+                        //найдём среди соседей отражения призрачную локацию, соответствующую граничной
+                        foreach (var pShadowEdge in pShadow.m_cEdges)
+                        {
+                            if (pShadowEdge.Key.Ghost)
+                            {
+                                var pShadowLine = pShadow.m_cEdges[pShadowEdge.Key];
 
-                        //добавляем внутренней локации границу с отражением - такую же, как с его призраком
-                        if (!pInnerLoc.m_cEdges.ContainsKey(pShadow))
-                            pInnerLoc.m_cEdges[pShadow] = pLine;
+                                VertexCH.Direction eShadowDir = pShadowEdge.Key.m_eGhost;
+                                if (pNeighbourChunk.m_pChunk.m_cNeighbours.ContainsKey(eShadowDir))
+                                {
+                                    var pShadowNeighbourChunk = pNeighbourChunk.m_pChunk.m_cNeighbours[eShadowDir];
+                                    Location pShadowShadow = pShadowNeighbourChunk.m_pChunk.m_cLocations[pShadowEdge.Key.m_cShadow[pShadowNeighbourChunk.m_eTransformation]];
 
-                        //добавляем отражению границу с внутренней локацией
-                        if (!pShadow.m_cEdges.ContainsKey(pInnerLoc))
-                            pShadow.m_cEdges[pInnerLoc] = pLine.Reverse();
+                                    if(pShadowShadow == pInnerLoc)
+                                    {
+                                        //добавляем внутренней локации границу с отражением - такую же, как с его призраком
+                                        if (!pInnerLoc.m_cEdges.ContainsKey(pShadow))
+                                            pInnerLoc.m_cEdges[pShadow] = pLine;
 
-                        //убираем у внутренней локации границу с призраком
-                        pInnerLoc.m_cEdges.Remove(pOuterLoc);
+                                        //добавляем отражению границу с внутренней локацией
+                                        if (!pShadow.m_cEdges.ContainsKey(pInnerLoc))
+                                            pShadow.m_cEdges[pInnerLoc] = pShadowLine;
+
+                                        //убираем у внутренней локации границу с призраком
+                                        pInnerLoc.m_cEdges.Remove(pOuterLoc);
+                                        pShadow.m_cEdges.Remove(pShadowEdge.Key);
+
+                                        //сливаем вершины
+                                        Vertex pBad1 = pLine.m_pFrom;
+                                        Vertex pGood1 = pShadowLine.m_pTo;
+                                        Vertex pBad2 = pLine.m_pTo;
+                                        Vertex pGood2 = pShadowLine.m_pFrom;
+
+                                        if (pBad1 != pGood1)
+                                        {
+                                            List<Vertex> cTemp = new List<Vertex>(pLine.m_pFrom.m_cLinked);
+                                            //проходим по всем локациям, связанным к "неправильной" вершиной
+                                            foreach (Location pLinkedLoc in cTemp)
+                                                pLinkedLoc.ReplaceVertex(pBad1, pGood1);
+
+                                            pBad1.m_bForbidden = true;
+                                        }
+
+                                        if (pBad2 != pGood2)
+                                        {
+                                            List<Vertex> cTemp = new List<Vertex>(pLine.m_pTo.m_cLinked);
+                                            foreach (Location pLinkedLoc in cTemp)
+                                                pLinkedLoc.ReplaceVertex(pBad2, pGood2);
+
+                                            pBad2.m_bForbidden = true;
+                                        }
+
+                                        foreach (var pT in pInnerLoc.m_cEdges)
+                                        {
+                                            if (pT.Key.Ghost)
+                                                continue;
+
+                                            foreach(var pTT in pT.Key.m_cEdges)
+                                            {
+                                                if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
+                                                    throw new Exception();
+                                            }
+                                        }
+
+                                        if (!cNewVertexes.Contains(pGood1))
+                                            cNewVertexes.Add(pGood1);
+                                        if (!cNewVertexes.Contains(pGood2))
+                                            cNewVertexes.Add(pGood2);
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                     //помечаем внутреннюю локацию для восстановления обоюдности границ
-                    m_cResolvedBorder.Add(pInnerLoc);
+                    //m_cResolvedBorder.Add(pInnerLoc);
                 }
                 //foreach (var pEdge in pInnerLoc.m_cEdges)
                 //{
@@ -134,10 +198,10 @@ namespace TestCubePlanet
                 //}
             }
 
-            //m_aVertexes = cNewVertexes.ToArray();
+            m_aVertexes = cNewVertexes.ToArray();
         }
 
-        public void FixEdges()
+     /* public void FixEdges()
         {
             List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
 
@@ -294,5 +358,6 @@ namespace TestCubePlanet
                 //}
             }
         }
+        */
     }
 }
