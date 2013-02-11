@@ -203,23 +203,28 @@ namespace TestCubePlanet
             //Придётся сделать несколько попыток, чтобы добиться оптимального заполнения всей территории
             int c = 0;
             List<SimpleVector3d> cPoints = new List<SimpleVector3d>();
-            do
-            {
+            //do
+            //{
                 cPoints = UniformPoissonDiskSampler.SampleRectangle(new SimpleVector3d(k, k, 0),
                                                     new SimpleVector3d(k + (size - 2 * k), k + (size - 2 * k), 0),
                                                         (float)R * 2);
-                R *= 0.99f;
-                c++;
-            }
-            while (cPoints.Count < count);
+            //    R *= 0.99f;
+            //    c++;
+            //}
+            //while (cPoints.Count < count);
 
             return cPoints;
         }
 
         private Dictionary<CellCH, List<CellCH>> m_cZeroEdges = new Dictionary<CellCH, List<CellCH>>();
 
-        private void RebuildEdges(List<VertexCH> locations, IEnumerable<VoronoiEdge<VertexCH, CellCH>> cEdges)
+        private Rect RebuildEdges(List<VertexCH> locations, IEnumerable<VoronoiEdge<VertexCH, CellCH>> cEdges)
         {
+            float fMinX = float.MaxValue;
+            float fMinY = float.MaxValue;
+            float fMaxX = float.MinValue;
+            float fMaxY = float.MinValue;
+
             m_cZeroEdges.Clear();
 
             foreach (var edge in cEdges)
@@ -229,6 +234,7 @@ namespace TestCubePlanet
 
                 double fMinDist = 1;//0.0000001;
 
+                //сливаем близко расположенные вершины
                 if (Point.Subtract(from.Circumcenter, to.Circumcenter).Length < fMinDist)
                 {
                     List<CellCH> cFromList;
@@ -287,6 +293,18 @@ namespace TestCubePlanet
                 //пропишем ссылки на ребро в найденных локациях
                 pLeft.m_cEdges[pRight] = new VertexCH.Edge(from, to);
                 pRight.m_cEdges[pLeft] = new VertexCH.Edge(to, from);
+
+                if (pLeft.m_eGhost == VertexCH.Direction.CenterNone || pRight.m_eGhost == VertexCH.Direction.CenterNone)
+                {
+                    if (from.Circumcenter.X < fMinX)
+                        fMinX = (float)from.Circumcenter.X;
+                    if (from.Circumcenter.Y < fMinY)
+                        fMinY = (float)from.Circumcenter.Y;
+                    if (from.Circumcenter.X > fMaxX)
+                        fMaxX = (float)from.Circumcenter.X;
+                    if (from.Circumcenter.Y > fMaxY)
+                        fMaxY = (float)from.Circumcenter.Y;
+                }
             }
 
             foreach (var pLoc in locations)
@@ -331,6 +349,8 @@ namespace TestCubePlanet
                     throw new Exception();
                 }
             }
+
+            return new Rect(fMinX, fMinY, fMaxX - fMinX, fMaxY - fMinY);
         }
 
         Dictionary<CellCH, CellCH> cChange = new Dictionary<CellCH, CellCH>();
@@ -382,17 +402,17 @@ namespace TestCubePlanet
 
             //Переведём результат в удобный нам формат.
             //Для каждого найденного ребра диаграммы Вороного найдём локации, которые оно разделяет
-            RebuildEdges(locations, voronoiMesh.Edges);
+            Rect pBounds = RebuildEdges(locations, voronoiMesh.Edges);
 
             var locs = locations.ToArray();
             var verts = voronoiMesh.Vertices.ToArray();
 
-            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Backward);
-            m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Bottom);
-            m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Forward);
-            m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Left);
-            m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Right);
-            m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Top);
+            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Backward);
+            m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Bottom);
+            m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Forward);
+            m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Left);
+            m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Right);
+            m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Top);
 
             //m_cFaces[Face3D.Backward].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
             //                                            null, VertexCH.Transformation.Rotate180,

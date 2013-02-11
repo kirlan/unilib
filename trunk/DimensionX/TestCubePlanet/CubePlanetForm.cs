@@ -112,5 +112,21 @@ namespace TestCubePlanet
             var interval = DateTime.Now - now;
             label2.Text = string.Format("Graphics init time: {0:0.000}s", interval.TotalSeconds);
         }
+
+        private void cubePlanetDraw3d1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && cubePlanetDraw3d1.m_pCurrentPicking.HasValue)
+            {
+                cubePlanetDraw3d1.m_bPanMode = true;
+                cubePlanetDraw3d1.m_pCamera.StartDrag((Vector3)cubePlanetDraw3d1.m_pCurrentPicking);
+            }
+            //if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //    m_b3dMapRotate = true;
+        }
+
+        private void cubePlanetDraw3d1_MouseUp(object sender, MouseEventArgs e)
+        {
+            cubePlanetDraw3d1.m_bPanMode = false;
+        }
     }
 }

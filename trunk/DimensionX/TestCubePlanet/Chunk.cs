@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Random;
+using System.Windows;
 
 namespace TestCubePlanet
 {
@@ -74,12 +75,22 @@ namespace TestCubePlanet
             return m_sName;
         }
 
-        public Chunk(ref VertexCH[] locations, ref CellCH[] vertices, float fDX, float fDY, float fR, Cube.Face3D eFace)
+        public Vertex m_pBoundTopLeft;
+        public Vertex m_pBoundTopRight;
+        public Vertex m_pBoundBottomRight;
+        public Vertex m_pBoundBottomLeft; 
+
+        public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fR, Cube.Face3D eFace)
         {
             Microsoft.Xna.Framework.Color eColor = Microsoft.Xna.Framework.Color.White;
             eColor = Microsoft.Xna.Framework.Color.FromNonPremultiplied(127 + Rnd.Get(100), 127 + Rnd.Get(100), 127 + Rnd.Get(100), 256);
 
             m_sName = string.Format("{0} ({1}, {2})", eFace, fDX, fDY);
+
+            m_pBoundTopLeft = new Vertex((float)(pBounds2D.X + fDX - fR), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fR), fR, eFace);
+            m_pBoundTopRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fR), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fR), fR, eFace);
+            m_pBoundBottomRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fR), (float)(pBounds2D.Y + fDY - fR), fR, eFace);
+            m_pBoundBottomLeft = new Vertex((float)(pBounds2D.X + fDX - fR), (float)(pBounds2D.Y + fDY - fR), fR, eFace); 
 
             List<Location> cBorders = new List<Location>();
 
