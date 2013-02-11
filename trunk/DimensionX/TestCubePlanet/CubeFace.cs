@@ -28,10 +28,10 @@ namespace TestCubePlanet
             switch (eTransform)
             {
                 case VertexCH.Transformation.Rotate90CCW:
-                    pChunk = m_cChunk[Size - 1 - y, x];
+                    pChunk = m_cChunk[y, Size - 1 - x];
                     break;
                 case VertexCH.Transformation.Rotate90CW:
-                    pChunk = m_cChunk[y, Size - 1 - x];
+                    pChunk = m_cChunk[Size - 1 - y, x];
                     break;
                 case VertexCH.Transformation.Rotate180:
                     pChunk = m_cChunk[Size - 1 - x, Size - 1 - y];
@@ -54,35 +54,35 @@ namespace TestCubePlanet
                 for (int y = 0; y < Size; y++)
                 {
                     if (x > 0 && y > 0)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpLeft] = new Chunk.NeighbourInfo(m_cChunk[x - 1, y - 1], VertexCH.Transformation.Stright);
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownLeft] = new Chunk.NeighbourInfo(m_cChunk[x - 1, y - 1], VertexCH.Transformation.Stright);
                     else
                     {
-                        if (pTopLeft != null)
+                        if (pBottomLeft != null)
                         {
-                            Chunk pChunk = pTopLeft.GetChunk(pTopLeft.Size - 1, pTopLeft.Size - 1, eTopLeft);
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpLeft] = new Chunk.NeighbourInfo(pChunk, eTopLeft);
+                            Chunk pChunk = pBottomLeft.GetChunk(pBottomLeft.Size - 1, pBottomLeft.Size - 1, eBottomLeft);
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownLeft] = new Chunk.NeighbourInfo(pChunk, eBottomLeft);
                         }
                     }
 
                     if (y > 0)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Up] = new Chunk.NeighbourInfo(m_cChunk[x, y - 1], VertexCH.Transformation.Stright);
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Down] = new Chunk.NeighbourInfo(m_cChunk[x, y - 1], VertexCH.Transformation.Stright);
                     else
                     {
-                        if (pTop != null)
+                        if (pBottom != null)
                         {
-                            Chunk pChunk = pTop.GetChunk(x, pTop.Size - 1, eTop);
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Up] = new Chunk.NeighbourInfo(pChunk, eTop);
+                            Chunk pChunk = pBottom.GetChunk(x, pBottom.Size - 1, eBottom);
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Down] = new Chunk.NeighbourInfo(pChunk, eBottom);
                         }
                     }
                     
                     if (x < Size - 1 && y > 0)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpRight] = new Chunk.NeighbourInfo(m_cChunk[x + 1, y - 1], VertexCH.Transformation.Stright);
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownRight] = new Chunk.NeighbourInfo(m_cChunk[x + 1, y - 1], VertexCH.Transformation.Stright);
                     else
                     {
-                        if (pTopRight != null)
+                        if (pBottomRight != null)
                         {
-                            Chunk pChunk = pTopRight.GetChunk(0, pTopRight.Size - 1, eTopRight);
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpRight] = new Chunk.NeighbourInfo(pChunk, eTopRight);
+                            Chunk pChunk = pBottomRight.GetChunk(0, pBottomRight.Size - 1, eBottomRight);
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownRight] = new Chunk.NeighbourInfo(pChunk, eBottomRight);
                         }
                     }
                     
@@ -98,35 +98,35 @@ namespace TestCubePlanet
                     }
                     
                     if (x < Size - 1 && y < Size - 1)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownRight] = new Chunk.NeighbourInfo(m_cChunk[x + 1, y + 1], VertexCH.Transformation.Stright);
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpRight] = new Chunk.NeighbourInfo(m_cChunk[x + 1, y + 1], VertexCH.Transformation.Stright);
                     else
                     {
-                        if (pBottomRight != null)
+                        if (pTopRight != null)
                         {
-                            Chunk pChunk = pBottomRight.GetChunk(0, 0, eBottomRight);
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownRight] = new Chunk.NeighbourInfo(pChunk, eBottomRight);
+                            Chunk pChunk = pTopRight.GetChunk(0, 0, eTopRight);
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpRight] = new Chunk.NeighbourInfo(pChunk, eTopRight);
                         }
                     }
                     
                     if (y < Size - 1)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Down] = new Chunk.NeighbourInfo(m_cChunk[x, y + 1], VertexCH.Transformation.Stright);
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Up] = new Chunk.NeighbourInfo(m_cChunk[x, y + 1], VertexCH.Transformation.Stright);
                     else
                     {
-                        if (pBottom != null)
+                        if (pTop != null)
                         {
-                            Chunk pChunk = pBottom.GetChunk(x, 0, eBottom);
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Down] = new Chunk.NeighbourInfo(pChunk, eBottom);
+                            Chunk pChunk = pTop.GetChunk(x, 0, eTop);
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Up] = new Chunk.NeighbourInfo(pChunk, eTop);
                         }
                     }
                     
                     if (x > 0 && y < Size - 1)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownLeft] = new Chunk.NeighbourInfo(m_cChunk[x - 1, y + 1], VertexCH.Transformation.Stright);
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpLeft] = new Chunk.NeighbourInfo(m_cChunk[x - 1, y + 1], VertexCH.Transformation.Stright);
                     else
                     {
-                        if (pBottomLeft != null)
+                        if (pTopLeft != null)
                         {
-                            Chunk pChunk = pBottomLeft.GetChunk(Size - 1, 0, eBottomLeft);
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownLeft] = new Chunk.NeighbourInfo(pChunk, eBottomLeft);
+                            Chunk pChunk = pTopLeft.GetChunk(pTopLeft.Size - 1, 0, eTopLeft);
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpLeft] = new Chunk.NeighbourInfo(pChunk, eTopLeft);
                         }
                     }
                     
@@ -136,7 +136,7 @@ namespace TestCubePlanet
                     {
                         if (pLeft != null)
                         {
-                            Chunk pChunk = pLeft.GetChunk(Size - 1, y, eLeft);
+                            Chunk pChunk = pLeft.GetChunk(pLeft.Size - 1, y, eLeft);
                             m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Left] = new Chunk.NeighbourInfo(pChunk, eLeft);
                         }
                     }

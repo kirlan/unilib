@@ -92,6 +92,8 @@ namespace TestCubePlanet
                     if (!pGood.m_cLinked.Contains(this))
                         pGood.m_cLinked.Add(this);
                     pBad.m_cLinked.Remove(this);
+
+                    //pBad.m_cDebugLinked.Add(this);
                 }
             }
         }

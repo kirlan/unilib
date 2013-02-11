@@ -67,6 +67,8 @@ namespace TestCubePlanet
 
         public Direction m_eGhost;
 
+        public object m_pTag = null;
+
         public bool m_bBorder = false;
 
         public static uint ID_counter = 0;

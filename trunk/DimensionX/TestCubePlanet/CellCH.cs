@@ -13,6 +13,8 @@ namespace TestCubePlanet
     {
         static System.Random rnd = new System.Random();
 
+        public object m_pTag = null;
+
         Point GetCircumcenter()
         {
             // From MathWorld: http://mathworld.wolfram.com/Circumcircle.html

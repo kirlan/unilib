@@ -58,27 +58,11 @@ namespace TestCubePlanet
 
         public void ReplaceVertexes(Vertex pBad1, Vertex pGood1, Vertex pBad2, Vertex pGood2)
         {
-            //List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
-           
             if (pBad1 != pGood1)
-            {
                 pBad1.Replace(pGood1);
-                //cNewVertexes.Remove(pBad1);
-                //cNewVertexes.Add(pGood1);
-            }
 
             if (pBad2 != pGood2)
-            {
                 pBad2.Replace(pGood2);
-                //cNewVertexes.Remove(pBad2);
-                //cNewVertexes.Add(pGood2);
-            }
-
-            //m_aVertexes = cNewVertexes.ToArray();
-
-            //if (!m_aVertexes.Contains(pGood1) ||
-            //    !m_aVertexes.Contains(pGood2))
-            //    throw new Exception();
         }
 
         private Dictionary<uint, Location> m_cLocations = new Dictionary<uint, Location>();
@@ -99,13 +83,14 @@ namespace TestCubePlanet
 
             List<Location> cBorders = new List<Location>();
 
-            Dictionary<VertexCH, Location> cTempLocations = new Dictionary<VertexCH, Location>();
-            for (int i=0; i<locations.Length; i++)
+            List<Location> cTempLocations = new List<Location>();
+            for (int i = 0; i < locations.Length; i++)
             {
                 var loc = locations[i];
                 Location myLocation = new Location(loc.m_iID, (float)loc.Position[0] + fDX - fR, (float)loc.Position[1] + fDY - fR, fR, eFace, loc.m_eGhost, loc.m_bBorder);
                 myLocation.m_eColor = eColor;
-                cTempLocations[loc] = myLocation;
+                cTempLocations.Add(myLocation);
+                loc.m_pTag = myLocation;
                 m_cLocations[loc.m_iID] = myLocation;
                 if (myLocation.Ghost)
                 {
@@ -118,41 +103,40 @@ namespace TestCubePlanet
                     cBorders.Add(myLocation);
             }
 
-            Dictionary<CellCH, Vertex> cTempVertexes = new Dictionary<CellCH, Vertex>();
+            List<Vertex> cTempVertexes = new List<Vertex>();
             for (int i = 0; i < vertices.Length; i++)
             {
                 var vertex = vertices[i];
                 Vertex myVertex = new Vertex((float)vertex.Circumcenter.X + fDX - fR, (float)vertex.Circumcenter.Y + fDY - fR, fR, eFace);
                 myVertex.m_eColor = eColor;
 
-                foreach (var vert in vertex.Vertices)
-                    myVertex.m_cLinked.Add(cTempLocations[vert]);
-
-                cTempVertexes[vertex] = myVertex;
+                vertex.m_pTag = myVertex;
+                cTempVertexes.Add(myVertex);
             }
 
             for (int i = 0; i < locations.Length; i++)
             {
                 var loc = locations[i];
-                Location myLocation = cTempLocations[loc];
+                Location myLocation = (Location)loc.m_pTag;
                 foreach (var edge in loc.m_cEdges)
                 {
-                    myLocation.m_cEdges[cTempLocations[edge.Key]] = new Location.Edge(cTempVertexes[edge.Value.m_pFrom], cTempVertexes[edge.Value.m_pTo]);
+                    Vertex pVertex1 = (Vertex)edge.Value.m_pFrom.m_pTag;
+                    Vertex pVertex2 = (Vertex)edge.Value.m_pTo.m_pTag;
+                    myLocation.m_cEdges[(Location)edge.Key.m_pTag] = new Location.Edge(pVertex1, pVertex2);
+                    if (!pVertex1.m_cLinked.Contains(myLocation))
+                        pVertex1.m_cLinked.Add(myLocation);
+                    if (!pVertex2.m_cLinked.Contains(myLocation))
+                        pVertex2.m_cLinked.Add(myLocation);
                 }
             }
 
-            m_aVertexes = cTempVertexes.Values.ToArray();
-            m_aLocations = cTempLocations.Values.ToArray();
+            m_aVertexes = cTempVertexes.ToArray();
+            m_aLocations = cTempLocations.ToArray();
             m_aBorderLocations = cBorders.ToArray();
         }
 
-        List<Location> m_cResolvedBorder = new List<Location>();
-
         public void Ghostbusters()
         {
-            //List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
-            //m_cResolvedBorder.Clear();
-
             //Перебираем все внутренние локации, лежащие на границах квадрата
             for (int i = 0; i < m_aBorderLocations.Length; i++)
             {
@@ -192,6 +176,24 @@ namespace TestCubePlanet
 
                                     if(pShadowShadow == pInnerLoc)
                                     {
+                                        //>>>>>>>>>>>>>>>>DEBUG
+                                        //foreach (var pT in pShadow.m_cEdges)
+                                        //{
+                                        //    if (pT.Key.Ghost)
+                                        //        continue;
+
+                                        //    foreach (var pTT in pT.Key.m_cEdges)
+                                        //    {
+                                        //        if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
+                                        //            throw new Exception();
+                                        //    }
+
+                                        //    if (pT.Value.m_pFrom.m_bForbidden || pT.Value.m_pTo.m_bForbidden)
+                                        //        throw new Exception();
+                                        //}
+                                        //<<<<<<<<<<<<<<<<DEBUG
+
+
                                         //добавляем внутренней локации границу с отражением - такую же, как с его призраком
                                         if (!pInnerLoc.m_cEdges.ContainsKey(pShadow))
                                             pInnerLoc.m_cEdges[pShadow] = pLine;
@@ -213,22 +215,37 @@ namespace TestCubePlanet
                                         ReplaceVertexes(pLine.m_pFrom, pGood1, pLine.m_pTo, pGood2);
                                         pNeighbourChunk.m_pChunk.ReplaceVertexes(pShadowLine.m_pTo, pGood1, pShadowLine.m_pFrom, pGood2);
 
+                                        //>>>>>>>>>>>>>>>>DEBUG
                                         //foreach (var pT in pInnerLoc.m_cEdges)
                                         //{
                                         //    if (pT.Key.Ghost)
                                         //        continue;
 
-                                        //    foreach(var pTT in pT.Key.m_cEdges)
+                                        //    foreach (var pTT in pT.Key.m_cEdges)
                                         //    {
                                         //        if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
                                         //            throw new Exception();
                                         //    }
+
+                                        //    if (pT.Value.m_pFrom.m_bForbidden || pT.Value.m_pTo.m_bForbidden)
+                                        //        throw new Exception();
                                         //}
 
-                                        //if (!cNewVertexes.Contains(pGood1))
-                                        //    cNewVertexes.Add(pGood1);
-                                        //if (!cNewVertexes.Contains(pGood2))
-                                        //    cNewVertexes.Add(pGood2);
+                                        //foreach (var pT in pShadow.m_cEdges)
+                                        //{
+                                        //    if (pT.Key.Ghost)
+                                        //        continue;
+
+                                        //    foreach (var pTT in pT.Key.m_cEdges)
+                                        //    {
+                                        //        if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
+                                        //            throw new Exception();
+                                        //    }
+
+                                        //    if (pT.Value.m_pFrom.m_bForbidden || pT.Value.m_pTo.m_bForbidden)
+                                        //        throw new Exception();
+                                        //}
+                                        //<<<<<<<<<<<<<<<<DEBUG
 
                                         break;
                                     }
@@ -236,176 +253,22 @@ namespace TestCubePlanet
                             }
                         }
                     }
-                    //помечаем внутреннюю локацию для восстановления обоюдности границ
-                    //m_cResolvedBorder.Add(pInnerLoc);
                 }
+                //>>>>>>>>>>>>>>>>DEBUG
                 //foreach (var pEdge in pInnerLoc.m_cEdges)
                 //{
                 //    if (pEdge.Key.Ghost)
-                //        throw new Exception();
-                //}
-            }
+                //        continue;
 
-            //m_aVertexes = cNewVertexes.ToArray();
-        }
-
-     /* public void FixEdges()
-        {
-            List<Vertex> cNewVertexes = new List<Vertex>(m_aVertexes);
-
-            //перебираем все пограничные регионы
-            foreach (var pInnerLoc in m_aBorderLocations)
-            {
-                //в каждом пограничном регионе смотрим все границы
-                foreach (var pInnerLocEdge in pInnerLoc.m_cEdges)
-                {
-                    //это - вершины границы с точки зрение пограничного региона
-                    var pInnerA = pInnerLocEdge.Value.m_pFrom;
-                    var pInnerB = pInnerLocEdge.Value.m_pTo;
-
-                    //это - регион с которым пограничный граничит по границе
-                    var pOuterLoc = pInnerLocEdge.Key;
-
-                    //есть ли у сопредельного региона граница с пограничным?
-                    if (!pOuterLoc.m_cEdges.ContainsKey(pInnerLoc))
-                        throw new Exception("Не обоюдная граница!");
-                        //continue;
-
-                    //это - вершины границы с точки зрения сопредельного региона
-                    var pOuterA = pOuterLoc.m_cEdges[pInnerLoc].m_pTo;
-                    var pOuterB = pOuterLoc.m_cEdges[pInnerLoc].m_pFrom;
-
-                    //обе линии оперируют одними и теми же точками - no problem
-                    if (pInnerA == pOuterA &&
-                        pInnerB == pOuterB)
-                    {
-                        if (!cNewVertexes.Contains(pInnerLocEdge.Value.m_pFrom))
-                            cNewVertexes.Add(pInnerLocEdge.Value.m_pFrom);
-                        if (!cNewVertexes.Contains(pInnerLocEdge.Value.m_pTo))
-                            cNewVertexes.Add(pInnerLocEdge.Value.m_pTo);
-                        continue;
-                    }
-
-                    //назначим одну из точек А "неправильной". 
-                    //Будем считать, что это наружная точка А.
-                    //Если наружная точка А уже неправильная, поменяем точки местами
-                    if (pOuterA.m_bForbidden)
-                    {
-                        var pSwap = pOuterA;
-                        pOuterA = pInnerA;
-                        pInnerA = pSwap;
-                    }
-
-                    if (pOuterA.m_bForbidden)
-                        throw new Exception();
-
-                    //заменим все ссылки на "неправильную" А ссылкой на правильную
-                    List<Vertex> cTemp = new List<Vertex>(pOuterA.m_cLinked);
-                    foreach (Location pLinkedLoc in cTemp)
-                        pLinkedLoc.ReplaceVertex(pOuterA, pInnerA);
-                    pInnerLoc.ReplaceVertex(pOuterA, pInnerA);
-                    if (!cNewVertexes.Contains(pInnerA))
-                        cNewVertexes.Add(pInnerA);
-
-                    if (pOuterB.m_bForbidden)
-                    {
-                        var pSwap = pOuterB;
-                        pOuterB = pInnerB;
-                        pInnerB = pSwap;
-                    }
-
-                    cTemp.Clear();
-                    cTemp.AddRange(pOuterB.m_cLinked);
-                    foreach (Location pLinkedLoc in cTemp)
-                        pLinkedLoc.ReplaceVertex(pOuterB, pInnerB);
-                    pInnerLoc.ReplaceVertex(pOuterB, pInnerB);
-                    if (!cNewVertexes.Contains(pInnerB))
-                        cNewVertexes.Add(pInnerB);
-
-                    pOuterA.m_bForbidden = true;
-                    pOuterB.m_bForbidden = true;
-
-                    cNewVertexes.Remove(pOuterA);
-                    cNewVertexes.Remove(pOuterB);
-
-                    //if (!cNewVertexes.Contains(pInnerLocEdge.Value.m_pFrom))
-                    //    cNewVertexes.Add(pInnerLocEdge.Value.m_pFrom);
-                    //if (!cNewVertexes.Contains(pInnerLocEdge.Value.m_pTo))
-                    //    cNewVertexes.Add(pInnerLocEdge.Value.m_pTo);
-                }
-            }
-
-            m_aVertexes = cNewVertexes.ToArray();
-
-            for (int i = 0; i < m_aLocations.Length; i++)
-            {
-                var pLoc = m_aLocations[i];
-                if (pLoc.Ghost)
-                    continue;
-
-                //if (!pLoc.m_bBorder)
-                //    continue;
-
-                //if (!m_aBorderLocations.Contains(pLoc))
-                //    throw new Exception();
-
-                //foreach (var pEdge in pLoc.m_cEdges)
-                //{
-                //    if (!cNewVertexes.Contains(pEdge.Value.m_pFrom))
-                //        cNewVertexes.Add(pEdge.Value.m_pFrom);
-                //    if (!cNewVertexes.Contains(pEdge.Value.m_pTo))
-                //        cNewVertexes.Add(pEdge.Value.m_pTo);
-                //}
-
-                Dictionary<Location, Location.Edge> cSequence = new Dictionary<Location,Location.Edge>();
-
-                bool bUnclosed = false;
-                Location pLastLoc = pLoc.m_cEdges.Keys.First();
-                Location.Edge pLast = pLoc.m_cEdges[pLastLoc];
-                cSequence[pLastLoc] = pLast;
-                for(int j=0; j<pLoc.m_cEdges.Count; j++)
-                {
-                    foreach (var pEdge in pLoc.m_cEdges)
-                    {
-                        if (pEdge.Key.Ghost)
-                            bUnclosed = true;
-                        if(pEdge.Value.m_pFrom == pLast.m_pTo && !cSequence.ContainsKey(pEdge.Key))
-                        {
-                            pLast = pEdge.Value;
-                            cSequence[pEdge.Key] = pLast;
-                            break;
-                        }
-                    }
-                }
-
-                if (!bUnclosed && cSequence.Count != pLoc.m_cEdges.Count)
-                {
-                    if (cSequence.Count > 1 && cSequence.Keys.First() == cSequence.Keys.Last())
-                    {
-                        pLoc.m_cEdges = cSequence;
-                    }
-                    else
-                        throw new Exception();
-                }
-
-                //foreach (var pEdge in pLoc.m_cEdges)
-                //{
-                //    var pInnerA = pEdge.Value.m_pFrom;
-                //    var pInnerB = pEdge.Value.m_pTo;
-
-                //    var pOuterA = pEdge.Key.m_cEdges[pLoc].m_pTo;
-                //    var pOuterB = pEdge.Key.m_cEdges[pLoc].m_pFrom;
-
-                //    if (pInnerA != pOuterA ||
-                //        pInnerB != pOuterB)
+                //    if (pEdge.Value.m_pFrom.m_bForbidden || pEdge.Value.m_pTo.m_bForbidden)
                 //        throw new Exception();
 
-                //    if (pInnerA.m_bForbidden || pOuterA.m_bForbidden ||
-                //        pInnerB.m_bForbidden || pOuterB.m_bForbidden)
-                //        throw new Exception();
+                //    foreach(var pEdge2 in pEdge.Key.m_cEdges)
+                //        if (pEdge.Value.m_pFrom.m_bForbidden || pEdge.Value.m_pTo.m_bForbidden)
+                //            throw new Exception();
                 //}
+                //<<<<<<<<<<<<<<<<DEBUG
             }
         }
-        */
     }
 }
