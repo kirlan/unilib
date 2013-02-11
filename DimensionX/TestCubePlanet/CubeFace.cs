@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace TestCubePlanet
 {
@@ -11,7 +12,7 @@ namespace TestCubePlanet
 
         public Chunk[,] m_cChunk;
 
-        public CubeFace(int iSize, ref VertexCH[] locations, ref CellCH[] vertices, float fSize, Cube.Face3D eFace)
+        public CubeFace(int iSize, Rect pBounds2D, ref VertexCH[] locations, ref CellCH[] vertices, float fSize, Cube.Face3D eFace)
         {
             Size = iSize;
 
@@ -19,7 +20,7 @@ namespace TestCubePlanet
 
             for (int x = 0; x < Size; x++)
                 for (int y = 0; y < Size; y++ )
-                    m_cChunk[x, y] = new Chunk(ref locations, ref vertices, fSize * x, fSize * y, fSize * Size / 2, eFace);
+                    m_cChunk[x, y] = new Chunk(ref locations, pBounds2D, ref vertices, fSize * x, fSize * y, fSize * Size / 2, eFace);
         }
 
         public Chunk GetChunk(int x, int y, VertexCH.Transformation eTransform)
