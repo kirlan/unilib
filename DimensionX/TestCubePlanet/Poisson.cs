@@ -122,6 +122,8 @@ namespace TestCubePlanet
             var found = false;
             var q = GenerateRandomAround(point, settings.MinimumDistance);
 
+            float fMinDistSquared = settings.MinimumDistance * settings.MinimumDistance;
+
             if (q.X >= settings.TopLeft.X && q.X < settings.LowerRight.X &&
                 q.Y > settings.TopLeft.Y && q.Y < settings.LowerRight.Y &&
                 (settings.RejectionSqDistance == null || SimpleVector3d.DistanceSquared(settings.Center, q) <= settings.RejectionSqDistance))
@@ -131,7 +133,7 @@ namespace TestCubePlanet
 
                 for (var i = (int)Math.Max(0, qIndex.X - 2); i < Math.Min(settings.GridWidth, qIndex.X + 3) && !tooClose; i++)
                     for (var j = (int)Math.Max(0, qIndex.Y - 2); j < Math.Min(settings.GridHeight, qIndex.Y + 3) && !tooClose; j++)
-                        if (state.Grid[i, j] != null && SimpleVector3d.Distance(state.Grid[i, j], q) < settings.MinimumDistance)
+                        if (state.Grid[i, j] != null && SimpleVector3d.DistanceSquared(state.Grid[i, j], q) < fMinDistSquared)
                             tooClose = true;
 
                 if (!tooClose)

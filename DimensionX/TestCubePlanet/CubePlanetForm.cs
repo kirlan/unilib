@@ -16,7 +16,7 @@ namespace TestCubePlanet
         {
             InitializeComponent();
 
-            comboBox1.SelectedIndex = 1;
+            comboBox1.SelectedIndex = 2;
         }
 
         private void cubePlanetDraw3d1_MouseMove(object sender, MouseEventArgs e)
@@ -29,6 +29,7 @@ namespace TestCubePlanet
         private void button2_Click(object sender, EventArgs e)
         {
             panel1.Enabled = false;
+            cubePlanetDraw3d1.Visible = false;
 
             var now = DateTime.Now;
 
@@ -49,7 +50,7 @@ namespace TestCubePlanet
             m_pCube = new Cube((int)numericUpDown1.Value, iSize);
 
             var interval = DateTime.Now - now;
-            label1.Text = string.Format("Building time: {0:0.000}s", interval.TotalSeconds);
+            label1.Text = string.Format("Building time: {0:0.000}s (~{1:#####}k points)", interval.TotalSeconds, numericUpDown1.Value * 6 * iSize * iSize / 1000);
 
             now = DateTime.Now;
             cubePlanetDraw3d1.Assign(m_pCube, checkBox1.Checked);
@@ -58,6 +59,7 @@ namespace TestCubePlanet
             
             radioButton2_CheckedChanged(this, new EventArgs());
 
+            cubePlanetDraw3d1.Visible = true;
             panel1.Enabled = true;
         }
 

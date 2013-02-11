@@ -12,6 +12,7 @@ namespace TestCubePlanet
         public float m_fZ;
 
         public List<Location> m_cLinked = new List<Location>();
+        //public List<Location> m_cDebugLinked = new List<Location>();
 
         public bool m_bForbidden = false;
         public bool m_bNew = false;
@@ -32,16 +33,36 @@ namespace TestCubePlanet
 
         public void Replace(Vertex pGood)
         {
-            if (m_bForbidden)
-                throw new Exception();
+            //>>>>>>>>>>>>>>>>DEBUG
+            //if (m_bForbidden)
+            //    throw new Exception();
 
-            if (pGood == this)
-                throw new Exception();
+            //if (pGood == this)
+            //    throw new Exception();
+
+            //if (pGood.m_bForbidden)
+            //    throw new Exception();
+            //<<<<<<<<<<<<<<<<DEBUG
 
             List<Location> cTemp = new List<Location>(m_cLinked);
             //проходим по всем локациям, связанным к "неправильной" вершиной
             foreach (Location pLinkedLoc in cTemp)
                 pLinkedLoc.ReplaceVertex(this, pGood);
+
+            //>>>>>>>>>>>>>>>>DEBUG
+            //foreach (Location pLinkedLoc in m_cLinked)
+            //{
+            //    foreach (var pEdge in pLinkedLoc.m_cEdges)
+            //    {
+            //        if (pEdge.Value.m_pFrom.m_bForbidden || pEdge.Value.m_pTo.m_bForbidden)
+            //            throw new Exception();
+
+            //        if (pEdge.Value.m_pFrom == this || pEdge.Value.m_pTo == this)
+            //            throw new Exception();
+            //    }
+            //}
+            //<<<<<<<<<<<<<<<<DEBUG
+
 
             m_bForbidden = true;
         }
@@ -57,42 +78,43 @@ namespace TestCubePlanet
                 case Cube.Face3D.Forward:
                         x = fX / fR;
                         y = fY / fR;
-                        z = 1;
+                        z = -1;
                     break;
                 case Cube.Face3D.Right:
                         x = 1;
                         y = fY / fR;
-                        z = -fX / fR;
+                        z = fX / fR;
                     break;
                 case Cube.Face3D.Backward:
                         x = -fX / fR;
                         y = fY / fR;
-                        z = -1;
+                        z = 1;
                     break;
                 case Cube.Face3D.Left:
                         x = -1;
                         y = fY / fR;
-                        z = fX / fR;
+                        z = -fX / fR;
                     break;
                 case Cube.Face3D.Top:
                         x = fX / fR;
                         y = 1;
-                        z = -fY / fR;
+                        z = fY / fR;
                     break;
                 case Cube.Face3D.Bottom:
                         x = fX / fR;
                         y = -1;
-                        z = fY / fR;
+                        z = -fY / fR;
                     break;
             }
-            m_fX = 1000 * x;// *(float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
-            m_fY = 1000 * y;// *(float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
-            m_fZ = 1000 * z;// *(float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
+            //минус - потому что XNA оперирует правой системой координат, а не левой
+            m_fX = -1500 * x *(float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
+            m_fY = 1500 * y *(float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
+            m_fZ = 1500 * z *(float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
         }
 
         public override string ToString()
         {
-            return string.Format("[{0}, {1}, {2}]", m_fX, m_fY, m_fZ);
+            return string.Format("{4}{3}[{0}, {1}, {2}]", m_fX, m_fY, m_fZ, m_bForbidden ? "x" : "", m_bNew ? "+" : "");
         }
     }
 }

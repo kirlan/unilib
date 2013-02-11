@@ -243,10 +243,10 @@
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "small",
-            "normal",
-            "big",
-            "giant"});
+            "6x1x1",
+            "6x3x3",
+            "6x5x5",
+            "6x7x7"});
             this.comboBox1.Location = new System.Drawing.Point(12, 32);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(58, 21);
@@ -269,7 +269,7 @@
             this.numericUpDown1.Size = new System.Drawing.Size(58, 20);
             this.numericUpDown1.TabIndex = 1;
             this.numericUpDown1.Value = new decimal(new int[] {
-            100,
+            800,
             0,
             0,
             0});
@@ -282,6 +282,7 @@
             this.cubePlanetDraw3d1.Size = new System.Drawing.Size(392, 357);
             this.cubePlanetDraw3d1.TabIndex = 0;
             this.cubePlanetDraw3d1.Text = "cubePlanetDraw3d1";
+            this.cubePlanetDraw3d1.Visible = false;
             this.cubePlanetDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseMove);
             // 
             // CubePlanetForm

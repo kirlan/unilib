@@ -54,18 +54,19 @@ namespace TestCubePlanet
                 var y2 = k * 0.5 + k * (fDelta - fDelta * 2 * r.NextDouble());
 
                 //Внутренние точки квадрата. Сначала - по часовой стрелке.
+                //Важно: в XNA используется правая координатная система, а значит ось Y должна быть направлена ВВЕРХ
 
-                var v2tl = new VertexCH(x2, y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopLeft, true);
-                var v2rt = new VertexCH(size - y2, x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightTop, true);
-                var v2br = new VertexCH(size - x2, size - y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomRight, true);
-                var v2lb = new VertexCH(y2, size - x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftBottom, true);
+                var v2tl = new VertexCH(x2, size - y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopLeft, true);
+                var v2rt = new VertexCH(size - y2, size - x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightTop, true);
+                var v2br = new VertexCH(size - x2, y2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomRight, true);
+                var v2lb = new VertexCH(y2, x2, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftBottom, true);
 
                 //Потом - против часовой.
 
-                var v1tr = new VertexCH(size - x1, -y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopRight, true);
-                var v1rb = new VertexCH(size + y1, size - x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightBottom, true);
-                var v1bl = new VertexCH(x1, size + y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomLeft, true);
-                var v1lt = new VertexCH(-y1, x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftTop, true);
+                var v1tr = new VertexCH(size - x1, size + y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopRight, true);
+                var v1rb = new VertexCH(size + y1, x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightBottom, true);
+                var v1bl = new VertexCH(x1, -y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomLeft, true);
+                var v1lt = new VertexCH(-y1, size - x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftTop, true);
 
                 //Те, которые по часовой - добавляем по любому.
                 locations.Add(v2tl);
@@ -89,9 +90,9 @@ namespace TestCubePlanet
                 //Дальше считаем наружные точки. Наружные точки добаволяем всегда, но они могут быть отражением различных внутренних точек
 
                 //Если это первый шаг, то наружная точка по часовой должна быть тенью внутренней по часовой, т.к. на первом шаге у нас нет внутренних против часовой
-                var v_1tl = new VertexCH(v2lb.Position[0], v2lb.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft, true);
+                var v_1tl = new VertexCH(v2lb.Position[0], v2lb.Position[1] + size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft, true);
                 if (i != 0) //иначе - внутренней против часовой
-                    v_1tl = new VertexCH(v1bl.Position[0], v1bl.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft, true);
+                    v_1tl = new VertexCH(v1bl.Position[0], v1bl.Position[1] + size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft, true);
                 locations.Add(v_1tl);
 
                 var v_1rt = new VertexCH(v2tl.Position[0] + size, v2tl.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop, true);
@@ -99,9 +100,9 @@ namespace TestCubePlanet
                     v_1rt = new VertexCH(v1lt.Position[0] + size, v1lt.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop, true);
                 locations.Add(v_1rt);
 
-                var v_1br = new VertexCH(v2rt.Position[0], v2rt.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight, true);
+                var v_1br = new VertexCH(v2rt.Position[0], v2rt.Position[1] - size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight, true);
                 if (i != 0)
-                    v_1br = new VertexCH(v1tr.Position[0], v1tr.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight, true);
+                    v_1br = new VertexCH(v1tr.Position[0], v1tr.Position[1] - size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight, true);
                 locations.Add(v_1br);
 
                 var v_1lb = new VertexCH(v2br.Position[0] - size, v2br.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom, true);
@@ -110,28 +111,28 @@ namespace TestCubePlanet
                 locations.Add(v_1lb);
 
                 //Для наружных точек против часовой всё проще, т.к. они являются тенями внутренних по часовой, которые у нас есть всегда
-                var v_2tr = new VertexCH(v2br.Position[0], v2br.Position[1] - size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight, true);
+                var v_2tr = new VertexCH(v2br.Position[0], v2br.Position[1] + size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight, true);
                 locations.Add(v_2tr);
 
                 var v_2rb = new VertexCH(v2lb.Position[0] + size, v2lb.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightBottom, true);
                 locations.Add(v_2rb);
 
-                var v_2bl = new VertexCH(v2tl.Position[0], v2tl.Position[1] + size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft, true);
+                var v_2bl = new VertexCH(v2tl.Position[0], v2tl.Position[1] - size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomLeft, true);
                 locations.Add(v_2bl);
 
                 var v_2lt = new VertexCH(v2rt.Position[0] - size, v2rt.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftTop, true);
                 locations.Add(v_2lt);
 
                 //теперь - угловые внешние точки
-                var v111 = new VertexCH(v1rb.Position[0] - size, v1rb.Position[1] - size, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft, true);
-                var v112 = new VertexCH(v1bl.Position[0] + size, v1bl.Position[1] - size, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight, true);
-                var v121 = new VertexCH(v1lt.Position[0] + size, v1lt.Position[1] + size, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight, true);
-                var v122 = new VertexCH(v1tr.Position[0] - size, v1tr.Position[1] + size, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft, true);
+                var v111 = new VertexCH(v1rb.Position[0] - size, v1rb.Position[1] + size, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft, true);
+                var v112 = new VertexCH(v1bl.Position[0] + size, v1bl.Position[1] + size, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight, true);
+                var v121 = new VertexCH(v1lt.Position[0] + size, v1lt.Position[1] - size, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight, true);
+                var v122 = new VertexCH(v1tr.Position[0] - size, v1tr.Position[1] - size, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft, true);
 
-                var v211 = new VertexCH(v2br.Position[0] - size, v2br.Position[1] - size, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft, true);
-                var v212 = new VertexCH(v2lb.Position[0] + size, v2lb.Position[1] - size, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight, true);
-                var v221 = new VertexCH(v2tl.Position[0] + size, v2tl.Position[1] + size, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight, true);
-                var v222 = new VertexCH(v2rt.Position[0] - size, v2rt.Position[1] + size, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft, true);
+                var v211 = new VertexCH(v2br.Position[0] - size, v2br.Position[1] + size, VertexCH.Direction.UpLeft, VertexCH.EdgeSide.CornerTopLeft, true);
+                var v212 = new VertexCH(v2lb.Position[0] + size, v2lb.Position[1] + size, VertexCH.Direction.UpRight, VertexCH.EdgeSide.CornerTopRight, true);
+                var v221 = new VertexCH(v2tl.Position[0] + size, v2tl.Position[1] - size, VertexCH.Direction.DownRight, VertexCH.EdgeSide.CornerBottomRight, true);
+                var v222 = new VertexCH(v2rt.Position[0] - size, v2rt.Position[1] - size, VertexCH.Direction.DownLeft, VertexCH.EdgeSide.CornerBottomLeft, true);
 
                 if (i < 4)
                 {
@@ -393,48 +394,24 @@ namespace TestCubePlanet
             m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Right);
             m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, ref locs, ref verts, size, Face3D.Top);
 
-            m_cFaces[Face3D.Backward].LinkNeighbours(m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
-                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate180,
-                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CCW,
-                                                        m_cFaces[Face3D.Left], VertexCH.Transformation.Stright,
-                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
-                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
-                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
-                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Stright);
-
-            m_cFaces[Face3D.Bottom].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
-                                                        null, VertexCH.Transformation.Rotate180,
-                                                        null, VertexCH.Transformation.Rotate90CCW,
-                                                        null, VertexCH.Transformation.Rotate90CCW,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Rotate90CW);
-            //m_cFaces[Face3D.Bottom].LinkNeighbours(m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate180,
-            //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Rotate180,
-            //                                            m_cFaces[Face3D.Right], VertexCH.Transformation.Rotate180,
-            //                                            m_cFaces[Face3D.Right], VertexCH.Transformation.Rotate90CCW,
-            //                                            m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CCW,
-            //                                            m_cFaces[Face3D.Backward], VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CW,
-            //                                            m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate90CW);
-            //m_cFaces[Face3D.Forward].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
+            //m_cFaces[Face3D.Backward].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
             //                                            null, VertexCH.Transformation.Rotate180,
             //                                            null, VertexCH.Transformation.Rotate90CCW,
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Rotate90CW,
+            //                                            null, VertexCH.Transformation.Rotate180,
             //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CW);
-            m_cFaces[Face3D.Forward].LinkNeighbours(m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CCW,
-                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Stright,
-                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
-                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
-                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
+            //                                            null, VertexCH.Transformation.Stright);
+            m_cFaces[Face3D.Backward].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
-                                                        m_cFaces[Face3D.Left], VertexCH.Transformation.Stright);
-            //m_cFaces[Face3D.Left].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Left], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate180,
+                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
+                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Stright);
+
+            //m_cFaces[Face3D.Bottom].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
             //                                            null, VertexCH.Transformation.Rotate180,
             //                                            null, VertexCH.Transformation.Rotate90CCW,
             //                                            null, VertexCH.Transformation.Rotate90CCW,
@@ -442,46 +419,78 @@ namespace TestCubePlanet
             //                                            null, VertexCH.Transformation.Stright,
             //                                            null, VertexCH.Transformation.Stright,
             //                                            null, VertexCH.Transformation.Rotate90CW);
+            m_cFaces[Face3D.Bottom].LinkNeighbours(m_cFaces[Face3D.Left], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate180,
+                                                        m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CCW,
+                                                        m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate90CCW);
+            //m_cFaces[Face3D.Forward].LinkNeighbours(null, VertexCH.Transformation.Rotate90CCW,
+            //                                            m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Rotate90CW,
+            //                                            m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Rotate90CCW,
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Rotate90CW,
+            //                                            m_cFaces[Face3D.Left], VertexCH.Transformation.Stright);
+            m_cFaces[Face3D.Forward].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
+                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CCW,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Left], VertexCH.Transformation.Stright);
+            //m_cFaces[Face3D.Left].LinkNeighbours(null, VertexCH.Transformation.Rotate180,
+            //                                            null, VertexCH.Transformation.Rotate90CCW,
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Rotate90CW,
+            //                                            null, VertexCH.Transformation.Rotate180,
+            //                                            null, VertexCH.Transformation.Stright);
             m_cFaces[Face3D.Left].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate180,
+                                                        m_cFaces[Face3D.Backward], VertexCH.Transformation.Stright);
+            //m_cFaces[Face3D.Right].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
+            //                                            null, VertexCH.Transformation.Rotate180,
+            //                                            null, VertexCH.Transformation.Rotate90CCW,
+            //                                            null, VertexCH.Transformation.Rotate90CCW,
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright);
+            m_cFaces[Face3D.Right].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,
+                                                        m_cFaces[Face3D.Backward], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CCW,
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Stright,
-                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Stright);
-            m_cFaces[Face3D.Right].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
-                                                        null, VertexCH.Transformation.Rotate180,
-                                                        null, VertexCH.Transformation.Rotate90CCW,
-                                                        null, VertexCH.Transformation.Rotate90CCW,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Rotate90CW);
-            m_cFaces[Face3D.Top].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
-                                                        null, VertexCH.Transformation.Rotate180,
-                                                        null, VertexCH.Transformation.Rotate90CCW,
-                                                        null, VertexCH.Transformation.Rotate90CCW,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Stright,
-                                                        null, VertexCH.Transformation.Rotate90CW);
-            //m_cFaces[Face3D.Right].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
-            //                                            m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,
-            //                                            m_cFaces[Face3D.Backward], VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Bottom], VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
-            //                                            m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate180,
-            //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright);
-            //m_cFaces[Face3D.Top].LinkNeighbours(m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CW,
-            //                                            m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate180,
-            //                                            m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CCW,
-            //                                            m_cFaces[Face3D.Right], VertexCH.Transformation.Rotate90CCW,
-            //                                            m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright);
+            //m_cFaces[Face3D.Top].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
+            //                                            null, VertexCH.Transformation.Rotate180,
+            //                                            null, VertexCH.Transformation.Rotate90CCW,
+            //                                            null, VertexCH.Transformation.Rotate90CCW,
+            //                                            null, VertexCH.Transformation.Stright,
             //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Left], VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate90CW);
+            //                                            null, VertexCH.Transformation.Stright,
+            //                                            null, VertexCH.Transformation.Rotate90CW);
+            m_cFaces[Face3D.Top].LinkNeighbours(m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CW,
+                                                        m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate180,
+                                                        m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CCW,
+                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Rotate90CCW,
+                                                        m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Left], VertexCH.Transformation.Stright,
+                                                        m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate90CW);
 
             foreach (var pFace in m_cFaces)
                 pFace.Value.Finalize();

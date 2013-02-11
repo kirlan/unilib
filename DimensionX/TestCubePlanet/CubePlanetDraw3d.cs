@@ -53,7 +53,7 @@ namespace TestCubePlanet
                 {
                     var vertex = pChunk.m_aVertexes[i];
                     userPrimitives[index] = new VertexPositionColor();
-                    userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fZ, vertex.m_fY);
+                    userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
                     userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Lerp(color, Microsoft.Xna.Framework.Color.Black, 0.2f);
                     if (bColored)
                         userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Lerp(vertex.m_eColor, Microsoft.Xna.Framework.Color.Black, 0.2f);
@@ -70,7 +70,7 @@ namespace TestCubePlanet
                 {
                     var loc = pChunk.m_aLocations[i];
                     userPrimitives[index] = new VertexPositionColor();
-                    userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fZ, loc.m_fY);
+                    userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
                     userPrimitives[index].Color = color;
                     if (bColored)
                         userPrimitives[index].Color = loc.m_eColor;
@@ -207,34 +207,34 @@ namespace TestCubePlanet
             foreach (var pFace in pCube.m_cFaces)
             {
                 m_aFaces[index++] = new Face(pFace.Value, bColored);
-                Microsoft.Xna.Framework.Color pColor = Microsoft.Xna.Framework.Color.Black;
-                switch(pFace.Key)
-                {
-                    case Cube.Face3D.Backward:
-                        pColor = Microsoft.Xna.Framework.Color.Blue;
-                        break;
-                    case Cube.Face3D.Bottom:
-                        pColor = Microsoft.Xna.Framework.Color.Green;
-                        break;
-                    case Cube.Face3D.Forward:
-                        pColor = Microsoft.Xna.Framework.Color.Red;
-                        break;
-                    case Cube.Face3D.Left:
-                        pColor = Microsoft.Xna.Framework.Color.Cyan;
-                        break;
-                    case Cube.Face3D.Right:
-                        pColor = Microsoft.Xna.Framework.Color.Gold;
-                        break;
-                    case Cube.Face3D.Top:
-                        pColor = Microsoft.Xna.Framework.Color.OrangeRed;
-                        break;
+                //Microsoft.Xna.Framework.Color pColor = Microsoft.Xna.Framework.Color.Black;
+                //switch(pFace.Key)
+                //{
+                //    case Cube.Face3D.Forward:
+                //        pColor = Microsoft.Xna.Framework.Color.Red;
+                //        break;
+                //    case Cube.Face3D.Top:
+                //        pColor = Microsoft.Xna.Framework.Color.Gold;
+                //        break;
+                //    case Cube.Face3D.Right:
+                //        pColor = Microsoft.Xna.Framework.Color.Green;
+                //        break;
+                //    case Cube.Face3D.Bottom:
+                //        pColor = Microsoft.Xna.Framework.Color.Cyan;
+                //        break;
+                //    case Cube.Face3D.Left:
+                //        pColor = Microsoft.Xna.Framework.Color.Blue;
+                //        break;
+                //    case Cube.Face3D.Backward:
+                //        pColor = Microsoft.Xna.Framework.Color.Violet;
+                //        break;
+                //}
 
-                }
-                foreach (var pSquare in m_aFaces[index - 1].m_aSquares)
-                {
-                    for (int i = 0; i < pSquare.userPrimitives.Length; i++ )
-                        pSquare.userPrimitives[i].Color = pColor;
-                }
+                //foreach (var pSquare in m_aFaces[index - 1].m_aSquares)
+                //{
+                //    for (int i = 0; i < pSquare.userPrimitives.Length; i++ )
+                //        pSquare.userPrimitives[i].Color = pColor;
+                //}
             }
 
             m_bReady = true;
