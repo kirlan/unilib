@@ -108,7 +108,8 @@ namespace SimpleVectors
 
         public static double DistanceSquared(SimpleVector3d simpleVector3d, SimpleVector3d q)
         {
-            return ~(simpleVector3d - q);
+            return (simpleVector3d.X - q.X) * (simpleVector3d.X - q.X) + (simpleVector3d.Y - q.Y) * (simpleVector3d.Y - q.Y) + (simpleVector3d.Z - q.Z) * (simpleVector3d.Z - q.Z);
+//            return ~(simpleVector3d - q);
         }
     }
 }
