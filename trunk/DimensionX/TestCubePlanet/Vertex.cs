@@ -107,9 +107,9 @@ namespace TestCubePlanet
                     break;
             }
             //минус - потому что XNA оперирует правой системой координат, а не левой
-            m_fX = -1500 * x *(float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
-            m_fY = 1500 * y *(float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
-            m_fZ = 1500 * z *(float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
+            m_fX = -150 * x *(float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
+            m_fY = 150 * y *(float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
+            m_fZ = 150 * z *(float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
         }
 
         public override string ToString()
