@@ -10,7 +10,10 @@ namespace TestCubePlanet
     //from http://rainwarrior.ca/dragon/arcball.html
     public class ArkBall
     {
-        Matrix ab_quat = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        /// <summary>
+        /// Actual rotation matrix
+        /// </summary>
+        public Matrix ab_quat = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         Matrix ab_last = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         Matrix ab_next = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
@@ -29,13 +32,13 @@ namespace TestCubePlanet
 
         Vector3 ab_start = new Vector3(0, 0, 1);
         Vector3 ab_curr = new Vector3(0, 0, 1);
-        Vector3 ab_eye = new Vector3(0, 0, 1);
-        Vector3 ab_eyedir = new Vector3(0, 0, 1);
-        Vector3 ab_up = new Vector3(0, 1, 0);
+        public Vector3 ab_eye = new Vector3(0, 0, 1);
+        public Vector3 ab_eyedir = new Vector3(0, 0, 1);
+        public Vector3 ab_up = new Vector3(0, 1, 0);
         Vector3 ab_out = new Vector3(1, 0, 0);
 
-        Matrix ab_glp = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        Matrix ab_glm = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        //Matrix ab_glp = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        //Matrix ab_glm = new Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         //Vector4 ab_glv = new Vector4(0,0,640,480);
 
         /// <summary>
@@ -68,7 +71,7 @@ namespace TestCubePlanet
             else
                 ab_planar = false;
 
-            glGetDoublev(GL_PROJECTION_MATRIX, ab_glp);
+            //glGetDoublev(GL_PROJECTION_MATRIX, ab_glp);
             //glGetIntegerv(GL_VIEWPORT,ab_glv);
         }
 
@@ -76,72 +79,92 @@ namespace TestCubePlanet
         /// Call arcball_rotate after resetting the modelview matrix in your 
         /// drawing code. It will call glRotate with its current rotation.
         /// </summary>
-        public void arcball_rotate()
-        {
-            // affect the arcball's orientation on openGL
-            glMultMatrixf(ab_quat);
-        }
+        //public void arcball_rotate()
+        //{
+        //    // affect the arcball's orientation on openGL
+        //    glMultMatrixf(ab_quat);
+        //}
 
-        // convert the quaternion into a rotation matrix
-        static void quaternion(ref Matrix q, float x, float y, float z, float w)
-        {
-            float x2 = x * x;
-            float y2 = y * y;
-            float z2 = z * z;
-            float xy = x * y;
-            float xz = x * z;
-            float yz = y * z;
-            float wx = w * x;
-            float wy = w * y;
-            float wz = w * z;
+        /// <summary>
+        /// convert the quaternion into a rotation matrix
+        /// </summary>
+        /// <param name="q"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="w"></param>
+        //static void quaternion(ref Matrix q, float x, float y, float z, float w)
+        //{
+        //    float x2 = x * x;
+        //    float y2 = y * y;
+        //    float z2 = z * z;
+        //    float xy = x * y;
+        //    float xz = x * z;
+        //    float yz = y * z;
+        //    float wx = w * x;
+        //    float wy = w * y;
+        //    float wz = w * z;
 
-            q.M11 = 1 - 2 * y2 - 2 * z2;
-            q.M12 = 2 * xy + 2 * wz;
-            q.M13 = 2 * xz - 2 * wy;
+        //    q.M11 = 1 - 2 * y2 - 2 * z2;
+        //    q.M12 = 2 * xy + 2 * wz;
+        //    q.M13 = 2 * xz - 2 * wy;
 
-            q.M21 = 2 * xy - 2 * wz;
-            q.M22 = 1 - 2 * x2 - 2 * z2;
-            q.M23 = 2 * yz + 2 * wx;
+        //    q.M21 = 2 * xy - 2 * wz;
+        //    q.M22 = 1 - 2 * x2 - 2 * z2;
+        //    q.M23 = 2 * yz + 2 * wx;
 
-            q.M31 = 2 * xz + 2 * wy;
-            q.M32 = 2 * yz - 2 * wx;
-            q.M33 = 1 - 2 * x2 - 2 * y2;
-        }
+        //    q.M31 = 2 * xz + 2 * wy;
+        //    q.M32 = 2 * yz - 2 * wx;
+        //    q.M33 = 1 - 2 * x2 - 2 * y2;
+        //}
 
-        // reset the rotation matrix
-        static void quatidentity(ref Matrix q)
-        {
-            //q.M11=1;  q.M12=0;  q.M13=0;  q.M14=0;
-            //q.M21=0;  q.M22=1;  q.M23=0;  q.M24=0;
-            //q.M31=0;  q.M32=0;  q.M33=1;  q.M34=0;
-            //q.M41=0;  q.M42=0;  q.M43=0;  q.M44=1; 
-            q = Matrix.Identity;
-        }
+        /// <summary>
+        /// reset the rotation matrix
+        /// </summary>
+        /// <param name="q"></param>
+        //static void quatidentity(ref Matrix q)
+        //{
+        //    //q.M11=1;  q.M12=0;  q.M13=0;  q.M14=0;
+        //    //q.M21=0;  q.M22=1;  q.M23=0;  q.M24=0;
+        //    //q.M31=0;  q.M32=0;  q.M33=1;  q.M34=0;
+        //    //q.M41=0;  q.M42=0;  q.M43=0;  q.M44=1; 
+        //    q = Matrix.Identity;
+        //}
 
-        // copy a rotation matrix
-        static void quatcopy(ref Matrix dst, Matrix src)
-        {
-            //dst.M11=src.M11; dst.M12=src.M12; dst.M13=src.M13;
-            //dst.M21=src.M21; dst.M22=src.M22; dst.M23=src.M23;
-            //dst.M31=src.M31; dst.M32=src.M32; dst.M33=src.M33; 
-            dst = src;
-        }
 
-        // multiply two rotation matrices
-        static void quatnext(ref Matrix dest, Matrix left, Matrix right)
-        {
-            //dest[0] = left[0]*right[0] + left[1]*right[4] + left[2] *right[8];
-            //dest[1] = left[0]*right[1] + left[1]*right[5] + left[2] *right[9];
-            //dest[2] = left[0]*right[2] + left[1]*right[6] + left[2] *right[10];
-            //dest[4] = left[4]*right[0] + left[5]*right[4] + left[6] *right[8];
-            //dest[5] = left[4]*right[1] + left[5]*right[5] + left[6] *right[9];
-            //dest[6] = left[4]*right[2] + left[5]*right[6] + left[6] *right[10];
-            //dest[8] = left[8]*right[0] + left[9]*right[4] + left[10]*right[8];
-            //dest[9] = left[8]*right[1] + left[9]*right[5] + left[10]*right[9];
-            //dest[10]= left[8]*right[2] + left[9]*right[6] + left[10]*right[10];
+        /// <summary>
+        /// copy a rotation matrix
+        /// </summary>
+        /// <param name="dst"></param>
+        /// <param name="src"></param>
+        //static void quatcopy(ref Matrix dst, Matrix src)
+        //{
+        //    //dst.M11=src.M11; dst.M12=src.M12; dst.M13=src.M13;
+        //    //dst.M21=src.M21; dst.M22=src.M22; dst.M23=src.M23;
+        //    //dst.M31=src.M31; dst.M32=src.M32; dst.M33=src.M33; 
+        //    dst = src;
+        //}
 
-            dest = Matrix.Multiply(left, right);
-        }
+        /// <summary>
+        /// multiply two rotation matrices
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        //static void quatnext(ref Matrix dest, Matrix left, Matrix right)
+        //{
+        //    //dest[0] = left[0]*right[0] + left[1]*right[4] + left[2] *right[8];
+        //    //dest[1] = left[0]*right[1] + left[1]*right[5] + left[2] *right[9];
+        //    //dest[2] = left[0]*right[2] + left[1]*right[6] + left[2] *right[10];
+        //    //dest[4] = left[4]*right[0] + left[5]*right[4] + left[6] *right[8];
+        //    //dest[5] = left[4]*right[1] + left[5]*right[5] + left[6] *right[9];
+        //    //dest[6] = left[4]*right[2] + left[5]*right[6] + left[6] *right[10];
+        //    //dest[8] = left[8]*right[0] + left[9]*right[4] + left[10]*right[8];
+        //    //dest[9] = left[8]*right[1] + left[9]*right[5] + left[10]*right[9];
+        //    //dest[10]= left[8]*right[2] + left[9]*right[6] + left[10]*right[10];
+
+        //    dest = Matrix.Multiply(left, right);
+        //}
 
         // find the intersection with the plane through the visible edge
         Vector3 edge_coords(Vector3 m)
@@ -165,6 +188,7 @@ namespace TestCubePlanet
         // find the intersection with the sphere
         Vector3 sphere_coords(Vector3 pTarget)
         {
+            //pTarget.Normalize();
             Vector3 m = pTarget - ab_eye;
 
             // mouse position represents ray: eye + t*m
@@ -180,6 +204,7 @@ namespace TestCubePlanet
         // get intersection with plane for "trackball" style rotation
         Vector3 planar_coords(Vector3 pTarget)
         {
+            //pTarget.Normalize();
             Vector3 m = pTarget - ab_eye;
             // intersect the point with the trackball plane
             float t = (ab_planedist - ab_zoom) / Vector3.Dot(ab_eyedir, m);
@@ -194,8 +219,10 @@ namespace TestCubePlanet
         public void arcball_reset()
         {
             // reset the arcball
-            quatidentity(ref ab_quat);
-            quatidentity(ref ab_last);
+            ab_quat = Matrix.Identity;
+            ab_last = Matrix.Identity;
+            //quatidentity(ref ab_quat);
+            //quatidentity(ref ab_last);
         }
 
         /// <summary>
@@ -208,11 +235,13 @@ namespace TestCubePlanet
             // begin arcball rotation
 
             // saves a copy of the current rotation for comparison
-            quatcopy(ref ab_last, ab_quat);
+            ab_last = ab_quat;
+            //quatcopy(ref ab_last, ab_quat);
             if (ab_planar)
                 ab_start = planar_coords(pTarget);
             else
-                ab_start = sphere_coords(pTarget);
+                //ab_start = sphere_coords(pTarget);
+                ab_start = Vector3.Normalize(pTarget);// sphere_coords(pTarget);
         }
 
         /// <summary>
@@ -239,38 +268,49 @@ namespace TestCubePlanet
                 // p is perpendicular to d
                 Vector3 p = Vector3.Normalize((ab_out * d.X) - (ab_up * d.Y)) * sina;
 
-                quaternion(ref ab_next, p.X, p.Y, p.Z, cosa);
-                quatnext(ref ab_quat, ab_last, ab_next);
+                ab_next = Matrix.CreateFromQuaternion(new Quaternion(p, cosa));
+                //quaternion(ref ab_next, p.X, p.Y, p.Z, cosa);
+                ab_quat = Matrix.Multiply(ab_last, ab_next);
+                //quatnext(ref ab_quat, ab_last, ab_next);
                 // planar style only ever relates to the last point
-                quatcopy(ref ab_last, ab_quat);
+                ab_last = ab_quat;
+                //quatcopy(ref ab_last, ab_quat);
                 ab_start = ab_curr;
 
             }
             else
             {
-                ab_curr = sphere_coords(pTarget);
+                ab_curr = Vector3.Normalize(pTarget);// sphere_coords(pTarget);
+                //ab_curr = sphere_coords(pTarget);
                 if (ab_curr.Equals(ab_start))
                 { // avoid potential rare divide by tiny
-                    quatcopy(ref ab_quat, ab_last);
+                    ab_quat = ab_last;
+                    //quatcopy(ref ab_quat, ab_last);
                     return;
                 }
 
                 // use a dot product to get the angle between them
                 // use a cross product to get the vector to rotate around
                 float cos2a = Vector3.Dot(ab_start, ab_curr);
+                //float sina = (float)Math.Sqrt((1.0 - cos2a*cos2a));
                 float sina = (float)Math.Sqrt((1.0 - cos2a) * 0.5);
                 float cosa = (float)Math.Sqrt((1.0 + cos2a) * 0.5);
                 Vector3 cross = Vector3.Normalize(Vector3.Cross(ab_start, ab_curr)) * sina;
-                quaternion(ref ab_next, cross.X, cross.Y, cross.Z, cosa);
+                //Vector3 cross = Vector3.Cross(ab_start, ab_curr);// *sina;
+                ab_next = Matrix.CreateFromQuaternion(new Quaternion(cross, -cosa));
+                //quaternion(ref ab_next, cross.X, cross.Y, cross.Z, cosa);
 
                 // update the rotation matrix
-                quatnext(ref ab_quat, ab_last, ab_next);
+                ab_quat = Matrix.Multiply(ab_last, ab_next);
+                //quatnext(ref ab_quat, ab_last, ab_next);
             }
         }
     }
 
     public class ArcBallCamera
     {
+        private ArkBall m_pBall = new ArkBall();
+
         public Vector3 Position { get; set; }
 
         public Matrix View { get; set; }
@@ -286,9 +326,6 @@ namespace TestCubePlanet
         public Vector3 Direction { get; private set; }
         public float m_fDistance;
 
-        private Vector3 startVector = Vector3.Zero;
-        private Quaternion quatRotation = Quaternion.Identity;
-
         /// <summary>
         /// ArcBall Constructor
         /// </summary>
@@ -299,16 +336,21 @@ namespace TestCubePlanet
             this.GraphicsDevice = graphicsDevice;
             generatePerspectiveProjectionMatrix(Microsoft.Xna.Framework.MathHelper.PiOver4);
 
-            this.Position = new Vector3(0, 4000, 0);
+            this.Position = new Vector3(0, 0, 400);
 
             m_fDistance = Vector3.Distance(Position, Vector3.Zero);
+
+            m_pBall.arcball_setzoom(1500, Position, Vector3.Up);
         }
 
         public void UpdateAspectRatio()
         {
             generatePerspectiveProjectionMatrix(Microsoft.Xna.Framework.MathHelper.ToRadians(45));
         }
-        
+
+        public Vector3 startVector;
+        Quaternion quatRotation = Quaternion.Identity;
+
         /// <summary>
         /// Begin dragging
         /// </summary>
@@ -316,21 +358,29 @@ namespace TestCubePlanet
         /// <param name="rotation"></param>
         public void StartDrag(Vector3 startPoint)
         {
-            this.startVector = Vector3.Normalize(startPoint);
+            //m_pBall.arcball_start(startPoint);
+            startVector = Vector3.Normalize(startPoint);
         }
+
+        public Vector3 axis;
 
         public void Drag(Vector3 currentPoint)
         {
+            //m_pBall.arcball_move(currentPoint);
             Vector3 currentVector = Vector3.Normalize(currentPoint);
 
-            if (startVector == currentVector)
+            if (startVector.Equals(currentVector))
                 return;
-
-            Vector3 axis = Vector3.Cross(startVector, currentVector);
 
             float angle = Vector3.Dot(startVector, currentVector);
 
-            Quaternion delta = new Quaternion(axis.X, axis.Y, axis.Z, -angle);
+            //float sina = (float)Math.Sqrt((1.0 - cos2a*cos2a));
+            float sina = (float)Math.Sqrt((1.0 - angle) * 0.5);
+            float cosa = (float)Math.Sqrt((1.0 + angle) * 0.5);
+
+            axis = Vector3.Normalize(Vector3.Cross(startVector, currentVector)) * sina;
+
+            Quaternion delta = new Quaternion(axis.X, axis.Y, axis.Z, -cosa);
 
             quatRotation = Quaternion.Multiply(quatRotation, delta);
         }
@@ -346,10 +396,10 @@ namespace TestCubePlanet
 
             Matrix cameraRotation = Matrix.CreateFromQuaternion(quatRotation);
 
-            Direction = Vector3.Transform(Vector3.Forward, cameraRotation);
+            Direction = Vector3.Transform(Vector3.Forward, cameraRotation);//m_pBall.ab_quat);
             Position = Vector3.Zero - Direction * m_fDistance;
 
-            Vector3 cameraRotatedUpVector = Vector3.Transform(Vector3.Up, cameraRotation);
+            Vector3 cameraRotatedUpVector = Vector3.Transform(Vector3.Up, cameraRotation);//m_pBall.ab_quat);
 
             View = Matrix.CreateLookAt(Position, Vector3.Zero, cameraRotatedUpVector);
         }

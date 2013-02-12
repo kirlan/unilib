@@ -21,7 +21,8 @@ namespace TestCubePlanet
 
         private void cubePlanetDraw3d1_MouseMove(object sender, MouseEventArgs e)
         {
-            cubePlanetDraw3d1.UpdatePicking(e.X, e.Y);
+            cubePlanetDraw3d1.MouseMoving(e.X, e.Y);
+            //cubePlanetDraw3d1.UpdatePicking(e.X, e.Y);
         }
 
         Cube m_pCube = null;
@@ -118,7 +119,7 @@ namespace TestCubePlanet
             if (e.Button == System.Windows.Forms.MouseButtons.Left && cubePlanetDraw3d1.m_pCurrentPicking.HasValue)
             {
                 cubePlanetDraw3d1.m_bPanMode = true;
-                cubePlanetDraw3d1.m_pCamera.StartDrag((Vector3)cubePlanetDraw3d1.m_pCurrentPicking);
+                cubePlanetDraw3d1.StartDrag();
             }
             //if (e.Button == System.Windows.Forms.MouseButtons.Right)
             //    m_b3dMapRotate = true;

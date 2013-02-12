@@ -445,12 +445,19 @@ namespace TestCubePlanet
             //m_pCamera.Update(m_pCameraDir, m_pCameraUp);
             if (m_bPanMode && m_pCurrentPicking != null)
             {
+                //m_pStartPicking = GetFocusedPoint(m_iStartMouseX, m_iStartMouseY);
+                //m_pCamera.StartDrag((Vector3)m_pStartPicking);
+                //m_pCamera.Drag(m_pCursorRay.Position);
                 m_pCamera.Drag((Vector3)m_pCurrentPicking);
+
+                //float fD = m_pCurrentPicking.Value.Length();
 
                 // m_pLastPicking = m_pCurrentPicking;
                 m_pCurrentPicking = null;
-            } 
+                m_bMouseUpdated = false;
+            }
             m_pCamera.Update();
+            UpdatePicking();
 
             effect.World = Matrix.Identity;
             effect.View = m_pCamera.View;
@@ -581,13 +588,13 @@ namespace TestCubePlanet
                 // Reset renderstates to their default values.
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            
-                //GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
-                //    PrimitiveType.LineList,
-                //    m_pPoints,
-                //    0,  // index of the first vertex to draw
-                //    m_pPoints.Length/2   // number of primitives
-                //);
+
+                GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+                    PrimitiveType.LineList,
+                    m_pPoints,
+                    0,  // index of the first vertex to draw
+                    m_pPoints.Length / 2   // number of primitives
+                );
             }
         }
 
@@ -601,38 +608,105 @@ namespace TestCubePlanet
         Square m_pSelectedSquare = null;
 
         public Vector3? m_pCurrentPicking = null;
-        //Vector3? m_pLastPicking = null;
+        Vector3? m_pStartPicking = null;
+
+        Ray m_pCursorRay;
+
+        private int m_iMouseX;
+        private int m_iMouseY;
+        private int m_iStartMouseX;
+        private int m_iStartMouseY;
+        private bool m_bMouseUpdated = false;
+
+        public void MouseMoving(int x, int y)
+        {
+            m_iMouseX = x;
+            m_iMouseY = y;
+
+            m_bMouseUpdated = true;
+        }
+
+        private Vector3? GetFocusedPoint(int x, int y)
+        {
+            // Look up a collision ray based on the current cursor position. See the
+            // Picking Sample documentation for a detailed explanation of this.
+            Ray pRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
+
+            // Keep track of the closest object we have seen so far, so we can
+            // choose the closest one if there are several models under the cursor.
+            float closestIntersection = float.MaxValue;
+
+            Vector3? pFocus = null;
+
+            foreach (var pFace in m_aFaces)
+                foreach (var pSquare in pFace.m_aSquares)
+                {
+                    if (pSquare.m_pBounds8.Intersects(pRay).HasValue)
+                    {
+                        Vector3 vertex1, vertex2, vertex3;
+
+                        // Perform the ray to model intersection test.
+                        float? intersection = pSquare.RayIntersectsLandscape(pRay, Matrix.Identity,//CreateScale(0.5f),
+                                                                    out vertex1, out vertex2,
+                                                                    out vertex3);
+                        // Do we have a per-triangle intersection with this model?
+                        if (intersection != null)
+                        {
+                            // If so, is it closer than any other model we might have
+                            // previously intersected?
+                            if (intersection < closestIntersection)
+                            {
+                                // Store information about this model.
+                                closestIntersection = intersection.Value;
+
+                                pFocus = pRay.Position + Vector3.Normalize(pRay.Direction) * intersection;
+                            }
+                        }
+                    }
+                }
+
+            return pFocus;
+        }
 
         /// <summary>
         /// Runs a per-triangle picking algorithm over all the models in the scene,
         /// storing which triangle is currently under the cursor.
         /// </summary>
-        public void UpdatePicking(int x, int y)
+        private void UpdatePicking()
         {
             if (!m_bReady)
                 return;
 
+            if (!m_bMouseUpdated)
+                return;
+
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
-            Ray cursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
+            m_pCursorRay = CalculateCursorRay(m_iMouseX, m_iMouseY, m_pCamera.Projection, m_pCamera.View);
 
             // calculate the ray-plane intersection point
             Vector3 n = new Vector3(0f, 1f, 0f);
             Plane p = new Plane(n, 0f);
 
             // calculate distance of intersection point from r.origin
-            float denominator = Vector3.Dot(p.Normal, cursorRay.Direction);
-            float numerator = Vector3.Dot(p.Normal, cursorRay.Position) + p.D;
+            float denominator = Vector3.Dot(p.Normal, m_pCursorRay.Direction);
+            float numerator = Vector3.Dot(p.Normal, m_pCursorRay.Position) + p.D;
             float t = -(numerator / denominator);
 
-            m_pPoints = new VertexPositionColor[4];
-            m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
-            m_pPoints[1] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * t, Microsoft.Xna.Framework.Color.DarkGoldenrod);
-            m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
-            m_pPoints[3] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+            //m_pPoints = new VertexPositionColor[4];
+            //m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+            //m_pPoints[1] = new VertexPositionColor(m_pCursorRay.Position + m_pCursorRay.Direction * t, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+            //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
+            //m_pPoints[3] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
 
-            m_iCursorX = (int)m_pPoints[1].Position.X;
-            m_iCursorY = (int)m_pPoints[1].Position.Z;
+            m_pPoints = new VertexPositionColor[4];
+            m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[1] = new VertexPositionColor(m_pCamera.startVector*2000, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[3] = new VertexPositionColor(Vector3.Normalize(m_pCamera.axis)*2000, Microsoft.Xna.Framework.Color.Black);
+
+            //m_iCursorX = (int)m_pPoints[1].Position.X;
+            //m_iCursorY = (int)m_pPoints[1].Position.Z;
 
             // Keep track of the closest object we have seen so far, so we can
             // choose the closest one if there are several models under the cursor.
@@ -643,12 +717,12 @@ namespace TestCubePlanet
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
-                    if (pSquare.m_pBounds8.Intersects(cursorRay).HasValue)
+                    if (pSquare.m_pBounds8.Intersects(m_pCursorRay).HasValue)
                     {
                         Vector3 vertex1, vertex2, vertex3;
 
                         // Perform the ray to model intersection test.
-                        float? intersection = pSquare.RayIntersectsLandscape(cursorRay, Matrix.Identity,//CreateScale(0.5f),
+                        float? intersection = pSquare.RayIntersectsLandscape(m_pCursorRay, Matrix.Identity,//CreateScale(0.5f),
                                                                     out vertex1, out vertex2,
                                                                     out vertex3);
                         // Do we have a per-triangle intersection with this model?
@@ -670,10 +744,10 @@ namespace TestCubePlanet
 
                                 m_pSelectedSquare = pSquare;
 
-                                m_pCurrentPicking = cursorRay.Position + Vector3.Normalize(cursorRay.Direction) * intersection;
+                                m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
 
-                                m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
-                                m_pPoints[3] = new VertexPositionColor(cursorRay.Position + cursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
+                                //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
+                                //m_pPoints[3] = new VertexPositionColor(m_pCursorRay.Position + m_pCursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
                             }
                         }
                     }
@@ -769,6 +843,19 @@ namespace TestCubePlanet
             }
 
             result = rayDistance;
+        }
+
+
+
+        internal void StartDrag()
+        {
+            if (!m_pCurrentPicking.HasValue)
+                return;
+
+            m_pCamera.StartDrag(m_pCurrentPicking.Value);
+
+            m_iStartMouseX = m_iMouseX;
+            m_iStartMouseY = m_iMouseY;
         }
     }
 }
