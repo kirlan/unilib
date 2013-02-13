@@ -339,12 +339,12 @@ namespace TestCubePlanet
 
             public Face(CubeFace pFace, bool bColored, GraphicsDevice graphicsDevice)
             {
-                m_aSquares = new Square[pFace.Size * pFace.Size];
+                m_aSquares = new Square[pFace.Resolution * pFace.Resolution];
 
                 int index = 0;
                 foreach (var chunk in pFace.m_cChunk)
                 {
-                    m_aSquares[index++] = new Square(chunk, bColored, pFace.Size);
+                    m_aSquares[index++] = new Square(chunk, bColored, pFace.Resolution);
                 }
             }
         }
@@ -353,9 +353,14 @@ namespace TestCubePlanet
 
         bool m_bReady = false;
 
+        private float m_fR = 150;
+
         public void Assign(Cube pCube, bool bColored)
         {
             m_bReady = false;
+
+            m_fR = pCube.R;
+
             int index = 0;
             foreach (var pFace in pCube.m_cFaces)
             {
@@ -626,46 +631,78 @@ namespace TestCubePlanet
             m_bMouseUpdated = true;
         }
 
+        private Vector3 MapToSphere(int x, int y)
+        {
+            //Matrix.CreateWorld
+
+            Vector3 pCenter = GraphicsDevice.Viewport.Project(Vector3.Zero, m_pCamera.Projection, m_pCamera.View, Matrix.Identity) ;
+
+            float fQuasyR = m_fR * m_pCamera.Position.Length() / (float)Math.Sqrt(m_pCamera.Position.Length() * m_pCamera.Position.Length() - m_fR*m_fR);
+
+            Vector3 pRadius = Vector3.Normalize(Vector3.Cross(m_pCamera.Position, m_pCamera.Top)) * fQuasyR;
+            float fDebug = pRadius.Length();
+            pRadius = GraphicsDevice.Viewport.Project(pRadius, m_pCamera.Projection, m_pCamera.View, Matrix.Identity);
+
+            float fRadius = (pRadius - pCenter).Length();
+            float fCenterX = pCenter.X - (float)Width / 2;
+            float fCenterY = pCenter.Y - (float)Height / 2;
+
+            float fMouseX = x - (float)Width / 2;
+            float fMouseY = y - (float)Height / 2;
+
+            Vector2 pRelativeMousePos = new Vector2((fMouseX - fCenterX),
+                                                (fMouseY - fCenterY));
+            //Vector2 normalizedVec = new Vector2(
+            //    (x - Width / 2) * 2.0f / Width,
+            //    (y - Height / 2) * 2.0f / Height
+            //);
+
+            Vector3? pPoint = GetFocusedPoint(x, y);
+            if (pPoint.HasValue)
+            {
+                Matrix pCameraBasis = Matrix.CreateWorld(Vector3.Zero, m_pCamera.Direction, m_pCamera.Top);
+
+                pPoint = Vector3.Transform(pPoint.Value, pCameraBasis);
+
+                //return pPoint.Value;
+            }
+
+            float length = pRelativeMousePos.LengthSquared();
+
+            if (length > fRadius*fRadius)
+            {
+                float norm = fRadius / (float)Math.Sqrt(length);
+
+                return new Vector3(
+                    pRelativeMousePos.X * norm,
+                    pRelativeMousePos.Y * norm,
+                    0.0f
+                );
+            }
+            else
+            {
+                return new Vector3(
+                    pRelativeMousePos.X,
+                    pRelativeMousePos.Y,
+                    (float)Math.Sqrt(fRadius * fRadius - length)
+                );
+            }
+        }
+        
         private Vector3? GetFocusedPoint(int x, int y)
         {
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
             Ray pRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
 
-            // Keep track of the closest object we have seen so far, so we can
-            // choose the closest one if there are several models under the cursor.
-            float closestIntersection = float.MaxValue;
+            BoundingSphere pSphere = new BoundingSphere(Vector3.Zero, m_fR);
 
-            Vector3? pFocus = null;
+            float? fDist = pSphere.Intersects(pRay);
 
-            foreach (var pFace in m_aFaces)
-                foreach (var pSquare in pFace.m_aSquares)
-                {
-                    if (pSquare.m_pBounds8.Intersects(pRay).HasValue)
-                    {
-                        Vector3 vertex1, vertex2, vertex3;
+            if (fDist.HasValue)
+                return pRay.Position + pRay.Direction*fDist.Value;
 
-                        // Perform the ray to model intersection test.
-                        float? intersection = pSquare.RayIntersectsLandscape(pRay, Matrix.Identity,//CreateScale(0.5f),
-                                                                    out vertex1, out vertex2,
-                                                                    out vertex3);
-                        // Do we have a per-triangle intersection with this model?
-                        if (intersection != null)
-                        {
-                            // If so, is it closer than any other model we might have
-                            // previously intersected?
-                            if (intersection < closestIntersection)
-                            {
-                                // Store information about this model.
-                                closestIntersection = intersection.Value;
-
-                                pFocus = pRay.Position + Vector3.Normalize(pRay.Direction) * intersection;
-                            }
-                        }
-                    }
-                }
-
-            return pFocus;
+            return null;
         }
 
         /// <summary>
@@ -679,6 +716,15 @@ namespace TestCubePlanet
 
             if (!m_bMouseUpdated)
                 return;
+
+            m_bPicked = false;
+
+            m_pCurrentPicking = GetFocusedPoint(m_iMouseX, m_iMouseY);
+
+            if (!m_pCurrentPicking.HasValue)
+                return;
+
+            m_pCurrentPicking = MapToSphere(m_iMouseX, Height - m_iMouseY);
 
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
@@ -712,8 +758,6 @@ namespace TestCubePlanet
             // choose the closest one if there are several models under the cursor.
             float closestIntersection = float.MaxValue;
 
-            m_bPicked = false;
-
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
@@ -744,7 +788,7 @@ namespace TestCubePlanet
 
                                 m_pSelectedSquare = pSquare;
 
-                                m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
+                                //m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
 
                                 //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
                                 //m_pPoints[3] = new VertexPositionColor(m_pCursorRay.Position + m_pCursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
