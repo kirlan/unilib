@@ -67,7 +67,7 @@ namespace TestCubePlanet
             m_bForbidden = true;
         }
 
-        public Vertex(float fX, float fY, float fR, Cube.Face3D eFace)
+        public Vertex(float fX, float fY, float fSize, Cube.Face3D eFace, float fR)
         {
             //Формула взята на http://mathproofs.blogspot.ru/2005/07/mapping-cube-to-sphere.html
             float x = 1;
@@ -76,40 +76,40 @@ namespace TestCubePlanet
             switch (eFace)
             {
                 case Cube.Face3D.Forward:
-                        x = fX / fR;
-                        y = fY / fR;
+                        x = fX / fSize;
+                        y = fY / fSize;
                         z = -1;
                     break;
                 case Cube.Face3D.Right:
                         x = 1;
-                        y = fY / fR;
-                        z = fX / fR;
+                        y = fY / fSize;
+                        z = fX / fSize;
                     break;
                 case Cube.Face3D.Backward:
-                        x = -fX / fR;
-                        y = fY / fR;
+                        x = -fX / fSize;
+                        y = fY / fSize;
                         z = 1;
                     break;
                 case Cube.Face3D.Left:
                         x = -1;
-                        y = fY / fR;
-                        z = -fX / fR;
+                        y = fY / fSize;
+                        z = -fX / fSize;
                     break;
                 case Cube.Face3D.Top:
-                        x = fX / fR;
+                        x = fX / fSize;
                         y = 1;
-                        z = fY / fR;
+                        z = fY / fSize;
                     break;
                 case Cube.Face3D.Bottom:
-                        x = fX / fR;
+                        x = fX / fSize;
                         y = -1;
-                        z = -fY / fR;
+                        z = -fY / fSize;
                     break;
             }
             //минус - потому что XNA оперирует правой системой координат, а не левой
-            m_fX = -150 * x *(float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
-            m_fY = 150 * y *(float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
-            m_fZ = 150 * z *(float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
+            m_fX = -fR * x *(float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
+            m_fY = fR * y * (float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
+            m_fZ = fR * z * (float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
         }
 
         public override string ToString()

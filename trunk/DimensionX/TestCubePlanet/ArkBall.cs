@@ -324,6 +324,7 @@ namespace TestCubePlanet
         }
 
         public Vector3 Direction { get; private set; }
+        public Vector3 Top;
         public float m_fDistance;
 
         /// <summary>
@@ -349,7 +350,8 @@ namespace TestCubePlanet
         }
 
         public Vector3 startVector;
-        Quaternion quatRotation = Quaternion.Identity;
+        private Quaternion quatRotation = Quaternion.Identity;
+        private Quaternion m_StartRot;
 
         /// <summary>
         /// Begin dragging
@@ -360,6 +362,7 @@ namespace TestCubePlanet
         {
             //m_pBall.arcball_start(startPoint);
             startVector = Vector3.Normalize(startPoint);
+            m_StartRot = quatRotation;
         }
 
         public Vector3 axis;
@@ -382,7 +385,13 @@ namespace TestCubePlanet
 
             Quaternion delta = new Quaternion(axis.X, axis.Y, axis.Z, -cosa);
 
-            quatRotation = Quaternion.Multiply(quatRotation, delta);
+            //quatRotation = Quaternion.Multiply(quatRotation, delta);
+            quatRotation = Quaternion.Multiply(m_StartRot, delta);
+
+            //float cosAlpha = Vector3.Dot(startVector, currentVector);
+            //Vector3 orthoVec = Vector3.Cross(startVector, currentVector);
+
+            //quatRotation = m_StartRot * new Quaternion(-orthoVec, cosAlpha);
         }
 
         /// <summary>
@@ -399,9 +408,9 @@ namespace TestCubePlanet
             Direction = Vector3.Transform(Vector3.Forward, cameraRotation);//m_pBall.ab_quat);
             Position = Vector3.Zero - Direction * m_fDistance;
 
-            Vector3 cameraRotatedUpVector = Vector3.Transform(Vector3.Up, cameraRotation);//m_pBall.ab_quat);
+            Top = Vector3.Transform(Vector3.Up, cameraRotation);//m_pBall.ab_quat);
 
-            View = Matrix.CreateLookAt(Position, Vector3.Zero, cameraRotatedUpVector);
+            View = Matrix.CreateLookAt(Position, Vector3.Zero, Top);
         }
     }
 }

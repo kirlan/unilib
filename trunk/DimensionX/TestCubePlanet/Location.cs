@@ -18,8 +18,8 @@ namespace TestCubePlanet
 
         public bool m_bBorder = false;
 
-        public Location(uint iID, float fX, float fY, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost, bool bBorder)
-            : base(fX, fY, fR, eFace)
+        public Location(uint iID, float fX, float fY, float fSize, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost, bool bBorder)
+            : base(fX, fY, fSize, eFace, fR)
         {
             m_iID = iID;
             m_eGhost = eGhost;

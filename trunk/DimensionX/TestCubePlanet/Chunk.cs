@@ -80,17 +80,17 @@ namespace TestCubePlanet
         public Vertex m_pBoundBottomRight;
         public Vertex m_pBoundBottomLeft; 
 
-        public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fR, Cube.Face3D eFace)
+        public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fWholeChunkSize, int iR, Cube.Face3D eFace)
         {
             Microsoft.Xna.Framework.Color eColor = Microsoft.Xna.Framework.Color.White;
             eColor = Microsoft.Xna.Framework.Color.FromNonPremultiplied(127 + Rnd.Get(100), 127 + Rnd.Get(100), 127 + Rnd.Get(100), 256);
 
             m_sName = string.Format("{0} ({1}, {2})", eFace, fDX, fDY);
 
-            m_pBoundTopLeft = new Vertex((float)(pBounds2D.X + fDX - fR), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fR), fR, eFace);
-            m_pBoundTopRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fR), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fR), fR, eFace);
-            m_pBoundBottomRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fR), (float)(pBounds2D.Y + fDY - fR), fR, eFace);
-            m_pBoundBottomLeft = new Vertex((float)(pBounds2D.X + fDX - fR), (float)(pBounds2D.Y + fDY - fR), fR, eFace); 
+            m_pBoundTopLeft = new Vertex((float)(pBounds2D.X + fDX - fWholeChunkSize/2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize/2), fWholeChunkSize/2, eFace, iR);
+            m_pBoundTopRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize / 2), fWholeChunkSize / 2, eFace, iR);
+            m_pBoundBottomRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + fDY - fWholeChunkSize / 2), fWholeChunkSize / 2, eFace, iR);
+            m_pBoundBottomLeft = new Vertex((float)(pBounds2D.X + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + fDY - fWholeChunkSize / 2), fWholeChunkSize / 2, eFace, iR); 
 
             List<Location> cBorders = new List<Location>();
 
@@ -98,7 +98,7 @@ namespace TestCubePlanet
             for (int i = 0; i < locations.Length; i++)
             {
                 var loc = locations[i];
-                Location myLocation = new Location(loc.m_iID, (float)loc.Position[0] + fDX - fR, (float)loc.Position[1] + fDY - fR, fR, eFace, loc.m_eGhost, loc.m_bBorder);
+                Location myLocation = new Location(loc.m_iID, (float)loc.Position[0] + fDX - fWholeChunkSize / 2, (float)loc.Position[1] + fDY - fWholeChunkSize / 2, fWholeChunkSize / 2, iR, eFace, loc.m_eGhost, loc.m_bBorder);
                 myLocation.m_eColor = eColor;
                 cTempLocations.Add(myLocation);
                 loc.m_pTag = myLocation;
@@ -118,7 +118,7 @@ namespace TestCubePlanet
             for (int i = 0; i < vertices.Length; i++)
             {
                 var vertex = vertices[i];
-                Vertex myVertex = new Vertex((float)vertex.Circumcenter.X + fDX - fR, (float)vertex.Circumcenter.Y + fDY - fR, fR, eFace);
+                Vertex myVertex = new Vertex((float)vertex.Circumcenter.X + fDX - fWholeChunkSize / 2, (float)vertex.Circumcenter.Y + fDY - fWholeChunkSize / 2, fWholeChunkSize / 2, eFace, iR);
                 myVertex.m_eColor = eColor;
 
                 vertex.m_pTag = myVertex;

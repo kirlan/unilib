@@ -35,6 +35,13 @@ namespace TestCubePlanet
 
         System.Random r = new System.Random();
 
+        /// <summary>
+        /// Строим периметр для диаграммы Вороного, который бы позволял мостить сферу как нам угодно
+        /// </summary>
+        /// <param name="iInnerCount"></param>
+        /// <param name="k"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         private List<VertexCH> BuildBorder(out int iInnerCount, double k, int size)
         {
             List<VertexCH> locations = new List<VertexCH>();
@@ -191,6 +198,13 @@ namespace TestCubePlanet
             return locations;
         }
 
+        /// <summary>
+        /// Получаем плоскость, заполненную точками с распределением по Поиссону
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="count"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
         private List<SimpleVector3d> BuildPoisson(int size, int count, double k)
         {
             float Sbig = size * size;
@@ -218,6 +232,12 @@ namespace TestCubePlanet
 
         private Dictionary<CellCH, List<CellCH>> m_cZeroEdges = new Dictionary<CellCH, List<CellCH>>();
 
+        /// <summary>
+        /// Восстанавливаем информацию о смежных гранях по выходным данным MIConvexHull
+        /// </summary>
+        /// <param name="locations"></param>
+        /// <param name="cEdges"></param>
+        /// <returns></returns>
         private Rect RebuildEdges(List<VertexCH> locations, IEnumerable<VoronoiEdge<VertexCH, CellCH>> cEdges)
         {
             float fMinX = float.MaxValue;
@@ -355,6 +375,11 @@ namespace TestCubePlanet
 
         Dictionary<CellCH, CellCH> cChange = new Dictionary<CellCH, CellCH>();
 
+        /// <summary>
+        /// Игнорируем слишком короткие рёбра
+        /// </summary>
+        /// <param name="pFrom"></param>
+        /// <returns></returns>
         private CellCH SkipZero(CellCH pFrom)
         {
             if (cChange.ContainsKey(pFrom))
@@ -364,6 +389,11 @@ namespace TestCubePlanet
             return pFrom;
         }
 
+        /// <summary>
+        /// Объединяем вершины, соединённые слишком короткими рёбрами
+        /// </summary>
+        /// <param name="pAnchor"></param>
+        /// <param name="pNewValue"></param>
         private void Claim(CellCH pAnchor, CellCH pNewValue)
         {
             cChange[pAnchor] = pNewValue;
@@ -377,6 +407,8 @@ namespace TestCubePlanet
                 }
             }
         }
+
+        public int R = 150;
 
         public Cube(int locationsCount, int iFaceSize)
         {
@@ -407,12 +439,12 @@ namespace TestCubePlanet
             var locs = locations.ToArray();
             var verts = voronoiMesh.Vertices.ToArray();
 
-            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Backward);
-            m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Bottom);
-            m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Forward);
-            m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Left);
-            m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Right);
-            m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, Face3D.Top);
+            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Backward);
+            m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Bottom);
+            m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Forward);
+            m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Left);
+            m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Right);
+            m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Top);
 
             //m_cFaces[Face3D.Backward].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
             //                                            null, VertexCH.Transformation.Rotate180,
