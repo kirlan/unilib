@@ -633,8 +633,6 @@ namespace TestCubePlanet
 
         private Vector3 MapToSphere(int x, int y)
         {
-            //Matrix.CreateWorld
-
             Vector3 pCenter = GraphicsDevice.Viewport.Project(Vector3.Zero, m_pCamera.Projection, m_pCamera.View, Matrix.Identity) ;
 
             float fQuasyR = m_fR * m_pCamera.Position.Length() / (float)Math.Sqrt(m_pCamera.Position.Length() * m_pCamera.Position.Length() - m_fR*m_fR);
@@ -644,45 +642,70 @@ namespace TestCubePlanet
             pRadius = GraphicsDevice.Viewport.Project(pRadius, m_pCamera.Projection, m_pCamera.View, Matrix.Identity);
 
             float fRadius = (pRadius - pCenter).Length();
-            float fCenterX = pCenter.X - (float)Width / 2;
-            float fCenterY = pCenter.Y - (float)Height / 2;
+            float fCenterX = pCenter.X - (float)GraphicsDevice.Viewport.Width / 2;
+            float fCenterY = pCenter.Y - (float)GraphicsDevice.Viewport.Height / 2;
 
-            float fMouseX = x - (float)Width / 2;
-            float fMouseY = y - (float)Height / 2;
+            float fMouseX = x - (float)ClientRectangle.Width / 2;
+            float fMouseY = y - (float)ClientRectangle.Height / 2;
 
             Vector2 pRelativeMousePos = new Vector2((fMouseX - fCenterX),
                                                 (fMouseY - fCenterY));
-            //Vector2 normalizedVec = new Vector2(
-            //    (x - Width / 2) * 2.0f / Width,
-            //    (y - Height / 2) * 2.0f / Height
-            //);
 
-            //Vector3? pPoint = GetFocusedPoint(x, y);
-            //if (pPoint.HasValue)
-            //{
-            //    Matrix pCameraBasis = Matrix.CreateWorld(Vector3.Zero, m_pCamera.Direction, m_pCamera.Top);
-
-            //    pPoint = Vector3.Transform(pPoint.Value, pCameraBasis);
-
-            //    //return pPoint.Value;
-            //}
-
-            Vector3 pCamera = Vector3.Backward * m_pCamera.Position.Length();
-            Vector3 pPoint = new Vector3(pRelativeMousePos, 0);
-            Ray pRay = new Ray(pCamera, Vector3.Normalize(pPoint - pCamera));
-
-            BoundingSphere pSphere = new BoundingSphere(Vector3.Zero, fRadius);
-
-            float? fDist = pSphere.Intersects(pRay);
-
-            Vector3 pIntersect = Vector3.Zero;
-
-            if (fDist.HasValue)
+            //=================================================
+            Vector3? pPoint = GetFocusedPoint(x, y);
+            if (pPoint.HasValue)
             {
-                pIntersect = pRay.Position + pRay.Direction * fDist.Value;
-                return pIntersect;
-            }
+                Matrix pCameraBasis = Matrix.CreateWorld(Vector3.Zero, m_pCamera.Direction, m_pCamera.Top);
 
+                pPoint = Vector3.Transform(pPoint.Value, pCameraBasis);
+
+                float A = m_pCamera.Position.Length();
+                float B = pRelativeMousePos.Length();
+                float C = -A * B;
+
+                float x0 = -A * C / (A * A + B * B);
+                float y0 = -B * C / (A * A + B * B);
+                if (C * C + float.Epsilon < m_fR * m_fR * (A * A + B * B))
+                {
+                    if (Math.Abs(C * C - m_fR * m_fR * (A * A + B * B)) < float.Epsilon)
+                    {
+                        pRelativeMousePos = Vector2.Normalize(pRelativeMousePos) * x0;
+                    }
+                    else
+                    {
+                        float d = m_fR * m_fR - C * C / (A * A + B * B);
+                        float mult = (float)Math.Sqrt(d / (A * A + B * B));
+                        float ax, ay, bx, by;
+                        ax = x0 + B * mult;
+                        bx = x0 - B * mult;
+                        ay = y0 - A * mult;
+                        by = y0 + A * mult;
+                        pRelativeMousePos = Vector2.Normalize(pRelativeMousePos) * bx;
+                    }
+                }
+                //return pPoint.Value;
+            }
+            //=================================================
+
+            //=================================================
+            //Vector3 pCamera = Vector3.Backward * m_pCamera.Position.Length();
+            //Vector3 pPoint = new Vector3(pRelativeMousePos, 0);
+            //Ray pRay = new Ray(pCamera, Vector3.Normalize(pPoint - pCamera));
+
+            //BoundingSphere pSphere = new BoundingSphere(Vector3.Zero, fRadius);
+
+            //float? fDist = pSphere.Intersects(pRay);
+
+            //Vector3 pIntersect = Vector3.Zero;
+
+            //if (fDist.HasValue)
+            //{
+            //    pIntersect = pRay.Position + pRay.Direction * fDist.Value;
+            //    return pIntersect;
+            //}
+            //=================================================
+
+            //=================================================
             //Vector3 m = pPoint - pCamera;
             // //mouse position represents ray: eye + t*m
             // //intersecting with a sphere centered at the origin
@@ -694,12 +717,13 @@ namespace TestCubePlanet
             //    float t = (0.0f - b - (float)Math.Sqrt(root)) / a;
             //    return Vector3.Normalize(pCamera + (m * t));
             //}
+            //=================================================
 
             float length = pRelativeMousePos.LengthSquared();
 
-            if (length > fRadius*fRadius)
+            if (length > m_fR * m_fR)
             {
-                float norm = fRadius / (float)Math.Sqrt(length);
+                float norm = m_fR / (float)Math.Sqrt(length);
 
                 return new Vector3(
                     pRelativeMousePos.X * norm,
@@ -712,7 +736,7 @@ namespace TestCubePlanet
                 return new Vector3(
                     pRelativeMousePos.X,
                     pRelativeMousePos.Y,
-                    (float)Math.Sqrt(fRadius * fRadius - length)
+                    (float)Math.Sqrt(m_fR * m_fR - length)
                 );
             }
         }
