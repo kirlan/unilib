@@ -447,22 +447,21 @@ namespace TestCubePlanet
             if (!m_bReady)
                 return;
 
+            ////UpdatePicking();
             //m_pCamera.Update(m_pCameraDir, m_pCameraUp);
             if (m_bPanMode && m_pCurrentPicking != null)
             {
                 //m_pStartPicking = GetFocusedPoint(m_iStartMouseX, m_iStartMouseY);
                 //m_pCamera.StartDrag((Vector3)m_pStartPicking);
                 //m_pCamera.Drag(m_pCursorRay.Position);
-                m_pCamera.Drag((Vector3)m_pCurrentPicking);
+                m_pCamera.Drag((Vector3)m_pCurrentPicking, m_fR);
 
                 //float fD = m_pCurrentPicking.Value.Length();
 
                 // m_pLastPicking = m_pCurrentPicking;
                 m_pCurrentPicking = null;
-                m_bMouseUpdated = false;
             }
             m_pCamera.Update();
-            UpdatePicking();
 
             effect.World = Matrix.Identity;
             effect.View = m_pCamera.View;
@@ -617,130 +616,12 @@ namespace TestCubePlanet
 
         Ray m_pCursorRay;
 
-        private int m_iMouseX;
-        private int m_iMouseY;
-        private int m_iStartMouseX;
-        private int m_iStartMouseY;
-        private bool m_bMouseUpdated = false;
-
-        public void MouseMoving(int x, int y)
-        {
-            m_iMouseX = x;
-            m_iMouseY = y;
-
-            m_bMouseUpdated = true;
-        }
-
-        private Vector3 MapToSphere(int x, int y)
-        {
-            Vector3 pCenter = GraphicsDevice.Viewport.Project(Vector3.Zero, m_pCamera.Projection, m_pCamera.View, Matrix.Identity) ;
-
-            float fQuasyR = m_fR * m_pCamera.Position.Length() / (float)Math.Sqrt(m_pCamera.Position.Length() * m_pCamera.Position.Length() - m_fR*m_fR);
-
-            Vector3 pRadius = Vector3.Normalize(Vector3.Cross(m_pCamera.Position, m_pCamera.Top)) * fQuasyR;
-            float fDebug = pRadius.Length();
-            pRadius = GraphicsDevice.Viewport.Project(pRadius, m_pCamera.Projection, m_pCamera.View, Matrix.Identity);
-
-            float fRadius = (pRadius - pCenter).Length();
-            float fCenterX = pCenter.X - (float)GraphicsDevice.Viewport.Width / 2;
-            float fCenterY = pCenter.Y - (float)GraphicsDevice.Viewport.Height / 2;
-
-            float fMouseX = x - (float)ClientRectangle.Width / 2;
-            float fMouseY = y - (float)ClientRectangle.Height / 2;
-
-            Vector2 pRelativeMousePos = new Vector2((fMouseX - fCenterX),
-                                                (fMouseY - fCenterY));
-
-            //=================================================
-            Vector3? pPoint = GetFocusedPoint(x, y);
-            if (pPoint.HasValue)
-            {
-                Matrix pCameraBasis = Matrix.CreateWorld(Vector3.Zero, m_pCamera.Direction, m_pCamera.Top);
-
-                pPoint = Vector3.Transform(pPoint.Value, pCameraBasis);
-
-                float A = m_pCamera.Position.Length();
-                float B = pRelativeMousePos.Length();
-                float C = -A * B;
-
-                float x0 = -A * C / (A * A + B * B);
-                float y0 = -B * C / (A * A + B * B);
-                if (C * C + float.Epsilon < m_fR * m_fR * (A * A + B * B))
-                {
-                    if (Math.Abs(C * C - m_fR * m_fR * (A * A + B * B)) < float.Epsilon)
-                    {
-                        pRelativeMousePos = Vector2.Normalize(pRelativeMousePos) * x0;
-                    }
-                    else
-                    {
-                        float d = m_fR * m_fR - C * C / (A * A + B * B);
-                        float mult = (float)Math.Sqrt(d / (A * A + B * B));
-                        float ax, ay, bx, by;
-                        ax = x0 + B * mult;
-                        bx = x0 - B * mult;
-                        ay = y0 - A * mult;
-                        by = y0 + A * mult;
-                        pRelativeMousePos = Vector2.Normalize(pRelativeMousePos) * bx;
-                    }
-                }
-                //return pPoint.Value;
-            }
-            //=================================================
-
-            //=================================================
-            //Vector3 pCamera = Vector3.Backward * m_pCamera.Position.Length();
-            //Vector3 pPoint = new Vector3(pRelativeMousePos, 0);
-            //Ray pRay = new Ray(pCamera, Vector3.Normalize(pPoint - pCamera));
-
-            //BoundingSphere pSphere = new BoundingSphere(Vector3.Zero, fRadius);
-
-            //float? fDist = pSphere.Intersects(pRay);
-
-            //Vector3 pIntersect = Vector3.Zero;
-
-            //if (fDist.HasValue)
-            //{
-            //    pIntersect = pRay.Position + pRay.Direction * fDist.Value;
-            //    return pIntersect;
-            //}
-            //=================================================
-
-            //=================================================
-            //Vector3 m = pPoint - pCamera;
-            // //mouse position represents ray: eye + t*m
-            // //intersecting with a sphere centered at the origin
-            //float a = Vector3.Dot(m, m);
-            //float b = Vector3.Dot(pCamera, m);
-            //float root = (b * b) - a * (Vector3.Dot(pCamera, pCamera) - fRadius * fRadius);
-            //if (root > 0)
-            //{
-            //    float t = (0.0f - b - (float)Math.Sqrt(root)) / a;
-            //    return Vector3.Normalize(pCamera + (m * t));
-            //}
-            //=================================================
-
-            float length = pRelativeMousePos.LengthSquared();
-
-            if (length > m_fR * m_fR)
-            {
-                float norm = m_fR / (float)Math.Sqrt(length);
-
-                return new Vector3(
-                    pRelativeMousePos.X * norm,
-                    pRelativeMousePos.Y * norm,
-                    0.0f
-                );
-            }
-            else
-            {
-                return new Vector3(
-                    pRelativeMousePos.X,
-                    pRelativeMousePos.Y,
-                    (float)Math.Sqrt(m_fR * m_fR - length)
-                );
-            }
-        }
-        
+        /// <summary>
+        /// Возвращает точку пересечения луча курсора с идеальной планетарной сферой
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         private Vector3? GetFocusedPoint(int x, int y)
         {
             // Look up a collision ray based on the current cursor position. See the
@@ -761,35 +642,30 @@ namespace TestCubePlanet
         /// Runs a per-triangle picking algorithm over all the models in the scene,
         /// storing which triangle is currently under the cursor.
         /// </summary>
-        private void UpdatePicking()
+        public void UpdatePicking(int x, int y)
         {
             if (!m_bReady)
                 return;
 
-            if (!m_bMouseUpdated)
-                return;
-
             m_bPicked = false;
 
-            m_pCurrentPicking = GetFocusedPoint(m_iMouseX, m_iMouseY);
+            //m_pCurrentPicking = GetFocusedPoint(m_iMouseX, m_iMouseY);
 
-            if (!m_pCurrentPicking.HasValue)
-                return;
-
-            m_pCurrentPicking = MapToSphere(m_iMouseX, Height - m_iMouseY);
+            //if (!m_pCurrentPicking.HasValue)
+            //    return;
 
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
-            m_pCursorRay = CalculateCursorRay(m_iMouseX, m_iMouseY, m_pCamera.Projection, m_pCamera.View);
+            m_pCursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
 
             // calculate the ray-plane intersection point
-            Vector3 n = new Vector3(0f, 1f, 0f);
-            Plane p = new Plane(n, 0f);
+            //Vector3 n = new Vector3(0f, 1f, 0f);
+            //Plane p = new Plane(n, 0f);
 
             // calculate distance of intersection point from r.origin
-            float denominator = Vector3.Dot(p.Normal, m_pCursorRay.Direction);
-            float numerator = Vector3.Dot(p.Normal, m_pCursorRay.Position) + p.D;
-            float t = -(numerator / denominator);
+            //float denominator = Vector3.Dot(p.Normal, m_pCursorRay.Direction);
+            //float numerator = Vector3.Dot(p.Normal, m_pCursorRay.Position) + p.D;
+            //float t = -(numerator / denominator);
 
             //m_pPoints = new VertexPositionColor[4];
             //m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
@@ -840,7 +716,7 @@ namespace TestCubePlanet
 
                                 m_pSelectedSquare = pSquare;
 
-                                //m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
+                                m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
 
                                 //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.LimeGreen);
                                 //m_pPoints[3] = new VertexPositionColor(m_pCursorRay.Position + m_pCursorRay.Direction * (float)intersection, Microsoft.Xna.Framework.Color.LimeGreen);
@@ -948,10 +824,7 @@ namespace TestCubePlanet
             if (!m_pCurrentPicking.HasValue)
                 return;
 
-            m_pCamera.StartDrag(m_pCurrentPicking.Value);
-
-            m_iStartMouseX = m_iMouseX;
-            m_iStartMouseY = m_iMouseY;
+            m_pCamera.StartDrag(m_pCurrentPicking.Value, m_fR);
         }
     }
 }
