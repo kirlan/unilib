@@ -21,8 +21,7 @@ namespace TestCubePlanet
 
         private void cubePlanetDraw3d1_MouseMove(object sender, MouseEventArgs e)
         {
-            cubePlanetDraw3d1.MouseMoving(e.X, e.Y);
-            //cubePlanetDraw3d1.UpdatePicking(e.X, e.Y);
+            cubePlanetDraw3d1.UpdatePicking(e.X, e.Y);
         }
 
         Cube m_pCube = null;
