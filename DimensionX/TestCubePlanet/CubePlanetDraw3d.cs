@@ -351,15 +351,11 @@ namespace TestCubePlanet
 
         private Face[] m_aFaces = new Face[6];
 
-        bool m_bReady = false;
-
-        private float m_fR = 150;
+        private Cube m_pCube = null;
 
         public void Assign(Cube pCube, bool bColored)
         {
-            m_bReady = false;
-
-            m_fR = pCube.R;
+            m_pCube = null;
 
             int index = 0;
             foreach (var pFace in pCube.m_cFaces)
@@ -399,7 +395,11 @@ namespace TestCubePlanet
             //    foreach (var pFace in m_aFaces)
             //        foreach (var pSquare in pFace.m_aSquares)
             //            pSquare.CreateBoundingBoxBuffers(GraphicsDevice);
-            m_bReady = true;
+
+            m_pCube = pCube;
+            
+            if(m_pCamera != null)
+                m_pCamera.Initialize(pCube.R);
         }
 
         private Microsoft.Xna.Framework.Color eSkyColor = Microsoft.Xna.Framework.Color.Lavender;
@@ -425,17 +425,22 @@ namespace TestCubePlanet
             Application.Idle += delegate { Invalidate(); };
 
             m_pCamera = new ArcBallCamera(GraphicsDevice);
+            if (m_pCube != null)
+                m_pCamera.Initialize(m_pCube.R);
 
-            //if (m_bReady)
-            //    foreach (var pFace in m_aFaces)
-            //        foreach (var pSquare in pFace.m_aSquares)
-            //            pSquare.CreateBoundingBoxBuffers(GraphicsDevice);
+            timer = Stopwatch.StartNew();
+            lastTime = timer.Elapsed.TotalMilliseconds;
         }
 
         public bool m_bPanMode = false;
 
         public Vector3 m_pCameraDir = Vector3.Forward;
         public Vector3 m_pCameraUp = Vector3.Up;
+
+        public float m_fScaling = 0;
+        Stopwatch timer;
+        double lastTime = 0;
+        public int m_iFrame = 0;
 
         /// <summary>
         /// Draws the control.
@@ -444,21 +449,26 @@ namespace TestCubePlanet
         {
             GraphicsDevice.Clear(eSkyColor);
 
-            if (!m_bReady)
+            if (timer == null)
                 return;
 
-            ////UpdatePicking();
-            //m_pCamera.Update(m_pCameraDir, m_pCameraUp);
+            m_iFrame++; 
+            
+            double fElapsedTime = timer.Elapsed.TotalMilliseconds - lastTime;
+            lastTime = timer.Elapsed.TotalMilliseconds; 
+            
+            if (m_pCube == null)
+                return;
+
+            if (m_fScaling != 0)
+            {
+                m_pCamera.ZoomIn(m_fScaling * (float)fElapsedTime);
+                m_fScaling = 0;
+            }
+
             if (m_bPanMode && m_pCurrentPicking != null)
             {
-                //m_pStartPicking = GetFocusedPoint(m_iStartMouseX, m_iStartMouseY);
-                //m_pCamera.StartDrag((Vector3)m_pStartPicking);
-                //m_pCamera.Drag(m_pCursorRay.Position);
-                m_pCamera.Drag((Vector3)m_pCurrentPicking, m_fR);
-
-                //float fD = m_pCurrentPicking.Value.Length();
-
-                // m_pLastPicking = m_pCurrentPicking;
+                m_pCamera.Drag((Vector3)m_pCurrentPicking);
                 m_pCurrentPicking = null;
             }
             m_pCamera.Update();
@@ -593,26 +603,21 @@ namespace TestCubePlanet
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-                GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
-                    PrimitiveType.LineList,
-                    m_pPoints,
-                    0,  // index of the first vertex to draw
-                    m_pPoints.Length / 2   // number of primitives
-                );
+                //GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+                //    PrimitiveType.LineList,
+                //    m_pPoints,
+                //    0,  // index of the first vertex to draw
+                //    m_pPoints.Length / 2   // number of primitives
+                //);
             }
         }
 
         bool m_bPicked = false;
 
-        VertexPositionColor[] m_pPoints;
-
-        public int m_iCursorX = 0;
-        public int m_iCursorY = 0;
+        //VertexPositionColor[] m_pPoints;
 
         Square m_pSelectedSquare = null;
-
         public Vector3? m_pCurrentPicking = null;
-        Vector3? m_pStartPicking = null;
 
         Ray m_pCursorRay;
 
@@ -622,21 +627,21 @@ namespace TestCubePlanet
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        private Vector3? GetFocusedPoint(int x, int y)
-        {
-            // Look up a collision ray based on the current cursor position. See the
-            // Picking Sample documentation for a detailed explanation of this.
-            Ray pRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
+        //private Vector3? GetFocusedPoint(int x, int y)
+        //{
+        //    // Look up a collision ray based on the current cursor position. See the
+        //    // Picking Sample documentation for a detailed explanation of this.
+        //    Ray pRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
 
-            BoundingSphere pSphere = new BoundingSphere(Vector3.Zero, m_fR);
+        //    BoundingSphere pSphere = new BoundingSphere(Vector3.Zero, m_fR);
 
-            float? fDist = pSphere.Intersects(pRay);
+        //    float? fDist = pSphere.Intersects(pRay);
 
-            if (fDist.HasValue)
-                return pRay.Position + pRay.Direction*fDist.Value;
+        //    if (fDist.HasValue)
+        //        return pRay.Position + pRay.Direction*fDist.Value;
 
-            return null;
-        }
+        //    return null;
+        //}
 
         /// <summary>
         /// Runs a per-triangle picking algorithm over all the models in the scene,
@@ -644,7 +649,7 @@ namespace TestCubePlanet
         /// </summary>
         public void UpdatePicking(int x, int y)
         {
-            if (!m_bReady)
+            if (m_pCube == null)
                 return;
 
             m_bPicked = false;
@@ -673,11 +678,11 @@ namespace TestCubePlanet
             //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
             //m_pPoints[3] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
 
-            m_pPoints = new VertexPositionColor[4];
-            m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-            m_pPoints[1] = new VertexPositionColor(m_pCamera.startVector*2000, Microsoft.Xna.Framework.Color.Black);
-            m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-            m_pPoints[3] = new VertexPositionColor(Vector3.Normalize(m_pCamera.axis)*2000, Microsoft.Xna.Framework.Color.Black);
+            //m_pPoints = new VertexPositionColor[4];
+            //m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            //m_pPoints[1] = new VertexPositionColor(m_pCamera.startVector*2000, Microsoft.Xna.Framework.Color.Black);
+            //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            //m_pPoints[3] = new VertexPositionColor(Vector3.Normalize(m_pCamera.m_pFocusPointRotationAxis)*2000, Microsoft.Xna.Framework.Color.Black);
 
             //m_iCursorX = (int)m_pPoints[1].Position.X;
             //m_iCursorY = (int)m_pPoints[1].Position.Z;
@@ -824,7 +829,7 @@ namespace TestCubePlanet
             if (!m_pCurrentPicking.HasValue)
                 return;
 
-            m_pCamera.StartDrag(m_pCurrentPicking.Value, m_fR);
+            m_pCamera.StartDrag(m_pCurrentPicking.Value);
         }
     }
 }
