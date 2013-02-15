@@ -151,7 +151,7 @@ namespace TestCubePlanet
         {
             var radius = minimumDistance + Rnd.Get(minimumDistance);
 
-            var angle = Rnd.Get(MathHelper.TwoPi);
+            var angle = Rnd.Get(PoissonMathHelper.TwoPi);
 
             var newX = radius * Math.Sin(angle);
             var newY = radius * Math.Cos(angle);
@@ -165,7 +165,7 @@ namespace TestCubePlanet
         }
     }
 
-    public static class MathHelper
+    public static class PoissonMathHelper
     {
         public const float Pi = (float)Math.PI;
         public const float HalfPi = (float)(Math.PI / 2);
