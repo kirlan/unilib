@@ -121,17 +121,20 @@ namespace TestCubePlanet
             Vector2 pRelativeMousePos = new Vector2((fMouseX - fCenterX) * m_fR / fRadius,
                                                     (fMouseY - fCenterY) * m_fR / fRadius);
 
+            float fCenterLength = (float)Math.Sqrt(fCenterX * fCenterX + fCenterY * fCenterY);
+            float fCameraScreenDistance = (float)Math.Sqrt(Position.Length() * Position.Length() - fCenterLength * fCenterLength);
+
             //теперь вычислим точку пересечения проецирующего луча с планетарной сферой - в мировых координатах, но в системе координат, образованной вектором взгляда и перпендикулярной ему плоскоостью, проходящей через центр планеты.
             //эта сфера - и есть наш ArkBall.
             //поскольку мы уже знаем координаты проекции, то работать будем в плоскости, образованной камерой, центром планеты и найденной проекцией точки.
             //всё, что нам на самом деле нужно - это найти пересечение проецирующего луча на плоскости с окружностью радиуса планеты
             //использованные формулы взяты на http://e-maxx.ru/algo/circle_line_intersection
 
-            //коэффициенты уравнения прямой на плоскости, проходящей через точки (0, m_pCamera.Position.Length()) и (pRelativeMousePos.Length(), 0)
+            //коэффициенты уравнения прямой на плоскости, проходящей через точки (-fCenterLength, fCameraScreenDistance) и (pRelativeMousePos.Length(), 0)
             //уравнение прямой по двум точкам: (y1-y2)*x + (x2-x1)*y + (x1*y2 - x2*y1) = 0  <http://www.math.by/geometry/eqline.html>
-            float A = Position.Length();
-            float B = pRelativeMousePos.Length();
-            float C = -A * B;
+            float A = fCameraScreenDistance;
+            float B = pRelativeMousePos.Length() + fCenterLength;
+            float C = -pRelativeMousePos.Length() * fCameraScreenDistance;
 
             //некоторые промежуточные вычисления, для оптимизации
             float A2B2 = A * A + B * B;
