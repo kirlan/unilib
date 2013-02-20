@@ -76,6 +76,8 @@ namespace TestCubePlanet
 
         private void cubePlanetDraw3d1_MouseMove(object sender, MouseEventArgs e)
         {
+            cubePlanetDraw3d1.Focus();
+
             System.Drawing.Point p = new System.Drawing.Point(0, 0);
 
             if (m_pMap3DLastMouseLocation.X > 0)
@@ -88,8 +90,24 @@ namespace TestCubePlanet
             cubePlanetDraw3d1.UpdatePicking(e.X, e.Y);
 
             if (m_b3dMapRotate)
-                cubePlanetDraw3d1.m_pCamera.Orbit(0, p.Y * 0.01f, p.X * 0.01f);
+                cubePlanetDraw3d1.m_pCamera.Orbit(p.X * 0.01f, p.Y * 0.01f, 0);
                 //cubePlanetDraw3d1.m_pCamera.Orbit(p.X * 0.01f, p.Y * 0.01f, 0);
+
+            label4.Text = "Center X = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallCenter.X.ToString();
+            label5.Text = "Center Y = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallCenter.Y.ToString();
+            label6.Text = "Mouse X = " + cubePlanetDraw3d1.m_pCamera.m_fMouseX.ToString();
+            label7.Text = "Mouse Y = " + cubePlanetDraw3d1.m_pCamera.m_fMouseY.ToString();
+            label8.Text = "ArcBall X = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.X.ToString();
+            label9.Text = "ArcBall Y = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.Y.ToString();
+            label10.Text = "ArcBall Z = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.Z.ToString();
+
+            label11.Text = "Axis X = " + cubePlanetDraw3d1.m_pCamera.m_pCursorPointRotationAxis.X.ToString();
+            label12.Text = "Axis Y = " + cubePlanetDraw3d1.m_pCamera.m_pCursorPointRotationAxis.Y.ToString();
+            label13.Text = "Axis Z = " + cubePlanetDraw3d1.m_pCamera.m_pCursorPointRotationAxis.Z.ToString();
+
+            label14.Text = "Start X = " + cubePlanetDraw3d1.m_pCamera.m_pStartCursorPoint.X.ToString();
+            label15.Text = "Start Y = " + cubePlanetDraw3d1.m_pCamera.m_pStartCursorPoint.Y.ToString();
+            label16.Text = "Start Z = " + cubePlanetDraw3d1.m_pCamera.m_pStartCursorPoint.Z.ToString();
         }
 
         private void cubePlanetDraw3d1_MouseDown(object sender, MouseEventArgs e)
@@ -126,6 +144,11 @@ namespace TestCubePlanet
             label3.Text = "FPS: " + Math.Min(999, cubePlanetDraw3d1.m_iFrame).ToString();
         //    timer2.Interval = Math.Max(100, 800 / (mapDraw3d1.m_iFrame + 1));
             cubePlanetDraw3d1.m_iFrame = 0;
+        }
+
+        private void cubePlanetDraw3d1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

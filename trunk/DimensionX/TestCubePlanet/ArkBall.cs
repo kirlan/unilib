@@ -45,12 +45,6 @@ namespace TestCubePlanet
             generatePerspectiveProjectionMatrix(Microsoft.Xna.Framework.MathHelper.PiOver4);
 
             //this.Position = new Vector3(0, 0, 400);
-
-            Yaw = MathHelper.ToRadians(0);
-            Pitch = MathHelper.ToRadians(359);
-            Roll = MathHelper.ToRadians(0);
-            
-            m_fDistance = 250;
         }
 
         public void UpdateAspectRatio()
@@ -61,29 +55,45 @@ namespace TestCubePlanet
         public void Initialize(float fR)
         {
             m_fR = fR;
+
+            Yaw = MathHelper.ToRadians(90);
+            Pitch = MathHelper.ToRadians(0);
+            Roll = MathHelper.ToRadians(0);
+
+            m_fDistance = 250;
+
+            FocusPoint = Vector3.Backward * m_fR;
         }
 
         /// <summary>
         /// Сохранённая точка фокуса камеры на момент начала её перетаскивания
         /// ВАЖНО: координаты в системе ArkBall-полусферы!
         /// </summary>
-        private Vector3 m_pStartFocusPoint;
+        public Vector3 m_pStartCursorPoint = Vector3.Up*150;
         /// <summary>
         /// Текущий кватернион поворота точки фокуса камеры
         /// В мировых координатах.
         /// </summary>
-        private Quaternion m_pFocusPointRotation = Quaternion.Identity;
+        private Quaternion m_pCursorPointRotation = Quaternion.Identity;
         /// <summary>
         /// Сохранённый кватернион поворота точки фокуса камеры на момент начала перетаскивания
         /// В мировых координатах.
         /// </summary>
-        private Quaternion m_pStartFocusPointRotation;
+        private Quaternion m_pStartCursorPointRotation;
+
+
+        public float m_fRadius;
+        public float m_fMouseX;
+        public float m_fMouseY;
+        public Vector3 m_pArcBallMouseRelative;
+        public Vector3 m_pArcBallCenter;
+        private Matrix m_pCameraMatrix;
 
         /// <summary>
         /// ось поворота при перетаскивании точки фокуса камеры.
         /// ВАЖНО: координаты в системе ArkBall-полусферы!
         /// </summary>
-        private Vector3 m_pFocusPointRotationAxis;
+        public Vector3 m_pCursorPointRotationAxis = Vector3.Forward*150;
 
         /// <summary>
         /// переводит мировые координаты точки на поверхности планеты (с рельефом) в координаты
@@ -92,80 +102,76 @@ namespace TestCubePlanet
         /// <param name="pPoint">точка</param>
         /// <param name="m_fR">радиус планеты</param>
         /// <returns></returns>
-        private Vector3 MapToSphere(Vector3 pPoint)
+        public Vector3 MapToSphere(Vector3 pPoint)
         {
-            //получим экранные координаты центра планеты
-            Vector3 pCenter = GraphicsDevice.Viewport.Project(Vector3.Zero, Projection, View, Matrix.Identity);
-            pCenter.Z = 0;
-            float fCenterX = pCenter.X - (float)GraphicsDevice.Viewport.Width / 2;
-            float fCenterY = pCenter.Y - (float)GraphicsDevice.Viewport.Height / 2;
-
-            //float fQuasyR = m_fR * m_pCamera.Position.Length() / (float)Math.Sqrt(m_pCamera.Position.Length() * m_pCamera.Position.Length() - m_fR*m_fR);
-
-            //получим экранный размер радиуса планеты
-            Vector3 pRadius = Vector3.Normalize(Vector3.Cross(Position, Top)) * m_fR;// fQuasyR;
-            pRadius = GraphicsDevice.Viewport.Project(pRadius, Projection, View, Matrix.Identity);
-            pRadius.Z = 0;
-            float fRadius = (pRadius - pCenter).Length();
-
+            //экранные координаты точки на планетарной сфере под курсором
             Vector3 pMousePoint = GraphicsDevice.Viewport.Project(Vector3.Normalize(pPoint) * m_fR, Projection, View, Matrix.Identity);
-            pMousePoint.Z = 0;
+            //экранные координаты центра планеты
+            Vector3 pCenter = GraphicsDevice.Viewport.Project(Vector3.Zero, Projection, View, Matrix.Identity);
 
-            //точка, куда указывает мышь - в экранных координатах, относительно центра экрана
-            //float fMouseX = x - (float)ClientRectangle.Width / 2;
-            //float fMouseY = y - (float)ClientRectangle.Height / 2;
-            float fMouseX = pMousePoint.X - (float)GraphicsDevice.Viewport.Width / 2;
-            float fMouseY = -(pMousePoint.Y - (float)GraphicsDevice.Viewport.Height / 2);
+            //матрица вида с в камеро-центричной системе координат
+            Matrix pArcBallView = Matrix.CreateLookAt(Vector3.Backward * m_fDistance, Vector3.Zero, Vector3.Up);
 
-            //проекция точки, куда указывает мышь, в мировых координатах - на плоскость перпендикулярную вектору взгляда и проходящую через центр планеты
-            Vector2 pRelativeMousePos = new Vector2((fMouseX - fCenterX) * m_fR / fRadius,
-                                                    (fMouseY - fCenterY) * m_fR / fRadius);
+            //мировые координаты курсора в камеро-центричной системе координат
+            Vector3 pArcBallMouse = GraphicsDevice.Viewport.Unproject(pMousePoint, Projection, pArcBallView, Matrix.Identity);
+            m_fMouseX = pArcBallMouse.X;
+            m_fMouseY = pArcBallMouse.Y;
+            //мировые координаты центра плаенты в камеро-центричной системе координат
+            m_pArcBallCenter = GraphicsDevice.Viewport.Unproject(pCenter, Projection, pArcBallView, Matrix.Identity);
 
-            float fCenterLength = (float)Math.Sqrt(fCenterX * fCenterX + fCenterY * fCenterY);
-            float fCameraScreenDistance = (float)Math.Sqrt(Position.Length() * Position.Length() - fCenterLength * fCenterLength);
+            m_pCameraMatrix = Matrix.Identity;
+            Vector3 pLeft = Vector3.Cross(Direction, Top);
+            m_pCameraMatrix.M11 = pLeft.X;
+            m_pCameraMatrix.M21 = pLeft.Y;
+            m_pCameraMatrix.M31 = pLeft.Z;
 
-            //теперь вычислим точку пересечения проецирующего луча с планетарной сферой - в мировых координатах, но в системе координат, образованной вектором взгляда и перпендикулярной ему плоскоостью, проходящей через центр планеты.
-            //эта сфера - и есть наш ArkBall.
-            //поскольку мы уже знаем координаты проекции, то работать будем в плоскости, образованной камерой, центром планеты и найденной проекцией точки.
-            //всё, что нам на самом деле нужно - это найти пересечение проецирующего луча на плоскости с окружностью радиуса планеты
-            //использованные формулы взяты на http://e-maxx.ru/algo/circle_line_intersection
+            m_pCameraMatrix.M12 = Top.X;
+            m_pCameraMatrix.M22 = Top.Y;
+            m_pCameraMatrix.M32 = Top.Z;
 
-            //коэффициенты уравнения прямой на плоскости, проходящей через точки (-fCenterLength, fCameraScreenDistance) и (pRelativeMousePos.Length(), 0)
-            //уравнение прямой по двум точкам: (y1-y2)*x + (x2-x1)*y + (x1*y2 - x2*y1) = 0  <http://www.math.by/geometry/eqline.html>
-            float A = fCameraScreenDistance;
-            float B = pRelativeMousePos.Length() + fCenterLength;
-            float C = -pRelativeMousePos.Length() * fCameraScreenDistance;
+            m_pCameraMatrix.M13 = -Direction.X;
+            m_pCameraMatrix.M23 = -Direction.Y;
+            m_pCameraMatrix.M33 = -Direction.Z;
 
-            //некоторые промежуточные вычисления, для оптимизации
-            float A2B2 = A * A + B * B;
-            float R2 = m_fR * m_fR;
-            float C2 = C * C;
+            Vector3 pArcBallMouseBis = Vector3.Transform(Vector3.Normalize(pPoint) * m_fR, m_pCameraMatrix);
 
-            float bx, by = 0;
-            //условие того, что прямая вообще пересекается с окружностью
-            if (C2 + float.Epsilon < R2 * A2B2)
-            {
-                //пересечение нашей прямой и перпендикуляра к ней, проведённого из центра окружности
-                float x0 = -A * C / A2B2;
-                float y0 = -B * C / A2B2;
+            //координаты курсора относительно центра планеты в камеро-центричной системе координат
+            //т.е. фактически в системе ArkBall-полусферы
+            m_pArcBallMouseRelative = pArcBallMouse - m_pArcBallCenter;
 
-                if (Math.Abs(C2 - R2 * A2B2) < float.Epsilon)
-                {
-                    //если прямая не пересекает окружность, а только касается её, то найденная точка пересечения праямой и перпендикуляра и есть то, что мы ищем
-                    pRelativeMousePos = Vector2.Normalize(pRelativeMousePos) * x0;
-                }
-                else
-                {
-                    //иначе решаем квадратное уравнение...
-                    float d = R2 - C2 / A2B2;
-                    float mult = (float)Math.Sqrt(d / A2B2);
-                    bx = x0 - B * mult;
-                    by = y0 + A * mult;
-                    pRelativeMousePos = Vector2.Normalize(pRelativeMousePos) * bx;
-                }
-            }
+            Vector3 pArcBallMouseRelative = m_pArcBallMouseRelative + m_pArcBallCenter;
 
-            return new Vector3(pRelativeMousePos.X, pRelativeMousePos.Y, by);
+            Vector3 pArcBallMouse2 = GraphicsDevice.Viewport.Project(pArcBallMouseRelative, Projection, pArcBallView, Matrix.Identity);
+
+            Vector3 pMousePoint2 = Vector3.Normalize(GraphicsDevice.Viewport.Unproject(pArcBallMouse2, Projection, View, Matrix.Identity)) * m_fR;
+
+            Matrix pCameraMatrixReverce = Matrix.Invert(m_pCameraMatrix);
+
+            Vector3 pMousePoint2bis = Vector3.Transform(pArcBallMouseBis, pCameraMatrixReverce);
+
+            Vector3 pMousePoint3bis = Vector3.Transform(m_pStartCursorPoint, pCameraMatrixReverce);
+
+            m_pArcBallMouseRelative = pArcBallMouseBis;
+
+            return m_pArcBallMouseRelative;
+        }
+
+        public Vector3 MapFromSphere(Vector3 pPoint)
+        {
+            //матрица вида с в камеро-центричной системе координат
+            Matrix pArcBallView = Matrix.CreateLookAt(Vector3.Backward * m_fDistance, Vector3.Zero, Vector3.Up);
+
+            Vector3 pArcBallMouseRelative = pPoint + m_pArcBallCenter;
+
+            Vector3 pArcBallMouse = GraphicsDevice.Viewport.Project(pArcBallMouseRelative, Projection, pArcBallView, Matrix.Identity);
+
+            Vector3 pMousePoint = Vector3.Normalize(GraphicsDevice.Viewport.Unproject(pArcBallMouse, Projection, View, Matrix.Identity)) * m_fR;
+
+            Matrix pCameraMatrixReverce = Matrix.Invert(m_pCameraMatrix);
+            Vector3 pMousePoint2bis = Vector3.Transform(pPoint, pCameraMatrixReverce);
+
+            return pMousePoint2bis;
+            //return pMousePoint;
         }
 
         /// <summary>
@@ -175,9 +181,12 @@ namespace TestCubePlanet
         /// <param name="m_fR">радиус планеты</param>
         public void StartDrag(Vector3 startPoint)
         {
-            m_pStartFocusPoint = Vector3.Normalize(MapToSphere(startPoint));
-            m_pStartFocusPointRotation = m_pFocusPointRotation;
+            m_pStartCursorPoint = MapToSphere(startPoint);
+            m_pStartCursorPointRotation = m_pCursorPointRotation;
         }
+
+        public Vector3 m_pAxis = Vector3.Up;
+        public Vector3 m_pStart = Vector3.Forward;
 
         /// <summary>
         /// Перетащить захваченную точку фокуса камеры на поверхности планеты в новые координаты
@@ -186,32 +195,41 @@ namespace TestCubePlanet
         /// <param name="fR">радиус планеты</param>
         public void Drag(Vector3 currentPoint)
         {
-            Vector3 pCurrentFocusPoint = Vector3.Normalize(MapToSphere(currentPoint));
+            Vector3 pStartCursorPoint = MapFromSphere(m_pStartCursorPoint);
+            //Vector3 pCurrentCursorPoint = Vector3.Normalize(MapToSphere(currentPoint));
+            Vector3 pCurrentCursorPoint = Vector3.Normalize(currentPoint)*m_fR;
 
-            if (m_pStartFocusPoint.Equals(pCurrentFocusPoint))
+            if (pStartCursorPoint.Equals(pCurrentCursorPoint))
                 return;
 
-            float fCos2A = Vector3.Dot(m_pStartFocusPoint, pCurrentFocusPoint);
+            float fCos2A = Math.Min(1, Vector3.Dot(Vector3.Normalize(pStartCursorPoint), Vector3.Normalize(pCurrentCursorPoint)));
 
             float fSinA = (float)Math.Sqrt((1.0 - fCos2A) * 0.5);
             float fCosA = (float)Math.Sqrt((1.0 + fCos2A) * 0.5);
 
-            m_pFocusPointRotationAxis = Vector3.Normalize(Vector3.Cross(m_pStartFocusPoint, pCurrentFocusPoint)) * fSinA;
+            m_pCursorPointRotationAxis = Vector3.Normalize(Vector3.Cross(pStartCursorPoint, pCurrentCursorPoint)) * fSinA;
 
-            Quaternion pFocusPointRotationDelta = new Quaternion(m_pFocusPointRotationAxis.X, m_pFocusPointRotationAxis.Y, m_pFocusPointRotationAxis.Z, -fCosA);
+            if (float.IsNaN(m_pCursorPointRotationAxis.X) ||
+                float.IsNaN(m_pCursorPointRotationAxis.Y) ||
+                float.IsNaN(m_pCursorPointRotationAxis.Z))
+                throw new Exception();
 
-            m_pFocusPointRotation = Quaternion.Multiply(m_pStartFocusPointRotation, pFocusPointRotationDelta);
+            Quaternion pFocusPointRotationDelta = new Quaternion(m_pCursorPointRotationAxis.X, m_pCursorPointRotationAxis.Y, m_pCursorPointRotationAxis.Z, -fCosA);
+
+            m_pCursorPointRotation = Quaternion.Multiply(m_pStartCursorPointRotation, pFocusPointRotationDelta);
+
+            StartDrag(currentPoint);
         }
 
         public void Orbit(float YawChange, float PitchChange, float RollChange)
         {
-            //Yaw += RollChange;
-            Pitch -= RollChange;
+            Yaw += YawChange;
+            Pitch -= PitchChange;
 
-            //Pitch = Math.Max(MathHelper.ToRadians(1), Math.Min(MathHelper.ToRadians(90), this.Pitch));
+            Pitch = Math.Max(MathHelper.ToRadians(1), Math.Min(MathHelper.ToRadians(89), this.Pitch));
             //this.Pitch = Math.Max(MathHelper.ToRadians(91), Math.Min(MathHelper.ToRadians(269), this.Pitch));
 
-            //Roll += RollChange;
+            Roll += RollChange;
         }
 
         public void ZoomIn(float fDistance)
@@ -234,21 +252,29 @@ namespace TestCubePlanet
         {
             UpdateAspectRatio();
 
-            Matrix pFocusPointRotation = Matrix.CreateFromQuaternion(m_pFocusPointRotation);
+            Matrix pFocusPointRotation = Matrix.CreateFromQuaternion(m_pCursorPointRotation);
 
             Vector3 pFocusPointDirection = Vector3.Transform(Vector3.Backward, pFocusPointRotation);
             FocusPoint = pFocusPointDirection * m_fR;
 
-            Matrix cameraRotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
-            Vector3 camDir = Vector3.Transform(Vector3.Forward, cameraRotation);
+            //Matrix cameraRotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+            Matrix cameraRotationYaw = Matrix.CreateFromAxisAngle(Vector3.Backward, Yaw);
+            Matrix cameraRotationPitch = Matrix.CreateFromAxisAngle(Vector3.Left, Pitch);
+            Vector3 camDir = Vector3.Transform(Vector3.Up, cameraRotationPitch);
+            camDir = Vector3.Transform(camDir, cameraRotationYaw);
 
             Direction = Vector3.Transform(camDir, pFocusPointRotation);
             Position = FocusPoint - Direction * m_fDistance;
 
             Vector3 cameraLeft = Vector3.Cross(FocusPoint, Direction);
-            Top = Vector3.Normalize(Vector3.Cross(cameraLeft, Direction));
+            Top = Vector3.Normalize(Vector3.Cross(-cameraLeft, Direction));
 
             View = Matrix.CreateLookAt(Position, FocusPoint, Top);
+
+            m_pAxis = Vector3.Normalize(m_pCursorPointRotationAxis)*m_fR;
+            m_pStart = MapFromSphere(m_pStartCursorPoint);
         }
+
+        public float m_fCameraLength { get; set; }
     }
 }
