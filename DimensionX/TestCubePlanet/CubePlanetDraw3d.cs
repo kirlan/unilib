@@ -466,10 +466,14 @@ namespace TestCubePlanet
                 m_fScaling = 0;
             }
 
-            if (m_bPanMode && m_pCurrentPicking != null)
+            if (m_pCurrentPicking.HasValue)
             {
-                m_pCamera.Drag((Vector3)m_pCurrentPicking);
-                m_pCurrentPicking = null;
+                m_pCamera.MapToSphere(m_pCurrentPicking.Value);
+                if (m_bPanMode)
+                {
+                    m_pCamera.Drag(m_pCurrentPicking.Value);
+                    m_pCurrentPicking = null;
+                }
             }
             m_pCamera.Update();
 
@@ -603,45 +607,23 @@ namespace TestCubePlanet
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-                //GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
-                //    PrimitiveType.LineList,
-                //    m_pPoints,
-                //    0,  // index of the first vertex to draw
-                //    m_pPoints.Length / 2   // number of primitives
-                //);
+                GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+                    PrimitiveType.LineList,
+                    m_pPoints,
+                    0,  // index of the first vertex to draw
+                    m_pPoints.Length / 2   // number of primitives
+                );
             }
         }
 
         bool m_bPicked = false;
 
-        //VertexPositionColor[] m_pPoints;
+        VertexPositionColor[] m_pPoints;
 
         Square m_pSelectedSquare = null;
         public Vector3? m_pCurrentPicking = null;
 
         Ray m_pCursorRay;
-
-        /// <summary>
-        /// Возвращает точку пересечения луча курсора с идеальной планетарной сферой
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        //private Vector3? GetFocusedPoint(int x, int y)
-        //{
-        //    // Look up a collision ray based on the current cursor position. See the
-        //    // Picking Sample documentation for a detailed explanation of this.
-        //    Ray pRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
-
-        //    BoundingSphere pSphere = new BoundingSphere(Vector3.Zero, m_fR);
-
-        //    float? fDist = pSphere.Intersects(pRay);
-
-        //    if (fDist.HasValue)
-        //        return pRay.Position + pRay.Direction*fDist.Value;
-
-        //    return null;
-        //}
 
         /// <summary>
         /// Runs a per-triangle picking algorithm over all the models in the scene,
@@ -678,11 +660,11 @@ namespace TestCubePlanet
             //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
             //m_pPoints[3] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
 
-            //m_pPoints = new VertexPositionColor[4];
-            //m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-            //m_pPoints[1] = new VertexPositionColor(m_pCamera.startVector*2000, Microsoft.Xna.Framework.Color.Black);
-            //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-            //m_pPoints[3] = new VertexPositionColor(Vector3.Normalize(m_pCamera.m_pFocusPointRotationAxis)*2000, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints = new VertexPositionColor[4];
+            m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[1] = new VertexPositionColor(m_pCamera.m_pStart * 1.2f, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[2] = new VertexPositionColor(-m_pCamera.m_pAxis * 1.2f, Microsoft.Xna.Framework.Color.DarkRed);
+            m_pPoints[3] = new VertexPositionColor(m_pCamera.m_pAxis * 1.2f, Microsoft.Xna.Framework.Color.Violet);
 
             //m_iCursorX = (int)m_pPoints[1].Position.X;
             //m_iCursorY = (int)m_pPoints[1].Position.Z;
