@@ -120,8 +120,10 @@ namespace TestCubePlanet
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left && cubePlanetDraw3d1.m_pCurrentPicking.HasValue)
             {
-                cubePlanetDraw3d1.m_bPanMode = true;
-                cubePlanetDraw3d1.StartDrag();
+                //cubePlanetDraw3d1.m_bPanMode = true;
+                //cubePlanetDraw3d1.StartDrag();
+                cubePlanetDraw3d1.m_pCamera.m_cTargets.Clear();
+                cubePlanetDraw3d1.m_pTarget = cubePlanetDraw3d1.m_pCurrentPicking;
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 m_b3dMapRotate = true;
