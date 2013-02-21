@@ -14,7 +14,7 @@ namespace TestCubePlanet
     public struct Region8
     {
         //the corners of the region
-        private Vector3 tfl, tfr, tbl, tbr, bfl, bfr, bbl, bbr;
+        private Vector3 tfl, tfr, tbl, tbr, bfl, bfr, bbl, bbr, center;
         #region public corner accessors
         public Vector3 TopFrontLeft { get { return tfl; } }
         public Vector3 TopFrontRight { get { return tfr; } }
@@ -24,6 +24,7 @@ namespace TestCubePlanet
         public Vector3 BottomFrontRight { get { return bfr; } }
         public Vector3 BottomBackLeft { get { return bbl; } }
         public Vector3 BottomBackRight { get { return bbr; } }
+        public Vector3 Center { get { return center; } }
         #endregion
         //vertices to represent the corners for drawing
         private VertexPositionColor[] vertices;
@@ -31,6 +32,7 @@ namespace TestCubePlanet
         private Plane front, back, top, bottom, left, right;
         private Plane[] planes;
         public Plane[] Planes { get { return planes; } }
+        public Plane Top { get { return top; } }
         //stores dot products used in collsions.
         public float[] dotProducts;
 
@@ -70,8 +72,8 @@ namespace TestCubePlanet
             vertices = new VertexPositionColor[8];
 
             //the average of the corners represents the center of the region
-            Vector3 avg = tfl + tfr + tbl + tbr + bfl + bfr + bbl + bbr;
-            avg /= 8;
+            center = tfl + tfr + tbl + tbr + bfl + bfr + bbl + bbr;
+            center /= 8;
 
             //Fix normals to point outward
             for (int p = 0; p < planes.Length; p++)
@@ -79,7 +81,7 @@ namespace TestCubePlanet
                 //choose the most convenient point on the plane
                 Vector3 pointOnPlane = planes[p].Normal * -planes[p].D;
                 //create a vector from the plane to the center
-                Vector3 planeToAvg = avg - pointOnPlane;
+                Vector3 planeToAvg = center - pointOnPlane;
                 //if the normal of the plane and the vector to the center point in the same direction, invert the normal
                 if (Vector3.Dot(planeToAvg, planes[p].Normal) > 0)
                 {
