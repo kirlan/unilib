@@ -97,13 +97,19 @@ namespace TestCubePlanet
             label5.Text = "Center Y = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallCenter.Y.ToString();
             label6.Text = "Mouse X = " + cubePlanetDraw3d1.m_pCamera.m_fMouseX.ToString();
             label7.Text = "Mouse Y = " + cubePlanetDraw3d1.m_pCamera.m_fMouseY.ToString();
-            label8.Text = "ArcBall X = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.X.ToString();
-            label9.Text = "ArcBall Y = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.Y.ToString();
-            label10.Text = "ArcBall Z = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.Z.ToString();
+            //label8.Text = "ArcBall X = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.X.ToString();
+            //label9.Text = "ArcBall Y = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.Y.ToString();
+            //label10.Text = "ArcBall Z = " + cubePlanetDraw3d1.m_pCamera.m_pArcBallMouseRelative.Z.ToString();
+            if (cubePlanetDraw3d1.m_pCurrentPicking.HasValue)
+            {
+                label8.Text = "Selection X = " + cubePlanetDraw3d1.m_pCurrentPicking.Value.X.ToString();
+                label9.Text = "Selection Y = " + cubePlanetDraw3d1.m_pCurrentPicking.Value.Y.ToString();
+                label10.Text = "Selection Z = " + cubePlanetDraw3d1.m_pCurrentPicking.Value.Z.ToString();
+            }
 
-            label11.Text = "Axis X = " + cubePlanetDraw3d1.m_pCamera.m_pCursorPointRotationAxis.X.ToString();
-            label12.Text = "Axis Y = " + cubePlanetDraw3d1.m_pCamera.m_pCursorPointRotationAxis.Y.ToString();
-            label13.Text = "Axis Z = " + cubePlanetDraw3d1.m_pCamera.m_pCursorPointRotationAxis.Z.ToString();
+            label11.Text = "Axis X = " + cubePlanetDraw3d1.m_pCamera.m_pAxis.X.ToString();
+            label12.Text = "Axis Y = " + cubePlanetDraw3d1.m_pCamera.m_pAxis.Y.ToString();
+            label13.Text = "Axis Z = " + cubePlanetDraw3d1.m_pCamera.m_pAxis.Z.ToString();
 
             label14.Text = "Start X = " + cubePlanetDraw3d1.m_pCamera.m_pStartCursorPoint.X.ToString();
             label15.Text = "Start Y = " + cubePlanetDraw3d1.m_pCamera.m_pStartCursorPoint.Y.ToString();
