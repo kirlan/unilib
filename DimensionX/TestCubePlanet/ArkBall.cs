@@ -81,6 +81,9 @@ namespace TestCubePlanet
         /// </summary>
         private Quaternion m_pStartCursorPointRotation;
 
+        public Vector3 m_pTarget = Vector3.Backward * 150;
+        private Quaternion m_pTargetRotation1 = Quaternion.Identity;
+        private Quaternion m_pTargetRotation2 = Quaternion.Identity;
 
         public float m_fRadius;
         public float m_fMouseX;
@@ -94,85 +97,6 @@ namespace TestCubePlanet
         /// ВАЖНО: координаты в системе ArkBall-полусферы!
         /// </summary>
         public Vector3 m_pCursorPointRotationAxis = Vector3.Forward*150;
-
-        /// <summary>
-        /// переводит мировые координаты точки на поверхности планеты (с рельефом) в координаты
-        /// точки на поверхности ArkBall полусферы, всегда ориентированной по камере, основанием от наблюдателя
-        /// </summary>
-        /// <param name="pPoint">точка</param>
-        /// <param name="m_fR">радиус планеты</param>
-        /// <returns></returns>
-        public Vector3 MapToSphere(Vector3 pPoint)
-        {
-            //экранные координаты точки на планетарной сфере под курсором
-            Vector3 pMousePoint = GraphicsDevice.Viewport.Project(Vector3.Normalize(pPoint) * m_fR, Projection, View, Matrix.Identity);
-            //экранные координаты центра планеты
-            Vector3 pCenter = GraphicsDevice.Viewport.Project(Vector3.Zero, Projection, View, Matrix.Identity);
-
-            //матрица вида с в камеро-центричной системе координат
-            Matrix pArcBallView = Matrix.CreateLookAt(Vector3.Backward * m_fDistance, Vector3.Zero, Vector3.Up);
-
-            //мировые координаты курсора в камеро-центричной системе координат
-            Vector3 pArcBallMouse = GraphicsDevice.Viewport.Unproject(pMousePoint, Projection, pArcBallView, Matrix.Identity);
-            m_fMouseX = pArcBallMouse.X;
-            m_fMouseY = pArcBallMouse.Y;
-            //мировые координаты центра плаенты в камеро-центричной системе координат
-            m_pArcBallCenter = GraphicsDevice.Viewport.Unproject(pCenter, Projection, pArcBallView, Matrix.Identity);
-
-            m_pCameraMatrix = Matrix.Identity;
-            Vector3 pLeft = Vector3.Cross(Direction, Top);
-            m_pCameraMatrix.M11 = pLeft.X;
-            m_pCameraMatrix.M21 = pLeft.Y;
-            m_pCameraMatrix.M31 = pLeft.Z;
-
-            m_pCameraMatrix.M12 = Top.X;
-            m_pCameraMatrix.M22 = Top.Y;
-            m_pCameraMatrix.M32 = Top.Z;
-
-            m_pCameraMatrix.M13 = -Direction.X;
-            m_pCameraMatrix.M23 = -Direction.Y;
-            m_pCameraMatrix.M33 = -Direction.Z;
-
-            Vector3 pArcBallMouseBis = Vector3.Transform(Vector3.Normalize(pPoint) * m_fR, m_pCameraMatrix);
-
-            //координаты курсора относительно центра планеты в камеро-центричной системе координат
-            //т.е. фактически в системе ArkBall-полусферы
-            m_pArcBallMouseRelative = pArcBallMouse - m_pArcBallCenter;
-
-            Vector3 pArcBallMouseRelative = m_pArcBallMouseRelative + m_pArcBallCenter;
-
-            Vector3 pArcBallMouse2 = GraphicsDevice.Viewport.Project(pArcBallMouseRelative, Projection, pArcBallView, Matrix.Identity);
-
-            Vector3 pMousePoint2 = Vector3.Normalize(GraphicsDevice.Viewport.Unproject(pArcBallMouse2, Projection, View, Matrix.Identity)) * m_fR;
-
-            Matrix pCameraMatrixReverce = Matrix.Invert(m_pCameraMatrix);
-
-            Vector3 pMousePoint2bis = Vector3.Transform(pArcBallMouseBis, pCameraMatrixReverce);
-
-            Vector3 pMousePoint3bis = Vector3.Transform(m_pStartCursorPoint, pCameraMatrixReverce);
-
-            m_pArcBallMouseRelative = pArcBallMouseBis;
-
-            return m_pArcBallMouseRelative;
-        }
-
-        public Vector3 MapFromSphere(Vector3 pPoint)
-        {
-            //матрица вида с в камеро-центричной системе координат
-            Matrix pArcBallView = Matrix.CreateLookAt(Vector3.Backward * m_fDistance, Vector3.Zero, Vector3.Up);
-
-            Vector3 pArcBallMouseRelative = pPoint + m_pArcBallCenter;
-
-            Vector3 pArcBallMouse = GraphicsDevice.Viewport.Project(pArcBallMouseRelative, Projection, pArcBallView, Matrix.Identity);
-
-            Vector3 pMousePoint = Vector3.Normalize(GraphicsDevice.Viewport.Unproject(pArcBallMouse, Projection, View, Matrix.Identity)) * m_fR;
-
-            Matrix pCameraMatrixReverce = Matrix.Invert(m_pCameraMatrix);
-            Vector3 pMousePoint2bis = Vector3.Transform(pPoint, pCameraMatrixReverce);
-
-            return pMousePoint2bis;
-            //return pMousePoint;
-        }
 
         /// <summary>
         /// Захватить точку для перемещения точки фокуса камеры на поверхности планеты
@@ -256,7 +180,6 @@ namespace TestCubePlanet
             Pitch -= PitchChange;
 
             Pitch = Math.Max(MathHelper.ToRadians(1), Math.Min(MathHelper.ToRadians(89), this.Pitch));
-            //this.Pitch = Math.Max(MathHelper.ToRadians(91), Math.Min(MathHelper.ToRadians(269), this.Pitch));
 
             Roll += RollChange;
         }
@@ -272,7 +195,80 @@ namespace TestCubePlanet
 
             if (m_fDistance > 1000)
                 m_fDistance = 1000;
-        }        
+        }
+
+        public List<KeyValuePair<Vector3, Vector3>> m_cTargets = new List<KeyValuePair<Vector3,Vector3>>();
+
+        private Quaternion GetRotation(Vector3 src, Vector3 dest)
+        {
+            src.Normalize();
+            dest.Normalize();
+
+            float fCosA = Vector3.Dot(src, dest);
+
+            if (fCosA >= 1f)
+            {
+                return Quaternion.Identity;
+            }
+            else
+            {
+                if (fCosA < (1e-6f - 1.0f))
+                {
+                    Vector3 axis = Vector3.Cross(Vector3.UnitX, src);
+
+                    if (axis.LengthSquared() == 0)
+                    {
+                        axis = Vector3.Cross(Vector3.UnitY, src);
+                    }
+
+                    axis.Normalize();
+                    return Quaternion.CreateFromAxisAngle(axis, MathHelper.Pi);
+                }
+                else
+                {
+                    float s = (float)Math.Sqrt((1 + fCosA) * 2);
+                    float invS = 1 / s;
+
+                    float fCosHalfA = (float)Math.Sqrt((1 + fCosA) / 2);
+                    float fSinHalfA = (float)Math.Sqrt((1 - fCosA) / 2);
+
+                    Vector3 c = Vector3.Cross(src, dest);
+                    Quaternion q = new Quaternion(invS * c, 0.5f * s);
+                    //Quaternion q = new Quaternion(fSinHalfA * c, fCosHalfA);
+                    q.Normalize();
+
+                    return q;
+                }
+            }
+        }
+        
+        public void MoveTarget(Vector3 pNewPosition, float fDistance)
+        {
+            //Quaternion pTargetRotationDelta1 = GetRotation(Vector3.Backward, pNewPosition, MathHelper.ToRadians(180));
+
+            m_pTargetRotation1 = GetRotation(Vector3.Backward, m_pTarget);
+            Vector3 pDelta = pNewPosition - m_pTarget;
+            if (pDelta.Length() > 10)
+                pDelta = Vector3.Normalize(pDelta)*10;
+            m_pTargetRotation2 = GetRotation(m_pTarget, m_pTarget + pDelta);
+
+            //m_pTargetRotation = Quaternion.Lerp(m_pTargetRotation, pTargetRotationDelta1, 0.1f);
+
+            Vector3 pTarget1 = Vector3.Transform(Vector3.Backward, Matrix.CreateFromQuaternion(m_pTargetRotation1)) * m_fR;
+            Vector3 pTarget2 = Vector3.Transform(pTarget1, Matrix.CreateFromQuaternion(m_pTargetRotation2));
+
+            //Vector3 pNewTarget = Vector3.Transform(Vector3.Backward, Matrix.CreateFromQuaternion(m_pTargetRotation1)) * m_fR;
+
+            Vector3 pNewTarget = pTarget2;
+
+            Vector3 pTargetDir1 = Vector3.Transform(Vector3.Backward*m_fR + Vector3.Up, Matrix.CreateFromQuaternion(m_pTargetRotation1));
+            Vector3 pTargetDir2 = Vector3.Transform(pTargetDir1, Matrix.CreateFromQuaternion(m_pTargetRotation2));
+
+            m_cTargets.Add(new KeyValuePair<Vector3, Vector3>(pTarget2, pTargetDir2 - pTarget2));
+            m_pTarget = pNewTarget;
+
+            return;
+        }
 
         /// <summary>
         /// Обновить положение камеры
@@ -281,18 +277,21 @@ namespace TestCubePlanet
         {
             UpdateAspectRatio();
 
-            Matrix pFocusPointRotation = Matrix.CreateFromQuaternion(m_pCursorPointRotation);
+            //Matrix pFocusPointRotation = Matrix.CreateFromQuaternion(m_pCursorPointRotation);
+            Matrix pFocusPointRotation1 = Matrix.CreateFromQuaternion(m_pTargetRotation1);
+            Matrix pFocusPointRotation2 = Matrix.CreateFromQuaternion(m_pTargetRotation2);
 
-            Vector3 pFocusPointDirection = Vector3.Transform(Vector3.Backward, pFocusPointRotation);
+            Vector3 pFocusPointDirection = Vector3.Transform(Vector3.Backward, pFocusPointRotation1);
+            pFocusPointDirection = Vector3.Transform(pFocusPointDirection, pFocusPointRotation2);
             FocusPoint = pFocusPointDirection * m_fR;
 
-            //Matrix cameraRotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
             Matrix cameraRotationYaw = Matrix.CreateFromAxisAngle(Vector3.Backward, Yaw);
             Matrix cameraRotationPitch = Matrix.CreateFromAxisAngle(Vector3.Left, Pitch);
             Vector3 camDir = Vector3.Transform(Vector3.Up, cameraRotationPitch);
             camDir = Vector3.Transform(camDir, cameraRotationYaw);
 
-            Direction = Vector3.Transform(camDir, pFocusPointRotation);
+            Direction = Vector3.Transform(camDir, pFocusPointRotation1);
+            Direction = Vector3.Transform(Direction, pFocusPointRotation2);
             Position = FocusPoint - Direction * m_fDistance;
 
             Vector3 cameraLeft = Vector3.Cross(FocusPoint, Direction);
@@ -301,7 +300,7 @@ namespace TestCubePlanet
             View = Matrix.CreateLookAt(Position, FocusPoint, Top);
 
             m_pAxis = Vector3.Normalize(m_pCursorPointRotationAxis)*m_fR;
-            m_pStart = m_pStartCursorPoint * m_fR;// MapFromSphere(m_pStartCursorPoint);
+            m_pStart = m_pStartCursorPoint * m_fR;
         }
 
         public float m_fCameraLength { get; set; }
