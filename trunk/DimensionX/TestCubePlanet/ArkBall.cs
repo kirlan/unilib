@@ -181,7 +181,7 @@ namespace TestCubePlanet
         /// <param name="m_fR">радиус планеты</param>
         public void StartDrag(Vector3 startPoint)
         {
-            m_pStartCursorPoint = MapToSphere(startPoint);
+            m_pStartCursorPoint = Vector3.Normalize(startPoint);// MapToSphere(startPoint);
             m_pStartCursorPointRotation = m_pCursorPointRotation;
         }
 
@@ -195,9 +195,12 @@ namespace TestCubePlanet
         /// <param name="fR">радиус планеты</param>
         public void Drag(Vector3 currentPoint)
         {
-            Vector3 pStartCursorPoint = MapFromSphere(m_pStartCursorPoint);
+            Vector3 pStartCursorPointScreen = GraphicsDevice.Viewport.Project(Vector3.Normalize(m_pStartCursorPoint) * m_fR, Projection, View, Matrix.Identity);
+            Vector3 pCursorPointScreen = GraphicsDevice.Viewport.Project(Vector3.Normalize(currentPoint) * m_fR, Projection, View, Matrix.Identity);
+
+            Vector3 pStartCursorPoint = m_pStartCursorPoint;// MapFromSphere(m_pStartCursorPoint);
             //Vector3 pCurrentCursorPoint = Vector3.Normalize(MapToSphere(currentPoint));
-            Vector3 pCurrentCursorPoint = Vector3.Normalize(currentPoint)*m_fR;
+            Vector3 pCurrentCursorPoint = Vector3.Normalize(currentPoint);
 
             if (pStartCursorPoint.Equals(pCurrentCursorPoint))
                 return;
@@ -218,7 +221,33 @@ namespace TestCubePlanet
 
             m_pCursorPointRotation = Quaternion.Multiply(m_pStartCursorPointRotation, pFocusPointRotationDelta);
 
-            StartDrag(currentPoint);
+            //StartDrag(currentPoint);
+            //m_pStartCursorPointRotation = m_pCursorPointRotation;
+        
+            Matrix pFocusPointRotation = Matrix.CreateFromQuaternion(m_pCursorPointRotation);
+
+            Vector3 pFocusPointDirection = Vector3.Transform(Vector3.Backward, pFocusPointRotation);
+            Vector3 pFocusPoint = pFocusPointDirection * m_fR;
+
+            //Matrix cameraRotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+            Matrix cameraRotationYaw = Matrix.CreateFromAxisAngle(Vector3.Backward, Yaw);
+            Matrix cameraRotationPitch = Matrix.CreateFromAxisAngle(Vector3.Left, Pitch);
+            Vector3 camDir = Vector3.Transform(Vector3.Up, cameraRotationPitch);
+            camDir = Vector3.Transform(camDir, cameraRotationYaw);
+
+            Vector3 pDirection = Vector3.Transform(camDir, pFocusPointRotation);
+            Vector3 pPosition = pFocusPoint - pDirection * m_fDistance;
+
+            Vector3 cameraLeft = Vector3.Cross(pFocusPoint, pDirection);
+            Vector3 pTop = Vector3.Normalize(Vector3.Cross(-cameraLeft, pDirection));
+
+            Matrix pView = Matrix.CreateLookAt(pPosition, pFocusPoint, pTop);
+
+            Vector3 pEndCursorPointScreen = GraphicsDevice.Viewport.Project(Vector3.Normalize(m_pStartCursorPoint) * m_fR, Projection, pView, Matrix.Identity);
+            Vector3 pNewStartCursorPoint = Vector3.Normalize(GraphicsDevice.Viewport.Unproject(pStartCursorPointScreen, Projection, pView, Matrix.Identity));
+            Vector3 pEndCursorPointScreen2 = GraphicsDevice.Viewport.Project(Vector3.Normalize(pNewStartCursorPoint) * m_fR, Projection, pView, Matrix.Identity);
+
+            m_pStartCursorPoint = pNewStartCursorPoint;
         }
 
         public void Orbit(float YawChange, float PitchChange, float RollChange)
@@ -272,7 +301,7 @@ namespace TestCubePlanet
             View = Matrix.CreateLookAt(Position, FocusPoint, Top);
 
             m_pAxis = Vector3.Normalize(m_pCursorPointRotationAxis)*m_fR;
-            m_pStart = MapFromSphere(m_pStartCursorPoint);
+            m_pStart = m_pStartCursorPoint * m_fR;// MapFromSphere(m_pStartCursorPoint);
         }
 
         public float m_fCameraLength { get; set; }

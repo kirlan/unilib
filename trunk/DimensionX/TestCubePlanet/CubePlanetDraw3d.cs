@@ -468,7 +468,7 @@ namespace TestCubePlanet
 
             if (m_pCurrentPicking.HasValue)
             {
-                m_pCamera.MapToSphere(m_pCurrentPicking.Value);
+                //m_pCamera.MapToSphere(m_pCurrentPicking.Value);
                 if (m_bPanMode)
                 {
                     m_pCamera.Drag(m_pCurrentPicking.Value);
