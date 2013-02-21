@@ -432,8 +432,6 @@ namespace TestCubePlanet
             lastTime = timer.Elapsed.TotalMilliseconds;
         }
 
-        public bool m_bPanMode = false;
-
         public float m_fScaling = 0;
         Stopwatch timer;
         double lastTime = 0;
@@ -464,23 +462,27 @@ namespace TestCubePlanet
                 m_pCamera.ZoomIn(m_fScaling * (float)fElapsedTime);
                 m_fScaling = 0;
             }
-            
+
             if (m_pTarget.HasValue)
-                m_pCamera.MoveTarget(m_pTarget.Value, 0);
+                m_pCamera.MoveTarget(m_pTarget.Value, 0.005f * (float)fElapsedTime);
 
-            if (m_pCurrentPicking.HasValue)
-            {
-                //m_pCamera.MoveTarget(m_pCurrentPicking.Value, 0);
-                //m_pCamera.MoveTarget(Vector3.Down * 150, 0);
-
-                //m_pCamera.MapToSphere(m_pCurrentPicking.Value);
-                if (m_bPanMode)
-                {
-                    m_pCamera.Drag(m_pCurrentPicking.Value);
-                    m_pCurrentPicking = null;
-                }
-            }
             m_pCamera.Update();
+
+            m_pPoints = new VertexPositionColor[4 + m_pCamera.m_cTargets.Count * 4];
+            m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[1] = new VertexPositionColor(m_pCamera.FocusPoint * 1.2f, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[2] = new VertexPositionColor(-Vector3.Backward * 200, Microsoft.Xna.Framework.Color.DarkRed);
+            m_pPoints[3] = new VertexPositionColor(Vector3.Backward * 200, Microsoft.Xna.Framework.Color.Violet);
+
+            int index = 4;
+            foreach (var pTarget in m_pCamera.m_cTargets)
+            {
+                m_pPoints[index++] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+                m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f, Microsoft.Xna.Framework.Color.Green);
+
+                m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f, Microsoft.Xna.Framework.Color.Red);
+                m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f + pTarget.Value * 10, Microsoft.Xna.Framework.Color.Red);
+            }
 
             effect.World = Matrix.Identity;
             effect.View = m_pCamera.View;
@@ -490,15 +492,57 @@ namespace TestCubePlanet
             RasterizerState rs = new RasterizerState();
             //rs.CullMode = CullMode.None;
             rs.CullMode = CullMode.CullClockwiseFace;
-            rs.FillMode = FillMode.WireFrame;
+            //rs.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = rs;
 
             effect.CurrentTechnique.Passes[0].Apply();
             //var pFace = m_aFaces[2];
+
+            BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
+
+            int iCount = 0;
+            int iGotit = 0;
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
+                {
+                    if (Vector3.Dot(Vector3.Normalize(pSquare.m_pBounds8.Center), m_pCamera.Direction) > 0.1)
+                        continue;
+
+                    Vector3 pViewVector = pSquare.m_pBounds8.Center - m_pCamera.Position;
+
+                    float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
+                    if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
+                    {
+                        if (pFrustrum.Contains(pSquare.m_pBounds8.BottomBackLeft) == ContainmentType.Disjoint &&
+                            pFrustrum.Contains(pSquare.m_pBounds8.BottomBackRight) == ContainmentType.Disjoint &&
+                            pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontLeft) == ContainmentType.Disjoint &&
+                            pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontRight) == ContainmentType.Disjoint &&
+                            pFrustrum.Contains(pSquare.m_pBounds8.TopBackLeft) == ContainmentType.Disjoint &&
+                            pFrustrum.Contains(pSquare.m_pBounds8.TopBackRight) == ContainmentType.Disjoint &&
+                            pFrustrum.Contains(pSquare.m_pBounds8.TopFrontLeft) == ContainmentType.Disjoint &&
+                            pFrustrum.Contains(pSquare.m_pBounds8.TopFrontRight) == ContainmentType.Disjoint)
+                        {
+                            Vector3[] aVer = {pSquare.m_pBounds8.BottomBackLeft, 
+                                                 pSquare.m_pBounds8.BottomBackRight, 
+                                                 pSquare.m_pBounds8.BottomFrontLeft, 
+                                                 pSquare.m_pBounds8.BottomFrontRight, 
+                                                 pSquare.m_pBounds8.TopBackLeft, 
+                                                 pSquare.m_pBounds8.TopBackRight, 
+                                                 pSquare.m_pBounds8.TopFrontLeft, 
+                                                 pSquare.m_pBounds8.TopFrontRight};
+                            BoundingSphere pSphere = BoundingSphere.CreateFromPoints(aVer);
+                            if (pFrustrum.Contains(pSphere) == ContainmentType.Disjoint)
+                            {
+                                iGotit++;
+                                continue;
+                            }
+                        }
+                    }
+
                     GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                                              pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndices, 0, pSquare.m_iTrianglesCount);
+                                                pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndices, 0, pSquare.m_iTrianglesCount);
+                    iCount++;
+                }
 
             rs = new RasterizerState();
             rs.CullMode = CullMode.None;
@@ -701,22 +745,6 @@ namespace TestCubePlanet
                                 m_pSelectedSquare = pSquare;
 
                                 m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
-
-                                m_pPoints = new VertexPositionColor[4 + m_pCamera.m_cTargets.Count * 4];
-                                m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-                                m_pPoints[1] = new VertexPositionColor(m_pCurrentPicking.Value * 1.2f, Microsoft.Xna.Framework.Color.Black);
-                                m_pPoints[2] = new VertexPositionColor(-m_pCamera.m_pAxis * 1.2f, Microsoft.Xna.Framework.Color.DarkRed);
-                                m_pPoints[3] = new VertexPositionColor(m_pCamera.m_pAxis * 1.2f, Microsoft.Xna.Framework.Color.Violet);
-
-                                int index = 4;
-                                foreach (var pTarget in m_pCamera.m_cTargets)
-                                {
-                                    m_pPoints[index++] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-                                    m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f, Microsoft.Xna.Framework.Color.Green);
-
-                                    m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f, Microsoft.Xna.Framework.Color.Red);
-                                    m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f + pTarget.Value*10, Microsoft.Xna.Framework.Color.Red);
-                                }
                             }
                         }
                     }
@@ -812,16 +840,6 @@ namespace TestCubePlanet
             }
 
             result = rayDistance;
-        }
-
-
-
-        internal void StartDrag()
-        {
-            if (!m_pCurrentPicking.HasValue)
-                return;
-
-            m_pCamera.StartDrag(m_pCurrentPicking.Value);
         }
     }
 }
