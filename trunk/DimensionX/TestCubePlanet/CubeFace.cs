@@ -150,7 +150,7 @@ namespace TestCubePlanet
         public void Finalize()
         {
             foreach (var pChunk in m_cChunk)
-                pChunk.RebuildVertexArray();
+                pChunk.Finalize();
         }
     }
 }

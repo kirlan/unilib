@@ -56,11 +56,11 @@ namespace TestCubePlanet
         {
             m_fR = fR;
 
-            Yaw = MathHelper.ToRadians(90);
-            Pitch = MathHelper.ToRadians(0);
+            Yaw = MathHelper.ToRadians(0);
+            Pitch = MathHelper.ToRadians(20);
             Roll = MathHelper.ToRadians(0);
 
-            m_fDistance = 250;
+            m_fDistance = 5;// 250;
 
             FocusPoint = Vector3.Backward * m_fR;
         }
@@ -158,7 +158,7 @@ namespace TestCubePlanet
             //pFocusPointDirection = Vector3.Transform(pFocusPointDirection, pFocusPointRotation2);
             //FocusPoint = pFocusPointDirection * m_fR;
 
-            FocusPoint = m_pTarget;
+            FocusPoint = m_pTarget + Vector3.Normalize(m_pTarget)*0.2f;
 
             Matrix cameraRotationYaw = Matrix.CreateFromAxisAngle(Vector3.Normalize(FocusPoint), Yaw);
             Matrix cameraRotationPitch = Matrix.CreateFromAxisAngle(Vector3.Cross(Vector3.Normalize(FocusPoint), m_pTargetDir), Pitch);
@@ -168,7 +168,7 @@ namespace TestCubePlanet
 
             //Direction = Vector3.Transform(camDir, pFocusPointRotation1);
             //Direction = Vector3.Transform(Direction, pFocusPointRotation2);
-            Position = FocusPoint - Direction * m_fDistance;
+            Position = FocusPoint +  - Direction * m_fDistance;
 
             Vector3 cameraLeft = Vector3.Cross(FocusPoint, Direction);
             Top = Vector3.Normalize(Vector3.Cross(-cameraLeft, Direction));

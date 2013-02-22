@@ -11,12 +11,16 @@ namespace TestCubePlanet
         public float m_fY;
         public float m_fZ;
 
+        /// <summary>
+        /// Список локаций, соприкасающихся с вершиной.
+        /// Используется при настройке связей между квадратами (в Vertex::Replace())
+        /// </summary>
         public List<Location> m_cLinked = new List<Location>();
-        //public List<Location> m_cDebugLinked = new List<Location>();
 
-        public bool m_bForbidden = false;
-        public bool m_bNew = false;
-
+        /// <summary>
+        /// Чанк, в который входит данная вершина. 
+        /// Используется в Chunk::RebuildVertexArray() при просмотре соседей как маркер того, что эта вершина уже была обработана.
+        /// </summary>
         public Chunk m_pChunkMarker = null;
 
         public Microsoft.Xna.Framework.Color m_eColor = Microsoft.Xna.Framework.Color.White;
@@ -27,46 +31,30 @@ namespace TestCubePlanet
             m_fY = pOriginal.m_fY;
             m_fZ = pOriginal.m_fZ;
             m_eColor = pOriginal.m_eColor;
-
-            m_bNew = true;
         }
 
-        public void Replace(Vertex pGood)
+        /// <summary>
+        /// Заменяет ссылку на текущую вершину во всех связанных локациях.
+        /// Вызывается из Chunk::ReplaceVertexes()
+        /// </summary>
+        /// <param name="pGood">"правильная" вершина</param>
+        public void Replace(Vertex pGood) 
         {
-            //>>>>>>>>>>>>>>>>DEBUG
-            //if (m_bForbidden)
-            //    throw new Exception();
-
-            //if (pGood == this)
-            //    throw new Exception();
-
-            //if (pGood.m_bForbidden)
-            //    throw new Exception();
-            //<<<<<<<<<<<<<<<<DEBUG
-
             List<Location> cTemp = new List<Location>(m_cLinked);
             //проходим по всем локациям, связанным к "неправильной" вершиной
             foreach (Location pLinkedLoc in cTemp)
                 pLinkedLoc.ReplaceVertex(this, pGood);
-
-            //>>>>>>>>>>>>>>>>DEBUG
-            //foreach (Location pLinkedLoc in m_cLinked)
-            //{
-            //    foreach (var pEdge in pLinkedLoc.m_cEdges)
-            //    {
-            //        if (pEdge.Value.m_pFrom.m_bForbidden || pEdge.Value.m_pTo.m_bForbidden)
-            //            throw new Exception();
-
-            //        if (pEdge.Value.m_pFrom == this || pEdge.Value.m_pTo == this)
-            //            throw new Exception();
-            //    }
-            //}
-            //<<<<<<<<<<<<<<<<DEBUG
-
-
-            m_bForbidden = true;
         }
 
+        /// <summary>
+        /// Размещает 2D-точку (fX, fY) на кубической сфере.
+        /// Считаем, что (0, 0) - центр грани.
+        /// </summary>
+        /// <param name="fX">X координата 2D точки</param>
+        /// <param name="fY">Y координата 2D точки</param>
+        /// <param name="fSize">половина длины ребра куба</param>
+        /// <param name="eFace">грань куба, на которой находится 2D точка</param>
+        /// <param name="fR">радиус сферы</param>
         public Vertex(float fX, float fY, float fSize, Cube.Face3D eFace, float fR)
         {
             //Формула взята на http://mathproofs.blogspot.ru/2005/07/mapping-cube-to-sphere.html
@@ -114,7 +102,7 @@ namespace TestCubePlanet
 
         public override string ToString()
         {
-            return string.Format("{4}{3}[{0}, {1}, {2}]", m_fX, m_fY, m_fZ, m_bForbidden ? "x" : "", m_bNew ? "+" : "");
+            return string.Format("[{0}, {1}, {2}]", m_fX, m_fY, m_fZ);
         }
     }
 }

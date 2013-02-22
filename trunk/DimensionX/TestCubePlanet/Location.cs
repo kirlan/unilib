@@ -7,24 +7,30 @@ namespace TestCubePlanet
 {
     public class Location: Vertex
     {
+        /// <summary>
+        /// Для "призрачной" локации - направление, в котором следует искать "настоящую" локацию.
+        /// Если локация не "призрачная", то CenterNone
+        /// </summary>
         public VertexCH.Direction m_eGhost;
 
+        /// <summary>
+        /// Является ли локация "призрачной", т.е. отражением какой-то локации, принадлежащей на самом деле соседнему квадрату
+        /// </summary>
         public bool Ghost
         {
             get { return m_eGhost != VertexCH.Direction.CenterNone; }
         }
 
+        /// <summary>
+        /// Уникальный номер локации. Пока нужен только для отладки, в будущем возможно ещё понадобится для чего-нибудь...
+        /// </summary>
         private uint m_iID;
-
-        public bool m_bBorder = false;
 
         public Location(uint iID, float fX, float fY, float fSize, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost, bool bBorder)
             : base(fX, fY, fSize, eFace, fR)
         {
             m_iID = iID;
             m_eGhost = eGhost;
-
-            m_bBorder = bBorder;
         }
 
         public Dictionary<VertexCH.Transformation, uint> m_cShadow = new Dictionary<VertexCH.Transformation, uint>();
@@ -52,11 +58,6 @@ namespace TestCubePlanet
             {
                 return string.Format("{0} - {1}", m_pFrom, m_pTo);
             }
-
-            public Edge Reverse()
-            {
-                return new Edge(m_pTo, m_pFrom);
-            }
         }
 
         public Dictionary<Location, Edge> m_cEdges = new Dictionary<Location, Edge>();
@@ -70,9 +71,6 @@ namespace TestCubePlanet
         /// <param name="pGood"></param>
         public void ReplaceVertex(Vertex pBad, Vertex pGood)
         {
-            if (pGood.m_bForbidden)
-                throw new Exception();
-
             foreach (var pEdge in m_cEdges)
             {
                 bool bGotIt = false;
@@ -92,8 +90,6 @@ namespace TestCubePlanet
                     if (!pGood.m_cLinked.Contains(this))
                         pGood.m_cLinked.Add(this);
                     pBad.m_cLinked.Remove(this);
-
-                    //pBad.m_cDebugLinked.Add(this);
                 }
             }
         }
