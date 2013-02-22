@@ -30,118 +30,11 @@ namespace TestCubePlanet
 
         class Square
         {
-            public class BoundingBoxBuffers
-            {
-                public VertexBuffer Vertices;
-                public int VertexCount;
-                public IndexBuffer Indices;
-                public int PrimitiveCount;
-            }
-            
             public VertexPositionColor[] userPrimitives;
             public int[] userPrimitivesIndices;
             public int m_iTrianglesCount = 0;
-            //public BoundingBox m_pBounds;
-            //public BoundingBoxBuffers m_pBoundingBoxBuffers;
 
             public Region8 m_pBounds8;
-
-            //public void CreateBoundingBoxBuffers(GraphicsDevice graphicsDevice)
-            //{
-            //    m_pBoundingBoxBuffers = new BoundingBoxBuffers();
-
-            //    m_pBoundingBoxBuffers.PrimitiveCount = 24;
-            //    m_pBoundingBoxBuffers.VertexCount = 48;
-
-            //    VertexBuffer vertexBuffer = new VertexBuffer(graphicsDevice,
-            //        typeof(VertexPositionColor), m_pBoundingBoxBuffers.VertexCount,
-            //        BufferUsage.WriteOnly);
-            //    List<VertexPositionColor> vertices = new List<VertexPositionColor>();
-
-            //    const float ratio = 5.0f;
-
-            //    Vector3 xOffset = new Vector3((m_pBounds.Max.X - m_pBounds.Min.X) / ratio, 0, 0);
-            //    Vector3 yOffset = new Vector3(0, (m_pBounds.Max.Y - m_pBounds.Min.Y) / ratio, 0);
-            //    Vector3 zOffset = new Vector3(0, 0, (m_pBounds.Max.Z - m_pBounds.Min.Z) / ratio);
-            //    Vector3[] corners = m_pBounds.GetCorners();
-
-            //    // Corner 1.
-            //    BBAddVertex(vertices, corners[0]);
-            //    BBAddVertex(vertices, corners[0] + xOffset);
-            //    BBAddVertex(vertices, corners[0]);
-            //    BBAddVertex(vertices, corners[0] - yOffset);
-            //    BBAddVertex(vertices, corners[0]);
-            //    BBAddVertex(vertices, corners[0] - zOffset);
-
-            //    // Corner 2.
-            //    BBAddVertex(vertices, corners[1]);
-            //    BBAddVertex(vertices, corners[1] - xOffset);
-            //    BBAddVertex(vertices, corners[1]);
-            //    BBAddVertex(vertices, corners[1] - yOffset);
-            //    BBAddVertex(vertices, corners[1]);
-            //    BBAddVertex(vertices, corners[1] - zOffset);
-
-            //    // Corner 3.
-            //    BBAddVertex(vertices, corners[2]);
-            //    BBAddVertex(vertices, corners[2] - xOffset);
-            //    BBAddVertex(vertices, corners[2]);
-            //    BBAddVertex(vertices, corners[2] + yOffset);
-            //    BBAddVertex(vertices, corners[2]);
-            //    BBAddVertex(vertices, corners[2] - zOffset);
-
-            //    // Corner 4.
-            //    BBAddVertex(vertices, corners[3]);
-            //    BBAddVertex(vertices, corners[3] + xOffset);
-            //    BBAddVertex(vertices, corners[3]);
-            //    BBAddVertex(vertices, corners[3] + yOffset);
-            //    BBAddVertex(vertices, corners[3]);
-            //    BBAddVertex(vertices, corners[3] - zOffset);
-
-            //    // Corner 5.
-            //    BBAddVertex(vertices, corners[4]);
-            //    BBAddVertex(vertices, corners[4] + xOffset);
-            //    BBAddVertex(vertices, corners[4]);
-            //    BBAddVertex(vertices, corners[4] - yOffset);
-            //    BBAddVertex(vertices, corners[4]);
-            //    BBAddVertex(vertices, corners[4] + zOffset);
-
-            //    // Corner 6.
-            //    BBAddVertex(vertices, corners[5]);
-            //    BBAddVertex(vertices, corners[5] - xOffset);
-            //    BBAddVertex(vertices, corners[5]);
-            //    BBAddVertex(vertices, corners[5] - yOffset);
-            //    BBAddVertex(vertices, corners[5]);
-            //    BBAddVertex(vertices, corners[5] + zOffset);
-
-            //    // Corner 7.
-            //    BBAddVertex(vertices, corners[6]);
-            //    BBAddVertex(vertices, corners[6] - xOffset);
-            //    BBAddVertex(vertices, corners[6]);
-            //    BBAddVertex(vertices, corners[6] + yOffset);
-            //    BBAddVertex(vertices, corners[6]);
-            //    BBAddVertex(vertices, corners[6] + zOffset);
-
-            //    // Corner 8.
-            //    BBAddVertex(vertices, corners[7]);
-            //    BBAddVertex(vertices, corners[7] + xOffset);
-            //    BBAddVertex(vertices, corners[7]);
-            //    BBAddVertex(vertices, corners[7] + yOffset);
-            //    BBAddVertex(vertices, corners[7]);
-            //    BBAddVertex(vertices, corners[7] + zOffset);
-
-            //    vertexBuffer.SetData(vertices.ToArray());
-            //    m_pBoundingBoxBuffers.Vertices = vertexBuffer;
-
-            //    IndexBuffer indexBuffer = new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, m_pBoundingBoxBuffers.VertexCount,
-            //        BufferUsage.WriteOnly);
-            //    indexBuffer.SetData(Enumerable.Range(0, m_pBoundingBoxBuffers.VertexCount).Select(i => (short)i).ToArray());
-            //    m_pBoundingBoxBuffers.Indices = indexBuffer;
-            //}
-
-            private static void BBAddVertex(List<VertexPositionColor> vertices, Vector3 position)
-            {
-                vertices.Add(new VertexPositionColor(position, Microsoft.Xna.Framework.Color.White));
-            }
 
             private void BuildBoundingBox(Chunk pChunk)
             {
@@ -178,8 +71,6 @@ namespace TestCubePlanet
                 fDist = pBoundBottomRightRay.Intersects(pOuterPlane);
                 Vector3 pBoundBottomRight2 = Vector3.Normalize(pBoundBottomRight) * (float)fDist;
 
-                //m_pBounds8 = new Region8(pBoundTopLeft, pBoundTopRight, pBoundTopLeft / fK, pBoundTopRight / fK,
-                //    pBoundBottomLeft, pBoundBottomRight, pBoundBottomLeft / fK, pBoundBottomRight / fK);
                 m_pBounds8 = new Region8(pBoundTopLeft1, pBoundTopRight1, pBoundTopLeft2, pBoundTopRight2,
                     pBoundBottomLeft1, pBoundBottomRight1, pBoundBottomLeft2, pBoundBottomRight2);
             }
@@ -208,9 +99,6 @@ namespace TestCubePlanet
                     if (bColored)
                         userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Lerp(vertex.m_eColor, Microsoft.Xna.Framework.Color.Black, 0.2f);
 
-                    if (vertex.m_bForbidden)
-                        userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Black;
-
                     vertexIndex[vertex] = index;
 
                     index++;
@@ -228,10 +116,7 @@ namespace TestCubePlanet
                         userPrimitives[index].Color = loc.m_eColor;
 
                     if (loc.Ghost)
-                        //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
-                            continue;
-                        //else
-                        //    userPrimitives[index].Color = Microsoft.Xna.Framework.Color.Orange;
+                        continue;
 
                     m_iTrianglesCount += loc.m_cEdges.Count;
 
@@ -355,6 +240,9 @@ namespace TestCubePlanet
 
         public void Assign(Cube pCube, bool bColored)
         {
+            if (m_pCube == null && m_pCamera != null)
+                m_pCamera.Initialize(pCube.R);
+
             m_pCube = null;
 
             int index = 0;
@@ -397,9 +285,6 @@ namespace TestCubePlanet
             //            pSquare.CreateBoundingBoxBuffers(GraphicsDevice);
 
             m_pCube = pCube;
-            
-            if(m_pCamera != null)
-                m_pCamera.Initialize(pCube.R);
         }
 
         private Microsoft.Xna.Framework.Color eSkyColor = Microsoft.Xna.Framework.Color.Lavender;
@@ -435,7 +320,17 @@ namespace TestCubePlanet
         public float m_fScaling = 0;
         Stopwatch timer;
         double lastTime = 0;
-        public int m_iFrame = 0;
+        private int m_iFrame = 0;
+        private double m_fDrawingTime = 0;
+        private double m_fFrameTime = 0;
+        public int FPS { get { return m_iFrame; } }
+        public double DrawingTime { get { return m_fDrawingTime; } }
+        public double FrameTime { get { return m_fFrameTime; } }
+
+        public void ResetFPS()
+        {
+            m_iFrame = 0;
+        }
 
         public Vector3? m_pTarget = null;
 
@@ -451,7 +346,7 @@ namespace TestCubePlanet
 
             m_iFrame++; 
             
-            double fElapsedTime = timer.Elapsed.TotalMilliseconds - lastTime;
+            m_fFrameTime = timer.Elapsed.TotalMilliseconds - lastTime;
             lastTime = timer.Elapsed.TotalMilliseconds; 
             
             if (m_pCube == null)
@@ -459,18 +354,18 @@ namespace TestCubePlanet
 
             if (m_fScaling != 0)
             {
-                m_pCamera.ZoomIn(m_fScaling * (float)fElapsedTime);
+                m_pCamera.ZoomIn(m_fScaling * (float)m_fFrameTime);
                 m_fScaling = 0;
             }
 
             if (m_pTarget.HasValue)
-                m_pCamera.MoveTarget(m_pTarget.Value, 0.005f * (float)fElapsedTime);
+                m_pCamera.MoveTarget(m_pTarget.Value, 0.005f * (float)m_fFrameTime);
 
             m_pCamera.Update();
 
             m_pPoints = new VertexPositionColor[4 + m_pCamera.m_cTargets.Count * 4];
             m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-            m_pPoints[1] = new VertexPositionColor(m_pCamera.FocusPoint * 1.2f, Microsoft.Xna.Framework.Color.Black);
+            m_pPoints[1] = new VertexPositionColor(m_pCamera.FocusPoint, Microsoft.Xna.Framework.Color.Black);
             m_pPoints[2] = new VertexPositionColor(-Vector3.Backward * 200, Microsoft.Xna.Framework.Color.DarkRed);
             m_pPoints[3] = new VertexPositionColor(Vector3.Backward * 200, Microsoft.Xna.Framework.Color.Violet);
 
@@ -500,6 +395,8 @@ namespace TestCubePlanet
 
             BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
 
+            double startTime = timer.Elapsed.TotalMilliseconds;
+            
             int iCount = 0;
             int iGotit = 0;
             foreach (var pFace in m_aFaces)
@@ -544,6 +441,8 @@ namespace TestCubePlanet
                     iCount++;
                 }
 
+            m_fDrawingTime = timer.Elapsed.TotalMilliseconds - startTime;
+
             rs = new RasterizerState();
             rs.CullMode = CullMode.None;
             //rs.CullMode = CullMode.CullClockwiseFace;
@@ -566,23 +465,6 @@ namespace TestCubePlanet
         
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
-        }
-
-        private void DrawBoundingBox(Square.BoundingBoxBuffers buffers)
-        {
-            GraphicsDevice.SetVertexBuffer(buffers.Vertices);
-            GraphicsDevice.Indices = buffers.Indices;
-
-            lineEffect.World = Matrix.Identity;
-            lineEffect.View = m_pCamera.View;
-            lineEffect.Projection = m_pCamera.Projection;
-
-            foreach (EffectPass pass in lineEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0,
-                    buffers.VertexCount, 0, buffers.PrimitiveCount);
-            }
         }
 
         // CalculateCursorRay Calculates a world space ray starting at the camera's

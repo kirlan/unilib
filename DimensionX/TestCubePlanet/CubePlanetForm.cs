@@ -17,19 +17,15 @@ namespace TestCubePlanet
             InitializeComponent();
 
             comboBox1.SelectedIndex = 2;
+            m_iLastSize = GetSquareSize();
 
             cubePlanetDraw3d1.MouseWheel += new MouseEventHandler(cubePlanetDraw3d1_MouseWheel);
         }
 
         Cube m_pCube = null;
 
-        private void button2_Click(object sender, EventArgs e)
+        private int GetSquareSize()
         {
-            panel1.Enabled = false;
-            cubePlanetDraw3d1.Visible = false;
-
-            var now = DateTime.Now;
-
             int iSize = 1;
 
             switch (comboBox1.SelectedIndex)
@@ -42,17 +38,42 @@ namespace TestCubePlanet
                     break;
                 case 3: iSize = 7;
                     break;
+                case 4: iSize = 9;
+                    break;
+                case 5: iSize = 17;
+                    break;
+                case 6: iSize = 25;
+                    break;
             }
+
+            return iSize;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            panel1.Enabled = false;
+            cubePlanetDraw3d1.Visible = false;
+
+            var now = DateTime.Now;
+
+            int iSize = GetSquareSize();
 
             m_pCube = new Cube((int)numericUpDown1.Value, iSize);
 
             var interval = DateTime.Now - now;
-            label1.Text = string.Format("Building time: {0:0.000}s (~{1:#####}k points)", interval.TotalSeconds, numericUpDown1.Value * 6 * iSize * iSize / 1000);
+            label1.Text = string.Format("Building time: {0:0.000}s", interval.TotalSeconds);
 
             now = DateTime.Now;
             cubePlanetDraw3d1.Assign(m_pCube, checkBox1.Checked);
             interval = DateTime.Now - now;
             label2.Text = string.Format("Graphics init time: {0:0.000}s", interval.TotalSeconds);
+
+            int iLocs = 0;
+            foreach (var pFace in m_pCube.m_cFaces)
+                foreach (var pChunk in pFace.Value.m_cChunk)
+                    iLocs += pChunk.m_aLocations.Length;
+
+            label6.Text = string.Format("Actual locations: ~{0:#####}k", iLocs/1000);
             
             cubePlanetDraw3d1.Visible = true;
             panel1.Enabled = true;
@@ -149,14 +170,55 @@ namespace TestCubePlanet
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            label3.Text = "FPS: " + Math.Min(999, cubePlanetDraw3d1.m_iFrame).ToString();
+            label3.Text = "FPS: " + Math.Min(999, cubePlanetDraw3d1.FPS).ToString();
         //    timer2.Interval = Math.Max(100, 800 / (mapDraw3d1.m_iFrame + 1));
-            cubePlanetDraw3d1.m_iFrame = 0;
+            cubePlanetDraw3d1.ResetFPS();
+
+            label4.Text = string.Format("Draw Time: {0:0.000}s", cubePlanetDraw3d1.DrawingTime/1000);
+            label5.Text = string.Format("Frame Time: {0:0.000}s", cubePlanetDraw3d1.FrameTime / 1000);
         }
 
         private void cubePlanetDraw3d1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void CubePlanetForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)27)
+                Application.Exit();
+        }
+
+        private void panel2_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if(e.KeyCode == Keys.Escape)
+                Application.Exit();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            int iSize = GetSquareSize();
+            label17.Text = string.Format("~{0:#####}k locations", numericUpDown1.Value * 6 * iSize * iSize / 1000);
+        }
+
+        private int m_iLastSize = 5;
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int iSize = GetSquareSize();
+            if (checkBox2.Checked)
+            {
+                int iCount = (int)numericUpDown1.Value * 6 * m_iLastSize * m_iLastSize / 1000;
+                numericUpDown1.Value = Math.Min(numericUpDown1.Maximum, Math.Max(numericUpDown1.Minimum, iCount * 1000 / (6 * iSize * iSize)));
+            }
+
+            label17.Text = string.Format("~{0:#####}k locations", numericUpDown1.Value * 6 * iSize * iSize / 1000);
+            m_iLastSize = iSize;
+        }
+
+        private void numericUpDown1_KeyUp(object sender, KeyEventArgs e)
+        {
+            numericUpDown1_ValueChanged(sender, new EventArgs());
         }
     }
 }

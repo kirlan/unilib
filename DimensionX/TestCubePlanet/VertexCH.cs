@@ -15,6 +15,17 @@ namespace TestCubePlanet
         {
         }
 
+        public VertexCH(VertexCH pOrigin)
+        {
+            m_iID = pOrigin.m_iID;
+
+            Position = new double[] { pOrigin.Position[0], pOrigin.Position[1] };
+            m_eGhost = pOrigin.m_eGhost;
+            m_eSide = pOrigin.m_eSide;
+
+            m_bBorder = pOrigin.m_bBorder;
+        }
+
         public enum EdgeSide
         {
             Inside,
@@ -124,6 +135,9 @@ namespace TestCubePlanet
             }
         }
 
+        /// <summary>
+        /// Заполняется в Cube::RebuildEdges()
+        /// </summary>
         public Dictionary<VertexCH, Edge> m_cEdges = new Dictionary<VertexCH,Edge>();
     }
 }

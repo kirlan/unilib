@@ -233,7 +233,8 @@ namespace TestCubePlanet
         private Dictionary<CellCH, List<CellCH>> m_cZeroEdges = new Dictionary<CellCH, List<CellCH>>();
 
         /// <summary>
-        /// Восстанавливаем информацию о смежных гранях по выходным данным MIConvexHull
+        /// Восстанавливаем информацию о смежных гранях по выходным данным MIConvexHull.
+        /// Возвращает минимальный Rect, полностью включающий в себя все вершины.
         /// </summary>
         /// <param name="locations"></param>
         /// <param name="cEdges"></param>
@@ -413,47 +414,75 @@ namespace TestCubePlanet
         public Cube(int locationsCount, int iFaceSize)
         {
             var size = 1000;
-            var k = 1.2 * size / Math.Sqrt(locationsCount);
+            var kHR = 1.2 * size / Math.Sqrt(locationsCount);
 
             int iInnerCount;
-            List<VertexCH> locations = BuildBorder(out iInnerCount, k, size);
+            List<VertexCH> border = BuildBorder(out iInnerCount, kHR, size);
+            List<VertexCH> locationsHR = new List<VertexCH>(border);
+            List<VertexCH> locationsLR = new List<VertexCH>();
+
+            Dictionary<VertexCH, VertexCH> pHi2Lo = new Dictionary<VertexCH, VertexCH>();
+            foreach (var pBorderLocHR in border)
+            {
+                VertexCH pBorderLocLR = new VertexCH(pBorderLocHR);
+                pHi2Lo[pBorderLocHR] = pBorderLocLR;
+                locationsLR.Add(pBorderLocLR);
+            }
+            foreach (var pBorderLoc in pHi2Lo)
+            {
+                foreach(var pShadow in pBorderLoc.Key.m_cShadow)
+                {
+                    if(pShadow.Value == null)
+                        continue;
+
+                    pBorderLoc.Value.m_cShadow[pShadow.Key] = pHi2Lo[pShadow.Value];
+                }
+            }
+
 
             //Территорию внутри построенной границы заполним случайными точками с распределением по Поиссону (чтобы случайно, но в общем равномерно).
-            List<SimpleVector3d> cPoints = BuildPoisson(size, locationsCount - iInnerCount, k);
+            List<SimpleVector3d> cPointsHR = BuildPoisson(size, locationsCount - iInnerCount, kHR);
+            List<SimpleVector3d> cPointsLR = BuildPoisson(size, 20, kHR);
 
             //перенесём построенное облако Поиссона в основной рабочий массив
-            for (var i = 0; i < cPoints.Count; i++)
+            for (var i = 0; i < cPointsHR.Count; i++)
             {
-                //var vi = new VertexCH(k + (size - 2 * k) * r.NextDouble(), k + (size - 2 * k) * r.NextDouble(), VertexCH.Direction.CenterNone, VertexCH.EdgeSide.Inside);
-                var vi = new VertexCH(cPoints[i].X, cPoints[i].Y, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.Inside, false);
-                locations.Add(vi);
+                var vi = new VertexCH(cPointsHR[i].X, cPointsHR[i].Y, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.Inside, false);
+                locationsHR.Add(vi);
+            }
+            for (var i = 0; i < cPointsLR.Count; i++)
+            {
+                var vi = new VertexCH(cPointsLR[i].X, cPointsLR[i].Y, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.Inside, false);
+                locationsLR.Add(vi);
             }
 
             //Наконец, строим диаграмму Вороного.
-            VoronoiMesh<VertexCH, CellCH, VoronoiEdge<VertexCH, CellCH>> voronoiMesh = VoronoiMesh.Create<VertexCH, CellCH>(locations);
+            VoronoiMesh<VertexCH, CellCH, VoronoiEdge<VertexCH, CellCH>> voronoiMeshHR = VoronoiMesh.Create<VertexCH, CellCH>(locationsHR);
+            VoronoiMesh<VertexCH, CellCH, VoronoiEdge<VertexCH, CellCH>> voronoiMeshLR = VoronoiMesh.Create<VertexCH, CellCH>(locationsLR);
 
             //Переведём результат в удобный нам формат.
             //Для каждого найденного ребра диаграммы Вороного найдём локации, которые оно разделяет
-            Rect pBounds = RebuildEdges(locations, voronoiMesh.Edges);
+            Rect pBoundingRectHR = RebuildEdges(locationsHR, voronoiMeshHR.Edges);
+            Rect pBoundingRectLR = RebuildEdges(locationsLR, voronoiMeshLR.Edges);
 
-            var locs = locations.ToArray();
-            var verts = voronoiMesh.Vertices.ToArray();
+            var locsHR = locationsHR.ToArray();
+            var vertsHR = voronoiMeshHR.Vertices.ToArray();
 
-            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Backward);
-            m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Bottom);
-            m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Forward);
-            m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Left);
-            m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Right);
-            m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBounds, ref locs, ref verts, size, R, Face3D.Top);
+            var locsLR = locationsLR.ToArray();
+            var vertsLR = voronoiMeshLR.Vertices.ToArray();
 
-            //m_cFaces[Face3D.Backward].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
-            //                                            null, VertexCH.Transformation.Rotate180,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CW,
-            //                                            null, VertexCH.Transformation.Rotate180,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright);
+            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Backward);
+            //m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
+            //m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Forward);
+            //m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left);
+            //m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Right);
+            //m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
+            m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
+            m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward);
+            m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Left);
+            m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right);
+            m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
+
             m_cFaces[Face3D.Backward].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
@@ -462,15 +491,6 @@ namespace TestCubePlanet
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
                                                         m_cFaces[Face3D.Right], VertexCH.Transformation.Stright);
-
-            //m_cFaces[Face3D.Bottom].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
-            //                                            null, VertexCH.Transformation.Rotate180,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CW);
             m_cFaces[Face3D.Bottom].LinkNeighbours(m_cFaces[Face3D.Left], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
@@ -479,14 +499,6 @@ namespace TestCubePlanet
                                                         m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CCW,
                                                         m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate90CCW);
-            //m_cFaces[Face3D.Forward].LinkNeighbours(null, VertexCH.Transformation.Rotate90CCW,
-            //                                            m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CW,
-            //                                            m_cFaces[Face3D.Right], VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CW,
-            //                                            m_cFaces[Face3D.Left], VertexCH.Transformation.Stright);
             m_cFaces[Face3D.Forward].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
@@ -495,14 +507,6 @@ namespace TestCubePlanet
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
                                                         m_cFaces[Face3D.Left], VertexCH.Transformation.Stright);
-            //m_cFaces[Face3D.Left].LinkNeighbours(null, VertexCH.Transformation.Rotate180,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CW,
-            //                                            null, VertexCH.Transformation.Rotate180,
-            //                                            null, VertexCH.Transformation.Stright);
             m_cFaces[Face3D.Left].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CCW,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
@@ -511,14 +515,6 @@ namespace TestCubePlanet
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CW,
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Backward], VertexCH.Transformation.Stright);
-            //m_cFaces[Face3D.Right].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
-            //                                            null, VertexCH.Transformation.Rotate180,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright);
             m_cFaces[Face3D.Right].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,
@@ -527,14 +523,6 @@ namespace TestCubePlanet
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Rotate90CCW,
                                                         m_cFaces[Face3D.Bottom], VertexCH.Transformation.Stright,
                                                         m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright);
-            //m_cFaces[Face3D.Top].LinkNeighbours(null, VertexCH.Transformation.Rotate90CW,
-            //                                            null, VertexCH.Transformation.Rotate180,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Rotate90CCW,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            m_cFaces[Face3D.Forward], VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Stright,
-            //                                            null, VertexCH.Transformation.Rotate90CW);
             m_cFaces[Face3D.Top].LinkNeighbours(m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CW,
                                                         m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate180,
                                                         m_cFaces[Face3D.Backward], VertexCH.Transformation.Rotate90CCW,

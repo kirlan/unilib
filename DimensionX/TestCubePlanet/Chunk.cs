@@ -27,8 +27,15 @@ namespace TestCubePlanet
         public Location[] m_aLocations;
         public Vertex[] m_aVertexes;
 
-        public void RebuildVertexArray()
+        /// <summary>
+        /// Выкидывает из списка локаций все "призрачные" локации (которые к этому моменту уже все должны быть "отрезаны" от основной массы).
+        /// Обновляет список вершин, чтобы в него гарантированно входили все вершины, связанные с не-"призрачными" локациями.
+        /// Смещает центр локации в её центр тяжести.
+        /// </summary>
+        public void Finalize()
         {
+            List<Location> cNewLocations = new List<Location>();
+
             List<Vertex> cNewVertexes = new List<Vertex>();
 
             for (int i = 0; i < m_aLocations.Length; i++)
@@ -36,6 +43,8 @@ namespace TestCubePlanet
                 var pLoc = m_aLocations[i];
                 if (pLoc.Ghost)
                     continue;
+
+                cNewLocations.Add(pLoc);
 
                 foreach (var pEdge in pLoc.m_cEdges)
                 {
@@ -54,6 +63,7 @@ namespace TestCubePlanet
                 pLoc.m_fZ /= pLoc.m_cEdges.Count + 1;
             }
 
+            m_aLocations = cNewLocations.ToArray();
             m_aVertexes = cNewVertexes.ToArray();
         }
 
@@ -94,13 +104,13 @@ namespace TestCubePlanet
 
             List<Location> cBorders = new List<Location>();
 
-            List<Location> cTempLocations = new List<Location>();
+            m_aLocations = new Location[locations.Length];
             for (int i = 0; i < locations.Length; i++)
             {
                 var loc = locations[i];
                 Location myLocation = new Location(loc.m_iID, (float)loc.Position[0] + fDX - fWholeChunkSize / 2, (float)loc.Position[1] + fDY - fWholeChunkSize / 2, fWholeChunkSize / 2, iR, eFace, loc.m_eGhost, loc.m_bBorder);
                 myLocation.m_eColor = eColor;
-                cTempLocations.Add(myLocation);
+                m_aLocations[i] = myLocation;
                 loc.m_pTag = myLocation;
                 m_cLocations[loc.m_iID] = myLocation;
                 if (myLocation.Ghost)
@@ -114,7 +124,7 @@ namespace TestCubePlanet
                     cBorders.Add(myLocation);
             }
 
-            List<Vertex> cTempVertexes = new List<Vertex>();
+            m_aVertexes = new Vertex[vertices.Length];
             for (int i = 0; i < vertices.Length; i++)
             {
                 var vertex = vertices[i];
@@ -122,7 +132,7 @@ namespace TestCubePlanet
                 myVertex.m_eColor = eColor;
 
                 vertex.m_pTag = myVertex;
-                cTempVertexes.Add(myVertex);
+                m_aVertexes[i] = myVertex;
             }
 
             for (int i = 0; i < locations.Length; i++)
@@ -141,8 +151,6 @@ namespace TestCubePlanet
                 }
             }
 
-            m_aVertexes = cTempVertexes.ToArray();
-            m_aLocations = cTempLocations.ToArray();
             m_aBorderLocations = cBorders.ToArray();
         }
 
@@ -187,24 +195,6 @@ namespace TestCubePlanet
 
                                     if(pShadowShadow == pInnerLoc)
                                     {
-                                        //>>>>>>>>>>>>>>>>DEBUG
-                                        //foreach (var pT in pShadow.m_cEdges)
-                                        //{
-                                        //    if (pT.Key.Ghost)
-                                        //        continue;
-
-                                        //    foreach (var pTT in pT.Key.m_cEdges)
-                                        //    {
-                                        //        if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
-                                        //            throw new Exception();
-                                        //    }
-
-                                        //    if (pT.Value.m_pFrom.m_bForbidden || pT.Value.m_pTo.m_bForbidden)
-                                        //        throw new Exception();
-                                        //}
-                                        //<<<<<<<<<<<<<<<<DEBUG
-
-
                                         //добавляем внутренней локации границу с отражением - такую же, как с его призраком
                                         if (!pInnerLoc.m_cEdges.ContainsKey(pShadow))
                                             pInnerLoc.m_cEdges[pShadow] = pLine;
@@ -226,38 +216,6 @@ namespace TestCubePlanet
                                         ReplaceVertexes(pLine.m_pFrom, pGood1, pLine.m_pTo, pGood2);
                                         pNeighbourChunk.m_pChunk.ReplaceVertexes(pShadowLine.m_pTo, pGood1, pShadowLine.m_pFrom, pGood2);
 
-                                        //>>>>>>>>>>>>>>>>DEBUG
-                                        //foreach (var pT in pInnerLoc.m_cEdges)
-                                        //{
-                                        //    if (pT.Key.Ghost)
-                                        //        continue;
-
-                                        //    foreach (var pTT in pT.Key.m_cEdges)
-                                        //    {
-                                        //        if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
-                                        //            throw new Exception();
-                                        //    }
-
-                                        //    if (pT.Value.m_pFrom.m_bForbidden || pT.Value.m_pTo.m_bForbidden)
-                                        //        throw new Exception();
-                                        //}
-
-                                        //foreach (var pT in pShadow.m_cEdges)
-                                        //{
-                                        //    if (pT.Key.Ghost)
-                                        //        continue;
-
-                                        //    foreach (var pTT in pT.Key.m_cEdges)
-                                        //    {
-                                        //        if (pTT.Value.m_pFrom.m_bForbidden || pTT.Value.m_pTo.m_bForbidden)
-                                        //            throw new Exception();
-                                        //    }
-
-                                        //    if (pT.Value.m_pFrom.m_bForbidden || pT.Value.m_pTo.m_bForbidden)
-                                        //        throw new Exception();
-                                        //}
-                                        //<<<<<<<<<<<<<<<<DEBUG
-
                                         break;
                                     }
                                 }
@@ -265,20 +223,6 @@ namespace TestCubePlanet
                         }
                     }
                 }
-                //>>>>>>>>>>>>>>>>DEBUG
-                //foreach (var pEdge in pInnerLoc.m_cEdges)
-                //{
-                //    if (pEdge.Key.Ghost)
-                //        continue;
-
-                //    if (pEdge.Value.m_pFrom.m_bForbidden || pEdge.Value.m_pTo.m_bForbidden)
-                //        throw new Exception();
-
-                //    foreach(var pEdge2 in pEdge.Key.m_cEdges)
-                //        if (pEdge.Value.m_pFrom.m_bForbidden || pEdge.Value.m_pTo.m_bForbidden)
-                //            throw new Exception();
-                //}
-                //<<<<<<<<<<<<<<<<DEBUG
             }
         }
     }
