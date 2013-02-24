@@ -122,11 +122,15 @@ namespace TestCubePlanet
         {
             public CellCH m_pFrom;
             public CellCH m_pTo;
+            public CellCH m_pMidPoint;
+            public CellCH m_pInnerPoint;
 
-            public Edge(CellCH pFrom, CellCH pTo)
+            public Edge(CellCH pFrom, CellCH pTo, CellCH pMidPoint, CellCH pInnerPoint)
             {
                 m_pFrom = pFrom;
                 m_pTo = pTo;
+                m_pMidPoint = pMidPoint;
+                m_pInnerPoint = pInnerPoint;
             }
 
             public override string ToString()
@@ -139,5 +143,10 @@ namespace TestCubePlanet
         /// Заполняется в Cube::RebuildEdges()
         /// </summary>
         public Dictionary<VertexCH, Edge> m_cEdges = new Dictionary<VertexCH,Edge>();
+
+        public override string ToString()
+        {
+            return string.Format("{0}{4} ({1}, {2}, {3})", m_eGhost != Direction.CenterNone ? "x" : "", Position[0], Position[1], m_bBorder, m_iID);
+        }
     }
 }

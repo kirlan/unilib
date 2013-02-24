@@ -47,11 +47,17 @@ namespace TestCubePlanet
         {
             public Vertex m_pFrom;
             public Vertex m_pTo;
+            public Vertex m_pMidPoint;
+            public Vertex m_pInnerPoint;
 
-            public Edge(Vertex pFrom, Vertex pTo)
+            public Edge m_pNext = null;
+
+            public Edge(Vertex pFrom, Vertex pTo, Vertex pMidPoint, Vertex pInnerPoint)
             {
                 m_pFrom = pFrom;
                 m_pTo = pTo;
+                m_pMidPoint = pMidPoint;
+                m_pInnerPoint = pInnerPoint;
             }
 
             public override string ToString()
@@ -84,6 +90,11 @@ namespace TestCubePlanet
                     pEdge.Value.m_pTo = pGood;
                     bGotIt = true;
                 }
+                if (pEdge.Value.m_pMidPoint == pBad)
+                {
+                    pEdge.Value.m_pMidPoint = pGood;
+                    bGotIt = true;
+                }
 
                 if (bGotIt)
                 {
@@ -91,6 +102,62 @@ namespace TestCubePlanet
                         pGood.m_cLinked.Add(this);
                     pBad.m_cLinked.Remove(this);
                 }
+            }
+        }
+
+        public void Finalize()
+        {
+            if (Ghost)
+                return;
+
+            List<Edge> cSequence = new List<Edge>();
+
+            Edge pLast = m_cEdges.Values.First();
+            cSequence.Add(pLast);
+            for (int j = 0; j < m_cEdges.Count; j++)
+            {
+                foreach (var pEdge in m_cEdges)
+                {
+                    if (pEdge.Key.Ghost)
+                        continue;
+
+                    if (pEdge.Value.m_pFrom == pLast.m_pTo && !cSequence.Contains(pEdge.Value))
+                    {
+                        pLast = pEdge.Value;
+                        cSequence.Add(pLast);
+                        break;
+                    }
+                }
+            }
+
+            if (cSequence.Count != m_cEdges.Count)
+            {
+                throw new Exception();
+            }
+
+            pLast = cSequence.Last();
+            foreach (var pEdge in cSequence)
+            {
+                pLast.m_pNext = pEdge;
+                pLast = pEdge;
+
+                m_fX += pEdge.m_pFrom.m_fX;
+                m_fY += pEdge.m_pFrom.m_fY;
+                m_fZ += pEdge.m_pFrom.m_fZ;
+
+                //if (pEdge.Value.m_pMidPoint != pEdge.Key.m_cEdges[pLoc].m_pMidPoint)
+                //    throw new Exception();
+            }
+
+            m_fX /= m_cEdges.Count + 1;
+            m_fY /= m_cEdges.Count + 1;
+            m_fZ /= m_cEdges.Count + 1;
+            
+            foreach (var pEdge in cSequence)
+            {
+                pEdge.m_pInnerPoint.m_fX = (m_fX + pEdge.m_pMidPoint.m_fX) / 2;
+                pEdge.m_pInnerPoint.m_fY = (m_fY + pEdge.m_pMidPoint.m_fY) / 2;
+                pEdge.m_pInnerPoint.m_fZ = (m_fZ + pEdge.m_pMidPoint.m_fZ) / 2;
             }
         }
 

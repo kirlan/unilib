@@ -88,6 +88,16 @@ namespace TestCubePlanet
         {
         }
 
+        public CellCH(CellCH pOrigin1, CellCH pOrigin2)
+        {
+            circumCenter = new Point((pOrigin1.Circumcenter.X + pOrigin2.Circumcenter.X) / 2, (pOrigin1.Circumcenter.Y + pOrigin2.Circumcenter.Y) / 2);
+        }
+
+        public CellCH(CellCH pOrigin1, VertexCH pOrigin2)
+        {
+            circumCenter = new Point((pOrigin1.Circumcenter.X + pOrigin2.Position[0]) / 2, (pOrigin1.Circumcenter.Y + pOrigin2.Position[1]) / 2);
+        }
+
         public override string ToString()
         {
             return string.Format("[{0}, {1}]", Circumcenter.X, Circumcenter.Y);

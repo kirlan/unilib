@@ -27,6 +27,8 @@ namespace TestCubePlanet
         public Location[] m_aLocations;
         public Vertex[] m_aVertexes;
 
+        //public bool m_bDirty = true;
+
         /// <summary>
         /// Выкидывает из списка локаций все "призрачные" локации (которые к этому моменту уже все должны быть "отрезаны" от основной массы).
         /// Обновляет список вершин, чтобы в него гарантированно входили все вершины, связанные с не-"призрачными" локациями.
@@ -53,27 +55,73 @@ namespace TestCubePlanet
                         cNewVertexes.Add(pEdge.Value.m_pFrom);
                         pEdge.Value.m_pFrom.m_pChunkMarker = this;
                     }
-                    pLoc.m_fX += pEdge.Value.m_pFrom.m_fX;
-                    pLoc.m_fY += pEdge.Value.m_pFrom.m_fY;
-                    pLoc.m_fZ += pEdge.Value.m_pFrom.m_fZ;
+                    if (pEdge.Value.m_pMidPoint.m_pChunkMarker != this)
+                    {
+                        cNewVertexes.Add(pEdge.Value.m_pMidPoint);
+                        pEdge.Value.m_pMidPoint.m_pChunkMarker = this;
+                    }
+                    if (pEdge.Value.m_pInnerPoint.m_pChunkMarker != this)
+                    {
+                        cNewVertexes.Add(pEdge.Value.m_pInnerPoint);
+                        pEdge.Value.m_pInnerPoint.m_pChunkMarker = this;
+                    }
                 }
 
-                pLoc.m_fX /= pLoc.m_cEdges.Count + 1;
-                pLoc.m_fY /= pLoc.m_cEdges.Count + 1;
-                pLoc.m_fZ /= pLoc.m_cEdges.Count + 1;
+                pLoc.Finalize();
             }
 
             m_aLocations = cNewLocations.ToArray();
             m_aVertexes = cNewVertexes.ToArray();
+
+            //m_bDirty = true;
+
+            //DebugVertexes();
         }
 
-        public void ReplaceVertexes(Vertex pBad1, Vertex pGood1, Vertex pBad2, Vertex pGood2)
+        //public void DebugVertexes()
+        //{
+        //    for (int i = 0; i < m_aLocations.Length; i++)
+        //    {
+        //        var pLoc = m_aLocations[i];
+
+        //        foreach (var pEdge in pLoc.m_cEdges)
+        //        {
+        //            if (!m_aVertexes.Contains(pEdge.Value.m_pFrom))
+        //            {
+        //                throw new Exception();
+        //            }
+        //            if (!m_aVertexes.Contains(pEdge.Value.m_pTo))
+        //            {
+        //                throw new Exception();
+        //            }
+        //            if (!m_aVertexes.Contains(pEdge.Value.m_pMidPoint))
+        //            {
+        //                throw new Exception();
+        //            }
+        //            if (!m_aVertexes.Contains(pEdge.Value.m_pInnerPoint))
+        //            {
+        //                throw new Exception();
+        //            }
+        //            if (pEdge.Value.m_pTo != pEdge.Value.m_pNext.m_pFrom)
+        //                throw new Exception();
+        //        }
+        //    }
+
+        //    m_bDirty = false;
+        //}
+
+        public void ReplaceVertexes(Vertex pBad1, Vertex pGood1, Vertex pBad2, Vertex pGood2, Vertex pBad3, Vertex pGood3)
         {
             if (pBad1 != pGood1)
                 pBad1.Replace(pGood1);
 
             if (pBad2 != pGood2)
                 pBad2.Replace(pGood2);
+
+            if (pBad3 != pGood3)
+                pBad3.Replace(pGood3);
+
+            //m_bDirty = true;
         }
 
         private Dictionary<uint, Location> m_cLocations = new Dictionary<uint, Location>();
@@ -143,15 +191,23 @@ namespace TestCubePlanet
                 {
                     Vertex pVertex1 = (Vertex)edge.Value.m_pFrom.m_pTag;
                     Vertex pVertex2 = (Vertex)edge.Value.m_pTo.m_pTag;
-                    myLocation.m_cEdges[(Location)edge.Key.m_pTag] = new Location.Edge(pVertex1, pVertex2);
+                    Vertex pMidPoint = (Vertex)edge.Value.m_pMidPoint.m_pTag;
+                    Vertex pInner = (Vertex)edge.Value.m_pInnerPoint.m_pTag;
+                    myLocation.m_cEdges[(Location)edge.Key.m_pTag] = new Location.Edge(pVertex1, pVertex2, pMidPoint, pInner);
                     if (!pVertex1.m_cLinked.Contains(myLocation))
                         pVertex1.m_cLinked.Add(myLocation);
                     if (!pVertex2.m_cLinked.Contains(myLocation))
                         pVertex2.m_cLinked.Add(myLocation);
+                    if (!pMidPoint.m_cLinked.Contains(myLocation))
+                        pMidPoint.m_cLinked.Add(myLocation);
+                    if (!pInner.m_cLinked.Contains(myLocation))
+                        pInner.m_cLinked.Add(myLocation);
                 }
             }
 
             m_aBorderLocations = cBorders.ToArray();
+
+            //m_bDirty = true;
         }
 
         public void Ghostbusters()
@@ -172,6 +228,8 @@ namespace TestCubePlanet
                     var pOuterLoc = pEdge.Key;
 
                     var pLine = pInnerLoc.m_cEdges[pOuterLoc];
+
+                    bool bMadeIt = false;
 
                     VertexCH.Direction eDir = pOuterLoc.m_eGhost;
                     if (m_cNeighbours.ContainsKey(eDir))
@@ -207,14 +265,21 @@ namespace TestCubePlanet
                                         pInnerLoc.m_cEdges.Remove(pOuterLoc);
                                         pShadow.m_cEdges.Remove(pShadowEdge.Key);
 
+                                        //m_bDirty = true;
+                                        //pNeighbourChunk.m_pChunk.m_bDirty = true;
+
                                         //сливаем вершины
                                         Vertex pGood1 = new Vertex(pLine.m_pFrom);
                                         pGood1.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood1.m_eColor, pShadowLine.m_pTo.m_eColor, 0.5f);
                                         Vertex pGood2 = new Vertex(pLine.m_pTo);
                                         pGood2.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood2.m_eColor, pShadowLine.m_pFrom.m_eColor, 0.5f);
+                                        Vertex pGood3 = new Vertex(pLine.m_pMidPoint);
+                                        pGood3.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood3.m_eColor, pShadowLine.m_pMidPoint.m_eColor, 0.5f);
 
-                                        ReplaceVertexes(pLine.m_pFrom, pGood1, pLine.m_pTo, pGood2);
-                                        pNeighbourChunk.m_pChunk.ReplaceVertexes(pShadowLine.m_pTo, pGood1, pShadowLine.m_pFrom, pGood2);
+                                        ReplaceVertexes(pLine.m_pFrom, pGood1, pLine.m_pTo, pGood2, pLine.m_pMidPoint, pGood3);
+                                        pNeighbourChunk.m_pChunk.ReplaceVertexes(pShadowLine.m_pTo, pGood1, pShadowLine.m_pFrom, pGood2, pShadowLine.m_pMidPoint, pGood3);
+
+                                        bMadeIt = true;
 
                                         break;
                                     }
@@ -222,8 +287,33 @@ namespace TestCubePlanet
                             }
                         }
                     }
+
+                    if (!bMadeIt)
+                    {
+                        throw new Exception();
+                    }
                 }
+
+                //foreach (var pEdge in pInnerLoc.m_cEdges)
+                //{
+                //    if (pEdge.Key.Ghost)
+                //        throw new Exception();
+                //}
             }
+
+            //for (int i = 0; i < m_aLocations.Length; i++)
+            //{
+            //    var pInnerLoc = m_aLocations[i];
+
+            //    if (pInnerLoc.Ghost)
+            //        continue;
+
+            //    foreach (var pEdge in pInnerLoc.m_cEdges)
+            //    {
+            //        if (pEdge.Key.Ghost)
+            //            throw new Exception();
+            //    }
+            //}
         }
     }
 }
