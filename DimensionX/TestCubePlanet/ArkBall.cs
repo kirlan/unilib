@@ -91,8 +91,6 @@ namespace TestCubePlanet
                 m_fDistance = 1000;
         }
 
-        public List<KeyValuePair<Vector3, Vector3>> m_cTargets = new List<KeyValuePair<Vector3,Vector3>>();
-        
         public void MoveTarget(Vector3 pNewPosition, float fDistance)
         {
             Vector3 pAxis = Vector3.Cross(m_pTarget, pNewPosition);

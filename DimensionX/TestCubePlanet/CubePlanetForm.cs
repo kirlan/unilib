@@ -18,6 +18,7 @@ namespace TestCubePlanet
 
             comboBox1.SelectedIndex = 2;
             m_iLastSize = GetSquareSize();
+            comboBox2.SelectedIndex = 0;
 
             cubePlanetDraw3d1.MouseWheel += new MouseEventHandler(cubePlanetDraw3d1_MouseWheel);
         }
@@ -58,7 +59,20 @@ namespace TestCubePlanet
 
             int iSize = GetSquareSize();
 
-            m_pCube = new Cube((int)numericUpDown1.Value, iSize);
+            Cube.WorkingArea eArea = Cube.WorkingArea.OneFace;
+            switch (comboBox2.SelectedIndex)
+            {
+                case 0: eArea = Cube.WorkingArea.OneFace;
+                    break;
+                case 1: eArea = Cube.WorkingArea.HalfSphereEquatorial;
+                    break;
+                case 2: eArea = Cube.WorkingArea.HalfSpherePolar;
+                    break;
+                case 3: eArea = Cube.WorkingArea.WholeSphere;
+                    break;
+            }
+
+            m_pCube = new Cube((int)numericUpDown1.Value, iSize, eArea);
 
             var interval = DateTime.Now - now;
             label1.Text = string.Format("Building time: {0:0.000}s", interval.TotalSeconds);
@@ -141,9 +155,6 @@ namespace TestCubePlanet
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left && cubePlanetDraw3d1.m_pCurrentPicking.HasValue)
             {
-                //cubePlanetDraw3d1.m_bPanMode = true;
-                //cubePlanetDraw3d1.StartDrag();
-                cubePlanetDraw3d1.m_pCamera.m_cTargets.Clear();
                 cubePlanetDraw3d1.m_pTarget = cubePlanetDraw3d1.m_pCurrentPicking;
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Right)

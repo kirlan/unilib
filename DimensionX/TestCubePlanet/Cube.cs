@@ -10,6 +10,14 @@ namespace TestCubePlanet
 {
     public class Cube
     {
+        public enum WorkingArea
+        { 
+            OneFace,
+            HalfSphereEquatorial,
+            HalfSpherePolar,
+            WholeSphere
+        }
+
         public enum Face3D
         {
             Top,
@@ -48,17 +56,18 @@ namespace TestCubePlanet
 
             int quanticSize = (int)(size / k);
 
-            float fDelta = 0.25f;//0.25f;
+            float fDeltaX = 0.1f;//0.25f;
+            float fDeltaY = 0.25f;//0.25f;
             
             iInnerCount = 0;
 
             for (int i = 0; i <= quanticSize / 2; i++)
             {
-                var x1 = k * 0.5 + i * k + k * (fDelta - fDelta * 2 * r.NextDouble());
-                var y1 = -k * 0.5 + k * (fDelta - fDelta * 2 * r.NextDouble());
+                var x1 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * r.NextDouble());
+                var y1 = -k * 0.5 + k * (fDeltaY - fDeltaY * 2 * r.NextDouble());
 
-                var x2 = k * 0.5 + i * k + k * (fDelta - fDelta * 2 * r.NextDouble());
-                var y2 = k * 0.5 + k * (fDelta - fDelta * 2 * r.NextDouble());
+                var x2 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * r.NextDouble());
+                var y2 = k * 0.5 + k * (fDeltaY - fDeltaY * 2 * r.NextDouble());
 
                 //Внутренние точки квадрата. Сначала - по часовой стрелке.
                 //Важно: в XNA используется правая координатная система, а значит ось Y должна быть направлена ВВЕРХ
@@ -426,7 +435,7 @@ namespace TestCubePlanet
 
         public int R = 150;
 
-        public Cube(int locationsCount, int iFaceSize)
+        public Cube(int locationsCount, int iFaceSize, WorkingArea eArea)
         {
             var size = 1000;
             var kHR = 1.2 * size / Math.Sqrt(locationsCount);
@@ -519,11 +528,43 @@ namespace TestCubePlanet
             //m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left);
             //m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Right);
             //m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
-            m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
-            m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward);
-            m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Left);
-            m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right);
-            m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
+            if (eArea == WorkingArea.OneFace)
+            {
+                m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
+                m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward);
+                m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Left);
+                m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right);
+                m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
+            }
+            else
+            {
+                m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left);
+
+                if(eArea == WorkingArea.WholeSphere)
+                {
+                    m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
+                    m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Forward);
+                    m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left);
+                    m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
+                }
+                else
+                {
+                    if (eArea == WorkingArea.HalfSphereEquatorial)
+                    {
+                        m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
+                        m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
+                    }
+                    else
+                    {
+                        m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
+                        m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
+                    }
+                    //m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
+                    //m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
+                    m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward);
+                    m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right);
+                }
+            }
 
             m_cFaces[Face3D.Backward].LinkNeighbours(m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate90CW,
                                                         m_cFaces[Face3D.Top], VertexCH.Transformation.Rotate180,

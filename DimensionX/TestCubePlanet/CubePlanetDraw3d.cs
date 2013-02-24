@@ -358,21 +358,13 @@ namespace TestCubePlanet
 
             m_pCamera.Update();
 
-            m_pPoints = new VertexPositionColor[4 + m_pCamera.m_cTargets.Count * 4];
+            Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
+
+            m_pPoints = new VertexPositionColor[4];
             m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
             m_pPoints[1] = new VertexPositionColor(m_pCamera.FocusPoint, Microsoft.Xna.Framework.Color.Black);
-            m_pPoints[2] = new VertexPositionColor(-Vector3.Backward * 200, Microsoft.Xna.Framework.Color.DarkRed);
-            m_pPoints[3] = new VertexPositionColor(Vector3.Backward * 200, Microsoft.Xna.Framework.Color.Violet);
-
-            int index = 4;
-            foreach (var pTarget in m_pCamera.m_cTargets)
-            {
-                m_pPoints[index++] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-                m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f, Microsoft.Xna.Framework.Color.Green);
-
-                m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f, Microsoft.Xna.Framework.Color.Red);
-                m_pPoints[index++] = new VertexPositionColor(pTarget.Key * 1.2f + pTarget.Value * 10, Microsoft.Xna.Framework.Color.Red);
-            }
+            m_pPoints[2] = new VertexPositionColor(-pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
+            m_pPoints[3] = new VertexPositionColor(pPole * 200, Microsoft.Xna.Framework.Color.Violet);
 
             effect.World = Matrix.Identity;
             effect.View = m_pCamera.View;
@@ -449,25 +441,24 @@ namespace TestCubePlanet
 
             m_fDrawingTime = timer.Elapsed.TotalMilliseconds - startTime;
 
-            rs = new RasterizerState();
-            rs.CullMode = CullMode.None;
-            //rs.CullMode = CullMode.CullClockwiseFace;
-            rs.FillMode = FillMode.WireFrame;
-            GraphicsDevice.RasterizerState = rs;
+            //rs = new RasterizerState();
+            //rs.CullMode = CullMode.None;
+            ////rs.CullMode = CullMode.CullClockwiseFace;
+            //rs.FillMode = FillMode.WireFrame;
+            //GraphicsDevice.RasterizerState = rs;
 
-            lineEffect.World = Matrix.Identity;
-            lineEffect.View = m_pCamera.View;
-            lineEffect.Projection = m_pCamera.Projection;
-            lineEffect.CurrentTechnique.Passes[0].Apply();
+            //lineEffect.World = Matrix.Identity;
+            //lineEffect.View = m_pCamera.View;
+            //lineEffect.Projection = m_pCamera.Projection;
+            //lineEffect.CurrentTechnique.Passes[0].Apply();
 
-            if (m_pSelectedSquare != null)
-            {
-                //DrawBoundingBox(pSquare.m_pBoundingBoxBuffers);
-                var bbvertices = m_pSelectedSquare.m_pBounds8.GetVertices();
-                var bbindices = m_pSelectedSquare.m_pBounds8.GetIndices();
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList,
-                                            bbvertices, 0, bbvertices.Length, bbindices, 0, bbindices.Length / 2);
-            }
+            //if (m_pSelectedSquare != null)
+            //{
+            //    var bbvertices = m_pSelectedSquare.m_pBounds8.GetVertices();
+            //    var bbindices = m_pSelectedSquare.m_pBounds8.GetIndices();
+            //    GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList,
+            //                                bbvertices, 0, bbvertices.Length, bbindices, 0, bbindices.Length / 2);
+            //}
         
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();

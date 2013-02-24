@@ -136,7 +136,22 @@ namespace TestCubePlanet
         public Vertex m_pBoundTopLeft;
         public Vertex m_pBoundTopRight;
         public Vertex m_pBoundBottomRight;
-        public Vertex m_pBoundBottomLeft; 
+        public Vertex m_pBoundBottomLeft;
+
+        private Microsoft.Xna.Framework.Color GetTemperature(Vertex pVertex)
+        {
+            float fNorthX = 150 / (float)Math.Sqrt(3);
+            float fNorthY = 150 / (float)Math.Sqrt(3);
+            float fNorthZ = 150 / (float)Math.Sqrt(3);
+
+            float fDistNorth = (float)Math.Sqrt((pVertex.m_fX - fNorthX) * (pVertex.m_fX - fNorthX) + (pVertex.m_fY - fNorthY) * (pVertex.m_fY - fNorthY) + (pVertex.m_fZ - fNorthZ) * (pVertex.m_fZ - fNorthZ));
+            float fDistSouth = (float)Math.Sqrt((pVertex.m_fX + fNorthX) * (pVertex.m_fX + fNorthX) + (pVertex.m_fY + fNorthY) * (pVertex.m_fY + fNorthY) + (pVertex.m_fZ + fNorthZ) * (pVertex.m_fZ + fNorthZ));
+
+            if(fDistNorth < fDistSouth)
+                return Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Cyan, Microsoft.Xna.Framework.Color.Yellow, fDistNorth / 213);
+            else
+                return Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Cyan, Microsoft.Xna.Framework.Color.Yellow, fDistSouth / 213);
+        }
 
         public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fWholeChunkSize, int iR, Cube.Face3D eFace)
         {
@@ -157,7 +172,7 @@ namespace TestCubePlanet
             {
                 var loc = locations[i];
                 Location myLocation = new Location(loc.m_iID, (float)loc.Position[0] + fDX - fWholeChunkSize / 2, (float)loc.Position[1] + fDY - fWholeChunkSize / 2, fWholeChunkSize / 2, iR, eFace, loc.m_eGhost, loc.m_bBorder);
-                myLocation.m_eColor = eColor;
+                myLocation.m_eColor = GetTemperature(myLocation);//eColor;
                 m_aLocations[i] = myLocation;
                 loc.m_pTag = myLocation;
                 m_cLocations[loc.m_iID] = myLocation;
@@ -177,7 +192,7 @@ namespace TestCubePlanet
             {
                 var vertex = vertices[i];
                 Vertex myVertex = new Vertex((float)vertex.Circumcenter.X + fDX - fWholeChunkSize / 2, (float)vertex.Circumcenter.Y + fDY - fWholeChunkSize / 2, fWholeChunkSize / 2, eFace, iR);
-                myVertex.m_eColor = eColor;
+                myVertex.m_eColor = GetTemperature(myVertex);//eColor;
 
                 vertex.m_pTag = myVertex;
                 m_aVertexes[i] = myVertex;
