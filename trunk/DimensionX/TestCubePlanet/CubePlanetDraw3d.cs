@@ -31,8 +31,10 @@ namespace TestCubePlanet
         class Square
         {
             public VertexPositionColor[] userPrimitives;
-            public int[] userPrimitivesIndices;
-            public int m_iTrianglesCount = 0;
+            public int[] userPrimitivesIndicesLR;
+            public int[] userPrimitivesIndicesHR;
+            public int m_iTrianglesCountLR = 0;
+            public int m_iTrianglesCountHR = 0;
 
             public Region8 m_pBounds8;
 
@@ -85,7 +87,7 @@ namespace TestCubePlanet
 
                 int index = 0;
 
-                m_iTrianglesCount = 0;
+                m_iTrianglesCountLR = 0;
 
                 //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2,2];
                 Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
@@ -109,16 +111,17 @@ namespace TestCubePlanet
                 for (int i=0; i<pChunk.m_aLocations.Length; i++)
                 {
                     var loc = pChunk.m_aLocations[i];
+                    //if (loc.Ghost)
+                    //    continue;
+
                     userPrimitives[index] = new VertexPositionColor();
                     userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
                     userPrimitives[index].Color = color;
                     if (bColored)
                         userPrimitives[index].Color = loc.m_eColor;
 
-                    if (loc.Ghost)
-                        continue;
-
-                    m_iTrianglesCount += loc.m_cEdges.Count;
+                    m_iTrianglesCountLR += loc.m_cEdges.Count;
+                    m_iTrianglesCountHR += loc.m_cEdges.Count * 4;
 
                     locationIndex[loc] = index;
 
@@ -126,23 +129,45 @@ namespace TestCubePlanet
                 }
 
 
-                userPrimitivesIndices = new int[m_iTrianglesCount * 3];
+                userPrimitivesIndicesLR = new int[m_iTrianglesCountLR * 3];
+                userPrimitivesIndicesHR = new int[m_iTrianglesCountHR * 3];
 
                 index = 0;
+                int indexHR = 0;
+
+                //pChunk.DebugVertexes();
 
                 //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2, 2];
                 for (int i = 0; i < pChunk.m_aLocations.Length; i++)
                 {
                     var loc = pChunk.m_aLocations[i];
                     //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
-                        if (loc.Ghost)
+                    if (loc.Ghost)
                         continue;
 
                     foreach (var edge in loc.m_cEdges)
                     {
-                        userPrimitivesIndices[index++] = locationIndex[loc];
-                        userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pFrom];
-                        userPrimitivesIndices[index++] = vertexIndex[edge.Value.m_pTo];
+                        userPrimitivesIndicesLR[index++] = locationIndex[loc];
+                        userPrimitivesIndicesLR[index++] = vertexIndex[edge.Value.m_pFrom];
+                        userPrimitivesIndicesLR[index++] = vertexIndex[edge.Value.m_pTo];
+
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pFrom];
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
+
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
+
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
+
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                        userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
+                        userPrimitivesIndicesHR[indexHR++] = locationIndex[loc];
+
+                        userPrimitives[vertexIndex[edge.Value.m_pInnerPoint]].Color = userPrimitives[locationIndex[loc]].Color;
                     }
                 }
             }
@@ -179,15 +204,15 @@ namespace TestCubePlanet
                 // so we can always return the closest one.
                 float? closestIntersection = null;
 
-                for (int i = 0; i < userPrimitivesIndices.Length; i += 3)
+                for (int i = 0; i < userPrimitivesIndicesLR.Length; i += 3)
                 {
                     // Perform a ray to triangle intersection test.
                     float? intersection;
 
                     RayIntersectsTriangle(ref ray,
-                                            ref userPrimitives[userPrimitivesIndices[i]].Position,
-                                            ref userPrimitives[userPrimitivesIndices[i + 1]].Position,
-                                            ref userPrimitives[userPrimitivesIndices[i + 2]].Position,
+                                            ref userPrimitives[userPrimitivesIndicesLR[i]].Position,
+                                            ref userPrimitives[userPrimitivesIndicesLR[i + 1]].Position,
+                                            ref userPrimitives[userPrimitivesIndicesLR[i + 2]].Position,
                                             out intersection);
 
                     // Does the ray intersect this triangle?
@@ -202,13 +227,13 @@ namespace TestCubePlanet
 
                             // Transform the three vertex positions into world space,
                             // and store them into the output vertex parameters.
-                            Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i]].Position,
+                            Vector3.Transform(ref userPrimitives[userPrimitivesIndicesLR[i]].Position,
                                                 ref modelTransform, out vertex1);
 
-                            Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i + 1]].Position,
+                            Vector3.Transform(ref userPrimitives[userPrimitivesIndicesLR[i + 1]].Position,
                                                 ref modelTransform, out vertex2);
 
-                            Vector3.Transform(ref userPrimitives[userPrimitivesIndices[i + 2]].Position,
+                            Vector3.Transform(ref userPrimitives[userPrimitivesIndicesLR[i + 2]].Position,
                                                 ref modelTransform, out vertex3);
                         }
                     }
@@ -249,40 +274,7 @@ namespace TestCubePlanet
             foreach (var pFace in pCube.m_cFaces)
             {
                 m_aFaces[index++] = new Face(pFace.Value, bColored, GraphicsDevice);
-                //Microsoft.Xna.Framework.Color pColor = Microsoft.Xna.Framework.Color.Black;
-                //switch(pFace.Key)
-                //{
-                //    case Cube.Face3D.Forward:
-                //        pColor = Microsoft.Xna.Framework.Color.Red;
-                //        break;
-                //    case Cube.Face3D.Top:
-                //        pColor = Microsoft.Xna.Framework.Color.Gold;
-                //        break;
-                //    case Cube.Face3D.Right:
-                //        pColor = Microsoft.Xna.Framework.Color.Green;
-                //        break;
-                //    case Cube.Face3D.Bottom:
-                //        pColor = Microsoft.Xna.Framework.Color.Cyan;
-                //        break;
-                //    case Cube.Face3D.Left:
-                //        pColor = Microsoft.Xna.Framework.Color.Blue;
-                //        break;
-                //    case Cube.Face3D.Backward:
-                //        pColor = Microsoft.Xna.Framework.Color.Violet;
-                //        break;
-                //}
-
-                //foreach (var pSquare in m_aFaces[index - 1].m_aSquares)
-                //{
-                //    for (int i = 0; i < pSquare.userPrimitives.Length; i++ )
-                //        pSquare.userPrimitives[i].Color = pColor;
-                //}
             }
-
-            //if (GraphicsDevice != null)
-            //    foreach (var pFace in m_aFaces)
-            //        foreach (var pSquare in pFace.m_aSquares)
-            //            pSquare.CreateBoundingBoxBuffers(GraphicsDevice);
 
             m_pCube = pCube;
         }
@@ -323,9 +315,12 @@ namespace TestCubePlanet
         private int m_iFrame = 0;
         private double m_fDrawingTime = 0;
         private double m_fFrameTime = 0;
+        private uint m_iTrianglesCount = 0;
         public int FPS { get { return m_iFrame; } }
         public double DrawingTime { get { return m_fDrawingTime; } }
         public double FrameTime { get { return m_fFrameTime; } }
+        public uint TrianglesCount { get { return m_iTrianglesCount; } }
+
 
         public void ResetFPS()
         {
@@ -399,6 +394,7 @@ namespace TestCubePlanet
             
             int iCount = 0;
             int iGotit = 0;
+            m_iTrianglesCount = 0;
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
@@ -436,8 +432,18 @@ namespace TestCubePlanet
                         }
                     }
 
-                    GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                                                pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndices, 0, pSquare.m_iTrianglesCount);
+                    if (pViewVector.Length() < 50)
+                    {
+                        GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                                                    pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesHR, 0, pSquare.m_iTrianglesCountHR);
+                        m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountHR;
+                    }
+                    else
+                    {
+                        GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                                                    pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesLR, 0, pSquare.m_iTrianglesCountLR);
+                        m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountLR;
+                    }
                     iCount++;
                 }
 

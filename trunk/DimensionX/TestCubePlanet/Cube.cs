@@ -48,7 +48,7 @@ namespace TestCubePlanet
 
             int quanticSize = (int)(size / k);
 
-            float fDelta = 0.4f;//0.25f;
+            float fDelta = 0.25f;//0.25f;
             
             iInnerCount = 0;
 
@@ -232,6 +232,8 @@ namespace TestCubePlanet
 
         private Dictionary<CellCH, List<CellCH>> m_cZeroEdges = new Dictionary<CellCH, List<CellCH>>();
 
+        private List<CellCH> m_cNewCells = new List<CellCH>();
+
         /// <summary>
         /// Восстанавливаем информацию о смежных гранях по выходным данным MIConvexHull.
         /// Возвращает минимальный Rect, полностью включающий в себя все вершины.
@@ -247,6 +249,7 @@ namespace TestCubePlanet
             float fMaxY = float.MinValue;
 
             m_cZeroEdges.Clear();
+            m_cNewCells.Clear();
 
             foreach (var edge in cEdges)
             {
@@ -258,6 +261,8 @@ namespace TestCubePlanet
                 //сливаем близко расположенные вершины
                 if (Point.Subtract(from.Circumcenter, to.Circumcenter).Length < fMinDist)
                 {
+                    //если from и to расположены слишком близко
+                    //добавляем to в список вершин, сливаемых с from
                     List<CellCH> cFromList;
                     if (!m_cZeroEdges.TryGetValue(from, out cFromList))
                     {
@@ -265,6 +270,7 @@ namespace TestCubePlanet
                         m_cZeroEdges[from] = cFromList;
                     }
                     cFromList.Add(to);
+                    //добавляем from в список вершин, сливаемых с to
                     List<CellCH> cToList;
                     if (!m_cZeroEdges.TryGetValue(to, out cToList))
                     {
@@ -272,6 +278,7 @@ namespace TestCubePlanet
                         m_cZeroEdges[to] = cToList;
                     }
                     cToList.Add(from);
+                    //больше не работаем с этой гранью!
                     continue;
                 }
 
@@ -311,9 +318,17 @@ namespace TestCubePlanet
                     pRight = pSwap;
                 }
 
+                CellCH pMiddle = new CellCH(from, to);
+                CellCH pInnerLeft = new CellCH(pMiddle, pLeft);
+                CellCH pInnerRight = new CellCH(pMiddle, pRight);
+
                 //пропишем ссылки на ребро в найденных локациях
-                pLeft.m_cEdges[pRight] = new VertexCH.Edge(from, to);
-                pRight.m_cEdges[pLeft] = new VertexCH.Edge(to, from);
+                pLeft.m_cEdges[pRight] = new VertexCH.Edge(from, to, pMiddle, pInnerLeft);
+                pRight.m_cEdges[pLeft] = new VertexCH.Edge(to, from, pMiddle, pInnerRight);
+
+                m_cNewCells.Add(pMiddle);
+                m_cNewCells.Add(pInnerLeft);
+                m_cNewCells.Add(pInnerRight);
 
                 if (pLeft.m_eGhost == VertexCH.Direction.CenterNone || pRight.m_eGhost == VertexCH.Direction.CenterNone)
                 {
@@ -338,43 +353,43 @@ namespace TestCubePlanet
                         pEdge.Value.m_pTo = SkipZero(pEdge.Value.m_pTo);
                 }
 
-                if (pLoc.m_eGhost != VertexCH.Direction.CenterNone)
-                    continue;
+                //if (pLoc.m_eGhost != VertexCH.Direction.CenterNone)
+                //    continue;
 
-                List<VertexCH.Edge> cSequence = new List<VertexCH.Edge>();
+                //List<VertexCH.Edge> cSequence = new List<VertexCH.Edge>();
 
-                VertexCH.Edge pLast = pLoc.m_cEdges.Values.First();
-                cSequence.Add(pLast);
-                for (int j = 0; j < pLoc.m_cEdges.Count; j++)
-                {
-                    foreach (var pEdge in pLoc.m_cEdges)
-                    {
-                        if (pEdge.Value.m_pFrom == pLast.m_pTo && !cSequence.Contains(pEdge.Value))
-                        {
-                            pLast = pEdge.Value;
-                            cSequence.Add(pLast);
-                            break;
-                        }
-                    }
-                }
+                //VertexCH.Edge pLast = pLoc.m_cEdges.Values.First();
+                //cSequence.Add(pLast);
+                //for (int j = 0; j < pLoc.m_cEdges.Count; j++)
+                //{
+                //    foreach (var pEdge in pLoc.m_cEdges)
+                //    {
+                //        if (pEdge.Value.m_pFrom == pLast.m_pTo && !cSequence.Contains(pEdge.Value))
+                //        {
+                //            pLast = pEdge.Value;
+                //            cSequence.Add(pLast);
+                //            break;
+                //        }
+                //    }
+                //}
 
-                if (cSequence.Count != pLoc.m_cEdges.Count)
-                {
-                    foreach (var pEdge in pLoc.m_cEdges)
-                    {
-                        if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pFrom))
-                            pEdge.Value.m_pFrom = SkipZero(pEdge.Value.m_pFrom);
-                        if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pTo))
-                            pEdge.Value.m_pTo = SkipZero(pEdge.Value.m_pTo);
-                    }
-                    throw new Exception();
-                }
+                //if (cSequence.Count != pLoc.m_cEdges.Count)
+                //{
+                //    //foreach (var pEdge in pLoc.m_cEdges)
+                //    //{
+                //    //    if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pFrom))
+                //    //        pEdge.Value.m_pFrom = SkipZero(pEdge.Value.m_pFrom);
+                //    //    if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pTo))
+                //    //        pEdge.Value.m_pTo = SkipZero(pEdge.Value.m_pTo);
+                //    //}
+                //    throw new Exception();
+                //}
             }
 
             return new Rect(fMinX, fMinY, fMaxX - fMinX, fMaxY - fMinY);
         }
 
-        Dictionary<CellCH, CellCH> cChange = new Dictionary<CellCH, CellCH>();
+        Dictionary<CellCH, CellCH> m_cReplacements = new Dictionary<CellCH, CellCH>();
 
         /// <summary>
         /// Игнорируем слишком короткие рёбра
@@ -383,8 +398,8 @@ namespace TestCubePlanet
         /// <returns></returns>
         private CellCH SkipZero(CellCH pFrom)
         {
-            if (cChange.ContainsKey(pFrom))
-                return cChange[pFrom];
+            if (m_cReplacements.ContainsKey(pFrom))
+                return m_cReplacements[pFrom];
 
             Claim(pFrom, pFrom);
             return pFrom;
@@ -397,12 +412,12 @@ namespace TestCubePlanet
         /// <param name="pNewValue"></param>
         private void Claim(CellCH pAnchor, CellCH pNewValue)
         {
-            cChange[pAnchor] = pNewValue;
+            m_cReplacements[pAnchor] = pNewValue;
             if (m_cZeroEdges.ContainsKey(pAnchor))
             {
                 foreach (var pPretender in m_cZeroEdges[pAnchor])
                 {
-                    if (cChange.ContainsKey(pPretender))
+                    if (m_cReplacements.ContainsKey(pPretender))
                         continue;
                     Claim(pPretender, pNewValue);
                 }
@@ -415,6 +430,7 @@ namespace TestCubePlanet
         {
             var size = 1000;
             var kHR = 1.2 * size / Math.Sqrt(locationsCount);
+            var kLR = 1.2 * size / Math.Sqrt(locationsCount/5);
 
             int iInnerCount;
             List<VertexCH> border = BuildBorder(out iInnerCount, kHR, size);
@@ -442,7 +458,7 @@ namespace TestCubePlanet
 
             //Территорию внутри построенной границы заполним случайными точками с распределением по Поиссону (чтобы случайно, но в общем равномерно).
             List<SimpleVector3d> cPointsHR = BuildPoisson(size, locationsCount - iInnerCount, kHR);
-            List<SimpleVector3d> cPointsLR = BuildPoisson(size, 20, kHR);
+            List<SimpleVector3d> cPointsLR = BuildPoisson(size, (locationsCount - iInnerCount)/5, kLR);
 
             //перенесём построенное облако Поиссона в основной рабочий массив
             for (var i = 0; i < cPointsHR.Count; i++)
@@ -463,13 +479,39 @@ namespace TestCubePlanet
             //Переведём результат в удобный нам формат.
             //Для каждого найденного ребра диаграммы Вороного найдём локации, которые оно разделяет
             Rect pBoundingRectHR = RebuildEdges(locationsHR, voronoiMeshHR.Edges);
+
+            m_cNewCells.AddRange(voronoiMeshHR.Vertices);
+            var locsHR = locationsHR.ToArray();
+            var vertsHR = m_cNewCells.ToArray();
+
+            foreach (var ploc in locsHR)
+            {
+                if (!ploc.m_bBorder)
+                {
+                    foreach (var pedge in ploc.m_cEdges)
+                        if (pedge.Key.m_eGhost != VertexCH.Direction.CenterNone)
+                            throw new Exception();
+                }
+
+            }
+
+            m_cNewCells.Clear();
             Rect pBoundingRectLR = RebuildEdges(locationsLR, voronoiMeshLR.Edges);
 
-            var locsHR = locationsHR.ToArray();
-            var vertsHR = voronoiMeshHR.Vertices.ToArray();
-
+            m_cNewCells.AddRange(voronoiMeshLR.Vertices);
             var locsLR = locationsLR.ToArray();
-            var vertsLR = voronoiMeshLR.Vertices.ToArray();
+            var vertsLR = m_cNewCells.ToArray();
+
+            foreach (var ploc in locsLR)
+            {
+                if (!ploc.m_bBorder)
+                {
+                    foreach (var pedge in ploc.m_cEdges)
+                        if (pedge.Key.m_eGhost != VertexCH.Direction.CenterNone)
+                            throw new Exception();
+                }
+
+            }
 
             m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Backward);
             //m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
@@ -533,7 +575,14 @@ namespace TestCubePlanet
                                                         m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate90CW);
 
             foreach (var pFace in m_cFaces)
+                pFace.Value.Ghostbusting();
+
+            foreach (var pFace in m_cFaces)
                 pFace.Value.Finalize();
+
+            //foreach (var pFace in m_cFaces)
+            //    foreach(var pChunk in pFace.Value.m_cChunk)
+            //        pChunk.DebugVertexes();
         }
     }
 }

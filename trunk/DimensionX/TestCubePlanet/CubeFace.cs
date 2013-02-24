@@ -142,7 +142,10 @@ namespace TestCubePlanet
                         }
                     }
                 }
+        }
 
+        public void Ghostbusting()
+        {
             foreach (var pChunk in m_cChunk)
                 pChunk.Ghostbusters();
         }
