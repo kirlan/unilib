@@ -46,7 +46,7 @@ Texture xTexture2;
 sampler TextureSampler2 = sampler_state { texture = <xTexture2> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
 
 Texture xTexture3;
-sampler TextureSampler3 = sampler_state { texture = <xTexture3> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+sampler TextureSampler3 = sampler_state { texture = <xTexture3> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
 
 Texture xTexture4;
 sampler TextureSampler4 = sampler_state { texture = <xTexture4> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
@@ -229,12 +229,71 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal :
     //output.View = normalize(mul(worldToTangentSpace,float4(CameraPosition,1.0) - worldPosition));    
 
 	output.View = normalize(float4(CameraPosition,1.0) - worldPosition);
-
+	
 	output.TextureCoords = input.TextureCoords;
 	output.TextureWeights = input.TexWeights;
 	output.TextureWeights2 = input.TexWeights2;
     
     return output;
+}
+
+float4 GetLandTexture(float2 TextureCoords, float4 TextureWeights, float4 TextureWeights2, float d)
+{
+    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
+    float blendFactor2 = clamp((d-BlendDistance/10)/(BlendDistance/5), 0, 1);
+
+	float4 texColor = float4(0, 0, 0, 0);
+	if(blendFactor >= 0.2)
+	{
+		float4 farColor = tex2D(TextureSampler0, TextureCoords)*TextureWeights.x;
+		farColor += tex2D(TextureSampler1, TextureCoords)*TextureWeights.y;
+		farColor += tex2D(TextureSampler2, TextureCoords)*TextureWeights.z;
+		farColor += tex2D(TextureSampler3, TextureCoords)*TextureWeights.w;
+		farColor += tex2D(TextureSampler4, TextureCoords)*TextureWeights2.x;
+		farColor += tex2D(TextureSampler5, TextureCoords)*TextureWeights2.y;
+		farColor += tex2D(TextureSampler6, TextureCoords)*TextureWeights2.z;
+		farColor += tex2D(TextureSampler7, TextureCoords)*TextureWeights2.w;
+	
+		texColor = farColor;
+	}
+
+	if(blendFactor < 1 && blendFactor2 >= 0.2)
+	{
+		float2 nearTextureCoords = TextureCoords*5;
+		float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*TextureWeights.x;
+		nearColor += tex2D(TextureSampler1, nearTextureCoords)*TextureWeights.y;
+		nearColor += tex2D(TextureSampler2, nearTextureCoords)*TextureWeights.z;
+		nearColor += tex2D(TextureSampler3, nearTextureCoords)*TextureWeights.w;
+		nearColor += tex2D(TextureSampler4, nearTextureCoords)*TextureWeights2.x;
+		nearColor += tex2D(TextureSampler5, nearTextureCoords)*TextureWeights2.y;
+		nearColor += tex2D(TextureSampler6, nearTextureCoords)*TextureWeights2.z;
+		nearColor += tex2D(TextureSampler7, nearTextureCoords)*TextureWeights2.w;
+
+		if(blendFactor < 0.2)
+			texColor = nearColor;
+		else
+			texColor = lerp(nearColor, texColor, blendFactor);
+	}
+
+	if(blendFactor2 < 1)
+	{
+		float2 closeTextureCoords = TextureCoords*15;
+		float4 closeColor = tex2D(TextureSampler0, closeTextureCoords)*TextureWeights.x;
+		closeColor += tex2D(TextureSampler1, closeTextureCoords)*TextureWeights.y;
+		closeColor += tex2D(TextureSampler2, closeTextureCoords)*TextureWeights.z;
+		closeColor += tex2D(TextureSampler3, closeTextureCoords)*TextureWeights.w;
+		closeColor += tex2D(TextureSampler4, closeTextureCoords)*TextureWeights2.x;
+		closeColor += tex2D(TextureSampler5, closeTextureCoords)*TextureWeights2.y;
+		closeColor += tex2D(TextureSampler6, closeTextureCoords)*TextureWeights2.z;
+		closeColor += tex2D(TextureSampler7, closeTextureCoords)*TextureWeights2.w;
+
+		if(blendFactor2 < 0.2)
+			texColor = closeColor;
+		else
+			texColor = lerp(closeColor, texColor, blendFactor2);
+	}
+
+	return texColor;
 }
 
 float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
@@ -254,41 +313,54 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
     float4 light = GetLight(input.Normal, input.View);
 
 	float d = length(input.Position3D - CameraPosition);
-     
-    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
-    float blendFactor2 = clamp((d-BlendDistance/10)/(BlendDistance/5), 0, 1);
 
-	float4 farColor = tex2D(TextureSampler0, input.TextureCoords)*input.TextureWeights.x;
-	farColor += tex2D(TextureSampler1, input.TextureCoords)*input.TextureWeights.y;
-	farColor += tex2D(TextureSampler2, input.TextureCoords)*input.TextureWeights.z;
-	farColor += tex2D(TextureSampler3, input.TextureCoords)*input.TextureWeights.w;
-	farColor += tex2D(TextureSampler4, input.TextureCoords)*input.TextureWeights2.x;
-	farColor += tex2D(TextureSampler5, input.TextureCoords)*input.TextureWeights2.y;
-	farColor += tex2D(TextureSampler6, input.TextureCoords)*input.TextureWeights2.z;
-	farColor += tex2D(TextureSampler7, input.TextureCoords)*input.TextureWeights2.w;
-
-    float2 nearTextureCoords = input.TextureCoords*5;
-    float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*input.TextureWeights.x;
-    nearColor += tex2D(TextureSampler1, nearTextureCoords)*input.TextureWeights.y;
-    nearColor += tex2D(TextureSampler2, nearTextureCoords)*input.TextureWeights.z;
-    nearColor += tex2D(TextureSampler3, nearTextureCoords)*input.TextureWeights.w;
-    nearColor += tex2D(TextureSampler4, nearTextureCoords)*input.TextureWeights2.x;
-    nearColor += tex2D(TextureSampler5, nearTextureCoords)*input.TextureWeights2.y;
-    nearColor += tex2D(TextureSampler6, nearTextureCoords)*input.TextureWeights2.z;
-    nearColor += tex2D(TextureSampler7, nearTextureCoords)*input.TextureWeights2.w;
-
-    float2 closeTextureCoords = input.TextureCoords*15;
-    float4 closeColor = tex2D(TextureSampler0, closeTextureCoords)*input.TextureWeights.x;
-    closeColor += tex2D(TextureSampler1, closeTextureCoords)*input.TextureWeights.y;
-    closeColor += tex2D(TextureSampler2, closeTextureCoords)*input.TextureWeights.z;
-    closeColor += tex2D(TextureSampler3, closeTextureCoords)*input.TextureWeights.w;
-    closeColor += tex2D(TextureSampler4, closeTextureCoords)*input.TextureWeights2.x;
-    closeColor += tex2D(TextureSampler5, closeTextureCoords)*input.TextureWeights2.y;
-    closeColor += tex2D(TextureSampler6, closeTextureCoords)*input.TextureWeights2.z;
-    closeColor += tex2D(TextureSampler7, closeTextureCoords)*input.TextureWeights2.w;
-
-    float4 texColor = lerp(nearColor, farColor, blendFactor);
-	texColor = lerp(closeColor, texColor, blendFactor2);
+	//==============================================================================================================================
+	// Determine the blend weights for the 3 planar projections.  
+	// N_orig is the vertex-interpolated normal vector.  
+	float3 blend_weights = abs( input.Normal.xyz );   // Tighten up the blending zone:  
+	blend_weights = (blend_weights - 0.2) * 7;  
+	blend_weights = max(blend_weights, 0);      // Force weights to sum to 1.0 (very important!)  
+	blend_weights /= (blend_weights.x + blend_weights.y + blend_weights.z ).xxx;   
+	// Now determine a color value and bump vector for each of the 3  
+	// projections, blend them, and store blended results in these two  
+	// vectors:  
+	float4 blended_color; // .w hold spec value  
+	float tex_scale = 0.05;
+	//float3 blended_bump_vec;  
+	{  
+		// Compute the UV coords for each of the 3 planar projections.  
+		// tex_scale (default ~ 1.0) determines how big the textures appear.  
+		float2 coord1 = input.Position3D.yz * tex_scale;  
+		float2 coord2 = input.Position3D.zx * tex_scale;  
+		float2 coord3 = input.Position3D.xy * tex_scale;  
+		// This is where you would apply conditional displacement mapping.  
+		//if (blend_weights.x > 0) coord1 = . . .  
+		//if (blend_weights.y > 0) coord2 = . . .  
+		//if (blend_weights.z > 0) coord3 = . . .  
+		// Sample color maps for each projection, at those UV coords.  
+		float4 col1 = GetLandTexture(coord1, input.TextureWeights, input.TextureWeights2, d);  
+		float4 col2 = GetLandTexture(coord2, input.TextureWeights, input.TextureWeights2, d); 
+		float4 col3 = GetLandTexture(coord3, input.TextureWeights, input.TextureWeights2, d);   
+		// Sample bump maps too, and generate bump vectors.  
+		// (Note: this uses an oversimplified tangent basis.)  
+		//float2 bumpFetch1 = bumpTex1.Sample(coord1).xy - 0.5;  
+		//float2 bumpFetch2 = bumpTex2.Sample(coord2).xy - 0.5;  
+		//float2 bumpFetch3 = bumpTex3.Sample(coord3).xy - 0.5;  
+		//float3 bump1 = float3(0, bumpFetch1.x, bumpFetch1.y);  
+		//float3 bump2 = float3(bumpFetch2.y, 0, bumpFetch2.x);  
+		//float3 bump3 = float3(bumpFetch3.x, bumpFetch3.y, 0);  
+		 // Finally, blend the results of the 3 planar projections.  
+		blended_color = col1.xyzw * blend_weights.xxxx +  
+						col2.xyzw * blend_weights.yyyy +  
+						col3.xyzw * blend_weights.zzzz;  
+		//blended_bump_vec = bump1.xyz * blend_weights.xxx +  
+		//				   bump2.xyz * blend_weights.yyy +  
+		//				   bump3.xyz * blend_weights.zzz;  
+	}  
+	// Apply bump vector to vertex-interpolated normal vector.  
+	//float3 N_for_lighting = normalize(N_orig + blended_bump);
+	//==============================================================================================================================
+    float4 texColor = blended_color;//GetLandTexture(input.TextureCoords, input.TextureWeights, input.TextureWeights2, d);
  	 
 	return ApplyFog(texColor*light, input.Position3D, 1);
 }

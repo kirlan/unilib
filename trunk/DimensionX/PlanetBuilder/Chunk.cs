@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Random;
 using System.Windows;
+using System.Drawing;
 
 namespace TestCubePlanet
 {
@@ -126,11 +127,12 @@ namespace TestCubePlanet
 
         private Dictionary<uint, Location> m_cLocations = new Dictionary<uint, Location>();
 
-        private string m_sName;
+        public Cube.Face3D m_eFace;
+        private float m_fDX, m_fDY;
 
         public override string ToString()
         {
-            return m_sName;
+            return string.Format("{0} ({1}, {2})", m_eFace, m_fDX, m_fDY);
         }
 
         public Vertex m_pBoundTopLeft;
@@ -138,27 +140,11 @@ namespace TestCubePlanet
         public Vertex m_pBoundBottomRight;
         public Vertex m_pBoundBottomLeft;
 
-        private Microsoft.Xna.Framework.Color GetTemperature(Vertex pVertex)
-        {
-            float fNorthX = 150 / (float)Math.Sqrt(3);
-            float fNorthY = 150 / (float)Math.Sqrt(3);
-            float fNorthZ = 150 / (float)Math.Sqrt(3);
-
-            float fDistNorth = (float)Math.Sqrt((pVertex.m_fX - fNorthX) * (pVertex.m_fX - fNorthX) + (pVertex.m_fY - fNorthY) * (pVertex.m_fY - fNorthY) + (pVertex.m_fZ - fNorthZ) * (pVertex.m_fZ - fNorthZ));
-            float fDistSouth = (float)Math.Sqrt((pVertex.m_fX + fNorthX) * (pVertex.m_fX + fNorthX) + (pVertex.m_fY + fNorthY) * (pVertex.m_fY + fNorthY) + (pVertex.m_fZ + fNorthZ) * (pVertex.m_fZ + fNorthZ));
-
-            if(fDistNorth < fDistSouth)
-                return Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Cyan, Microsoft.Xna.Framework.Color.Yellow, fDistNorth / 213);
-            else
-                return Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.Cyan, Microsoft.Xna.Framework.Color.Yellow, fDistSouth / 213);
-        }
-
         public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fWholeChunkSize, int iR, Cube.Face3D eFace)
         {
-            Microsoft.Xna.Framework.Color eColor = Microsoft.Xna.Framework.Color.White;
-            eColor = Microsoft.Xna.Framework.Color.FromNonPremultiplied(127 + Rnd.Get(100), 127 + Rnd.Get(100), 127 + Rnd.Get(100), 256);
-
-            m_sName = string.Format("{0} ({1}, {2})", eFace, fDX, fDY);
+            m_eFace = eFace;
+            m_fDX = fDX;
+            m_fDY = fDY;
 
             m_pBoundTopLeft = new Vertex((float)(pBounds2D.X + fDX - fWholeChunkSize/2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize/2), fWholeChunkSize/2, eFace, iR);
             m_pBoundTopRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize / 2), fWholeChunkSize / 2, eFace, iR);
@@ -172,7 +158,6 @@ namespace TestCubePlanet
             {
                 var loc = locations[i];
                 Location myLocation = new Location(loc.m_iID, (float)loc.Position[0] + fDX - fWholeChunkSize / 2, (float)loc.Position[1] + fDY - fWholeChunkSize / 2, fWholeChunkSize / 2, iR, eFace, loc.m_eGhost, loc.m_bBorder);
-                myLocation.m_eColor = GetTemperature(myLocation);//eColor;
                 m_aLocations[i] = myLocation;
                 loc.m_pTag = myLocation;
                 m_cLocations[loc.m_iID] = myLocation;
@@ -192,7 +177,6 @@ namespace TestCubePlanet
             {
                 var vertex = vertices[i];
                 Vertex myVertex = new Vertex((float)vertex.Circumcenter.X + fDX - fWholeChunkSize / 2, (float)vertex.Circumcenter.Y + fDY - fWholeChunkSize / 2, fWholeChunkSize / 2, eFace, iR);
-                myVertex.m_eColor = GetTemperature(myVertex);//eColor;
 
                 vertex.m_pTag = myVertex;
                 m_aVertexes[i] = myVertex;
@@ -285,11 +269,8 @@ namespace TestCubePlanet
 
                                         //сливаем вершины
                                         Vertex pGood1 = new Vertex(pLine.m_pFrom);
-                                        pGood1.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood1.m_eColor, pShadowLine.m_pTo.m_eColor, 0.5f);
                                         Vertex pGood2 = new Vertex(pLine.m_pTo);
-                                        pGood2.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood2.m_eColor, pShadowLine.m_pFrom.m_eColor, 0.5f);
                                         Vertex pGood3 = new Vertex(pLine.m_pMidPoint);
-                                        pGood3.m_eColor = Microsoft.Xna.Framework.Color.Lerp(pGood3.m_eColor, pShadowLine.m_pMidPoint.m_eColor, 0.5f);
 
                                         ReplaceVertexes(pLine.m_pFrom, pGood1, pLine.m_pTo, pGood2, pLine.m_pMidPoint, pGood3);
                                         pNeighbourChunk.m_pChunk.ReplaceVertexes(pShadowLine.m_pTo, pGood1, pShadowLine.m_pFrom, pGood2, pShadowLine.m_pMidPoint, pGood3);
