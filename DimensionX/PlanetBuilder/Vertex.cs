@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using PlanetBuilder;
+using Random;
 
 namespace TestCubePlanet
 {
@@ -11,6 +13,13 @@ namespace TestCubePlanet
         public float m_fX;
         public float m_fY;
         public float m_fZ;
+        public float m_fXN;
+        public float m_fYN;
+        public float m_fZN;
+        public float m_fH = 0;
+
+        public float m_fRndBig = 0.7f + Rnd.Get(0.6f);
+        public float m_fRndSmall = Rnd.Get(0.2f);
 
         /// <summary>
         /// Список локаций, соприкасающихся с вершиной.
@@ -29,6 +38,12 @@ namespace TestCubePlanet
             m_fX = pOriginal.m_fX;
             m_fY = pOriginal.m_fY;
             m_fZ = pOriginal.m_fZ;
+
+            m_fXN = pOriginal.m_fXN;
+            m_fYN = pOriginal.m_fYN;
+            m_fZN = pOriginal.m_fZN;
+
+            m_fH = pOriginal.m_fH;
         }
 
         /// <summary>
@@ -96,6 +111,12 @@ namespace TestCubePlanet
             m_fX = -fR * x *(float)Math.Sqrt(1 - y * y / 2 - z * z / 2 + y * y * z * z / 3);
             m_fY = fR * y * (float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
             m_fZ = fR * z * (float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
+
+            m_fH = (float)ClassicNoise.noise(m_fX / 3, m_fY / 3, m_fZ / 3) / 5 + (float)ClassicNoise.noise(m_fX / 10, m_fY / 10, m_fZ / 10) / 2 + (float)ClassicNoise.noise(m_fX / 50, m_fY / 50, m_fZ / 50) * 2;
+            if (m_fH > 0)
+                m_fH *= m_fH * m_fH;
+            else
+                m_fH = 0;//*= m_fH * m_fH;
         }
 
         public override string ToString()

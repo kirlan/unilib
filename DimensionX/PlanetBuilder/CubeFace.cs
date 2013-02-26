@@ -143,17 +143,5 @@ namespace TestCubePlanet
                     }
                 }
         }
-
-        public void Ghostbusting()
-        {
-            foreach (var pChunk in m_cChunk)
-                pChunk.Ghostbusters();
-        }
-
-        public void Finalize()
-        {
-            foreach (var pChunk in m_cChunk)
-                pChunk.Finalize();
-        }
     }
 }

@@ -156,7 +156,7 @@ namespace TestCubePlanet
             //pFocusPointDirection = Vector3.Transform(pFocusPointDirection, pFocusPointRotation2);
             //FocusPoint = pFocusPointDirection * m_fR;
 
-            FocusPoint = m_pTarget + Vector3.Normalize(m_pTarget)*0.2f;
+            FocusPoint = m_pTarget;// + Vector3.Normalize(m_pTarget) * 0.2f;
 
             Matrix cameraRotationYaw = Matrix.CreateFromAxisAngle(Vector3.Normalize(FocusPoint), Yaw);
             Matrix cameraRotationPitch = Matrix.CreateFromAxisAngle(Vector3.Cross(Vector3.Normalize(FocusPoint), m_pTargetDir), Pitch);

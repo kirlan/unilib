@@ -544,7 +544,7 @@ namespace TestCubePlanet
                 {
                     m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
                     m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Forward);
-                    m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left);
+                    m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Right);
                     m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
                 }
                 else
@@ -616,14 +616,19 @@ namespace TestCubePlanet
                                                         m_cFaces[Face3D.Left], VertexCH.Transformation.Rotate90CW);
 
             foreach (var pFace in m_cFaces)
-                pFace.Value.Ghostbusting();
+                foreach (var pChunk in pFace.Value.m_cChunk)
+                    pChunk.Ghostbusters();
 
             foreach (var pFace in m_cFaces)
-                pFace.Value.Finalize();
+                foreach (var pChunk in pFace.Value.m_cChunk)
+                {
+                    pChunk.Finalize();
+                    pChunk.BuildNormals();
+                }
 
-            //foreach (var pFace in m_cFaces)
-            //    foreach(var pChunk in pFace.Value.m_cChunk)
-            //        pChunk.DebugVertexes();
+            foreach (var pFace in m_cFaces)
+                foreach (var pChunk in pFace.Value.m_cChunk)
+                    pChunk.NormalizeNormals();
         }
     }
 }

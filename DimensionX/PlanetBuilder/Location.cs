@@ -163,7 +163,7 @@ namespace TestCubePlanet
 
         public override string ToString()
         {
-            return string.Format("{0}{4} ({1}, {2}, {3})", Ghost ? "x":"", m_fX, m_fY, m_fZ, m_iID);
+            return string.Format("{0}{4} ({1}, {2}, {3})", Ghost ? "x" : "", m_fX, m_fY, m_fZ, m_iID);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace TestCubePlanet
 
             comboBox1.SelectedIndex = 2;
             m_iLastSize = GetSquareSize();
-            comboBox2.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 3;
 
             cubePlanetDraw3d1.MouseWheel += new MouseEventHandler(cubePlanetDraw3d1_MouseWheel);
         }
