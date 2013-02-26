@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace TestCubePlanet
 {
@@ -23,14 +24,11 @@ namespace TestCubePlanet
         /// </summary>
         public Chunk m_pChunkMarker = null;
 
-        public Microsoft.Xna.Framework.Color m_eColor = Microsoft.Xna.Framework.Color.White;
-
         public Vertex(Vertex pOriginal)
         {
             m_fX = pOriginal.m_fX;
             m_fY = pOriginal.m_fY;
             m_fZ = pOriginal.m_fZ;
-            m_eColor = pOriginal.m_eColor;
         }
 
         /// <summary>
