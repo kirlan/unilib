@@ -78,7 +78,7 @@ namespace TestCubePlanet
             label1.Text = string.Format("Building time: {0:0.000}s", interval.TotalSeconds);
 
             now = DateTime.Now;
-            cubePlanetDraw3d1.Assign(m_pCube, checkBox1.Checked);
+            cubePlanetDraw3d1.Assign(m_pCube);
             interval = DateTime.Now - now;
             label2.Text = string.Format("Graphics init time: {0:0.000}s", interval.TotalSeconds);
 
@@ -92,18 +92,6 @@ namespace TestCubePlanet
             cubePlanetDraw3d1.Visible = true;
             panel1.Enabled = true;
         }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (m_pCube == null)
-                return;
-
-            var now = DateTime.Now;
-            cubePlanetDraw3d1.Assign(m_pCube, checkBox1.Checked);
-            var interval = DateTime.Now - now;
-            label2.Text = string.Format("Graphics init time: {0:0.000}s", interval.TotalSeconds);
-        }
-
 
         bool m_b3dMapRotate = false;
 

@@ -57,88 +57,25 @@ namespace TestCubePlanet
                 pBoundBottomLeft1, pBoundBottomRight1, pBoundBottomLeft2, pBoundBottomRight2);
         }
 
-        /// <summary>
-        /// вычисляем текстурные координаты для заданной вершины, в зависимости от формы мира
-        /// </summary>
-        /// <param name="pVertex">заданная вершина</param>
-        /// <returns></returns>
-        private Vector2 GetTexture(Vertex pVertex)
+        public VertexBuffer myVertexBuffer;
+        public IndexBuffer myIndexBufferLR;
+        public IndexBuffer myIndexBufferHR;
+
+        private void CopyToBuffers(GraphicsDevice pDevice)
         {
-            Vector2 TextureCoordinate = new Vector2(0);
+            myVertexBuffer = new VertexBuffer(pDevice, VertexMultitextured.VertexDeclaration, userPrimitives.Length, BufferUsage.WriteOnly);
+            myVertexBuffer.SetData(userPrimitives);
 
-            float fLongitudeBB = (float)Math.Atan2(m_pBounds8.Center.X, m_pBounds8.Center.Z);
-            float fLongitude = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
-            float fLat = 0;
+            myIndexBufferLR = new IndexBuffer(pDevice, typeof(int), userPrimitivesIndicesLR.Length, BufferUsage.WriteOnly);
+            myIndexBufferLR.SetData(userPrimitivesIndicesLR);
 
-            switch (m_pChunk.m_eFace)
-            {
-                case Cube.Face3D.Backward:
-                    fLat = (float)Math.Atan2(pVertex.m_fY, pVertex.m_fZ);
-                    break;
-                case Cube.Face3D.Left:
-                    fLongitude -= (float)Math.PI / 2;
-                    fLat = (float)Math.Atan2(pVertex.m_fY, pVertex.m_fX);
-                    break;
-                case Cube.Face3D.Forward:
-                    if (fLongitude > 0)
-                        fLongitude -= (float)Math.PI;
-                    else
-                        fLongitude += (float)Math.PI;
-                    fLat = (float)Math.Atan2(pVertex.m_fY, -pVertex.m_fZ);
-                    break;
-                case Cube.Face3D.Right:
-                    fLongitude += (float)Math.PI / 2;
-                    fLat = (float)Math.Atan2(pVertex.m_fY, -pVertex.m_fX);
-                    break;
-                case Cube.Face3D.Top:
-                    fLongitude = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fY);
-                    fLat = (float)Math.Atan2(pVertex.m_fZ, pVertex.m_fY);
-                    break;
-                case Cube.Face3D.Bottom:
-                    fLongitude = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fY);
-                    fLat = (float)Math.Atan2(pVertex.m_fZ, -pVertex.m_fY);
-                    break;
-            }
-            //if (fLongitudeBB > -Math.PI / 4 && fLongitudeBB < Math.PI / 4)
-            //    fLat = (float)Math.Atan2(pVertex.m_fY, pVertex.m_fZ);//backward
-
-            //if (fLongitudeBB > Math.PI / 4 && fLongitudeBB < Math.PI * 3 / 4)
-            //    fLat = (float)Math.Atan2(pVertex.m_fY, pVertex.m_fX);//left
-
-            //if (fLongitudeBB > Math.PI * 3 / 4 || fLongitudeBB < -Math.PI * 3 / 4)
-            //    fLat = (float)Math.Atan2(pVertex.m_fY, -pVertex.m_fZ);
-
-            //if (fLongitudeBB > -Math.PI * 3 / 4 && fLongitudeBB < -Math.PI / 4)
-            //    fLat = (float)Math.Atan2(pVertex.m_fY, -pVertex.m_fX);//right
-
-            //if (fLat > Math.PI / 4 || fLat < -Math.PI / 4)
-            //{
-            //    fLongitude = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fY);
-            //    if (fLat > Math.PI / 4)
-            //        fLat = (float)Math.Atan2(pVertex.m_fZ, pVertex.m_fY);//top
-            //    else if (fLat < -Math.PI / 4)
-            //        fLat = (float)Math.Atan2(pVertex.m_fZ, -pVertex.m_fY);
-            //}
-
-            //float fLongitude4 = (float)(fLongitude % (Math.PI / 2));
-
-            //сколько раз тайл текстуры укладывается в грань куба по горизонтали или вертикали.
-            //для лучшего наложения должно быть чётным.
-            int iTilesPerQuadrant = 8;
-
-            TextureCoordinate.X = fLongitude * 2 * iTilesPerQuadrant / (float)Math.PI;
-            //if (TextureCoordinate.X < 0)
-            //    TextureCoordinate.X = -TextureCoordinate.X - 0.12f;
-            TextureCoordinate.Y = fLat * 2 * iTilesPerQuadrant / (float)Math.PI;
-            //if (TextureCoordinate.Y < 0)
-            //    TextureCoordinate.Y = -TextureCoordinate.Y - 0.12f;
-
-            return TextureCoordinate;
+            myIndexBufferHR = new IndexBuffer(pDevice, typeof(int), userPrimitivesIndicesHR.Length, BufferUsage.WriteOnly);
+            myIndexBufferHR.SetData(userPrimitivesIndicesHR);
         }
 
         private Chunk m_pChunk;
 
-        public Square(Chunk pChunk, bool bColored, int iFaceSize)
+        public Square(GraphicsDevice pDevice, Chunk pChunk, int iFaceSize)
         {
             m_pChunk = pChunk;
 
@@ -164,7 +101,7 @@ namespace TestCubePlanet
                 userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
                 userPrimitives[index].Normal = Vector3.Normalize(userPrimitives[index].Position);
                 userPrimitives[index].Tangent = Vector3.Zero;
-                userPrimitives[index].TextureCoordinate = new Vector4(GetTexture(vertex), 0, 0); 
+                userPrimitives[index].TextureCoordinate = new Vector4(0, 0, 0, 0); // new Vector4(GetTexture(vertex), 0, 0); 
                 userPrimitives[index].TexWeights = new Vector4(0, 0, 0, 1);
                 userPrimitives[index].TexWeights2 = new Vector4(0, 0, 0, 0);
 
@@ -183,7 +120,7 @@ namespace TestCubePlanet
                 userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
                 userPrimitives[index].Normal = Vector3.Normalize(userPrimitives[index].Position);
                 userPrimitives[index].Tangent = Vector3.Zero;
-                userPrimitives[index].TextureCoordinate = new Vector4(GetTexture(loc), 0, 0); 
+                userPrimitives[index].TextureCoordinate = new Vector4(0, 0, 0, 0); //new Vector4(GetTexture(loc), 0, 0); 
                 userPrimitives[index].TexWeights = new Vector4(0, 0, 0, 1);
                 userPrimitives[index].TexWeights2 = new Vector4(0, 0, 0, 0);
 
@@ -237,6 +174,8 @@ namespace TestCubePlanet
                     userPrimitives[vertexIndex[edge.Value.m_pInnerPoint]].TexWeights = userPrimitives[locationIndex[loc]].TexWeights;
                 }
             }
+
+            CopyToBuffers(pDevice);
         }
 
         private Color GetTemperature(Vertex pVertex)

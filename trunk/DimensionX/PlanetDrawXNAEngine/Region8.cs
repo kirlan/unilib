@@ -14,7 +14,7 @@ namespace TestCubePlanet
     public struct Region8
     {
         //the corners of the region
-        private Vector3 tfl, tfr, tbl, tbr, bfl, bfr, bbl, bbr, center;
+        private Vector3 tfl, tfr, tbl, tbr, bfl, bfr, bbl, bbr, center, normal;
         #region public corner accessors
         public Vector3 TopFrontLeft { get { return tfl; } }
         public Vector3 TopFrontRight { get { return tfr; } }
@@ -25,6 +25,7 @@ namespace TestCubePlanet
         public Vector3 BottomBackLeft { get { return bbl; } }
         public Vector3 BottomBackRight { get { return bbr; } }
         public Vector3 Center { get { return center; } }
+        public Vector3 Normal { get { return normal; } }
         #endregion
         //vertices to represent the corners for drawing
         private VertexPositionColor[] vertices;
@@ -35,6 +36,7 @@ namespace TestCubePlanet
         public Plane Top { get { return top; } }
         //stores dot products used in collsions.
         public float[] dotProducts;
+        public BoundingSphere m_pSphere;
 
         /// <summary>
         /// Creates a new Region defined by 8 arbitrary points. The faces of this region must be flat planes for it to work. Recommended for frustums.
@@ -75,6 +77,8 @@ namespace TestCubePlanet
             center = tfl + tfr + tbl + tbr + bfl + bfr + bbl + bbr;
             center /= 8;
 
+            normal = Vector3.Normalize(center);
+
             //Fix normals to point outward
             for (int p = 0; p < planes.Length; p++)
             {
@@ -96,6 +100,9 @@ namespace TestCubePlanet
             }
 
             dotProducts = new float[6];
+
+            Vector3[] aVer = { bbl, bbr, bfl, bfr, tbl, tbr, tfl, tfr };
+            m_pSphere = BoundingSphere.CreateFromPoints(aVer);
 
             vertices[0] = MakeVert(tfl);
             vertices[1] = MakeVert(tfr);
