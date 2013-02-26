@@ -87,10 +87,6 @@
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
       <Name>Random</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\SimpleVectors\SimpleVectors.csproj">
-      <Project>{9D04A744-D09B-4B4E-B843-1763A47339A5}</Project>
-      <Name>SimpleVectors</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MIConvexHull\MIConvexHull.csproj">
       <Project>{2337776D-7D0C-40AA-A439-C26C3CE24FAB}</Project>
       <Name>MIConvexHull</Name>

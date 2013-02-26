@@ -55,16 +55,28 @@ namespace TestCubePlanet
                     {
                         cNewVertexes.Add(pEdge.Value.m_pFrom);
                         pEdge.Value.m_pFrom.m_pChunkMarker = this;
+
+                        if (pLoc.m_fH > 0 && pEdge.Value.m_pFrom.m_fH <= 0)
+                            pEdge.Value.m_pFrom.m_fH = pLoc.m_fH / 2;
                     }
                     if (pEdge.Value.m_pMidPoint.m_pChunkMarker != this)
                     {
                         cNewVertexes.Add(pEdge.Value.m_pMidPoint);
                         pEdge.Value.m_pMidPoint.m_pChunkMarker = this;
+
+                        if (pLoc.m_fH > 0 && pEdge.Value.m_pMidPoint.m_fH <= 0)
+                            pEdge.Value.m_pMidPoint.m_fH = pLoc.m_fH / 2;
                     }
                     if (pEdge.Value.m_pInnerPoint.m_pChunkMarker != this)
                     {
                         cNewVertexes.Add(pEdge.Value.m_pInnerPoint);
                         pEdge.Value.m_pInnerPoint.m_pChunkMarker = this;
+
+                        if (pLoc.m_fH > 0 && pEdge.Value.m_pInnerPoint.m_fH <= 0)
+                            pEdge.Value.m_pInnerPoint.m_fH = pLoc.m_fH * 2 / 3;
+
+                        if (pLoc.m_fH <= 0 && pEdge.Value.m_pInnerPoint.m_fH > 0)
+                            pEdge.Value.m_pInnerPoint.m_fH = pLoc.m_fH * 2 / 3;
                     }
                 }
 
@@ -77,6 +89,30 @@ namespace TestCubePlanet
             //m_bDirty = true;
 
             //DebugVertexes();
+        }
+
+        public void NormalizeNormals()
+        {
+            for (int i = 0; i < m_aLocations.Length; i++)
+            {
+                var pLoc = m_aLocations[i];
+                if (pLoc.Ghost)
+                    continue;
+
+                float fLen = (float)Math.Sqrt(pLoc.m_fXN * pLoc.m_fXN + pLoc.m_fYN * pLoc.m_fYN + pLoc.m_fZN * pLoc.m_fZN);
+                pLoc.m_fXN = pLoc.m_fXN / fLen;
+                pLoc.m_fYN = pLoc.m_fYN / fLen;
+                pLoc.m_fZN = pLoc.m_fZN / fLen;
+            }
+            for (int i = 0; i < m_aVertexes.Length; i++)
+            {
+                var pVertex = m_aVertexes[i];
+
+                float fLen = (float)Math.Sqrt(pVertex.m_fXN * pVertex.m_fXN + pVertex.m_fYN * pVertex.m_fYN + pVertex.m_fZN * pVertex.m_fZN);
+                pVertex.m_fXN = pVertex.m_fXN / fLen;
+                pVertex.m_fYN = pVertex.m_fYN / fLen;
+                pVertex.m_fZN = pVertex.m_fZN / fLen;
+            }
         }
 
         //public void DebugVertexes()
@@ -129,6 +165,7 @@ namespace TestCubePlanet
 
         public Cube.Face3D m_eFace;
         private float m_fDX, m_fDY;
+        private float m_fR;
 
         public override string ToString()
         {
@@ -145,6 +182,8 @@ namespace TestCubePlanet
             m_eFace = eFace;
             m_fDX = fDX;
             m_fDY = fDY;
+
+            m_fR = iR;
 
             m_pBoundTopLeft = new Vertex((float)(pBounds2D.X + fDX - fWholeChunkSize/2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize/2), fWholeChunkSize/2, eFace, iR);
             m_pBoundTopRight = new Vertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize / 2), fWholeChunkSize / 2, eFace, iR);
@@ -310,6 +349,94 @@ namespace TestCubePlanet
             //            throw new Exception();
             //    }
             //}
+        }
+
+        internal void BuildNormals()
+        {
+            for (int i = 0; i < m_aLocations.Length; i++)
+            {
+                var pLoc = m_aLocations[i];
+                if (pLoc.Ghost)
+                    continue;
+
+                foreach (var pEdge in pLoc.m_cEdges)
+                {
+                    float fXN1, fYN1, fZN1;
+                    GetNormal(pEdge.Value.m_pInnerPoint, pEdge.Value.m_pMidPoint, pEdge.Value.m_pFrom, out fXN1, out fYN1, out fZN1);
+                    pEdge.Value.m_pInnerPoint.m_fXN += fXN1;
+                    pEdge.Value.m_pInnerPoint.m_fYN += fYN1;
+                    pEdge.Value.m_pInnerPoint.m_fZN += fZN1;
+                    pEdge.Value.m_pMidPoint.m_fXN += fXN1;
+                    pEdge.Value.m_pMidPoint.m_fYN += fYN1;
+                    pEdge.Value.m_pMidPoint.m_fZN += fZN1;
+                    pEdge.Value.m_pFrom.m_fXN += fXN1;
+                    pEdge.Value.m_pFrom.m_fYN += fYN1;
+                    pEdge.Value.m_pFrom.m_fZN += fZN1;
+
+                    float fXN2, fYN2, fZN2;
+                    GetNormal(pEdge.Value.m_pInnerPoint, pEdge.Value.m_pTo, pEdge.Value.m_pMidPoint, out fXN2, out fYN2, out fZN2);
+                    pEdge.Value.m_pInnerPoint.m_fXN += fXN2;
+                    pEdge.Value.m_pInnerPoint.m_fYN += fYN2;
+                    pEdge.Value.m_pInnerPoint.m_fZN += fZN2;
+                    pEdge.Value.m_pTo.m_fXN += fXN2;
+                    pEdge.Value.m_pTo.m_fYN += fYN2;
+                    pEdge.Value.m_pTo.m_fZN += fZN2;
+                    pEdge.Value.m_pMidPoint.m_fXN += fXN2;
+                    pEdge.Value.m_pMidPoint.m_fYN += fYN2;
+                    pEdge.Value.m_pMidPoint.m_fZN += fZN2;
+
+                    float fXN3, fYN3, fZN3;
+                    GetNormal(pEdge.Value.m_pInnerPoint, pEdge.Value.m_pNext.m_pInnerPoint, pEdge.Value.m_pTo, out fXN3, out fYN3, out fZN3);
+                    pEdge.Value.m_pInnerPoint.m_fXN += fXN3;
+                    pEdge.Value.m_pInnerPoint.m_fYN += fYN3;
+                    pEdge.Value.m_pInnerPoint.m_fZN += fZN3;
+                    pEdge.Value.m_pNext.m_pInnerPoint.m_fXN += fXN3;
+                    pEdge.Value.m_pNext.m_pInnerPoint.m_fYN += fYN3;
+                    pEdge.Value.m_pNext.m_pInnerPoint.m_fZN += fZN3;
+                    pEdge.Value.m_pTo.m_fXN += fXN3;
+                    pEdge.Value.m_pTo.m_fYN += fYN3;
+                    pEdge.Value.m_pTo.m_fZN += fZN3;
+
+                    float fXN4, fYN4, fZN4;
+                    GetNormal(pEdge.Value.m_pInnerPoint, pLoc, pEdge.Value.m_pNext.m_pInnerPoint, out fXN4, out fYN4, out fZN4);
+                    pEdge.Value.m_pInnerPoint.m_fXN += fXN4;
+                    pEdge.Value.m_pInnerPoint.m_fYN += fYN4;
+                    pEdge.Value.m_pInnerPoint.m_fZN += fZN4;
+                    pLoc.m_fXN += fXN4;
+                    pLoc.m_fYN += fYN4;
+                    pLoc.m_fZN += fZN4;
+                    pEdge.Value.m_pNext.m_pInnerPoint.m_fXN += fXN4;
+                    pEdge.Value.m_pNext.m_pInnerPoint.m_fYN += fYN4;
+                    pEdge.Value.m_pNext.m_pInnerPoint.m_fZN += fZN4;
+                }
+            }
+        }
+
+        private void GetNormal(Vertex vertex1, Vertex vertex2, Vertex vertex3, out float fX, out float fY, out float fZ)
+        {
+            float vX1 = vertex1.m_fX +vertex1.m_fX * vertex1.m_fH / m_fR;
+            float vY1 = vertex1.m_fY +vertex1.m_fY * vertex1.m_fH / m_fR;
+            float vZ1 = vertex1.m_fZ +vertex1.m_fZ * vertex1.m_fH / m_fR;
+
+            float vX2 = vertex2.m_fX +vertex2.m_fX * vertex2.m_fH / m_fR;
+            float vY2 = vertex2.m_fY +vertex2.m_fY * vertex2.m_fH / m_fR;
+            float vZ2 = vertex2.m_fZ +vertex2.m_fZ * vertex2.m_fH / m_fR;
+            
+            float vX3 = vertex3.m_fX +vertex3.m_fX * vertex3.m_fH / m_fR;
+            float vY3 = vertex3.m_fY +vertex3.m_fY * vertex3.m_fH / m_fR;
+            float vZ3 = vertex3.m_fZ +vertex3.m_fZ * vertex3.m_fH / m_fR;
+
+            float side1X = vX1 - vX3;
+            float side1Y = vY1 - vY3;
+            float side1Z = vZ1 - vZ3;
+
+            float side2X = vX1 - vX2;
+            float side2Y = vY1 - vY2;
+            float side2Z = vZ1 - vZ2;
+
+            fX = side1Y * side2Z - side1Z * side2Y;
+            fY = side1Z * side2X - side1X * side2Z;
+            fZ = side1X * side2Y - side1Y * side2X;
         }
     }
 }

@@ -214,7 +214,7 @@ namespace TestCubePlanet
             pEffectFogModePlain.SetValue(false);
             pEffectFogModeRing.SetValue(false);
             pEffectFogModeSphere.SetValue(true);
-            pEffectFogDensity.SetValue(0.007f);
+            pEffectFogDensity.SetValue(0.05f);
 
             pEffectBlendDistance.SetValue(20);//2
             pEffectBlendWidth.SetValue(40);
@@ -353,6 +353,22 @@ namespace TestCubePlanet
             set { m_bUseCelShading = value; }
         }
 
+        private bool m_bShowBounds = false;
+
+        public bool ShowBounds
+        {
+            get { return m_bShowBounds; }
+            set { m_bShowBounds = value; }
+        }
+
+        private bool m_bWireFrame = false;
+
+        public bool WireFrame
+        {
+            get { return m_bWireFrame; }
+            set { m_bWireFrame = value; }
+        }
+
         public void ResetFPS()
         {
             m_iFrame = 0;
@@ -389,13 +405,42 @@ namespace TestCubePlanet
 
             m_pCamera.Update();
 
+            Vector3? pCharacter = GetSurface(m_pCamera.FocusPoint);
+            if (pCharacter.HasValue)
+            {
+                pCharacter += Vector3.Normalize(pCharacter.Value) * 0.2f;
+                m_pCamera.Position += pCharacter.Value - m_pCamera.FocusPoint;
+                m_pCamera.FocusPoint = pCharacter.Value;
+
+                //Убедимся, что камера достаточно высоко над землёй
+                if (m_pCamera.Position.Length() < m_pCube.R + 10)
+                {
+                    float fMinHeight = 0.1f;
+                    Vector3? pSurface = GetSurface(m_pCamera.Position);
+                    if (pSurface.HasValue)
+                    {
+                        if ((pSurface.Value - m_pCamera.Position).Length() < fMinHeight)
+                        {
+                            //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
+                            m_pCamera.Position = pSurface.Value + Vector3.Normalize(pSurface.Value) * fMinHeight;
+                        }
+                    }
+                }
+                m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
+            }
+            else
+            {
+                pCharacter = GetSurface(m_pCamera.FocusPoint);
+                throw new Exception();
+            }
+
             Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
 
-            m_pPoints = new VertexPositionColor[4];
-            m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-            m_pPoints[1] = new VertexPositionColor(m_pCamera.FocusPoint, Microsoft.Xna.Framework.Color.Black);
-            m_pPoints[2] = new VertexPositionColor(-pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
-            m_pPoints[3] = new VertexPositionColor(pPole * 200, Microsoft.Xna.Framework.Color.Violet);
+            m_pDebugInfo = new VertexPositionColor[4];
+            m_pDebugInfo[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            m_pDebugInfo[1] = new VertexPositionColor(m_pCamera.FocusPoint, Microsoft.Xna.Framework.Color.Black);
+            m_pDebugInfo[2] = new VertexPositionColor(-pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
+            m_pDebugInfo[3] = new VertexPositionColor(pPole * 200, Microsoft.Xna.Framework.Color.Violet);
 
             pEffectView.SetValue(m_pCamera.View);
             pEffectProjection.SetValue(m_pCamera.Projection);
@@ -406,9 +451,12 @@ namespace TestCubePlanet
 
             // Set renderstates.
             RasterizerState rs = new RasterizerState();
-            //rs.CullMode = CullMode.None;
             rs.CullMode = CullMode.CullClockwiseFace;
-            //rs.FillMode = FillMode.WireFrame;
+            if (m_bWireFrame)
+            {
+                rs.CullMode = CullMode.None;
+                rs.FillMode = FillMode.WireFrame;
+            }
             GraphicsDevice.RasterizerState = rs;
 
             Viewport pPort = GraphicsDevice.Viewport;
@@ -442,7 +490,7 @@ namespace TestCubePlanet
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
-                    if (Vector3.Dot(pSquare.m_pBounds8.Normal, m_pCamera.Direction) > 0.1)
+                    if (Vector3.Dot(pSquare.m_pBounds8.Normal, m_pCamera.Direction) > 0.2)
                         continue;
 
                     Vector3 pViewVector = pSquare.m_pBounds8.Center - m_pCamera.Position;
@@ -450,20 +498,10 @@ namespace TestCubePlanet
                     float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
                     if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
                     {
-                        //if (//pFrustrum.Contains(pSquare.m_pBounds8.BottomBackLeft) == ContainmentType.Disjoint &&
-                        //    //pFrustrum.Contains(pSquare.m_pBounds8.BottomBackRight) == ContainmentType.Disjoint &&
-                        //    //pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontLeft) == ContainmentType.Disjoint &&
-                        //    //pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontRight) == ContainmentType.Disjoint &&
-                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopBackLeft) == ContainmentType.Disjoint &&
-                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopBackRight) == ContainmentType.Disjoint &&
-                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopFrontLeft) == ContainmentType.Disjoint &&
-                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopFrontRight) == ContainmentType.Disjoint)
+                        if (pFrustrum.Contains(pSquare.m_pBounds8.m_pSphere) == ContainmentType.Disjoint)
                         {
-                            if (pFrustrum.Contains(pSquare.m_pBounds8.m_pSphere) == ContainmentType.Disjoint)
-                            {
-                                iGotit++;
-                                continue;
-                            }
+                            iGotit++;
+                            continue;
                         }
                     }
 
@@ -489,27 +527,31 @@ namespace TestCubePlanet
                     iCount++;
                 }
 
-            rs = new RasterizerState();
-            rs.CullMode = CullMode.None;
-            //rs.CullMode = CullMode.CullClockwiseFace;
-            rs.FillMode = FillMode.WireFrame;
-            GraphicsDevice.RasterizerState = rs;
-
-            lineEffect.World = Matrix.Identity;
-            lineEffect.View = m_pCamera.View;
-            lineEffect.Projection = m_pCamera.Projection;
-            lineEffect.CurrentTechnique.Passes[0].Apply();
-
-            if (m_pSelectedSquare != null)
+            if (m_bShowBounds)
             {
-                var bbvertices = m_pSelectedSquare.m_pBounds8.GetVertices();
-                var bbindices = m_pSelectedSquare.m_pBounds8.GetIndices();
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList,
-                                            bbvertices, 0, bbvertices.Length, bbindices, 0, bbindices.Length / 2);
+                rs = new RasterizerState();
+                rs.CullMode = CullMode.None;
+                //rs.CullMode = CullMode.CullClockwiseFace;
+                rs.FillMode = FillMode.WireFrame;
+                GraphicsDevice.RasterizerState = rs;
+
+                lineEffect.World = Matrix.Identity;
+                lineEffect.View = m_pCamera.View;
+                lineEffect.Projection = m_pCamera.Projection;
+                lineEffect.CurrentTechnique.Passes[0].Apply();
+
+                if (m_pSelectedSquare != null)
+                {
+                    var bbvertices = m_pSelectedSquare.m_pBounds8.GetVertices();
+                    var bbindices = m_pSelectedSquare.m_pBounds8.GetIndices();
+                    GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList,
+                                                bbvertices, 0, bbvertices.Length, bbindices, 0, bbindices.Length / 2);
+                }
             }
-        
+
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
+            DrawDebugInfo();
 
             if (m_bUseCelShading)
             {
@@ -563,14 +605,6 @@ namespace TestCubePlanet
             return new Ray(nearPoint, direction);
         }
 
-        // Vertex array that stores exactly which triangle was picked.
-        VertexPositionColor[] m_aPickedTriangle =
-        {
-            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
-            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
-            new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Magenta),
-        };
-
         /// <summary>
         /// Helper for drawing the outline of the triangle currently under the cursor.
         /// </summary>
@@ -582,7 +616,10 @@ namespace TestCubePlanet
                 // and turn off the depth buffer because we want to be able to
                 // see the picked triangle outline regardless of which way it is
                 // facing, and even if there is other geometry in front of it.
-                GraphicsDevice.RasterizerState = RasterizerState.CullNone; 
+                RasterizerState rs = new RasterizerState();
+                rs.CullMode = CullMode.None;
+                rs.FillMode = FillMode.WireFrame;
+                GraphicsDevice.RasterizerState = rs;
                 GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
                 // Activate the line drawing BasicEffect.
@@ -592,30 +629,76 @@ namespace TestCubePlanet
                 lineEffect.CurrentTechnique.Passes[0].Apply();
 
                 // Draw the triangle.
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
-                                          m_aPickedTriangle, 0, 1);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
+                //                          m_aPickedTriangle, 0, 1);
+                if (m_pSelectedSquare != null)
+                    GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
+                                          m_pSelectedSquare.userPrimitives, 0, m_pSelectedSquare.userPrimitives.Length - 1, m_pSelectedSquare.m_aLocations[m_pFocusedLocation], 0, m_pSelectedSquare.m_aLocations[m_pFocusedLocation].Length / 2);
 
                 // Reset renderstates to their default values.
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-                GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
-                    PrimitiveType.LineList,
-                    m_pPoints,
-                    0,  // index of the first vertex to draw
-                    m_pPoints.Length / 2   // number of primitives
-                );
             }
+        }
+
+        /// <summary>
+        /// Helper for drawing the outline of the triangle currently under the cursor.
+        /// </summary>
+        void DrawDebugInfo()
+        {
+            // Activate the line drawing BasicEffect.
+            lineEffect.Projection = m_pCamera.Projection;
+            lineEffect.View = m_pCamera.View;
+
+            lineEffect.CurrentTechnique.Passes[0].Apply();
+
+            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+                PrimitiveType.LineList,
+                m_pDebugInfo,
+                0,  // index of the first vertex to draw
+                m_pDebugInfo.Length / 2   // number of primitives
+            );
         }
 
         bool m_bPicked = false;
 
-        VertexPositionColor[] m_pPoints;
+        VertexPositionColor[] m_pDebugInfo;
 
         Square m_pSelectedSquare = null;
         public Vector3? m_pCurrentPicking = null;
 
         Ray m_pCursorRay;
+
+        public Vector3? GetSurface(Vector3 pPos)
+        {
+            if (m_pCube == null)
+                return null;
+
+            Ray upRay = new Ray(Vector3.Zero, Vector3.Normalize(pPos));
+
+            foreach (var pFace in m_aFaces)
+                foreach (var pSquare in pFace.m_aSquares)
+                {
+                    if (pSquare.m_pBounds8.Intersects(upRay).HasValue)
+                    {
+                        Location pLoc;
+
+                        // Perform the ray to model intersection test.
+                        float? intersection = pSquare.RayIntersectsLandscape(upRay, Matrix.Identity,//CreateScale(0.5f),
+                                                                    out pLoc);
+                        // Do we have a per-triangle intersection with this model?
+                        if (intersection != null)
+                            return Vector3.Normalize(upRay.Direction) * intersection;
+                    }
+                }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Локация, над которой находится указатель мыши.
+        /// </summary>
+        private Location m_pFocusedLocation = null;
 
         /// <summary>
         /// Runs a per-triangle picking algorithm over all the models in the scene,
@@ -664,12 +747,11 @@ namespace TestCubePlanet
                 {
                     if (pSquare.m_pBounds8.Intersects(m_pCursorRay).HasValue)
                     {
-                        Vector3 vertex1, vertex2, vertex3;
+                        Location pLoc;
 
                         // Perform the ray to model intersection test.
                         float? intersection = pSquare.RayIntersectsLandscape(m_pCursorRay, Matrix.Identity,//CreateScale(0.5f),
-                                                                    out vertex1, out vertex2,
-                                                                    out vertex3);
+                                                                    out pLoc);
                         // Do we have a per-triangle intersection with this model?
                         if (intersection != null)
                         {
@@ -681,9 +763,7 @@ namespace TestCubePlanet
                                 closestIntersection = intersection.Value;
 
                                 // Store vertex positions so we can display the picked triangle.
-                                m_aPickedTriangle[0].Position = vertex1;
-                                m_aPickedTriangle[1].Position = vertex2;
-                                m_aPickedTriangle[2].Position = vertex3;
+                                m_pFocusedLocation = pLoc;
 
                                 m_bPicked = true;
 
