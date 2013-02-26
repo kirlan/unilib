@@ -10,14 +10,14 @@ namespace TestCubePlanet
     {
         public Square[] m_aSquares;
 
-        public Face(CubeFace pFace, bool bColored)
+        public Face(GraphicsDevice pDevice, CubeFace pFace)
         {
             m_aSquares = new Square[pFace.Resolution * pFace.Resolution];
 
             int index = 0;
             foreach (var chunk in pFace.m_cChunk)
             {
-                m_aSquares[index++] = new Square(chunk, bColored, pFace.Resolution);
+                m_aSquares[index++] = new Square(pDevice, chunk, pFace.Resolution);
             }
         }
     }

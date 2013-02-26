@@ -257,7 +257,7 @@ float4 GetLandTexture(float2 TextureCoords, float4 TextureWeights, float4 Textur
 		texColor = farColor;
 	}
 
-	if(blendFactor < 1 && blendFactor2 >= 0.2)
+	if(blendFactor < 1 && blendFactor2 >= 0.1)
 	{
 		float2 nearTextureCoords = TextureCoords*5;
 		float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*TextureWeights.x;
@@ -287,7 +287,7 @@ float4 GetLandTexture(float2 TextureCoords, float4 TextureWeights, float4 Textur
 		closeColor += tex2D(TextureSampler6, closeTextureCoords)*TextureWeights2.z;
 		closeColor += tex2D(TextureSampler7, closeTextureCoords)*TextureWeights2.w;
 
-		if(blendFactor2 < 0.2)
+		if(blendFactor2 < 0.1)
 			texColor = closeColor;
 		else
 			texColor = lerp(closeColor, texColor, blendFactor2);
@@ -338,9 +338,16 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 		//if (blend_weights.y > 0) coord2 = . . .  
 		//if (blend_weights.z > 0) coord3 = . . .  
 		// Sample color maps for each projection, at those UV coords.  
-		float4 col1 = GetLandTexture(coord1, input.TextureWeights, input.TextureWeights2, d);  
-		float4 col2 = GetLandTexture(coord2, input.TextureWeights, input.TextureWeights2, d); 
-		float4 col3 = GetLandTexture(coord3, input.TextureWeights, input.TextureWeights2, d);   
+		float4 col1 = float4(0, 0, 0, 0);
+		float4 col2 = float4(0, 0, 0, 0);
+		float4 col3 = float4(0, 0, 0, 0);  
+
+		if(blend_weights.x != 0)
+			col1 = GetLandTexture(coord1, input.TextureWeights, input.TextureWeights2, d);  
+		if(blend_weights.y != 0)
+			col2 = GetLandTexture(coord2, input.TextureWeights, input.TextureWeights2, d); 
+		if(blend_weights.z != 0)
+			col3 = GetLandTexture(coord3, input.TextureWeights, input.TextureWeights2, d);   
 		// Sample bump maps too, and generate bump vectors.  
 		// (Note: this uses an oversimplified tangent basis.)  
 		//float2 bumpFetch1 = bumpTex1.Sample(coord1).xy - 0.5;  

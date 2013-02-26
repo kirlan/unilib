@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
@@ -55,7 +55,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.cubePlanetDraw3d1 = new TestCubePlanet.CubePlanetDraw3d();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -66,7 +65,6 @@
             this.panel1.Controls.Add(this.comboBox2);
             this.panel1.Controls.Add(this.label17);
             this.panel1.Controls.Add(this.checkBox2);
-            this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.comboBox1);
             this.panel1.Controls.Add(this.numericUpDown1);
@@ -77,10 +75,24 @@
             this.panel1.TabIndex = 1;
             this.panel1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.panel2_PreviewKeyDown);
             // 
+            // comboBox2
+            // 
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "1/6",
+            "1/2 Equatorial",
+            "1/2 Polar",
+            "Whole"});
+            this.comboBox2.Location = new System.Drawing.Point(155, 5);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(93, 21);
+            this.comboBox2.TabIndex = 10;
+            // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(76, 8);
+            this.label17.Location = new System.Drawing.Point(96, 37);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(41, 13);
             this.label17.TabIndex = 9;
@@ -89,31 +101,20 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(79, 36);
+            this.checkBox2.Location = new System.Drawing.Point(12, 36);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(70, 17);
             this.checkBox2.TabIndex = 8;
             this.checkBox2.Text = "loc count";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
-            // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(293, 9);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(49, 17);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "color";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            this.checkBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CubePlanetForm_KeyPress);
-            // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(155, 32);
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Location = new System.Drawing.Point(287, 6);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(93, 21);
+            this.button2.Size = new System.Drawing.Size(61, 47);
             this.button2.TabIndex = 3;
             this.button2.Text = "BUILD!";
             this.button2.UseVisualStyleBackColor = true;
@@ -132,7 +133,7 @@
             "6x9x9",
             "6x17x17",
             "6x25x25"});
-            this.comboBox1.Location = new System.Drawing.Point(12, 32);
+            this.comboBox1.Location = new System.Drawing.Point(12, 6);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(58, 21);
             this.comboBox1.TabIndex = 2;
@@ -141,7 +142,7 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(12, 6);
+            this.numericUpDown1.Location = new System.Drawing.Point(79, 6);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -362,26 +363,13 @@
             this.cubePlanetDraw3d1.Size = new System.Drawing.Size(354, 377);
             this.cubePlanetDraw3d1.TabIndex = 0;
             this.cubePlanetDraw3d1.Text = "cubePlanetDraw3d1";
+            this.cubePlanetDraw3d1.UseCelShading = true;
             this.cubePlanetDraw3d1.Visible = false;
             this.cubePlanetDraw3d1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CubePlanetForm_KeyPress);
             this.cubePlanetDraw3d1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseDown);
             this.cubePlanetDraw3d1.MouseLeave += new System.EventHandler(this.cubePlanetDraw3d1_MouseLeave);
             this.cubePlanetDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseMove);
             this.cubePlanetDraw3d1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseUp);
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "1/6",
-            "1/2 Equatorial",
-            "1/2 Polar",
-            "Whole"});
-            this.comboBox2.Location = new System.Drawing.Point(155, 5);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(93, 21);
-            this.comboBox2.TabIndex = 10;
             // 
             // CubePlanetForm
             // 
@@ -412,7 +400,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Panel panel2;

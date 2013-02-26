@@ -120,47 +120,52 @@ namespace TestCubePlanet
 
         private Cube m_pCube = null;
 
-        public void Assign(Cube pCube, bool bColored)
+        private void MyInit(Cube pCube)
         {
-            if (m_pCube == null && m_pCamera != null)
-                m_pCamera.Initialize(pCube.R);
-
-            m_pCube = null;
-
-            int index = 0;
-            foreach (var pFace in pCube.m_cFaces)
-            {
-                m_aFaces[index++] = new Face(pFace.Value, bColored);
-            }
-
             if (GraphicsDevice != null)
             {
-                float fFogHeight = 10;
-                fFogHeight = pCube.R + 5;
+                m_pCamera = new ArcBallCamera(GraphicsDevice);
+                m_pCamera.Initialize(pCube.R);
 
-                //foreach (Model pModel in treeModel)
-                //    foreach (ModelMesh mesh in pModel.Meshes)
-                //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                //        {
-                //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                //        }
+                int index = 0;
+                foreach (var pFace in pCube.m_cFaces)
+                {
+                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value);
 
-                //foreach (Model pModel in palmModel)
-                //    foreach (ModelMesh mesh in pModel.Meshes)
-                //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                //        {
-                //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                //        }
+                    float fFogHeight = 10;
+                    fFogHeight = pCube.R + 5;
 
-                //foreach (Model pModel in pineModel)
-                //    foreach (ModelMesh mesh in pModel.Meshes)
-                //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                //        {
-                //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                //        }
+                    //foreach (Model pModel in treeModel)
+                    //    foreach (ModelMesh mesh in pModel.Meshes)
+                    //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    //        {
+                    //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                    //        }
 
-                pEffectFogHeight.SetValue(fFogHeight);
+                    //foreach (Model pModel in palmModel)
+                    //    foreach (ModelMesh mesh in pModel.Meshes)
+                    //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    //        {
+                    //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                    //        }
+
+                    //foreach (Model pModel in pineModel)
+                    //    foreach (ModelMesh mesh in pModel.Meshes)
+                    //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    //        {
+                    //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                    //        }
+
+                    pEffectFogHeight.SetValue(fFogHeight);
+                }
             }
+        }
+
+        public void Assign(Cube pCube)
+        {
+            m_pCube = null;
+
+            MyInit(pCube);
 
             m_pCube = pCube;
         }
@@ -264,9 +269,10 @@ namespace TestCubePlanet
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
 
-            m_pCamera = new ArcBallCamera(GraphicsDevice);
             if (m_pCube != null)
-                m_pCamera.Initialize(m_pCube.R);
+            {
+                MyInit(m_pCube);
+            }
 
             timer = Stopwatch.StartNew();
             lastTime = timer.Elapsed.TotalMilliseconds;
@@ -359,10 +365,10 @@ namespace TestCubePlanet
         /// </summary>
         protected override void Draw()
         {
-            GraphicsDevice.Clear(eSkyColor);
-
             if (timer == null)
                 return;
+
+            //double startTime = timer.Elapsed.TotalMilliseconds;
 
             m_iFrame++; 
             
@@ -430,15 +436,13 @@ namespace TestCubePlanet
 
             BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
 
-            double startTime = timer.Elapsed.TotalMilliseconds;
-            
             int iCount = 0;
             int iGotit = 0;
             m_iTrianglesCount = 0;
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
-                    if (Vector3.Dot(Vector3.Normalize(pSquare.m_pBounds8.Center), m_pCamera.Direction) > 0.1)
+                    if (Vector3.Dot(pSquare.m_pBounds8.Normal, m_pCamera.Direction) > 0.1)
                         continue;
 
                     Vector3 pViewVector = pSquare.m_pBounds8.Center - m_pCamera.Position;
@@ -446,25 +450,16 @@ namespace TestCubePlanet
                     float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
                     if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
                     {
-                        if (pFrustrum.Contains(pSquare.m_pBounds8.BottomBackLeft) == ContainmentType.Disjoint &&
-                            pFrustrum.Contains(pSquare.m_pBounds8.BottomBackRight) == ContainmentType.Disjoint &&
-                            pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontLeft) == ContainmentType.Disjoint &&
-                            pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontRight) == ContainmentType.Disjoint &&
-                            pFrustrum.Contains(pSquare.m_pBounds8.TopBackLeft) == ContainmentType.Disjoint &&
-                            pFrustrum.Contains(pSquare.m_pBounds8.TopBackRight) == ContainmentType.Disjoint &&
-                            pFrustrum.Contains(pSquare.m_pBounds8.TopFrontLeft) == ContainmentType.Disjoint &&
-                            pFrustrum.Contains(pSquare.m_pBounds8.TopFrontRight) == ContainmentType.Disjoint)
+                        //if (//pFrustrum.Contains(pSquare.m_pBounds8.BottomBackLeft) == ContainmentType.Disjoint &&
+                        //    //pFrustrum.Contains(pSquare.m_pBounds8.BottomBackRight) == ContainmentType.Disjoint &&
+                        //    //pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontLeft) == ContainmentType.Disjoint &&
+                        //    //pFrustrum.Contains(pSquare.m_pBounds8.BottomFrontRight) == ContainmentType.Disjoint &&
+                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopBackLeft) == ContainmentType.Disjoint &&
+                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopBackRight) == ContainmentType.Disjoint &&
+                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopFrontLeft) == ContainmentType.Disjoint &&
+                        //    pFrustrum.Contains(pSquare.m_pBounds8.TopFrontRight) == ContainmentType.Disjoint)
                         {
-                            Vector3[] aVer = {pSquare.m_pBounds8.BottomBackLeft, 
-                                                 pSquare.m_pBounds8.BottomBackRight, 
-                                                 pSquare.m_pBounds8.BottomFrontLeft, 
-                                                 pSquare.m_pBounds8.BottomFrontRight, 
-                                                 pSquare.m_pBounds8.TopBackLeft, 
-                                                 pSquare.m_pBounds8.TopBackRight, 
-                                                 pSquare.m_pBounds8.TopFrontLeft, 
-                                                 pSquare.m_pBounds8.TopFrontRight};
-                            BoundingSphere pSphere = BoundingSphere.CreateFromPoints(aVer);
-                            if (pFrustrum.Contains(pSphere) == ContainmentType.Disjoint)
+                            if (pFrustrum.Contains(pSquare.m_pBounds8.m_pSphere) == ContainmentType.Disjoint)
                             {
                                 iGotit++;
                                 continue;
@@ -472,22 +467,27 @@ namespace TestCubePlanet
                         }
                     }
 
+                    GraphicsDevice.SetVertexBuffer(pSquare.myVertexBuffer);
                     if (pViewVector.Length() < 50)
                     {
-                        GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
-                                                    pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesHR, 0, pSquare.m_iTrianglesCountHR);
+                        GraphicsDevice.Indices = pSquare.myIndexBufferHR;
+                        GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.userPrimitives.Length, 0, pSquare.m_iTrianglesCountHR);
+
+                        //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
+                        //                            pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesHR, 0, pSquare.m_iTrianglesCountHR);
                         m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountHR;
                     }
                     else
                     {
-                        GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
-                                                    pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesLR, 0, pSquare.m_iTrianglesCountLR);
+                        GraphicsDevice.Indices = pSquare.myIndexBufferLR;
+                        GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.userPrimitives.Length, 0, pSquare.m_iTrianglesCountLR);
+
+                        //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
+                        //                            pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesLR, 0, pSquare.m_iTrianglesCountLR);
                         m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountLR;
                     }
                     iCount++;
                 }
-
-            m_fDrawingTime = timer.Elapsed.TotalMilliseconds - startTime;
 
             rs = new RasterizerState();
             rs.CullMode = CullMode.None;
@@ -529,6 +529,8 @@ namespace TestCubePlanet
                 m_pSpriteBatch.Draw(celTarget, Vector2.Zero, Microsoft.Xna.Framework.Color.White);
                 m_pSpriteBatch.End();
             }
+
+            m_fDrawingTime = timer.Elapsed.TotalMilliseconds - lastTime;
         }
 
         // CalculateCursorRay Calculates a world space ray starting at the camera's
@@ -536,7 +538,7 @@ namespace TestCubePlanet
         // to accomplish this. see the accompanying documentation for more explanation
         // of the math behind this function.
         public Ray CalculateCursorRay(int x, int y, Matrix projectionMatrix, Matrix viewMatrix)
-        {
+       {
             // create 2 positions in screenspace using the cursor position. 0 is as
             // close as possible to the camera, 1 is as far away as possible.
             Vector3 nearSource = new Vector3(x, y, 0f);
