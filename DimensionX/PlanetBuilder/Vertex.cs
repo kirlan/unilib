@@ -68,7 +68,7 @@ namespace TestCubePlanet
         /// <param name="fSize">половина длины ребра куба</param>
         /// <param name="eFace">грань куба, на которой находится 2D точка</param>
         /// <param name="fR">радиус сферы</param>
-        public Vertex(float fX, float fY, float fSize, Cube.Face3D eFace, float fR)
+        public Vertex(float fX, float fY, float fSize, Cube.Face3D eFace, float fR, bool bHighRes)
         {
             //Формула взята на http://mathproofs.blogspot.ru/2005/07/mapping-cube-to-sphere.html
             float x = 1;
@@ -112,11 +112,16 @@ namespace TestCubePlanet
             m_fY = fR * y * (float)Math.Sqrt(1 - x * x / 2 - z * z / 2 + x * x * z * z / 3);
             m_fZ = fR * z * (float)Math.Sqrt(1 - x * x / 2 - y * y / 2 + x * x * y * y / 3);
 
-            m_fH = (float)ClassicNoise.noise(m_fX / 3, m_fY / 3, m_fZ / 3) / 5 + (float)ClassicNoise.noise(m_fX / 10, m_fY / 10, m_fZ / 10) / 2 + (float)ClassicNoise.noise(m_fX / 50, m_fY / 50, m_fZ / 50) * 2;
-            if (m_fH > 0)
-                m_fH *= m_fH * m_fH;
+            if (bHighRes)
+            {
+                m_fH = (float)ClassicNoise.noise(m_fX / 3, m_fY / 3, m_fZ / 3) / 5 + (float)ClassicNoise.noise(m_fX / 10, m_fY / 10, m_fZ / 10) / 2 + (float)ClassicNoise.noise(m_fX / 50, m_fY / 50, m_fZ / 50) * 2;
+                if (m_fH > 0)
+                    m_fH *= m_fH * m_fH;
+                else
+                    m_fH = 0;//*= m_fH * m_fH;
+            }
             else
-                m_fH = 0;//*= m_fH * m_fH;
+                m_fH = 0;
         }
 
         public override string ToString()

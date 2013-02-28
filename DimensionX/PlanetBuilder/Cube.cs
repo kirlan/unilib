@@ -439,7 +439,7 @@ namespace TestCubePlanet
         {
             var size = 1000;
             var kHR = 1.2 * size / Math.Sqrt(locationsCount);
-            var kLR = 1.2 * size / Math.Sqrt(locationsCount/5);
+            var kLR = 1.2 * size / Math.Sqrt(50);
 
             int iInnerCount;
             List<VertexCH> border = BuildBorder(out iInnerCount, kHR, size);
@@ -467,7 +467,7 @@ namespace TestCubePlanet
 
             //Территорию внутри построенной границы заполним случайными точками с распределением по Поиссону (чтобы случайно, но в общем равномерно).
             List<SimpleVector3d> cPointsHR = BuildPoisson(size, locationsCount - iInnerCount, kHR);
-            List<SimpleVector3d> cPointsLR = BuildPoisson(size, (locationsCount - iInnerCount)/5, kLR);
+            List<SimpleVector3d> cPointsLR = BuildPoisson(size, 50, kLR);
 
             //перенесём построенное облако Поиссона в основной рабочий массив
             for (var i = 0; i < cPointsHR.Count; i++)
@@ -522,7 +522,7 @@ namespace TestCubePlanet
 
             }
 
-            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Backward);
+            m_cFaces[Face3D.Backward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Backward, true);
             //m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
             //m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Forward);
             //m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left);
@@ -530,39 +530,39 @@ namespace TestCubePlanet
             //m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
             if (eArea == WorkingArea.OneFace)
             {
-                m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
-                m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward);
-                m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Left);
-                m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right);
-                m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
+                m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom, false);
+                m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward, false);
+                m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Left, false);
+                m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right, false);
+                m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top, false);
             }
             else
             {
-                m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left);
+                m_cFaces[Face3D.Left] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Left, true);
 
                 if(eArea == WorkingArea.WholeSphere)
                 {
-                    m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
-                    m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Forward);
-                    m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Right);
-                    m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
+                    m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom, true);
+                    m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Forward, true);
+                    m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Right, true);
+                    m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top, true);
                 }
                 else
                 {
                     if (eArea == WorkingArea.HalfSphereEquatorial)
                     {
-                        m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom);
-                        m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
+                        m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Bottom, true);
+                        m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top, false);
                     }
                     else
                     {
-                        m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
-                        m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top);
+                        m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom, false);
+                        m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size, R, Face3D.Top, true);
                     }
                     //m_cFaces[Face3D.Bottom] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Bottom);
                     //m_cFaces[Face3D.Top] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Top);
-                    m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward);
-                    m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right);
+                    m_cFaces[Face3D.Forward] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Forward, false);
+                    m_cFaces[Face3D.Right] = new CubeFace(iFaceSize, pBoundingRectLR, ref locsLR, ref vertsLR, size, R, Face3D.Right, false);
                 }
             }
 

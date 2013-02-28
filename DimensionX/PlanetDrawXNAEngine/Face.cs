@@ -17,7 +17,7 @@ namespace TestCubePlanet
             int index = 0;
             foreach (var chunk in pFace.m_cChunk)
             {
-                m_aSquares[index++] = new Square(pDevice, chunk, pFace.Resolution);
+                m_aSquares[index++] = new Square(pDevice, chunk);
             }
         }
     }
