@@ -26,8 +26,8 @@ namespace TestCubePlanet
         /// </summary>
         private uint m_iID;
 
-        public Location(uint iID, float fX, float fY, float fSize, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost, bool bBorder)
-            : base(fX, fY, fSize, eFace, fR)
+        public Location(uint iID, float fX, float fY, float fSize, float fR, Cube.Face3D eFace, VertexCH.Direction eGhost, bool bBorder, bool bHighRes)
+            : base(fX, fY, fSize, eFace, fR, bHighRes)
         {
             m_iID = iID;
             m_eGhost = eGhost;

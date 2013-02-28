@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using UniLibXNA;
 using Random;
+using Microsoft.VisualBasic.Devices;
 
 namespace TestCubePlanet
 {
@@ -161,11 +162,33 @@ namespace TestCubePlanet
             }
         }
 
+        public void Clear()
+        {
+            m_pCube = null;
+            for (int iFace = 0; iFace < m_aFaces.Length; iFace++ )
+            {
+                if (m_aFaces[iFace] != null)
+                {
+                    for (int iSquare = 0; iSquare < m_aFaces[iFace].m_aSquares.Length; iSquare++)
+                    {
+                        if (m_aFaces[iFace].m_aSquares[iSquare] != null)
+                        {
+                            m_aFaces[iFace].m_aSquares[iSquare].Clear();
+                            m_aFaces[iFace].m_aSquares[iSquare] = null;
+                        }
+                    }
+                    m_aFaces[iFace] = null;
+                }
+            }
+        }
+
         public void Assign(Cube pCube)
         {
             m_pCube = null;
 
             MyInit(pCube);
+            
+            Square.ClearQueues();
 
             m_pCube = pCube;
         }
@@ -431,7 +454,7 @@ namespace TestCubePlanet
             else
             {
                 pCharacter = GetSurface(m_pCamera.FocusPoint);
-                throw new Exception();
+                //throw new Exception();
             }
 
             Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
@@ -485,46 +508,67 @@ namespace TestCubePlanet
             BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
 
             int iCount = 0;
-            int iGotit = 0;
             m_iTrianglesCount = 0;
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
-                    if (Vector3.Dot(pSquare.m_pBounds8.Normal, m_pCamera.Direction) > 0.2)
-                        continue;
+                    //var freemem = new ComputerInfo().AvailablePhysicalMemory;
+                    //PerformanceCounter pc = new PerformanceCounter("Memory", "Available Bytes");
+                    //long freeRAM = Convert.ToInt64(pc.NextValue());
+                    //if (freeRAM < (long)m_iChunkMemory * 2)
+                    //{
+                    //    if (m_pInvisibleQueue.Count > 0)
+                    //    {
+                    //        var pDead = m_pInvisibleQueue[0];
+                    //        if (pDead.m_fVisibleDistance > 0)
+                    //            pDead.Clear();
+                    //        else
+                    //            pDead.Clear();
 
-                    Vector3 pViewVector = pSquare.m_pBounds8.Center - m_pCamera.Position;
+                    //        m_pInvisibleQueue.Remove(pDead);
+                    //    }
+                    //    else if (m_pVisibleQueue.Count > 0)
+                    //    {
+                    //        var pDead = m_pVisibleQueue[0];
+                    //        pDead.Clear();
 
-                    float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
-                    if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
+                    //        m_pVisibleQueue.Remove(pDead);
+                    //    }
+                    //}
+
+                    pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction);
+
+                    if (pSquare.m_fVisibleDistance > 0)
                     {
-                        if (pFrustrum.Contains(pSquare.m_pBounds8.m_pSphere) == ContainmentType.Disjoint)
+                        GraphicsDevice.SetVertexBuffer(pSquare.myVertexBuffer);
+                        if (pSquare.m_fVisibleDistance < 50)
                         {
-                            iGotit++;
-                            continue;
+                            GraphicsDevice.Indices = pSquare.myIndexBufferHR;
+                            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.userPrimitives.Length, 0, pSquare.m_iTrianglesCountHR);
+
+                            //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
+                            //                            pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesHR, 0, pSquare.m_iTrianglesCountHR);
+                            m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountHR;
                         }
-                    }
+                        else
+                        {
+                            GraphicsDevice.Indices = pSquare.myIndexBufferLR;
+                            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.userPrimitives.Length, 0, pSquare.m_iTrianglesCountLR);
 
-                    GraphicsDevice.SetVertexBuffer(pSquare.myVertexBuffer);
-                    if (pViewVector.Length() < 50)
-                    {
-                        GraphicsDevice.Indices = pSquare.myIndexBufferHR;
-                        GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.userPrimitives.Length, 0, pSquare.m_iTrianglesCountHR);
-
-                        //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
-                        //                            pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesHR, 0, pSquare.m_iTrianglesCountHR);
-                        m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountHR;
+                            //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
+                            //                            pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesLR, 0, pSquare.m_iTrianglesCountLR);
+                            m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountLR;
+                        }
+                        iCount++;
                     }
-                    else
-                    {
-                        GraphicsDevice.Indices = pSquare.myIndexBufferLR;
-                        GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.userPrimitives.Length, 0, pSquare.m_iTrianglesCountLR);
-
-                        //GraphicsDevice.DrawUserIndexedPrimitives<VertexMultitextured>(PrimitiveType.TriangleList,
-                        //                            pSquare.userPrimitives, 0, pSquare.userPrimitives.Length - 1, pSquare.userPrimitivesIndicesLR, 0, pSquare.m_iTrianglesCountLR);
-                        m_iTrianglesCount += (uint)pSquare.m_iTrianglesCountLR;
-                    }
-                    iCount++;
+                    //else
+                    //{
+                    //    //var mem = new ComputerInfo().AvailablePhysicalMemory;
+                    //    ////PerformanceCounter pc = new PerformanceCounter("Memory", "Available Bytes");
+                    //    ////long freeRAM = Convert.ToInt64(pc.NextValue());
+                    //    //if (mem < m_iChunkMemory * 2)
+                    //    //    pSquare.Clear();
+                    //}
                 }
 
             if (m_bShowBounds)
@@ -632,8 +676,11 @@ namespace TestCubePlanet
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
                 //                          m_aPickedTriangle, 0, 1);
                 if (m_pSelectedSquare != null)
+                {
+                    m_pSelectedSquare.Rebuild(GraphicsDevice);
                     GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
-                                          m_pSelectedSquare.userPrimitives, 0, m_pSelectedSquare.userPrimitives.Length - 1, m_pSelectedSquare.m_aLocations[m_pFocusedLocation], 0, m_pSelectedSquare.m_aLocations[m_pFocusedLocation].Length / 2);
+                                          m_pSelectedSquare.g.userPrimitives, 0, m_pSelectedSquare.g.userPrimitives.Length - 1, m_pSelectedSquare.g.m_aLocations[m_iFocusedLocation], 0, m_pSelectedSquare.g.m_aLocations[m_iFocusedLocation].Length / 2);
+                }
 
                 // Reset renderstates to their default values.
                 GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -681,11 +728,13 @@ namespace TestCubePlanet
                 {
                     if (pSquare.m_pBounds8.Intersects(upRay).HasValue)
                     {
-                        Location pLoc;
+                        pSquare.Rebuild(GraphicsDevice);
+
+                        int iLoc;
 
                         // Perform the ray to model intersection test.
                         float? intersection = pSquare.RayIntersectsLandscape(upRay, Matrix.Identity,//CreateScale(0.5f),
-                                                                    out pLoc);
+                                                                    out iLoc);
                         // Do we have a per-triangle intersection with this model?
                         if (intersection != null)
                             return Vector3.Normalize(upRay.Direction) * intersection;
@@ -696,9 +745,9 @@ namespace TestCubePlanet
         }
 
         /// <summary>
-        /// Локация, над которой находится указатель мыши.
+        /// Индекс локации в выбранном квадрате, над которой находится указатель мыши.
         /// </summary>
-        private Location m_pFocusedLocation = null;
+        private int m_iFocusedLocation = -1;
 
         /// <summary>
         /// Runs a per-triangle picking algorithm over all the models in the scene,
@@ -745,13 +794,14 @@ namespace TestCubePlanet
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
-                    if (pSquare.m_pBounds8.Intersects(m_pCursorRay).HasValue)
+                    if (pSquare.m_fVisibleDistance > 0 && pSquare.m_pBounds8.Intersects(m_pCursorRay).HasValue)
                     {
-                        Location pLoc;
+                        pSquare.Rebuild(GraphicsDevice);
+                        int iLoc;
 
                         // Perform the ray to model intersection test.
                         float? intersection = pSquare.RayIntersectsLandscape(m_pCursorRay, Matrix.Identity,//CreateScale(0.5f),
-                                                                    out pLoc);
+                                                                    out iLoc);
                         // Do we have a per-triangle intersection with this model?
                         if (intersection != null)
                         {
@@ -763,7 +813,7 @@ namespace TestCubePlanet
                                 closestIntersection = intersection.Value;
 
                                 // Store vertex positions so we can display the picked triangle.
-                                m_pFocusedLocation = pLoc;
+                                m_iFocusedLocation = iLoc;
 
                                 m_bPicked = true;
 

@@ -43,6 +43,8 @@ namespace UniLibXNA
         public Vector3 Tangent;
         public Microsoft.Xna.Framework.Color Color;
 
+        public readonly static long Size = sizeof(float) * 21 + sizeof(byte)*4;
+
         public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
          (
              new VertexElement( 0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0 ),
@@ -116,8 +118,8 @@ namespace UniLibXNA
             if (!DesignMode)
             {
                 graphicsDeviceService = GraphicsDeviceService.AddRef(Handle,
-                                                                     ClientSize.Width,
-                                                                     ClientSize.Height);
+                                                                     Screen.FromControl(this).Bounds.Width,
+                                                                     Screen.FromControl(this).Bounds.Height);
 
                 // Register the service, so components like ContentManager can find it.
                 services.AddService<IGraphicsDeviceService>(graphicsDeviceService);

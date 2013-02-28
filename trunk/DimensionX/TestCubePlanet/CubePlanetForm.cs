@@ -71,6 +71,9 @@ namespace TestCubePlanet
                 case 3: eArea = Cube.WorkingArea.WholeSphere;
                     break;
             }
+            
+            cubePlanetDraw3d1.Clear();
+            m_pCube = null;
 
             m_pCube = new Cube((int)numericUpDown1.Value, iSize, eArea);
 

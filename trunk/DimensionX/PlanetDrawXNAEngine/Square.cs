@@ -6,16 +6,132 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using UniLibXNA;
 using Random;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.VisualBasic.Devices;
 
 namespace TestCubePlanet
 {
     class Square
     {
-        public VertexMultitextured[] userPrimitives;
-        public int[] userPrimitivesIndicesLR;
-        public int[] userPrimitivesIndicesHR;
+        public struct Geometry
+        {
+            public VertexMultitextured[] userPrimitives;
+            public int[] userPrimitivesIndicesLR;
+            public int[] userPrimitivesIndicesHR;
+            public int[] m_aLocationReferences;
+            public int[][] m_aLocations;
+
+            public void Save(string sFilename)
+            {
+                using (FileStream fs = new FileStream(sFilename, FileMode.Create))
+                {
+                    using (BinaryWriter bw = new BinaryWriter(fs))
+                    {
+                        bw.Write(userPrimitives.Length);
+                        for (int i = 0; i < userPrimitives.Length; i++)
+                        {
+                            bw.Write(userPrimitives[i].Position.X);
+                            bw.Write(userPrimitives[i].Position.Y);
+                            bw.Write(userPrimitives[i].Position.Z);
+                            bw.Write(userPrimitives[i].Normal.X);
+                            bw.Write(userPrimitives[i].Normal.Y);
+                            bw.Write(userPrimitives[i].Normal.Z);
+                            bw.Write(userPrimitives[i].Tangent.X);
+                            bw.Write(userPrimitives[i].Tangent.Y);
+                            bw.Write(userPrimitives[i].Tangent.Z);
+                            bw.Write(userPrimitives[i].TexWeights.X);
+                            bw.Write(userPrimitives[i].TexWeights.Y);
+                            bw.Write(userPrimitives[i].TexWeights.Z);
+                            bw.Write(userPrimitives[i].TexWeights.W);
+                            bw.Write(userPrimitives[i].TexWeights2.X);
+                            bw.Write(userPrimitives[i].TexWeights2.Y);
+                            bw.Write(userPrimitives[i].TexWeights2.Z);
+                            bw.Write(userPrimitives[i].TexWeights2.W);
+                            bw.Write(userPrimitives[i].Color.R);
+                            bw.Write(userPrimitives[i].Color.G);
+                            bw.Write(userPrimitives[i].Color.B);
+                        }
+
+                        bw.Write(userPrimitivesIndicesLR.Length);
+                        for (int i = 0; i < userPrimitivesIndicesLR.Length; i++)
+                            bw.Write(userPrimitivesIndicesLR[i]);
+
+                        bw.Write(userPrimitivesIndicesHR.Length);
+                        for (int i = 0; i < userPrimitivesIndicesHR.Length; i++)
+                            bw.Write(userPrimitivesIndicesHR[i]);
+
+                        bw.Write(m_aLocationReferences.Length);
+                        for (int i = 0; i < m_aLocationReferences.Length; i++)
+                            bw.Write(m_aLocationReferences[i]);
+
+                        bw.Write(m_aLocations.GetLength(0));
+                        for (int i = 0; i < m_aLocations.GetLength(0); i++)
+                        {
+                            bw.Write(m_aLocations[i].Length);
+                            for (int j = 0; j < m_aLocations[i].Length; j++)
+                                bw.Write(m_aLocations[i][j]);
+                        }
+                    }
+                }
+            }
+
+            public void Load(string sFilename)
+            {
+                using (FileStream fs = new FileStream(sFilename, FileMode.Open))
+                {
+                    using (BinaryReader br = new BinaryReader(fs))
+                    {
+                        int iCount;
+
+                        iCount = br.ReadInt32();
+                        userPrimitives = new VertexMultitextured[iCount];
+                        for (int i = 0; i < iCount; i++)
+                        {
+                            userPrimitives[i] = new VertexMultitextured();
+                            userPrimitives[i].Position = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
+                            userPrimitives[i].Normal = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
+                            userPrimitives[i].Tangent = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
+                            userPrimitives[i].TextureCoordinate = Vector4.Zero;
+                            userPrimitives[i].TexWeights = new Vector4(br.ReadSingle(), br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
+                            userPrimitives[i].TexWeights2 = new Vector4(br.ReadSingle(), br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
+                            userPrimitives[i].Color = new Color(br.ReadByte(), br.ReadByte(), br.ReadByte());
+                        }
+
+                        iCount = br.ReadInt32();
+                        userPrimitivesIndicesLR = new int[iCount];
+                        for (int i = 0; i < iCount; i++)
+                            userPrimitivesIndicesLR[i] = br.ReadInt32();
+
+                        iCount = br.ReadInt32();
+                        userPrimitivesIndicesHR = new int[iCount];
+                        for (int i = 0; i < iCount; i++)
+                            userPrimitivesIndicesHR[i] = br.ReadInt32();
+
+                        iCount = br.ReadInt32();
+                        m_aLocationReferences = new int[iCount];
+                        for (int i = 0; i < iCount; i++)
+                            m_aLocationReferences[i] = br.ReadInt32();
+
+                        iCount = br.ReadInt32();
+                        m_aLocations = new int[iCount][];
+                        for (int i = 0; i < iCount; i++)
+                        {
+                            int iCount2 = br.ReadInt32();
+                            m_aLocations[i] = new int[iCount2];
+                            for (int j = 0; j < iCount2; j++)
+                                m_aLocations[i][j] = br.ReadInt32();
+                        }
+                    }
+                }
+            }
+        }
+        
+        public Geometry g;
+
         public int m_iTrianglesCountLR = 0;
         public int m_iTrianglesCountHR = 0;
+        private int m_iLocationsIndicesCount = 0;
 
         public Region8 m_pBounds8;
 
@@ -64,14 +180,14 @@ namespace TestCubePlanet
 
         private void CopyToBuffers(GraphicsDevice pDevice)
         {
-            myVertexBuffer = new VertexBuffer(pDevice, VertexMultitextured.VertexDeclaration, userPrimitives.Length, BufferUsage.WriteOnly);
-            myVertexBuffer.SetData(userPrimitives);
+            myVertexBuffer = new VertexBuffer(pDevice, VertexMultitextured.VertexDeclaration, g.userPrimitives.Length, BufferUsage.WriteOnly);
+            myVertexBuffer.SetData(g.userPrimitives);
 
-            myIndexBufferLR = new IndexBuffer(pDevice, typeof(int), userPrimitivesIndicesLR.Length, BufferUsage.WriteOnly);
-            myIndexBufferLR.SetData(userPrimitivesIndicesLR);
+            myIndexBufferLR = new IndexBuffer(pDevice, typeof(int), g.userPrimitivesIndicesLR.Length, BufferUsage.WriteOnly);
+            myIndexBufferLR.SetData(g.userPrimitivesIndicesLR);
 
-            myIndexBufferHR = new IndexBuffer(pDevice, typeof(int), userPrimitivesIndicesHR.Length, BufferUsage.WriteOnly);
-            myIndexBufferHR.SetData(userPrimitivesIndicesHR);
+            myIndexBufferHR = new IndexBuffer(pDevice, typeof(int), g.userPrimitivesIndicesHR.Length, BufferUsage.WriteOnly);
+            myIndexBufferHR.SetData(g.userPrimitivesIndicesHR);
         }
 
         private Chunk m_pChunk;
@@ -107,133 +223,297 @@ namespace TestCubePlanet
             }
         }
 
-        public Square(GraphicsDevice pDevice, Chunk pChunk, int iFaceSize)
+        private string m_sCacheFileName = string.Empty;
+
+        public void Clear()
         {
+            if (m_bCleared)
+                return;
+
+            if (string.IsNullOrEmpty(m_sCacheFileName))
+            {
+                m_sCacheFileName = Path.GetTempFileName();
+                DriveInfo pDrive = new DriveInfo(m_sCacheFileName);
+                long iAvailableSpace = pDrive.AvailableFreeSpace;
+                long iNeededSpace = VertexMultitextured.Size * g.userPrimitives.Length + sizeof(int) +
+                    sizeof(int) * g.userPrimitivesIndicesLR.Length + sizeof(int) +
+                    sizeof(int) * g.userPrimitivesIndicesHR.Length + sizeof(int) +
+                    sizeof(int) * g.m_aLocationReferences.Length + sizeof(int) +
+                    sizeof(int) * g.m_aLocations.Length + sizeof(int);
+                
+                if (iAvailableSpace < iNeededSpace)
+                    m_sCacheFileName = string.Empty;
+                else
+                    g.Save(m_sCacheFileName);
+            }
+
+            g.userPrimitives = null;
+            g.userPrimitivesIndicesLR = null;
+            g.userPrimitivesIndicesHR = null;
+            g.m_aLocationReferences = null;
+            g.m_aLocations = null;
+
+            if (myVertexBuffer != null)
+                myVertexBuffer.Dispose();
+
+            if (myIndexBufferLR != null)
+                myIndexBufferLR.Dispose();
+
+            if (myIndexBufferHR != null)
+                myIndexBufferHR.Dispose();
+
+            m_bCleared = true;
+        }
+
+        public float m_fVisibleDistance = -1;
+
+        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustrum, Vector3 pCameraPos, Vector3 pCameraDir)
+        {
+            m_fVisibleDistance = -1;
+
+            if (Vector3.Dot(m_pBounds8.Normal, pCameraDir) < 0.2)
+            {
+                Vector3 pViewVector = m_pBounds8.Center - pCameraPos;
+                float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), pCameraDir);
+                if (fCos > 0.6 || pFrustrum.Contains(m_pBounds8.m_pSphere) != ContainmentType.Disjoint) //cos(45) = 0,70710678118654752440084436210485...
+                {
+                    m_fVisibleDistance = pViewVector.Length();
+                    Rebuild(pDevice);
+                    return;
+                }
+            }
+
+            if (!m_bCleared && !s_pInvisibleQueue.Contains(this))
+                s_pInvisibleQueue.Add(this);
+
+            if (s_pVisibleQueue.Contains(this))
+                s_pVisibleQueue.Remove(this); 
+        }
+
+        private TimeSpan m_fRebuild = TimeSpan.Zero;
+        private TimeSpan m_fReload = TimeSpan.Zero;
+        private TimeSpan m_fReload2 = TimeSpan.Zero;
+
+        public bool m_bCleared = true;
+
+        private static List<Square> s_pInvisibleQueue = new List<Square>();
+        private static List<Square> s_pVisibleQueue = new List<Square>();
+
+        public static void ClearQueues()
+        {
+            s_pInvisibleQueue.Clear();
+            s_pVisibleQueue.Clear();
+        }
+
+        public void Rebuild(GraphicsDevice pDevice)
+        {
+            if (!m_bCleared)
+                return;
+
+            bool bSuccess = false;
+            do
+            {
+                try
+                {
+                    DateTime now;
+                    if (!string.IsNullOrEmpty(m_sCacheFileName) && File.Exists(m_sCacheFileName))
+                    {
+                        now = DateTime.Now;
+                        g.Load(m_sCacheFileName);
+                        m_fReload = DateTime.Now - now;
+                    }
+                    else
+                    {
+                        now = DateTime.Now;
+                        g.userPrimitives = new VertexMultitextured[m_pChunk.m_aLocations.Length +
+                            m_pChunk.m_aVertexes.Length];
+
+                        Dictionary<Vertex, int> vertexIndex = new Dictionary<Vertex, int>();
+                        Dictionary<Location, int> locationIndex = new Dictionary<Location, int>();
+
+                        int index = 0;
+
+                        m_iTrianglesCountLR = 0;
+                        m_iTrianglesCountHR = 0;
+
+                        for (int i = 0; i < m_pChunk.m_aVertexes.Length; i++)
+                        {
+                            var vertex = m_pChunk.m_aVertexes[i];
+                            g.userPrimitives[index] = new VertexMultitextured();
+                            g.userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
+                            g.userPrimitives[index].Position += Vector3.Normalize(g.userPrimitives[index].Position) * vertex.m_fH;
+                            g.userPrimitives[index].Normal = new Vector3(vertex.m_fXN, vertex.m_fYN, vertex.m_fZN);
+                            g.userPrimitives[index].Tangent = Vector3.Zero;
+                            g.userPrimitives[index].Color = Color.Red;
+                            g.userPrimitives[index].TextureCoordinate = new Vector4(0, 0, 0, 0); // new Vector4(GetTexture(vertex), 0, 0); 
+                            SetTextureWeights(ref g.userPrimitives[index], vertex.m_fH, GetTemperature(vertex), vertex.m_fRndBig, vertex.m_fRndSmall);
+
+                            vertexIndex[vertex] = index;
+
+                            index++;
+                        }
+
+                        for (int i = 0; i < m_pChunk.m_aLocations.Length; i++)
+                        {
+                            var loc = m_pChunk.m_aLocations[i];
+
+                            g.userPrimitives[index] = new VertexMultitextured();
+                            g.userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
+                            g.userPrimitives[index].Position += Vector3.Normalize(g.userPrimitives[index].Position) * loc.m_fH;
+                            g.userPrimitives[index].Normal = new Vector3(loc.m_fXN, loc.m_fYN, loc.m_fZN);
+                            g.userPrimitives[index].Tangent = Vector3.Zero;
+                            g.userPrimitives[index].Color = Color.Red;
+                            g.userPrimitives[index].TextureCoordinate = new Vector4(0, 0, 0, 0); //new Vector4(GetTexture(loc), 0, 0); 
+                            SetTextureWeights(ref g.userPrimitives[index], loc.m_fH, GetTemperature(loc), loc.m_fRndBig, loc.m_fRndSmall);
+
+                            m_iTrianglesCountLR += loc.m_cEdges.Count;
+                            m_iTrianglesCountHR += loc.m_cEdges.Count * 4;
+
+                            locationIndex[loc] = index;
+
+                            index++;
+                        }
+
+                        g.userPrimitivesIndicesLR = new int[m_iTrianglesCountLR * 3];
+                        g.userPrimitivesIndicesHR = new int[m_iTrianglesCountHR * 3];
+
+                        g.m_aLocationReferences = new int[m_iTrianglesCountLR];
+                        g.m_aLocations = new int[m_pChunk.m_aLocations.Length][];
+
+                        index = 0;
+                        int indexHR = 0;
+                        int iReferenceCounter = 0;
+
+                        m_iLocationsIndicesCount = 0;
+
+                        for (int i = 0; i < m_pChunk.m_aLocations.Length; i++)
+                        {
+                            var loc = m_pChunk.m_aLocations[i];
+
+                            foreach (var edge in loc.m_cEdges)
+                            {
+                                g.m_aLocationReferences[iReferenceCounter++] = i;
+                                g.userPrimitivesIndicesLR[index++] = locationIndex[loc];
+                                g.userPrimitivesIndicesLR[index++] = vertexIndex[edge.Value.m_pFrom];
+                                g.userPrimitivesIndicesLR[index++] = vertexIndex[edge.Value.m_pTo];
+
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pFrom];
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
+
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
+
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
+
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                g.userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
+                                g.userPrimitivesIndicesHR[indexHR++] = locationIndex[loc];
+
+                                g.userPrimitives[vertexIndex[edge.Value.m_pInnerPoint]].TexWeights = g.userPrimitives[locationIndex[loc]].TexWeights;
+                            }
+
+                            g.m_aLocations[i] = BuildLocationReferencesIndices(loc, ref vertexIndex);
+                        }
+
+                        for (int i = 0; i < g.userPrimitives.Length; i++)
+                        {
+                            NormalizeTextureWeights(ref g.userPrimitives[i]);
+                        }
+
+                        m_fRebuild = DateTime.Now - now;
+                    }
+                    now = DateTime.Now;
+                    CopyToBuffers(pDevice);
+                    m_fReload2 = DateTime.Now - now;
+
+                    m_bCleared = false;
+
+                    bSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    if (s_pInvisibleQueue.Count > 0)
+                    {
+                        int iCount = s_pInvisibleQueue.Count;///2 + 1;
+                        for (int i = 0; i < iCount; i++)
+                        {
+                            var pDead = s_pInvisibleQueue[0];
+                            pDead.Clear();
+
+                            s_pInvisibleQueue.Remove(pDead);
+                        }
+                    }
+                    else if (s_pVisibleQueue.Count > 0)
+                    {
+                        int iCount = s_pVisibleQueue.Count;
+                        for (int i = 0; i < iCount; i++)
+                        {
+                            var pDead = s_pVisibleQueue[0];
+                            pDead.Clear();
+
+                            s_pVisibleQueue.Remove(pDead);
+                        }
+                    }
+                    else
+                    {
+                        if (ex is OutOfMemoryException)
+                            throw new OutOfMemoryException("Really out of memory!", ex);
+                        else
+                            throw new Exception("Something really wrong!", ex);
+                    }
+                }
+            }
+            while (!bSuccess);
+
+            if (s_pInvisibleQueue.Contains(this))
+                s_pInvisibleQueue.Remove(this);
+
+            if (!s_pVisibleQueue.Contains(this))
+                s_pVisibleQueue.Add(this);
+        }
+
+        ~Square()
+        {
+            if (!string.IsNullOrEmpty(m_sCacheFileName))
+                if (File.Exists(m_sCacheFileName))
+                    File.Delete(m_sCacheFileName);
+        }
+
+        public Square(GraphicsDevice pDevice, Chunk pChunk)
+        {
+            m_bCleared = true;
+
             m_pChunk = pChunk;
-
-            userPrimitives = new VertexMultitextured[pChunk.m_aLocations.Length +
-                pChunk.m_aVertexes.Length];
-
-            Dictionary<Vertex, int> vertexIndex = new Dictionary<Vertex, int>();
-            Dictionary<Location, int> locationIndex = new Dictionary<Location, int>();
-
-            int index = 0;
-
-            m_iTrianglesCountLR = 0;
-
-            //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2,2];
-            Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
 
             float fMinHeight = float.MaxValue;
             float fMaxHeight = float.MinValue;
 
-            for (int i = 0; i < pChunk.m_aVertexes.Length; i++)
+            for (int i = 0; i < m_pChunk.m_aVertexes.Length; i++)
             {
-                var vertex = pChunk.m_aVertexes[i];
-                userPrimitives[index] = new VertexMultitextured();
-                userPrimitives[index].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
-                userPrimitives[index].Position += Vector3.Normalize(userPrimitives[index].Position) * vertex.m_fH;
-                userPrimitives[index].Normal = new Vector3(vertex.m_fXN, vertex.m_fYN, vertex.m_fZN);
-                userPrimitives[index].Tangent = Vector3.Zero;
-                userPrimitives[index].Color = Color.Red;
-                userPrimitives[index].TextureCoordinate = new Vector4(0, 0, 0, 0); // new Vector4(GetTexture(vertex), 0, 0); 
-                SetTextureWeights(ref userPrimitives[index], vertex.m_fH, GetTemperature(vertex), vertex.m_fRndBig, vertex.m_fRndSmall);
-
-                vertexIndex[vertex] = index;
-
+                var vertex = m_pChunk.m_aVertexes[i];
                 if (fMinHeight > vertex.m_fH)
                     fMinHeight = vertex.m_fH;
                 if (fMaxHeight < vertex.m_fH)
                     fMaxHeight = vertex.m_fH;
-
-                index++;
             }
 
-            for (int i = 0; i < pChunk.m_aLocations.Length; i++)
+            for (int i = 0; i < m_pChunk.m_aLocations.Length; i++)
             {
-                var loc = pChunk.m_aLocations[i];
-                //if (loc.Ghost)
-                //    continue;
-
-                userPrimitives[index] = new VertexMultitextured();
-                userPrimitives[index].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
-                userPrimitives[index].Position += Vector3.Normalize(userPrimitives[index].Position) * loc.m_fH;
-                userPrimitives[index].Normal = new Vector3(loc.m_fXN, loc.m_fYN, loc.m_fZN);
-                userPrimitives[index].Tangent = Vector3.Zero;
-                userPrimitives[index].Color = Color.Red;
-                userPrimitives[index].TextureCoordinate = new Vector4(0, 0, 0, 0); //new Vector4(GetTexture(loc), 0, 0); 
-                SetTextureWeights(ref userPrimitives[index], loc.m_fH, GetTemperature(loc), loc.m_fRndBig, loc.m_fRndSmall);
-
-                m_iTrianglesCountLR += loc.m_cEdges.Count;
-                m_iTrianglesCountHR += loc.m_cEdges.Count * 4;
-
-                locationIndex[loc] = index;
+                var loc = m_pChunk.m_aLocations[i];
 
                 if (fMinHeight > loc.m_fH)
                     fMinHeight = loc.m_fH;
                 if (fMaxHeight < loc.m_fH)
                     fMaxHeight = loc.m_fH;
-
-                index++;
             }
 
-            BuildBoundingBox(pChunk, fMinHeight, fMaxHeight);
-
-            userPrimitivesIndicesLR = new int[m_iTrianglesCountLR * 3];
-            userPrimitivesIndicesHR = new int[m_iTrianglesCountHR * 3];
-
-            m_aLocationReferences = new Location[m_iTrianglesCountLR];
-
-            index = 0;
-            int indexHR = 0;
-            int iReferenceCounter = 0;
-
-            //pChunk.DebugVertexes();
-
-            //var chunk = pCube.m_cFaces[Cube.Face3D.Forward].m_cChunk[2, 2];
-            for (int i = 0; i < pChunk.m_aLocations.Length; i++)
-            {
-                var loc = pChunk.m_aLocations[i];
-                //if (chunk != pFace.m_cChunk[CubeFace.Size / 2, CubeFace.Size / 2])
-                if (loc.Ghost)
-                    continue;
-
-                foreach (var edge in loc.m_cEdges)
-                {
-                    m_aLocationReferences[iReferenceCounter++] = loc;
-                    userPrimitivesIndicesLR[index++] = locationIndex[loc];
-                    userPrimitivesIndicesLR[index++] = vertexIndex[edge.Value.m_pFrom];
-                    userPrimitivesIndicesLR[index++] = vertexIndex[edge.Value.m_pTo];
-
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pFrom];
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
-
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
-
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
-
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                    userPrimitivesIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
-                    userPrimitivesIndicesHR[indexHR++] = locationIndex[loc];
-
-                    userPrimitives[vertexIndex[edge.Value.m_pInnerPoint]].TexWeights = userPrimitives[locationIndex[loc]].TexWeights;
-                }
-
-                m_aLocations[loc] = BuildLocationReferencesIndices(loc, ref vertexIndex);
-            }
-
-            for (int i = 0; i < userPrimitives.Length; i++)
-            {
-                //userPrimitives[i].Normal.Normalize();
-                NormalizeTextureWeights(ref userPrimitives[i]);
-            }
-
-            CopyToBuffers(pDevice);
+            BuildBoundingBox(m_pChunk, fMinHeight, fMaxHeight); 
+            
+            //Rebuild(pDevice);
         }
 
         /// <summary>
@@ -265,8 +545,6 @@ namespace TestCubePlanet
                 return fDistSouth / 213;
         }
 
-        public Dictionary<Location, int[]> m_aLocations = new Dictionary<Location, int[]>();
-
         /// <summary>
         /// заполняет индексный буфер границы указанной локации
         /// </summary>
@@ -294,10 +572,10 @@ namespace TestCubePlanet
                 aIndices[iCounter++] = cVertexes[pLine.m_pTo];
             }
 
+            m_iLocationsIndicesCount += aIndices.Length;
             return aIndices;
         }
 
-        private Location[] m_aLocationReferences;
         /// <summary>
         /// Checks whether a ray intersects a model. This method needs to access
         /// the model vertex data, so the model must have been built using the
@@ -306,9 +584,9 @@ namespace TestCubePlanet
         /// if there is no intersection.
         /// </summary>
         public float? RayIntersectsLandscape(Ray ray, Matrix modelTransform,
-                                         out Location pLoc)
+                                         out int iLoc)
         {
-            pLoc = null;
+            iLoc = -1;
 
             // The input ray is in world space, but our model data is stored in object
             // space. We would normally have to transform all the model data by the
@@ -329,15 +607,15 @@ namespace TestCubePlanet
             // so we can always return the closest one.
             float? closestIntersection = null;
 
-            for (int i = 0; i < userPrimitivesIndicesLR.Length; i += 3)
+            for (int i = 0; i < g.userPrimitivesIndicesLR.Length; i += 3)
             {
                 // Perform a ray to triangle intersection test.
                 float? intersection;
 
                 RayIntersectsTriangle(ref ray,
-                                        ref userPrimitives[userPrimitivesIndicesLR[i]].Position,
-                                        ref userPrimitives[userPrimitivesIndicesLR[i + 1]].Position,
-                                        ref userPrimitives[userPrimitivesIndicesLR[i + 2]].Position,
+                                        ref g.userPrimitives[g.userPrimitivesIndicesLR[i]].Position,
+                                        ref g.userPrimitives[g.userPrimitivesIndicesLR[i + 1]].Position,
+                                        ref g.userPrimitives[g.userPrimitivesIndicesLR[i + 2]].Position,
                                         out intersection);
 
                 // Does the ray intersect this triangle?
@@ -350,7 +628,7 @@ namespace TestCubePlanet
                         // Store the distance to this triangle.
                         closestIntersection = intersection;
 
-                        pLoc = m_aLocationReferences[i / 3];
+                        iLoc = g.m_aLocationReferences[i / 3];
                     }
                 }
             }
