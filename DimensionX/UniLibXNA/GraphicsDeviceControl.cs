@@ -33,6 +33,23 @@ namespace UniLibXNA
         }
     }
 
+    public struct VertexPosition : IVertexType
+    {
+        public Vector3 Position;
+
+        public readonly static long Size = sizeof(float) * 3;
+
+        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
+        (
+            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0)
+        );
+
+        VertexDeclaration IVertexType.VertexDeclaration
+        {
+            get { return VertexDeclaration; }
+        }
+    }
+
     public struct VertexMultitextured : IVertexType
     {
         public Vector3 Position;

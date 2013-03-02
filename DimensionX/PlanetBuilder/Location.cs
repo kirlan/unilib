@@ -152,12 +152,25 @@ namespace TestCubePlanet
             m_fX /= m_cEdges.Count + 1;
             m_fY /= m_cEdges.Count + 1;
             m_fZ /= m_cEdges.Count + 1;
-            
-            foreach (var pEdge in cSequence)
+
+            foreach (var pEdge in m_cEdges)
             {
-                pEdge.m_pInnerPoint.m_fX = (m_fX + pEdge.m_pMidPoint.m_fX) / 2;
-                pEdge.m_pInnerPoint.m_fY = (m_fY + pEdge.m_pMidPoint.m_fY) / 2;
-                pEdge.m_pInnerPoint.m_fZ = (m_fZ + pEdge.m_pMidPoint.m_fZ) / 2;
+                pEdge.Value.m_pInnerPoint.m_fX = (m_fX + pEdge.Value.m_pMidPoint.m_fX) / 2;
+                pEdge.Value.m_pInnerPoint.m_fY = (m_fY + pEdge.Value.m_pMidPoint.m_fY) / 2;
+                pEdge.Value.m_pInnerPoint.m_fZ = (m_fZ + pEdge.Value.m_pMidPoint.m_fZ) / 2;
+
+                if (m_fH > 0 && pEdge.Key.m_fH <= 0)
+                {
+                    pEdge.Value.m_pFrom.m_fH = 0;
+                    pEdge.Value.m_pMidPoint.m_fH = 0;
+                }
+                if (m_fH <= 0 && pEdge.Key.m_fH <= 0)
+                {
+                    //if (pEdge.Value.m_pFrom.m_fH > 0)
+                    //    pEdge.Value.m_pFrom.m_fH = (m_fH + pEdge.Key.m_fH)/2;
+                    if (pEdge.Value.m_pMidPoint.m_fH > 0)
+                        pEdge.Value.m_pMidPoint.m_fH = (m_fH + pEdge.Key.m_fH) / 2;
+                }
             }
         }
 
