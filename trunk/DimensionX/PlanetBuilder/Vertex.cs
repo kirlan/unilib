@@ -115,13 +115,13 @@ namespace TestCubePlanet
             if (bHighRes)
             {
                 m_fH = (float)ClassicNoise.noise(m_fX / 3, m_fY / 3, m_fZ / 3) / 5 + (float)ClassicNoise.noise(m_fX / 10, m_fY / 10, m_fZ / 10) / 2 + (float)ClassicNoise.noise(m_fX / 50, m_fY / 50, m_fZ / 50) * 2;
-                if (m_fH > 0)
+                if (m_fH > 0.0001)
                     m_fH *= m_fH * m_fH;
                 else
-                    m_fH = 0;//*= m_fH * m_fH;
+                    m_fH = m_fH * m_fH * m_fH - 0.1f;
             }
             else
-                m_fH = 0;
+                m_fH = -2;
         }
 
         public override string ToString()

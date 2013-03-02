@@ -17,6 +17,8 @@ float4 FogColor = float4(0, 0, 0, 0);
 float FogDensity = 0.025;
 float FogHeight = 10;
 
+float PlanetRadius = 150;
+
 //int FogMode = 0;
 bool FogModePlain = true;
 bool FogModeRing = false;
@@ -147,7 +149,7 @@ float4 ApplyFog(float4 Color, float3 Position, float koeff)
 	if(FogModeSphere)
 		d = DistFogSphere(Position);
 
-	float l = exp( - pow( d * FogDensity * koeff, 2 ) );
+	float l = exp( - pow( d * d * FogDensity * koeff, 2 ) );
 	l = saturate(1 - l);
 
 	return lerp(Color, FogColor, l);
@@ -714,7 +716,7 @@ struct WVertexToPixel
     float3 View : TEXCOORD5;
 };
 
-WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD, float3 Normal : NORMAL)
+WVertexToPixel WaterVS(float4 inPos : POSITION)
 {    
     WVertexToPixel Output = (WVertexToPixel)0;
 
@@ -724,7 +726,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD, float3 N
 	float4 worldPosition = mul(inPos, World);
     float4 viewPosition = mul(worldPosition, View);
     Output.Position = mul(viewPosition, Projection);
-	Output.Normal = Normal;
+	Output.Normal = normalize(inPos);
 
     //Output.ReflectionMapSamplingPos = mul(inPos, preWorldReflectionViewProjection);
      
