@@ -375,8 +375,8 @@ namespace TestCubePlanet
 
         public bool m_bCleared = true;
 
-        private static List<Square> s_pInvisibleQueue = new List<Square>();
-        private static List<Square> s_pVisibleQueue = new List<Square>();
+        public static List<Square> s_pInvisibleQueue = new List<Square>();
+        public static List<Square> s_pVisibleQueue = new List<Square>();
 
         public static void ClearQueues()
         {
@@ -386,214 +386,214 @@ namespace TestCubePlanet
 
         public void Rebuild(GraphicsDevice pDevice)
         {
-            if (!m_bCleared)
-                return;
-
-            bool bSuccess = false;
-            do
+            if (m_bCleared)
             {
-                try
+                bool bSuccess = false;
+                do
                 {
-                    DateTime now;
-                    if (!string.IsNullOrEmpty(m_sCacheFileName) && File.Exists(m_sCacheFileName))
+                    try
                     {
-                        now = DateTime.Now;
-                        g.Load(m_sCacheFileName);
-                        m_fReload = DateTime.Now - now;
-                    }
-                    else
-                    {
-                        now = DateTime.Now;
-                        g.m_aLandPoints = new VertexMultitextured[m_pChunk.m_aLocations.Length +
-                            m_pChunk.m_aVertexes.Length];
-
-                        g.m_aWaterPoints = new VertexPosition[m_pChunk.m_aLocations.Length +
-                            m_pChunk.m_aVertexes.Length];
-
-                        Dictionary<Vertex, int> vertexIndex = new Dictionary<Vertex, int>();
-                        Dictionary<Location, int> locationIndex = new Dictionary<Location, int>();
-
-                        Dictionary<Vertex, int> vertexWaterIndex = new Dictionary<Vertex, int>();
-                        Dictionary<Location, int> locationWaterIndex = new Dictionary<Location, int>();
-
-                        int index = 0;
-
-                        int indexWater = 0;
-
-                        m_iLandTrianglesCountLR = 0;
-                        m_iLandTrianglesCountHR = 0;
-                        m_iWaterTrianglesCount = 0;
-
-                        for (int i = 0; i < m_pChunk.m_aVertexes.Length; i++)
+                        DateTime now;
+                        if (!string.IsNullOrEmpty(m_sCacheFileName) && File.Exists(m_sCacheFileName))
                         {
-                            var vertex = m_pChunk.m_aVertexes[i];
-                            g.m_aLandPoints[index] = new VertexMultitextured();
-                            g.m_aLandPoints[index].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
-                            g.m_aLandPoints[index].Position += Vector3.Normalize(g.m_aLandPoints[index].Position) * vertex.m_fH;
-                            g.m_aLandPoints[index].Normal = new Vector3(vertex.m_fXN, vertex.m_fYN, vertex.m_fZN);
-                            g.m_aLandPoints[index].Tangent = Vector3.Zero;
-                            g.m_aLandPoints[index].Color = Color.Red;
-                            g.m_aLandPoints[index].TextureCoordinate = new Vector4(0, 0, 0, 0); // new Vector4(GetTexture(vertex), 0, 0); 
-                            SetTextureWeights(ref g.m_aLandPoints[index], vertex.m_fH, GetTemperature(vertex), vertex.m_fRndBig, vertex.m_fRndSmall);
-
-                            vertexIndex[vertex] = index;
-
-                            index++;
-
-                            g.m_aWaterPoints[indexWater] = new VertexPosition();
-                            g.m_aWaterPoints[indexWater].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
-                            g.m_aWaterPoints[indexWater].Position = Vector3.Normalize(g.m_aWaterPoints[indexWater].Position) * m_fR;
-
-                            vertexWaterIndex[vertex] = indexWater;
-
-                            indexWater++;
+                            now = DateTime.Now;
+                            g.Load(m_sCacheFileName);
+                            m_fReload = DateTime.Now - now;
                         }
-
-                        for (int i = 0; i < m_pChunk.m_aLocations.Length; i++)
+                        else
                         {
-                            var loc = m_pChunk.m_aLocations[i];
+                            now = DateTime.Now;
+                            g.m_aLandPoints = new VertexMultitextured[m_pChunk.m_aLocations.Length +
+                                m_pChunk.m_aVertexes.Length];
 
-                            g.m_aLandPoints[index] = new VertexMultitextured();
-                            g.m_aLandPoints[index].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
-                            g.m_aLandPoints[index].Position += Vector3.Normalize(g.m_aLandPoints[index].Position) * loc.m_fH;
-                            g.m_aLandPoints[index].Normal = new Vector3(loc.m_fXN, loc.m_fYN, loc.m_fZN);
-                            g.m_aLandPoints[index].Tangent = Vector3.Zero;
-                            g.m_aLandPoints[index].Color = Color.Red;
-                            g.m_aLandPoints[index].TextureCoordinate = new Vector4(0, 0, 0, 0); //new Vector4(GetTexture(loc), 0, 0); 
-                            SetTextureWeights(ref g.m_aLandPoints[index], loc.m_fH, GetTemperature(loc), loc.m_fRndBig, loc.m_fRndSmall);
+                            g.m_aWaterPoints = new VertexPosition[m_pChunk.m_aLocations.Length +
+                                m_pChunk.m_aVertexes.Length];
 
-                            m_iLandTrianglesCountLR += loc.m_cEdges.Count;
-                            m_iLandTrianglesCountHR += loc.m_cEdges.Count * 4;
+                            Dictionary<Vertex, int> vertexIndex = new Dictionary<Vertex, int>();
+                            Dictionary<Location, int> locationIndex = new Dictionary<Location, int>();
 
-                            locationIndex[loc] = index;
+                            Dictionary<Vertex, int> vertexWaterIndex = new Dictionary<Vertex, int>();
+                            Dictionary<Location, int> locationWaterIndex = new Dictionary<Location, int>();
 
-                            index++;
+                            int index = 0;
 
-                            if (loc.m_fH <= 0)
+                            int indexWater = 0;
+
+                            m_iLandTrianglesCountLR = 0;
+                            m_iLandTrianglesCountHR = 0;
+                            m_iWaterTrianglesCount = 0;
+
+                            for (int i = 0; i < m_pChunk.m_aVertexes.Length; i++)
                             {
-                                m_iUnderwaterTrianglesCount += loc.m_cEdges.Count;
+                                var vertex = m_pChunk.m_aVertexes[i];
+                                g.m_aLandPoints[index] = new VertexMultitextured();
+                                g.m_aLandPoints[index].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
+                                g.m_aLandPoints[index].Position += Vector3.Normalize(g.m_aLandPoints[index].Position) * vertex.m_fH;
+                                g.m_aLandPoints[index].Normal = new Vector3(vertex.m_fXN, vertex.m_fYN, vertex.m_fZN);
+                                g.m_aLandPoints[index].Tangent = Vector3.Zero;
+                                g.m_aLandPoints[index].Color = Color.Red;
+                                g.m_aLandPoints[index].TextureCoordinate = new Vector4(0, 0, 0, 0); // new Vector4(GetTexture(vertex), 0, 0); 
+                                SetTextureWeights(ref g.m_aLandPoints[index], vertex.m_fH, GetTemperature(vertex), vertex.m_fRndBig, vertex.m_fRndSmall);
+
+                                vertexIndex[vertex] = index;
+
+                                index++;
 
                                 g.m_aWaterPoints[indexWater] = new VertexPosition();
-                                g.m_aWaterPoints[indexWater].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
+                                g.m_aWaterPoints[indexWater].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
                                 g.m_aWaterPoints[indexWater].Position = Vector3.Normalize(g.m_aWaterPoints[indexWater].Position) * m_fR;
 
-                                m_iWaterTrianglesCount += loc.m_cEdges.Count;
-
-                                locationWaterIndex[loc] = indexWater;
+                                vertexWaterIndex[vertex] = indexWater;
 
                                 indexWater++;
                             }
-                        }
 
-                        g.m_aLandIndicesLR = new int[m_iLandTrianglesCountLR * 3];
-                        g.m_aLandIndicesHR = new int[m_iLandTrianglesCountHR * 3];
-                        g.m_aUnderwaterIndices = new int[m_iUnderwaterTrianglesCount * 3];
-                        g.m_aWaterIndices = new int[m_iWaterTrianglesCount * 3];
-
-                        g.m_aLocationReferences = new int[m_iLandTrianglesCountLR];
-                        g.m_aLocations = new int[m_pChunk.m_aLocations.Length][];
-
-                        index = 0;
-                        indexWater = 0;
-                        int indexHR = 0;
-                        int indexUnderwater = 0;
-                        int iReferenceCounter = 0;
-
-                        m_iLocationsIndicesCount = 0;
-
-                        for (int i = 0; i < m_pChunk.m_aLocations.Length; i++)
-                        {
-                            var loc = m_pChunk.m_aLocations[i];
-
-                            foreach (var edge in loc.m_cEdges)
+                            for (int i = 0; i < m_pChunk.m_aLocations.Length; i++)
                             {
-                                g.m_aLocationReferences[iReferenceCounter++] = i;
-                                g.m_aLandIndicesLR[index++] = locationIndex[loc];
-                                g.m_aLandIndicesLR[index++] = vertexIndex[edge.Value.m_pFrom];
-                                g.m_aLandIndicesLR[index++] = vertexIndex[edge.Value.m_pTo];
+                                var loc = m_pChunk.m_aLocations[i];
 
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pFrom];
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
+                                g.m_aLandPoints[index] = new VertexMultitextured();
+                                g.m_aLandPoints[index].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
+                                g.m_aLandPoints[index].Position += Vector3.Normalize(g.m_aLandPoints[index].Position) * loc.m_fH;
+                                g.m_aLandPoints[index].Normal = new Vector3(loc.m_fXN, loc.m_fYN, loc.m_fZN);
+                                g.m_aLandPoints[index].Tangent = Vector3.Zero;
+                                g.m_aLandPoints[index].Color = Color.Red;
+                                g.m_aLandPoints[index].TextureCoordinate = new Vector4(0, 0, 0, 0); //new Vector4(GetTexture(loc), 0, 0); 
+                                SetTextureWeights(ref g.m_aLandPoints[index], loc.m_fH, GetTemperature(loc), loc.m_fRndBig, loc.m_fRndSmall);
 
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
+                                m_iLandTrianglesCountLR += loc.m_cEdges.Count;
+                                m_iLandTrianglesCountHR += loc.m_cEdges.Count * 4;
 
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
+                                locationIndex[loc] = index;
 
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
-                                g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
-                                g.m_aLandIndicesHR[indexHR++] = locationIndex[loc];
+                                index++;
 
                                 if (loc.m_fH <= 0)
                                 {
-                                    g.m_aUnderwaterIndices[indexUnderwater++] = locationIndex[loc];
-                                    g.m_aUnderwaterIndices[indexUnderwater++] = vertexIndex[edge.Value.m_pFrom];
-                                    g.m_aUnderwaterIndices[indexUnderwater++] = vertexIndex[edge.Value.m_pTo];
+                                    m_iUnderwaterTrianglesCount += loc.m_cEdges.Count;
 
-                                    g.m_aWaterIndices[indexWater++] = locationWaterIndex[loc];
-                                    g.m_aWaterIndices[indexWater++] = vertexWaterIndex[edge.Value.m_pFrom];
-                                    g.m_aWaterIndices[indexWater++] = vertexWaterIndex[edge.Value.m_pTo];
+                                    g.m_aWaterPoints[indexWater] = new VertexPosition();
+                                    g.m_aWaterPoints[indexWater].Position = new Vector3(loc.m_fX, loc.m_fY, loc.m_fZ);
+                                    g.m_aWaterPoints[indexWater].Position = Vector3.Normalize(g.m_aWaterPoints[indexWater].Position) * m_fR;
+
+                                    m_iWaterTrianglesCount += loc.m_cEdges.Count;
+
+                                    locationWaterIndex[loc] = indexWater;
+
+                                    indexWater++;
                                 }
-
-                                g.m_aLandPoints[vertexIndex[edge.Value.m_pInnerPoint]].TexWeights = g.m_aLandPoints[locationIndex[loc]].TexWeights;
                             }
 
-                            g.m_aLocations[i] = BuildLocationReferencesIndices(loc, ref vertexIndex);
-                        }
+                            g.m_aLandIndicesLR = new int[m_iLandTrianglesCountLR * 3];
+                            g.m_aLandIndicesHR = new int[m_iLandTrianglesCountHR * 3];
+                            g.m_aUnderwaterIndices = new int[m_iUnderwaterTrianglesCount * 3];
+                            g.m_aWaterIndices = new int[m_iWaterTrianglesCount * 3];
 
-                        for (int i = 0; i < g.m_aLandPoints.Length; i++)
-                        {
-                            NormalizeTextureWeights(ref g.m_aLandPoints[i]);
-                        }
+                            g.m_aLocationReferences = new int[m_iLandTrianglesCountLR];
+                            g.m_aLocations = new int[m_pChunk.m_aLocations.Length][];
 
-                        m_fRebuild = DateTime.Now - now;
+                            index = 0;
+                            indexWater = 0;
+                            int indexHR = 0;
+                            int indexUnderwater = 0;
+                            int iReferenceCounter = 0;
+
+                            m_iLocationsIndicesCount = 0;
+
+                            for (int i = 0; i < m_pChunk.m_aLocations.Length; i++)
+                            {
+                                var loc = m_pChunk.m_aLocations[i];
+
+                                foreach (var edge in loc.m_cEdges)
+                                {
+                                    g.m_aLocationReferences[iReferenceCounter++] = i;
+                                    g.m_aLandIndicesLR[index++] = locationIndex[loc];
+                                    g.m_aLandIndicesLR[index++] = vertexIndex[edge.Value.m_pFrom];
+                                    g.m_aLandIndicesLR[index++] = vertexIndex[edge.Value.m_pTo];
+
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pFrom];
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
+
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pMidPoint];
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
+
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pTo];
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
+
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pInnerPoint];
+                                    g.m_aLandIndicesHR[indexHR++] = vertexIndex[edge.Value.m_pNext.m_pInnerPoint];
+                                    g.m_aLandIndicesHR[indexHR++] = locationIndex[loc];
+
+                                    if (loc.m_fH <= 0)
+                                    {
+                                        g.m_aUnderwaterIndices[indexUnderwater++] = locationIndex[loc];
+                                        g.m_aUnderwaterIndices[indexUnderwater++] = vertexIndex[edge.Value.m_pFrom];
+                                        g.m_aUnderwaterIndices[indexUnderwater++] = vertexIndex[edge.Value.m_pTo];
+
+                                        g.m_aWaterIndices[indexWater++] = locationWaterIndex[loc];
+                                        g.m_aWaterIndices[indexWater++] = vertexWaterIndex[edge.Value.m_pFrom];
+                                        g.m_aWaterIndices[indexWater++] = vertexWaterIndex[edge.Value.m_pTo];
+                                    }
+
+                                    g.m_aLandPoints[vertexIndex[edge.Value.m_pInnerPoint]].TexWeights = g.m_aLandPoints[locationIndex[loc]].TexWeights;
+                                }
+
+                                g.m_aLocations[i] = BuildLocationReferencesIndices(loc, ref vertexIndex);
+                            }
+
+                            for (int i = 0; i < g.m_aLandPoints.Length; i++)
+                            {
+                                NormalizeTextureWeights(ref g.m_aLandPoints[i]);
+                            }
+
+                            m_fRebuild = DateTime.Now - now;
+                        }
+                        now = DateTime.Now;
+                        CopyToBuffers(pDevice);
+                        m_fReload2 = DateTime.Now - now;
+
+                        m_bCleared = false;
+
+                        bSuccess = true;
                     }
-                    now = DateTime.Now;
-                    CopyToBuffers(pDevice);
-                    m_fReload2 = DateTime.Now - now;
-
-                    m_bCleared = false;
-
-                    bSuccess = true;
-                }
-                catch (Exception ex)
-                {
-                    if (s_pInvisibleQueue.Count > 0)
+                    catch (Exception ex)
                     {
-                        int iCount = s_pInvisibleQueue.Count;///2 + 1;
-                        for (int i = 0; i < iCount; i++)
+                        if (s_pInvisibleQueue.Count > 0)
                         {
-                            var pDead = s_pInvisibleQueue[0];
-                            pDead.Clear();
+                            int iCount = s_pInvisibleQueue.Count;///2 + 1;
+                            for (int i = 0; i < iCount; i++)
+                            {
+                                var pDead = s_pInvisibleQueue[0];
+                                pDead.Clear();
 
-                            s_pInvisibleQueue.Remove(pDead);
+                                s_pInvisibleQueue.Remove(pDead);
+                            }
                         }
-                    }
-                    //else if (s_pVisibleQueue.Count > 0)
-                    //{
-                    //    int iCount = s_pVisibleQueue.Count;
-                    //    for (int i = 0; i < iCount; i++)
-                    //    {
-                    //        var pDead = s_pVisibleQueue[0];
-                    //        pDead.Clear();
+                        //else if (s_pVisibleQueue.Count > 0)
+                        //{
+                        //    int iCount = s_pVisibleQueue.Count;
+                        //    for (int i = 0; i < iCount; i++)
+                        //    {
+                        //        var pDead = s_pVisibleQueue[0];
+                        //        pDead.Clear();
 
-                    //        s_pVisibleQueue.Remove(pDead);
-                    //    }
-                    //}
-                    else
-                    {
-                        if (ex is OutOfMemoryException)
-                            throw new OutOfMemoryException("Really out of memory!", ex);
+                        //        s_pVisibleQueue.Remove(pDead);
+                        //    }
+                        //}
                         else
-                            throw new Exception("Something really wrong!", ex);
+                        {
+                            if (ex is OutOfMemoryException)
+                                throw new OutOfMemoryException("Really out of memory!", ex);
+                            else
+                                throw new Exception("Something really wrong!", ex);
+                        }
                     }
                 }
+                while (!bSuccess);
             }
-            while (!bSuccess);
 
             if (s_pInvisibleQueue.Contains(this))
                 s_pInvisibleQueue.Remove(this);

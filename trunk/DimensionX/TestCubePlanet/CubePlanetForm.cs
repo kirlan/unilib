@@ -185,6 +185,9 @@ namespace TestCubePlanet
             label4.Text = string.Format("Draw Time: {0:0.000}s", cubePlanetDraw3d1.DrawingTime/1000);
             label5.Text = string.Format("Frame Time: {0:0.000}s", cubePlanetDraw3d1.FrameTime / 1000);
             label7.Text = string.Format("Triangles: ~{0}k", cubePlanetDraw3d1.TrianglesCount/1000);
+
+            label9.Text = "Visible Squares: " + cubePlanetDraw3d1.VisibleQueue.ToString();
+            label10.Text = "Cached Squares: " + cubePlanetDraw3d1.InvisibleQueue.ToString();
         }
 
         private void cubePlanetDraw3d1_Click(object sender, EventArgs e)

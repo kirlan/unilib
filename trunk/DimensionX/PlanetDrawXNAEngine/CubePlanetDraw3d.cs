@@ -410,6 +410,9 @@ namespace TestCubePlanet
 
         private Matrix m_pWorldMatrix = Matrix.Identity;
 
+        public int VisibleQueue { get { return Square.s_pVisibleQueue.Count; } }
+        public int InvisibleQueue { get { return Square.s_pInvisibleQueue.Count; } }
+
         /// <summary>
         /// Draws the control.
         /// </summary>
@@ -523,6 +526,7 @@ namespace TestCubePlanet
             m_iTrianglesCount = 0;
 
             GraphicsDevice.SetRenderTarget(refractionRenderTarget);
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
@@ -535,6 +539,12 @@ namespace TestCubePlanet
 
                     if (pSquare.m_fVisibleDistance > 0 && pSquare.m_iUnderwaterTrianglesCount > 0)
                     {
+                        if (!Square.s_pVisibleQueue.Contains(pSquare))
+                        {
+                            pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction);
+                            throw new Exception();
+                        }
+
                         GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
                         GraphicsDevice.Indices = pSquare.m_pUnderwaterIndexBuffer;
                         GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iUnderwaterTrianglesCount);
