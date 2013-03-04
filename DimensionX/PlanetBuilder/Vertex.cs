@@ -122,6 +122,8 @@ namespace TestCubePlanet
             }
             else
                 m_fH = -2;
+
+            m_fH *= 2;
         }
 
         public override string ToString()

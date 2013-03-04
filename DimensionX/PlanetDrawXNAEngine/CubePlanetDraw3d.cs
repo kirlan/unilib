@@ -480,7 +480,15 @@ namespace TestCubePlanet
                     m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
             }
 
-            //m_pWorldMatrix = Matrix.CreateScale(m_pCamera.Left, m_pCamera.Top/2, m_pCamera.Direction);
+            Vector3 pTop = Vector3.Normalize(m_pCamera.FocusPoint);
+            Vector3 pForward = Vector3.Cross(pTop, m_pCamera.Left);
+
+            Matrix T = new Matrix(m_pCamera.Left.X, pTop.X, pForward.X, 0,
+                                  m_pCamera.Left.Y, pTop.Y, pForward.Y, 0,
+                                  m_pCamera.Left.Z, pTop.Z, pForward.Z, 0,
+                                  0, 0, 0, 1);
+            m_pWorldMatrix = Matrix.Multiply(Matrix.Multiply(T, Matrix.CreateScale(1, 0.5f, 1)), Matrix.Invert(T));
+            m_pWorldMatrix = Matrix.Multiply(m_pWorldMatrix, Matrix.CreateTranslation(pTop*m_pCube.R/2));
 
             Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
 
@@ -712,6 +720,7 @@ namespace TestCubePlanet
                 GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
                 // Activate the line drawing BasicEffect.
+                lineEffect.World = m_pWorldMatrix;
                 lineEffect.Projection = m_pCamera.Projection;
                 lineEffect.View = m_pCamera.View;
 
@@ -739,6 +748,7 @@ namespace TestCubePlanet
         void DrawDebugInfo()
         {
             // Activate the line drawing BasicEffect.
+            lineEffect.World = m_pWorldMatrix;
             lineEffect.Projection = m_pCamera.Projection;
             lineEffect.View = m_pCamera.View;
 
@@ -778,7 +788,7 @@ namespace TestCubePlanet
                         int iLoc = -1;
 
                         // Perform the ray to model intersection test.
-                        float? intersection = pSquare.RayIntersectsLandscape(upRay, m_pWorldMatrix,//CreateScale(0.5f),
+                        float? intersection = pSquare.RayIntersectsLandscape(upRay, Matrix.Identity,//m_pWorldMatrix,//CreateScale(0.5f),
                                                                     ref iLoc);
                         // Do we have a per-triangle intersection with this model?
                         if (intersection != null)
@@ -815,7 +825,7 @@ namespace TestCubePlanet
                 m_pSelectedSquare.m_pBounds8.Intersects(m_pCursorRay).HasValue)
             {
                 m_pSelectedSquare.Rebuild(GraphicsDevice);
-                float? intersection = m_pSelectedSquare.RayIntersectsLandscape(m_pCursorRay, m_pWorldMatrix,//CreateScale(0.5f),
+                float? intersection = m_pSelectedSquare.RayIntersectsLandscape(m_pCursorRay, Matrix.Identity,//m_pWorldMatrix,//CreateScale(0.5f),
                                                             ref m_iFocusedLocation);
                 // Do we have a per-triangle intersection with this model?
                 if (intersection != null)
@@ -840,7 +850,7 @@ namespace TestCubePlanet
                         int iLoc = -1;
 
                         // Perform the ray to model intersection test.
-                        float? intersection = pSquare.RayIntersectsLandscape(m_pCursorRay, m_pWorldMatrix,//CreateScale(0.5f),
+                        float? intersection = pSquare.RayIntersectsLandscape(m_pCursorRay, Matrix.Identity,//m_pWorldMatrix,//CreateScale(0.5f),
                                                                     ref iLoc);
                         // Do we have a per-triangle intersection with this model?
                         if (intersection != null)

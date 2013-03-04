@@ -49,6 +49,8 @@ namespace TestCubePlanet
 
                 cNewLocations.Add(pLoc);
 
+                pLoc.m_pChunkMarker = this;
+
                 foreach (var pEdge in pLoc.m_cEdges)
                 {
                     if (pEdge.Value.m_pFrom.m_pChunkMarker != this)
@@ -86,6 +88,18 @@ namespace TestCubePlanet
             m_aLocations = cNewLocations.ToArray();
             m_aVertexes = cNewVertexes.ToArray();
 
+            for (int i = 0; i < m_aLocations.Length; i++)
+            {
+                var pLoc = m_aLocations[i];
+
+                foreach (var pEdge in pLoc.m_cEdges)
+                {
+                    if (pEdge.Key.m_pChunkMarker != this)
+                    {
+                        pEdge.Value.m_pMidPoint.m_fH = (pEdge.Value.m_pFrom.m_fH + pEdge.Value.m_pTo.m_fH) / 2;
+                    }
+                }
+            }
             //m_bDirty = true;
 
             //DebugVertexes();
