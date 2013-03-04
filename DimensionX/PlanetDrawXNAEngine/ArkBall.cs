@@ -16,10 +16,21 @@ namespace TestCubePlanet
         public Matrix Projection { get; set; }
 
         protected GraphicsDevice GraphicsDevice { get; set; }
-        private void generatePerspectiveProjectionMatrix(float FieldOfView)
+
+        private float m_fStoredAspectRatio = 0;
+        private float m_fStoredFieldOfView = 0;
+
+        private bool generatePerspectiveProjectionMatrix(float FieldOfView)
         {
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
-            this.Projection = Matrix.CreatePerspectiveFieldOfView(FieldOfView, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100000f);
+            //PresentationParameters pp = GraphicsDevice.PresentationParameters;
+            if (m_fStoredAspectRatio != GraphicsDevice.Viewport.AspectRatio || m_fStoredFieldOfView != FieldOfView)
+            {
+                Projection = Matrix.CreatePerspectiveFieldOfView(FieldOfView, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100000f);
+                m_fStoredAspectRatio = GraphicsDevice.Viewport.AspectRatio;
+                m_fStoredFieldOfView = FieldOfView;
+                return true;
+            }
+            return false;
         }
 
         public Vector3 Direction { get; private set; }
@@ -47,9 +58,9 @@ namespace TestCubePlanet
             //this.Position = new Vector3(0, 0, 400);
         }
 
-        public void UpdateAspectRatio()
+        public bool UpdateAspectRatio()
         {
-            generatePerspectiveProjectionMatrix(Microsoft.Xna.Framework.MathHelper.ToRadians(45));
+            return generatePerspectiveProjectionMatrix(Microsoft.Xna.Framework.MathHelper.ToRadians(45));
         }
 
         public void Initialize(float fR)
@@ -68,18 +79,28 @@ namespace TestCubePlanet
         public Vector3 m_pTarget = Vector3.Backward * 150;
         public Vector3 m_pTargetDir = Vector3.Up;
 
+        private bool m_bNeedUpdate = true;
+
         public void Orbit(float YawChange, float PitchChange, float RollChange)
         {
+            if (YawChange == 0 && PitchChange == 0 && RollChange == 0)
+                return;
+
             Yaw += YawChange;
             Pitch -= PitchChange;
 
             Pitch = Math.Max(MathHelper.ToRadians(1), Math.Min(MathHelper.ToRadians(89), this.Pitch));
 
             Roll += RollChange;
+
+            m_bNeedUpdate = true;
         }
 
         public void ZoomIn(float fDistance)
         {
+            if (fDistance == 0)
+                return;
+
             fDistance *= m_fDistance / 10000;
 
             m_fDistance -= fDistance;
@@ -89,10 +110,15 @@ namespace TestCubePlanet
 
             if (m_fDistance > 1000)
                 m_fDistance = 1000;
+
+            m_bNeedUpdate = true;
         }
 
         public void MoveTarget(Vector3 pNewPosition, float fDistance)
         {
+            if (fDistance == 0)
+                return;
+
             Vector3 pAxis = Vector3.Cross(m_pTarget, pNewPosition);
             pAxis.Normalize();
 
@@ -127,26 +153,32 @@ namespace TestCubePlanet
             else
                 fRotAngle /= 2;
 
+            if (fRotAngle == 0)
+                return;
+
             Vector3 pDelta1 = Vector3.Transform(m_pTarget, Matrix.CreateFromAxisAngle(pAxis, fRotAngle));
 
             Vector3 pDelta = pDelta1 - m_pTarget;
             
-            Vector3 pTarget1 = Vector3.Normalize(m_pTarget + pDelta) * m_fR;
+            Vector3 pNewTarget = Vector3.Normalize(m_pTarget + pDelta) * m_fR;
 
-            m_pTargetDir = Vector3.Normalize(Vector3.Normalize(m_pTarget + pDelta + m_pTargetDir) * m_fR - pTarget1);
+            m_pTargetDir = Vector3.Normalize(Vector3.Normalize(m_pTarget + pDelta + m_pTargetDir) * m_fR - pNewTarget);
 
             //m_cTargets.Add(new KeyValuePair<Vector3, Vector3>(pTarget1, m_pTargetDir));
-            m_pTarget = pTarget1;
+            m_pTarget = pNewTarget;
 
-            return;
+            m_bNeedUpdate = true;
         }
+
+        public Vector3 Left = Vector3.Left;
 
         /// <summary>
         /// Обновить положение камеры
         /// </summary>
-        public void Update()
+        public bool Update()
         {
-            UpdateAspectRatio();
+            if (!UpdateAspectRatio() && !m_bNeedUpdate)
+                return false;
 
             //Matrix pFocusPointRotation = Matrix.CreateFromQuaternion(m_pCursorPointRotation);
             //Matrix pFocusPointRotation1 = Matrix.CreateFromQuaternion(m_pTargetRotation1);
@@ -168,10 +200,14 @@ namespace TestCubePlanet
             //Direction = Vector3.Transform(Direction, pFocusPointRotation2);
             Position = FocusPoint +  - Direction * m_fDistance;
 
-            Vector3 cameraLeft = Vector3.Cross(FocusPoint, Direction);
-            Top = Vector3.Normalize(Vector3.Cross(-cameraLeft, Direction));
+            Left = Vector3.Cross(FocusPoint, Direction);
+            Top = Vector3.Normalize(Vector3.Cross(-Left, Direction));
 
             View = Matrix.CreateLookAt(Position, FocusPoint, Top);
+
+            m_bNeedUpdate = false;
+
+            return true;
         }
 
         public float m_fCameraLength { get; set; }

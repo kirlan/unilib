@@ -201,7 +201,7 @@ namespace TestCubePlanet
 
             Vector3 pCentral = (pBoundTopLeft + pBoundTopRight + pBoundBottomLeft + pBoundBottomRight) / 4;
 
-            Plane pInnerPlane = new Plane(-Vector3.Normalize(pCentral), (float)pCentral.Length() - fMinHeight);
+            Plane pInnerPlane = new Plane(-Vector3.Normalize(pCentral), (float)pCentral.Length() + fMinHeight);
             Plane pOuterPlane = new Plane(-Vector3.Normalize(pCentral), (float)pBoundTopLeft.Length() + fMaxHeight);
 
             Ray pBoundTopLeftRay = new Ray(Vector3.Zero, Vector3.Normalize(pBoundTopLeft));
@@ -714,10 +714,8 @@ namespace TestCubePlanet
         /// if there is no intersection.
         /// </summary>
         public float? RayIntersectsLandscape(Ray ray, Matrix modelTransform,
-                                         out int iLoc)
+                                         ref int iLoc)
         {
-            iLoc = -1;
-
             // The input ray is in world space, but our model data is stored in object
             // space. We would normally have to transform all the model data by the
             // modelTransform matrix, moving it into world space before we test it
@@ -736,6 +734,58 @@ namespace TestCubePlanet
             // Keep track of the closest triangle we found so far,
             // so we can always return the closest one.
             float? closestIntersection = null;
+
+            if (iLoc >= 0 && iLoc < g.m_aLocations.GetLength(0))
+            {
+                Vector3 pLocationCenter = new Vector3(m_pChunk.m_aLocations[iLoc].m_fX, m_pChunk.m_aLocations[iLoc].m_fY, m_pChunk.m_aLocations[iLoc].m_fZ);
+                pLocationCenter += Vector3.Normalize(pLocationCenter) * m_pChunk.m_aLocations[iLoc].m_fH;
+                for (int i = 0; i < g.m_aLocations[iLoc].Length; i+=4)
+                {
+                    float? intersection;
+
+                    RayIntersectsTriangle(ref ray,
+                                            ref pLocationCenter,
+                                            ref g.m_aLandPoints[g.m_aLocations[iLoc][i]].Position,
+                                            ref g.m_aLandPoints[g.m_aLocations[iLoc][i + 3]].Position,
+                                            out intersection);
+
+                    // Does the ray intersect this triangle?
+                    if (intersection != null)
+                    {
+                        return intersection;
+                    }
+                }
+                //поиск по непосредственным соседям - это хорошо, но работать не будет, т.к. (1) мы не знаем индекс соседней локации и (2) даже если бы знали, она вполне может оказаться в другом квадрате
+                //foreach (var pEdge in m_pChunk.m_aLocations[iLoc].m_cEdges)
+                //{
+                //    if (!m_pChunk.m_aLocations.Contains(pEdge.Key))
+                //        continue;
+
+                //    int iEdge = m_pChunk.m_aLocations.IndexOf(pEdge.Key)
+
+                //    pLocationCenter = new Vector3(pEdge.Key.m_fX, pEdge.Key.m_fY, pEdge.Key.m_fZ);
+                //    pLocationCenter += Vector3.Normalize(pLocationCenter) * pEdge.Key.m_fH;
+                //    Vector3 v1 = new Vector3(pEdge.Value.m_pFrom.m_fX, pEdge.Value.m_pFrom.m_fY, pEdge.Value.m_pFrom.m_fZ);
+                //    v1 += Vector3.Normalize(v1) * pEdge.Value.m_pFrom.m_fH;
+                //    Vector3 v2 = new Vector3(pEdge.Value.m_pTo.m_fX, pEdge.Value.m_pTo.m_fY, pEdge.Value.m_pTo.m_fZ);
+                //    v2 += Vector3.Normalize(v2) * pEdge.Value.m_pTo.m_fH;
+
+                //    float? intersection;
+
+                //    RayIntersectsTriangle(ref ray,
+                //                            ref pLocationCenter,
+                //                            ref v1,
+                //                            ref v2,
+                //                            out intersection);
+
+                //    // Does the ray intersect this triangle?
+                //    if (intersection != null)
+                //    {
+                //        iLoc = iEdge;
+                //        return intersection;
+                //    }
+                //}
+            }
 
             for (int i = 0; i < g.m_aLandIndicesLR.Length; i += 3)
             {

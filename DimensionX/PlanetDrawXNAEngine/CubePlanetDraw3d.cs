@@ -392,12 +392,23 @@ namespace TestCubePlanet
             set { m_bWireFrame = value; }
         }
 
+        private float m_fLODDistance = 50;
+
+        public float LODDistance
+        {
+            get { return m_fLODDistance; }
+            set { m_fLODDistance = value; }
+        }
+        
         public void ResetFPS()
         {
             m_iFrame = 0;
         }
 
         public Vector3? m_pTarget = null;
+        private Square m_pFocusedSquare = null;
+
+        private Matrix m_pWorldMatrix = Matrix.Identity;
 
         /// <summary>
         /// Draws the control.
@@ -426,36 +437,47 @@ namespace TestCubePlanet
             if (m_pTarget.HasValue)
                 m_pCamera.MoveTarget(m_pTarget.Value, 0.005f * (float)m_fFrameTime);
 
-            m_pCamera.Update();
-
-            Vector3? pCharacter = GetSurface(m_pCamera.FocusPoint);
-            if (pCharacter.HasValue)
+            if (m_pCamera.Update())
             {
-                pCharacter += Vector3.Normalize(pCharacter.Value) * 0.2f;
-                m_pCamera.Position += pCharacter.Value - m_pCamera.FocusPoint;
-                m_pCamera.FocusPoint = pCharacter.Value;
+                bool bCameraChanged = false;
+
+                Vector3? pCharacter = GetSurface(m_pCamera.FocusPoint, out m_pFocusedSquare);
+                if (pCharacter.HasValue)
+                {
+                    pCharacter += Vector3.Normalize(pCharacter.Value) * 0.2f;
+                    m_pCamera.Position += pCharacter.Value - m_pCamera.FocusPoint;
+                    m_pCamera.FocusPoint = pCharacter.Value;
+
+                    bCameraChanged = true;
+                }
+                else
+                {
+                    pCharacter = GetSurface(m_pCamera.FocusPoint, out m_pFocusedSquare);
+                    //throw new Exception();
+                }
 
                 //Убедимся, что камера достаточно высоко над землёй
                 if (m_pCamera.Position.Length() < m_pCube.R + 10)
                 {
                     float fMinHeight = 0.1f;
-                    Vector3? pSurface = GetSurface(m_pCamera.Position);
+                    Square pCameraSquare;
+                    Vector3? pSurface = GetSurface(m_pCamera.Position, out pCameraSquare);
                     if (pSurface.HasValue)
                     {
                         if ((pSurface.Value - m_pCamera.Position).Length() < fMinHeight)
                         {
                             //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
                             m_pCamera.Position = pSurface.Value + Vector3.Normalize(pSurface.Value) * fMinHeight;
+                            bCameraChanged = true;
                         }
                     }
                 }
-                m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
+
+                if (bCameraChanged)
+                    m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
             }
-            else
-            {
-                pCharacter = GetSurface(m_pCamera.FocusPoint);
-                //throw new Exception();
-            }
+
+            //m_pWorldMatrix = Matrix.CreateScale(m_pCamera.Left, m_pCamera.Top/2, m_pCamera.Direction);
 
             Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
 
@@ -470,7 +492,7 @@ namespace TestCubePlanet
 
             pEffectCameraPosition.SetValue(m_pCamera.Position);
 
-            pEffectWorld.SetValue(Matrix.Identity);
+            pEffectWorld.SetValue(m_pWorldMatrix);
 
             // Set renderstates.
             RasterizerState rs = new RasterizerState();
@@ -545,7 +567,7 @@ namespace TestCubePlanet
                     if (pSquare.m_fVisibleDistance > 0)
                     {
                         GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
-                        if (pSquare.m_fVisibleDistance < 30)
+                        if (pSquare.m_fVisibleDistance < m_fLODDistance || pSquare == m_pFocusedSquare)
                         {
                             GraphicsDevice.Indices = pSquare.m_pLandIndexBufferHR;
                             GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountHR);
@@ -592,7 +614,7 @@ namespace TestCubePlanet
                 rs.FillMode = FillMode.WireFrame;
                 GraphicsDevice.RasterizerState = rs;
 
-                lineEffect.World = Matrix.Identity;
+                lineEffect.World = m_pWorldMatrix;
                 lineEffect.View = m_pCamera.View;
                 lineEffect.Projection = m_pCamera.Projection;
                 lineEffect.CurrentTechnique.Passes[0].Apply();
@@ -648,10 +670,10 @@ namespace TestCubePlanet
             // matrix, which we have saved as member variables. We also need a world
             // matrix, which can just be identity.
             Vector3 nearPoint = GraphicsDevice.Viewport.Unproject(nearSource,
-                projectionMatrix, viewMatrix, Matrix.Identity);
+                projectionMatrix, viewMatrix, m_pWorldMatrix);
 
             Vector3 farPoint = GraphicsDevice.Viewport.Unproject(farSource,
-                projectionMatrix, viewMatrix, Matrix.Identity);
+                projectionMatrix, viewMatrix, m_pWorldMatrix);
 
             // find the direction vector that goes from the nearPoint to the farPoint
             // and normalize it....
@@ -667,7 +689,7 @@ namespace TestCubePlanet
         /// </summary>
         void DrawPickedTriangle()
         {
-            if (m_bPicked)
+            if (m_iFocusedLocation != -1)
             {
                 // Set line drawing renderstates. We disable backface culling
                 // and turn off the depth buffer because we want to be able to
@@ -720,8 +742,6 @@ namespace TestCubePlanet
             );
         }
 
-        bool m_bPicked = false;
-
         VertexPositionColor[] m_pDebugInfo;
 
         Square m_pSelectedSquare = null;
@@ -729,8 +749,10 @@ namespace TestCubePlanet
 
         Ray m_pCursorRay;
 
-        public Vector3? GetSurface(Vector3 pPos)
+        private Vector3? GetSurface(Vector3 pPos, out Square pOwnerSquare)
         {
+            pOwnerSquare = null;
+
             if (m_pCube == null)
                 return null;
 
@@ -743,14 +765,17 @@ namespace TestCubePlanet
                     {
                         pSquare.Rebuild(GraphicsDevice);
 
-                        int iLoc;
+                        int iLoc = -1;
 
                         // Perform the ray to model intersection test.
-                        float? intersection = pSquare.RayIntersectsLandscape(upRay, Matrix.Identity,//CreateScale(0.5f),
-                                                                    out iLoc);
+                        float? intersection = pSquare.RayIntersectsLandscape(upRay, m_pWorldMatrix,//CreateScale(0.5f),
+                                                                    ref iLoc);
                         // Do we have a per-triangle intersection with this model?
                         if (intersection != null)
+                        {
+                            pOwnerSquare = pSquare;
                             return Vector3.Normalize(upRay.Direction) * intersection;
+                        }
                     }
                 }
 
@@ -771,34 +796,26 @@ namespace TestCubePlanet
             if (m_pCube == null)
                 return;
 
-            m_bPicked = false;
-
-            //m_pCurrentPicking = GetFocusedPoint(m_iMouseX, m_iMouseY);
-
-            //if (!m_pCurrentPicking.HasValue)
-            //    return;
-
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
             m_pCursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
 
-            // calculate the ray-plane intersection point
-            //Vector3 n = new Vector3(0f, 1f, 0f);
-            //Plane p = new Plane(n, 0f);
 
-            // calculate distance of intersection point from r.origin
-            //float denominator = Vector3.Dot(p.Normal, m_pCursorRay.Direction);
-            //float numerator = Vector3.Dot(p.Normal, m_pCursorRay.Position) + p.D;
-            //float t = -(numerator / denominator);
+            if (m_pSelectedSquare != null && m_pSelectedSquare.m_fVisibleDistance > 0 &&
+                m_pSelectedSquare.m_pBounds8.Intersects(m_pCursorRay).HasValue)
+            {
+                m_pSelectedSquare.Rebuild(GraphicsDevice);
+                float? intersection = m_pSelectedSquare.RayIntersectsLandscape(m_pCursorRay, m_pWorldMatrix,//CreateScale(0.5f),
+                                                            ref m_iFocusedLocation);
+                // Do we have a per-triangle intersection with this model?
+                if (intersection != null)
+                {
+                    m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
+                    return;
+                }
+            }
 
-            //m_pPoints = new VertexPositionColor[4];
-            //m_pPoints[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
-            //m_pPoints[1] = new VertexPositionColor(m_pCursorRay.Position + m_pCursorRay.Direction * t, Microsoft.Xna.Framework.Color.DarkGoldenrod);
-            //m_pPoints[2] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
-            //m_pPoints[3] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.DarkGoldenrod);
-
-            //m_iCursorX = (int)m_pPoints[1].Position.X;
-            //m_iCursorY = (int)m_pPoints[1].Position.Z;
+            m_iFocusedLocation = -1;
 
             // Keep track of the closest object we have seen so far, so we can
             // choose the closest one if there are several models under the cursor.
@@ -810,11 +827,11 @@ namespace TestCubePlanet
                     if (pSquare.m_fVisibleDistance > 0 && pSquare.m_pBounds8.Intersects(m_pCursorRay).HasValue)
                     {
                         pSquare.Rebuild(GraphicsDevice);
-                        int iLoc;
+                        int iLoc = -1;
 
                         // Perform the ray to model intersection test.
-                        float? intersection = pSquare.RayIntersectsLandscape(m_pCursorRay, Matrix.Identity,//CreateScale(0.5f),
-                                                                    out iLoc);
+                        float? intersection = pSquare.RayIntersectsLandscape(m_pCursorRay, m_pWorldMatrix,//CreateScale(0.5f),
+                                                                    ref iLoc);
                         // Do we have a per-triangle intersection with this model?
                         if (intersection != null)
                         {
@@ -828,8 +845,6 @@ namespace TestCubePlanet
                                 // Store vertex positions so we can display the picked triangle.
                                 m_iFocusedLocation = iLoc;
 
-                                m_bPicked = true;
-
                                 m_pSelectedSquare = pSquare;
 
                                 m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
@@ -838,7 +853,7 @@ namespace TestCubePlanet
                     }
                 }
 
-            if(!m_bPicked)
+            if (m_iFocusedLocation == -1)
                 m_pCurrentPicking = null;
         }
 
