@@ -756,7 +756,7 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 
     //float4 light = GetLight(input.Normal, input.View);
 	
-	float4 reflectiveColor = float4(0.3f, 0.3f, 0.5f, 0.5f);
+	float4 reflectiveColor = float4(0.1f, 0.1f, 0.3f, 1.0f);
 	//reflectiveColor = reflectiveColor*light;
 
     float2 ProjectedRefrTexCoords = (float2)0;
@@ -768,7 +768,7 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
     float3 eyeVector = normalize(CameraPosition - PSIn.Position3D);
     //float3 normalVector = float3(0,1,0);
     float fresnelTerm = dot(eyeVector, PSIn.Normal);    
-    float4 combinedColor = lerp(reflectiveColor, refractiveColor, fresnelTerm*fresnelTerm*fresnelTerm);
+    float4 combinedColor = lerp(reflectiveColor, refractiveColor, fresnelTerm*fresnelTerm);//*fresnelTerm);
      
     //float4 dullColor = float4(0.3f, 0.3f, 0.5f, 1.0f);
      
