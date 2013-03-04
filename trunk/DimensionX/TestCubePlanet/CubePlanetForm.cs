@@ -52,7 +52,7 @@ namespace TestCubePlanet
 
         private void button2_Click(object sender, EventArgs e)
         {
-            panel1.Enabled = false;
+            panel2.Enabled = false;
             cubePlanetDraw3d1.Visible = false;
 
             var now = DateTime.Now;
@@ -93,25 +93,30 @@ namespace TestCubePlanet
             label6.Text = string.Format("Actual locations: ~{0:#####}k", iLocs/1000);
             
             cubePlanetDraw3d1.Visible = true;
-            panel1.Enabled = true;
+            panel2.Enabled = true;
         }
 
         bool m_b3dMapRotate = false;
 
-        private System.Drawing.Point m_pMap3DLastMouseLocation = new System.Drawing.Point(0, 0);
+        private MouseEventArgs m_pMap3DLastMouseLocation = null;
 
         private void cubePlanetDraw3d1_MouseMove(object sender, MouseEventArgs e)
         {
+            if (m_bMouseLock)
+                return;
+
+            m_bMouseLock = true;
+
             cubePlanetDraw3d1.Focus();
 
             System.Drawing.Point p = new System.Drawing.Point(0, 0);
 
-            if (m_pMap3DLastMouseLocation.X > 0)
+            if (m_pMap3DLastMouseLocation != null)
             {
                 p.X = m_pMap3DLastMouseLocation.X - e.X;
                 p.Y = m_pMap3DLastMouseLocation.Y - e.Y;
             }
-            m_pMap3DLastMouseLocation = e.Location;
+            m_pMap3DLastMouseLocation = e;
 
             cubePlanetDraw3d1.UpdatePicking(e.X, e.Y);
 
@@ -174,6 +179,7 @@ namespace TestCubePlanet
         {
             label3.Text = "FPS: " + Math.Min(999, cubePlanetDraw3d1.FPS).ToString();
         //    timer2.Interval = Math.Max(100, 800 / (mapDraw3d1.m_iFrame + 1));
+            timer2.Interval = Math.Max(50, 800 / (cubePlanetDraw3d1.FPS + 1));
             cubePlanetDraw3d1.ResetFPS();
 
             label4.Text = string.Format("Draw Time: {0:0.000}s", cubePlanetDraw3d1.DrawingTime/1000);
@@ -222,6 +228,37 @@ namespace TestCubePlanet
         private void numericUpDown1_KeyUp(object sender, KeyEventArgs e)
         {
             numericUpDown1_ValueChanged(sender, new EventArgs());
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            cubePlanetDraw3d1.WireFrame = checkBox1.Checked;
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            cubePlanetDraw3d1.UseCelShading = checkBox3.Checked;
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            cubePlanetDraw3d1.ShowBounds = checkBox4.Checked;
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            label18.Text = "LOD distance: " + trackBar1.Value;
+            cubePlanetDraw3d1.LODDistance = trackBar1.Value;
+        }
+
+        private bool m_bMouseLock = false;
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            m_bMouseLock = false;
+            //if (m_pMap3DLastMouseLocation != null)
+            //    cubePlanetDraw3d1_MouseMove(sender, m_pMap3DLastMouseLocation);
+            //m_pMap3DLastMouseLocation = null;
         }
     }
 }
