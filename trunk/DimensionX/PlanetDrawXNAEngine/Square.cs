@@ -12,7 +12,7 @@ using Microsoft.VisualBasic.Devices;
 
 namespace TestCubePlanet
 {
-    class Square
+    public class Square
     {
         public struct Geometry
         {
@@ -346,20 +346,38 @@ namespace TestCubePlanet
 
         public float m_fVisibleDistance = -1;
 
-        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustrum, Vector3 pCameraPos, Vector3 pCameraDir)
+        public static bool Check1 = true;
+        public static bool Check2 = true;
+        public static bool Check3 = true;
+        public static bool Check4 = true;
+
+        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustum, Vector3 pCameraPos, Vector3 pCameraDir)
         {
             m_fVisibleDistance = -1;
 
-            if (Vector3.Dot(m_pBounds8.Normal, pCameraDir) < 0.2)
+            bool bVisible = true;
+
+            Vector3 pViewVector = m_pBounds8.Center - pCameraPos;
+            if(Check1)
             {
-                Vector3 pViewVector = m_pBounds8.Center - pCameraPos;
+                float fCos2 = Vector3.Dot(Vector3.Normalize(pViewVector), m_pBounds8.Normal);
+                if (fCos2 > 0.3)// || m_pBounds8.m_pSphere.Contains(pCameraPos) != ContainmentType.Disjoint)// m_pBounds8.Intersects(new Ray(pCameraPos, pCameraDir)).HasValue)
+                    bVisible = false;
+            }
+
+            if(bVisible && Check2)
+            {
                 float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), pCameraDir);
-                if (fCos > 0.6 || pFrustrum.Contains(m_pBounds8.m_pSphere) != ContainmentType.Disjoint) //cos(45) = 0,70710678118654752440084436210485...
-                {
-                    m_fVisibleDistance = pViewVector.Length();
-                    Rebuild(pDevice);
-                    return;
-                }
+                if (fCos < 0.6 && (!m_pBounds8.Intersects(pFrustum) || !Check3) &&
+                    (m_pBounds8.m_pSphere.Contains(pCameraPos) == ContainmentType.Disjoint || !Check4)) //cos(45) = 0,70710678118654752440084436210485...
+                    bVisible = false;
+            }
+
+            if(bVisible)
+            {
+                m_fVisibleDistance = pViewVector.Length();
+                Rebuild(pDevice);
+                return;
             }
 
             if (!m_bCleared && !s_pInvisibleQueue.Contains(this))
