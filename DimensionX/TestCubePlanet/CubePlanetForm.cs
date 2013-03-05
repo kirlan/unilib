@@ -263,5 +263,15 @@ namespace TestCubePlanet
             //    cubePlanetDraw3d1_MouseMove(sender, m_pMap3DLastMouseLocation);
             //m_pMap3DLastMouseLocation = null;
         }
+
+        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        {
+            Square.Check1 = checkBox5.Checked;
+        }
+
+        private void checkBox6_CheckedChanged(object sender, EventArgs e)
+        {
+            Square.Check2 = checkBox6.Checked;
+        }
     }
 }
