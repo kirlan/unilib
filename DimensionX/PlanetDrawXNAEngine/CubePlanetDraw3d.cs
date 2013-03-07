@@ -478,17 +478,23 @@ namespace TestCubePlanet
 
                 if (bCameraChanged)
                     m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
+
+                Vector3 pTop = Vector3.Normalize(m_pCamera.FocusPoint);
+                Vector3 pForward = Vector3.Cross(pTop, m_pCamera.Left);
+
+                Matrix T = new Matrix(m_pCamera.Left.X, pTop.X, pForward.X, 0,
+                                      m_pCamera.Left.Y, pTop.Y, pForward.Y, 0,
+                                      m_pCamera.Left.Z, pTop.Z, pForward.Z, 0,
+                                      0, 0, 0, 1);
+                m_pWorldMatrix = Matrix.Multiply(Matrix.Multiply(T, Matrix.CreateScale(1, 0.5f, 1)), Matrix.Invert(T));
+                m_pWorldMatrix = Matrix.Multiply(m_pWorldMatrix, Matrix.CreateTranslation(pTop * m_pCube.R / 2));
+
+                BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
+
+                foreach (var pFace in m_aFaces)
+                    foreach (var pSquare in pFace.m_aSquares)
+                        pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pWorldMatrix);
             }
-
-            Vector3 pTop = Vector3.Normalize(m_pCamera.FocusPoint);
-            Vector3 pForward = Vector3.Cross(pTop, m_pCamera.Left);
-
-            Matrix T = new Matrix(m_pCamera.Left.X, pTop.X, pForward.X, 0,
-                                  m_pCamera.Left.Y, pTop.Y, pForward.Y, 0,
-                                  m_pCamera.Left.Z, pTop.Z, pForward.Z, 0,
-                                  0, 0, 0, 1);
-            m_pWorldMatrix = Matrix.Multiply(Matrix.Multiply(T, Matrix.CreateScale(1, 0.5f, 1)), Matrix.Invert(T));
-            m_pWorldMatrix = Matrix.Multiply(m_pWorldMatrix, Matrix.CreateTranslation(pTop*m_pCube.R/2));
 
             Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
 
@@ -528,8 +534,6 @@ namespace TestCubePlanet
             pEffectDirectionalLightDirection.SetValue(-m_pCamera.Position);
             pEffectDirectionalLightIntensity.SetValue(0.8f);//0.8f
 
-            BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
-
             int iCount = 0;
             m_iTrianglesCount = 0;
 
@@ -540,27 +544,18 @@ namespace TestCubePlanet
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Clear(eSkyColor);
 
-            foreach (var pFace in m_aFaces)
-                foreach (var pSquare in pFace.m_aSquares)
+            foreach (var pSquare in Square.s_pVisibleQueue)
+            {
+                if (pSquare.m_iUnderwaterTrianglesCount > 0)
                 {
-                    pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pWorldMatrix);
+                    GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
+                    GraphicsDevice.Indices = pSquare.m_pUnderwaterIndexBuffer;
+                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iUnderwaterTrianglesCount);
 
-                    if (pSquare.m_fVisibleDistance > 0 && pSquare.m_iUnderwaterTrianglesCount > 0)
-                    {
-                        if (!Square.s_pVisibleQueue.Contains(pSquare))
-                        {
-                            pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pWorldMatrix);
-                            throw new Exception();
-                        }
-
-                        GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
-                        GraphicsDevice.Indices = pSquare.m_pUnderwaterIndexBuffer;
-                        GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iUnderwaterTrianglesCount);
-
-                        m_iTrianglesCount += (uint)pSquare.m_iUnderwaterTrianglesCount;
-                        iCount++;
-                    }
+                    m_iTrianglesCount += (uint)pSquare.m_iUnderwaterTrianglesCount;
+                    iCount++;
                 }
+            }
             
             if (m_bUseCelShading)
             {
@@ -577,29 +572,23 @@ namespace TestCubePlanet
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.Clear(eSkyColor);
 
-            foreach (var pFace in m_aFaces)
-                foreach (var pSquare in pFace.m_aSquares)
+            foreach (var pSquare in Square.s_pVisibleQueue)
+            {
+                GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
+                if (pSquare.m_fVisibleDistance < m_fLODDistance || pSquare == m_pFocusedSquare)
                 {
-                    //pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction);
-
-                    if (pSquare.m_fVisibleDistance > 0)
-                    {
-                        GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
-                        if (pSquare.m_fVisibleDistance < m_fLODDistance || pSquare == m_pFocusedSquare)
-                        {
-                            GraphicsDevice.Indices = pSquare.m_pLandIndexBufferHR;
-                            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountHR);
-                            m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountHR;
-                        }
-                        else
-                        {
-                            GraphicsDevice.Indices = pSquare.m_pLandIndexBufferLR;
-                            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountLR);
-                            m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountLR;
-                        }
-                        iCount++;
-                    }
+                    GraphicsDevice.Indices = pSquare.m_pLandIndexBufferHR;
+                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountHR);
+                    m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountHR;
                 }
+                else
+                {
+                    GraphicsDevice.Indices = pSquare.m_pLandIndexBufferLR;
+                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountLR);
+                    m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountLR;
+                }
+                iCount++;
+            }
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
             //effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
@@ -608,21 +597,18 @@ namespace TestCubePlanet
 
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
 
-            foreach (var pFace in m_aFaces)
-                foreach (var pSquare in pFace.m_aSquares)
+            foreach (var pSquare in Square.s_pVisibleQueue)
+            {
+                if (pSquare.m_iUnderwaterTrianglesCount > 0)
                 {
-                    //pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction);
+                    GraphicsDevice.SetVertexBuffer(pSquare.m_pWaterVertexBuffer);
+                    GraphicsDevice.Indices = pSquare.m_pWaterIndexBuffer;
+                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aWaterPoints.Length, 0, pSquare.m_iWaterTrianglesCount);
 
-                    if (pSquare.m_fVisibleDistance > 0 && pSquare.m_iUnderwaterTrianglesCount > 0)
-                    {
-                        GraphicsDevice.SetVertexBuffer(pSquare.m_pWaterVertexBuffer);
-                        GraphicsDevice.Indices = pSquare.m_pWaterIndexBuffer;
-                        GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aWaterPoints.Length, 0, pSquare.m_iWaterTrianglesCount);
-
-                        m_iTrianglesCount += (uint)pSquare.m_iWaterTrianglesCount;
-                        iCount++;
-                    }
+                    m_iTrianglesCount += (uint)pSquare.m_iWaterTrianglesCount;
+                    iCount++;
                 }
+            }
 
             if (m_bShowBounds)
             {

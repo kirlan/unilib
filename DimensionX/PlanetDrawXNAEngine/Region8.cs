@@ -233,6 +233,8 @@ namespace TestCubePlanet
 
         public bool Intersects(BoundingFrustum pFrustum, Matrix pWorld)
         {
+            bool bRes2 = true;
+
             Vector3 bblW = Vector3.Transform(bbl, pWorld);
             Vector3 bbrW = Vector3.Transform(bbr, pWorld);
             Vector3 bflW = Vector3.Transform(bfl, pWorld);
@@ -247,131 +249,70 @@ namespace TestCubePlanet
                 distance2 > 0 &&
                 distance3 > 0 &&
                 distance4 > 0)
-                return false;
+                bRes2 = false;
 
-            Vector3 tblW = Vector3.Transform(tbl, pWorld);
-            Vector3 tbrW = Vector3.Transform(tbr, pWorld);
-            Vector3 tflW = Vector3.Transform(tfl, pWorld);
-            Vector3 tfrW = Vector3.Transform(tfr, pWorld);
+            if (bRes2)
+            {
+                Vector3 tblW = Vector3.Transform(tbl, pWorld);
+                Vector3 tbrW = Vector3.Transform(tbr, pWorld);
+                Vector3 tflW = Vector3.Transform(tfl, pWorld);
+                Vector3 tfrW = Vector3.Transform(tfr, pWorld);
 
-            distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tblW) + pFrustum.Bottom.D;
-            distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tbrW) + pFrustum.Bottom.D;
-            distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tflW) + pFrustum.Bottom.D;
-            distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tfrW) + pFrustum.Bottom.D;
+                distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tblW) + pFrustum.Bottom.D;
+                distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tbrW) + pFrustum.Bottom.D;
+                distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tflW) + pFrustum.Bottom.D;
+                distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Bottom.Normal), tfrW) + pFrustum.Bottom.D;
 
-            if (distance1 > 0 &&
-                distance2 > 0 &&
-                distance3 > 0 &&
-                distance4 > 0)
-                return false;
+                if (distance1 > 0 &&
+                    distance2 > 0 &&
+                    distance3 > 0 &&
+                    distance4 > 0)
+                    bRes2 = false;
+            }
 
-            distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bblW) + pFrustum.Left.D;
-            distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bbrW) + pFrustum.Left.D;
-            distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bflW) + pFrustum.Left.D;
-            distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bfrW) + pFrustum.Left.D;
+            if (bRes2)
+            {
+                distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bblW) + pFrustum.Left.D;
+                distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bbrW) + pFrustum.Left.D;
+                distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bflW) + pFrustum.Left.D;
+                distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Left.Normal), bfrW) + pFrustum.Left.D;
 
-            if (distance1 > 0 &&
-                distance2 > 0 &&
-                distance3 > 0 &&
-                distance4 > 0)
-                return false;
+                if (distance1 > 0 &&
+                    distance2 > 0 &&
+                    distance3 > 0 &&
+                    distance4 > 0)
+                    bRes2 = false;
+            }
 
-            distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bblW) + pFrustum.Right.D;
-            distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bbrW) + pFrustum.Right.D;
-            distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bflW) + pFrustum.Right.D;
-            distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bfrW) + pFrustum.Right.D;
+            if (bRes2)
+            {
+                distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bblW) + pFrustum.Right.D;
+                distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bbrW) + pFrustum.Right.D;
+                distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bflW) + pFrustum.Right.D;
+                distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Right.Normal), bfrW) + pFrustum.Right.D;
 
-            if (distance1 > 0 &&
-                distance2 > 0 &&
-                distance3 > 0 &&
-                distance4 > 0)
-                return false;
+                if (distance1 > 0 &&
+                    distance2 > 0 &&
+                    distance3 > 0 &&
+                    distance4 > 0)
+                    bRes2 = false;
+            }
 
-            distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bblW) + pFrustum.Top.D;
-            distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bbrW) + pFrustum.Top.D;
-            distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bflW) + pFrustum.Top.D;
-            distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bfrW) + pFrustum.Top.D;
+            if (bRes2)
+            {
+                distance1 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bblW) + pFrustum.Top.D;
+                distance2 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bbrW) + pFrustum.Top.D;
+                distance3 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bflW) + pFrustum.Top.D;
+                distance4 = Vector3.Dot(Vector3.Normalize(pFrustum.Top.Normal), bfrW) + pFrustum.Top.D;
 
-            if (distance1 > 0 &&
-                distance2 > 0 &&
-                distance3 > 0 &&
-                distance4 > 0)
-                return false;
+                if (distance1 > 0 &&
+                    distance2 > 0 &&
+                    distance3 > 0 &&
+                    distance4 > 0)
+                    bRes2 = false;
+            }
 
-            return true;
-
-            //Ray r1 = new Ray(bbl, pFrustum.Near.Normal);
-            //Ray r2 = new Ray(bbr, pFrustum.Near.Normal);
-            //Ray r3 = new Ray(bfl, pFrustum.Near.Normal);
-            //Ray r4 = new Ray(bfr, pFrustum.Near.Normal);
-
-            //if (r1.Intersects(pFrustum.Near).HasValue &&
-            //    r2.Intersects(pFrustum.Near).HasValue &&
-            //    r3.Intersects(pFrustum.Near).HasValue &&
-            //    r4.Intersects(pFrustum.Near).HasValue)
-            //    return false;
-
-            //r1 = new Ray(tbl, pFrustum.Bottom.Normal);
-            //r2 = new Ray(tbr, pFrustum.Bottom.Normal);
-            //r3 = new Ray(tfl, pFrustum.Bottom.Normal);
-            //r4 = new Ray(tfr, pFrustum.Bottom.Normal);
-
-            //if (r1.Intersects(pFrustum.Bottom).HasValue &&
-            //    r2.Intersects(pFrustum.Bottom).HasValue &&
-            //    r3.Intersects(pFrustum.Bottom).HasValue &&
-            //    r4.Intersects(pFrustum.Bottom).HasValue)
-            //    return false;
-
-            //r1 = new Ray(bbl, pFrustum.Left.Normal);
-            //r2 = new Ray(bbr, pFrustum.Left.Normal);
-            //r3 = new Ray(bfl, pFrustum.Left.Normal);
-            //r4 = new Ray(bfr, pFrustum.Left.Normal);
-
-            //if (r1.Intersects(pFrustum.Left).HasValue &&
-            //    r2.Intersects(pFrustum.Left).HasValue &&
-            //    r3.Intersects(pFrustum.Left).HasValue &&
-            //    r4.Intersects(pFrustum.Left).HasValue)
-            //    return false;
-
-            //r1 = new Ray(bbl, pFrustum.Right.Normal);
-            //r2 = new Ray(bbr, pFrustum.Right.Normal);
-            //r3 = new Ray(bfl, pFrustum.Right.Normal);
-            //r4 = new Ray(bfr, pFrustum.Right.Normal);
-
-            //if (r1.Intersects(pFrustum.Right).HasValue &&
-            //    r2.Intersects(pFrustum.Right).HasValue &&
-            //    r3.Intersects(pFrustum.Right).HasValue &&
-            //    r4.Intersects(pFrustum.Right).HasValue)
-            //    return false;
-
-            //r1 = new Ray(bbl, pFrustum.Top.Normal);
-            //r2 = new Ray(bbr, pFrustum.Top.Normal);
-            //r3 = new Ray(bfl, pFrustum.Top.Normal);
-            //r4 = new Ray(bfr, pFrustum.Top.Normal);
-
-            //if (r1.Intersects(pFrustum.Top).HasValue &&
-            //    r2.Intersects(pFrustum.Top).HasValue &&
-            //    r3.Intersects(pFrustum.Top).HasValue &&
-            //    r4.Intersects(pFrustum.Top).HasValue)
-            //    return false;
-
-            //return true;
-
-            //return pFrustum.Contains(bbl) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(bbr) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(bfl) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(bfr) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(tbl) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(tbr) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(tfl) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(tfr) != ContainmentType.Disjoint ||
-            //    pFrustum.Contains(center) != ContainmentType.Disjoint;
-
-
-            //return Intersects(pFrustum, ref bbl, ref bbr, ref bfr) ||
-            //        Intersects(pFrustum, ref bbr, ref bfr, ref bfl);// ||
-                    //Intersects(pFrustum, ref tbl, ref tbr, ref tfr) ||
-                    //Intersects(pFrustum, ref tbr, ref tfr, ref tfl);
+            return bRes2;
         }
 
         /// <summary>
