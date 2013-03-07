@@ -543,13 +543,13 @@ namespace TestCubePlanet
             foreach (var pFace in m_aFaces)
                 foreach (var pSquare in pFace.m_aSquares)
                 {
-                    pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction);
+                    pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pWorldMatrix);
 
                     if (pSquare.m_fVisibleDistance > 0 && pSquare.m_iUnderwaterTrianglesCount > 0)
                     {
                         if (!Square.s_pVisibleQueue.Contains(pSquare))
                         {
-                            pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction);
+                            pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pWorldMatrix);
                             throw new Exception();
                         }
 

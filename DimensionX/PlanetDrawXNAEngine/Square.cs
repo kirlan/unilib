@@ -227,8 +227,10 @@ namespace TestCubePlanet
             fDist = pBoundBottomRightRay.Intersects(pOuterPlane);
             Vector3 pBoundBottomRight2 = Vector3.Normalize(pBoundBottomRight) * (float)fDist;
 
-            m_pBounds8 = new Region8(pBoundTopLeft1, pBoundTopRight1, pBoundTopLeft2, pBoundTopRight2,
-                pBoundBottomLeft1, pBoundBottomRight1, pBoundBottomLeft2, pBoundBottomRight2);
+            //m_pBounds8 = new Region8(pBoundTopLeft1, pBoundTopRight1, pBoundTopLeft2, pBoundTopRight2,
+            //    pBoundBottomLeft1, pBoundBottomRight1, pBoundBottomLeft2, pBoundBottomRight2);
+            m_pBounds8 = new Region8(pBoundBottomLeft2, pBoundBottomRight2, pBoundTopLeft2, pBoundTopRight2,
+                pBoundBottomLeft1, pBoundBottomRight1, pBoundTopLeft1, pBoundTopRight1);
         }
 
         public VertexBuffer m_pVertexBuffer;
@@ -348,28 +350,26 @@ namespace TestCubePlanet
 
         public static bool Check1 = true;
         public static bool Check2 = true;
-        public static bool Check3 = true;
-        public static bool Check4 = true;
 
-        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustum, Vector3 pCameraPos, Vector3 pCameraDir)
+        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustum, Vector3 pCameraPos, Vector3 pCameraDir, Matrix pWorld)
         {
             m_fVisibleDistance = -1;
 
             bool bVisible = true;
 
-            Vector3 pViewVector = m_pBounds8.Center - pCameraPos;
+            Vector3 pViewVector = Vector3.Transform(m_pBounds8.Center, pWorld) - pCameraPos;
             if(Check1)
             {
                 float fCos2 = Vector3.Dot(Vector3.Normalize(pViewVector), m_pBounds8.Normal);
-                if (fCos2 > 0.3)// || m_pBounds8.m_pSphere.Contains(pCameraPos) != ContainmentType.Disjoint)// m_pBounds8.Intersects(new Ray(pCameraPos, pCameraDir)).HasValue)
+                if (fCos2 > 0.3)
                     bVisible = false;
             }
 
             if(bVisible && Check2)
             {
                 float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), pCameraDir);
-                if (fCos < 0.6 && (!m_pBounds8.Intersects(pFrustum) || !Check3) &&
-                    (m_pBounds8.m_pSphere.Contains(pCameraPos) == ContainmentType.Disjoint || !Check4)) //cos(45) = 0,70710678118654752440084436210485...
+                if (fCos < 0.6 && !m_pBounds8.Intersects(pFrustum, pWorld) &&
+                    m_pBounds8.m_pSphere.Contains(pCameraPos) == ContainmentType.Disjoint) //cos(45) = 0,70710678118654752440084436210485...
                     bVisible = false;
             }
 
@@ -919,6 +919,11 @@ namespace TestCubePlanet
             }
 
             result = rayDistance;
+        }
+
+        public override string ToString()
+        {
+            return m_pBounds8.m_pSphere.ToString();
         }
     }
 }
