@@ -16,6 +16,12 @@ namespace TestCubePlanet
     {
         public struct Geometry
         {
+            public Model[] m_aTreeModels;
+            public Model[] m_aPalmModels;
+            public Model[] m_aPineModels;
+
+            public Texture2D m_pTreeTexture;
+            
             public VertexMultitextured[] m_aLandPoints;
             public int[] m_aLandIndicesLR;
             public int[] m_aLandIndicesHR;
@@ -23,16 +29,18 @@ namespace TestCubePlanet
             public VertexPosition[] m_aWaterPoints;
             public int[] m_aWaterIndices;
 
-            //нам не нужны специальные списки для поверхности воды - мы можем использовать в шейдере те же данные,
-            //что использовались для подводного мира, просто нормировав координату по радиусу планеты.
-            //public VertexPosition[] m_aWaterPoints;
-            //public int[] m_aWaterIndices;
-
             public int[] m_aLocationReferences;
             public int[][] m_aLocations;
 
+            public Dictionary<Model, TreeModel[]> m_aTrees;
+            public SettlementModel[] m_aSettlements;
+
             public long Size()
             {
+                int iTreeModels = 0;
+                foreach (var pTree in m_aTrees)
+                    iTreeModels += pTree.Value.Length;
+
                 return VertexMultitextured.Size * m_aLandPoints.Length + sizeof(int) +
                     sizeof(int) * m_aLandIndicesLR.Length + sizeof(int) +
                     sizeof(int) * m_aLandIndicesHR.Length + sizeof(int) +
@@ -40,7 +48,8 @@ namespace TestCubePlanet
                     VertexPosition.Size * m_aWaterPoints.Length + sizeof(int) +
                     sizeof(int) * m_aWaterIndices.Length + sizeof(int) + 
                     sizeof(int) * m_aLocationReferences.Length + sizeof(int) +
-                    sizeof(int) * m_aLocations.Length + sizeof(int);
+                    sizeof(int) * m_aLocations.Length + sizeof(int) +
+                    sizeof(int) * m_aTrees.Count + TreeModel.Size * iTreeModels;
             }
 
             public void Save(string sFilename)
@@ -109,6 +118,13 @@ namespace TestCubePlanet
                             for (int j = 0; j < m_aLocations[i].Length; j++)
                                 bw.Write(m_aLocations[i][j]);
                         }
+
+                        foreach (var pTree in m_aTrees)
+                        {
+                            bw.Write(pTree.Value.Length);
+                            for (int i = 0; i < pTree.Value.Length; i++)
+                                pTree.Value[i].Save(bw); ;
+                        }
                     }
                 }
             }
@@ -176,6 +192,15 @@ namespace TestCubePlanet
                             m_aLocations[i] = new int[iCount2];
                             for (int j = 0; j < iCount2; j++)
                                 m_aLocations[i][j] = br.ReadInt32();
+                        }
+
+                        var aModels = m_aTrees.Keys.ToArray();
+                        foreach (var pTree in aModels)
+                        {
+                            iCount = br.ReadInt32();
+                            m_aTrees[pTree] = new TreeModel[iCount];
+                            for (int i = 0; i < iCount; i++)
+                                m_aTrees[pTree][i] = new TreeModel(br, pTree, m_pTreeTexture);
                         }
                     }
                 }
@@ -267,7 +292,7 @@ namespace TestCubePlanet
         private Chunk m_pChunk;
         private float m_fR = 150;
 
-        private void SetTextureWeights(ref VertexMultitextured pVM, float fH, float fT, float fBig, float fSmall)
+        private void SetTextureWeights(ref VertexMultitextured pVM, float fH, float fT, float fBig, float fSmall, bool bForest)
         {
             pVM.TexWeights = new Vector4(fSmall, fSmall, 1, 0);
             pVM.TexWeights2 = new Vector4(fSmall, 0, fSmall/2, 0);
@@ -281,12 +306,20 @@ namespace TestCubePlanet
                 }
                 else
                 {
-                    pVM.TexWeights = new Vector4(fSmall, fBig, fSmall, 0);
+                    if (bForest)
+                    {
+                        pVM.TexWeights = new Vector4(fSmall, fSmall, fSmall, 0);
+                        pVM.TexWeights2 = new Vector4(fBig, 0, fSmall / 2, 0);
+                    }
+                    else
+                    {
+                        pVM.TexWeights = new Vector4(fSmall, fBig, fSmall, 0);
+                        pVM.TexWeights2 = new Vector4(fSmall, 0, fSmall / 2, 0);
+                    }
                     if (fT < 0.3)
                         pVM.TexWeights.W = Math.Max(0, 2 - (float)Math.Sqrt(fT) * 4);
                     if (fT > 0.7)
                         pVM.TexWeights.X = (fT - 0.7f) * 3;
-                    pVM.TexWeights2 = new Vector4(fBig/2, 0, fSmall / 2, 0);
                 }
             }
             else
@@ -325,6 +358,10 @@ namespace TestCubePlanet
             g.m_aLocationReferences = null;
             g.m_aLocations = null;
 
+            var aTrees = g.m_aTrees.Keys.ToArray();
+            foreach (var pTree in aTrees)
+                g.m_aTrees[pTree] = new TreeModel[0];
+
             if (m_pVertexBuffer != null)
                 m_pVertexBuffer.Dispose();
 
@@ -348,24 +385,18 @@ namespace TestCubePlanet
 
         public float m_fVisibleDistance = -1;
 
-        public static bool Check1 = true;
-        public static bool Check2 = true;
-
-        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustum, Vector3 pCameraPos, Vector3 pCameraDir, Matrix pWorld)
+        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustum, Vector3 pCameraPos, Vector3 pCameraDir, Vector3 pCameraTarget, Matrix pWorld)
         {
             m_fVisibleDistance = -1;
 
             bool bVisible = true;
 
             Vector3 pViewVector = Vector3.Transform(m_pBounds8.Center, pWorld) - pCameraPos;
-            if(Check1)
-            {
-                float fCos2 = Vector3.Dot(Vector3.Normalize(pViewVector), m_pBounds8.Normal);
-                if (fCos2 > 0.3)
-                    bVisible = false;
-            }
+            float fCos2 = Vector3.Dot(Vector3.Normalize(pViewVector), m_pBounds8.Normal);
+            if (fCos2 > 0.3)
+                bVisible = false;
 
-            if(bVisible && Check2)
+            if(bVisible)
             {
                 float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), pCameraDir);
                 if (fCos < 0.6 && !m_pBounds8.Intersects(pFrustum, pWorld) &&
@@ -375,7 +406,8 @@ namespace TestCubePlanet
 
             if(bVisible)
             {
-                m_fVisibleDistance = pViewVector.Length();
+                Vector3 pTargetVector = Vector3.Transform(m_pBounds8.Center, pWorld) - pCameraTarget;
+                m_fVisibleDistance = Math.Min(pViewVector.Length(), pTargetVector.Length());
                 Rebuild(pDevice);
                 return;
             }
@@ -444,6 +476,13 @@ namespace TestCubePlanet
                             for (int i = 0; i < m_pChunk.m_aVertexes.Length; i++)
                             {
                                 var vertex = m_pChunk.m_aVertexes[i];
+
+                                bool bForest = false;
+
+                                foreach (var pLink in vertex.m_cLinked)
+                                    if (pLink.m_bForest)
+                                        bForest = true;
+
                                 g.m_aLandPoints[index] = new VertexMultitextured();
                                 g.m_aLandPoints[index].Position = new Vector3(vertex.m_fX, vertex.m_fY, vertex.m_fZ);
                                 g.m_aLandPoints[index].Position += Vector3.Normalize(g.m_aLandPoints[index].Position) * vertex.m_fH;
@@ -451,7 +490,7 @@ namespace TestCubePlanet
                                 g.m_aLandPoints[index].Tangent = Vector3.Zero;
                                 g.m_aLandPoints[index].Color = Color.Red;
                                 g.m_aLandPoints[index].TextureCoordinate = new Vector4(0, 0, 0, 0); // new Vector4(GetTexture(vertex), 0, 0); 
-                                SetTextureWeights(ref g.m_aLandPoints[index], vertex.m_fH, GetTemperature(vertex), vertex.m_fRndBig, vertex.m_fRndSmall);
+                                SetTextureWeights(ref g.m_aLandPoints[index], vertex.m_fH, GetTemperature(vertex), vertex.m_fRndBig, vertex.m_fRndSmall, bForest);
 
                                 vertexIndex[vertex] = index;
 
@@ -477,7 +516,7 @@ namespace TestCubePlanet
                                 g.m_aLandPoints[index].Tangent = Vector3.Zero;
                                 g.m_aLandPoints[index].Color = Color.Red;
                                 g.m_aLandPoints[index].TextureCoordinate = new Vector4(0, 0, 0, 0); //new Vector4(GetTexture(loc), 0, 0); 
-                                SetTextureWeights(ref g.m_aLandPoints[index], loc.m_fH, GetTemperature(loc), loc.m_fRndBig, loc.m_fRndSmall);
+                                SetTextureWeights(ref g.m_aLandPoints[index], loc.m_fH, GetTemperature(loc), loc.m_fRndBig, loc.m_fRndSmall, loc.m_bForest);
 
                                 m_iLandTrianglesCountLR += loc.m_cEdges.Count;
                                 m_iLandTrianglesCountHR += loc.m_cEdges.Count * 4;
@@ -509,6 +548,9 @@ namespace TestCubePlanet
 
                             g.m_aLocationReferences = new int[m_iLandTrianglesCountLR];
                             g.m_aLocations = new int[m_pChunk.m_aLocations.Length][];
+
+                            Dictionary<Model, List<TreeModel>> cTrees = new Dictionary<Model, List<TreeModel>>();
+                            List<SettlementModel> cSettlements = new List<SettlementModel>();
 
                             index = 0;
                             indexWater = 0;
@@ -560,12 +602,36 @@ namespace TestCubePlanet
                                 }
 
                                 g.m_aLocations[i] = BuildLocationReferencesIndices(loc, ref vertexIndex);
+
+                                if (loc.m_bForest)
+                                {
+                                    float fScale = 0.15f; //0.015f;
+                                    fScale *= (float)(70 / Math.Sqrt(120000)); 
+                                    
+                                    bool bEdge = false;
+                                    foreach (var pEdge in loc.m_cEdges)
+                                    {
+                                        if (!pEdge.Key.m_bForest)
+                                        {
+                                            //if (pEdge.Key.m_fH > 0)
+                                            //{
+                                            //    AddTreeModels(pEdge.Key, ref g.m_aLandPoints, ref locationIndex, ref vertexIndex, ref cTrees, fScale, 0.1f);
+                                            //}
+                                            bEdge = true;
+                                        }
+                                    }
+                                    AddTreeModels(loc, ref g.m_aLandPoints, ref locationIndex, ref vertexIndex, ref cTrees, fScale, bEdge ? 0.75f : 1f);
+                                }
                             }
 
                             for (int i = 0; i < g.m_aLandPoints.Length; i++)
                             {
                                 NormalizeTextureWeights(ref g.m_aLandPoints[i]);
                             }
+
+                            g.m_aTrees = new Dictionary<Model, TreeModel[]>();
+                            foreach (var vTree in cTrees)
+                                g.m_aTrees[vTree.Key] = vTree.Value.ToArray();
 
                             m_fRebuild = DateTime.Now - now;
                         }
@@ -577,7 +643,8 @@ namespace TestCubePlanet
 
                         bSuccess = true;
                     }
-                    catch (Exception ex)
+                    //catch (Exception ex)
+                    catch (OutOfMemoryException ex)
                     {
                         if (s_pInvisibleQueue.Count > 0)
                         {
@@ -620,6 +687,89 @@ namespace TestCubePlanet
                 s_pVisibleQueue.Add(this);
         }
 
+        /// <summary>
+        /// наполняет локацию деревьями
+        /// </summary>
+        /// <param name="pLoc">локация</param>
+        /// <param name="eLT">тип территории, согласно которому нужно выбрать модели деревьев. может не совпадать с типом территории локации - например, на равнине рядом с лесом могут расти специфичные для этого леса деревья</param>
+        /// <param name="aVertices">заполненый вершинный буфер - отсюда мы будем брать уже вычисленные координаты точек, куда "сажать" деревья</param>
+        /// <param name="cLocations">словарь индексов центров локаций в вершинном буфере</param>
+        /// <param name="cVertexes">словарь индексов вертексов в вершинном буфере</param>
+        /// <param name="cTrees">пополняемый список деревьев</param>
+        /// <param name="fScale">масштабный коэффициент</param>
+        /// <param name="fProbability">частота деревьев (0..1). Всего будет высажено примерно [число вершин в периметре локации]*3*[частота деревьев] деревьев</param>
+        private void AddTreeModels(Location pLoc, ref VertexMultitextured[] aVertices, ref Dictionary<Location, int> cLocations, ref Dictionary<Vertex, int> cVertexes, ref Dictionary<Model, List<TreeModel>> cTrees, float fScale, float fProbability)
+        {
+            //fProbability /= 1 + (pLoc.m_cRoads[RoadQuality.Country].Count + pLoc.m_cRoads[RoadQuality.Normal].Count + pLoc.m_cRoads[RoadQuality.Good].Count)/2;
+
+            //последовательно перебирает все связанные линии, пока круг не замкнётся.
+            foreach(var pEdge in pLoc.m_cEdges)
+            {
+                int iCenter = cVertexes[pEdge.Value.m_pInnerPoint];
+                Vector3 pCenter = aVertices[iCenter].Position;
+
+                if (Rnd.Get(1f) < fProbability)
+                    AddTreeModel((pCenter + aVertices[cLocations[pLoc]].Position) / 2, ref cTrees, fScale);
+
+                //if (pLoc.m_pSettlement == null ||
+                //    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Hamlet ||
+                //    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Village ||
+                //    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Town ||
+                //    pLoc.m_pSettlement.m_pInfo.m_eSize == Socium.Settlements.SettlementSize.Fort)
+                {
+                    if (Rnd.Get(1f) < fProbability)
+                        AddTreeModel(pCenter, ref cTrees, fScale);
+                    if (Rnd.Get(1f) < fProbability)
+                        AddTreeModel((pCenter + aVertices[cVertexes[pEdge.Value.m_pTo]].Position) / 2, ref cTrees, fScale);
+                    if (Rnd.Get(1f) < fProbability)
+                        AddTreeModel((pCenter + aVertices[cVertexes[pEdge.Value.m_pFrom]].Position) / 2, ref cTrees, fScale);
+                }
+            }
+        }
+
+        /// <summary>
+        /// посадить дерево в указанную точку
+        /// </summary>
+        /// <param name="pPos">координаты дерева</param>
+        /// <param name="eLT">тип территории для выбора модели дерева</param>
+        /// <param name="cTrees">пополняемый список деревьев</param>
+        /// <param name="fScale">масштабный коэффициент</param>
+        private void AddTreeModel(Vector3 pPos, ref Dictionary<Model, List<TreeModel>> cTrees, float fScale)
+        {
+            Model pTree = null;
+            //switch (eLT)
+            //{
+            //    case LandType.Forest:
+            //        pTree = treeModel[Rnd.Get(treeModel.Length)];
+            //        break;
+            //    case LandType.Jungle:
+            //        if (Rnd.OneChanceFrom(3))
+            //            pTree = treeModel[Rnd.Get(treeModel.Length)];
+            //        else
+            //        {
+            //            pTree = palmModel[Rnd.Get(palmModel.Length)];
+            //            fScale *= 1.75f;
+            //        }
+            //        break;
+            //    case LandType.Taiga:
+            //        pTree = Rnd.OneChanceFrom(3) ? treeModel[Rnd.Get(treeModel.Length)] : pineModel[Rnd.Get(pineModel.Length)];
+            //        break;
+            //}
+            pTree = g.m_aTreeModels[Rnd.Get(g.m_aTreeModels.Length)];
+
+            if (pTree != null)
+            {
+                List<TreeModel> cInstances;
+                if (!cTrees.TryGetValue(pTree, out cInstances))
+                {
+                    cInstances = new List<TreeModel>();
+                    cTrees[pTree] = cInstances;
+                }
+
+                cInstances.Add(new TreeModel(pPos, Rnd.Get((float)Math.PI * 2), fScale, pTree, g.m_pTreeTexture));
+            }
+        }
+
         ~Square()
         {
             if (!string.IsNullOrEmpty(m_sCacheFileName))
@@ -630,12 +780,17 @@ namespace TestCubePlanet
         public float m_fMinHeight = float.MaxValue;
         public float m_fMaxHeight = float.MinValue;
 
-        public Square(GraphicsDevice pDevice, Chunk pChunk, float fR)
+        public Square(GraphicsDevice pDevice, Chunk pChunk, float fR, Model[] treeModel, Model[] palmModel, Model[] pineModel, Texture2D pTreeTexture)
         {
             m_bCleared = true;
 
             m_pChunk = pChunk;
             m_fR = fR;
+
+            g.m_aTreeModels = treeModel;
+            g.m_aPalmModels = palmModel;
+            g.m_aPineModels = pineModel;
+            g.m_pTreeTexture = pTreeTexture;
 
             m_fMinHeight = float.MaxValue;
             m_fMaxHeight = float.MinValue;
@@ -659,8 +814,19 @@ namespace TestCubePlanet
                     m_fMaxHeight = loc.m_fH;
             }
 
-            BuildBoundingBox(m_pChunk, m_fMinHeight, m_fMaxHeight); 
+            BuildBoundingBox(m_pChunk, m_fMinHeight, m_fMaxHeight);
             
+            g.m_aTrees = new Dictionary<Model, TreeModel[]>();            
+            
+            foreach (Model pModel in treeModel)
+                g.m_aTrees[pModel] = new TreeModel[0];
+
+            foreach (Model pModel in palmModel)
+                g.m_aTrees[pModel] = new TreeModel[0];
+
+            foreach (Model pModel in pineModel)
+                g.m_aTrees[pModel] = new TreeModel[0];
+
             //Rebuild(pDevice);
         }
 

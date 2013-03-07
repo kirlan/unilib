@@ -95,6 +95,9 @@ namespace TestCubePlanet
         SpriteFont cityNameFont;
         SpriteBatch m_pSpriteBatch;
 
+        Dictionary<SettlementSize, Dictionary<int, Model>> m_cSettlementModels = new Dictionary<SettlementSize, Dictionary<int, Model>>();
+        Dictionary<SettlementSize, Dictionary<int, Texture2D>> m_cSettlementTextures = new Dictionary<SettlementSize, Dictionary<int, Texture2D>>();
+
         Effect outlineShader;   // Outline shader effect
         float defaultThickness = 1.5f;  // default outline thickness
         float defaultThreshold = 0.2f;  // default edge detection threshold
@@ -131,31 +134,39 @@ namespace TestCubePlanet
                 int index = 0;
                 foreach (var pFace in pCube.m_cFaces)
                 {
-                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R);
+                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, treeModel, palmModel, pineModel, treeTexture);
 
                     float fFogHeight = 10;
                     fFogHeight = pCube.R + 10;
 
-                    //foreach (Model pModel in treeModel)
-                    //    foreach (ModelMesh mesh in pModel.Meshes)
-                    //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    //        {
-                    //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                    //        }
+                    foreach (Model pModel in treeModel)
+                        foreach (ModelMesh mesh in pModel.Meshes)
+                            foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                            {
+                                meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                            }
 
-                    //foreach (Model pModel in palmModel)
-                    //    foreach (ModelMesh mesh in pModel.Meshes)
-                    //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    //        {
-                    //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                    //        }
+                    foreach (Model pModel in palmModel)
+                        foreach (ModelMesh mesh in pModel.Meshes)
+                            foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                            {
+                                meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                            }
 
-                    //foreach (Model pModel in pineModel)
-                    //    foreach (ModelMesh mesh in pModel.Meshes)
-                    //        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    //        {
-                    //            meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                    //        }
+                    foreach (Model pModel in pineModel)
+                        foreach (ModelMesh mesh in pModel.Meshes)
+                            foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                            {
+                                meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                            }
+
+                    foreach (var vSettlementSize in m_cSettlementModels)
+                        foreach (var vSettlement in vSettlementSize.Value)
+                            foreach (ModelMesh mesh in vSettlement.Value.Meshes)
+                                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                                {
+                                    meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
+                                }
 
                     pEffectFogHeight.SetValue(fFogHeight);
                 }
@@ -268,6 +279,10 @@ namespace TestCubePlanet
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             refractionRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, pp.DepthStencilFormat);
 
+            LoadTrees();
+
+            LoadSettlements();
+
             textEffect = new BasicEffect(GraphicsDevice);
 
             /* Load and initialize the outline shader effect
@@ -299,6 +314,191 @@ namespace TestCubePlanet
 
             timer = Stopwatch.StartNew();
             lastTime = timer.Elapsed.TotalMilliseconds;
+        }
+
+        private void LoadTrees()
+        {
+            treeTexture = LibContent.Load<Texture2D>("content/dds/trees");
+
+            treeModel[0] = LoadModel("content/fbx/tree1");
+            treeModel[1] = LoadModel("content/fbx/tree2");
+            treeModel[2] = LoadModel("content/fbx/tree3");
+            treeModel[3] = LoadModel("content/fbx/tree4");
+            treeModel[4] = LoadModel("content/fbx/tree6");
+            treeModel[5] = LoadModel("content/fbx/tree7");
+            treeModel[6] = LoadModel("content/fbx/tree8");
+            treeModel[7] = LoadModel("content/fbx/tree9");
+            treeModel[8] = LoadModel("content/fbx/tree10");
+            treeModel[9] = LoadModel("content/fbx/tree11");
+            treeModel[10] = LoadModel("content/fbx/tree12");
+            treeModel[11] = LoadModel("content/fbx/tree15");
+            treeModel[12] = LoadModel("content/fbx/tree16");
+
+            palmModel[0] = LoadModel("content/fbx/palm1");
+            palmModel[1] = LoadModel("content/fbx/palm2");
+            palmModel[2] = LoadModel("content/fbx/palm3");
+            palmModel[3] = LoadModel("content/fbx/palm4");
+
+            pineModel[0] = LoadModel("content/fbx/tree5");
+            pineModel[1] = LoadModel("content/fbx/tree13");
+            pineModel[2] = LoadModel("content/fbx/tree14");
+            pineModel[3] = LoadModel("content/fbx/tree16");
+        }
+
+        private void LoadSettlements()
+        {
+            foreach (SettlementSize eSize in Enum.GetValues(typeof(SettlementSize)))
+            {
+                m_cSettlementModels[eSize] = new Dictionary<int, Model>();
+                m_cSettlementTextures[eSize] = new Dictionary<int, Texture2D>();
+            }
+
+            Texture2D pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T0");
+            m_cSettlementModels[SettlementSize.Hamlet][0] = LoadModel("content/fbx/hamlet_T0");
+            m_cSettlementTextures[SettlementSize.Hamlet][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.Village][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.Town][0] = pTexture;
+            m_cSettlementModels[SettlementSize.City][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.City][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][0] = LoadModel("content/fbx/village_T0");
+            m_cSettlementTextures[SettlementSize.Capital][0] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][0] = LoadModel("content/fbx/fort_T1");
+            m_cSettlementTextures[SettlementSize.Fort][0] = LibContent.Load<Texture2D>("content/dds/Fort_T1");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T1");
+            m_cSettlementModels[SettlementSize.Hamlet][1] = LoadModel("content/fbx/hamlet_T1");
+            m_cSettlementTextures[SettlementSize.Hamlet][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][1] = LoadModel("content/fbx/village_T1");
+            m_cSettlementTextures[SettlementSize.Village][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][1] = LoadModel("content/fbx/town_T1");
+            m_cSettlementTextures[SettlementSize.Town][1] = pTexture;
+            m_cSettlementModels[SettlementSize.City][1] = LoadModel("content/fbx/city_T1");
+            m_cSettlementTextures[SettlementSize.City][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][1] = LoadModel("content/fbx/city_T1");
+            m_cSettlementTextures[SettlementSize.Capital][1] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][1] = LoadModel("content/fbx/fort_T1");
+            m_cSettlementTextures[SettlementSize.Fort][1] = LibContent.Load<Texture2D>("content/dds/Fort_T1");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_small");
+            m_cSettlementModels[SettlementSize.Hamlet][2] = LoadModel("content/fbx/hamlet_T2");
+            m_cSettlementTextures[SettlementSize.Hamlet][2] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][2] = LoadModel("content/fbx/village_T2");
+            m_cSettlementTextures[SettlementSize.Village][2] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_big");
+            m_cSettlementModels[SettlementSize.Town][2] = LoadModel("content/fbx/town_T2");
+            m_cSettlementTextures[SettlementSize.Town][2] = pTexture;
+            m_cSettlementModels[SettlementSize.City][2] = LoadModel("content/fbx/city_T2");
+            m_cSettlementTextures[SettlementSize.City][2] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][2] = LoadModel("content/fbx/city_T2");
+            m_cSettlementTextures[SettlementSize.Capital][2] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][2] = LoadModel("content/fbx/fort_T2");
+            m_cSettlementTextures[SettlementSize.Fort][2] = LibContent.Load<Texture2D>("content/dds/Fort_T2");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_small");
+            m_cSettlementModels[SettlementSize.Hamlet][3] = LoadModel("content/fbx/hamlet_T2");
+            m_cSettlementTextures[SettlementSize.Hamlet][3] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][3] = LoadModel("content/fbx/village_T2");
+            m_cSettlementTextures[SettlementSize.Village][3] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T3_big");
+            m_cSettlementModels[SettlementSize.Town][3] = LoadModel("content/fbx/town_T3");
+            m_cSettlementTextures[SettlementSize.Town][3] = pTexture;
+            m_cSettlementModels[SettlementSize.City][3] = LoadModel("content/fbx/city_T3");
+            m_cSettlementTextures[SettlementSize.City][3] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][3] = LoadModel("content/fbx/city_T3");
+            m_cSettlementTextures[SettlementSize.Capital][3] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][3] = LoadModel("content/fbx/fort_T3");
+            m_cSettlementTextures[SettlementSize.Fort][3] = LibContent.Load<Texture2D>("content/dds/Fort_T3");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_small");
+            m_cSettlementModels[SettlementSize.Hamlet][4] = LoadModel("content/fbx/hamlet_T4");
+            m_cSettlementTextures[SettlementSize.Hamlet][4] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][4] = LoadModel("content/fbx/village_T4");
+            m_cSettlementTextures[SettlementSize.Village][4] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_big");
+            m_cSettlementModels[SettlementSize.Town][4] = LoadModel("content/fbx/town_T4");
+            m_cSettlementTextures[SettlementSize.Town][4] = pTexture;
+            m_cSettlementModels[SettlementSize.City][4] = LoadModel("content/fbx/city_T4");
+            m_cSettlementTextures[SettlementSize.City][4] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][4] = LoadModel("content/fbx/city_T4");
+            m_cSettlementTextures[SettlementSize.Capital][4] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][4] = LoadModel("content/fbx/fort_T3");
+            m_cSettlementTextures[SettlementSize.Fort][4] = LibContent.Load<Texture2D>("content/dds/Fort_T3");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_small");
+            m_cSettlementModels[SettlementSize.Hamlet][5] = LoadModel("content/fbx/hamlet_T4");
+            m_cSettlementTextures[SettlementSize.Hamlet][5] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][5] = LoadModel("content/fbx/village_T4");
+            m_cSettlementTextures[SettlementSize.Village][5] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T5_big");
+            m_cSettlementModels[SettlementSize.Town][5] = LoadModel("content/fbx/town_T5");
+            m_cSettlementTextures[SettlementSize.Town][5] = pTexture;
+            m_cSettlementModels[SettlementSize.City][5] = LoadModel("content/fbx/city_T5");
+            m_cSettlementTextures[SettlementSize.City][5] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][5] = LoadModel("content/fbx/city_T5");
+            m_cSettlementTextures[SettlementSize.Capital][5] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][5] = LoadModel("content/fbx/fort_T5");
+            m_cSettlementTextures[SettlementSize.Fort][5] = LibContent.Load<Texture2D>("content/dds/Fort_T5");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6_hamlet");
+            m_cSettlementModels[SettlementSize.Hamlet][6] = LoadModel("content/fbx/hamlet_T6");
+            m_cSettlementTextures[SettlementSize.Hamlet][6] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6_village");
+            m_cSettlementModels[SettlementSize.Village][6] = LoadModel("content/fbx/village_T6");
+            m_cSettlementTextures[SettlementSize.Village][6] = pTexture;
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6");
+            m_cSettlementModels[SettlementSize.Town][6] = LoadModel("content/fbx/town_T6");
+            m_cSettlementTextures[SettlementSize.Town][6] = pTexture;
+            m_cSettlementModels[SettlementSize.City][6] = LoadModel("content/fbx/city_T6");
+            m_cSettlementTextures[SettlementSize.City][6] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][6] = LoadModel("content/fbx/city_T6");
+            m_cSettlementTextures[SettlementSize.Capital][6] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][6] = LoadModel("content/fbx/fort_T6");
+            m_cSettlementTextures[SettlementSize.Fort][6] = LibContent.Load<Texture2D>("content/dds/Fort_T6");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T7");
+            m_cSettlementModels[SettlementSize.Hamlet][7] = LoadModel("content/fbx/hamlet_T7");
+            m_cSettlementTextures[SettlementSize.Hamlet][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][7] = LoadModel("content/fbx/village_T7");
+            m_cSettlementTextures[SettlementSize.Village][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][7] = LoadModel("content/fbx/town_T7");
+            m_cSettlementTextures[SettlementSize.Town][7] = pTexture;
+            m_cSettlementModels[SettlementSize.City][7] = LoadModel("content/fbx/city_T7");
+            m_cSettlementTextures[SettlementSize.City][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][7] = LoadModel("content/fbx/city_T7");
+            m_cSettlementTextures[SettlementSize.Capital][7] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][7] = LoadModel("content/fbx/fort_T7");
+            m_cSettlementTextures[SettlementSize.Fort][7] = LibContent.Load<Texture2D>("content/dds/Fort_T7");
+
+            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T8");
+            m_cSettlementModels[SettlementSize.Hamlet][8] = LoadModel("content/fbx/hamlet_T8");
+            m_cSettlementTextures[SettlementSize.Hamlet][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Village][8] = LoadModel("content/fbx/village_T8");
+            m_cSettlementTextures[SettlementSize.Village][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Town][8] = LoadModel("content/fbx/town_T8");
+            m_cSettlementTextures[SettlementSize.Town][8] = pTexture;
+            m_cSettlementModels[SettlementSize.City][8] = LoadModel("content/fbx/city_T8");
+            m_cSettlementTextures[SettlementSize.City][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Capital][8] = LoadModel("content/fbx/city_T8");
+            m_cSettlementTextures[SettlementSize.Capital][8] = pTexture;
+            m_cSettlementModels[SettlementSize.Fort][8] = LoadModel("content/fbx/fort_T7");
+            m_cSettlementTextures[SettlementSize.Fort][8] = LibContent.Load<Texture2D>("content/dds/Fort_T7");
+        }
+
+        /// <summary>
+        /// m_pMyEffect должен уже быть создан и настроен!
+        /// </summary>
+        /// <param name="sPath"></param>
+        /// <returns></returns>
+        private Model LoadModel(string sPath)
+        {
+            Model pModel = LibContent.Load<Model>(sPath);
+            foreach (ModelMesh mesh in pModel.Meshes)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    meshPart.Effect = m_pMyEffect.Clone();
+
+            return pModel;
         }
 
         private void BindEffectParameters()
@@ -392,6 +592,14 @@ namespace TestCubePlanet
             set { m_bWireFrame = value; }
         }
 
+        private bool m_bDrawTrees = true;
+
+        public bool NeedDrawTrees
+        {
+            get { return m_bDrawTrees; }
+            set { m_bDrawTrees = value; }
+        }
+
         private float m_fLODDistance = 50;
 
         public float LODDistance
@@ -413,24 +621,8 @@ namespace TestCubePlanet
         public int VisibleQueue { get { return Square.s_pVisibleQueue.Count; } }
         public int InvisibleQueue { get { return Square.s_pInvisibleQueue.Count; } }
 
-        /// <summary>
-        /// Draws the control.
-        /// </summary>
-        protected override void Draw()
+        private void UpdateCamera()
         {
-            if (timer == null)
-                return;
-
-            //double startTime = timer.Elapsed.TotalMilliseconds;
-
-            m_iFrame++; 
-            
-            m_fFrameTime = timer.Elapsed.TotalMilliseconds - lastTime;
-            lastTime = timer.Elapsed.TotalMilliseconds; 
-            
-            if (m_pCube == null)
-                return;
-
             if (m_fScaling != 0)
             {
                 m_pCamera.ZoomIn(m_fScaling * (float)m_fFrameTime);
@@ -493,8 +685,29 @@ namespace TestCubePlanet
 
                 foreach (var pFace in m_aFaces)
                     foreach (var pSquare in pFace.m_aSquares)
-                        pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pWorldMatrix);
+                        pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pCamera.FocusPoint, m_pWorldMatrix);
             }
+        }
+
+        /// <summary>
+        /// Draws the control.
+        /// </summary>
+        protected override void Draw()
+        {
+            if (timer == null)
+                return;
+
+            //double startTime = timer.Elapsed.TotalMilliseconds;
+
+            m_iFrame++; 
+            
+            m_fFrameTime = timer.Elapsed.TotalMilliseconds - lastTime;
+            lastTime = timer.Elapsed.TotalMilliseconds; 
+            
+            if (m_pCube == null)
+                return;
+
+            UpdateCamera();
 
             Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
 
@@ -506,9 +719,7 @@ namespace TestCubePlanet
 
             pEffectView.SetValue(m_pCamera.View);
             pEffectProjection.SetValue(m_pCamera.Projection);
-
             pEffectCameraPosition.SetValue(m_pCamera.Position);
-
             pEffectWorld.SetValue(m_pWorldMatrix);
 
             // Set renderstates.
@@ -575,7 +786,7 @@ namespace TestCubePlanet
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
                 GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
-                if (pSquare.m_fVisibleDistance < m_fLODDistance || pSquare == m_pFocusedSquare)
+                if (pSquare.m_fVisibleDistance < m_fLODDistance)
                 {
                     GraphicsDevice.Indices = pSquare.m_pLandIndexBufferHR;
                     GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountHR);
@@ -588,6 +799,15 @@ namespace TestCubePlanet
                     m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountLR;
                 }
                 iCount++;
+            }
+
+            if (m_bDrawTrees)
+            {
+                foreach (var pSquare in Square.s_pVisibleQueue)
+                {
+                    if (pSquare.m_fVisibleDistance < m_fLODDistance)
+                        DrawTrees(pSquare);
+                }
             }
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
@@ -656,6 +876,109 @@ namespace TestCubePlanet
             }
 
             m_fDrawingTime = timer.Elapsed.TotalMilliseconds - lastTime;
+        }
+
+        private void DrawTrees(Square pSquare)
+        {
+            //float fMaxDistanceSquared = 2500;
+            //fMaxDistanceSquared *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
+
+            foreach (var vTree in pSquare.g.m_aTrees)
+            {
+                Model pTreeModel = vTree.Key;
+
+                Matrix[] instancedModelBones = new Matrix[pTreeModel.Bones.Count];
+                pTreeModel.CopyAbsoluteBoneTransformsTo(instancedModelBones);
+
+                List<Matrix> instances = new List<Matrix>();
+                for (int i = 0; i < vTree.Value.Length; i++)
+                {
+                    TreeModel pTree = vTree.Value[i];
+
+                    //Vector3 pViewVector = pTree.m_pPosition - m_pCamera.Position;
+
+                    //float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
+                    //if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
+                    //    continue;
+
+                    //if (pViewVector.LengthSquared() > fMaxDistanceSquared)
+                    //    continue;
+
+                    instances.Add(pTree.worldMatrix * m_pWorldMatrix);
+                }
+
+                DrawModelHardwareInstancing(pTreeModel, instancedModelBones,
+                                         instances.ToArray(), m_pCamera.View, m_pCamera.Projection);
+            }
+        }
+
+        // To store instance transform matrices in a vertex buffer, we use this custom
+        // vertex type which encodes 4x4 matrices as a set of four Vector4 values.
+        static VertexDeclaration instanceVertexDeclaration = new VertexDeclaration
+        (
+            new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 0),
+            new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 1),
+            new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 2),
+            new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 3)
+        );
+        private DynamicVertexBuffer instanceVertexBuffer;
+
+        /// <summary>
+        /// Efficiently draws several copies of a piece of geometry using hardware instancing.
+        /// </summary>
+        private void DrawModelHardwareInstancing(Model model, Matrix[] modelBones,
+                                         Matrix[] instances, Matrix view, Matrix projection)
+        {
+            if (instances.Length == 0)
+                return;
+
+            // If we have more instances than room in our vertex buffer, grow it to the neccessary size.
+            if ((instanceVertexBuffer == null) ||
+                (instances.Length > instanceVertexBuffer.VertexCount))
+            {
+                if (instanceVertexBuffer != null)
+                    instanceVertexBuffer.Dispose();
+
+                instanceVertexBuffer = new DynamicVertexBuffer(GraphicsDevice, instanceVertexDeclaration,
+                                                               instances.Length, BufferUsage.WriteOnly);
+            }
+
+            // Transfer the latest instance transform matrices into the instanceVertexBuffer.
+            instanceVertexBuffer.SetData(instances, 0, instances.Length, SetDataOptions.Discard);
+
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                {
+                    // Tell the GPU to read from both the model vertex buffer plus our instanceVertexBuffer.
+                    GraphicsDevice.SetVertexBuffers(
+                        new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset, 0),
+                        new VertexBufferBinding(instanceVertexBuffer, 0, 1)
+                    );
+
+                    GraphicsDevice.Indices = meshPart.IndexBuffer;
+
+                    // Set up the instance rendering effect.
+                    Effect effect = meshPart.Effect;
+
+                    //effect.CurrentTechnique = effect.Techniques["HardwareInstancing"];
+
+                    effect.Parameters["World"].SetValue(modelBones[mesh.ParentBone.Index]);
+                    effect.Parameters["View"].SetValue(view);
+                    effect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
+                    effect.Parameters["Projection"].SetValue(projection);
+
+                    // Draw all the instance copies in a single call.
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+
+                        GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                                                               meshPart.NumVertices, meshPart.StartIndex,
+                                                               meshPart.PrimitiveCount, instances.Length);
+                    }
+                }
+            }
         }
 
         // CalculateCursorRay Calculates a world space ray starting at the camera's

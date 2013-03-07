@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PlanetBuilder;
 
 namespace TestCubePlanet
 {
     public class Location: Vertex
     {
+        public bool m_bForest = false;
+
         /// <summary>
         /// Для "призрачной" локации - направление, в котором следует искать "настоящую" локацию.
         /// Если локация не "призрачная", то CenterNone
@@ -171,6 +174,13 @@ namespace TestCubePlanet
                     if (pEdge.Value.m_pMidPoint.m_fH > 0)
                         pEdge.Value.m_pMidPoint.m_fH = (m_fH + pEdge.Key.m_fH) / 2;
                 }
+            }
+
+            if (m_fH > 0.01 && m_fH < 1)
+            {
+                float fDensity = (float)ClassicNoise.noise(m_fX / 8, m_fY / 8, m_fZ / 8);
+                if (fDensity > 0)
+                    m_bForest = true;
             }
         }
 

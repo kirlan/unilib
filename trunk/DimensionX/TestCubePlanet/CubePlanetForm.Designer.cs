@@ -366,9 +366,9 @@
             this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox5.Location = new System.Drawing.Point(9, 296);
             this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(84, 17);
+            this.checkBox5.Size = new System.Drawing.Size(77, 17);
             this.checkBox5.TabIndex = 18;
-            this.checkBox5.Text = "cull check 1";
+            this.checkBox5.Text = "Draw trees";
             this.checkBox5.UseVisualStyleBackColor = true;
             this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
             // 
