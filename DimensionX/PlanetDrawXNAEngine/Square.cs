@@ -391,8 +391,11 @@ namespace TestCubePlanet
 
             bool bVisible = true;
 
-            Vector3 pViewVector = Vector3.Transform(m_pBounds8.Center, pWorld) - pCameraPos;
-            float fCos2 = Vector3.Dot(Vector3.Normalize(pViewVector), m_pBounds8.Normal);
+            Vector3 pRealCenter = Vector3.Transform(m_pBounds8.Center, pWorld);
+
+            Vector3 pViewVector = pRealCenter - pCameraPos;
+            Vector3 pRealViewVector = pRealCenter - pCameraPos*2;
+            float fCos2 = Vector3.Dot(Vector3.Normalize(pRealViewVector), m_pBounds8.Normal);
             if (fCos2 > 0.3)
                 bVisible = false;
 
@@ -406,7 +409,7 @@ namespace TestCubePlanet
 
             if(bVisible)
             {
-                Vector3 pTargetVector = Vector3.Transform(m_pBounds8.Center, pWorld) - pCameraTarget;
+                Vector3 pTargetVector = pRealCenter - pCameraTarget;
                 m_fVisibleDistance = Math.Min(pViewVector.Length(), pTargetVector.Length());
                 Rebuild(pDevice);
                 return;

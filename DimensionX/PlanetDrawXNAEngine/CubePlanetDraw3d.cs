@@ -137,7 +137,7 @@ namespace TestCubePlanet
                     m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, treeModel, palmModel, pineModel, treeTexture);
 
                     float fFogHeight = 10;
-                    fFogHeight = pCube.R + 10;
+                    fFogHeight = pCube.R + 15;
 
                     foreach (Model pModel in treeModel)
                         foreach (ModelMesh mesh in pModel.Meshes)
@@ -244,7 +244,7 @@ namespace TestCubePlanet
             pEffectSpecularColor.SetValue(0);
 
             pEffectFogColor.SetValue(eSkyColor.ToVector4());
-            pEffectFogHeight.SetValue(160);
+            pEffectFogHeight.SetValue(165);
             pEffectFogModePlain.SetValue(false);
             pEffectFogModeRing.SetValue(false);
             pEffectFogModeSphere.SetValue(true);
@@ -625,7 +625,7 @@ namespace TestCubePlanet
         {
             if (m_fScaling != 0)
             {
-                m_pCamera.ZoomIn(m_fScaling * (float)m_fFrameTime);
+                m_pCamera.ZoomIn(m_fScaling * (float)Math.Sqrt(m_fFrameTime));
                 m_fScaling = 0;
             }
 
@@ -639,7 +639,7 @@ namespace TestCubePlanet
                 Vector3? pCharacter = GetSurface(m_pCamera.FocusPoint, out m_pFocusedSquare);
                 if (pCharacter.HasValue)
                 {
-                    pCharacter += Vector3.Normalize(pCharacter.Value) * 0.2f;
+                    pCharacter += Vector3.Normalize(pCharacter.Value);// *1.2f;
                     m_pCamera.Position += pCharacter.Value - m_pCamera.FocusPoint;
                     m_pCamera.FocusPoint = pCharacter.Value;
 
@@ -686,6 +686,8 @@ namespace TestCubePlanet
                 foreach (var pFace in m_aFaces)
                     foreach (var pSquare in pFace.m_aSquares)
                         pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pCamera.FocusPoint, m_pWorldMatrix);
+
+                RecalckTrees();
             }
         }
 
@@ -803,11 +805,7 @@ namespace TestCubePlanet
 
             if (m_bDrawTrees)
             {
-                foreach (var pSquare in Square.s_pVisibleQueue)
-                {
-                    if (pSquare.m_fVisibleDistance < m_fLODDistance)
-                        DrawTrees(pSquare);
-                }
+                DrawTrees();
             }
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
@@ -878,37 +876,55 @@ namespace TestCubePlanet
             m_fDrawingTime = timer.Elapsed.TotalMilliseconds - lastTime;
         }
 
-        private void DrawTrees(Square pSquare)
+        private Dictionary<Model, List<Matrix>> m_cTreeInstances = new Dictionary<Model, List<Matrix>>();
+
+        private void RecalckTrees()
         {
-            //float fMaxDistanceSquared = 2500;
+            foreach (var pTreeModel in m_cTreeInstances)
+                pTreeModel.Value.Clear();            
+            
+            float fMaxDistanceSquared = 1600;
             //fMaxDistanceSquared *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
 
-            foreach (var vTree in pSquare.g.m_aTrees)
+            foreach (var pSquare in Square.s_pVisibleQueue)
             {
-                Model pTreeModel = vTree.Key;
-
-                Matrix[] instancedModelBones = new Matrix[pTreeModel.Bones.Count];
-                pTreeModel.CopyAbsoluteBoneTransformsTo(instancedModelBones);
-
-                List<Matrix> instances = new List<Matrix>();
-                for (int i = 0; i < vTree.Value.Length; i++)
+                if (pSquare.m_fVisibleDistance < m_fLODDistance)
                 {
-                    TreeModel pTree = vTree.Value[i];
+                    foreach (var vTree in pSquare.g.m_aTrees)
+                    {
+                        Model pTreeModel = vTree.Key;
 
-                    //Vector3 pViewVector = pTree.m_pPosition - m_pCamera.Position;
+                        if (!m_cTreeInstances.ContainsKey(pTreeModel))
+                            m_cTreeInstances[pTreeModel] = new List<Matrix>();
+                        for (int i = 0; i < vTree.Value.Length; i++)
+                        {
+                            TreeModel pTree = vTree.Value[i];
 
-                    //float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
-                    //if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
-                    //    continue;
+                            Vector3 pViewVector = (pTree.worldMatrix * m_pWorldMatrix).Translation - m_pCamera.Position;
 
-                    //if (pViewVector.LengthSquared() > fMaxDistanceSquared)
-                    //    continue;
+                            //float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
+                            //if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
+                            //    continue;
 
-                    instances.Add(pTree.worldMatrix * m_pWorldMatrix);
+                            if (pViewVector.LengthSquared() > fMaxDistanceSquared)
+                                continue;
+
+                            m_cTreeInstances[pTreeModel].Add(pTree.worldMatrix * m_pWorldMatrix);
+                        }
+                    }
                 }
+            }
+        }
 
-                DrawModelHardwareInstancing(pTreeModel, instancedModelBones,
-                                         instances.ToArray(), m_pCamera.View, m_pCamera.Projection);
+        private void DrawTrees()
+        {
+            foreach (var pTreeModel in m_cTreeInstances)
+            {
+                Matrix[] instancedModelBones = new Matrix[pTreeModel.Key.Bones.Count];
+                pTreeModel.Key.CopyAbsoluteBoneTransformsTo(instancedModelBones);
+
+                DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
+                                         pTreeModel.Value.ToArray(), m_pCamera.View, m_pCamera.Projection);
             }
         }
 
