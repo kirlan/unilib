@@ -396,7 +396,7 @@ namespace TestCubePlanet
             Vector3 pViewVector = pRealCenter - pCameraPos;
             Vector3 pRealViewVector = pRealCenter - pCameraPos*2;
             float fCos2 = Vector3.Dot(Vector3.Normalize(pRealViewVector), m_pBounds8.Normal);
-            if (fCos2 > 0.3)
+            if (fCos2 > 0.1)
                 bVisible = false;
 
             if(bVisible)
@@ -646,8 +646,8 @@ namespace TestCubePlanet
 
                         bSuccess = true;
                     }
-                    //catch (Exception ex)
-                    catch (OutOfMemoryException ex)
+                    catch (Exception ex)
+                    //catch (OutOfMemoryException ex)
                     {
                         if (s_pInvisibleQueue.Count > 0)
                         {
@@ -675,8 +675,8 @@ namespace TestCubePlanet
                         {
                             if (ex is OutOfMemoryException)
                                 throw new OutOfMemoryException("Really out of memory!", ex);
-                            else
-                                throw new Exception("Something really wrong!", ex);
+                            //else
+                            //    throw new Exception("Something really wrong!", ex);
                         }
                     }
                 }

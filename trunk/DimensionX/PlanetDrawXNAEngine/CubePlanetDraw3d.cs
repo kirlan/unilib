@@ -248,6 +248,7 @@ namespace TestCubePlanet
             pEffectFogModePlain.SetValue(false);
             pEffectFogModeRing.SetValue(false);
             pEffectFogModeSphere.SetValue(true);
+//            pEffectFogDensity.SetValue(0.05f);
             pEffectFogDensity.SetValue(0.001f);
 
             pEffectBlendDistance.SetValue(20);//2
@@ -712,6 +713,8 @@ namespace TestCubePlanet
             UpdateCamera();
 
             Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
+            Vector3 pSun = Vector3.Normalize(Vector3.Forward + Vector3.Up + Vector3.Right);
+            pSun = Vector3.Cross(pSun, pPole);
 
             m_pDebugInfo = new VertexPositionColor[4];
             m_pDebugInfo[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
@@ -744,7 +747,8 @@ namespace TestCubePlanet
                         false, SurfaceFormat.Color, DepthFormat.Depth24);
             }
 
-            pEffectDirectionalLightDirection.SetValue(-m_pCamera.Position);
+            //pEffectDirectionalLightDirection.SetValue(-Vector3.Normalize(m_pCamera.FocusPoint));
+            pEffectDirectionalLightDirection.SetValue(Vector3.Transform(pSun, Matrix.CreateFromAxisAngle(pPole, (float)lastTime/2000)));
             pEffectDirectionalLightIntensity.SetValue(0.8f);//0.8f
 
             int iCount = 0;
