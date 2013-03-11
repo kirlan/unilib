@@ -207,6 +207,7 @@ namespace TestCubePlanet
         //DumbCamera m_pCamera = null;
         public ArcBallCamera m_pCamera = null;
         public Vector3 m_pSun = new Vector3(0, 0, 300);
+        private Model m_pSunModel;
 
         /// <summary>
         /// Initializes the control.
@@ -285,6 +286,8 @@ namespace TestCubePlanet
 
             LoadSettlements();
 
+            m_pSunModel = LoadModel("content/fbx/SphereLowPoly"); 
+            
             textEffect = new BasicEffect(GraphicsDevice);
 
             /* Load and initialize the outline shader effect
@@ -851,6 +854,13 @@ namespace TestCubePlanet
             {
                 DrawTrees();
             }
+
+            ModelMesh pSunMesh = m_pSunModel.Meshes[0];
+            ModelMeshPart pSunMeshPart = pSunMesh.MeshParts[0];
+            GraphicsDevice.SetVertexBuffer(pSunMeshPart.VertexBuffer, pSunMeshPart.VertexOffset);
+            GraphicsDevice.Indices = pSunMeshPart.IndexBuffer;
+
+            m_pSunModel.Draw(Matrix.CreateTranslation(-m_pSun * 200), m_pCamera.View, m_pCamera.Projection);
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
             //effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
