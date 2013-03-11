@@ -606,24 +606,30 @@ namespace TestCubePlanet
 
                                 g.m_aLocations[i] = BuildLocationReferencesIndices(loc, ref vertexIndex);
 
-                                if (loc.m_bForest)
+                                if (loc.m_fH > 0)
                                 {
                                     float fScale = 0.15f; //0.015f;
-                                    fScale *= (float)(70 / Math.Sqrt(120000)); 
-                                    
-                                    bool bEdge = false;
-                                    foreach (var pEdge in loc.m_cEdges)
+                                    fScale *= (float)(70 / Math.Sqrt(120000));
+
+                                    if (loc.m_bForest)
                                     {
-                                        if (!pEdge.Key.m_bForest)
-                                        {
-                                            //if (pEdge.Key.m_fH > 0)
-                                            //{
-                                            //    AddTreeModels(pEdge.Key, ref g.m_aLandPoints, ref locationIndex, ref vertexIndex, ref cTrees, fScale, 0.1f);
-                                            //}
-                                            bEdge = true;
-                                        }
+                                        bool bEdge = false;
+                                        foreach (var pEdge in loc.m_cEdges)
+                                            if (!pEdge.Key.m_bForest)
+                                                bEdge = true;
+
+                                        AddTreeModels(loc, ref g.m_aLandPoints, ref locationIndex, ref vertexIndex, ref cTrees, fScale, bEdge ? 0.75f : 1f);
                                     }
-                                    AddTreeModels(loc, ref g.m_aLandPoints, ref locationIndex, ref vertexIndex, ref cTrees, fScale, bEdge ? 0.75f : 1f);
+                                    else
+                                    {
+                                        bool bEdge = false;
+                                        foreach (var pEdge in loc.m_cEdges)
+                                            if (pEdge.Key.m_bForest)
+                                                bEdge = true;
+
+                                        if(bEdge)
+                                            AddTreeModels(loc, ref g.m_aLandPoints, ref locationIndex, ref vertexIndex, ref cTrees, fScale, 0.1f);
+                                    }
                                 }
                             }
 

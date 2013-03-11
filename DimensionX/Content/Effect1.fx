@@ -85,43 +85,8 @@ texture CelMap;
  */
 sampler2D CelMapSampler = sampler_state { Texture = <CelMap>; MinFilter = LINEAR; MagFilter = LINEAR; MipFilter = LINEAR; AddressU = mirror; AddressV = mirror; };
 
-float DistFogPlain(float3 Position)
+float4 ApplyFog(float4 Color, float3 Position, float koeff)
 {
-	//return 1;
-
-	float d = length(Position - CameraPosition);
-	//заморачиваемся только, если камера НАД границей атмосферы
-	if(CameraPosition.y > FogHeight && CameraPosition.y != Position.y)
-	{
-		d = (FogHeight - Position.y) * d / (CameraPosition.y - Position.y);
-	}
-
-	return d;
-}
-
-float DistFogRingworld(float3 Position)
-{
-	//return 1;
-
-	float HCam = length(CameraPosition.xy);
-
-	float d = length(Position - CameraPosition);
-	//заморачиваемся только, если камера НАД границей атмосферы
-	//на кольце атмосфера расположена на внутренней стороне кольца, т.е. "выше" - это значит ближе к центру кольца
-	if(HCam < FogHeight)
-	{
-		float HPos = length(Position.xy);
-		if(HPos != HCam)
-			d = (HPos - FogHeight) * d / (HPos - HCam);
-	}
-
-	return d;
-}
-
-float DistFogSphere(float3 Position)
-{
-	//return 1;
-
 	float HCam = length(CameraPosition);
 
 	float d = length(Position - CameraPosition);
@@ -142,34 +107,23 @@ float DistFogSphere(float3 Position)
 		//d = sqrt(d-d1)/2 + d1;
 	}
 
-	return d;
-}
-
-float4 ApplyFog(float4 Color, float3 Position, float koeff)
-{
-	float d = length(Position - CameraPosition);
-
-	//if(FogModePlain)
-	//	d = DistFogPlain(Position);
-
-	//if(FogModeRing)
-	//	d = DistFogRingworld(Position);
-
-	//if(FogModeSphere)
-		d = DistFogSphere(Position);
-
 	float l = exp( - pow( d * d * FogDensity * koeff, 2 ) );
 	l = saturate(1 - l);
 
 	return lerp(Color, FogColor, l);
 }
 
-float4 GetLight(float3 inNormal, float3 inView)
+float4 GetLight(float3 inNormal, float3 Position, float3 inView)
 {
 	float4 normal = float4(inNormal, 1.0);
+	float4 normalGlobal = float4(normalize(Position), 1.0);
 
-	float diff = saturate(dot(-DirectionalLightDirection,normal) + 0.3);
-	diff = 1 - (1-diff)*(1-diff)*(1-diff)*(1-diff);
+	float diff = saturate(dot(-DirectionalLightDirection, normal));
+	float diff2 = saturate(dot(-DirectionalLightDirection, normalGlobal) + 0.3);
+
+	diff = (diff + diff2)/2;
+
+	diff = 1 - (1-diff)*(1-diff);//*(1-diff)*(1-diff);
 
 	float4 diffuse = diff;
 	
@@ -323,7 +277,7 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 	//float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	//float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
-    float4 light = GetLight(input.Normal, input.View);
+    float4 light = GetLight(input.Normal, input.Position3D, input.View);
 
 	float d = length(input.Position3D - CameraPosition);
 
@@ -657,24 +611,13 @@ float alphaReference = .9f;
 
 float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 {
-    // TODO: add your pixel shader code here.
-	float4 normal = float4(normalize(input.Position3D), 1.0);//float4(input.Normal, 1.0);
-	float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
-	//float4 diffuse = float4(0.66, 0.66, 0.66, 1.0) + saturate(dot(-DirectionalLightDirection,normal))/3;
-	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	float4 specular = pow(saturate(dot(reflect,input.View)),15);
-
-	//float l = d / 20;
-	 
 	float4 texColor = tex2D(TextureSamplerModel, input.TextureCoords);
 
 	float4 output = texColor;
 
 	clip(output.a < alphaReference ? -1:1); 	 
 
-	float4 lightColor = AmbientLightColor*AmbientLightIntensity + 
-		   DirectionalLightIntensity*DirectionalLightColor*diffuse + 
-		   SpecularColor*specular;
+	float4 lightColor = GetLight(normalize(input.Position3D), input.Position3D, input.View);
 
 	output.rgb = ApplyFog(float4(texColor.rgb, FogColor.a), input.Position3D, 0.5).rgb*output.a;
 
@@ -751,7 +694,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION)
 
 float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 {
-    float4 light = GetLight(PSIn.Normal, PSIn.View);
+    float4 light = GetLight(PSIn.Normal, PSIn.Position3D, PSIn.View);
 
     //float4 bumpColor = tex2D(WaterBumpMapSampler, PSIn.BumpMapSamplingPos);
     float2 perturbation = (float2)1;//xWaveHeight*(bumpColor.rg - 0.5f)*2.0f;
