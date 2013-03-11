@@ -125,12 +125,21 @@ float DistFogSphere(float3 Position)
 	float HCam = length(CameraPosition);
 
 	float d = length(Position - CameraPosition);
+
 	//заморачиваемся только, если камера НАД границей атмосферы
 	if(HCam > FogHeight)
 	{
-		float HPos = length(Position);
-		if(HPos != HCam)
-			d = (FogHeight - HPos) * d / (HCam - HPos);
+		float3 newCameraPosition = CameraPosition * (FogHeight + sqrt(HCam - FogHeight)) / HCam;
+		HCam = length(newCameraPosition);
+		d = length(Position - newCameraPosition);
+
+		//float d1 = 0;
+
+		//float HPos = length(Position);
+		//if(HPos != HCam)
+		//	d1 = (FogHeight - HPos) * d / (HCam - HPos);
+
+		//d = sqrt(d-d1)/2 + d1;
 	}
 
 	return d;
@@ -138,15 +147,15 @@ float DistFogSphere(float3 Position)
 
 float4 ApplyFog(float4 Color, float3 Position, float koeff)
 {
-	float d = 0;
+	float d = length(Position - CameraPosition);
 
-	if(FogModePlain)
-		d = DistFogPlain(Position);
+	//if(FogModePlain)
+	//	d = DistFogPlain(Position);
 
-	if(FogModeRing)
-		d = DistFogRingworld(Position);
+	//if(FogModeRing)
+	//	d = DistFogRingworld(Position);
 
-	if(FogModeSphere)
+	//if(FogModeSphere)
 		d = DistFogSphere(Position);
 
 	float l = exp( - pow( d * d * FogDensity * koeff, 2 ) );
@@ -159,7 +168,9 @@ float4 GetLight(float3 inNormal, float3 inView)
 {
 	float4 normal = float4(inNormal, 1.0);
 
-	float diff = saturate(dot(-DirectionalLightDirection,normal));
+	float diff = saturate(dot(-DirectionalLightDirection,normal) + 0.3);
+	diff = 1 - (1-diff)*(1-diff)*(1-diff)*(1-diff);
+
 	float4 diffuse = diff;
 	
 	if(UseCelShading)
@@ -371,7 +382,7 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 	//==============================================================================================================================
     float4 texColor = blended_color;//GetLandTexture(input.TextureCoords, input.TextureWeights, input.TextureWeights2, d);
  	 
-	return ApplyFog(texColor*light, input.Position3D, 1);
+	return ApplyFog(texColor, input.Position3D, 1)*light;
 }
 
 technique Land
@@ -647,8 +658,8 @@ float alphaReference = .9f;
 float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
-	float4 normal = float4(input.Normal, 1.0);
-	float4 diffuse = 1;//saturate(dot(-DirectionalLightDirection,normal));
+	float4 normal = float4(normalize(input.Position3D), 1.0);//float4(input.Normal, 1.0);
+	float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
 	//float4 diffuse = float4(0.66, 0.66, 0.66, 1.0) + saturate(dot(-DirectionalLightDirection,normal))/3;
 	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	float4 specular = pow(saturate(dot(reflect,input.View)),15);
@@ -661,13 +672,13 @@ float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 
 	clip(output.a < alphaReference ? -1:1); 	 
 
-	float3 lightColor = texColor.rgb*AmbientLightColor.rgb*AmbientLightIntensity + 
-		   texColor.rgb*DirectionalLightIntensity*DirectionalLightColor.rgb*diffuse + 
-		   texColor.rgb*SpecularColor.rgb*specular;
+	float4 lightColor = AmbientLightColor*AmbientLightIntensity + 
+		   DirectionalLightIntensity*DirectionalLightColor*diffuse + 
+		   SpecularColor*specular;
 
-	output.rgb = ApplyFog(float4(lightColor, FogColor.a), input.Position3D, 1.2).rgb*output.a;
+	output.rgb = ApplyFog(float4(texColor.rgb, FogColor.a), input.Position3D, 0.5).rgb*output.a;
 
-	return output;
+	return output*lightColor;
 }
 
 float4 ModelPSPlain(ModelVertexShaderOutput input) : COLOR0
@@ -731,7 +742,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION)
     //Output.ReflectionMapSamplingPos = mul(inPos, preWorldReflectionViewProjection);
      
 	Output.RefractionMapSamplingPos = mul(viewPosition, Projection);
-    Output.Position3D = mul(inPos, World);
+    Output.Position3D = inPos;//mul(inPos, World);
 	
 	Output.View = normalize(float4(CameraPosition,1.0) - worldPosition);
 
@@ -740,6 +751,8 @@ WVertexToPixel WaterVS(float4 inPos : POSITION)
 
 float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 {
+    float4 light = GetLight(PSIn.Normal, PSIn.View);
+
     //float4 bumpColor = tex2D(WaterBumpMapSampler, PSIn.BumpMapSamplingPos);
     float2 perturbation = (float2)1;//xWaveHeight*(bumpColor.rg - 0.5f)*2.0f;
 	
@@ -756,7 +769,7 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 
     //float4 light = GetLight(input.Normal, input.View);
 	
-	float4 reflectiveColor = float4(0.1f, 0.1f, 0.3f, 1.0f);
+	float4 reflectiveColor = float4(0.1f, 0.1f, 0.3f, 1.0f);//*light;
 	//reflectiveColor = reflectiveColor*light;
 
     float2 ProjectedRefrTexCoords = (float2)0;
@@ -774,7 +787,8 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
      
 //    Output.Color = lerp(combinedColor, dullColor, 0.2f);
 	
-	return ApplyFog(lerp(combinedColor, FogColor, 0.2f), PSIn.Position3D, 1);
+	return ApplyFog(lerp(combinedColor, FogColor, 0.2f), PSIn.Position3D, 1)*light;
+//	return ApplyFog(float4(0.1f, 0.1f, 0.3f, 1.0f), PSIn.Position3D, 1)*light;
 }
 
 technique Water
