@@ -859,6 +859,21 @@ namespace TestCubePlanet
             ModelMeshPart pSunMeshPart = pSunMesh.MeshParts[0];
             GraphicsDevice.SetVertexBuffer(pSunMeshPart.VertexBuffer, pSunMeshPart.VertexOffset);
             GraphicsDevice.Indices = pSunMeshPart.IndexBuffer;
+            
+            //now we loop through the passes in the teqnique, drawing each
+            //one in order
+            for (int i = 0; i < effect.CurrentTechnique.Passes.Count; i++)
+            {
+                //EffectPass.Apply will update the device to
+                //begin using the state information defined in the current pass
+                effect.CurrentTechnique.Passes[i].Apply();
+
+                //sampleMesh contains all of the information required to draw
+                //the current mesh
+                GraphicsDevice.DrawIndexedPrimitives(
+                    PrimitiveType.TriangleList, 0, 0,
+                    pSunMeshPart.NumVertices, pSunMeshPart.StartIndex, pSunMeshPart.PrimitiveCount);
+            }
 
             m_pSunModel.Draw(Matrix.CreateTranslation(-m_pSun * 200), m_pCamera.View, m_pCamera.Projection);
 
