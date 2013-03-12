@@ -62,11 +62,17 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
             this.cubePlanetDraw3d1 = new TestCubePlanet.CubePlanetDraw3d();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -326,6 +332,9 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label21);
+            this.panel2.Controls.Add(this.label20);
+            this.panel2.Controls.Add(this.label19);
             this.panel2.Controls.Add(this.checkBox6);
             this.panel2.Controls.Add(this.checkBox5);
             this.panel2.Controls.Add(this.label18);
@@ -339,6 +348,7 @@
             this.panel2.Controls.Add(this.checkBox2);
             this.panel2.Controls.Add(this.numericUpDown1);
             this.panel2.Controls.Add(this.comboBox1);
+            this.panel2.Controls.Add(this.trackBar2);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(354, 0);
             this.panel2.Name = "panel2";
@@ -351,11 +361,11 @@
             this.checkBox6.AutoSize = true;
             this.checkBox6.Checked = true;
             this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox6.Location = new System.Drawing.Point(9, 316);
+            this.checkBox6.Location = new System.Drawing.Point(9, 354);
             this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(84, 17);
+            this.checkBox6.Size = new System.Drawing.Size(131, 17);
             this.checkBox6.TabIndex = 19;
-            this.checkBox6.Text = "cull check 2";
+            this.checkBox6.Text = "long days, short nights";
             this.checkBox6.UseVisualStyleBackColor = true;
             this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
             // 
@@ -364,7 +374,7 @@
             this.checkBox5.AutoSize = true;
             this.checkBox5.Checked = true;
             this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox5.Location = new System.Drawing.Point(9, 296);
+            this.checkBox5.Location = new System.Drawing.Point(9, 275);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(77, 17);
             this.checkBox5.TabIndex = 18;
@@ -375,7 +385,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 252);
+            this.label18.Location = new System.Drawing.Point(6, 231);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(90, 13);
             this.label18.TabIndex = 17;
@@ -386,7 +396,7 @@
             this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.LargeChange = 10;
-            this.trackBar1.Location = new System.Drawing.Point(9, 268);
+            this.trackBar1.Location = new System.Drawing.Point(9, 247);
             this.trackBar1.Margin = new System.Windows.Forms.Padding(0);
             this.trackBar1.Maximum = 100;
             this.trackBar1.Minimum = 10;
@@ -401,7 +411,7 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(9, 229);
+            this.checkBox4.Location = new System.Drawing.Point(9, 208);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(92, 17);
             this.checkBox4.TabIndex = 15;
@@ -414,7 +424,7 @@
             this.checkBox3.AutoSize = true;
             this.checkBox3.Checked = true;
             this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox3.Location = new System.Drawing.Point(9, 206);
+            this.checkBox3.Location = new System.Drawing.Point(9, 185);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(81, 17);
             this.checkBox3.TabIndex = 14;
@@ -425,7 +435,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(9, 183);
+            this.checkBox1.Location = new System.Drawing.Point(9, 162);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(74, 17);
             this.checkBox1.TabIndex = 13;
@@ -471,16 +481,74 @@
             this.timer2.Enabled = true;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // trackBar2
+            // 
+            this.trackBar2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBar2.LargeChange = 10;
+            this.trackBar2.Location = new System.Drawing.Point(9, 314);
+            this.trackBar2.Margin = new System.Windows.Forms.Padding(0);
+            this.trackBar2.Maximum = 30;
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(129, 45);
+            this.trackBar2.TabIndex = 20;
+            this.trackBar2.TickFrequency = 5;
+            this.trackBar2.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.trackBar2.Value = 15;
+            this.trackBar2.Scroll += new System.EventHandler(this.trackBar2_Scroll);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(6, 338);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(28, 13);
+            this.label19.TabIndex = 21;
+            this.label19.Text = "slow";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(114, 338);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(24, 13);
+            this.label20.TabIndex = 22;
+            this.label20.Text = "fast";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(6, 298);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(61, 13);
+            this.label21.TabIndex = 23;
+            this.label21.Text = "Time scale:";
+            // 
+            // label22
+            // 
+            this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label22.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.label22.Location = new System.Drawing.Point(204, 361);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(150, 16);
+            this.label22.TabIndex = 9;
+            this.label22.Text = "label22";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            // 
             // cubePlanetDraw3d1
             // 
             this.cubePlanetDraw3d1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cubePlanetDraw3d1.Location = new System.Drawing.Point(0, 0);
             this.cubePlanetDraw3d1.LODDistance = 50F;
             this.cubePlanetDraw3d1.Name = "cubePlanetDraw3d1";
+            this.cubePlanetDraw3d1.NeedDrawTrees = true;
             this.cubePlanetDraw3d1.ShowBounds = false;
             this.cubePlanetDraw3d1.Size = new System.Drawing.Size(354, 377);
             this.cubePlanetDraw3d1.TabIndex = 0;
             this.cubePlanetDraw3d1.Text = "cubePlanetDraw3d1";
+            this.cubePlanetDraw3d1.TimeSpeed = 6.25E-05F;
+            this.cubePlanetDraw3d1.TimeWarp = true;
             this.cubePlanetDraw3d1.UseCelShading = true;
             this.cubePlanetDraw3d1.Visible = false;
             this.cubePlanetDraw3d1.WireFrame = false;
@@ -495,6 +563,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(501, 438);
+            this.Controls.Add(this.label22);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -511,6 +580,7 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -552,6 +622,11 @@
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.Label label22;
     }
 }
 
