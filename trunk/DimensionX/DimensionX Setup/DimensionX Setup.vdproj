@@ -130,6 +130,18 @@
         "Entry"
         {
         "MsmKey" = "8:_260BEEEFE9E5A96108F046092A10CA5C"
+        "OwnerKey" = "8:_4BDE3E317E60FCC613B53E2BEE2821DE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_260BEEEFE9E5A96108F046092A10CA5C"
+        "OwnerKey" = "8:_E48BA3A3E3EF4A67848DC5BA727A67F1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_260BEEEFE9E5A96108F046092A10CA5C"
         "OwnerKey" = "8:_58FE95D5EB7DAB1894CD4AD2C13AA58B"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -159,18 +171,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_260BEEEFE9E5A96108F046092A10CA5C"
-        "OwnerKey" = "8:_4BDE3E317E60FCC613B53E2BEE2821DE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_260BEEEFE9E5A96108F046092A10CA5C"
-        "OwnerKey" = "8:_E48BA3A3E3EF4A67848DC5BA727A67F1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2D2CC0830A9D49F1AE4E76C21BC85871"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -184,6 +184,12 @@
         "Entry"
         {
         "MsmKey" = "8:_2FABAF12FBEE4CAEA764EE81964B4600"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_300216C4A728461796AE1F5E05D8D3D4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -657,6 +663,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BBAC5C05BC3340E2B4CEEB2B0CF37491"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BC95643E6EF1B0CE47DF9334E21E586A"
         "OwnerKey" = "8:_6D0270416105BB55DCCD50EFEEA85012"
         "MsmSig" = "8:_UNDEFINED"
@@ -898,7 +910,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_260BEEEFE9E5A96108F046092A10CA5C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_B2D5ACE61341F6614896C119ACA72F49"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B85D794B3D5044AA134A2FA441E57F3B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -911,18 +935,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_1CB0DB3578CEC51B3B9B4793BB2C93DA"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_260BEEEFE9E5A96108F046092A10CA5C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B85D794B3D5044AA134A2FA441E57F3B"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -1468,6 +1480,26 @@
             "TargetName" = "8:Settlements_T6.xnb"
             "Tag" = "8:"
             "Folder" = "8:_DA755B3FE98E4C06AF8D93CF14A0168E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_300216C4A728461796AE1F5E05D8D3D4"
+            {
+            "SourcePath" = "8:..\\VQMapTest2\\bin\\Release\\Content\\celMap.xnb"
+            "TargetName" = "8:celMap.xnb"
+            "Tag" = "8:"
+            "Folder" = "8:_6D5C6332D738410FAD4391795DD37EB9"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2861,6 +2893,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BBAC5C05BC3340E2B4CEEB2B0CF37491"
+            {
+            "SourcePath" = "8:..\\VQMapTest2\\bin\\Release\\Content\\OutlineShader.xnb"
+            "TargetName" = "8:OutlineShader.xnb"
+            "Tag" = "8:"
+            "Folder" = "8:_6D5C6332D738410FAD4391795DD37EB9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BC95643E6EF1B0CE47DF9334E21E586A"
             {
             "AssemblyRegister" = "3:1"
@@ -3515,7 +3567,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DimensionX World Builder"
         "ProductCode" = "8:{8813F890-A0AE-47CD-AFC8-5D4C8034D18E}"
-        "PackageCode" = "8:{39635D65-3CA0-4A81-9284-B81F284744A9}"
+        "PackageCode" = "8:{2C9A699E-CEA9-4874-9E26-ACEFD4EF8C4A}"
         "UpgradeCode" = "8:{C99B9CAA-9214-4498-B04B-67F093B9EA8A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

@@ -121,7 +121,7 @@ float4 GetLight(float3 inNormal, float3 Position, float3 inView)
 	float diff = saturate(dot(-DirectionalLightDirection, normal));
 	float diff2 = saturate(dot(-DirectionalLightDirection, normalGlobal) + 0.3);
 
-	diff = (diff + diff2)/2;
+	diff = (diff + diff2*7)/8;
 
 	diff = 1 - (1-diff)*(1-diff);//*(1-diff)*(1-diff);
 
@@ -619,7 +619,7 @@ float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 
 	float4 lightColor = GetLight(normalize(input.Position3D), input.Position3D, input.View);
 
-	output.rgb = ApplyFog(float4(texColor.rgb, FogColor.a), input.Position3D, 0.5).rgb*output.a;
+	output.rgb = ApplyFog(float4(texColor.rgb, FogColor.a), input.Position3D, 1.2).rgb*output.a;
 
 	return output*lightColor;
 }
