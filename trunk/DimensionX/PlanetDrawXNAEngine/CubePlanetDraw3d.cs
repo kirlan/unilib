@@ -31,6 +31,7 @@ namespace TestCubePlanet
         Effect m_pMyEffect;
 
         private Microsoft.Xna.Framework.Color m_eSkyColor = Microsoft.Xna.Framework.Color.AliceBlue;
+        private Microsoft.Xna.Framework.Color m_eRealSkyColor = Microsoft.Xna.Framework.Color.AliceBlue;
 
         public static ContentManager LibContent;
 
@@ -206,7 +207,9 @@ namespace TestCubePlanet
 
         //DumbCamera m_pCamera = null;
         public ArcBallCamera m_pCamera = null;
-        public Vector3 m_pSun = new Vector3(0, 0, 300);
+        public static Vector3 m_pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
+        public static Vector3 m_pSunOriginal = Vector3.Normalize(Vector3.Cross(Vector3.Normalize(Vector3.Forward + Vector3.Up + Vector3.Right), m_pPole));
+        public Vector3 m_pSunCurrent = m_pSunOriginal;
         public Microsoft.Xna.Framework.Color m_eSunColor = Microsoft.Xna.Framework.Color.Yellow;
         private Model m_pSunModel;
 
@@ -241,7 +244,7 @@ namespace TestCubePlanet
             pEffectAmbientLightIntensity.SetValue(0.07f);
 
             pEffectDirectionalLightColor.SetValue(m_eSunColor.ToVector4());
-            pEffectDirectionalLightDirection.SetValue(m_pSun);
+            pEffectDirectionalLightDirection.SetValue(m_pSunCurrent);
             pEffectDirectionalLightIntensity.SetValue(0.9f);
             //pEffectDirectionalLightIntensity.SetValue(0.8f);
 
@@ -629,6 +632,7 @@ namespace TestCubePlanet
         private Square m_pFocusedSquare = null;
 
         private Matrix m_pWorldMatrix = Matrix.Identity;
+        private Vector3 m_pHorizon;
 
         public int VisibleQueue { get { return Square.s_pVisibleQueue.Count; } }
         public int InvisibleQueue { get { return Square.s_pInvisibleQueue.Count; } }
@@ -683,6 +687,11 @@ namespace TestCubePlanet
                 if (bCameraChanged)
                     m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
 
+                float h = m_pCamera.Position.Length();
+                float d = h * (float)Math.Sqrt(h * h / (m_pCube.R * m_pCube.R) - 1);
+                m_pHorizon = Vector3.Normalize(m_pCamera.Position - Vector3.Normalize(Vector3.Cross(m_pCamera.Position, m_pCamera.Left)) * d);
+                //pHorizon = Vector3.Normalize(pHorizon) * m_pCube.R;
+
                 Vector3 pTop = Vector3.Normalize(m_pCamera.FocusPoint);
                 Vector3 pForward = Vector3.Cross(pTop, m_pCamera.Left);
 
@@ -704,9 +713,86 @@ namespace TestCubePlanet
             }
         }
 
-        Microsoft.Xna.Framework.Color GetSkyColor(Vector3 normal)
+        private float m_fSunAngle = 0;
+
+        private float m_fTimeSpeed = 1.0f / 16000;
+
+        public float TimeSpeed
         {
-            float diff = Vector3.Dot(-m_pSun, normal) + 0.3f;
+            get { return m_fTimeSpeed; }
+            set { m_fTimeSpeed = value; }
+        }
+
+        private bool m_bTimeWarp = true;
+
+        public bool TimeWarp
+        {
+            get { return m_bTimeWarp; }
+            set { m_bTimeWarp = value; }
+        }
+
+        private TimeSpan m_fDayTime = TimeSpan.Zero;
+        public TimeSpan DayTime { get { return m_fDayTime; } }
+
+        private void UpdateLight()
+        {
+            Vector3 pSunHighestPos = Vector3.Normalize(Vector3.Cross(m_pPole, Vector3.Cross(m_pSunOriginal, m_pPole)));
+            pSunHighestPos = Vector3.Normalize(Vector3.Cross(m_pPole, Vector3.Cross(m_pCamera.FocusPoint, m_pPole)));
+
+            //1 в полдень, -1 в полночь
+            float fDayTime = Vector3.Dot(pSunHighestPos, -m_pSunCurrent);
+
+            if (fDayTime > 1)
+                fDayTime = 1;
+            if (fDayTime < -1)
+                fDayTime = -1;
+
+            float fK = 1;
+
+            if (m_bTimeWarp)
+            {
+                fK = 1 - fDayTime;
+                fK = fK * fK;
+
+                if (fK < 0.1)
+                    fK = 0.1f;
+
+                fK *= 5;
+            }
+
+            m_fSunAngle += (float)(fK * m_fFrameTime * m_fTimeSpeed);
+            while (m_fSunAngle > Math.PI * 2)
+                m_fSunAngle -= (float)(Math.PI * 2);
+            m_pSunCurrent = Vector3.Transform(m_pSunOriginal, Matrix.CreateFromAxisAngle(m_pPole, m_fSunAngle));
+
+            //если fDayTime2 < fDayTime - значит сейчас вторая половина суток, когда солнце уже миновало верхнюю точку.
+            float fDayTime2 = Vector3.Dot(pSunHighestPos, -m_pSunCurrent);
+            if (fDayTime2 > 1)
+                fDayTime2 = 1;
+            if (fDayTime2 < -1)
+                fDayTime2 = -1;
+
+            //если это первая половина суток, то Пи - это полночь, а 0 - это полдень.
+            //иначе - наоборот
+            float fRelativeSunAngle = (float)Math.Acos(fDayTime2);
+            if (fDayTime2 > fDayTime)
+                m_fDayTime = TimeSpan.FromMinutes(12 * 60 * (Math.PI - fRelativeSunAngle) / Math.PI);
+            else
+                m_fDayTime = TimeSpan.FromMinutes(12 * 60 * (Math.PI + fRelativeSunAngle) / Math.PI);
+
+            float fCos = Vector3.Dot(Vector3.Normalize(m_pCamera.Position), -m_pSunCurrent) + 0.3f;
+            //float fSin = (float)Math.Sqrt(1 - fCos*fCos);
+            if (fCos > 1)
+                fCos = 1;
+
+            fCos = 1 - (1 - fCos) * (1 - fCos);
+
+            if (fCos < 0)
+                m_eSunColor = Microsoft.Xna.Framework.Color.LightPink;
+            else
+                m_eSunColor = Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.LightPink, Microsoft.Xna.Framework.Color.LightYellow, fCos);
+
+            float diff = Vector3.Dot(-m_pSunCurrent, m_pHorizon) + 0.3f;
             if (diff > 1)
                 diff = 1;
             diff = 1 - (1 - diff) * (1 - diff);//*(1-diff)*(1-diff);
@@ -727,11 +813,11 @@ namespace TestCubePlanet
 
             Vector3 light = m_eSkyColor.ToVector3() * 0.02f +
                    m_eSunColor.ToVector3() * diffuse;// *0.8f;// +
-                   //SpecularColor * specular;
+            //SpecularColor * specular;
 
             //light = m_eSkyColor.ToVector3() * light;
 
-            return Microsoft.Xna.Framework.Color.FromNonPremultiplied((int)(light.X * 255), (int)(light.Y * 255), (int)(light.Z * 255), 255);
+            m_eRealSkyColor = Microsoft.Xna.Framework.Color.FromNonPremultiplied((int)(light.X * 255), (int)(light.Y * 255), (int)(light.Z * 255), 255);
         }
 
         /// <summary>
@@ -754,35 +840,13 @@ namespace TestCubePlanet
 
             UpdateCamera();
 
-            Vector3 pPole = Vector3.Normalize(Vector3.Backward + Vector3.Up + Vector3.Right);
-            m_pSun = Vector3.Normalize(Vector3.Forward + Vector3.Up + Vector3.Right);
-            m_pSun = Vector3.Cross(m_pSun, pPole);
-            m_pSun = Vector3.Transform(m_pSun, Matrix.CreateFromAxisAngle(pPole, (float)(lastTime / 16000)));
-
-            float fCos = Vector3.Dot(Vector3.Normalize(m_pCamera.Position), -m_pSun) + 0.3f;
-            //float fSin = (float)Math.Sqrt(1 - fCos*fCos);
-            if (fCos > 1)
-                fCos = 1;
-
-            fCos = 1 - (1 - fCos)*(1 - fCos);
-
-            if (fCos < 0)
-                m_eSunColor = Microsoft.Xna.Framework.Color.LightPink;
-            else
-                m_eSunColor = Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.LightPink, Microsoft.Xna.Framework.Color.LightYellow, fCos);
-
-            float h = m_pCamera.Position.Length();
-            float d = h * (float)Math.Sqrt(h*h/(m_pCube.R*m_pCube.R) -1);
-            Vector3 pHorizon = m_pCamera.Position - Vector3.Normalize(Vector3.Cross(m_pCamera.Position, m_pCamera.Left)) * d;
-            //pHorizon = Vector3.Normalize(pHorizon) * m_pCube.R;
-
-            Microsoft.Xna.Framework.Color eSkyColor = GetSkyColor(Vector3.Normalize(pHorizon));
+            UpdateLight();
 
             m_pDebugInfo = new VertexPositionColor[4];
             m_pDebugInfo[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
             m_pDebugInfo[1] = new VertexPositionColor(m_pCamera.FocusPoint, Microsoft.Xna.Framework.Color.Black);
-            m_pDebugInfo[2] = new VertexPositionColor(-pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
-            m_pDebugInfo[3] = new VertexPositionColor(pPole * 200, Microsoft.Xna.Framework.Color.Violet);
+            m_pDebugInfo[2] = new VertexPositionColor(-m_pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
+            m_pDebugInfo[3] = new VertexPositionColor(m_pPole * 200, Microsoft.Xna.Framework.Color.Violet);
 
             pEffectView.SetValue(m_pCamera.View);
             pEffectProjection.SetValue(m_pCamera.Projection);
@@ -802,7 +866,7 @@ namespace TestCubePlanet
             Viewport pPort = GraphicsDevice.Viewport;
 
             m_pMyEffect.Parameters["UseCelShading"].SetValue(m_bUseCelShading);
-            if (m_bUseCelShading)
+            if (m_bUseCelShading && !m_bWireFrame)
             {
                 if (GraphicsDevice.Viewport.Width != celTarget.Width || GraphicsDevice.Viewport.Height != celTarget.Height)
                     celTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
@@ -810,7 +874,7 @@ namespace TestCubePlanet
             }
 
             //pEffectDirectionalLightDirection.SetValue(-Vector3.Normalize(m_pCamera.FocusPoint));
-            pEffectDirectionalLightDirection.SetValue(m_pSun);
+            pEffectDirectionalLightDirection.SetValue(m_pSunCurrent);
             pEffectDirectionalLightIntensity.SetValue(0.9f);//0.8f
             pEffectDirectionalLightColor.SetValue(m_eSunColor.ToVector4());
 
@@ -822,7 +886,7 @@ namespace TestCubePlanet
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.Clear(eSkyColor);
+            GraphicsDevice.Clear(m_eRealSkyColor);
 
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
@@ -836,8 +900,8 @@ namespace TestCubePlanet
                     iCount++;
                 }
             }
-            
-            if (m_bUseCelShading)
+
+            if (m_bUseCelShading && !m_bWireFrame)
             {
                 GraphicsDevice.SetRenderTarget(celTarget);
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -850,7 +914,7 @@ namespace TestCubePlanet
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.Clear(eSkyColor);
+            GraphicsDevice.Clear(m_eRealSkyColor);
 
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
@@ -923,7 +987,7 @@ namespace TestCubePlanet
             DrawPickedTriangle();
             DrawDebugInfo();
 
-            if (m_bUseCelShading)
+            if (m_bUseCelShading && !m_bWireFrame)
             {
                 /* We are done with the render target so set it back to null.
                  * This will get us back to rendering to the default render target
@@ -931,7 +995,7 @@ namespace TestCubePlanet
                 GraphicsDevice.SetRenderTarget(null);
                 GraphicsDevice.Viewport = pPort;
 
-                GraphicsDevice.Clear(eSkyColor);
+                GraphicsDevice.Clear(m_eRealSkyColor);
                 /* Also in XNA 4.0 applying effects to a sprite is a little different
                  * Use an overload of Begin that takes the effect as a parameter.  Also make
                  * sure to set the sprite batch blend state to Opaque or we will not get black
@@ -952,7 +1016,7 @@ namespace TestCubePlanet
             GraphicsDevice.SetVertexBuffer(pSunMeshPart.VertexBuffer, pSunMeshPart.VertexOffset);
             GraphicsDevice.Indices = pSunMeshPart.IndexBuffer;
 
-            lineEffect.World = Matrix.CreateTranslation(-m_pSun * 200)*m_pWorldMatrix;
+            lineEffect.World = Matrix.CreateTranslation(-m_pSunCurrent * 200)*m_pWorldMatrix;
             lineEffect.Projection = m_pCamera.Projection;
             lineEffect.View = m_pCamera.View;
 
@@ -1074,7 +1138,7 @@ namespace TestCubePlanet
                     effect.Parameters["View"].SetValue(view);
                     effect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
                     effect.Parameters["Projection"].SetValue(projection);
-                    effect.Parameters["DirectionalLightDirection"].SetValue(m_pSun);
+                    effect.Parameters["DirectionalLightDirection"].SetValue(m_pSunCurrent);
                     effect.Parameters["DirectionalLightColor"].SetValue(m_eSunColor.ToVector4());
                     
                     // Draw all the instance copies in a single call.

@@ -20,6 +20,9 @@ namespace TestCubePlanet
             m_iLastSize = GetSquareSize();
             comboBox2.SelectedIndex = 3;
 
+            trackBar2.Value = 31 - (int)(1.0f / (cubePlanetDraw3d1.TimeSpeed * 1000));
+            checkBox6.Checked = cubePlanetDraw3d1.TimeWarp;
+
             cubePlanetDraw3d1.MouseWheel += new MouseEventHandler(cubePlanetDraw3d1_MouseWheel);
         }
 
@@ -230,7 +233,8 @@ namespace TestCubePlanet
 
         private void numericUpDown1_KeyUp(object sender, KeyEventArgs e)
         {
-            numericUpDown1_ValueChanged(sender, new EventArgs());
+            int iSize = GetSquareSize();
+            label17.Text = string.Format("~{0:#####}k locations", numericUpDown1.Value * 6 * iSize * iSize / 1000);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -262,6 +266,7 @@ namespace TestCubePlanet
             //if (m_pMap3DLastMouseLocation != null)
             //    cubePlanetDraw3d1_MouseMove(sender, m_pMap3DLastMouseLocation);
             //m_pMap3DLastMouseLocation = null;
+            label22.Text = string.Format("World time: {0}:{1:00}", cubePlanetDraw3d1.DayTime.Hours, cubePlanetDraw3d1.DayTime.Minutes);
         }
 
         private void checkBox5_CheckedChanged(object sender, EventArgs e)
@@ -271,7 +276,12 @@ namespace TestCubePlanet
 
         private void checkBox6_CheckedChanged(object sender, EventArgs e)
         {
-            //Square.Check2 = checkBox6.Checked;
+            cubePlanetDraw3d1.TimeWarp = checkBox6.Checked;
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            cubePlanetDraw3d1.TimeSpeed = 1.0f / ((31 - trackBar2.Value) * 1000);
         }
     }
 }
