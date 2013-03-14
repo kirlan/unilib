@@ -12,7 +12,7 @@ namespace TestCubePlanet
     {
         public readonly Model m_pModel;
         public readonly Matrix worldMatrix;
-        public Matrix[] boneTransforms;
+        //public Matrix[] boneTransforms;
 
         public static int Size { get { return sizeof(float)*16; } }
 
@@ -45,16 +45,16 @@ namespace TestCubePlanet
                 br.ReadSingle(), br.ReadSingle(), br.ReadSingle(), br.ReadSingle(),
                 br.ReadSingle(), br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 
-            boneTransforms = new Matrix[m_pModel.Bones.Count];
-            m_pModel.CopyAbsoluteBoneTransformsTo(boneTransforms);
-            foreach (ModelMesh mesh in m_pModel.Meshes)
-            {
-                foreach (Effect currentEffect in mesh.Effects)
-                {
-                    currentEffect.CurrentTechnique = currentEffect.Techniques["Tree"];
-                    currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
-                }
-            }
+            //boneTransforms = new Matrix[m_pModel.Bones.Count];
+            //m_pModel.CopyAbsoluteBoneTransformsTo(boneTransforms);
+            //foreach (ModelMesh mesh in m_pModel.Meshes)
+            //{
+            //    foreach (Effect currentEffect in mesh.Effects)
+            //    {
+            //        currentEffect.CurrentTechnique = currentEffect.Techniques["Tree"];
+            //        currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
+            //    }
+            //}
         }
 
         public TreeModel(Vector3 pPosition, float fAngle, float fScale, Model pModel, Texture2D pTexture)
@@ -67,16 +67,16 @@ namespace TestCubePlanet
             float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
             worldMatrix = Matrix.CreateScale(fScale * 10) * Matrix.CreateRotationY(fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(pPosition);
 
-            boneTransforms = new Matrix[m_pModel.Bones.Count];
-            m_pModel.CopyAbsoluteBoneTransformsTo(boneTransforms);
-            foreach (ModelMesh mesh in m_pModel.Meshes)
-            {
-                foreach (Effect currentEffect in mesh.Effects)
-                {
-                    currentEffect.CurrentTechnique = currentEffect.Techniques["Tree"];
-                    currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
-                }
-            }
+            //boneTransforms = new Matrix[m_pModel.Bones.Count];
+            //m_pModel.CopyAbsoluteBoneTransformsTo(boneTransforms);
+            //foreach (ModelMesh mesh in m_pModel.Meshes)
+            //{
+            //    foreach (Effect currentEffect in mesh.Effects)
+            //    {
+            //        currentEffect.CurrentTechnique = currentEffect.Techniques["Tree"];
+            //        currentEffect.Parameters["xTextureModel"].SetValue(pTexture);
+            //    }
+            //}
         }
 
         public override string ToString()

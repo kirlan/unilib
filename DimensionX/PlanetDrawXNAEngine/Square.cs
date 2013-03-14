@@ -386,15 +386,13 @@ namespace TestCubePlanet
 
         public float m_fVisibleDistance = -1;
 
-        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustum, Vector3 pCameraPos, Vector3 pCameraDir, Vector3 pCameraTarget, Matrix pWorld)
+        public void UpdateVisible(GraphicsDevice pDevice, BoundingFrustum pFrustum, Vector3 pCameraPos, Vector3 pCameraDir, Vector3 pCameraTarget, Matrix pWorld, Matrix pInvert)
         {
             m_fVisibleDistance = -1;
 
             bool bVisible = true;
 
             Vector3 pRealCenter = Vector3.Transform(m_pBounds8.Center, pWorld);
-            Matrix pInvert = Matrix.Invert(pWorld);
-
             Vector3 pRealNormal = Vector3.Normalize(Vector3.Transform(m_pBounds8.Center + m_pBounds8.Normal, pInvert) - Vector3.Transform(m_pBounds8.Center, pInvert));
 
             Vector3 pViewVector = pRealCenter - pCameraPos;

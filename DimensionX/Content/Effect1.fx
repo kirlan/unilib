@@ -2,6 +2,8 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 
+float4x4 ModelBoneWorld;
+
 float3 CameraPosition;
 
 float4 AmbientLightColor;
@@ -583,7 +585,7 @@ ModelVertexShaderOutput InstancedModelVSCommon(InstancedModelVertexShaderInput i
 ModelVertexShaderOutput HardwareInstancingVertexShader(InstancedModelVertexShaderInput input,
                                                   float4x4 instanceTransform : BLENDWEIGHT)
 {
-    return InstancedModelVSCommon(input, mul(World, transpose(instanceTransform)));
+    return InstancedModelVSCommon(input, mul(ModelBoneWorld, transpose(instanceTransform)));
 }
 
 ModelVertexShaderOutput ModelVS(ModelVertexShaderInput input, float3 Normal : NORMAL)

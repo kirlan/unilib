@@ -50,27 +50,27 @@ namespace ContentLoader
         }
     }
 
-    public class Shaders
+    public static class Shader
     {
         private static ContentManager LibContent;
 
-        public Dictionary<SettlementSizes, Dictionary<int, Model>> m_cSettlementModels = new Dictionary<SettlementSizes, Dictionary<int, Model>>();
-        public Dictionary<SettlementSizes, Dictionary<int, Texture2D>> m_cSettlementTextures = new Dictionary<SettlementSizes, Dictionary<int, Texture2D>>();
+        public static Dictionary<SettlementSizes, Dictionary<int, Model>> m_cSettlementModels = new Dictionary<SettlementSizes, Dictionary<int, Model>>();
+        public static Dictionary<SettlementSizes, Dictionary<int, Texture2D>> m_cSettlementTextures = new Dictionary<SettlementSizes, Dictionary<int, Texture2D>>();
 
-        private RenderTarget2D refractionRenderTarget;
-        private RenderTarget2D celTarget;
+        private static RenderTarget2D refractionRenderTarget;
+        private static RenderTarget2D celTarget;
 
-        private BasicEffect m_pBasicEffect;
-        private Effect m_pMyEffect;
+        private static BasicEffect m_pBasicEffect;
+        private static Effect m_pMyEffect;
 
-        public void DrawLandscape(VertexBuffer pVBuffer, IndexBuffer pIBuffer, int iVBufferSize, int iIBufferSize)
+        public static void DrawLandscape(VertexBuffer pVBuffer, IndexBuffer pIBuffer, int iVBufferSize, int iIBufferSize)
         {
             m_pGraphicsDevice.SetVertexBuffer(pVBuffer);
             m_pGraphicsDevice.Indices = pIBuffer;
             m_pGraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, iVBufferSize, 0, iIBufferSize);
         }
 
-        public void PrepareDrawUnderwater(Color eBackground)
+        public static void PrepareDrawUnderwater(Color eBackground)
         {
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
@@ -81,7 +81,7 @@ namespace ContentLoader
             m_pGraphicsDevice.Clear(eBackground);
         }
 
-        public void PrepareDrawLand(Color eBackground)
+        public static void PrepareDrawLand(Color eBackground)
         {
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
@@ -100,7 +100,7 @@ namespace ContentLoader
             m_pGraphicsDevice.Clear(eBackground);
         }
 
-        public void PrepareDrawWater()
+        public static void PrepareDrawWater()
         {
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
             //effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
@@ -110,7 +110,7 @@ namespace ContentLoader
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
         }
 
-        public void PrepareDrawLines(bool bDepthStencil)
+        public static void PrepareDrawLines(bool bDepthStencil)
         {
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.None;
@@ -123,176 +123,78 @@ namespace ContentLoader
             m_pLineEffect.CurrentTechnique.Passes[0].Apply();
         }
 
-        public void DrawLines(VertexPositionColor[] bbvertices, int[] bbindices)
+        public static void DrawLines(VertexPositionColor[] bbvertices, int[] bbindices)
         {
             m_pGraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
                                         bbvertices, 0, bbvertices.Length, bbindices, 0, bbindices.Length / 2);
         }
 
-        public void DrawLines(VertexPositionColor[] bbvertices)
+        public static void DrawLines(VertexPositionColor[] bbvertices)
         {
             m_pGraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList,
                                         bbvertices, 0, bbvertices.Length / 2);
         }
 
-        public void DrawLines(VertexMultitextured[] bbvertices, int[] bbindices)
+        public static void DrawLines(VertexMultitextured[] bbvertices, int[] bbindices)
         {
             m_pGraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
                                         bbvertices, 0, bbvertices.Length, bbindices, 0, bbindices.Length / 2);
         }
 
-        public static void SetMatrices(Effect pEffect, Matrix pWorld, Matrix pView, Matrix pProjection, Vector3 pCamera)
+        public static void SetMatrices(Matrix pWorld, Matrix pView, Matrix pProjection, Vector3 pCamera)
         {
-            pEffect.Parameters["World"].SetValue(pWorld);
-            pEffect.Parameters["View"].SetValue(pView);
-            pEffect.Parameters["Projection"].SetValue(pProjection);
-            pEffect.Parameters["CameraPosition"].SetValue(pCamera);
-        }
-
-        public void SetMatrices(Matrix pWorld, Matrix pView, Matrix pProjection, Vector3 pCamera)
-        {
-            SetMatrices(m_pMyEffect, pWorld, pView, pProjection, pCamera);
+            m_pWorld.SetValue(pWorld);
+            m_pView.SetValue(pView);
+            m_pProjection.SetValue(pProjection);
+            m_pCameraPosition.SetValue(pCamera);
 
             m_pLineEffect.World = pWorld;
             m_pLineEffect.View = pView;
             m_pLineEffect.Projection = pProjection;
         }
-
-        private static void SetDirectionalLight(Effect pEffect, Vector3 pDirection, float fIntesity, Color eColor)
-        {
-            pEffect.Parameters["DirectionalLightDirection"].SetValue(pDirection);
-            pEffect.Parameters["DirectionalLightIntensity"].SetValue(fIntesity);//0.8f
-            pEffect.Parameters["DirectionalLightColor"].SetValue(eColor.ToVector4());
-        }
         
-        public void SetDirectionalLight(Vector3 pDirection, float fIntesity, Color eColor)
+        public static void SetDirectionalLight(Vector3 pDirection, float fIntesity, Color eColor)
         {
-            SetDirectionalLight(m_pMyEffect, pDirection, fIntesity, eColor);
-
-            foreach (Model pModel in m_aTreeModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetDirectionalLight(meshPart.Effect, pDirection, fIntesity, eColor);
-                    }
-
-            foreach (Model pModel in m_aPalmModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetDirectionalLight(meshPart.Effect, pDirection, fIntesity, eColor);
-                    }
-
-            foreach (Model pModel in m_aPineModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetDirectionalLight(meshPart.Effect, pDirection, fIntesity, eColor);
-                    }
-
-            foreach (var vSettlementSize in m_cSettlementModels)
-                foreach (var vSettlement in vSettlementSize.Value)
-                    foreach (ModelMesh mesh in vSettlement.Value.Meshes)
-                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                        {
-                            SetDirectionalLight(meshPart.Effect, pDirection, fIntesity, eColor);
-                        }
+            m_pDirectionalLightDirection.SetValue(pDirection);
+            m_pDirectionalLightIntensity.SetValue(fIntesity);//0.8f
+            m_pDirectionalLightColor.SetValue(eColor.ToVector4());
         }
 
-        private static void SetAmbientLight(Effect pEffect, Color pColor, float fIntensity)
+        public static void SetAmbientLight(Color pColor, float fIntensity)
         {
-            pEffect.Parameters["AmbientLightColor"].SetValue(pColor.ToVector4());
-            pEffect.Parameters["AmbientLightIntensity"].SetValue(fIntensity);
+            m_pMyEffect.Parameters["AmbientLightColor"].SetValue(pColor.ToVector4());
+            m_pMyEffect.Parameters["AmbientLightIntensity"].SetValue(fIntensity);
         }
 
-        public void SetAmbientLight(Color pColor, float fIntensity)
+        public static void SetFog(Color pColor, float fMaxHeight, float fDensity)
         {
-            SetAmbientLight(m_pMyEffect, pColor, fIntensity);
-
-            foreach (Model pModel in m_aTreeModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetAmbientLight(meshPart.Effect, pColor, fIntensity);
-                    }
-
-            foreach (Model pModel in m_aPalmModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetAmbientLight(meshPart.Effect, pColor, fIntensity);
-                    }
-
-            foreach (Model pModel in m_aPineModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetAmbientLight(meshPart.Effect, pColor, fIntensity);
-                    }
-
-            foreach (var vSettlementSize in m_cSettlementModels)
-                foreach (var vSettlement in vSettlementSize.Value)
-                    foreach (ModelMesh mesh in vSettlement.Value.Meshes)
-                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                        {
-                            SetAmbientLight(meshPart.Effect, pColor, fIntensity);
-                        }
+            m_pMyEffect.Parameters["FogColor"].SetValue(pColor.ToVector4());
+            m_pMyEffect.Parameters["FogHeight"].SetValue(fMaxHeight);
+            m_pMyEffect.Parameters["FogDensity"].SetValue(fDensity);
         }
 
-        private static void SetFog(Effect pEffect, Color pColor, float fMaxHeight, float fDensity)
-        {
-            pEffect.Parameters["FogColor"].SetValue(pColor.ToVector4());
-            pEffect.Parameters["FogHeight"].SetValue(fMaxHeight);
-            pEffect.Parameters["FogDensity"].SetValue(fDensity);
-        }
+        static EffectParameter m_pSpecularColor;
 
-        public void SetFog(Color pColor, float fMaxHeight, float fDensity)
-        {
-            SetFog(m_pMyEffect, pColor, fMaxHeight, fDensity);
+        static EffectParameter m_pBlendDistance;
+        static EffectParameter m_pBlendWidth;
+        static EffectParameter m_pUseCelShading;
 
-            foreach (Model pModel in m_aTreeModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetFog(meshPart.Effect, pColor, fMaxHeight, fDensity);
-                    }
+        static EffectParameter m_pDirectionalLightDirection;
+        static EffectParameter m_pDirectionalLightIntensity;
+        static EffectParameter m_pDirectionalLightColor;
 
-            foreach (Model pModel in m_aPalmModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetFog(meshPart.Effect, pColor, fMaxHeight, fDensity);
-                    }
+        static EffectParameter m_pWorld;
+        static EffectParameter m_pView;
+        static EffectParameter m_pProjection;
+        static EffectParameter m_pCameraPosition;
 
-            foreach (Model pModel in m_aPineModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetFog(meshPart.Effect, pColor, fMaxHeight, fDensity);
-                    }
+        static EffectParameter m_pModelBoneWorld;
 
-            foreach (var vSettlementSize in m_cSettlementModels)
-                foreach (var vSettlement in vSettlementSize.Value)
-                    foreach (ModelMesh mesh in vSettlement.Value.Meshes)
-                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                        {
-                            SetFog(meshPart.Effect, pColor, fMaxHeight, fDensity);
-                        }
-        }
+        private static Viewport pPort;
 
-        EffectParameter m_pSpecularColor;
+        private static bool m_bUseCelShading = false;
 
-        EffectParameter m_pEffectBlendDistance;
-        EffectParameter m_pEffectBlendWidth;
-
-        private static void SetUseCelShading(Effect pEffect, bool bValue)
-        {
-            pEffect.Parameters["UseCelShading"].SetValue(bValue);
-        }
-
-        private Viewport pPort;
-
-        public void BeginDraw(bool bUseCelShading, bool bWireFrame)
+        public static void BeginDraw(bool bUseCelShading, bool bWireFrame)
         {
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.CullClockwiseFace;
@@ -306,38 +208,14 @@ namespace ContentLoader
             
             pPort = m_pGraphicsDevice.Viewport;
 
-            SetUseCelShading(m_pMyEffect, bUseCelShading && !bWireFrame);
+            if (m_bUseCelShading != bUseCelShading && !bWireFrame)
+            {
+                m_bUseCelShading = bUseCelShading && !bWireFrame;
 
-            foreach (Model pModel in m_aTreeModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetUseCelShading(meshPart.Effect, bUseCelShading && !bWireFrame);
-                    }
+                m_pUseCelShading.SetValue(m_bUseCelShading);
+            }
 
-            foreach (Model pModel in m_aPalmModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetUseCelShading(meshPart.Effect, bUseCelShading && !bWireFrame);
-                    }
-
-            foreach (Model pModel in m_aPineModels)
-                foreach (ModelMesh mesh in pModel.Meshes)
-                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    {
-                        SetUseCelShading(meshPart.Effect, bUseCelShading && !bWireFrame);
-                    }
-
-            foreach (var vSettlementSize in m_cSettlementModels)
-                foreach (var vSettlement in vSettlementSize.Value)
-                    foreach (ModelMesh mesh in vSettlement.Value.Meshes)
-                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                        {
-                            SetUseCelShading(meshPart.Effect, bUseCelShading && !bWireFrame);
-                        }
-
-            if (bUseCelShading && !bWireFrame)
+            if (m_bUseCelShading)
             {
                 if (m_pGraphicsDevice.Viewport.Width != celTarget.Width || m_pGraphicsDevice.Viewport.Height != celTarget.Height)
                     celTarget = new RenderTarget2D(m_pGraphicsDevice, m_pGraphicsDevice.Viewport.Width, m_pGraphicsDevice.Viewport.Height,
@@ -345,7 +223,7 @@ namespace ContentLoader
             }
         }
 
-        public void FinishDraw(Color eBackground)
+        public static void FinishDraw(Color eBackground)
         {
             if (m_pMyEffect.Parameters["UseCelShading"].GetValueBoolean())
             {
@@ -367,57 +245,57 @@ namespace ContentLoader
             }
         }
 
-        Texture2D grassTexture;
-        Texture2D sandTexture;
-        Texture2D rockTexture;
-        Texture2D snowTexture;
-        Texture2D forestTexture;
-        Texture2D roadTexture;
-        Texture2D swampTexture;
-        Texture2D lavaTexture;
+        static Texture2D grassTexture;
+        static Texture2D sandTexture;
+        static Texture2D rockTexture;
+        static Texture2D snowTexture;
+        static Texture2D forestTexture;
+        static Texture2D roadTexture;
+        static Texture2D swampTexture;
+        static Texture2D lavaTexture;
 
-        Texture2D grassBump;
-        Texture2D sandBump;
-        Texture2D rockBump;
-        Texture2D snowBump;
-        Texture2D forestBump;
-        Texture2D roadBump;
-        Texture2D swampBump;
-        Texture2D lavaBump;
+        static Texture2D grassBump;
+        static Texture2D sandBump;
+        static Texture2D rockBump;
+        static Texture2D snowBump;
+        static Texture2D forestBump;
+        static Texture2D roadBump;
+        static Texture2D swampBump;
+        static Texture2D lavaBump;
 
-        public Texture2D m_pTreeTexture;
+        public static Texture2D m_pTreeTexture;
 
-        public Model[] m_aTreeModels = new Model[13];
-        public Model[] m_aPalmModels = new Model[4];
-        public Model[] m_aPineModels = new Model[4];
+        public static Model[] m_aTreeModels = new Model[13];
+        public static Model[] m_aPalmModels = new Model[4];
+        public static Model[] m_aPineModels = new Model[4];
 
-        public SpriteFont m_pVillageNameFont;
-        public SpriteFont m_pTownNameFont;
-        public SpriteFont m_pCityNameFont;
-        public SpriteBatch m_pSpriteBatch;
+        public static SpriteFont m_pVillageNameFont;
+        public static SpriteFont m_pTownNameFont;
+        public static SpriteFont m_pCityNameFont;
+        public static SpriteBatch m_pSpriteBatch;
 
-        Effect m_pOutlineShader;   // Outline shader effect
-        float defaultThickness = 1.5f;  // default outline thickness
-        float defaultThreshold = 0.2f;  // default edge detection threshold
-        float outlineThickness = 0.5f;  // current outline thickness
-        float outlineThreshold = 0.12f;  // current edge detection threshold
-        float tStep = 0.01f;    // Ammount to step the line thickness by
-        float hStep = 0.001f;   // Ammount to step the threshold by
+        static Effect m_pOutlineShader;   // Outline shader effect
+        static float defaultThickness = 1.5f;  // default outline thickness
+        static float defaultThreshold = 0.2f;  // default edge detection threshold
+        static float outlineThickness = 0.5f;  // current outline thickness
+        static float outlineThreshold = 0.12f;  // current edge detection threshold
+        static float tStep = 0.01f;    // Ammount to step the line thickness by
+        static float hStep = 0.001f;   // Ammount to step the threshold by
 
         /* Render target to capture cel-shaded render for edge detection
          * post processing
          */
-        Texture2D celMap;       // Texture map for cell shading
+        static Texture2D celMap;       // Texture map for cell shading
 
-        BasicEffect m_pLineEffect;
+        static BasicEffect m_pLineEffect;
 
-        BasicEffect m_pTextEffect;
+        static BasicEffect m_pTextEffect;
 
-        public Model m_pSunModel;
+        public static Model m_pSunModel;
         
-        GraphicsDevice m_pGraphicsDevice;
+        static GraphicsDevice m_pGraphicsDevice;
         
-        public Shaders(GraphicsDevice GraphicsDevice, IServiceProvider Services)
+        public static void Init(GraphicsDevice GraphicsDevice, IServiceProvider Services)
         {
             m_pGraphicsDevice = GraphicsDevice;
 
@@ -435,17 +313,11 @@ namespace ContentLoader
             m_pCityNameFont = LibContent.Load<SpriteFont>("content/cityname");
 
             m_pMyEffect = LibContent.Load<Effect>("content/Effect1");
-            BindEffectParameters();
 
             celMap = LibContent.Load<Texture2D>("content/celMap");
             m_pMyEffect.Parameters["CelMap"].SetValue(celMap);
 
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
-
-            m_pSpecularColor.SetValue(0);
-
-            m_pEffectBlendDistance.SetValue(20);//2
-            m_pEffectBlendWidth.SetValue(40);
 
             m_pMyEffect.Parameters["xTexture0"].SetValue(sandTexture);
             m_pMyEffect.Parameters["xTexture1"].SetValue(grassTexture);
@@ -474,6 +346,13 @@ namespace ContentLoader
 
             LoadSettlements();
 
+            BindEffectParameters();
+
+            m_pSpecularColor.SetValue(0);
+
+            m_pBlendDistance.SetValue(20);//2
+            m_pBlendWidth.SetValue(40);
+
             m_pSunModel = LoadModel("content/fbx/SphereLowPoly");
 
             m_pTextEffect = new BasicEffect(GraphicsDevice);
@@ -500,7 +379,7 @@ namespace ContentLoader
             celTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
                 false, SurfaceFormat.Color, DepthFormat.Depth24);
         }
-        private void LoadTrees()
+        private static void LoadTrees()
         {
             m_pTreeTexture = LibContent.Load<Texture2D>("content/dds/trees");
 
@@ -527,9 +406,11 @@ namespace ContentLoader
             m_aPineModels[1] = LoadModel("content/fbx/tree13");
             m_aPineModels[2] = LoadModel("content/fbx/tree14");
             m_aPineModels[3] = LoadModel("content/fbx/tree16");
+
+            m_pMyEffect.Parameters["xTextureModel"].SetValue(m_pTreeTexture);
         }
 
-        private void LoadSettlements()
+        private static void LoadSettlements()
         {
             foreach (SettlementSizes eSize in Enum.GetValues(typeof(SettlementSizes)))
             {
@@ -675,25 +556,38 @@ namespace ContentLoader
         /// </summary>
         /// <param name="sPath"></param>
         /// <returns></returns>
-        private Model LoadModel(string sPath)
+        private static Model LoadModel(string sPath)
         {
             Model pModel = LibContent.Load<Model>(sPath);
-            foreach (ModelMesh mesh in pModel.Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = m_pMyEffect.Clone();
+            //foreach (ModelMesh mesh in pModel.Meshes)
+            //    foreach (ModelMeshPart meshPart in mesh.MeshParts)
+            //        meshPart.Effect = m_pMyEffect.Clone();
 
             return pModel;
         }
 
-        private void BindEffectParameters()
+        private static void BindEffectParameters()
         {
             m_pSpecularColor = m_pMyEffect.Parameters["SpecularColor"];
 
-            m_pEffectBlendDistance = m_pMyEffect.Parameters["BlendDistance"];
-            m_pEffectBlendWidth = m_pMyEffect.Parameters["BlendWidth"];
+            m_pBlendDistance = m_pMyEffect.Parameters["BlendDistance"];
+            m_pBlendWidth = m_pMyEffect.Parameters["BlendWidth"];
+
+            m_pUseCelShading = m_pMyEffect.Parameters["UseCelShading"];
+
+            m_pDirectionalLightDirection = m_pMyEffect.Parameters["DirectionalLightDirection"];
+            m_pDirectionalLightIntensity = m_pMyEffect.Parameters["DirectionalLightIntensity"];
+            m_pDirectionalLightColor = m_pMyEffect.Parameters["DirectionalLightColor"];
+
+            m_pWorld = m_pMyEffect.Parameters["World"];
+            m_pView = m_pMyEffect.Parameters["View"];
+            m_pProjection = m_pMyEffect.Parameters["Projection"];
+            m_pCameraPosition = m_pMyEffect.Parameters["CameraPosition"];
+
+            m_pModelBoneWorld = m_pMyEffect.Parameters["ModelBoneWorld"];
         }
 
-        private void LoadTerrainTextures()
+        private static void LoadTerrainTextures()
         {
             grassTexture = LibContent.Load<Texture2D>("content/dds/1-plain");
             sandTexture = LibContent.Load<Texture2D>("content/dds/1-desert");
@@ -717,12 +611,12 @@ namespace ContentLoader
             new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 2),
             new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 3)
         );
-        private DynamicVertexBuffer instanceVertexBuffer;
+        private static DynamicVertexBuffer instanceVertexBuffer;
 
         /// <summary>
         /// Efficiently draws several copies of a piece of geometry using hardware instancing.
         /// </summary>
-        public void DrawModelHardwareInstancing(Model model, Matrix[] modelBones,
+        public static void DrawModelHardwareInstancing(Model model, Matrix[] modelBones,
                                          Matrix[] instances, Matrix view, Matrix projection, Vector3 pCamera)
         {
             if (instances.Length == 0)
@@ -742,6 +636,8 @@ namespace ContentLoader
             // Transfer the latest instance transform matrices into the instanceVertexBuffer.
             instanceVertexBuffer.SetData(instances, 0, instances.Length, SetDataOptions.Discard);
 
+            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Tree"];
+
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (ModelMeshPart meshPart in mesh.MeshParts)
@@ -754,15 +650,10 @@ namespace ContentLoader
 
                     m_pGraphicsDevice.Indices = meshPart.IndexBuffer;
 
-                    // Set up the instance rendering effect.
-                    Effect effect = meshPart.Effect;
-
-                    //effect.CurrentTechnique = effect.Techniques["HardwareInstancing"];
-
-                    Shaders.SetMatrices(effect, modelBones[mesh.ParentBone.Index], view, projection, pCamera);
+                    m_pModelBoneWorld.SetValue(modelBones[mesh.ParentBone.Index]);
 
                     // Draw all the instance copies in a single call.
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    foreach (EffectPass pass in m_pMyEffect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
 

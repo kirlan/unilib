@@ -31,8 +31,6 @@ namespace TestCubePlanet
         private Microsoft.Xna.Framework.Color m_eSkyColor = Microsoft.Xna.Framework.Color.AliceBlue;
         private Microsoft.Xna.Framework.Color m_eRealSkyColor = Microsoft.Xna.Framework.Color.AliceBlue;
 
-        Shaders m_pShader = null;
-
         private Face[] m_aFaces = new Face[6];
 
         private Cube m_pCube = null;
@@ -44,12 +42,12 @@ namespace TestCubePlanet
                 m_pCamera = new ArcBallCamera(GraphicsDevice);
                 m_pCamera.Initialize(pCube.R);
 
-                m_pShader.SetFog(m_eSkyColor, pCube.R + 15, 0.001f);
+                Shader.SetFog(m_eSkyColor, pCube.R + 15, 0.001f);
 
                 int index = 0;
                 foreach (var pFace in pCube.m_cFaces)
                 {
-                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, m_pShader.m_aTreeModels, m_pShader.m_aPalmModels, m_pShader.m_aPineModels, m_pShader.m_pTreeTexture);
+                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, Shader.m_aTreeModels, Shader.m_aPalmModels, Shader.m_aPineModels, Shader.m_pTreeTexture);
                 }
             }
         }
@@ -97,8 +95,8 @@ namespace TestCubePlanet
         /// </summary>
         protected override void Initialize()
         {
-            m_pShader = new Shaders(GraphicsDevice, Services);
-            m_pShader.SetAmbientLight(m_eSkyColor, 0.07f);
+            Shader.Init(GraphicsDevice, Services);
+            Shader.SetAmbientLight(m_eSkyColor, 0.07f);
 
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
@@ -255,11 +253,13 @@ namespace TestCubePlanet
                 m_pWorldMatrix = Matrix.Multiply(Matrix.Multiply(T, Matrix.CreateScale(1, 0.5f, 1)), Matrix.Invert(T));
                 m_pWorldMatrix = Matrix.Multiply(m_pWorldMatrix, Matrix.CreateTranslation(pTop * m_pCube.R / 2));
 
+                Matrix pInvert = Matrix.Invert(m_pWorldMatrix);
+
                 //Вычисляем видимость квадратов
                 BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
                 foreach (var pFace in m_aFaces)
                     foreach (var pSquare in pFace.m_aSquares)
-                        pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pCamera.FocusPoint, m_pWorldMatrix);
+                        pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pCamera.FocusPoint, m_pWorldMatrix, pInvert);
 
                 //Обновляем массив отображаемых деревьев
                 if (m_bDrawTrees)
@@ -399,29 +399,29 @@ namespace TestCubePlanet
             m_aDebugInfo[2] = new VertexPositionColor(-m_pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
             m_aDebugInfo[3] = new VertexPositionColor(m_pPole * 200, Microsoft.Xna.Framework.Color.Violet);
 
-            m_pShader.BeginDraw(m_bUseCelShading, m_bWireFrame);
+            Shader.BeginDraw(m_bUseCelShading, m_bWireFrame);
 
             if (m_bShowFrustum)
             {
                 Matrix pCameraView = Matrix.CreateLookAt(m_pCamera.Position * 3, m_pCamera.FocusPoint, m_pCamera.Top);
-                m_pShader.SetMatrices(m_pWorldMatrix, pCameraView, m_pCamera.Projection, m_pCamera.Position);
-                m_pShader.SetFog(m_eSkyColor, 1, 0);
+                Shader.SetMatrices(m_pWorldMatrix, pCameraView, m_pCamera.Projection, m_pCamera.Position);
+                Shader.SetFog(m_eSkyColor, 1, 0);
             }
             else
-                m_pShader.SetMatrices(m_pWorldMatrix, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+                Shader.SetMatrices(m_pWorldMatrix, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
 
-            m_pShader.SetDirectionalLight(m_pSunCurrent, 0.9f, m_eSunColor);
+            Shader.SetDirectionalLight(m_pSunCurrent, 0.9f, m_eSunColor);
 
             int iCount = 0;
             m_iTrianglesCount = 0;
 
             //Рисуем подводный мир - в refractionRenderTarget
-            m_pShader.PrepareDrawUnderwater(m_eRealSkyColor);
+            Shader.PrepareDrawUnderwater(m_eRealSkyColor);
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
                 if (pSquare.m_iUnderwaterTrianglesCount > 0)
                 {
-                    m_pShader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pUnderwaterIndexBuffer, pSquare.g.m_aLandPoints.Length, pSquare.m_iUnderwaterTrianglesCount);
+                    Shader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pUnderwaterIndexBuffer, pSquare.g.m_aLandPoints.Length, pSquare.m_iUnderwaterTrianglesCount);
 
                     m_iTrianglesCount += (uint)pSquare.m_iUnderwaterTrianglesCount;
                     iCount++;
@@ -429,17 +429,17 @@ namespace TestCubePlanet
             }
 
             //Рисуем надводный мир
-            m_pShader.PrepareDrawLand(m_eRealSkyColor);
+            Shader.PrepareDrawLand(m_eRealSkyColor);
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
                 if (pSquare.m_fVisibleDistance < m_fLODDistance)
                 {
-                    m_pShader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pLandIndexBufferHR, pSquare.g.m_aLandPoints.Length, pSquare.m_iLandTrianglesCountHR);
+                    Shader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pLandIndexBufferHR, pSquare.g.m_aLandPoints.Length, pSquare.m_iLandTrianglesCountHR);
                     m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountHR;
                 }
                 else
                 {
-                    m_pShader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pLandIndexBufferLR, pSquare.g.m_aLandPoints.Length, pSquare.m_iLandTrianglesCountLR);
+                    Shader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pLandIndexBufferLR, pSquare.g.m_aLandPoints.Length, pSquare.m_iLandTrianglesCountLR);
                     m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountLR;
                 }
                 iCount++;
@@ -453,12 +453,12 @@ namespace TestCubePlanet
             //DrawSun();
 
             //Рисуем водную поверхность и видимый через неё подводный мир
-            m_pShader.PrepareDrawWater();
+            Shader.PrepareDrawWater();
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
                 if (pSquare.m_iUnderwaterTrianglesCount > 0)
                 {
-                    m_pShader.DrawLandscape(pSquare.m_pWaterVertexBuffer, pSquare.m_pWaterIndexBuffer, pSquare.g.m_aWaterPoints.Length, pSquare.m_iWaterTrianglesCount);
+                    Shader.DrawLandscape(pSquare.m_pWaterVertexBuffer, pSquare.m_pWaterIndexBuffer, pSquare.g.m_aWaterPoints.Length, pSquare.m_iWaterTrianglesCount);
 
                     m_iTrianglesCount += (uint)pSquare.m_iWaterTrianglesCount;
                     iCount++;
@@ -467,10 +467,10 @@ namespace TestCubePlanet
 
             if (m_bShowBounds)
             {
-                m_pShader.PrepareDrawLines(false);
+                Shader.PrepareDrawLines(false);
 
                 foreach (var pSquare in Square.s_pVisibleQueue)
-                    m_pShader.DrawLines(pSquare.m_pBounds8.GetVertices(), pSquare.m_pBounds8.GetIndices());
+                    Shader.DrawLines(pSquare.m_pBounds8.GetVertices(), pSquare.m_pBounds8.GetIndices());
                 
                 //if (m_pSelectedSquare != null)
                 //{
@@ -480,7 +480,7 @@ namespace TestCubePlanet
 
             if (m_bShowFrustum)
             {
-                m_pShader.PrepareDrawLines(false);
+                Shader.PrepareDrawLines(false);
 
                 BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
 
@@ -511,14 +511,14 @@ namespace TestCubePlanet
                                 1,5
                             };
 
-                m_pShader.DrawLines(aVert, indices);
+                Shader.DrawLines(aVert, indices);
             }
 
             // Draw the outline of the triangle under the cursor.
             DrawPickedTriangle();
             DrawDebugInfo();
 
-            m_pShader.FinishDraw(m_eRealSkyColor);
+            Shader.FinishDraw(m_eRealSkyColor);
 
             m_fDrawingTime = timer.Elapsed.TotalMilliseconds - lastTime;
         }
@@ -545,12 +545,14 @@ namespace TestCubePlanet
         //    //m_pSunModel.Draw(Matrix.CreateTranslation(-m_pSun * 200), m_pCamera.View, m_pCamera.Projection);
         //}
 
-        private Dictionary<Model, List<Matrix>> m_cTreeInstances = new Dictionary<Model, List<Matrix>>();
+        private Dictionary<Model, Matrix[]> m_cTreeInstances = new Dictionary<Model, Matrix[]>();
 
         private void RecalckTrees()
         {
+            Dictionary<Model, List<Matrix>> cTreeInstances = new Dictionary<Model, List<Matrix>>();
+
             foreach (var pTreeModel in m_cTreeInstances)
-                pTreeModel.Value.Clear();            
+                cTreeInstances[pTreeModel.Key] = new List<Matrix>();            
             
             float fMaxDistanceSquared = 1600;
             //fMaxDistanceSquared *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
@@ -563,13 +565,15 @@ namespace TestCubePlanet
                     {
                         Model pTreeModel = vTree.Key;
 
-                        if (!m_cTreeInstances.ContainsKey(pTreeModel))
-                            m_cTreeInstances[pTreeModel] = new List<Matrix>();
+                        if (!cTreeInstances.ContainsKey(pTreeModel))
+                            cTreeInstances[pTreeModel] = new List<Matrix>();
                         for (int i = 0; i < vTree.Value.Length; i++)
                         {
                             TreeModel pTree = vTree.Value[i];
 
-                            Vector3 pViewVector = (pTree.worldMatrix * m_pWorldMatrix).Translation - m_pCamera.Position;
+                            Matrix pWorld = pTree.worldMatrix * m_pWorldMatrix;
+
+                            Vector3 pViewVector = pWorld.Translation - m_pCamera.Position;
 
                             //float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), m_pCamera.Direction);
                             //if (fCos < 0.6) //cos(45) = 0,70710678118654752440084436210485...
@@ -578,11 +582,14 @@ namespace TestCubePlanet
                             if (pViewVector.LengthSquared() > fMaxDistanceSquared)
                                 continue;
 
-                            m_cTreeInstances[pTreeModel].Add(pTree.worldMatrix * m_pWorldMatrix);
+                            cTreeInstances[pTreeModel].Add(pWorld);
                         }
                     }
                 }
             }
+
+            foreach (var pTreeModel in cTreeInstances)
+                m_cTreeInstances[pTreeModel.Key] = pTreeModel.Value.ToArray();    
         }
 
         private void DrawTrees()
@@ -596,8 +603,8 @@ namespace TestCubePlanet
                     Matrix[] instancedModelBones = new Matrix[pTreeModel.Key.Bones.Count];
                     pTreeModel.Key.CopyAbsoluteBoneTransformsTo(instancedModelBones);
 
-                    m_pShader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
-                                             pTreeModel.Value.ToArray(), pCameraView, m_pCamera.Projection, m_pCamera.Position);
+                    Shader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
+                                             pTreeModel.Value, pCameraView, m_pCamera.Projection, m_pCamera.Position);
                 }
             }
             else
@@ -606,8 +613,8 @@ namespace TestCubePlanet
                     Matrix[] instancedModelBones = new Matrix[pTreeModel.Key.Bones.Count];
                     pTreeModel.Key.CopyAbsoluteBoneTransformsTo(instancedModelBones);
 
-                    m_pShader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
-                                             pTreeModel.Value.ToArray(), m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+                    Shader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
+                                             pTreeModel.Value, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
                 }
         }
 
@@ -652,7 +659,7 @@ namespace TestCubePlanet
                 // and turn off the depth buffer because we want to be able to
                 // see the picked triangle outline regardless of which way it is
                 // facing, and even if there is other geometry in front of it.
-                m_pShader.PrepareDrawLines(true);
+                Shader.PrepareDrawLines(true);
 
                 // Draw the triangle.
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
@@ -660,7 +667,7 @@ namespace TestCubePlanet
                 if (m_pSelectedSquare != null)
                 {
                     m_pSelectedSquare.Rebuild(GraphicsDevice);
-                    m_pShader.DrawLines(m_pSelectedSquare.g.m_aLandPoints, m_pSelectedSquare.g.m_aLocations[m_iFocusedLocation]);
+                    Shader.DrawLines(m_pSelectedSquare.g.m_aLandPoints, m_pSelectedSquare.g.m_aLocations[m_iFocusedLocation]);
                 }
             }
         }
@@ -671,8 +678,8 @@ namespace TestCubePlanet
         void DrawDebugInfo()
         {
             // Activate the line drawing BasicEffect.
-            m_pShader.PrepareDrawLines(false);
-            m_pShader.DrawLines(m_aDebugInfo);
+            Shader.PrepareDrawLines(false);
+            Shader.DrawLines(m_aDebugInfo);
         }
 
         VertexPositionColor[] m_aDebugInfo;
