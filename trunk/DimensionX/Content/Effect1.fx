@@ -712,7 +712,9 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 
     //float4 light = GetLight(input.Normal, input.View);
 	
-	float4 reflectiveColor = float4(0.1f, 0.1f, 0.3f, 1.0f);//*light;
+	//float4 reflectiveColor = float4(0.1f, 0.1f, 0.3f, 1.0f);//*light;
+	//float4 reflectiveColor = float4(0.12f, 0.69f, 0.66f, 1.0f);//*light;
+	float4 reflectiveColor = float4(0.06f, 0.45f, 0.43f, 1.0f);//*light;
 	//reflectiveColor = reflectiveColor*light;
 
     float2 ProjectedRefrTexCoords = (float2)0;
@@ -730,7 +732,7 @@ float4 WaterPS(WVertexToPixel PSIn) : COLOR0
      
 //    Output.Color = lerp(combinedColor, dullColor, 0.2f);
 	
-	return ApplyFog(lerp(combinedColor, FogColor, 0.2f), PSIn.Position3D, 1)*light;
+	return ApplyFog(lerp(combinedColor, FogColor, 0.5f), PSIn.Position3D, 1)*light;
 //	return ApplyFog(float4(0.1f, 0.1f, 0.3f, 1.0f), PSIn.Position3D, 1)*light;
 }
 

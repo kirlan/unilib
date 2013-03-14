@@ -191,6 +191,8 @@ namespace TestCubePlanet
 
             label9.Text = "Visible Squares: " + cubePlanetDraw3d1.VisibleQueue.ToString();
             label10.Text = "Cached Squares: " + cubePlanetDraw3d1.InvisibleQueue.ToString();
+
+            label22.Text = string.Format("World time: {0}:{1:00}", cubePlanetDraw3d1.DayTime.Hours, cubePlanetDraw3d1.DayTime.Minutes);
         }
 
         private void cubePlanetDraw3d1_Click(object sender, EventArgs e)
@@ -266,7 +268,6 @@ namespace TestCubePlanet
             //if (m_pMap3DLastMouseLocation != null)
             //    cubePlanetDraw3d1_MouseMove(sender, m_pMap3DLastMouseLocation);
             //m_pMap3DLastMouseLocation = null;
-            label22.Text = string.Format("World time: {0}:{1:00}", cubePlanetDraw3d1.DayTime.Hours, cubePlanetDraw3d1.DayTime.Minutes);
         }
 
         private void checkBox5_CheckedChanged(object sender, EventArgs e)

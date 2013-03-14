@@ -752,7 +752,7 @@ namespace TestCubePlanet
             if (m_bTimeWarp)
             {
                 fK = 1 - fDayTime;
-                fK = fK * fK;
+                //fK = fK * fK;
 
                 if (fK < 0.1)
                     fK = 0.1f;
@@ -815,7 +815,7 @@ namespace TestCubePlanet
                    m_eSunColor.ToVector3() * diffuse;// *0.8f;// +
             //SpecularColor * specular;
 
-            //light = m_eSkyColor.ToVector3() * light;
+            light = m_eSkyColor.ToVector3() * light;
 
             m_eRealSkyColor = Microsoft.Xna.Framework.Color.FromNonPremultiplied((int)(light.X * 255), (int)(light.Y * 255), (int)(light.Z * 255), 255);
         }
