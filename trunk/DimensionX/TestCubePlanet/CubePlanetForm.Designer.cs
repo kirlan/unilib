@@ -68,6 +68,7 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.label22 = new System.Windows.Forms.Label();
             this.cubePlanetDraw3d1 = new TestCubePlanet.CubePlanetDraw3d();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -90,7 +91,7 @@
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.label14);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 377);
+            this.panel1.Location = new System.Drawing.Point(0, 402);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(501, 61);
             this.panel1.TabIndex = 1;
@@ -332,6 +333,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.checkBox7);
             this.panel2.Controls.Add(this.label21);
             this.panel2.Controls.Add(this.label20);
             this.panel2.Controls.Add(this.label19);
@@ -352,7 +354,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(354, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(147, 377);
+            this.panel2.Size = new System.Drawing.Size(147, 402);
             this.panel2.TabIndex = 2;
             this.panel2.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.panel2_PreviewKeyDown);
             // 
@@ -529,7 +531,7 @@
             this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label22.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.label22.Location = new System.Drawing.Point(204, 361);
+            this.label22.Location = new System.Drawing.Point(204, 386);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(150, 16);
             this.label22.TabIndex = 9;
@@ -544,7 +546,7 @@
             this.cubePlanetDraw3d1.Name = "cubePlanetDraw3d1";
             this.cubePlanetDraw3d1.NeedDrawTrees = true;
             this.cubePlanetDraw3d1.ShowBounds = false;
-            this.cubePlanetDraw3d1.Size = new System.Drawing.Size(354, 377);
+            this.cubePlanetDraw3d1.Size = new System.Drawing.Size(354, 402);
             this.cubePlanetDraw3d1.TabIndex = 0;
             this.cubePlanetDraw3d1.Text = "cubePlanetDraw3d1";
             this.cubePlanetDraw3d1.TimeSpeed = 6.25E-05F;
@@ -558,11 +560,22 @@
             this.cubePlanetDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseMove);
             this.cubePlanetDraw3d1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseUp);
             // 
+            // checkBox7
+            // 
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Location = new System.Drawing.Point(9, 377);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(67, 17);
+            this.checkBox7.TabIndex = 24;
+            this.checkBox7.Text = "DEBUG!";
+            this.checkBox7.UseVisualStyleBackColor = true;
+            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+            // 
             // CubePlanetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(501, 438);
+            this.ClientSize = new System.Drawing.Size(501, 463);
             this.Controls.Add(this.label22);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label5);
@@ -627,6 +640,7 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TrackBar trackBar2;
         private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.CheckBox checkBox7;
     }
 }
 

@@ -25,7 +25,7 @@ namespace TestCubePlanet
             //PresentationParameters pp = GraphicsDevice.PresentationParameters;
             if (m_fStoredAspectRatio != GraphicsDevice.Viewport.AspectRatio || m_fStoredFieldOfView != FieldOfView)
             {
-                Projection = Matrix.CreatePerspectiveFieldOfView(FieldOfView, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100000f);
+                Projection = Matrix.CreatePerspectiveFieldOfView(FieldOfView, GraphicsDevice.Viewport.AspectRatio, 0.1f, 800f);
                 m_fStoredAspectRatio = GraphicsDevice.Viewport.AspectRatio;
                 m_fStoredFieldOfView = FieldOfView;
                 return true;

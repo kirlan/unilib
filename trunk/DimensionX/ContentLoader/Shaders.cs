@@ -60,8 +60,8 @@ namespace ContentLoader
         private RenderTarget2D refractionRenderTarget;
         private RenderTarget2D celTarget;
 
-        BasicEffect m_pBasicEffect;
-        Effect m_pMyEffect;
+        private BasicEffect m_pBasicEffect;
+        private Effect m_pMyEffect;
 
         public void DrawLandscape(VertexBuffer pVBuffer, IndexBuffer pIBuffer, int iVBufferSize, int iIBufferSize)
         {
@@ -280,7 +280,7 @@ namespace ContentLoader
                         }
         }
 
-        public EffectParameter m_pSpecularColor;
+        EffectParameter m_pSpecularColor;
 
         EffectParameter m_pEffectBlendDistance;
         EffectParameter m_pEffectBlendWidth;
@@ -396,7 +396,7 @@ namespace ContentLoader
         public SpriteFont m_pCityNameFont;
         public SpriteBatch m_pSpriteBatch;
 
-        public Effect m_pOutlineShader;   // Outline shader effect
+        Effect m_pOutlineShader;   // Outline shader effect
         float defaultThickness = 1.5f;  // default outline thickness
         float defaultThreshold = 0.2f;  // default edge detection threshold
         float outlineThickness = 0.5f;  // current outline thickness
@@ -411,7 +411,7 @@ namespace ContentLoader
 
         BasicEffect m_pLineEffect;
 
-        public BasicEffect m_pTextEffect;
+        BasicEffect m_pTextEffect;
 
         public Model m_pSunModel;
         
