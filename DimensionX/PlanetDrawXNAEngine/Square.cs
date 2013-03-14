@@ -393,17 +393,19 @@ namespace TestCubePlanet
             bool bVisible = true;
 
             Vector3 pRealCenter = Vector3.Transform(m_pBounds8.Center, pWorld);
+            Matrix pInvert = Matrix.Invert(pWorld);
+
+            Vector3 pRealNormal = Vector3.Normalize(Vector3.Transform(m_pBounds8.Center + m_pBounds8.Normal, pInvert) - Vector3.Transform(m_pBounds8.Center, pInvert));
 
             Vector3 pViewVector = pRealCenter - pCameraPos;
-            Vector3 pRealViewVector = pRealCenter - pCameraPos*2;
-            float fCos2 = Vector3.Dot(Vector3.Normalize(pRealViewVector), m_pBounds8.Normal);
+            float fCos2 = Vector3.Dot(Vector3.Normalize(pViewVector), pRealNormal);//m_pBounds8.Normal);
             if (fCos2 > 0.1)
                 bVisible = false;
 
             if(bVisible)
             {
                 float fCos = Vector3.Dot(Vector3.Normalize(pViewVector), pCameraDir);
-                if (fCos < 0.6 && !m_pBounds8.Intersects(pFrustum, pWorld) &&
+                if (fCos < 0.8 && !m_pBounds8.Intersects(pFrustum, pWorld) &&
                     m_pBounds8.m_pSphere.Contains(pCameraPos) == ContainmentType.Disjoint) //cos(45) = 0,70710678118654752440084436210485...
                     bVisible = false;
             }

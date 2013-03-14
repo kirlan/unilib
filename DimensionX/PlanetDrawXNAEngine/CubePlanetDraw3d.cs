@@ -146,6 +146,13 @@ namespace TestCubePlanet
             set { m_bShowBounds = value; }
         }
 
+        private bool m_bShowFrustum = false;
+        public bool ShowFrustum
+        {
+            get { return m_bShowFrustum; }
+            set { m_bShowFrustum = value; }
+        }
+
         private bool m_bWireFrame = false;
         public bool WireFrame
         {
@@ -394,7 +401,15 @@ namespace TestCubePlanet
 
             m_pShader.BeginDraw(m_bUseCelShading, m_bWireFrame);
 
-            m_pShader.SetMatrices(m_pWorldMatrix, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+            if (m_bShowFrustum)
+            {
+                Matrix pCameraView = Matrix.CreateLookAt(m_pCamera.Position * 3, m_pCamera.FocusPoint, m_pCamera.Top);
+                m_pShader.SetMatrices(m_pWorldMatrix, pCameraView, m_pCamera.Projection, m_pCamera.Position);
+                m_pShader.SetFog(m_eSkyColor, 1, 0);
+            }
+            else
+                m_pShader.SetMatrices(m_pWorldMatrix, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+
             m_pShader.SetDirectionalLight(m_pSunCurrent, 0.9f, m_eSunColor);
 
             int iCount = 0;
@@ -454,10 +469,49 @@ namespace TestCubePlanet
             {
                 m_pShader.PrepareDrawLines(false);
 
-                if (m_pSelectedSquare != null)
-                {
-                    m_pShader.DrawLines(m_pSelectedSquare.m_pBounds8.GetVertices(), m_pSelectedSquare.m_pBounds8.GetIndices());
-                }
+                foreach (var pSquare in Square.s_pVisibleQueue)
+                    m_pShader.DrawLines(pSquare.m_pBounds8.GetVertices(), pSquare.m_pBounds8.GetIndices());
+                
+                //if (m_pSelectedSquare != null)
+                //{
+                //    m_pShader.DrawLines(m_pSelectedSquare.m_pBounds8.GetVertices(), m_pSelectedSquare.m_pBounds8.GetIndices());
+                //}
+            }
+
+            if (m_bShowFrustum)
+            {
+                m_pShader.PrepareDrawLines(false);
+
+                BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
+
+                var aCorneres = pFrustrum.GetCorners();
+
+                VertexPositionColor[] aVert = new VertexPositionColor[8];
+                aVert[0] = new VertexPositionColor(aCorneres[0], Microsoft.Xna.Framework.Color.Blue);
+                aVert[1] = new VertexPositionColor(aCorneres[3], Microsoft.Xna.Framework.Color.Blue);
+                aVert[2] = new VertexPositionColor(aCorneres[1], Microsoft.Xna.Framework.Color.Blue);
+                aVert[3] = new VertexPositionColor(aCorneres[2], Microsoft.Xna.Framework.Color.Blue);
+                aVert[4] = new VertexPositionColor(aCorneres[4], Microsoft.Xna.Framework.Color.Blue);
+                aVert[5] = new VertexPositionColor(aCorneres[7], Microsoft.Xna.Framework.Color.Blue);
+                aVert[6] = new VertexPositionColor(aCorneres[5], Microsoft.Xna.Framework.Color.Blue);
+                aVert[7] = new VertexPositionColor(aCorneres[6], Microsoft.Xna.Framework.Color.Blue);
+
+                int[] indices = {
+                                0,2,
+                                0,1,
+                                2,3,
+                                1,3,
+                                4,6,
+                                6,7,
+                                5,7,
+                                4,5,
+                                0,4,
+                                2,6,
+                                3,7,
+                                1,5
+                            };
+
+                m_pShader.DrawLines(aVert, indices);
             }
 
             // Draw the outline of the triangle under the cursor.
@@ -533,14 +587,28 @@ namespace TestCubePlanet
 
         private void DrawTrees()
         {
-            foreach (var pTreeModel in m_cTreeInstances)
+            if (m_bShowFrustum)
             {
-                Matrix[] instancedModelBones = new Matrix[pTreeModel.Key.Bones.Count];
-                pTreeModel.Key.CopyAbsoluteBoneTransformsTo(instancedModelBones);
+                Matrix pCameraView = Matrix.CreateLookAt(m_pCamera.Position * 3, m_pCamera.FocusPoint, m_pCamera.Top);
 
-                m_pShader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
-                                         pTreeModel.Value.ToArray(), m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+                foreach (var pTreeModel in m_cTreeInstances)
+                {
+                    Matrix[] instancedModelBones = new Matrix[pTreeModel.Key.Bones.Count];
+                    pTreeModel.Key.CopyAbsoluteBoneTransformsTo(instancedModelBones);
+
+                    m_pShader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
+                                             pTreeModel.Value.ToArray(), pCameraView, m_pCamera.Projection, m_pCamera.Position);
+                }
             }
+            else
+                foreach (var pTreeModel in m_cTreeInstances)
+                {
+                    Matrix[] instancedModelBones = new Matrix[pTreeModel.Key.Bones.Count];
+                    pTreeModel.Key.CopyAbsoluteBoneTransformsTo(instancedModelBones);
+
+                    m_pShader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
+                                             pTreeModel.Value.ToArray(), m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+                }
         }
 
         // CalculateCursorRay Calculates a world space ray starting at the camera's
@@ -663,7 +731,13 @@ namespace TestCubePlanet
 
             // Look up a collision ray based on the current cursor position. See the
             // Picking Sample documentation for a detailed explanation of this.
-            m_pCursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
+            if (m_bShowFrustum)
+            {
+                Matrix pCameraView = Matrix.CreateLookAt(m_pCamera.Position * 3, m_pCamera.FocusPoint, m_pCamera.Top);
+                m_pCursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, pCameraView);
+            }
+            else
+                m_pCursorRay = CalculateCursorRay(x, y, m_pCamera.Projection, m_pCamera.View);
 
 
             if (m_pSelectedSquare != null && m_pSelectedSquare.m_fVisibleDistance > 0 &&

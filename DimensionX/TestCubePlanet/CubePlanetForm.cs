@@ -284,5 +284,10 @@ namespace TestCubePlanet
         {
             cubePlanetDraw3d1.TimeSpeed = 1.0f / ((31 - trackBar2.Value) * 1000);
         }
+
+        private void checkBox7_CheckedChanged(object sender, EventArgs e)
+        {
+            cubePlanetDraw3d1.ShowFrustum = checkBox7.Checked;
+        }
     }
 }
