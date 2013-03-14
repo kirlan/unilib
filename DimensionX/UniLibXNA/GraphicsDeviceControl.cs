@@ -50,35 +50,6 @@ namespace UniLibXNA
         }
     }
 
-    public struct VertexMultitextured : IVertexType
-    {
-        public Vector3 Position;
-        public Vector3 Normal;
-        public Vector4 TextureCoordinate;
-        public Vector4 TexWeights;
-        public Vector4 TexWeights2;
-        public Vector3 Tangent;
-        public Microsoft.Xna.Framework.Color Color;
-
-        public readonly static long Size = sizeof(float) * 21 + sizeof(byte)*4;
-
-        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
-         (
-             new VertexElement( 0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0 ),
-             new VertexElement( sizeof(float) * 3, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0 ),
-             new VertexElement( sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0 ),
-             new VertexElement( sizeof(float) * 10, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1 ),
-             new VertexElement(sizeof(float) * 14, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2),
-             new VertexElement(sizeof(float) * 18, VertexElementFormat.Vector3, VertexElementUsage.Tangent, 0),
-             new VertexElement(sizeof(float) * 21, VertexElementFormat.Color, VertexElementUsage.Color, 0)
-        );
-
-        VertexDeclaration IVertexType.VertexDeclaration
-        {
-            get { return VertexDeclaration; }
-        }
-    }
-    
     /// <summary>
     /// Custom control uses the XNA Framework GraphicsDevice to render onto
     /// a Windows Form. Derived classes can override the Initialize and Draw

@@ -7,16 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TestCubePlanet
 {
-    public enum SettlementSize
-    {
-        Hamlet,
-        Village,
-        Fort,
-        Town,
-        City,
-        Capital
-    }
-
     public class SettlementModel
     {
         public readonly Vector3 m_pPosition;

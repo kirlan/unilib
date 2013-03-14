@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Media;
 using UniLibXNA;
 using Random;
 using Microsoft.VisualBasic.Devices;
+using ContentLoader;
 
 namespace TestCubePlanet
 {
@@ -27,99 +28,10 @@ namespace TestCubePlanet
     /// </summary>
     public class CubePlanetDraw3d : GraphicsDeviceControl
     {
-        BasicEffect m_pBasicEffect;
-        Effect m_pMyEffect;
-
         private Microsoft.Xna.Framework.Color m_eSkyColor = Microsoft.Xna.Framework.Color.AliceBlue;
         private Microsoft.Xna.Framework.Color m_eRealSkyColor = Microsoft.Xna.Framework.Color.AliceBlue;
 
-        public static ContentManager LibContent;
-
-        EffectParameter pEffectWorld;
-        EffectParameter pEffectView;
-        EffectParameter pEffectProjection;
-        EffectParameter pEffectAmbientLightColor;
-        EffectParameter pEffectAmbientLightIntensity;
-        EffectParameter pEffectDirectionalLightDirection;
-        EffectParameter pEffectDirectionalLightColor;
-        EffectParameter pEffectDirectionalLightIntensity;
-        EffectParameter pEffectCameraPosition;
-        EffectParameter pEffectSpecularColor;
-        EffectParameter pEffectFogColor;
-        EffectParameter pEffectFogDensity;
-        EffectParameter pEffectFogHeight;
-        EffectParameter pEffectFogModePlain;
-        EffectParameter pEffectFogModeRing;
-        EffectParameter pEffectFogModeSphere;
-        EffectParameter pEffectBlendDistance;
-        EffectParameter pEffectBlendWidth;
-
-        EffectParameter pEffectTexture0;
-        EffectParameter pEffectTexture1;
-        EffectParameter pEffectTexture2;
-        EffectParameter pEffectTexture3;
-        EffectParameter pEffectTexture4;
-        EffectParameter pEffectTexture5;
-        EffectParameter pEffectTexture6;
-        EffectParameter pEffectTexture7;
-
-        EffectParameter pEffectBumpMap0;
-
-        EffectParameter pEffectTextureModel;
-
-        Texture2D grassTexture;
-        Texture2D sandTexture;
-        Texture2D rockTexture;
-        Texture2D snowTexture;
-        Texture2D forestTexture;
-        Texture2D roadTexture;
-        Texture2D swampTexture;
-        Texture2D lavaTexture;
-
-        Texture2D grassBump;
-        Texture2D sandBump;
-        Texture2D rockBump;
-        Texture2D snowBump;
-        Texture2D forestBump;
-        Texture2D roadBump;
-        Texture2D swampBump;
-        Texture2D lavaBump;
-
-        Texture2D treeTexture;
-
-        Model[] treeModel = new Model[13];
-        Model[] palmModel = new Model[4];
-        Model[] pineModel = new Model[4];
-
-        SpriteFont villageNameFont;
-        SpriteFont townNameFont;
-        SpriteFont cityNameFont;
-        SpriteBatch m_pSpriteBatch;
-
-        Dictionary<SettlementSize, Dictionary<int, Model>> m_cSettlementModels = new Dictionary<SettlementSize, Dictionary<int, Model>>();
-        Dictionary<SettlementSize, Dictionary<int, Texture2D>> m_cSettlementTextures = new Dictionary<SettlementSize, Dictionary<int, Texture2D>>();
-
-        Effect outlineShader;   // Outline shader effect
-        float defaultThickness = 1.5f;  // default outline thickness
-        float defaultThreshold = 0.2f;  // default edge detection threshold
-        float outlineThickness = 0.5f;  // current outline thickness
-        float outlineThreshold = 0.12f;  // current edge detection threshold
-        float tStep = 0.01f;    // Ammount to step the line thickness by
-        float hStep = 0.001f;   // Ammount to step the threshold by
-
-        /* Render target to capture cel-shaded render for edge detection
-         * post processing
-         */
-        Texture2D celMap;       // Texture map for cell shading
-        RenderTarget2D celTarget;       // render target for main game object
-
-        // Vertex array that stores exactly which triangle was picked.
-        // Effect and vertex declaration for drawing the picked triangle.
-        BasicEffect lineEffect;
-
-        BasicEffect textEffect;
-
-        RenderTarget2D refractionRenderTarget;
+        Shaders m_pShader = null;
 
         private Face[] m_aFaces = new Face[6];
 
@@ -132,44 +44,12 @@ namespace TestCubePlanet
                 m_pCamera = new ArcBallCamera(GraphicsDevice);
                 m_pCamera.Initialize(pCube.R);
 
+                m_pShader.SetFog(m_eSkyColor, pCube.R + 15, 0.001f);
+
                 int index = 0;
                 foreach (var pFace in pCube.m_cFaces)
                 {
-                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, treeModel, palmModel, pineModel, treeTexture);
-
-                    float fFogHeight = 10;
-                    fFogHeight = pCube.R + 15;
-
-                    foreach (Model pModel in treeModel)
-                        foreach (ModelMesh mesh in pModel.Meshes)
-                            foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                            {
-                                meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                            }
-
-                    foreach (Model pModel in palmModel)
-                        foreach (ModelMesh mesh in pModel.Meshes)
-                            foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                            {
-                                meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                            }
-
-                    foreach (Model pModel in pineModel)
-                        foreach (ModelMesh mesh in pModel.Meshes)
-                            foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                            {
-                                meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                            }
-
-                    foreach (var vSettlementSize in m_cSettlementModels)
-                        foreach (var vSettlement in vSettlementSize.Value)
-                            foreach (ModelMesh mesh in vSettlement.Value.Meshes)
-                                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                                {
-                                    meshPart.Effect.Parameters["FogHeight"].SetValue(fFogHeight);
-                                }
-
-                    pEffectFogHeight.SetValue(fFogHeight);
+                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, m_pShader.m_aTreeModels, m_pShader.m_aPalmModels, m_pShader.m_aPineModels, m_pShader.m_pTreeTexture);
                 }
             }
         }
@@ -211,108 +91,14 @@ namespace TestCubePlanet
         public static Vector3 m_pSunOriginal = Vector3.Normalize(Vector3.Cross(Vector3.Normalize(Vector3.Forward + Vector3.Up + Vector3.Right), m_pPole));
         public Vector3 m_pSunCurrent = m_pSunOriginal;
         public Microsoft.Xna.Framework.Color m_eSunColor = Microsoft.Xna.Framework.Color.Yellow;
-        private Model m_pSunModel;
 
         /// <summary>
         /// Initializes the control.
         /// </summary>
         protected override void Initialize()
         {
-            m_pBasicEffect = new BasicEffect(GraphicsDevice);
-            m_pBasicEffect.VertexColorEnabled = true;
-            m_pSpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            LibContent = new ContentManager(Services);
-
-            // Create our effect.
-            LoadTerrainTextures();
-
-            villageNameFont = LibContent.Load<SpriteFont>("content/villagename");
-            townNameFont = LibContent.Load<SpriteFont>("content/townname");
-            cityNameFont = LibContent.Load<SpriteFont>("content/cityname");
-
-            m_pMyEffect = LibContent.Load<Effect>("content/Effect1");
-            BindEffectParameters();
-
-            celMap = LibContent.Load<Texture2D>("content/celMap");
-            m_pMyEffect.Parameters["CelMap"].SetValue(celMap);
-
-            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
-            pEffectWorld.SetValue(Matrix.Identity);
-
-            pEffectAmbientLightColor.SetValue(m_eSkyColor.ToVector4());
-            pEffectAmbientLightIntensity.SetValue(0.07f);
-
-            pEffectDirectionalLightColor.SetValue(m_eSunColor.ToVector4());
-            pEffectDirectionalLightDirection.SetValue(m_pSunCurrent);
-            pEffectDirectionalLightIntensity.SetValue(0.9f);
-            //pEffectDirectionalLightIntensity.SetValue(0.8f);
-
-            pEffectSpecularColor.SetValue(0);
-
-            pEffectFogColor.SetValue(m_eSkyColor.ToVector4());
-            pEffectFogHeight.SetValue(165);
-            pEffectFogModePlain.SetValue(false);
-            pEffectFogModeRing.SetValue(false);
-            pEffectFogModeSphere.SetValue(true);
-//            pEffectFogDensity.SetValue(0.05f);
-            pEffectFogDensity.SetValue(0.001f);
-
-            pEffectBlendDistance.SetValue(20);//2
-            pEffectBlendWidth.SetValue(40);
-
-            pEffectTexture0.SetValue(sandTexture);
-            pEffectTexture1.SetValue(grassTexture);
-            pEffectTexture2.SetValue(rockTexture);
-            pEffectTexture3.SetValue(snowTexture);
-            pEffectTexture4.SetValue(forestTexture);
-            pEffectTexture5.SetValue(roadTexture);
-            pEffectTexture6.SetValue(swampTexture);
-            pEffectTexture7.SetValue(lavaTexture);
-
-            pEffectBumpMap0.SetValue(rockBump);
-
-            m_pMyEffect.Parameters["GridColor1"].SetValue(Microsoft.Xna.Framework.Color.Black.ToVector4());
-            m_pMyEffect.Parameters["GridColor2"].SetValue(Microsoft.Xna.Framework.Color.Pink.ToVector4());
-            m_pMyEffect.Parameters["GridColor3"].SetValue(Microsoft.Xna.Framework.Color.White.ToVector4());
-            m_pMyEffect.Parameters["GridColor4"].SetValue(Microsoft.Xna.Framework.Color.Goldenrod.ToVector4());
-            m_pMyEffect.Parameters["GridColor5"].SetValue(Microsoft.Xna.Framework.Color.Yellow.ToVector4());
-            m_pMyEffect.Parameters["GridColor6"].SetValue(Microsoft.Xna.Framework.Color.Black.ToVector4());
-
-            // create the effect and vertex declaration for drawing the
-            // picked triangle.
-            lineEffect = new BasicEffect(GraphicsDevice);
-            lineEffect.VertexColorEnabled = true;
-
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
-            refractionRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, pp.DepthStencilFormat);
-
-            LoadTrees();
-
-            LoadSettlements();
-
-            m_pSunModel = LoadModel("content/fbx/SphereLowPoly"); 
-            
-            textEffect = new BasicEffect(GraphicsDevice);
-
-            /* Load and initialize the outline shader effect
-             */
-            outlineShader = LibContent.Load<Effect>("content/OutlineShader");
-            outlineShader.Parameters["Thickness"].SetValue(outlineThickness);
-            outlineShader.Parameters["Threshold"].SetValue(outlineThreshold);
-            outlineShader.Parameters["ScreenSize"].SetValue(
-                new Vector2(GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height));
-
-            /* Here is the first significant difference between XNA 3.0 and XNA 4.0
-             * Render targets have been significantly revamped in this version of XNA
-             * this constructor creates a render target with the given width and height, 
-             * no MipMap, the standard Color surface format and a depth format that provides
-             * space for depth information.  The key bit here is the depth format.  If
-             * we do not specify this here we will get the default DepthFormat for a render
-             * target which is None.  Without a depth buffer we will not get propper culling.
-             */
-            celTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
-                false, SurfaceFormat.Color, DepthFormat.Depth24);
+            m_pShader = new Shaders(GraphicsDevice, Services);
+            m_pShader.SetAmbientLight(m_eSkyColor, 0.07f);
 
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
@@ -326,260 +112,27 @@ namespace TestCubePlanet
             lastTime = timer.Elapsed.TotalMilliseconds;
         }
 
-        private void LoadTrees()
-        {
-            treeTexture = LibContent.Load<Texture2D>("content/dds/trees");
-
-            treeModel[0] = LoadModel("content/fbx/tree1");
-            treeModel[1] = LoadModel("content/fbx/tree2");
-            treeModel[2] = LoadModel("content/fbx/tree3");
-            treeModel[3] = LoadModel("content/fbx/tree4");
-            treeModel[4] = LoadModel("content/fbx/tree6");
-            treeModel[5] = LoadModel("content/fbx/tree7");
-            treeModel[6] = LoadModel("content/fbx/tree8");
-            treeModel[7] = LoadModel("content/fbx/tree9");
-            treeModel[8] = LoadModel("content/fbx/tree10");
-            treeModel[9] = LoadModel("content/fbx/tree11");
-            treeModel[10] = LoadModel("content/fbx/tree12");
-            treeModel[11] = LoadModel("content/fbx/tree15");
-            treeModel[12] = LoadModel("content/fbx/tree16");
-
-            palmModel[0] = LoadModel("content/fbx/palm1");
-            palmModel[1] = LoadModel("content/fbx/palm2");
-            palmModel[2] = LoadModel("content/fbx/palm3");
-            palmModel[3] = LoadModel("content/fbx/palm4");
-
-            pineModel[0] = LoadModel("content/fbx/tree5");
-            pineModel[1] = LoadModel("content/fbx/tree13");
-            pineModel[2] = LoadModel("content/fbx/tree14");
-            pineModel[3] = LoadModel("content/fbx/tree16");
-        }
-
-        private void LoadSettlements()
-        {
-            foreach (SettlementSize eSize in Enum.GetValues(typeof(SettlementSize)))
-            {
-                m_cSettlementModels[eSize] = new Dictionary<int, Model>();
-                m_cSettlementTextures[eSize] = new Dictionary<int, Texture2D>();
-            }
-
-            Texture2D pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T0");
-            m_cSettlementModels[SettlementSize.Hamlet][0] = LoadModel("content/fbx/hamlet_T0");
-            m_cSettlementTextures[SettlementSize.Hamlet][0] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][0] = LoadModel("content/fbx/village_T0");
-            m_cSettlementTextures[SettlementSize.Village][0] = pTexture;
-            m_cSettlementModels[SettlementSize.Town][0] = LoadModel("content/fbx/village_T0");
-            m_cSettlementTextures[SettlementSize.Town][0] = pTexture;
-            m_cSettlementModels[SettlementSize.City][0] = LoadModel("content/fbx/village_T0");
-            m_cSettlementTextures[SettlementSize.City][0] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][0] = LoadModel("content/fbx/village_T0");
-            m_cSettlementTextures[SettlementSize.Capital][0] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][0] = LoadModel("content/fbx/fort_T1");
-            m_cSettlementTextures[SettlementSize.Fort][0] = LibContent.Load<Texture2D>("content/dds/Fort_T1");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T1");
-            m_cSettlementModels[SettlementSize.Hamlet][1] = LoadModel("content/fbx/hamlet_T1");
-            m_cSettlementTextures[SettlementSize.Hamlet][1] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][1] = LoadModel("content/fbx/village_T1");
-            m_cSettlementTextures[SettlementSize.Village][1] = pTexture;
-            m_cSettlementModels[SettlementSize.Town][1] = LoadModel("content/fbx/town_T1");
-            m_cSettlementTextures[SettlementSize.Town][1] = pTexture;
-            m_cSettlementModels[SettlementSize.City][1] = LoadModel("content/fbx/city_T1");
-            m_cSettlementTextures[SettlementSize.City][1] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][1] = LoadModel("content/fbx/city_T1");
-            m_cSettlementTextures[SettlementSize.Capital][1] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][1] = LoadModel("content/fbx/fort_T1");
-            m_cSettlementTextures[SettlementSize.Fort][1] = LibContent.Load<Texture2D>("content/dds/Fort_T1");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_small");
-            m_cSettlementModels[SettlementSize.Hamlet][2] = LoadModel("content/fbx/hamlet_T2");
-            m_cSettlementTextures[SettlementSize.Hamlet][2] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][2] = LoadModel("content/fbx/village_T2");
-            m_cSettlementTextures[SettlementSize.Village][2] = pTexture;
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_big");
-            m_cSettlementModels[SettlementSize.Town][2] = LoadModel("content/fbx/town_T2");
-            m_cSettlementTextures[SettlementSize.Town][2] = pTexture;
-            m_cSettlementModels[SettlementSize.City][2] = LoadModel("content/fbx/city_T2");
-            m_cSettlementTextures[SettlementSize.City][2] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][2] = LoadModel("content/fbx/city_T2");
-            m_cSettlementTextures[SettlementSize.Capital][2] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][2] = LoadModel("content/fbx/fort_T2");
-            m_cSettlementTextures[SettlementSize.Fort][2] = LibContent.Load<Texture2D>("content/dds/Fort_T2");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T2_small");
-            m_cSettlementModels[SettlementSize.Hamlet][3] = LoadModel("content/fbx/hamlet_T2");
-            m_cSettlementTextures[SettlementSize.Hamlet][3] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][3] = LoadModel("content/fbx/village_T2");
-            m_cSettlementTextures[SettlementSize.Village][3] = pTexture;
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T3_big");
-            m_cSettlementModels[SettlementSize.Town][3] = LoadModel("content/fbx/town_T3");
-            m_cSettlementTextures[SettlementSize.Town][3] = pTexture;
-            m_cSettlementModels[SettlementSize.City][3] = LoadModel("content/fbx/city_T3");
-            m_cSettlementTextures[SettlementSize.City][3] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][3] = LoadModel("content/fbx/city_T3");
-            m_cSettlementTextures[SettlementSize.Capital][3] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][3] = LoadModel("content/fbx/fort_T3");
-            m_cSettlementTextures[SettlementSize.Fort][3] = LibContent.Load<Texture2D>("content/dds/Fort_T3");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_small");
-            m_cSettlementModels[SettlementSize.Hamlet][4] = LoadModel("content/fbx/hamlet_T4");
-            m_cSettlementTextures[SettlementSize.Hamlet][4] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][4] = LoadModel("content/fbx/village_T4");
-            m_cSettlementTextures[SettlementSize.Village][4] = pTexture;
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_big");
-            m_cSettlementModels[SettlementSize.Town][4] = LoadModel("content/fbx/town_T4");
-            m_cSettlementTextures[SettlementSize.Town][4] = pTexture;
-            m_cSettlementModels[SettlementSize.City][4] = LoadModel("content/fbx/city_T4");
-            m_cSettlementTextures[SettlementSize.City][4] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][4] = LoadModel("content/fbx/city_T4");
-            m_cSettlementTextures[SettlementSize.Capital][4] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][4] = LoadModel("content/fbx/fort_T3");
-            m_cSettlementTextures[SettlementSize.Fort][4] = LibContent.Load<Texture2D>("content/dds/Fort_T3");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T4_small");
-            m_cSettlementModels[SettlementSize.Hamlet][5] = LoadModel("content/fbx/hamlet_T4");
-            m_cSettlementTextures[SettlementSize.Hamlet][5] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][5] = LoadModel("content/fbx/village_T4");
-            m_cSettlementTextures[SettlementSize.Village][5] = pTexture;
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T5_big");
-            m_cSettlementModels[SettlementSize.Town][5] = LoadModel("content/fbx/town_T5");
-            m_cSettlementTextures[SettlementSize.Town][5] = pTexture;
-            m_cSettlementModels[SettlementSize.City][5] = LoadModel("content/fbx/city_T5");
-            m_cSettlementTextures[SettlementSize.City][5] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][5] = LoadModel("content/fbx/city_T5");
-            m_cSettlementTextures[SettlementSize.Capital][5] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][5] = LoadModel("content/fbx/fort_T5");
-            m_cSettlementTextures[SettlementSize.Fort][5] = LibContent.Load<Texture2D>("content/dds/Fort_T5");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6_hamlet");
-            m_cSettlementModels[SettlementSize.Hamlet][6] = LoadModel("content/fbx/hamlet_T6");
-            m_cSettlementTextures[SettlementSize.Hamlet][6] = pTexture;
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6_village");
-            m_cSettlementModels[SettlementSize.Village][6] = LoadModel("content/fbx/village_T6");
-            m_cSettlementTextures[SettlementSize.Village][6] = pTexture;
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T6");
-            m_cSettlementModels[SettlementSize.Town][6] = LoadModel("content/fbx/town_T6");
-            m_cSettlementTextures[SettlementSize.Town][6] = pTexture;
-            m_cSettlementModels[SettlementSize.City][6] = LoadModel("content/fbx/city_T6");
-            m_cSettlementTextures[SettlementSize.City][6] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][6] = LoadModel("content/fbx/city_T6");
-            m_cSettlementTextures[SettlementSize.Capital][6] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][6] = LoadModel("content/fbx/fort_T6");
-            m_cSettlementTextures[SettlementSize.Fort][6] = LibContent.Load<Texture2D>("content/dds/Fort_T6");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T7");
-            m_cSettlementModels[SettlementSize.Hamlet][7] = LoadModel("content/fbx/hamlet_T7");
-            m_cSettlementTextures[SettlementSize.Hamlet][7] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][7] = LoadModel("content/fbx/village_T7");
-            m_cSettlementTextures[SettlementSize.Village][7] = pTexture;
-            m_cSettlementModels[SettlementSize.Town][7] = LoadModel("content/fbx/town_T7");
-            m_cSettlementTextures[SettlementSize.Town][7] = pTexture;
-            m_cSettlementModels[SettlementSize.City][7] = LoadModel("content/fbx/city_T7");
-            m_cSettlementTextures[SettlementSize.City][7] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][7] = LoadModel("content/fbx/city_T7");
-            m_cSettlementTextures[SettlementSize.Capital][7] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][7] = LoadModel("content/fbx/fort_T7");
-            m_cSettlementTextures[SettlementSize.Fort][7] = LibContent.Load<Texture2D>("content/dds/Fort_T7");
-
-            pTexture = LibContent.Load<Texture2D>("content/dds/Settlements_T8");
-            m_cSettlementModels[SettlementSize.Hamlet][8] = LoadModel("content/fbx/hamlet_T8");
-            m_cSettlementTextures[SettlementSize.Hamlet][8] = pTexture;
-            m_cSettlementModels[SettlementSize.Village][8] = LoadModel("content/fbx/village_T8");
-            m_cSettlementTextures[SettlementSize.Village][8] = pTexture;
-            m_cSettlementModels[SettlementSize.Town][8] = LoadModel("content/fbx/town_T8");
-            m_cSettlementTextures[SettlementSize.Town][8] = pTexture;
-            m_cSettlementModels[SettlementSize.City][8] = LoadModel("content/fbx/city_T8");
-            m_cSettlementTextures[SettlementSize.City][8] = pTexture;
-            m_cSettlementModels[SettlementSize.Capital][8] = LoadModel("content/fbx/city_T8");
-            m_cSettlementTextures[SettlementSize.Capital][8] = pTexture;
-            m_cSettlementModels[SettlementSize.Fort][8] = LoadModel("content/fbx/fort_T7");
-            m_cSettlementTextures[SettlementSize.Fort][8] = LibContent.Load<Texture2D>("content/dds/Fort_T7");
-        }
-
-        /// <summary>
-        /// m_pMyEffect должен уже быть создан и настроен!
-        /// </summary>
-        /// <param name="sPath"></param>
-        /// <returns></returns>
-        private Model LoadModel(string sPath)
-        {
-            Model pModel = LibContent.Load<Model>(sPath);
-            foreach (ModelMesh mesh in pModel.Meshes)
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                    meshPart.Effect = m_pMyEffect.Clone();
-
-            return pModel;
-        }
-
-        private void BindEffectParameters()
-        {
-            pEffectWorld = m_pMyEffect.Parameters["World"];
-            pEffectView = m_pMyEffect.Parameters["View"];
-            pEffectProjection = m_pMyEffect.Parameters["Projection"];
-
-            pEffectCameraPosition = m_pMyEffect.Parameters["CameraPosition"];
-
-            pEffectAmbientLightColor = m_pMyEffect.Parameters["AmbientLightColor"];
-            pEffectAmbientLightIntensity = m_pMyEffect.Parameters["AmbientLightIntensity"];
-
-            pEffectDirectionalLightDirection = m_pMyEffect.Parameters["DirectionalLightDirection"];
-            pEffectDirectionalLightColor = m_pMyEffect.Parameters["DirectionalLightColor"];
-            pEffectDirectionalLightIntensity = m_pMyEffect.Parameters["DirectionalLightIntensity"];
-
-            pEffectSpecularColor = m_pMyEffect.Parameters["SpecularColor"];
-
-            pEffectFogColor = m_pMyEffect.Parameters["FogColor"];
-            pEffectFogDensity = m_pMyEffect.Parameters["FogDensity"];
-            pEffectFogHeight = m_pMyEffect.Parameters["FogHeight"];
-            pEffectFogModePlain = m_pMyEffect.Parameters["FogModePlain"];
-            pEffectFogModeRing = m_pMyEffect.Parameters["FogModeRing"];
-            pEffectFogModeSphere = m_pMyEffect.Parameters["FogModeSphere"];
-
-            pEffectBlendDistance = m_pMyEffect.Parameters["BlendDistance"];
-            pEffectBlendWidth = m_pMyEffect.Parameters["BlendWidth"];
-
-            pEffectTexture0 = m_pMyEffect.Parameters["xTexture0"];
-            pEffectTexture1 = m_pMyEffect.Parameters["xTexture1"];
-            pEffectTexture2 = m_pMyEffect.Parameters["xTexture2"];
-            pEffectTexture3 = m_pMyEffect.Parameters["xTexture3"];
-            pEffectTexture4 = m_pMyEffect.Parameters["xTexture4"];
-            pEffectTexture5 = m_pMyEffect.Parameters["xTexture5"];
-            pEffectTexture6 = m_pMyEffect.Parameters["xTexture6"];
-            pEffectTexture7 = m_pMyEffect.Parameters["xTexture7"];
-            pEffectTextureModel = m_pMyEffect.Parameters["xTextureModel"];
-
-            pEffectBumpMap0 = m_pMyEffect.Parameters["BumpMap0"];
-        }
-
-        private void LoadTerrainTextures()
-        {
-            grassTexture = LibContent.Load<Texture2D>("content/dds/1-plain");
-            sandTexture = LibContent.Load<Texture2D>("content/dds/1-desert");
-            //            rockTexture = LibContent.Load<Texture2D>("content/dds/mountain");
-            rockTexture = LibContent.Load<Texture2D>("content/dds/rock");
-            snowTexture = LibContent.Load<Texture2D>("content/dds/snow");
-            forestTexture = LibContent.Load<Texture2D>("content/dds/grass");
-            roadTexture = LibContent.Load<Texture2D>("content/dds/sand");
-            swampTexture = LibContent.Load<Texture2D>("content/dds/river");
-            lavaTexture = LibContent.Load<Texture2D>("content/dds/2-lava");
-
-            rockBump = LibContent.Load<Texture2D>("content/dds/bump-rock");
-        }
-
         public float m_fScaling = 0;
         Stopwatch timer;
         double lastTime = 0;
+        
         private int m_iFrame = 0;
-        private double m_fDrawingTime = 0;
-        private double m_fFrameTime = 0;
-        private uint m_iTrianglesCount = 0;
         public int FPS { get { return m_iFrame; } }
+        public void ResetFPS()
+        {
+            m_iFrame = 0;
+        }
+
+        private double m_fDrawingTime = 0;
         public double DrawingTime { get { return m_fDrawingTime; } }
+
+        private double m_fFrameTime = 0;
         public double FrameTime { get { return m_fFrameTime; } }
+
+        private uint m_iTrianglesCount = 0;
         public uint TrianglesCount { get { return m_iTrianglesCount; } }
 
         private bool m_bUseCelShading = true;
-
         public bool UseCelShading
         {
             get { return m_bUseCelShading; }
@@ -587,7 +140,6 @@ namespace TestCubePlanet
         }
 
         private bool m_bShowBounds = false;
-
         public bool ShowBounds
         {
             get { return m_bShowBounds; }
@@ -595,7 +147,6 @@ namespace TestCubePlanet
         }
 
         private bool m_bWireFrame = false;
-
         public bool WireFrame
         {
             get { return m_bWireFrame; }
@@ -603,7 +154,6 @@ namespace TestCubePlanet
         }
 
         private bool m_bDrawTrees = true;
-
         public bool NeedDrawTrees
         {
             get { return m_bDrawTrees; }
@@ -616,50 +166,46 @@ namespace TestCubePlanet
         }
 
         private float m_fLODDistance = 50;
-
         public float LODDistance
         {
             get { return m_fLODDistance; }
             set { m_fLODDistance = value; }
         }
         
-        public void ResetFPS()
-        {
-            m_iFrame = 0;
-        }
-
         public Vector3? m_pTarget = null;
         private Square m_pFocusedSquare = null;
 
         private Matrix m_pWorldMatrix = Matrix.Identity;
-        private Vector3 m_pHorizon;
+        /// <summary>
+        /// Нормаль к планетарной сфере в точке на горизонте, максимально близкой к направлению взгляда камеры
+        /// </summary>
+        private Vector3 m_pHorizonNormal;
 
         public int VisibleQueue { get { return Square.s_pVisibleQueue.Count; } }
         public int InvisibleQueue { get { return Square.s_pInvisibleQueue.Count; } }
 
         private void UpdateCamera()
         {
+            //Удаление камеры от точки фокуса
             if (m_fScaling != 0)
             {
                 m_pCamera.ZoomIn(m_fScaling * (float)Math.Sqrt(m_fFrameTime));
                 m_fScaling = 0;
             }
 
+            //Смещение точки фокуса
             if (m_pTarget.HasValue)
                 m_pCamera.MoveTarget(m_pTarget.Value, 0.005f * (float)m_fFrameTime);
 
             if (m_pCamera.Update())
             {
-                bool bCameraChanged = false;
-
+                //Точка фокуса должна быть над поверхностью ландшафта
                 Vector3? pCharacter = GetSurface(m_pCamera.FocusPoint, out m_pFocusedSquare);
                 if (pCharacter.HasValue)
                 {
                     pCharacter += Vector3.Normalize(pCharacter.Value);// *1.2f;
                     m_pCamera.Position += pCharacter.Value - m_pCamera.FocusPoint;
                     m_pCamera.FocusPoint = pCharacter.Value;
-
-                    bCameraChanged = true;
                 }
                 else
                 {
@@ -667,7 +213,7 @@ namespace TestCubePlanet
                     //throw new Exception();
                 }
 
-                //Убедимся, что камера достаточно высоко над землёй
+                //Сама камера тоже должна быть над поверхностью ландшафта
                 if (m_pCamera.Position.Length() < m_pCube.R + 10)
                 {
                     float fMinHeight = 0.1f;
@@ -679,22 +225,22 @@ namespace TestCubePlanet
                         {
                             //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
                             m_pCamera.Position = pSurface.Value + Vector3.Normalize(pSurface.Value) * fMinHeight;
-                            bCameraChanged = true;
                         }
                     }
                 }
 
-                if (bCameraChanged)
-                    m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
+                //Обновим матрицу вида с учётом изменившегося положения камеры и её фокуса
+                m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
 
+                //Вычислим нормаль на горизонте, чтобы потом использовать её при вычислении цвета неба
                 float h = m_pCamera.Position.Length();
                 float d = h * (float)Math.Sqrt(h * h / (m_pCube.R * m_pCube.R) - 1);
-                m_pHorizon = Vector3.Normalize(m_pCamera.Position - Vector3.Normalize(Vector3.Cross(m_pCamera.Position, m_pCamera.Left)) * d);
-                //pHorizon = Vector3.Normalize(pHorizon) * m_pCube.R;
+                m_pHorizonNormal = Vector3.Normalize(m_pCamera.Position - Vector3.Normalize(Vector3.Cross(m_pCamera.Position, m_pCamera.Left)) * d);
 
+                //Создадим такую мировую матрицу, которая сжимет мир по вертикали (относительно камеры!)
+                //и затем поднимает его вверх так, чтобы сохранить мировые коодинаты фокуса камеры
                 Vector3 pTop = Vector3.Normalize(m_pCamera.FocusPoint);
                 Vector3 pForward = Vector3.Cross(pTop, m_pCamera.Left);
-
                 Matrix T = new Matrix(m_pCamera.Left.X, pTop.X, pForward.X, 0,
                                       m_pCamera.Left.Y, pTop.Y, pForward.Y, 0,
                                       m_pCamera.Left.Z, pTop.Z, pForward.Z, 0,
@@ -702,12 +248,13 @@ namespace TestCubePlanet
                 m_pWorldMatrix = Matrix.Multiply(Matrix.Multiply(T, Matrix.CreateScale(1, 0.5f, 1)), Matrix.Invert(T));
                 m_pWorldMatrix = Matrix.Multiply(m_pWorldMatrix, Matrix.CreateTranslation(pTop * m_pCube.R / 2));
 
+                //Вычисляем видимость квадратов
                 BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
-
                 foreach (var pFace in m_aFaces)
                     foreach (var pSquare in pFace.m_aSquares)
                         pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pCamera.FocusPoint, m_pWorldMatrix);
 
+                //Обновляем массив отображаемых деревьев
                 if (m_bDrawTrees)
                     RecalckTrees();
             }
@@ -792,7 +339,7 @@ namespace TestCubePlanet
             else
                 m_eSunColor = Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.LightPink, Microsoft.Xna.Framework.Color.LightYellow, fCos);
 
-            float diff = Vector3.Dot(-m_pSunCurrent, m_pHorizon) + 0.3f;
+            float diff = Vector3.Dot(-m_pSunCurrent, m_pHorizonNormal) + 0.3f;
             if (diff > 1)
                 diff = 1;
             diff = 1 - (1 - diff) * (1 - diff);//*(1-diff)*(1-diff);
@@ -828,10 +375,7 @@ namespace TestCubePlanet
             if (timer == null)
                 return;
 
-            //double startTime = timer.Elapsed.TotalMilliseconds;
-
             m_iFrame++; 
-            
             m_fFrameTime = timer.Elapsed.TotalMilliseconds - lastTime;
             lastTime = timer.Elapsed.TotalMilliseconds; 
             
@@ -842,93 +386,45 @@ namespace TestCubePlanet
 
             UpdateLight();
 
-            m_pDebugInfo = new VertexPositionColor[4];
-            m_pDebugInfo[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
-            m_pDebugInfo[1] = new VertexPositionColor(m_pCamera.FocusPoint, Microsoft.Xna.Framework.Color.Black);
-            m_pDebugInfo[2] = new VertexPositionColor(-m_pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
-            m_pDebugInfo[3] = new VertexPositionColor(m_pPole * 200, Microsoft.Xna.Framework.Color.Violet);
+            m_aDebugInfo = new VertexPositionColor[4];
+            m_aDebugInfo[0] = new VertexPositionColor(Vector3.Zero, Microsoft.Xna.Framework.Color.Black);
+            m_aDebugInfo[1] = new VertexPositionColor(m_pCamera.FocusPoint, Microsoft.Xna.Framework.Color.Black);
+            m_aDebugInfo[2] = new VertexPositionColor(-m_pPole * 200, Microsoft.Xna.Framework.Color.DarkRed);
+            m_aDebugInfo[3] = new VertexPositionColor(m_pPole * 200, Microsoft.Xna.Framework.Color.Violet);
 
-            pEffectView.SetValue(m_pCamera.View);
-            pEffectProjection.SetValue(m_pCamera.Projection);
-            pEffectCameraPosition.SetValue(m_pCamera.Position);
-            pEffectWorld.SetValue(m_pWorldMatrix);
+            m_pShader.BeginDraw(m_bUseCelShading, m_bWireFrame);
 
-            // Set renderstates.
-            RasterizerState rs = new RasterizerState();
-            rs.CullMode = CullMode.CullClockwiseFace;
-            if (m_bWireFrame)
-            {
-                rs.CullMode = CullMode.None;
-                rs.FillMode = FillMode.WireFrame;
-            }
-            GraphicsDevice.RasterizerState = rs;
-
-            Viewport pPort = GraphicsDevice.Viewport;
-
-            m_pMyEffect.Parameters["UseCelShading"].SetValue(m_bUseCelShading);
-            if (m_bUseCelShading && !m_bWireFrame)
-            {
-                if (GraphicsDevice.Viewport.Width != celTarget.Width || GraphicsDevice.Viewport.Height != celTarget.Height)
-                    celTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
-                        false, SurfaceFormat.Color, DepthFormat.Depth24);
-            }
-
-            //pEffectDirectionalLightDirection.SetValue(-Vector3.Normalize(m_pCamera.FocusPoint));
-            pEffectDirectionalLightDirection.SetValue(m_pSunCurrent);
-            pEffectDirectionalLightIntensity.SetValue(0.9f);//0.8f
-            pEffectDirectionalLightColor.SetValue(m_eSunColor.ToVector4());
+            m_pShader.SetMatrices(m_pWorldMatrix, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+            m_pShader.SetDirectionalLight(m_pSunCurrent, 0.9f, m_eSunColor);
 
             int iCount = 0;
             m_iTrianglesCount = 0;
 
-            GraphicsDevice.SetRenderTarget(refractionRenderTarget);
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
-            m_pMyEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.Clear(m_eRealSkyColor);
-
+            //Рисуем подводный мир - в refractionRenderTarget
+            m_pShader.PrepareDrawUnderwater(m_eRealSkyColor);
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
                 if (pSquare.m_iUnderwaterTrianglesCount > 0)
                 {
-                    GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
-                    GraphicsDevice.Indices = pSquare.m_pUnderwaterIndexBuffer;
-                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iUnderwaterTrianglesCount);
+                    m_pShader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pUnderwaterIndexBuffer, pSquare.g.m_aLandPoints.Length, pSquare.m_iUnderwaterTrianglesCount);
 
                     m_iTrianglesCount += (uint)pSquare.m_iUnderwaterTrianglesCount;
                     iCount++;
                 }
             }
 
-            if (m_bUseCelShading && !m_bWireFrame)
-            {
-                GraphicsDevice.SetRenderTarget(celTarget);
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            }
-            else
-            {
-                GraphicsDevice.SetRenderTarget(null);
-                GraphicsDevice.Viewport = pPort;
-            }
-
-            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
-            m_pMyEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.Clear(m_eRealSkyColor);
-
+            //Рисуем надводный мир
+            m_pShader.PrepareDrawLand(m_eRealSkyColor);
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
-                GraphicsDevice.SetVertexBuffer(pSquare.m_pVertexBuffer);
                 if (pSquare.m_fVisibleDistance < m_fLODDistance)
                 {
-                    GraphicsDevice.Indices = pSquare.m_pLandIndexBufferHR;
-                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountHR);
+                    m_pShader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pLandIndexBufferHR, pSquare.g.m_aLandPoints.Length, pSquare.m_iLandTrianglesCountHR);
                     m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountHR;
                 }
                 else
                 {
-                    GraphicsDevice.Indices = pSquare.m_pLandIndexBufferLR;
-                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aLandPoints.Length, 0, pSquare.m_iLandTrianglesCountLR);
+                    m_pShader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pLandIndexBufferLR, pSquare.g.m_aLandPoints.Length, pSquare.m_iLandTrianglesCountLR);
                     m_iTrianglesCount += (uint)pSquare.m_iLandTrianglesCountLR;
                 }
                 iCount++;
@@ -941,20 +437,13 @@ namespace TestCubePlanet
 
             //DrawSun();
 
-            m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
-            //effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
-            //effect.Parameters["xReflectionMap"].SetValue(reflectionMap);
-            m_pMyEffect.Parameters["xRefractionMap"].SetValue(refractionRenderTarget);
-
-            m_pMyEffect.CurrentTechnique.Passes[0].Apply();
-
+            //Рисуем водную поверхность и видимый через неё подводный мир
+            m_pShader.PrepareDrawWater();
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
                 if (pSquare.m_iUnderwaterTrianglesCount > 0)
                 {
-                    GraphicsDevice.SetVertexBuffer(pSquare.m_pWaterVertexBuffer);
-                    GraphicsDevice.Indices = pSquare.m_pWaterIndexBuffer;
-                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pSquare.g.m_aWaterPoints.Length, 0, pSquare.m_iWaterTrianglesCount);
+                    m_pShader.DrawLandscape(pSquare.m_pWaterVertexBuffer, pSquare.m_pWaterIndexBuffer, pSquare.g.m_aWaterPoints.Length, pSquare.m_iWaterTrianglesCount);
 
                     m_iTrianglesCount += (uint)pSquare.m_iWaterTrianglesCount;
                     iCount++;
@@ -963,23 +452,11 @@ namespace TestCubePlanet
 
             if (m_bShowBounds)
             {
-                rs = new RasterizerState();
-                rs.CullMode = CullMode.None;
-                //rs.CullMode = CullMode.CullClockwiseFace;
-                rs.FillMode = FillMode.WireFrame;
-                GraphicsDevice.RasterizerState = rs;
-
-                lineEffect.World = m_pWorldMatrix;
-                lineEffect.View = m_pCamera.View;
-                lineEffect.Projection = m_pCamera.Projection;
-                lineEffect.CurrentTechnique.Passes[0].Apply();
+                m_pShader.PrepareDrawLines(false);
 
                 if (m_pSelectedSquare != null)
                 {
-                    var bbvertices = m_pSelectedSquare.m_pBounds8.GetVertices();
-                    var bbindices = m_pSelectedSquare.m_pBounds8.GetIndices();
-                    GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList,
-                                                bbvertices, 0, bbvertices.Length, bbindices, 0, bbindices.Length / 2);
+                    m_pShader.DrawLines(m_pSelectedSquare.m_pBounds8.GetVertices(), m_pSelectedSquare.m_pBounds8.GetIndices());
                 }
             }
 
@@ -987,49 +464,32 @@ namespace TestCubePlanet
             DrawPickedTriangle();
             DrawDebugInfo();
 
-            if (m_bUseCelShading && !m_bWireFrame)
-            {
-                /* We are done with the render target so set it back to null.
-                 * This will get us back to rendering to the default render target
-                 */
-                GraphicsDevice.SetRenderTarget(null);
-                GraphicsDevice.Viewport = pPort;
-
-                GraphicsDevice.Clear(m_eRealSkyColor);
-                /* Also in XNA 4.0 applying effects to a sprite is a little different
-                 * Use an overload of Begin that takes the effect as a parameter.  Also make
-                 * sure to set the sprite batch blend state to Opaque or we will not get black
-                 * outlines.
-                 */
-                m_pSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, outlineShader);
-                m_pSpriteBatch.Draw(celTarget, Vector2.Zero, Microsoft.Xna.Framework.Color.White);
-                m_pSpriteBatch.End();
-            }
+            m_pShader.FinishDraw(m_eRealSkyColor);
 
             m_fDrawingTime = timer.Elapsed.TotalMilliseconds - lastTime;
         }
 
-        private void DrawSun()
-        { 
-            ModelMesh pSunMesh = m_pSunModel.Meshes[0];
-            ModelMeshPart pSunMeshPart = pSunMesh.MeshParts[0];
-            GraphicsDevice.SetVertexBuffer(pSunMeshPart.VertexBuffer, pSunMeshPart.VertexOffset);
-            GraphicsDevice.Indices = pSunMeshPart.IndexBuffer;
+        //private void DrawSun()
+        //{
+        //    ModelMesh pSunMesh = m_pContent.m_pSunModel.Meshes[0];
+        //    ModelMeshPart pSunMeshPart = pSunMesh.MeshParts[0];
+        //    GraphicsDevice.SetVertexBuffer(pSunMeshPart.VertexBuffer, pSunMeshPart.VertexOffset);
+        //    GraphicsDevice.Indices = pSunMeshPart.IndexBuffer;
 
-            lineEffect.World = Matrix.CreateTranslation(-m_pSunCurrent * 200)*m_pWorldMatrix;
-            lineEffect.Projection = m_pCamera.Projection;
-            lineEffect.View = m_pCamera.View;
+        //    m_pContent.m_pLineEffect.World = Matrix.CreateTranslation(-m_pSunCurrent * 200) * m_pWorldMatrix;
+        //    m_pContent.m_pLineEffect.Projection = m_pCamera.Projection;
+        //    m_pContent.m_pLineEffect.View = m_pCamera.View;
 
-            lineEffect.CurrentTechnique.Passes[0].Apply();
+        //    m_pContent.m_pLineEffect.CurrentTechnique.Passes[0].Apply();
 
-            //sampleMesh contains all of the information required to draw
-            //the current mesh
-            GraphicsDevice.DrawIndexedPrimitives(
-                PrimitiveType.TriangleList, 0, 0,
-                pSunMeshPart.NumVertices, pSunMeshPart.StartIndex, pSunMeshPart.PrimitiveCount);
+        //    //sampleMesh contains all of the information required to draw
+        //    //the current mesh
+        //    GraphicsDevice.DrawIndexedPrimitives(
+        //        PrimitiveType.TriangleList, 0, 0,
+        //        pSunMeshPart.NumVertices, pSunMeshPart.StartIndex, pSunMeshPart.PrimitiveCount);
 
-            //m_pSunModel.Draw(Matrix.CreateTranslation(-m_pSun * 200), m_pCamera.View, m_pCamera.Projection);
-        }
+        //    //m_pSunModel.Draw(Matrix.CreateTranslation(-m_pSun * 200), m_pCamera.View, m_pCamera.Projection);
+        //}
 
         private Dictionary<Model, List<Matrix>> m_cTreeInstances = new Dictionary<Model, List<Matrix>>();
 
@@ -1078,79 +538,8 @@ namespace TestCubePlanet
                 Matrix[] instancedModelBones = new Matrix[pTreeModel.Key.Bones.Count];
                 pTreeModel.Key.CopyAbsoluteBoneTransformsTo(instancedModelBones);
 
-                DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
-                                         pTreeModel.Value.ToArray(), m_pCamera.View, m_pCamera.Projection);
-            }
-        }
-
-        // To store instance transform matrices in a vertex buffer, we use this custom
-        // vertex type which encodes 4x4 matrices as a set of four Vector4 values.
-        static VertexDeclaration instanceVertexDeclaration = new VertexDeclaration
-        (
-            new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 0),
-            new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 1),
-            new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 2),
-            new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 3)
-        );
-        private DynamicVertexBuffer instanceVertexBuffer;
-
-        /// <summary>
-        /// Efficiently draws several copies of a piece of geometry using hardware instancing.
-        /// </summary>
-        private void DrawModelHardwareInstancing(Model model, Matrix[] modelBones,
-                                         Matrix[] instances, Matrix view, Matrix projection)
-        {
-            if (instances.Length == 0)
-                return;
-
-            // If we have more instances than room in our vertex buffer, grow it to the neccessary size.
-            if ((instanceVertexBuffer == null) ||
-                (instances.Length > instanceVertexBuffer.VertexCount))
-            {
-                if (instanceVertexBuffer != null)
-                    instanceVertexBuffer.Dispose();
-
-                instanceVertexBuffer = new DynamicVertexBuffer(GraphicsDevice, instanceVertexDeclaration,
-                                                               instances.Length, BufferUsage.WriteOnly);
-            }
-
-            // Transfer the latest instance transform matrices into the instanceVertexBuffer.
-            instanceVertexBuffer.SetData(instances, 0, instances.Length, SetDataOptions.Discard);
-
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                {
-                    // Tell the GPU to read from both the model vertex buffer plus our instanceVertexBuffer.
-                    GraphicsDevice.SetVertexBuffers(
-                        new VertexBufferBinding(meshPart.VertexBuffer, meshPart.VertexOffset, 0),
-                        new VertexBufferBinding(instanceVertexBuffer, 0, 1)
-                    );
-
-                    GraphicsDevice.Indices = meshPart.IndexBuffer;
-
-                    // Set up the instance rendering effect.
-                    Effect effect = meshPart.Effect;
-
-                    //effect.CurrentTechnique = effect.Techniques["HardwareInstancing"];
-
-                    effect.Parameters["World"].SetValue(modelBones[mesh.ParentBone.Index]);
-                    effect.Parameters["View"].SetValue(view);
-                    effect.Parameters["CameraPosition"].SetValue(m_pCamera.Position);
-                    effect.Parameters["Projection"].SetValue(projection);
-                    effect.Parameters["DirectionalLightDirection"].SetValue(m_pSunCurrent);
-                    effect.Parameters["DirectionalLightColor"].SetValue(m_eSunColor.ToVector4());
-                    
-                    // Draw all the instance copies in a single call.
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-
-                        GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                                                               meshPart.NumVertices, meshPart.StartIndex,
-                                                               meshPart.PrimitiveCount, instances.Length);
-                    }
-                }
+                m_pShader.DrawModelHardwareInstancing(pTreeModel.Key, instancedModelBones,
+                                         pTreeModel.Value.ToArray(), m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
             }
         }
 
@@ -1195,18 +584,7 @@ namespace TestCubePlanet
                 // and turn off the depth buffer because we want to be able to
                 // see the picked triangle outline regardless of which way it is
                 // facing, and even if there is other geometry in front of it.
-                RasterizerState rs = new RasterizerState();
-                rs.CullMode = CullMode.None;
-                rs.FillMode = FillMode.WireFrame;
-                GraphicsDevice.RasterizerState = rs;
-                GraphicsDevice.DepthStencilState = DepthStencilState.None;
-
-                // Activate the line drawing BasicEffect.
-                lineEffect.World = m_pWorldMatrix;
-                lineEffect.Projection = m_pCamera.Projection;
-                lineEffect.View = m_pCamera.View;
-
-                lineEffect.CurrentTechnique.Passes[0].Apply();
+                m_pShader.PrepareDrawLines(true);
 
                 // Draw the triangle.
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
@@ -1214,13 +592,8 @@ namespace TestCubePlanet
                 if (m_pSelectedSquare != null)
                 {
                     m_pSelectedSquare.Rebuild(GraphicsDevice);
-                    GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
-                                          m_pSelectedSquare.g.m_aLandPoints, 0, m_pSelectedSquare.g.m_aLandPoints.Length - 1, m_pSelectedSquare.g.m_aLocations[m_iFocusedLocation], 0, m_pSelectedSquare.g.m_aLocations[m_iFocusedLocation].Length / 2);
+                    m_pShader.DrawLines(m_pSelectedSquare.g.m_aLandPoints, m_pSelectedSquare.g.m_aLocations[m_iFocusedLocation]);
                 }
-
-                // Reset renderstates to their default values.
-                GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             }
         }
 
@@ -1230,21 +603,11 @@ namespace TestCubePlanet
         void DrawDebugInfo()
         {
             // Activate the line drawing BasicEffect.
-            lineEffect.World = m_pWorldMatrix;
-            lineEffect.Projection = m_pCamera.Projection;
-            lineEffect.View = m_pCamera.View;
-
-            lineEffect.CurrentTechnique.Passes[0].Apply();
-
-            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
-                PrimitiveType.LineList,
-                m_pDebugInfo,
-                0,  // index of the first vertex to draw
-                m_pDebugInfo.Length / 2   // number of primitives
-            );
+            m_pShader.PrepareDrawLines(false);
+            m_pShader.DrawLines(m_aDebugInfo);
         }
 
-        VertexPositionColor[] m_pDebugInfo;
+        VertexPositionColor[] m_aDebugInfo;
 
         Square m_pSelectedSquare = null;
         public Vector3? m_pCurrentPicking = null;
