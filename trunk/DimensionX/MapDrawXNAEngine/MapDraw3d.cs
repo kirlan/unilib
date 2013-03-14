@@ -22,6 +22,7 @@ using Socium.Nations;
 using Socium.Languages;
 using nsUniLibControls;
 using LandscapeGeneration.PathFind;
+using ContentLoader;
 
 namespace MapDrawXNAEngine
 {

@@ -1,21 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{DF8FB19D-26BC-4101-8371-DE523CF5F957}</ProjectGuid>
+    <ProjectGuid>{EE758DF7-B8C2-4D23-ADF2-67462341021D}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MapDrawXNAEngine</RootNamespace>
-    <AssemblyName>MapDrawXNAEngine</AssemblyName>
+    <RootNamespace>ContentLoader</RootNamespace>
+    <AssemblyName>ContentLoader</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>HiDef</XnaProfile>
-    <XnaCrossPlatformGroupID>faf532d2-58c7-4fa5-be26-edb662d39ef4</XnaCrossPlatformGroupID>
+    <XnaCrossPlatformGroupID>fb62c912-e194-444f-a83d-327fc0bd66e7</XnaCrossPlatformGroupID>
     <XnaOutputType>Library</XnaOutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -41,13 +40,12 @@
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>True</XnaCompressContent>
+    <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -78,8 +76,6 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
@@ -96,54 +92,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera.cs" />
-    <Compile Include="GeoData.cs" />
-    <Compile Include="PlainCamera.cs" />
-    <Compile Include="MapDraw3d.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PlanetCamera.cs" />
+    <Compile Include="Shaders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RingworldCamera.cs" />
-    <Compile Include="RoadData.cs" />
-    <Compile Include="SettlementModel.cs" />
-    <Compile Include="TreeModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Random\Random.csproj">
-      <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
-      <Name>Random</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\UniLibControls\UniLibControls.csproj">
-      <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
-      <Name>UniLibControls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ContentLoader\ContentLoader.csproj">
-      <Project>{EE758DF7-B8C2-4D23-ADF2-67462341021D}</Project>
-      <Name>ContentLoader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Content\Content.contentproj">
-      <Project>{9696E015-7C8A-4AA9-9BBE-E0B2BA3F159B}</Project>
-      <Name>Content</Name>
-      <XnaReferenceType>Content</XnaReferenceType>
-    </ProjectReference>
-    <ProjectReference Include="..\Landscape\Landscape.csproj">
-      <Project>{AF080137-842A-437C-B4F0-BF20AD1E4594}</Project>
-      <Name>Landscape</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Socium\Socium.csproj">
-      <Project>{358A8F33-4C83-42EC-B661-AC20467178C5}</Project>
-      <Name>Socium</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UniLibXNA\UniLibXNA.csproj">
-      <Project>{8F9990DB-F34F-4B11-B325-5BB9B307E216}</Project>
-      <Name>UniLibXNA</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MapDraw3d.resx">
-      <DependentUpon>MapDraw3d.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

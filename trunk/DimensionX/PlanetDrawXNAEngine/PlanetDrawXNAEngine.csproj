@@ -112,6 +112,10 @@
       <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
       <Name>Random</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ContentLoader\ContentLoader.csproj">
+      <Project>{EE758DF7-B8C2-4D23-ADF2-67462341021D}</Project>
+      <Name>ContentLoader</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Content\Content.contentproj">
       <Project>{9696E015-7C8A-4AA9-9BBE-E0B2BA3F159B}</Project>
       <Name>Content</Name>

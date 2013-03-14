@@ -6,6 +6,7 @@ using UniLibXNA;
 using Microsoft.Xna.Framework;
 using LandscapeGeneration;
 using Random;
+using ContentLoader;
 
 namespace MapDrawXNAEngine
 {
