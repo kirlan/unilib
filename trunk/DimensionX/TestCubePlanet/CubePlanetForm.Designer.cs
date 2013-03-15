@@ -51,6 +51,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.label21 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -68,7 +69,7 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.label22 = new System.Windows.Forms.Label();
             this.cubePlanetDraw3d1 = new TestCubePlanet.CubePlanetDraw3d();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
+            this.timer3 = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -358,6 +359,17 @@
             this.panel2.TabIndex = 2;
             this.panel2.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.panel2_PreviewKeyDown);
             // 
+            // checkBox7
+            // 
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Location = new System.Drawing.Point(9, 377);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(67, 17);
+            this.checkBox7.TabIndex = 24;
+            this.checkBox7.Text = "DEBUG!";
+            this.checkBox7.UseVisualStyleBackColor = true;
+            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+            // 
             // label21
             // 
             this.label21.AutoSize = true;
@@ -546,6 +558,7 @@
             this.cubePlanetDraw3d1.Name = "cubePlanetDraw3d1";
             this.cubePlanetDraw3d1.NeedDrawTrees = true;
             this.cubePlanetDraw3d1.ShowBounds = false;
+            this.cubePlanetDraw3d1.ShowFrustum = false;
             this.cubePlanetDraw3d1.Size = new System.Drawing.Size(354, 402);
             this.cubePlanetDraw3d1.TabIndex = 0;
             this.cubePlanetDraw3d1.Text = "cubePlanetDraw3d1";
@@ -560,16 +573,11 @@
             this.cubePlanetDraw3d1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseMove);
             this.cubePlanetDraw3d1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.cubePlanetDraw3d1_MouseUp);
             // 
-            // checkBox7
+            // timer3
             // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.Location = new System.Drawing.Point(9, 377);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(67, 17);
-            this.checkBox7.TabIndex = 24;
-            this.checkBox7.Text = "DEBUG!";
-            this.checkBox7.UseVisualStyleBackColor = true;
-            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+            this.timer3.Enabled = true;
+            this.timer3.Interval = 1000;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
             // CubePlanetForm
             // 
@@ -641,6 +649,7 @@
         private System.Windows.Forms.TrackBar trackBar2;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.CheckBox checkBox7;
+        private System.Windows.Forms.Timer timer3;
     }
 }
 

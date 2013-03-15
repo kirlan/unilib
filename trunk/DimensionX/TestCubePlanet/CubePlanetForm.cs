@@ -180,11 +180,6 @@ namespace TestCubePlanet
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            label3.Text = "FPS: " + Math.Min(999, cubePlanetDraw3d1.FPS).ToString();
-        //    timer2.Interval = Math.Max(100, 800 / (mapDraw3d1.m_iFrame + 1));
-            timer2.Interval = Math.Max(50, 800 / (cubePlanetDraw3d1.FPS + 1));
-            cubePlanetDraw3d1.ResetFPS();
-
             label4.Text = string.Format("Draw Time: {0:0.000}s", cubePlanetDraw3d1.DrawingTime/1000);
             label5.Text = string.Format("Frame Time: {0:0.000}s", cubePlanetDraw3d1.FrameTime / 1000);
             label7.Text = string.Format("Triangles: ~{0}k", cubePlanetDraw3d1.TrianglesCount/1000);
@@ -288,6 +283,14 @@ namespace TestCubePlanet
         private void checkBox7_CheckedChanged(object sender, EventArgs e)
         {
             cubePlanetDraw3d1.ShowFrustum = checkBox7.Checked;
+        }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            label3.Text = "FPS: " + Math.Min(999, cubePlanetDraw3d1.FPS).ToString();
+            //    timer2.Interval = Math.Max(100, 800 / (mapDraw3d1.m_iFrame + 1));
+            timer2.Interval = Math.Max(50, 800 / (cubePlanetDraw3d1.FPS + 1));
+            cubePlanetDraw3d1.ResetFPS();
         }
     }
 }
