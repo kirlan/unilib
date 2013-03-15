@@ -117,8 +117,7 @@ namespace ContentLoader
             //rs.CullMode = CullMode.CullClockwiseFace;
             rs.FillMode = FillMode.WireFrame;
             m_pGraphicsDevice.RasterizerState = rs;
-            if(bDepthStencil)
-                m_pGraphicsDevice.DepthStencilState = DepthStencilState.None;
+            m_pGraphicsDevice.DepthStencilState = bDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
             m_pLineEffect.CurrentTechnique.Passes[0].Apply();
         }
