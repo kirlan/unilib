@@ -78,6 +78,16 @@ sampler BumpMap0Sampler = sampler_state
    AddressV = mirror; 
 }; 
 
+Texture xWaterBumpMap;
+
+sampler WaterBumpMapSampler = sampler_state { texture = <xWaterBumpMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+
+float xTime;
+float3 xWindDirection;
+float xWindForce;
+float xWaveLength;
+float xWaveHeight;
+
 bool UseCelShading = true;
 
 texture CelMap;
@@ -115,10 +125,11 @@ float4 ApplyFog(float4 Color, float3 Position, float koeff)
 	return lerp(Color, FogColor, l);
 }
 
-float4 GetLight(float3 inNormal, float3 Position, float3 inView)
+float4 GetLight(float3 inNormal, float3 Position, float3 inView, float h)
 {
 	float4 normal = float4(inNormal, 1.0);
 	float4 normalGlobal = float4(normalize(Position), 1.0);
+	//float4 normalGlobal = normal;
 
 	float diff = saturate(dot(-DirectionalLightDirection, normal));
 	float diff2 = saturate(dot(-DirectionalLightDirection, normalGlobal) + 0.3);
@@ -129,14 +140,23 @@ float4 GetLight(float3 inNormal, float3 Position, float3 inView)
 
 	float4 diffuse = diff;
 	
+	if(h < PlanetRadius)
+	{
+		h = PlanetRadius - h;
+		//float d = saturate(h/4.0f);
+		float d = saturate(1.0f - 1.0f/(h*h*0.3f+1.0f));
+		diffuse = lerp(diffuse, float4(0.0f, 0.0f, 0.0f, 1.0f), d);
+		//light = float4(0.0f, 0.0f, 0.2f, 1.0f);
+	}
+
 	if(UseCelShading)
 	{
 		// Look up the cel shading light color
-		float2 celTexCoord = float2(diff, 0.0f);
+		float2 celTexCoord = float2(diffuse.x, 0.0f);
 		diffuse = tex2D(CelMapSampler, celTexCoord);
 	}	
-	float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	float4 specular = pow(saturate(dot(reflect,inView)),15);
+	float4 reflected = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
+	float4 specular = pow(saturate(dot(reflected,inView)),15);
 
 	float4 light = AmbientLightColor*AmbientLightIntensity + 
 		   DirectionalLightIntensity*DirectionalLightColor*diffuse + 
@@ -166,13 +186,14 @@ struct VertexShaderOutput
     float4 TextureWeights    : TEXCOORD4;
     float4 TextureWeights2    : TEXCOORD5;
     float3 Tangent : TEXCOORD6;
-    float3 Binormal : TEXCOORD7;
+    float Height : TEXCOORD7;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal : NORMAL, float3 Tangent : TANGENT)
 {
     VertexShaderOutput output;
-	output.Position3D = input.Position;
+	output.Position3D = mul(input.Position, World);//input.Position;
+	//output.Position3D = input.Position;
 	//output.Color = input.Color;
 
     float4 worldPosition = mul(input.Position, World);
@@ -185,8 +206,8 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal :
 	float3 tangent = normalize(mul(Tangent, World));
 	output.Tangent = tangent;
 
-	float3 binormal = normalize(mul(cross(Tangent,Normal), World));
-	output.Binormal = binormal;
+	//float3 binormal = normalize(mul(cross(Tangent,Normal), World));
+	output.Height = length(input.Position);
    
     // Calculate tangent space. 
     //float4x4 worldToTangentSpace; 
@@ -208,45 +229,45 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float3 Normal :
 
 float4 GetLandTexture(float2 TextureCoords, float4 TextureWeights, float4 TextureWeights2, float d)
 {
-    float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
-    float blendFactor2 = clamp((d-BlendDistance/10)/(BlendDistance/5), 0, 1);
+    //float blendFactor = clamp((d-BlendDistance)/BlendWidth, 0, 1);
+    //float blendFactor2 = clamp((d-BlendDistance/10)/(BlendDistance/5), 0, 1);
 
 	float4 texColor = float4(0, 0, 0, 0);
-	if(blendFactor >= 0.2)
-	{
-		float4 farColor = tex2D(TextureSampler0, TextureCoords)*TextureWeights.x;
-		farColor += tex2D(TextureSampler1, TextureCoords)*TextureWeights.y;
-		farColor += tex2D(TextureSampler2, TextureCoords)*TextureWeights.z;
-		farColor += tex2D(TextureSampler3, TextureCoords)*TextureWeights.w;
-		farColor += tex2D(TextureSampler4, TextureCoords)*TextureWeights2.x;
-		farColor += tex2D(TextureSampler5, TextureCoords)*TextureWeights2.y;
-		farColor += tex2D(TextureSampler6, TextureCoords)*TextureWeights2.z;
-		farColor += tex2D(TextureSampler7, TextureCoords)*TextureWeights2.w;
+	//if(blendFactor >= 0.2)
+	//{
+	//	float4 farColor = tex2D(TextureSampler0, TextureCoords)*TextureWeights.x;
+	//	farColor += tex2D(TextureSampler1, TextureCoords)*TextureWeights.y;
+	//	farColor += tex2D(TextureSampler2, TextureCoords)*TextureWeights.z;
+	//	farColor += tex2D(TextureSampler3, TextureCoords)*TextureWeights.w;
+	//	farColor += tex2D(TextureSampler4, TextureCoords)*TextureWeights2.x;
+	//	farColor += tex2D(TextureSampler5, TextureCoords)*TextureWeights2.y;
+	//	farColor += tex2D(TextureSampler6, TextureCoords)*TextureWeights2.z;
+	//	farColor += tex2D(TextureSampler7, TextureCoords)*TextureWeights2.w;
 	
-		texColor = farColor;
-	}
+	//	texColor = farColor;
+	//}
 
-	if(blendFactor < 1 && blendFactor2 >= 0.1)
-	{
-		float2 nearTextureCoords = TextureCoords*5;
-		float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*TextureWeights.x;
-		nearColor += tex2D(TextureSampler1, nearTextureCoords)*TextureWeights.y;
-		nearColor += tex2D(TextureSampler2, nearTextureCoords)*TextureWeights.z;
-		nearColor += tex2D(TextureSampler3, nearTextureCoords)*TextureWeights.w;
-		nearColor += tex2D(TextureSampler4, nearTextureCoords)*TextureWeights2.x;
-		nearColor += tex2D(TextureSampler5, nearTextureCoords)*TextureWeights2.y;
-		nearColor += tex2D(TextureSampler6, nearTextureCoords)*TextureWeights2.z;
-		nearColor += tex2D(TextureSampler7, nearTextureCoords)*TextureWeights2.w;
+	//if(blendFactor < 1 && blendFactor2 >= 0.1)
+	//{
+		//float2 nearTextureCoords = TextureCoords*5;
+		//float4 nearColor = tex2D(TextureSampler0, nearTextureCoords)*TextureWeights.x;
+		//nearColor += tex2D(TextureSampler1, nearTextureCoords)*TextureWeights.y;
+		//nearColor += tex2D(TextureSampler2, nearTextureCoords)*TextureWeights.z;
+		//nearColor += tex2D(TextureSampler3, nearTextureCoords)*TextureWeights.w;
+		//nearColor += tex2D(TextureSampler4, nearTextureCoords)*TextureWeights2.x;
+		//nearColor += tex2D(TextureSampler5, nearTextureCoords)*TextureWeights2.y;
+		//nearColor += tex2D(TextureSampler6, nearTextureCoords)*TextureWeights2.z;
+		//nearColor += tex2D(TextureSampler7, nearTextureCoords)*TextureWeights2.w;
 
-		if(blendFactor < 0.2)
-			texColor = nearColor;
-		else
-			texColor = lerp(nearColor, texColor, blendFactor);
-	}
+		//if(blendFactor < 0.2)
+			//texColor = nearColor;
+		//else
+		//	texColor = lerp(nearColor, texColor, blendFactor);
+	//}
 
-	if(blendFactor2 < 1)
-	{
-		float2 closeTextureCoords = TextureCoords*15;
+	//if(blendFactor2 < 1)
+	//{
+		float2 closeTextureCoords = TextureCoords*10;
 		float4 closeColor = tex2D(TextureSampler0, closeTextureCoords)*TextureWeights.x;
 		closeColor += tex2D(TextureSampler1, closeTextureCoords)*TextureWeights.y;
 		closeColor += tex2D(TextureSampler2, closeTextureCoords)*TextureWeights.z;
@@ -256,11 +277,11 @@ float4 GetLandTexture(float2 TextureCoords, float4 TextureWeights, float4 Textur
 		closeColor += tex2D(TextureSampler6, closeTextureCoords)*TextureWeights2.z;
 		closeColor += tex2D(TextureSampler7, closeTextureCoords)*TextureWeights2.w;
 
-		if(blendFactor2 < 0.1)
+	//	if(blendFactor2 < 0.1)
 			texColor = closeColor;
-		else
-			texColor = lerp(closeColor, texColor, blendFactor2);
-	}
+	//	else
+	//		texColor = lerp(closeColor, texColor, blendFactor2);
+	//}
 
 	return texColor;
 }
@@ -279,14 +300,15 @@ float4 PixelShaderFunctionPlain(VertexShaderOutput input) : COLOR0
 	//float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
 	//float4 specular = pow(saturate(dot(reflect,input.View)),15);
 
-    float4 light = GetLight(input.Normal, input.Position3D, input.View);
+    float4 light = GetLight(input.Normal, input.Position3D, input.View, input.Height);
 
 	float d = length(input.Position3D - CameraPosition);
 
 	//==============================================================================================================================
 	// Determine the blend weights for the 3 planar projections.  
 	// N_orig is the vertex-interpolated normal vector.  
-	float3 blend_weights = abs( input.Normal.xyz );   // Tighten up the blending zone:  
+	//float3 blend_weights = abs( input.Normal.xyz );   // Tighten up the blending zone:  
+	float3 blend_weights = abs( normalize(input.Position3D).xyz );   // Tighten up the blending zone:  
 	blend_weights = (blend_weights - 0.2) * 7;  
 	blend_weights = max(blend_weights, 0);      // Force weights to sum to 1.0 (very important!)  
 	blend_weights /= (blend_weights.x + blend_weights.y + blend_weights.z ).xxx;   
@@ -619,7 +641,7 @@ float4 TreePSPlain(ModelVertexShaderOutput input) : COLOR0
 
 	clip(output.a < alphaReference ? -1:1); 	 
 
-	float4 lightColor = GetLight(normalize(input.Position3D), input.Position3D, input.View);
+	float4 lightColor = GetLight(normalize(input.Position3D), input.Position3D, input.View, PlanetRadius);
 
 	output.rgb = ApplyFog(float4(texColor.rgb, FogColor.a), input.Position3D, 1.2).rgb*output.a;
 
@@ -667,12 +689,15 @@ struct WVertexToPixel
     float4 Position                 : POSITION;
     float3 Normal : TEXCOORD1;
     //float4 ReflectionMapSamplingPos    : TEXCOORD2;
+	float2 BumpMapSamplingPos        : TEXCOORD2;
     float4 RefractionMapSamplingPos : TEXCOORD3;
     float4 Position3D                : TEXCOORD4;
     float3 View : TEXCOORD5;
+	float2 BumpMapSamplingPos2        : TEXCOORD6;
+    float Height                : TEXCOORD7;
 };
 
-WVertexToPixel WaterVS(float4 inPos : POSITION)
+WVertexToPixel WaterVS(float4 inPos : POSITION0, float4 inPos2 : POSITION1)
 {    
     WVertexToPixel Output = (WVertexToPixel)0;
 
@@ -682,59 +707,119 @@ WVertexToPixel WaterVS(float4 inPos : POSITION)
 	float4 worldPosition = mul(inPos, World);
     float4 viewPosition = mul(worldPosition, View);
     Output.Position = mul(viewPosition, Projection);
-	Output.Normal = normalize(inPos);
+	Output.Normal = normalize(inPos.xyz);
 
     //Output.ReflectionMapSamplingPos = mul(inPos, preWorldReflectionViewProjection);
      
 	Output.RefractionMapSamplingPos = mul(viewPosition, Projection);
     Output.Position3D = inPos;//mul(inPos, World);
 	
+	float tex_scale = 0.15;//0.32;
+	
+	float3 coord = inPos.xyz * tex_scale;  
+	float3 coordCam = CameraPosition * tex_scale;  
+
+    float3 windDir = normalize(xWindDirection);    
+    float3 perpDir = cross(windDir, normalize(inPos.xyz));
+
+	float ydot = 0;
+    float xdot = 0;
+	float ydotCam = 0;
+    float xdotCam = 0;
+
+	ydot = dot(coord, windDir);
+	xdot = dot(coord, perpDir);
+	ydotCam = dot(coordCam, windDir);
+	xdotCam = dot(coordCam, perpDir);
+
+    float2 moveVector = float2(xdot - xdotCam, ydot - ydotCam);
+	moveVector.x /= 2;    
+    Output.BumpMapSamplingPos2 = moveVector.xy/xWaveLength; 
+	moveVector.y += xTime*xWindForce;    
+    Output.BumpMapSamplingPos = moveVector.xy/xWaveLength; 
+	 
 	Output.View = normalize(float4(CameraPosition,1.0) - worldPosition);
+
+	Output.Height = length(inPos2);
 
     return Output;
 }
 
 float4 WaterPS(WVertexToPixel PSIn) : COLOR0
 {
-    float4 light = GetLight(PSIn.Normal, PSIn.Position3D, PSIn.View);
-
-    //float4 bumpColor = tex2D(WaterBumpMapSampler, PSIn.BumpMapSamplingPos);
-    float2 perturbation = (float2)1;//xWaveHeight*(bumpColor.rg - 0.5f)*2.0f;
+	float2 BumpMoving = PSIn.BumpMapSamplingPos;
+	float2 BumpStatic = PSIn.BumpMapSamplingPos2;
 	
-    //float2 ProjectedTexCoords;
-    //ProjectedTexCoords.x = PSIn.ReflectionMapSamplingPos.x/PSIn.ReflectionMapSamplingPos.w/2.0f + 0.5f;
-    //ProjectedTexCoords.y = -PSIn.ReflectionMapSamplingPos.y/PSIn.ReflectionMapSamplingPos.w/2.0f + 0.5f;        
-    //float2 perturbatedTexCoords = ProjectedTexCoords + perturbation;
-    //float4 reflectiveColor = tex2D(ReflectionSampler, perturbatedTexCoords);   
+	BumpMoving.x += 0.2;
+	//BumpMoving.x += 0.1;
+	BumpStatic.x += 0.7;
+    float4 bumpColor = tex2D(WaterBumpMapSampler, BumpMoving);
+    float4 bumpColor2 = tex2D(WaterBumpMapSampler, BumpStatic);
 
-	//float4 normal = float4(PSIn.Normal, 1.0);
-	//float4 diffuse = saturate(dot(-DirectionalLightDirection,normal));
-	//float4 reflect = normalize(2*diffuse*normal-float4(DirectionalLightDirection,1.0));
-	//float4 specular = pow(saturate(dot(reflect,PSIn.View)),15);
+	BumpMoving.x -= 0.3;
+	BumpMoving.y -= 0.3;
+	BumpStatic.x -= 0.4;
+	BumpStatic.y -= 0.4;
+    float4 bumpColor3 = tex2D(WaterBumpMapSampler, BumpMoving*0.9);//*0.7);
+    float4 bumpColor4 = tex2D(WaterBumpMapSampler, BumpStatic);
 
-    //float4 light = GetLight(input.Normal, input.View);
+	//bumpColor = lerp(bumpColor2, bumpColor4, 0.5);
+	bumpColor2 = lerp(bumpColor2, bumpColor4, 0.5);
+	bumpColor = lerp(bumpColor, bumpColor3, 0.5);
+	bumpColor = lerp(bumpColor, bumpColor2, 0.5);
+
+	//bumpColor = bumpColor*bumpColor2;
+
+	float3 normalPert = normalize(xWindDirection)*xWaveHeight*(length(bumpColor.rg) - 0.65f)*2.0f;
+
+    //float3 normalVector = normalize(normalPert);//bumpColor.rgb);
+    float3 normalVector = normalize(PSIn.Normal + normalPert);//bumpColor.rgb);
+    //float4 light = GetLight(normalVector, normalVector, PSIn.View, PlanetRadius);
+    float4 light = GetLight(normalVector, PSIn.Position3D, PSIn.View, PlanetRadius);
+    //float4 light = GetLight(PSIn.Normal, PSIn.Position3D, PSIn.View);
+
+    float2 perturbation = xWaveHeight*(bumpColor.rg - 0.5f)*2.0f/3.0f;
+    //float2 perturbation = (float2)1;//xWaveHeight*(bumpColor.rg - 0.5f)*2.0f;
 	
-	//float4 reflectiveColor = float4(0.1f, 0.1f, 0.3f, 1.0f);//*light;
-	//float4 reflectiveColor = float4(0.12f, 0.69f, 0.66f, 1.0f);//*light;
-	float4 reflectiveColor = float4(0.06f, 0.45f, 0.43f, 1.0f);//*light;
+	float h = PlanetRadius - PSIn.Height;
+	h = saturate(1.0f - 1.0f/(h*h*8 + 1));
+
+	//float4 reflectiveColor = float4(0.1f, 0.1f, 0.3f, 1.0f);
+	//float4 reflectiveColor = float4(0.12f, 0.69f, 0.66f, 1.0f);
+	float4 reflectiveColor = float4(0.06f, 0.45f, 0.43f, h);//0.7f);
+	//float4 reflectiveColor = float4(float3(0.06f, 0.45f, 0.43f)*bumpColor.rgb, 1.0f);
 	//reflectiveColor = reflectiveColor*light;
 
+	//reflectiveColor = float4((float3)length(bumpColor.rg), 1);
+
     float2 ProjectedRefrTexCoords = (float2)0;
-    ProjectedRefrTexCoords.x = -PSIn.RefractionMapSamplingPos.x/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;
-    ProjectedRefrTexCoords.y = PSIn.RefractionMapSamplingPos.y/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;    
+    ProjectedRefrTexCoords.x = PSIn.RefractionMapSamplingPos.x/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;
+    ProjectedRefrTexCoords.y = -PSIn.RefractionMapSamplingPos.y/PSIn.RefractionMapSamplingPos.w/2.0f + 0.5f;    
     float2 perturbatedRefrTexCoords = ProjectedRefrTexCoords + perturbation;    
     float4 refractiveColor = tex2D(RefractionSampler, perturbatedRefrTexCoords);
      
     float3 eyeVector = normalize(CameraPosition - PSIn.Position3D);
-    //float3 normalVector = float3(0,1,0);
-    float fresnelTerm = dot(eyeVector, PSIn.Normal);    
+    //float fresnelTerm = dot(eyeVector, PSIn.Normal);    
+    float fresnelTerm = saturate(dot(eyeVector, normalVector));//PSIn.Normal);    
+    float fresnelTerm2 = dot(eyeVector, PSIn.Normal)/0.6;    
+
+	fresnelTerm = saturate((fresnelTerm + fresnelTerm2*2)/3.0);
+
+    //float4 combinedColor = lerp(bumpColor, refractiveColor, fresnelTerm*fresnelTerm);//*fresnelTerm);
     float4 combinedColor = lerp(reflectiveColor, refractiveColor, fresnelTerm*fresnelTerm);//*fresnelTerm);
+
+	combinedColor.a = h;
      
     //float4 dullColor = float4(0.3f, 0.3f, 0.5f, 1.0f);
      
 //    Output.Color = lerp(combinedColor, dullColor, 0.2f);
 	
-	return ApplyFog(lerp(combinedColor, FogColor, 0.5f), PSIn.Position3D, 1)*light;
+//	return combinedColor*light;//reflectiveColor;
+//	return float4((float3)(fresnelTerm*fresnelTerm), 1);//combinedColor;//reflectiveColor;
+//	return float4((float3)(1.0 - (1.0 - fresnelTerm2)*(1.0 - fresnelTerm2)), 1);//combinedColor;//reflectiveColor;
+//	return ApplyFog(lerp(reflectiveColor, FogColor, 0.5f), PSIn.Position3D, 1)*light;
+	return ApplyFog(combinedColor, PSIn.Position3D, 1)*light;//*bumpColor;
+//	return ApplyFog(lerp(combinedColor, FogColor, 0.5f), PSIn.Position3D, 1)*light;//*bumpColor;
 //	return ApplyFog(float4(0.1f, 0.1f, 0.3f, 1.0f), PSIn.Position3D, 1)*light;
 }
 

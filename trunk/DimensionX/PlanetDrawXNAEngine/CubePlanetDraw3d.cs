@@ -39,16 +39,16 @@ namespace TestCubePlanet
         {
             if (GraphicsDevice != null)
             {
-                m_pCamera = new ArcBallCamera(GraphicsDevice);
-                m_pCamera.Initialize(pCube.R);
-
-                Shader.SetFog(m_eSkyColor, pCube.R + 15, 0.001f);
-
                 int index = 0;
                 foreach (var pFace in pCube.m_cFaces)
                 {
                     m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, Shader.m_aTreeModels, Shader.m_aPalmModels, Shader.m_aPineModels, Shader.m_pTreeTexture);
                 }
+
+                m_pCamera = new ArcBallCamera(GraphicsDevice);
+                m_pCamera.Initialize(pCube.R, m_aFaces);
+
+                Shader.SetFog(m_eSkyColor, pCube.R + 15, 0.001f);
             }
         }
 
@@ -148,7 +148,17 @@ namespace TestCubePlanet
         public bool ShowFrustum
         {
             get { return m_bShowFrustum; }
-            set { m_bShowFrustum = value; }
+            set 
+            { 
+                m_bShowFrustum = value;
+                if (m_pCube != null)
+                {
+                    if (m_bShowFrustum)
+                        Shader.SetFog(m_eSkyColor, 1, 0);
+                    else
+                        Shader.SetFog(m_eSkyColor, m_pCube.R + 15, 0.001f);
+                }
+            }
         }
 
         private bool m_bWireFrame = false;
@@ -178,13 +188,6 @@ namespace TestCubePlanet
         }
         
         public Vector3? m_pTarget = null;
-        private Square m_pFocusedSquare = null;
-
-        private Matrix m_pWorldMatrix = Matrix.Identity;
-        /// <summary>
-        /// Нормаль к планетарной сфере в точке на горизонте, максимально близкой к направлению взгляда камеры
-        /// </summary>
-        private Vector3 m_pHorizonNormal;
 
         public int VisibleQueue { get { return Square.s_pVisibleQueue.Count; } }
         public int InvisibleQueue { get { return Square.s_pInvisibleQueue.Count; } }
@@ -204,62 +207,11 @@ namespace TestCubePlanet
 
             if (m_pCamera.Update())
             {
-                //Точка фокуса должна быть над поверхностью ландшафта
-                Vector3? pCharacter = GetSurface(m_pCamera.FocusPoint, out m_pFocusedSquare);
-                if (pCharacter.HasValue)
-                {
-                    pCharacter += Vector3.Normalize(pCharacter.Value);// *1.2f;
-                    m_pCamera.Position += pCharacter.Value - m_pCamera.FocusPoint;
-                    m_pCamera.FocusPoint = pCharacter.Value;
-                }
-                else
-                {
-                    pCharacter = GetSurface(m_pCamera.FocusPoint, out m_pFocusedSquare);
-                    //throw new Exception();
-                }
-
-                //Сама камера тоже должна быть над поверхностью ландшафта
-                if (m_pCamera.Position.Length() < m_pCube.R + 10)
-                {
-                    float fMinHeight = 0.1f;
-                    Square pCameraSquare;
-                    Vector3? pSurface = GetSurface(m_pCamera.Position, out pCameraSquare);
-                    if (pSurface.HasValue)
-                    {
-                        if ((pSurface.Value - m_pCamera.Position).Length() < fMinHeight)
-                        {
-                            //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
-                            m_pCamera.Position = pSurface.Value + Vector3.Normalize(pSurface.Value) * fMinHeight;
-                        }
-                    }
-                }
-
-                //Обновим матрицу вида с учётом изменившегося положения камеры и её фокуса
-                m_pCamera.View = Matrix.CreateLookAt(m_pCamera.Position, m_pCamera.FocusPoint, m_pCamera.Top);
-
-                //Вычислим нормаль на горизонте, чтобы потом использовать её при вычислении цвета неба
-                float h = m_pCamera.Position.Length();
-                float d = h * (float)Math.Sqrt(h * h / (m_pCube.R * m_pCube.R) - 1);
-                m_pHorizonNormal = Vector3.Normalize(m_pCamera.Position - Vector3.Normalize(Vector3.Cross(m_pCamera.Position, m_pCamera.Left)) * d);
-
-                //Создадим такую мировую матрицу, которая сжимет мир по вертикали (относительно камеры!)
-                //и затем поднимает его вверх так, чтобы сохранить мировые коодинаты фокуса камеры
-                Vector3 pTop = Vector3.Normalize(m_pCamera.FocusPoint);
-                Vector3 pForward = Vector3.Cross(pTop, m_pCamera.Left);
-                Matrix T = new Matrix(m_pCamera.Left.X, pTop.X, pForward.X, 0,
-                                      m_pCamera.Left.Y, pTop.Y, pForward.Y, 0,
-                                      m_pCamera.Left.Z, pTop.Z, pForward.Z, 0,
-                                      0, 0, 0, 1);
-                m_pWorldMatrix = Matrix.Multiply(Matrix.Multiply(T, Matrix.CreateScale(1, 0.5f, 1)), Matrix.Invert(T));
-                m_pWorldMatrix = Matrix.Multiply(m_pWorldMatrix, Matrix.CreateTranslation(pTop * m_pCube.R / 2));
-
-                Matrix pInvert = Matrix.Invert(m_pWorldMatrix);
-
                 //Вычисляем видимость квадратов
                 BoundingFrustum pFrustrum = new BoundingFrustum(Matrix.Multiply(m_pCamera.View, m_pCamera.Projection));
                 foreach (var pFace in m_aFaces)
                     foreach (var pSquare in pFace.m_aSquares)
-                        pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pCamera.FocusPoint, m_pWorldMatrix, pInvert);
+                        pSquare.UpdateVisible(GraphicsDevice, pFrustrum, m_pCamera.Position, m_pCamera.Direction, m_pCamera.FocusPoint, m_pCamera.m_pWorldMatrix, m_pCamera.m_pWorldInvertMatrix);
 
                 //Обновляем массив отображаемых деревьев
                 if (m_bDrawTrees)
@@ -346,7 +298,7 @@ namespace TestCubePlanet
             else
                 m_eSunColor = Microsoft.Xna.Framework.Color.Lerp(Microsoft.Xna.Framework.Color.LightPink, Microsoft.Xna.Framework.Color.LightYellow, fCos);
 
-            float diff = Vector3.Dot(-m_pSunCurrent, m_pHorizonNormal) + 0.3f;
+            float diff = Vector3.Dot(-m_pSunCurrent, m_pCamera.m_pHorizonNormal) + 0.3f;
             if (diff > 1)
                 diff = 1;
             diff = 1 - (1 - diff) * (1 - diff);//*(1-diff)*(1-diff);
@@ -404,11 +356,10 @@ namespace TestCubePlanet
             if (m_bShowFrustum)
             {
                 Matrix pCameraView = Matrix.CreateLookAt(m_pCamera.Position * 3, m_pCamera.FocusPoint, m_pCamera.Top);
-                Shader.SetMatrices(m_pWorldMatrix, pCameraView, m_pCamera.Projection, m_pCamera.Position);
-                Shader.SetFog(m_eSkyColor, 1, 0);
+                Shader.SetMatrices(m_pCamera.m_pWorldMatrix, pCameraView, m_pCamera.Projection, m_pCamera.Position);
             }
             else
-                Shader.SetMatrices(m_pWorldMatrix, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
+                Shader.SetMatrices(m_pCamera.m_pWorldMatrix, m_pCamera.View, m_pCamera.Projection, m_pCamera.Position);
 
             Shader.SetDirectionalLight(m_pSunCurrent, 0.9f, m_eSunColor);
 
@@ -419,11 +370,19 @@ namespace TestCubePlanet
             Shader.PrepareDrawUnderwater(m_eRealSkyColor);
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
-                if (pSquare.m_iUnderwaterTrianglesCount > 0)
+                if (pSquare.m_iUnderwaterTrianglesCountLR > 0)
                 {
-                    Shader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pUnderwaterIndexBuffer, pSquare.g.m_aLandPoints.Length, pSquare.m_iUnderwaterTrianglesCount);
+                    if (pSquare.m_fVisibleDistance < m_fLODDistance)
+                    {
+                        Shader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pUnderwaterIndexBufferHR, pSquare.g.m_aLandPoints.Length, pSquare.m_iUnderwaterTrianglesCountHR);
+                        m_iTrianglesCount += (uint)pSquare.m_iUnderwaterTrianglesCountHR;
+                    }
+                    else
+                    {
+                        Shader.DrawLandscape(pSquare.m_pVertexBuffer, pSquare.m_pUnderwaterIndexBufferLR, pSquare.g.m_aLandPoints.Length, pSquare.m_iUnderwaterTrianglesCountLR);
+                        m_iTrianglesCount += (uint)pSquare.m_iUnderwaterTrianglesCountLR;
+                    }
 
-                    m_iTrianglesCount += (uint)pSquare.m_iUnderwaterTrianglesCount;
                     iCount++;
                 }
             }
@@ -453,10 +412,11 @@ namespace TestCubePlanet
             //DrawSun();
 
             //Рисуем водную поверхность и видимый через неё подводный мир
-            Shader.PrepareDrawWater();
+            Shader.PrepareDrawWater((float)lastTime / 500.0f, m_pCamera.m_pHorizonNormal * m_pCube.R - m_pCamera.FocusPoint);
+            //Shader.PrepareDrawWater((float)Math.Sin(lastTime / 500.0f), m_pCamera.Direction);
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
-                if (pSquare.m_iUnderwaterTrianglesCount > 0)
+                if (pSquare.m_iUnderwaterTrianglesCountLR > 0)
                 {
                     Shader.DrawLandscape(pSquare.m_pWaterVertexBuffer, pSquare.m_pWaterIndexBuffer, pSquare.g.m_aWaterPoints.Length, pSquare.m_iWaterTrianglesCount);
 
@@ -571,7 +531,7 @@ namespace TestCubePlanet
                         {
                             TreeModel pTree = vTree.Value[i];
 
-                            Matrix pWorld = pTree.worldMatrix * m_pWorldMatrix;
+                            Matrix pWorld = pTree.worldMatrix * m_pCamera.m_pWorldMatrix;
 
                             Vector3 pViewVector = pWorld.Translation - m_pCamera.Position;
 
@@ -634,10 +594,10 @@ namespace TestCubePlanet
             // matrix, which we have saved as member variables. We also need a world
             // matrix, which can just be identity.
             Vector3 nearPoint = GraphicsDevice.Viewport.Unproject(nearSource,
-                projectionMatrix, viewMatrix, m_pWorldMatrix);
+                projectionMatrix, viewMatrix, m_pCamera.m_pWorldMatrix);
 
             Vector3 farPoint = GraphicsDevice.Viewport.Unproject(farSource,
-                projectionMatrix, viewMatrix, m_pWorldMatrix);
+                projectionMatrix, viewMatrix, m_pCamera.m_pWorldMatrix);
 
             // find the direction vector that goes from the nearPoint to the farPoint
             // and normalize it....
@@ -688,39 +648,6 @@ namespace TestCubePlanet
         public Vector3? m_pCurrentPicking = null;
 
         Ray m_pCursorRay;
-
-        private Vector3? GetSurface(Vector3 pPos, out Square pOwnerSquare)
-        {
-            pOwnerSquare = null;
-
-            if (m_pCube == null)
-                return null;
-
-            Ray upRay = new Ray(Vector3.Zero, Vector3.Normalize(pPos));
-
-            foreach (var pFace in m_aFaces)
-                foreach (var pSquare in pFace.m_aSquares)
-                {
-                    if (pSquare.m_pBounds8.Intersects(upRay).HasValue)
-                    {
-                        pSquare.Rebuild(GraphicsDevice);
-
-                        int iLoc = -1;
-
-                        // Perform the ray to model intersection test.
-                        float? intersection = pSquare.RayIntersectsLandscape(upRay, Matrix.Identity,//m_pWorldMatrix,//CreateScale(0.5f),
-                                                                    ref iLoc);
-                        // Do we have a per-triangle intersection with this model?
-                        if (intersection != null)
-                        {
-                            pOwnerSquare = pSquare;
-                            return Vector3.Normalize(upRay.Direction) * intersection;
-                        }
-                    }
-                }
-
-            return null;
-        }
 
         /// <summary>
         /// Индекс локации в выбранном квадрате, над которой находится указатель мыши.

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TestCubePlanet
 {
-    class Face
+    public class Face
     {
         public Square[] m_aSquares;
 
