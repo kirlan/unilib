@@ -33,15 +33,17 @@ namespace UniLibXNA
         }
     }
 
-    public struct VertexPosition : IVertexType
+    public struct VertexPosition2 : IVertexType
     {
         public Vector3 Position;
+        public Vector3 Position2;
 
-        public readonly static long Size = sizeof(float) * 3;
+        public readonly static long Size = sizeof(float) * 6;
 
         public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
         (
-            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0)
+            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+            new VertexElement(sizeof(float) * 3, VertexElementFormat.Vector3, VertexElementUsage.Position, 1)
         );
 
         VertexDeclaration IVertexType.VertexDeclaration

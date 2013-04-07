@@ -20,7 +20,7 @@ namespace TestCubePlanet
             m_iLastSize = GetSquareSize();
             comboBox2.SelectedIndex = 3;
 
-            trackBar2.Value = 31 - (int)(1.0f / (cubePlanetDraw3d1.TimeSpeed * 1000));
+            trackBar2.Value = 31 - (int)Math.Sqrt((1.0f / (cubePlanetDraw3d1.TimeSpeed * 1000)));
             checkBox6.Checked = cubePlanetDraw3d1.TimeWarp;
 
             cubePlanetDraw3d1.MouseWheel += new MouseEventHandler(cubePlanetDraw3d1_MouseWheel);
@@ -277,7 +277,7 @@ namespace TestCubePlanet
 
         private void trackBar2_Scroll(object sender, EventArgs e)
         {
-            cubePlanetDraw3d1.TimeSpeed = 1.0f / ((31 - trackBar2.Value) * 1000);
+            cubePlanetDraw3d1.TimeSpeed = 1.0f / ((31 - trackBar2.Value) * (31 - trackBar2.Value) * 1000);
         }
 
         private void checkBox7_CheckedChanged(object sender, EventArgs e)

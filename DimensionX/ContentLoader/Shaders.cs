@@ -100,12 +100,14 @@ namespace ContentLoader
             m_pGraphicsDevice.Clear(eBackground);
         }
 
-        public static void PrepareDrawWater()
+        public static void PrepareDrawWater(float time, Vector3 pCamDir)
         {
             m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Water"];
             //effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
             //effect.Parameters["xReflectionMap"].SetValue(reflectionMap);
             m_pMyEffect.Parameters["xRefractionMap"].SetValue(refractionRenderTarget);
+            m_pWavesTime.SetValue(time);
+            m_pMyEffect.Parameters["xWindDirection"].SetValue(pCamDir);
 
             m_pMyEffect.CurrentTechnique.Passes[0].Apply();
         }
@@ -189,6 +191,8 @@ namespace ContentLoader
 
         static EffectParameter m_pModelBoneWorld;
 
+        static EffectParameter m_pWavesTime;
+
         private static Viewport pPort;
 
         private static bool m_bUseCelShading = false;
@@ -252,7 +256,9 @@ namespace ContentLoader
         static Texture2D roadTexture;
         static Texture2D swampTexture;
         static Texture2D lavaTexture;
-
+        
+        static Texture2D waterBumpMap;
+        
         static Texture2D grassBump;
         static Texture2D sandBump;
         static Texture2D rockBump;
@@ -328,6 +334,13 @@ namespace ContentLoader
             m_pMyEffect.Parameters["xTexture7"].SetValue(lavaTexture);
 
             m_pMyEffect.Parameters["BumpMap0"].SetValue(rockBump);
+
+            m_pMyEffect.Parameters["xWaterBumpMap"].SetValue(waterBumpMap);
+
+            m_pMyEffect.Parameters["xWaveLength"].SetValue(0.1f);
+            m_pMyEffect.Parameters["xWaveHeight"].SetValue(3f);
+            m_pMyEffect.Parameters["xWindForce"].SetValue(0.002f);
+            m_pMyEffect.Parameters["xWindDirection"].SetValue(new Vector3(0, 0, 1));
 
             m_pMyEffect.Parameters["GridColor1"].SetValue(Microsoft.Xna.Framework.Color.Black.ToVector4());
             m_pMyEffect.Parameters["GridColor2"].SetValue(Microsoft.Xna.Framework.Color.Pink.ToVector4());
@@ -584,6 +597,8 @@ namespace ContentLoader
             m_pCameraPosition = m_pMyEffect.Parameters["CameraPosition"];
 
             m_pModelBoneWorld = m_pMyEffect.Parameters["ModelBoneWorld"];
+
+            m_pWavesTime = m_pMyEffect.Parameters["xTime"];
         }
 
         private static void LoadTerrainTextures()
@@ -599,6 +614,8 @@ namespace ContentLoader
             lavaTexture = LibContent.Load<Texture2D>("content/dds/2-lava");
 
             rockBump = LibContent.Load<Texture2D>("content/dds/bump-rock");
+
+            waterBumpMap = LibContent.Load<Texture2D>("content/dds/waterbump");
         }
 
         // To store instance transform matrices in a vertex buffer, we use this custom

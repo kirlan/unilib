@@ -9,13 +9,27 @@ namespace TestCubePlanet
 {
     public class ArcBallCamera
     {
-        public Vector3 FocusPoint { get; set; }
-        public Vector3 Position { get; set; }
+        public static float FlatScale = 0.125f;
 
-        public Matrix View { get; set; }
-        public Matrix Projection { get; set; }
+        public Vector3 FocusPoint { get; private set; }
+        public Vector3 Position { get; private set; }
+        public Vector3 Direction { get; private set; }
+        public Vector3 Top;
 
-        protected GraphicsDevice GraphicsDevice { get; set; }
+        public Square m_pFocusedSquare = null;
+
+        public Matrix m_pWorldMatrix = Matrix.Identity;
+        public Matrix m_pWorldInvertMatrix = Matrix.Identity;
+        /// <summary>
+        /// Нормаль к планетарной сфере в точке на горизонте, максимально близкой к направлению взгляда камеры
+        /// </summary>
+        public Vector3 m_pHorizonNormal;
+
+
+        public Matrix View { get; private set; }
+        public Matrix Projection { get; private set; }
+
+        private GraphicsDevice GraphicsDevice;
 
         private float m_fStoredAspectRatio = 0;
         private float m_fStoredFieldOfView = 0;
@@ -33,17 +47,26 @@ namespace TestCubePlanet
             return false;
         }
 
-        public Vector3 Direction { get; private set; }
-        public Vector3 Top;
-        public float m_fDistance;
+        private float m_fDistance;
         /// <summary>
         /// радиус планеты
         /// </summary>
         private float m_fR = 150;
 
-        public float Yaw { get; set; }
-        public float Pitch { get; set; }
-        public float Roll { get; set; }
+        private float Yaw;
+        private float Pitch;
+        private float Roll;
+
+        private Face[] m_aFaces;
+
+        private Vector3 m_pTarget = Vector3.Backward * 150;
+        private Vector3 m_pTargetDir = Vector3.Up;
+
+        private bool m_bNeedUpdate = true;
+
+        private float m_fFutureYaw = 0;
+        private float m_fFutureDistance = 8;
+        //private float m_fFutureDistance = (float)Math.Sqrt(m_fMaxDist);//8;
 
         /// <summary>
         /// ArcBall Constructor
@@ -63,8 +86,10 @@ namespace TestCubePlanet
             return generatePerspectiveProjectionMatrix(Microsoft.Xna.Framework.MathHelper.ToRadians(45));
         }
 
-        public void Initialize(float fR)
+        public void Initialize(float fR, Face[] aFaces)
         {
+            m_aFaces = aFaces;
+
             m_fR = fR;
 
             Yaw = MathHelper.ToRadians(0);
@@ -77,13 +102,6 @@ namespace TestCubePlanet
 
             FocusPoint = Vector3.Backward * m_fR;
         }
-
-        public Vector3 m_pTarget = Vector3.Backward * 150;
-        public Vector3 m_pTargetDir = Vector3.Up;
-
-        private bool m_bNeedUpdate = true;
-
-        private float m_fFutureYaw = 0;
 
         public void Orbit(float YawChange, float PitchChange, float RollChange)
         {
@@ -100,7 +118,7 @@ namespace TestCubePlanet
             m_bNeedUpdate = true;
         }
 
-        private float m_fFutureDistance = 8;
+        private static float m_fMaxDist = 246;// / FlatScale;
 
         public void ZoomIn(float fDistance)
         {
@@ -114,8 +132,8 @@ namespace TestCubePlanet
             if (m_fFutureDistance < 2.2)
                 m_fFutureDistance = 2.2f;
 
-            if (m_fFutureDistance > 246)
-                m_fFutureDistance = 246;
+            if (m_fFutureDistance > m_fMaxDist)
+                m_fFutureDistance = m_fMaxDist;
 
             m_bNeedUpdate = true;
         }
@@ -195,6 +213,16 @@ namespace TestCubePlanet
                 Yaw = m_fFutureYaw;
 
             Pitch = 0.1f * (float)Math.Sqrt(m_fDistance);
+            //Pitch = (float)Math.Sqrt(m_fDistance * m_fDistance + 0.25 - m_fMaxDist) - 0.5f;//0.1f * (float)Math.Sqrt(m_fDistance);
+            //Pitch = Pitch * (float)Math.PI / (2 * m_fDistance);
+            if (Pitch > Math.PI / 2.1)
+                Pitch = (float)Math.PI / 2.1f;
+
+            float fPitchNorm = Pitch / ((float)Math.PI / 2);
+            float fPitchPow = (float)Math.Pow(fPitchNorm, 1.2*FlatScale);
+
+            //Pitch = (Pitch + (float)(fPitchPow * (Math.PI / 2))) / 2;
+            Pitch = (float)(fPitchPow * (Math.PI / 2));
 
             //Matrix pFocusPointRotation = Matrix.CreateFromQuaternion(m_pCursorPointRotation);
             //Matrix pFocusPointRotation1 = Matrix.CreateFromQuaternion(m_pTargetRotation1);
@@ -219,6 +247,57 @@ namespace TestCubePlanet
             Left = Vector3.Cross(FocusPoint, Direction);
             Top = Vector3.Normalize(Vector3.Cross(-Left, Direction));
 
+            //Точка фокуса должна быть над поверхностью ландшафта
+            Vector3? pCharacter = GetSurface(FocusPoint, out m_pFocusedSquare);
+            if (pCharacter.HasValue)
+            {
+                pCharacter += Vector3.Normalize(pCharacter.Value) / FlatScale;// *1.2f;
+                Position += pCharacter.Value - FocusPoint;
+                FocusPoint = pCharacter.Value;
+            }
+            else
+            {
+                pCharacter = GetSurface(FocusPoint, out m_pFocusedSquare);
+                //throw new Exception();
+            }
+
+            //Сама камера тоже должна быть над поверхностью ландшафта
+            if (Position.Length() < m_fR + 40)
+            {
+                float fMinHeight = 0.1f;
+                Square pCameraSquare;
+                Vector3? pSurface = GetSurface(Position, out pCameraSquare);
+                if (pSurface.HasValue)
+                {
+                    if ((pSurface.Value - Position).Length() < fMinHeight)
+                    {
+                        //камера слишком низко - принудительно поднимаем её на минимальную допустимую высоту
+                        Position = pSurface.Value + Vector3.Normalize(pSurface.Value) * fMinHeight;
+                    }
+                }
+            }
+
+            //Вычислим нормаль на горизонте, чтобы потом использовать её при вычислении цвета неба
+            float h = Position.Length();
+            float d = h * (float)Math.Sqrt(h * h / (m_fR * m_fR) - 1);
+            m_pHorizonNormal = Vector3.Normalize(Position - Vector3.Normalize(Vector3.Cross(Position, Left)) * d);
+
+            //Создадим такую мировую матрицу, которая сжимет мир по вертикали (относительно камеры!)
+            //и затем поднимает его вверх так, чтобы сохранить мировые коодинаты фокуса камеры
+            Vector3 pCamBasisTop = Vector3.Normalize(FocusPoint);
+            Vector3 pCamBasisForward = Vector3.Cross(pCamBasisTop, Left);
+            Matrix pCamBasis = new Matrix(Left.X, pCamBasisTop.X, pCamBasisForward.X, 0,
+                                  Left.Y, pCamBasisTop.Y, pCamBasisForward.Y, 0,
+                                  Left.Z, pCamBasisTop.Z, pCamBasisForward.Z, 0,
+                                  0, 0, 0, 1);
+            m_pWorldMatrix = Matrix.Multiply(Matrix.Multiply(pCamBasis, Matrix.CreateScale(1, FlatScale, 1)), Matrix.Invert(pCamBasis));
+            m_pWorldMatrix = Matrix.Multiply(m_pWorldMatrix, Matrix.CreateTranslation(pCamBasisTop * m_fR * (1 - FlatScale)));
+
+            m_pWorldInvertMatrix = Matrix.Invert(m_pWorldMatrix);
+
+            Position = Vector3.Transform(Position, m_pWorldMatrix);
+            FocusPoint = Vector3.Transform(FocusPoint, m_pWorldMatrix);
+
             View = Matrix.CreateLookAt(Position, FocusPoint, Top);
 
             m_bNeedUpdate = (m_fDistance != m_fFutureDistance) || (Yaw != m_fFutureYaw);
@@ -226,6 +305,37 @@ namespace TestCubePlanet
             return true;
         }
 
-        public float m_fCameraLength { get; set; }
+        private Vector3? GetSurface(Vector3 pPos, out Square pOwnerSquare)
+        {
+            pOwnerSquare = null;
+
+            Ray upRay = new Ray(Vector3.Zero, Vector3.Normalize(pPos));
+
+            foreach (var pFace in m_aFaces)
+                foreach (var pSquare in pFace.m_aSquares)
+                {
+                    if (pSquare.m_pBounds8.Intersects(upRay).HasValue)
+                    {
+                        pSquare.Rebuild(GraphicsDevice);
+
+                        int iLoc = -1;
+
+                        // Perform the ray to model intersection test.
+                        float? intersection = pSquare.RayIntersectsLandscape(upRay, Matrix.Identity,//m_pWorldMatrix,//CreateScale(0.5f),
+                                                                    ref iLoc);
+                        // Do we have a per-triangle intersection with this model?
+                        if (intersection != null)
+                        {
+                            if (intersection < m_fR)
+                                intersection = m_fR;
+
+                            pOwnerSquare = pSquare;
+                            return Vector3.Normalize(upRay.Direction) * intersection;
+                        }
+                    }
+                }
+
+            return null;
+        }
     }
 }
