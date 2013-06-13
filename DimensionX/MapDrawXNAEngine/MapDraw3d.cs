@@ -249,10 +249,10 @@ namespace MapDrawXNAEngine
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             refractionRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, pp.DepthStencilFormat);
 
-            if (m_pWorld != null && m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
-                m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
-            else if (m_pWorld != null && m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
-                m_pCamera = new PlanetCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
+            if (m_pWorld != null && m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
+                m_pCamera = new RingworldCamera(m_pWorld.m_pPlanet.RX / ((float)Math.PI * 1000), GraphicsDevice);
+            else if (m_pWorld != null && m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
+                m_pCamera = new PlanetCamera(m_pWorld.m_pPlanet.RX / ((float)Math.PI * 1000), GraphicsDevice);
             else
                 m_pCamera = new PlainCamera(GraphicsDevice);
 
@@ -568,9 +568,9 @@ namespace MapDrawXNAEngine
 
             FillNationColors();
 
-            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+            if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                 m_fLandHeightMultiplier = 7f / 60;//m_pWorld.m_fMaxHeight;
-            else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+            else if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
                 m_fLandHeightMultiplier = 3.5f / 60;//1.75f / 60;//m_pWorld.m_fMaxHeight;
             else
                 m_fLandHeightMultiplier = 3.5f / 60;// m_pWorld.m_fMaxHeight;
@@ -580,7 +580,7 @@ namespace MapDrawXNAEngine
 
             for (int i = 0; i < m_aRoads.Length; i++)
             {
-                m_aRoads[i].Build3D(m_pWorld.m_pGrid.m_eShape, m_pWorld.m_pGrid.RX, m_pWorld.m_pGrid.RY, m_fTextureScale);
+                m_aRoads[i].Build3D(m_pWorld.m_pPlanet.m_eShape, m_pWorld.m_pPlanet.RX, m_pWorld.m_pPlanet.RY, m_fTextureScale);
                 m_aRoads[i].NormalizeTextureWeights();
             }
 
@@ -616,19 +616,19 @@ namespace MapDrawXNAEngine
                 int iFogMode = 0;
 
                 m_pMyEffect.CurrentTechnique = m_pMyEffect.Techniques["Land"];
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                 {
-                    m_pCamera = new RingworldCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
+                    m_pCamera = new RingworldCamera(m_pWorld.m_pPlanet.RX / ((float)Math.PI * 1000), GraphicsDevice);
                     pEffectDirectionalLightDirection.SetValue(new Vector3(0, 0, -150));
-                    fFogHeight = (m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000)) - 10;
+                    fFogHeight = (m_pWorld.m_pPlanet.RX / ((float)Math.PI * 1000)) - 10;
                     iFogMode = 1;
                     fFogDensity = 0.025f;
                 }
-                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                else if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
                 {
-                    m_pCamera = new PlanetCamera(m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000), GraphicsDevice);
+                    m_pCamera = new PlanetCamera(m_pWorld.m_pPlanet.RX / ((float)Math.PI * 1000), GraphicsDevice);
                     pEffectDirectionalLightDirection.SetValue(Vector3.Normalize(new Vector3(1, -1, -1)));
-                    fFogHeight = (m_pWorld.m_pGrid.RX / ((float)Math.PI * 1000)) + 10;
+                    fFogHeight = (m_pWorld.m_pPlanet.RX / ((float)Math.PI * 1000)) + 10;
                     iFogMode = 2;
                     fFogDensity = 0.07f;
                 }
@@ -747,11 +747,11 @@ namespace MapDrawXNAEngine
         /// </summary>
         /// <param name="pVertex">заданная вершина</param>
         /// <returns></returns>
-        private Vector2 GetTexture(Vertex pVertex)
+        private Vector2 GetTexture(VoronoiVertex pVertex)
         {
             Vector2 TextureCoordinate = new Vector2(0);
 
-            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+            if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
             {
                 float fLongitude = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
                 float fLat = 0;
@@ -792,11 +792,11 @@ namespace MapDrawXNAEngine
             }
             else
             {
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                 {
                     float fPhi = (float)Math.Atan2(pVertex.m_fX, pVertex.m_fZ);
 
-                    TextureCoordinate.X = fPhi * m_pWorld.m_pGrid.RX / ((float)Math.PI * 10000);
+                    TextureCoordinate.X = fPhi * m_pWorld.m_pPlanet.RX / ((float)Math.PI * 10000);
                 }
                 else
                 {
@@ -1082,14 +1082,14 @@ namespace MapDrawXNAEngine
                      LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
             Dictionary<LocationX, GeoData> cGeoLData = new Dictionary<LocationX, GeoData>();
-            Dictionary<Vertex, GeoData2> cGeoVData = new Dictionary<Vertex, GeoData2>();
+            Dictionary<VoronoiVertex, GeoData2> cGeoVData = new Dictionary<VoronoiVertex, GeoData2>();
 
             if (BeginStep != null)
-                BeginStep("Building geometry...", (m_pWorld.m_pGrid.m_aVertexes.Length * 2 + m_pWorld.m_pGrid.m_aLocations.Length * 2 + m_pWorld.m_cTransportGrid.Count) / 1000);
+                BeginStep("Building geometry...", (m_pWorld.m_pPlanet.m_aVertexes.Length * 2 + m_pWorld.m_pPlanet.m_aLocations.Length * 2 + m_pWorld.m_cTransportGrid.Count) / 1000);
 
             int iUpdateCounter = 0;
             //добавляем в вершинный буффер узлы диаграммы Вороного
-            for (int k=0; k<m_pWorld.m_pGrid.m_aVertexes.Length; k++)
+            for (int k=0; k<m_pWorld.m_pPlanet.m_aVertexes.Length; k++)
             {
                 if (iUpdateCounter++ > 1000)
                 {
@@ -1098,9 +1098,9 @@ namespace MapDrawXNAEngine
                         ProgressStep();
                 }
 
-                Vertex pVertex = m_pWorld.m_pGrid.m_aVertexes[k];
+                VoronoiVertex pVertex = m_pWorld.m_pPlanet.m_aVertexes[k];
 
-                GeoData2 pData = new GeoData2(pVertex, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
+                GeoData2 pData = new GeoData2(pVertex, m_pWorld.m_pPlanet.m_eShape, m_fLandHeightMultiplier);
 
                 bool bForbidden = true;
                 for (int i = 0; i < pVertex.m_aLocations.Length; i++)
@@ -1129,9 +1129,9 @@ namespace MapDrawXNAEngine
             }
 
             //добавляем в вершинный буффер центры локаций
-            for (int i=0; i<m_pWorld.m_pGrid.m_aLocations.Length; i++)
+            for (int i=0; i<m_pWorld.m_pPlanet.m_aLocations.Length; i++)
             {
-                LocationX pLoc = m_pWorld.m_pGrid.m_aLocations[i];
+                LocationX pLoc = m_pWorld.m_pPlanet.m_aLocations[i];
                 if (iUpdateCounter++ > 1000)
                 {
                     iUpdateCounter = 0;
@@ -1148,7 +1148,7 @@ namespace MapDrawXNAEngine
                 if (pLoc.m_eType == RegionType.Volcano)
                     fHeight -= 4;
 
-                GeoData2 pData = new GeoData2(pLoc, m_pWorld.m_pGrid.m_eShape, fHeight, m_fLandHeightMultiplier);
+                GeoData2 pData = new GeoData2(pLoc, m_pWorld.m_pPlanet.m_eShape, fHeight, m_fLandHeightMultiplier);
                 cGeoLData[pLoc] = pData;
 
                 pData.TextureCoordinate = new Vector4(GetTexture(pLoc), 0, 0); 
@@ -1166,11 +1166,11 @@ namespace MapDrawXNAEngine
                     {
                         if (pLoc.m_eType == RegionType.Volcano)
                         {
-                            cGeoVData[pLine.m_pInnerPoint].m_pPosition = GeoData.GetPosition(pLine.m_pInnerPoint, m_pWorld.m_pGrid.m_eShape, pLine.m_pInnerPoint.m_fHeight + 6 + Rnd.Get(3f), m_fLandHeightMultiplier);
+                            cGeoVData[pLine.m_pInnerPoint].m_pPosition = GeoData.GetPosition(pLine.m_pInnerPoint, m_pWorld.m_pPlanet.m_eShape, pLine.m_pInnerPoint.m_fHeight + 6 + Rnd.Get(3f), m_fLandHeightMultiplier);
                             cGeoVData[pLine.m_pInnerPoint].m_pPosition = (cGeoVData[pLine.m_pInnerPoint].m_pPosition + cGeoLData[pLoc].m_pPosition) / 2;
                         }
                         else
-                            cGeoVData[pLine.m_pInnerPoint].m_pPosition = GeoData.GetPosition(pLine.m_pInnerPoint, m_pWorld.m_pGrid.m_eShape, pLine.m_pInnerPoint.m_fHeight + 1.5f + Rnd.Get(1f), m_fLandHeightMultiplier);
+                            cGeoVData[pLine.m_pInnerPoint].m_pPosition = GeoData.GetPosition(pLine.m_pInnerPoint, m_pWorld.m_pPlanet.m_eShape, pLine.m_pInnerPoint.m_fHeight + 1.5f + Rnd.Get(1f), m_fLandHeightMultiplier);
 
                         pLine = pLine.m_pNext;
                     }
@@ -1179,7 +1179,7 @@ namespace MapDrawXNAEngine
             }
 
             //сделаем нашим квази-вертексам ссылки на квази-локации
-            for (int k = 0; k < m_pWorld.m_pGrid.m_aVertexes.Length; k++)
+            for (int k = 0; k < m_pWorld.m_pPlanet.m_aVertexes.Length; k++)
             {
                 if (iUpdateCounter++ > 1000)
                 {
@@ -1188,7 +1188,7 @@ namespace MapDrawXNAEngine
                         ProgressStep();
                 }
 
-                Vertex pVertex = m_pWorld.m_pGrid.m_aVertexes[k];
+                VoronoiVertex pVertex = m_pWorld.m_pPlanet.m_aVertexes[k];
                 
                 List<GeoData> cAllowed = new List<GeoData>();
                 for (int i = 0; i < pVertex.m_aLocations.Length; i++)
@@ -1209,9 +1209,9 @@ namespace MapDrawXNAEngine
             }
             
             //заполняем индексный буффер
-            for (int i = 0; i < m_pWorld.m_pGrid.m_aLocations.Length; i++)
+            for (int i = 0; i < m_pWorld.m_pPlanet.m_aLocations.Length; i++)
             {
-                LocationX pLoc = m_pWorld.m_pGrid.m_aLocations[i];
+                LocationX pLoc = m_pWorld.m_pPlanet.m_aLocations[i];
                 if (iUpdateCounter++ > 1000)
                 {
                     iUpdateCounter = 0;
@@ -1398,7 +1398,7 @@ namespace MapDrawXNAEngine
                     continue;
 
                 List<GeoData> cRoadLine = new List<GeoData>();
-                foreach (Vertex pVertex in pRoad.m_aPoints)
+                foreach (VoronoiVertex pVertex in pRoad.m_aPoints)
                 {
                     if(pVertex is LocationX)
                         cRoadLine.Add(cGeoLData[(LocationX)pVertex]);
@@ -1446,7 +1446,7 @@ namespace MapDrawXNAEngine
             pData = new MapLayersData();
             pData.m_aVertices = new VertexPositionColorNormal[m_cGeoVData.Length];
 
-            Dictionary<Vertex, int> cVertexes = new Dictionary<Vertex, int>();
+            Dictionary<VoronoiVertex, int> cVertexes = new Dictionary<VoronoiVertex, int>();
             Dictionary<LocationX, int> cLocations = new Dictionary<LocationX, int>();
 
             if (BeginStep != null)
@@ -1458,7 +1458,7 @@ namespace MapDrawXNAEngine
             int iCounter = 0;
             for (int k = 0; k < m_cGeoVData.Length; k++)
             {
-                Vertex pVertex = m_cGeoVData[k].m_pOwner;
+                VoronoiVertex pVertex = m_cGeoVData[k].m_pOwner;
                 VertexPositionColorNormal pVM = new VertexPositionColorNormal();
 
                 pVM.Color = Microsoft.Xna.Framework.Color.Red;
@@ -1495,7 +1495,7 @@ namespace MapDrawXNAEngine
         /// <param name="pLoc">локация, границу которой строим</param>
         /// <param name="cVertexes">словарь индексов вершин в вершинном буфере</param>
         /// <returns></returns>
-        private int[] BuildLocationReferencesIndices(LocationX pLoc, ref Dictionary<Vertex, int> cVertexes)
+        private int[] BuildLocationReferencesIndices(LocationX pLoc, ref Dictionary<VoronoiVertex, int> cVertexes)
         {
             //добавляем в вершинный буффер центры локаций
             int m_iLinesCount = pLoc.m_aBorderWith.Length * 2;
@@ -1527,7 +1527,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         /// <param name="cVertexes">словарь индексов вершин в вершинном буфере</param>
         /// <returns></returns>
-        private int[] BuildLocationsIndices(ref Dictionary<Vertex, int> cVertexes)
+        private int[] BuildLocationsIndices(ref Dictionary<VoronoiVertex, int> cVertexes)
         {
             //добавляем в вершинный буффер центры локаций
             int m_iLinesCount = 0;
@@ -1576,7 +1576,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         /// <param name="cVertexes">словарь индексов вершин в вершинном буфере</param>
         /// <returns></returns>
-        private int[] BuildLandsIndices(ref Dictionary<Vertex, int> cVertexes)
+        private int[] BuildLandsIndices(ref Dictionary<VoronoiVertex, int> cVertexes)
         {
             List<int> cIndices = new List<int>();
 
@@ -1615,7 +1615,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         /// <param name="cVertexes">словарь индексов вершин в вершинном буфере</param>
         /// <returns></returns>
-        private int[] BuildLandMassesIndices(ref Dictionary<Vertex, int> cVertexes)
+        private int[] BuildLandMassesIndices(ref Dictionary<VoronoiVertex, int> cVertexes)
         {
             List<int> cIndices = new List<int>();
 
@@ -1654,7 +1654,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         /// <param name="cVertexes">словарь индексов вершин в вершинном буфере</param>
         /// <returns></returns>
-        private int[] BuildContinentsIndices(ref Dictionary<Vertex, int> cVertexes)
+        private int[] BuildContinentsIndices(ref Dictionary<VoronoiVertex, int> cVertexes)
         {
             List<int> cIndices = new List<int>();
 
@@ -1693,7 +1693,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         /// <param name="cVertexes">словарь индексов вершин в вершинном буфере</param>
         /// <returns></returns>
-        private int[] BuildProvincesIndices(ref Dictionary<Vertex, int> cVertexes)
+        private int[] BuildProvincesIndices(ref Dictionary<VoronoiVertex, int> cVertexes)
         {
             List<int> cIndices = new List<int>();
 
@@ -1732,7 +1732,7 @@ namespace MapDrawXNAEngine
         /// </summary>
         /// <param name="cVertexes">словарь индексов вершин в вершинном буфере</param>
         /// <returns></returns>
-        private int[] BuildStatesIndices(ref Dictionary<Vertex, int> cVertexes)
+        private int[] BuildStatesIndices(ref Dictionary<VoronoiVertex, int> cVertexes)
         {
             List<int> cIndices = new List<int>();
 
@@ -1789,7 +1789,7 @@ namespace MapDrawXNAEngine
 
             for (int k=0; k<m_cGeoVData.Length; k++)
             {
-                Vertex pVertex = m_cGeoVData[k].m_pOwner;
+                VoronoiVertex pVertex = m_cGeoVData[k].m_pOwner;
                 //считаем только те узлы диаграммы Вороного, которые соприкасаются хотя бы с одной разрешённой локацией
                 for (int i = 0; i < m_cGeoVData[k].m_aLinked.Length; i++)
                 {
@@ -1820,7 +1820,7 @@ namespace MapDrawXNAEngine
             pData = new MapModeData<VertexMultitextured>();
             pData.m_aVertices = new VertexMultitextured[iVertexesCount];
 
-            Dictionary<Vertex, int> cVertexes = new Dictionary<Vertex, int>();
+            Dictionary<VoronoiVertex, int> cVertexes = new Dictionary<VoronoiVertex, int>();
             Dictionary<LocationX, int> cLocations = new Dictionary<LocationX, int>();
 
             if (BeginStep != null)
@@ -1835,7 +1835,7 @@ namespace MapDrawXNAEngine
             int iCounter = 0;
             for (int k=0; k<m_cGeoVData.Length; k++)
             {
-                Vertex pVertex = m_cGeoVData[k].m_pOwner;
+                VoronoiVertex pVertex = m_cGeoVData[k].m_pOwner;
 
                 bool bForbidden = true;
                 bool bOcean = false;
@@ -1964,7 +1964,7 @@ namespace MapDrawXNAEngine
                 {
                     float fScale = 0.02f; //0.015f;
 
-                    fScale *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
+                    fScale *= (float)(70 / Math.Sqrt(m_pWorld.m_pPlanet.m_iLocationsCount));
 
                     if (eLT == LandType.Forest || eLT == LandType.Taiga || eLT == LandType.Jungle)
                     {
@@ -2018,7 +2018,7 @@ namespace MapDrawXNAEngine
 
                         cSettlements.Add(new SettlementModel(pData.m_aVertices[cLocations[pLoc]].Position,
                                                 Rnd.Get((float)Math.PI * 2), fScale,
-                                                pModel, m_pWorld.m_pGrid.m_eShape, pTexture, pLoc.m_pSettlement.m_sName, iSize));
+                                                pModel, m_pWorld.m_pPlanet.m_eShape, pTexture, pLoc.m_pSettlement.m_sName, iSize));
                     }
                 }
             }
@@ -2041,7 +2041,7 @@ namespace MapDrawXNAEngine
         /// <param name="cTrees">пополняемый список деревьев</param>
         /// <param name="fScale">масштабный коэффициент</param>
         /// <param name="fProbability">частота деревьев (0..1). Всего будет высажено примерно [число вершин в периметре локации]*3*[частота деревьев] деревьев</param>
-        private void AddTreeModels(LocationX pLoc, ref LandType eLT, ref VertexMultitextured[] aVertices, ref Dictionary<LocationX, int> cLocations, ref Dictionary<Vertex, int> cVertexes, ref Dictionary<Model, List<TreeModel>> cTrees, float fScale, float fProbability)
+        private void AddTreeModels(LocationX pLoc, ref LandType eLT, ref VertexMultitextured[] aVertices, ref Dictionary<LocationX, int> cLocations, ref Dictionary<VoronoiVertex, int> cVertexes, ref Dictionary<Model, List<TreeModel>> cTrees, float fScale, float fProbability)
         {
             //fProbability /= 1 + (pLoc.m_cRoads[RoadQuality.Country].Count + pLoc.m_cRoads[RoadQuality.Normal].Count + pLoc.m_cRoads[RoadQuality.Good].Count)/2;
 
@@ -2130,7 +2130,7 @@ namespace MapDrawXNAEngine
                     cTrees[pTree] = cInstances;
                 }
 
-                cInstances.Add(new TreeModel(pPos, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pGrid.m_eShape, treeTexture));
+                cInstances.Add(new TreeModel(pPos, Rnd.Get((float)Math.PI * 2), fScale, pTree, m_pWorld.m_pPlanet.m_eShape, treeTexture));
             }
         }
 
@@ -2144,7 +2144,7 @@ namespace MapDrawXNAEngine
         private void BuildWater()
         {
             int iPrimitivesCount = 0;
-            foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
+            foreach (VoronoiVertex pVertex in m_pWorld.m_pPlanet.m_aVertexes)
             {
                 for (int i = 0; i < pVertex.m_aLocations.Length; i++)
                 {
@@ -2162,7 +2162,7 @@ namespace MapDrawXNAEngine
                 }
 
             }
-            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pWorld.m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -2181,7 +2181,7 @@ namespace MapDrawXNAEngine
             Dictionary<long, int> cLocations = new Dictionary<long, int>();
 
             int iCounter = 0;
-            foreach (Vertex pVertex in m_pWorld.m_pGrid.m_aVertexes)
+            foreach (VoronoiVertex pVertex in m_pWorld.m_pPlanet.m_aVertexes)
             {
                 VertexPositionNormalTexture pVM = new VertexPositionNormalTexture();
 
@@ -2203,11 +2203,11 @@ namespace MapDrawXNAEngine
 
                 //у нас x и y - это горизонтальная плоскость, причём y растёт в направлении вниз экрана, т.е. как бы к зрителю. а z - это высота.
                 //в DX всё не как у людей. У них горизонтальная плоскость - это xz, причём z растёт к зрителю, а y - высота
-                pVM.Position = GeoData.GetPosition(pVertex, m_pWorld.m_pGrid.m_eShape, 0);
+                pVM.Position = GeoData.GetPosition(pVertex, m_pWorld.m_pPlanet.m_eShape, 0);
 
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
                     pVM.Normal = Vector3.Normalize(pVM.Position);
-                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                else if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                 {
                     pVM.Normal = Vector3.Transform(pVM.Position, Matrix.CreateScale(0, 1, 1));
                     pVM.Normal.Normalize();
@@ -2224,7 +2224,7 @@ namespace MapDrawXNAEngine
             }
 
             m_pWater.m_iTrianglesCount = 0;
-            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pWorld.m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -2236,11 +2236,11 @@ namespace MapDrawXNAEngine
                 m_pWater.m_aVertices[iCounter] = new VertexPositionNormalTexture();
                 float fHeight = pLoc.H * m_fLandHeightMultiplier;
 
-                m_pWater.m_aVertices[iCounter].Position = GeoData.GetPosition(pLoc, m_pWorld.m_pGrid.m_eShape, 0);
+                m_pWater.m_aVertices[iCounter].Position = GeoData.GetPosition(pLoc, m_pWorld.m_pPlanet.m_eShape, 0);
 
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
                     m_pWater.m_aVertices[iCounter].Normal = Vector3.Normalize(m_pWater.m_aVertices[iCounter].Position);
-                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                else if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                 {
                     m_pWater.m_aVertices[iCounter].Normal = Vector3.Transform(m_pWater.m_aVertices[iCounter].Position, Matrix.CreateScale(0, 1, 1));
                     m_pWater.m_aVertices[iCounter].Normal.Normalize();
@@ -2262,7 +2262,7 @@ namespace MapDrawXNAEngine
 
             iCounter = 0;
 
-            foreach (LocationX pLoc in m_pWorld.m_pGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pWorld.m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.m_pFirstLine == null)
                     continue;
@@ -2306,7 +2306,7 @@ namespace MapDrawXNAEngine
             int iPrimitivesCount = 0;
             for (int k=0; k<m_cGeoVData.Length; k++)
             {
-                Vertex pVertex = m_cGeoVData[k].m_pOwner;
+                VoronoiVertex pVertex = m_cGeoVData[k].m_pOwner;
 
                 List<Microsoft.Xna.Framework.Color> cColors = new List<Microsoft.Xna.Framework.Color>();
                 for (int i = 0; i < m_cGeoVData[k].m_aLinked.Length; i++)
@@ -2327,7 +2327,7 @@ namespace MapDrawXNAEngine
             // Create the verticies for our triangle
             pData.m_aVertices = new VertexPositionColorNormal[iPrimitivesCount + m_cGeoLData.Length];
 
-            Dictionary<Microsoft.Xna.Framework.Color, Dictionary<Vertex, int>> cVertexes = new Dictionary<Microsoft.Xna.Framework.Color,Dictionary<Vertex,int>>();
+            Dictionary<Microsoft.Xna.Framework.Color, Dictionary<VoronoiVertex, int>> cVertexes = new Dictionary<Microsoft.Xna.Framework.Color,Dictionary<VoronoiVertex,int>>();
             Dictionary<LocationX, int> cLocations = new Dictionary<LocationX, int>();
 
             if (BeginStep != null)
@@ -2337,7 +2337,7 @@ namespace MapDrawXNAEngine
             int iUpdateCounter = 0;
             for (int k=0; k<m_cGeoVData.Length; k++)
             {
-                Vertex pVertex = m_cGeoVData[k].m_pOwner;
+                VoronoiVertex pVertex = m_cGeoVData[k].m_pOwner;
 
                 List<object> cColors = new List<object>();
                 for (int i = 0; i < m_cGeoVData[k].m_aLinked.Length; i++)
@@ -2348,10 +2348,10 @@ namespace MapDrawXNAEngine
 
                     if (!cColors.Contains(pColor))
                     {
-                        Dictionary<Vertex, int> pColorDic;
+                        Dictionary<VoronoiVertex, int> pColorDic;
                         if (!cVertexes.TryGetValue(pColor, out pColorDic))
                         {
-                            pColorDic = new Dictionary<Vertex, int>();
+                            pColorDic = new Dictionary<VoronoiVertex, int>();
                             cVertexes[pColor] = pColorDic;
                         }
 
@@ -2418,7 +2418,7 @@ namespace MapDrawXNAEngine
                 }
                 
                 Microsoft.Xna.Framework.Color pColor = m_cGeoLData[i].m_pColor;
-                Dictionary<Vertex, int> pColorDic = cVertexes[pColor];
+                Dictionary<VoronoiVertex, int> pColorDic = cVertexes[pColor];
 
                 Line pLine = pLoc.m_pFirstLine;
                 //последовательно перебирает все связанные линии, пока круг не замкнётся.
@@ -2787,7 +2787,7 @@ namespace MapDrawXNAEngine
 
         public void FocusSelectedState()
         {
-            m_pCamera.Target = GeoData.GetPosition(m_pSelectedState, m_pWorld.m_pGrid.m_eShape, m_fLandHeightMultiplier);
+            m_pCamera.Target = GeoData.GetPosition(m_pSelectedState, m_pWorld.m_pPlanet.m_eShape, m_fLandHeightMultiplier);
         }
         bool m_bPicked = false;
 
@@ -3087,7 +3087,7 @@ namespace MapDrawXNAEngine
             m_pCamera.Update();
 
             //Убедимся, что камера достаточно высоко над землёй
-            if (m_pWorld.m_pGrid.m_eShape == WorldShape.Plain && m_pCamera.Position.Y < m_pWorld.m_fMaxHeight)
+            if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Plain && m_pCamera.Position.Y < m_pWorld.m_fMaxHeight)
             {
                 float fMinHeight = 0.1f;
                 Ray downRay = new Ray(m_pCamera.Position, Vector3.Down);
@@ -3143,12 +3143,12 @@ namespace MapDrawXNAEngine
 
             if (m_eMode == MapMode.Sattelite)
             {
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                 {
                     pEffectDirectionalLightDirection.SetValue(m_pCamera.Position);
                     pEffectDirectionalLightIntensity.SetValue(0.8f);
                 }
-                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                else if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
                 {
                     //pEffectDirectionalLightDirection.SetValue(-m_pCamera.Top/5 + m_pCamera.Direction);
                     pEffectDirectionalLightDirection.SetValue(-m_pCamera.Position);
@@ -3250,11 +3250,11 @@ namespace MapDrawXNAEngine
 
                 m_pBasicEffect.LightingEnabled = true;
                 m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1, -1, -1));
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                 {
                     m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(m_pCamera.Position);
                 }
-                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                else if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
                 {
                     //pEffectDirectionalLightDirection.SetValue(-m_pCamera.Top/5 + m_pCamera.Direction);
                     m_pBasicEffect.DirectionalLight0.Direction = Vector3.Normalize(-m_pCamera.Position);
@@ -3569,9 +3569,9 @@ namespace MapDrawXNAEngine
                     continue;
 
                 Vector3 pUplift;
-                if (m_pWorld.m_pGrid.m_eShape == WorldShape.Planet)
+                if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Planet)
                     pUplift = Vector3.Normalize(pSettlement.m_pPosition);
-                else if (m_pWorld.m_pGrid.m_eShape == WorldShape.Ringworld)
+                else if (m_pWorld.m_pPlanet.m_eShape == WorldShape.Ringworld)
                     pUplift = Vector3.Transform(-Vector3.Normalize(pSettlement.m_pPosition), Matrix.CreateScale(1, 0, 1));
                 else
                     pUplift = Vector3.Up;
@@ -3590,7 +3590,7 @@ namespace MapDrawXNAEngine
                         break;
                 }
 
-                fScale *= (float)(70 / Math.Sqrt(m_pWorld.m_pGrid.m_iLocationsCount));
+                fScale *= (float)(70 / Math.Sqrt(m_pWorld.m_pPlanet.m_iLocationsCount));
                 
                 // calculate screenspace of text3d space position
                 Vector3 screenSpace = GraphicsDevice.Viewport.Project(Vector3.Zero,

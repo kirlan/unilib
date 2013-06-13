@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Socium.Nations;
 using Socium.Settlements;
 using Socium.Psichology;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace Socium
 {
@@ -446,31 +447,25 @@ namespace Socium
         /// <summary>
         /// Генерация мира
         /// </summary>
-        /// <param name="cLocations">Сетка локаций, на которой будет строиться мир.</param>
         /// <param name="iContinents">Общее количество континентов - обособленных, разделённых водой участков суши.</param>
         /// <param name="bGreatOcean">Если true, то карта со всех сторон окружена водой.</param>
-        /// <param name="iLands">Общее количество `земель` - групп соседних локаций с одинаковым типом территории</param>
+        /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории</param>
         /// <param name="iProvinces">Общее количество провинций. Каждая провинция объединяет несколько сопредельных земель.</param>
         /// <param name="iStates">Общее количество государств. Каждое государство объединяет несколько сопредельных провинций.</param>
-        /// <param name="iLandMasses">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
+        /// <param name="iLandMassesDiversity">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
         /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
-        /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
-        /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
         /// <param name="aEpoches">Информация об эпохах развития мира (расы, техническое развитие, магические способности, пришельцы и т.д....)</param>
-        public World(LocationsGrid<LocationX> cLocations, 
+        public World(int iLocationsCount, int iFaceSize, WorkingArea eArea, 
                      int iContinents, 
-                     bool bGreatOcean, 
-                     int iLands, 
+                     int iLandsDiversity, 
                      int iProvinces, 
                      int iStates, 
-                     int iLandMasses, 
+                     int iLandMassesDiversity, 
                      int iOcean, 
-                     int iEquator, 
-                     int iPole, 
                      Epoch[] aEpoches,
-                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
-            : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole, BeginStep, ProgressStep)
+                     Cube<LocationX>.BeginStepDelegate BeginStep,
+                     Cube<LocationX>.ProgressStepDelegate ProgressStep)
+            : base(iLocationsCount, iFaceSize, eArea, iContinents, iLandsDiversity, iLandMassesDiversity, iOcean, BeginStep, ProgressStep)
         {
             Create(iProvinces, iStates, aEpoches, BeginStep, ProgressStep);
         }
@@ -480,8 +475,8 @@ namespace Socium
         private void Create(int iProvinces, 
                             int iStates,
                             Epoch[] aEpoches,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            Cube<LocationX>.BeginStepDelegate BeginStep,
+                            Cube<LocationX>.ProgressStepDelegate ProgressStep)
         {
             foreach (Race pRace in Race.m_cAllRaces)
                 pRace.ResetNations();
@@ -519,15 +514,15 @@ namespace Socium
         /// </summary>
         private void CorrectElevation()
         {
-            foreach (LocationX pLoc in m_pGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null || pLoc.m_pSettlement == null)// || pLoc.m_pBuilding == null)
                     continue;
 
-                Line pLine = pLoc.m_pFirstLine;
+                Location.Edge pLine = pLoc.m_pFirstLine;
                 do
                 {
-                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pInnerPoint.m_fHeight + 2*pLoc.H) / 3;
+                    pLine.m_pInnerPoint.m_fH = (pLine.m_pInnerPoint.m_fH + 2*pLoc.H) / 3;
 
                     pLine = pLine.m_pNext;
                 }
@@ -536,34 +531,35 @@ namespace Socium
         }
 
         private void PopulateWorld(Epoch pEpoch, bool bFinalize,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            Cube<LocationX>.BeginStepDelegate BeginStep,
+                            Cube<LocationX>.ProgressStepDelegate ProgressStep)
         {
+            BeginStep("Growing states...", 6);
+
             SetWorldLevels(pEpoch);
 
             AddRaces(pEpoch);
             if (bFinalize)
                 AddInvadersRaces(pEpoch);
+            ProgressStep();
 
-            //BeginStep("Distributing races...", 1);
             DistributeRacesToLandMasses();
-            //ProgressStep();
+            ProgressStep();
             
-            //BeginStep("Populating lands...", 1);
             PopulateAreas();
-            //ProgressStep();
+            ProgressStep();
 
             //BeginStep("Building provinces...", 1);
             BuildProvinces();
-            //ProgressStep();
+            ProgressStep();
 
 //            BeginStep("Building cities...", 1);
-//            ProgressStep();
             BuildCities(!bFinalize, BeginStep, ProgressStep);
+            ProgressStep();
 
 //            BeginStep("Building states...", 1);
-            //ProgressStep();
             BuildStates(!bFinalize, BeginStep, ProgressStep);
+            ProgressStep();
 
             //if (bFinalize)
             //    BuildSeaRoutes(m_pGrid.CycleShift);
@@ -867,8 +863,8 @@ namespace Socium
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
         private void BuildStates(bool bFast,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            Cube<LocationX>.BeginStepDelegate BeginStep,
+                            Cube<LocationX>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building states...", 10);
 
@@ -1384,7 +1380,7 @@ namespace Socium
                 if (eMaxNavalPath == 0)
                     continue;
 
-                int iMaxLength = m_pGrid.RX * 10;
+                int iMaxLength = (int)(m_pPlanet.R * Math.PI);
                 if (eMaxNavalPath == RoadQuality.Country)
                     iMaxLength /= 10;
                 if (eMaxNavalPath == RoadQuality.Normal)
@@ -1439,7 +1435,7 @@ namespace Socium
                     }
 
                     eMaxNavalPath = State.InfrastructureLevels[pOtherState.m_iInfrastructureLevel].m_eMaxNavalPath;
-                    iMaxLength = m_pGrid.RX * 10;
+                    iMaxLength = (int)(m_pPlanet.R * Math.PI);
                     if (eMaxNavalPath == RoadQuality.Country)
                         iMaxLength /= 10;
                     if (eMaxNavalPath == RoadQuality.Normal)
@@ -1649,8 +1645,8 @@ namespace Socium
         }
 
         private void BuildCities(bool bFast,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            Cube<LocationX>.BeginStepDelegate BeginStep,
+                            Cube<LocationX>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building cities...", m_aProvinces.Length * 2 + 1);
 
@@ -1953,7 +1949,7 @@ namespace Socium
                 pRoad.ClearRoad();
 
             //все локации в мире
-            foreach (LocationX pLoc in m_pGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pPlanet.m_aLocations)
             {
                 //очищаем информацию о дорогах, проходивших через локацию
                 pLoc.m_cRoads.Clear();

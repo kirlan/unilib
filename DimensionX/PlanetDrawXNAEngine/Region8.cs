@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace TestCubePlanet
+namespace PlanetDrawXNAEngine
 {
     /// <summary>
     /// Defines an irregular solid region with 8 boundary points.

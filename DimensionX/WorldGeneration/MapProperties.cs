@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LandscapeGeneration;
 using Socium;
 using Random;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace WorldGeneration
 {
@@ -16,49 +17,70 @@ namespace WorldGeneration
     {
         MapPreset[] m_aWorldMaps = new MapPreset[] 
         {
-            new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 0, 90, 5, 66, 50, 45),
-            new MapPreset("Continents 2", "Earth-like world. 5 big continents ocuppies 33% of world surface. There could be a continents in polar regions in this template.", true, false, 0, 45, 5, 66, 50, 50),
-            new MapPreset("Gondwana", "One big continent ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 0, 90, 1, 66, 50, 45),
-            new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 0, 300, 30, 66, 50, 45),
+            new MapPreset("Gondwana", "One big continent ocuppies 33% of world surface.", 40, 14, 1, 66),
+            new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface.", 40, 14, 5, 66),
+            new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface.", 40, 50, 30, 66),
         };
 
         MapPreset[] m_aPartialMaps = new MapPreset[] 
         {
-            new MapPreset("Coast", "Traditional adventure map of big coastral region, like Europe, Middlearth, Hyperborea or Faerun. This is a part of a one big continent from arctic to tropics, with a long coastral line.", false, false, 15, 45, 1, 50, 95, 95),
-            new MapPreset("Mediterranean", "Mediterranean-like region - there are parts of 3 big continents, divided by a sea. Continents extends from arctic to tropics.", false, false, 15, 45, 3, 50, 95, 95),
-            new MapPreset("Atlantis", "One big continent in middle latitudes, surrounded by ocean.", false, true, 15, 45, 1, 50, 120, 130),
-            new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 300, 15, 90, 50, 100),
+            new MapPreset("Atlantis", "Traditional adventure map of 1 one big continent, with a complex coastral line.", 80, 25, 1, 50),
+            new MapPreset("Duality", "2 big continents, divided by a wide ocean.", 80, 25, 2, 75),
+            new MapPreset("Mediterranean", "Mediterranean-like region - there are 3 big continents, divided by a narrow sea.", 80, 25, 3, 50),
+            new MapPreset("Islands Paradise", "Archipelago of about 15 small islands.", 0, 100, 15, 90),
         };
 
-        private LocationsGrid<LocationX> m_pLocationsGrid = null;
+        private WorkingArea m_eWorkingArea = WorkingArea.WholeSphere;
 
-        [Browsable(false)]
-        public LocationsGrid<LocationX> LocationsGrid
+        public WorkingArea WorkingArea
         {
-            get { return m_pLocationsGrid; }
+            get { return m_eWorkingArea; }
             set 
             {
-                m_pLocationsGrid = value;
+                m_eWorkingArea = value;
 
-                Enabled = m_pLocationsGrid != null;
+                Enabled = true;
 
-                if (m_pLocationsGrid == null)
-                    return;
-
-                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_pLocationsGrid.m_eShape != WorldShape.Plain))
+                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != (m_eWorkingArea == WorkingArea.WholeSphere))
                 {
                     MapPresets.Items.Clear();
 
-                    if (m_pLocationsGrid.m_eShape == WorldShape.Ringworld || m_pLocationsGrid.m_eShape == WorldShape.Planet)
+                    if (m_eWorkingArea == WorkingArea.WholeSphere)
                         MapPresets.Items.AddRange(m_aWorldMaps);
                     else
                         MapPresets.Items.AddRange(m_aPartialMaps);
                 }
 
-                CalculateLimits(m_pLocationsGrid.m_iLocationsCount);
+                CalculateLimits();
 
                 if (MapPresets.Items.Count > 0)
                     MapPresets.SelectedIndex = 0;
+            }
+        }
+
+        private int m_iChunkSize = 800;
+
+        public int ChunkSize
+        {
+            get { return m_iChunkSize; }
+            set 
+            { 
+                m_iChunkSize = value;
+
+                CalculateLimits();
+            }
+        }
+
+        private int m_iChunksCount = 5;
+
+        public int ChunksCount
+        {
+            get { return m_iChunksCount; }
+            set 
+            { 
+                m_iChunksCount = value;
+
+                CalculateLimits();
             }
         }
 
@@ -96,44 +118,50 @@ namespace WorldGeneration
             Enabled = false;
         }
 
-        private void CalculateLimits(int iLocationsCount)
+        private void CalculateLimits()
         {
-            if (LandsCountBar.Minimum > Math.Min(600, iLocationsCount / 4))
-                LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
+            //if (LandsCountBar.Minimum > Math.Min(600, iLocationsCount / 4))
+            //    LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
 
-            if (LandsCountBar.Maximum < iLocationsCount / 2)
-                LandsCountBar.Maximum = iLocationsCount / 2;
+            //if (LandsCountBar.Maximum < iLocationsCount / 2)
+            //    LandsCountBar.Maximum = iLocationsCount / 2;
 
-            if (LandsCountBar.Value > iLocationsCount / 2)
-                LandsCountBar.Value = iLocationsCount / 2;
+            //if (LandsCountBar.Value > iLocationsCount / 2)
+            //    LandsCountBar.Value = iLocationsCount / 2;
 
-            if (LandsCountBar.Value < Math.Min(600, iLocationsCount / 4))
-                LandsCountBar.Value = Math.Min(600, iLocationsCount / 4);
+            //if (LandsCountBar.Value < Math.Min(600, iLocationsCount / 4))
+            //    LandsCountBar.Value = Math.Min(600, iLocationsCount / 4);
 
-            LandsCountBar.Maximum = iLocationsCount / 2 + LandsCountBar.LargeChange - 1;
-            LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
+            //LandsCountBar.Maximum = iLocationsCount / 2 + LandsCountBar.LargeChange - 1;
+            //LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
 
-            if (LandMassesCountBar.Minimum > Math.Min(30, iLocationsCount / 20))
-                LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
+            //if (LandMassesCountBar.Minimum > Math.Min(30, iLocationsCount / 20))
+            //    LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
 
-            if (LandMassesCountBar.Maximum < Math.Min(300, iLocationsCount / 4))
-                LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4);
+            //if (LandMassesCountBar.Maximum < Math.Min(300, iLocationsCount / 4))
+            //    LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4);
 
-            if (LandMassesCountBar.Value > Math.Min(300, iLocationsCount / 4))
-                LandMassesCountBar.Value = Math.Min(300, iLocationsCount / 4);
+            //if (LandMassesCountBar.Value > Math.Min(300, iLocationsCount / 4))
+            //    LandMassesCountBar.Value = Math.Min(300, iLocationsCount / 4);
 
-            if (LandMassesCountBar.Value < Math.Min(30, iLocationsCount / 20))
-                LandMassesCountBar.Value = Math.Min(30, iLocationsCount / 20);
+            //if (LandMassesCountBar.Value < Math.Min(30, iLocationsCount / 20))
+            //    LandMassesCountBar.Value = Math.Min(30, iLocationsCount / 20);
 
-            LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4) + LandMassesCountBar.LargeChange - 1;
-            LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
+            //LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4) + LandMassesCountBar.LargeChange - 1;
+            //LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
 
-            int iNotOcean = iLocationsCount * (100 - (int)WaterPercentBar.Value) / 100;
+            int iLocations = m_iChunkSize * m_iChunksCount * m_iChunksCount;
+            if (m_eWorkingArea == WorkingArea.WholeSphere)
+                iLocations *= 6;
+            if (m_eWorkingArea == WorkingArea.HalfSphereEquatorial || m_eWorkingArea == WorkingArea.HalfSpherePolar)
+                iLocations *= 3;
 
-            if (StatesCountBar.Minimum > Math.Min(1, iNotOcean / 40))
+            int iNotOcean = iLocations * (100 - (int)WaterPercentBar.Value) / 100;
+
+            //if (StatesCountBar.Minimum > Math.Min(1, iNotOcean / 40))
                 StatesCountBar.Minimum = Math.Min(1, iNotOcean / 40);
 
-            if (StatesCountBar.Maximum < Math.Min(100, iNotOcean / 20))
+            //f (StatesCountBar.Maximum < Math.Min(100, iNotOcean / 20))
                 StatesCountBar.Maximum = Math.Min(100, iNotOcean / 20);
 
             if (StatesCountBar.Value > Math.Min(100, iNotOcean / 20))
@@ -178,51 +206,27 @@ namespace WorldGeneration
 
         private void ApplyPreset(MapPreset pPreset)
         {
-            PartialMapBox.Checked = !pPreset.m_bBordered;
-            if (pPreset.m_iLandsCountPercent > 0)
-                LandsCountBar.Value = LandsCountBar.Minimum + (LandsCountBar.Maximum - LandsCountBar.Minimum) * pPreset.m_iLandsCountPercent / 100;
-            else
-            {
-                if (LandsCountBar.Maximum < 6000)
-                    LandsCountBar.Value = LandsCountBar.Maximum;
-                else
-                    if (LandsCountBar.Minimum > 6000)
-                        LandsCountBar.Value = LandsCountBar.Minimum;
-                    else
-                        LandsCountBar.Value = 6000;
-            }
-
-            if (LandMassesCountBar.Maximum < pPreset.m_iLandMassesCount)
-                LandMassesCountBar.Value = LandMassesCountBar.Maximum;
-            else
-                if (LandMassesCountBar.Minimum > pPreset.m_iLandMassesCount)
-                    LandMassesCountBar.Value = LandMassesCountBar.Minimum;
-                else
-                    LandMassesCountBar.Value = pPreset.m_iLandMassesCount;
-
-            if (ContinentsCountEdit.Maximum < pPreset.m_iContinentsCount)
-                ContinentsCountEdit.Value = ContinentsCountEdit.Maximum;
-            else
-                if (ContinentsCountEdit.Minimum > pPreset.m_iContinentsCount)
-                    ContinentsCountEdit.Value = ContinentsCountEdit.Minimum;
-                else
-                    ContinentsCountEdit.Value = pPreset.m_iContinentsCount;
+            LandsCountBar.Value = pPreset.m_iLandsCountPercent;
+            LandMassesCountBar.Value = pPreset.m_iLandMassesPercent;
+            ContinentsCountEdit.Value = pPreset.m_iContinentsCount;
 
             WaterPercentBar.Value = pPreset.m_iWaterCoverage;
-            EquatorBar.Value = pPreset.m_iEquatorPosition;
-            PoleBar.Value = pPreset.m_iPoleDistance;
 
             //считаем количество государств на отображаемом участке карты из рассчёта что на полной карте имеем 60 государств (т.е. на четвертинке карты, такой как средиземье или хайбория, будет 15 государств...)
-            StatesCountBar.Value = Math.Min(StatesCountBar.Maximum, Math.Max(StatesCountBar.Minimum, 150000 / (PoleBar.Value * PoleBar.Value)));
+            StatesCountBar.Value = 10;
+            if (m_eWorkingArea == WorkingArea.WholeSphere)
+                StatesCountBar.Value *= 6;
+            if (m_eWorkingArea == WorkingArea.HalfSphereEquatorial || m_eWorkingArea == WorkingArea.HalfSpherePolar)
+                StatesCountBar.Value *= 3;
         }
 
-        public int LandsCount
+        public int LandsDiversity
         {
             get { return LandsCountBar.Value; }
             set { LandsCountBar.Value = value; }
         }
 
-        public int LandMassesCount
+        public int LandMassesDiversity
         {
             get { return LandMassesCountBar.Value; }
             set { LandMassesCountBar.Value = value; }
@@ -240,23 +244,23 @@ namespace WorldGeneration
             set { WaterPercentBar.Value = value; }
         }
 
-        public bool PartialMap
-        {
-            get { return PartialMapBox.Checked; }
-            set { PartialMapBox.Checked = value; }
-        }
+        //public bool PartialMap
+        //{
+        //    get { return PartialMapBox.Checked; }
+        //    set { PartialMapBox.Checked = value; }
+        //}
 
-        public int EquatorPosition
-        {
-            get { return EquatorBar.Value; }
-            set { EquatorBar.Value = value; }
-        }
+        //public int EquatorPosition
+        //{
+        //    get { return EquatorBar.Value; }
+        //    set { EquatorBar.Value = value; }
+        //}
 
-        public int PoleDistance
-        {
-            get { return PoleBar.Value; }
-            set { PoleBar.Value = value; }
-        }
+        //public int PoleDistance
+        //{
+        //    get { return PoleBar.Value; }
+        //    set { PoleBar.Value = value; }
+        //}
 
         public int StatesCount
         {
@@ -268,11 +272,11 @@ namespace WorldGeneration
         {
             ContinentsCountEdit.Value = ContinentsCountEdit.Minimum + Rnd.Get((int)ContinentsCountEdit.Maximum - (int)ContinentsCountEdit.Minimum);
 
-            EquatorBar.Value = Rnd.Get(200) - 50;
+            //EquatorBar.Value = Rnd.Get(200) - 50;
 
-            PoleBar.Value = Math.Max(100 - EquatorBar.Value, EquatorBar.Value);
-            if (Rnd.OneChanceFrom(2))
-                PoleBar.Value = PoleBar.Value + Rnd.Get((int)(PoleBar.Value / 2));
+            //PoleBar.Value = Math.Max(100 - EquatorBar.Value, EquatorBar.Value);
+            //if (Rnd.OneChanceFrom(2))
+            //    PoleBar.Value = PoleBar.Value + Rnd.Get((int)(PoleBar.Value / 2));
 
             WaterPercentBar.Value = WaterPercentBar.Minimum + Rnd.Get((int)WaterPercentBar.Maximum - (int)WaterPercentBar.Minimum);
 

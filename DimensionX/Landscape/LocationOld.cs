@@ -5,17 +5,18 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using LandscapeGeneration.PathFind;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace LandscapeGeneration
 {
     public class Line
     {
-        public Vertex m_pPoint1;
-        public Vertex m_pPoint2;
-        public Vertex m_pMidPoint;
-        public Vertex m_pInnerPoint;
+        public VoronoiVertex m_pPoint1;
+        public VoronoiVertex m_pPoint2;
+        public VoronoiVertex m_pMidPoint;
+        public VoronoiVertex m_pInnerPoint;
 
-        public Line(Vertex pPoint1, Vertex pPoint2, Vertex pMidPoint, Vertex pInnerPoint)
+        public Line(VoronoiVertex pPoint1, VoronoiVertex pPoint2, VoronoiVertex pMidPoint, VoronoiVertex pInnerPoint)
         {
             m_pPoint1 = pPoint1;
             m_pPoint2 = pPoint2;
@@ -35,7 +36,7 @@ namespace LandscapeGeneration
             m_fLength = pOriginal.m_fLength;
         }
 
-        public Line(BinaryReader binReader, Dictionary<long, Vertex> cVertexes)
+        public Line(BinaryReader binReader, Dictionary<long, VoronoiVertex> cVertexes)
         {
             m_pPoint1 = cVertexes[binReader.ReadInt64()];
             m_pPoint2 = cVertexes[binReader.ReadInt64()];
@@ -53,7 +54,7 @@ namespace LandscapeGeneration
             binWriter.Write(m_pInnerPoint.m_iID);
         }
 
-        public void Merge(Vertex pFrom, Vertex pTo)
+        public void Merge(VoronoiVertex pFrom, VoronoiVertex pTo)
         {
             if (m_pPoint1 == pFrom)
                 m_pPoint1 = pTo;
@@ -77,14 +78,7 @@ namespace LandscapeGeneration
 
     }
 
-    public enum RegionType
-    {
-        Empty,
-        Peak,
-        Volcano
-    }
-
-    public class Location : TransportationNode, ITerritory
+    public class LocationOld : TransportationNode//, ITerritory
     {
         public Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
 
@@ -127,7 +121,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Для "призрачных" локаций - ссылка на оригинал.
         /// </summary>
-        internal Location m_pOrigin = null;
+        internal LocationOld m_pOrigin = null;
 
         /// <summary>
         /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
@@ -167,7 +161,7 @@ namespace LandscapeGeneration
             m_iGridY = iGridY;
         }
 
-        public void Create(long iID, float x, float y, float z, Location pOrigin)
+        public void Create(long iID, float x, float y, float z, LocationOld pOrigin)
         {
             X = x;
             Y = y;
@@ -320,7 +314,7 @@ namespace LandscapeGeneration
             binWriter.Write(m_cBorderWith.Count);
             foreach (var pLoc in m_cBorderWith)
             {
-                binWriter.Write((pLoc.Key as Location).m_iID);
+                binWriter.Write((pLoc.Key as LocationOld).m_iID);
                 binWriter.Write(pLoc.Value.Count);
                 foreach (Line pLine in pLoc.Value)
                 {
@@ -342,7 +336,7 @@ namespace LandscapeGeneration
         /// После считывания всех локаций необходимо перевести информацию из m_cBorderWithID в m_cBorderWith.
         /// </summary>
         /// <param name="binReader"></param>
-        public void Load(BinaryReader binReader, Dictionary<long, Vertex> cVertexes)
+        public void Load(BinaryReader binReader, Dictionary<long, VoronoiVertex> cVertexes)
         {
             m_cLinks.Clear();
             m_cBorderWith.Clear();

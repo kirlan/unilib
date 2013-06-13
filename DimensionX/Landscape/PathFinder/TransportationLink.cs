@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace LandscapeGeneration.PathFind
 {
@@ -288,7 +289,7 @@ namespace LandscapeGeneration.PathFind
             
             m_aPoints[0] = pLoc1;
 
-            Line pLine = pLoc1.BorderWith[pLoc2][0];
+            Location.Edge pLine = pLoc1.BorderWith[pLoc2][0];
 
             m_aPoints[1] = pLine.m_pInnerPoint;
             m_aPoints[2] = pLine.m_pMidPoint;
@@ -344,10 +345,10 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLand1;
             m_aPoints[2] = pLand2;
 
-            Line pBestLine = null;
+            Location.Edge pBestLine = null;
             float fShortest = float.MaxValue;
-            Line[] cLines = pLand1.BorderWith[pLand2].ToArray();
-            foreach (Line pLine in cLines)
+            Location.Edge[] cLines = pLand1.BorderWith[pLand2].ToArray();
+            foreach (var pLine in cLines)
             {
                 m_aPoints[1] = pLine.m_pMidPoint;
 
@@ -374,10 +375,10 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLandMass1;
             m_aPoints[2] = pLandMass2;
 
-            Line pBestLine = null;
+            Location.Edge pBestLine = null;
             float fShortest = float.MaxValue;
-            Line[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
-            foreach (Line pLine in cLines)
+            Location.Edge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
+            foreach (var pLine in cLines)
             {
                 m_aPoints[1] = pLine.m_pMidPoint;
 

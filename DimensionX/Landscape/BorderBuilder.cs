@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LandscapeGeneration.PathFind;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace LandscapeGeneration
 {
     public abstract class BorderBuilder<INNER> : TransportationNode
         where INNER : class, ITerritory
     {
-        public Dictionary<object, List<Line>> m_cBorder = new Dictionary<object, List<Line>>();
+        public Dictionary<object, List<Location.Edge>> m_cBorder = new Dictionary<object, List<Location.Edge>>();
 
         public virtual void Start(INNER pSeed)
         {
@@ -17,37 +18,37 @@ namespace LandscapeGeneration
 
             foreach (var pInner in pSeed.BorderWith)
             {
-                m_cBorder[pInner.Key] = new List<Line>();
-                Line[] aLines = pInner.Value.ToArray();
-                foreach (Line pLine in aLines)
-                    m_cBorder[pInner.Key].Add(new Line(pLine));
+                m_cBorder[pInner.Key] = new List<Location.Edge>();
+                Location.Edge[] aLines = pInner.Value.ToArray();
+                foreach (Location.Edge pLine in aLines)
+                    m_cBorder[pInner.Key].Add(new Location.Edge(pLine));
             }
 
             //ChainBorder();
         }
-        public List<Line> m_cFirstLines = new List<Line>();
+        private List<Location.Edge> m_cFirstLines = new List<Location.Edge>();
 
         public bool TestChain()
         {
-            List<Line> cTotalBorder = new List<Line>();
+            List<Location.Edge> cTotalBorder = new List<Location.Edge>();
             foreach (var cLines in m_cBorder)
                 cTotalBorder.AddRange(cLines.Value);
-        
-            Line[] aTotalBorder = cTotalBorder.ToArray();
+
+            Location.Edge[] aTotalBorder = cTotalBorder.ToArray();
             int iTotalCount = aTotalBorder.Length;
 
             for (int i = 0; i < iTotalCount; i++)
             {
                 bool bGot1 = false;
-                bool bGot2 = false; 
-                
-                Line pCurrentLine = aTotalBorder[i];
+                bool bGot2 = false;
+
+                Location.Edge pCurrentLine = aTotalBorder[i];
                 for (int j = 0; j < iTotalCount; j++)
                 {
                     if (i == j)
                         continue;
 
-                    Line pLine = aTotalBorder[j];
+                    Location.Edge pLine = aTotalBorder[j];
                     if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
                                 pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY)
                         bGot1 = true;
@@ -66,7 +67,7 @@ namespace LandscapeGeneration
             return true;
         }
 
-        private List<List<Vertex>> m_pOrdered = new List<List<Vertex>>();
+        public List<List<Vertex>> m_cOrdered = new List<List<Vertex>>();
 
         /// <summary>
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
@@ -74,11 +75,11 @@ namespace LandscapeGeneration
         /// <param name="fCycleShift">Величина смещения X-координаты для закольцованной карты</param>
         protected void ChainBorder()
         {
-            List<Line> cTotalBorder = new List<Line>();
+            List<Location.Edge> cTotalBorder = new List<Location.Edge>();
             foreach (var cLines in m_cBorder)
                 cTotalBorder.AddRange(cLines.Value);
 
-            Line[] aTotalBorder = cTotalBorder.ToArray();
+            Location.Edge[] aTotalBorder = cTotalBorder.ToArray();
             int iTotalCount = aTotalBorder.Length;
 
             X = 0;
@@ -86,10 +87,10 @@ namespace LandscapeGeneration
             Z = 0;
             H = 0;
             float fPerimeter = 0;
-            foreach (Line pLine in aTotalBorder)
+            foreach (Location.Edge pLine in aTotalBorder)
             {
                 pLine.m_pNext = null;
-                pLine.m_pPrevious = null;
+                //pLine.m_pPrevious = null;
 
                 X += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
                 Y += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
@@ -103,15 +104,16 @@ namespace LandscapeGeneration
             H /= fPerimeter;
 
             m_cFirstLines.Clear();
+            m_cOrdered.Clear();
 
-            Line pFirstLine;
+            Location.Edge pFirstLine;
             do
             {
                 pFirstLine = null;
                 for (int i = 0; i < iTotalCount; i++)
                 {
-                    Line pLine = aTotalBorder[i];
-                    if (pLine.m_pNext == null && pLine.m_pPrevious == null)
+                    Location.Edge pLine = aTotalBorder[i];
+                    if (pLine.m_pNext == null)// && pLine.m_pPrevious == null)
                     {
                         pFirstLine = pLine;
                         break;
@@ -120,8 +122,10 @@ namespace LandscapeGeneration
 
                 if (pFirstLine != null)
                 {
+                    List<Vertex> cVertexes = new List<Vertex>();
+
                     m_cFirstLines.Add(pFirstLine);
-                    Line pCurrentLine = pFirstLine;
+                    Location.Edge pCurrentLine = pFirstLine;
 
                     bool bGotIt;
                     int iCounter = 0;
@@ -130,11 +134,12 @@ namespace LandscapeGeneration
                         bGotIt = false;
                         for (int i = 0; i < iTotalCount; i++)
                         {
-                            Line pLine = aTotalBorder[i];
+                            Location.Edge pLine = aTotalBorder[i];
                             if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2)
                             {
                                 pCurrentLine.m_pNext = pLine;
-                                pLine.m_pPrevious = pCurrentLine;
+                                //pLine.m_pPrevious = pCurrentLine;
+                                cVertexes.Add(pCurrentLine.m_pPoint1);
 
                                 pCurrentLine = pLine;
                                 bGotIt = true;
@@ -148,24 +153,35 @@ namespace LandscapeGeneration
                         }
                     }
                     while (pCurrentLine != pFirstLine && bGotIt && iCounter <= iTotalCount);
+
+                    m_cOrdered.Add(cVertexes);
                 }
             }
             while (pFirstLine != null);
 
-            foreach (Line pFLine in m_cFirstLines)
-            {
-                List<Vertex> cVertexes = new List<Vertex>();
+            //foreach (Location.Edge pFLine in m_cFirstLines)
+            //{
+            //    bool bOK = false;
+            //    foreach (var pT in m_cBorder)
+            //        if (pT.Value.Contains(pFLine))
+            //            bOK = true;
 
-                Line pLine = pFLine;
-                do
-                {
-                    cVertexes.Add(pLine.m_pPoint1);
-                    pLine = pLine.m_pNext;
-                }
-                while (pLine != pFLine);
+            //    if (!bOK)
+            //        throw new Exception("Wrong firstline!");
 
-                m_pOrdered.Add(cVertexes);
-            }
+            //    List<Vertex> cVertexes = new List<Vertex>();
+
+            //    Location.Edge pLine = pFLine;
+            //    do
+            //    {
+            //        cVertexes.Add(pLine.m_pPoint1);
+            //        pLine = pLine.m_pNext;
+            //        if (cVertexes.Count > aTotalBorder.Length)
+            //            throw new Exception("Borderline too long!");
+            //    }
+            //    while (pLine != pFLine);
+
+            //}
         }
     }
 }

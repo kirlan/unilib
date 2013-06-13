@@ -47,7 +47,6 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.WaterPercentBar = new System.Windows.Forms.HScrollBar();
             this.label13 = new System.Windows.Forms.Label();
-            this.PartialMapBox = new System.Windows.Forms.CheckBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.LandMassesCountBar = new System.Windows.Forms.HScrollBar();
             this.label5 = new System.Windows.Forms.Label();
@@ -174,7 +173,6 @@
             this.tableLayoutPanel1.Controls.Add(this.label14, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.PartialMapBox, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel4, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 16);
@@ -201,14 +199,13 @@
             // LandsCountBar
             // 
             this.LandsCountBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LandsCountBar.LargeChange = 100;
-            this.LandsCountBar.Location = new System.Drawing.Point(69, 0);
-            this.LandsCountBar.Maximum = 4000;
-            this.LandsCountBar.Minimum = 1000;
+            this.LandsCountBar.LargeChange = 20;
+            this.LandsCountBar.Location = new System.Drawing.Point(103, 0);
+            this.LandsCountBar.Minimum = 1;
             this.LandsCountBar.Name = "LandsCountBar";
-            this.LandsCountBar.Size = new System.Drawing.Size(170, 19);
+            this.LandsCountBar.Size = new System.Drawing.Size(136, 19);
             this.LandsCountBar.TabIndex = 27;
-            this.LandsCountBar.Value = 3000;
+            this.LandsCountBar.Value = 40;
             this.LandsCountBar.ValueChanged += new System.EventHandler(this.ScrollBar_ValueChanged);
             // 
             // label3
@@ -216,9 +213,9 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Left;
             this.label3.Location = new System.Drawing.Point(0, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 19);
+            this.label3.Size = new System.Drawing.Size(103, 19);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Lands count:";
+            this.label3.Text = "Lands complexity:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.label3, "Number of lands.\r\nLand is a group of adjacent locations, which has one territory " +
         "type and name.");
@@ -310,19 +307,6 @@
             this.label13.Text = "Water coverage:";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // PartialMapBox
-            // 
-            this.PartialMapBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.PartialMapBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PartialMapBox.Location = new System.Drawing.Point(245, 31);
-            this.PartialMapBox.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.PartialMapBox.Name = "PartialMapBox";
-            this.PartialMapBox.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
-            this.PartialMapBox.Size = new System.Drawing.Size(245, 19);
-            this.PartialMapBox.TabIndex = 20;
-            this.PartialMapBox.Text = "Continents could touch map border";
-            this.PartialMapBox.UseVisualStyleBackColor = true;
-            // 
             // panel4
             // 
             this.panel4.Controls.Add(this.LandMassesCountBar);
@@ -336,13 +320,12 @@
             // LandMassesCountBar
             // 
             this.LandMassesCountBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LandMassesCountBar.Location = new System.Drawing.Point(77, 0);
-            this.LandMassesCountBar.Maximum = 300;
-            this.LandMassesCountBar.Minimum = 30;
+            this.LandMassesCountBar.Location = new System.Drawing.Point(109, 0);
+            this.LandMassesCountBar.Minimum = 1;
             this.LandMassesCountBar.Name = "LandMassesCountBar";
-            this.LandMassesCountBar.Size = new System.Drawing.Size(162, 19);
+            this.LandMassesCountBar.Size = new System.Drawing.Size(130, 19);
             this.LandMassesCountBar.TabIndex = 28;
-            this.LandMassesCountBar.Value = 150;
+            this.LandMassesCountBar.Value = 50;
             this.LandMassesCountBar.ValueChanged += new System.EventHandler(this.ScrollBar_ValueChanged);
             // 
             // label5
@@ -350,9 +333,9 @@
             this.label5.Dock = System.Windows.Forms.DockStyle.Left;
             this.label5.Location = new System.Drawing.Point(0, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(77, 19);
+            this.label5.Size = new System.Drawing.Size(109, 19);
             this.label5.TabIndex = 3;
-            this.label5.Text = "Plates count:";
+            this.label5.Text = "Coastline complexity:";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.label5, resources.GetString("label5.ToolTip"));
             // 
@@ -367,6 +350,7 @@
             this.groupBox4.TabIndex = 45;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Climate";
+            this.groupBox4.Visible = false;
             // 
             // tableLayoutPanel2
             // 
@@ -544,13 +528,6 @@
         private System.Windows.Forms.ListBox MapPresets;
         private System.Windows.Forms.HScrollBar StatesCountBar;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.HScrollBar PoleBar;
-        private System.Windows.Forms.HScrollBar EquatorBar;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.HScrollBar WaterPercentBar;
         private System.Windows.Forms.HScrollBar LandMassesCountBar;
@@ -561,17 +538,23 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.CheckBox PartialMapBox;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Panel panel5;
-        private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.HScrollBar EquatorBar;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.HScrollBar PoleBar;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
     }
 }

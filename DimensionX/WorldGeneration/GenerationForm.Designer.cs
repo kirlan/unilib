@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.StartGenerationButton = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.GridsManagerButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.AgesView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -43,19 +42,25 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.epochProperties1 = new WorldGeneration.EpochProperties();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.GridsComboBox = new System.Windows.Forms.ComboBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.mapProperties1 = new WorldGeneration.MapProperties();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.label1 = new System.Windows.Forms.Label();
+            this.ChunkSizeUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.ChunksCountBox = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.WorkingAreaBox = new System.Windows.Forms.ComboBox();
+            this.mapProperties1 = new WorldGeneration.MapProperties();
+            this.epochProperties1 = new WorldGeneration.EpochProperties();
             this.groupBox5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ChunkSizeUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // StartGenerationButton
@@ -76,19 +81,6 @@
             this.toolTip1.AutoPopDelay = 100000000;
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
-            // 
-            // GridsManagerButton
-            // 
-            this.GridsManagerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.GridsManagerButton.Location = new System.Drawing.Point(305, 16);
-            this.GridsManagerButton.Name = "GridsManagerButton";
-            this.GridsManagerButton.Size = new System.Drawing.Size(127, 23);
-            this.GridsManagerButton.TabIndex = 2;
-            this.GridsManagerButton.Text = "Show grids manager...";
-            this.toolTip1.SetToolTip(this.GridsManagerButton, "Build completely new grid to use it and - optional - save to file for future use." +
-        "");
-            this.GridsManagerButton.UseVisualStyleBackColor = true;
-            this.GridsManagerButton.Click += new System.EventHandler(this.GridsManagerButton_Click);
             // 
             // groupBox5
             // 
@@ -214,42 +206,20 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // epochProperties1
-            // 
-            this.epochProperties1.AdvancedMode = false;
-            this.epochProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.epochProperties1.BackColor = System.Drawing.Color.White;
-            this.epochProperties1.Enabled = false;
-            this.epochProperties1.Epoch = null;
-            this.epochProperties1.Location = new System.Drawing.Point(5, 131);
-            this.epochProperties1.Name = "epochProperties1";
-            this.epochProperties1.Size = new System.Drawing.Size(425, 215);
-            this.epochProperties1.TabIndex = 4;
-            this.epochProperties1.UpdateEvent += new WorldGeneration.EpochProperties.UpdateEventHandler(this.epochProperties1_UpdateEvent);
-            // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.GridsComboBox);
-            this.groupBox6.Controls.Add(this.GridsManagerButton);
+            this.groupBox6.Controls.Add(this.WorkingAreaBox);
+            this.groupBox6.Controls.Add(this.label3);
+            this.groupBox6.Controls.Add(this.ChunksCountBox);
+            this.groupBox6.Controls.Add(this.label2);
+            this.groupBox6.Controls.Add(this.ChunkSizeUpDown);
+            this.groupBox6.Controls.Add(this.label1);
             this.groupBox6.Location = new System.Drawing.Point(12, 3);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(438, 46);
+            this.groupBox6.Size = new System.Drawing.Size(438, 68);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Grid";
-            // 
-            // GridsComboBox
-            // 
-            this.GridsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.GridsComboBox.FormattingEnabled = true;
-            this.GridsComboBox.Location = new System.Drawing.Point(9, 17);
-            this.GridsComboBox.Name = "GridsComboBox";
-            this.GridsComboBox.Size = new System.Drawing.Size(286, 21);
-            this.GridsComboBox.Sorted = true;
-            this.GridsComboBox.TabIndex = 3;
-            this.GridsComboBox.SelectedIndexChanged += new System.EventHandler(this.GridsComboBox_SelectedIndexChanged);
+            this.groupBox6.Text = "Planet";
             // 
             // checkBox1
             // 
@@ -263,27 +233,6 @@
             this.checkBox1.Text = "Advanced Mode";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // mapProperties1
-            // 
-            this.mapProperties1.AdvancedMode = false;
-            this.mapProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.mapProperties1.BackColor = System.Drawing.Color.White;
-            this.mapProperties1.ContinentsCount = 5;
-            this.mapProperties1.Enabled = false;
-            this.mapProperties1.EquatorPosition = 50;
-            this.mapProperties1.LandMassesCount = 150;
-            this.mapProperties1.LandsCount = 3000;
-            this.mapProperties1.Location = new System.Drawing.Point(9, 55);
-            this.mapProperties1.LocationsGrid = null;
-            this.mapProperties1.Name = "mapProperties1";
-            this.mapProperties1.PartialMap = false;
-            this.mapProperties1.PoleDistance = 45;
-            this.mapProperties1.Size = new System.Drawing.Size(443, 229);
-            this.mapProperties1.StatesCount = 8;
-            this.mapProperties1.TabIndex = 16;
-            this.mapProperties1.WaterPercent = 66;
             // 
             // button5
             // 
@@ -324,6 +273,128 @@
             // 
             this.folderBrowserDialog1.Description = "Please, select a folder for temporary app data (about 10-50Mb total):";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Chunk size:";
+            // 
+            // ChunkSizeUpDown
+            // 
+            this.ChunkSizeUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ChunkSizeUpDown.Location = new System.Drawing.Point(74, 15);
+            this.ChunkSizeUpDown.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.ChunkSizeUpDown.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.ChunkSizeUpDown.Name = "ChunkSizeUpDown";
+            this.ChunkSizeUpDown.Size = new System.Drawing.Size(142, 20);
+            this.ChunkSizeUpDown.TabIndex = 2;
+            this.ChunkSizeUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.ChunkSizeUpDown.Value = new decimal(new int[] {
+            800,
+            0,
+            0,
+            0});
+            this.ChunkSizeUpDown.ValueChanged += new System.EventHandler(this.ChunkSizeUpDown_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(222, 17);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(76, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Chunks count:";
+            // 
+            // ChunksCountBox
+            // 
+            this.ChunksCountBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ChunksCountBox.FormattingEnabled = true;
+            this.ChunksCountBox.Items.AddRange(new object[] {
+            "6x1x1",
+            "6x3x3",
+            "6x5x5",
+            "6x7x7",
+            "6x9x9",
+            "6x17x17",
+            "6x25x25"});
+            this.ChunksCountBox.Location = new System.Drawing.Point(304, 14);
+            this.ChunksCountBox.Name = "ChunksCountBox";
+            this.ChunksCountBox.Size = new System.Drawing.Size(128, 21);
+            this.ChunksCountBox.TabIndex = 4;
+            this.ChunksCountBox.SelectedIndexChanged += new System.EventHandler(this.ChunksCountBox_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 43);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(90, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Available territory:";
+            // 
+            // WorkingAreaBox
+            // 
+            this.WorkingAreaBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.WorkingAreaBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.WorkingAreaBox.FormattingEnabled = true;
+            this.WorkingAreaBox.Items.AddRange(new object[] {
+            "Segment 1/6",
+            "Equatorial hemisphere",
+            "Polar hemisphere",
+            "Whole sphere"});
+            this.WorkingAreaBox.Location = new System.Drawing.Point(102, 40);
+            this.WorkingAreaBox.Name = "WorkingAreaBox";
+            this.WorkingAreaBox.Size = new System.Drawing.Size(114, 21);
+            this.WorkingAreaBox.TabIndex = 11;
+            this.WorkingAreaBox.SelectedIndexChanged += new System.EventHandler(this.WorkingAreaBox_SelectedIndexChanged);
+            // 
+            // mapProperties1
+            // 
+            this.mapProperties1.AdvancedMode = true;
+            this.mapProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.mapProperties1.BackColor = System.Drawing.Color.White;
+            this.mapProperties1.ChunksCount = 5;
+            this.mapProperties1.ChunkSize = 800;
+            this.mapProperties1.ContinentsCount = 1;
+            this.mapProperties1.Enabled = false;
+            this.mapProperties1.LandMassesDiversity = 14;
+            this.mapProperties1.LandsDiversity = 40;
+            this.mapProperties1.Location = new System.Drawing.Point(7, 90);
+            this.mapProperties1.Name = "mapProperties1";
+            this.mapProperties1.Size = new System.Drawing.Size(443, 229);
+            this.mapProperties1.StatesCount = 60;
+            this.mapProperties1.TabIndex = 16;
+            this.mapProperties1.WaterPercent = 66;
+            this.mapProperties1.WorkingArea = LandscapeGeneration.PlanetBuilder.WorkingArea.WholeSphere;
+            // 
+            // epochProperties1
+            // 
+            this.epochProperties1.AdvancedMode = false;
+            this.epochProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.epochProperties1.BackColor = System.Drawing.Color.White;
+            this.epochProperties1.Enabled = false;
+            this.epochProperties1.Epoch = null;
+            this.epochProperties1.Location = new System.Drawing.Point(5, 131);
+            this.epochProperties1.Name = "epochProperties1";
+            this.epochProperties1.Size = new System.Drawing.Size(425, 215);
+            this.epochProperties1.TabIndex = 4;
+            this.epochProperties1.UpdateEvent += new WorldGeneration.EpochProperties.UpdateEventHandler(this.epochProperties1_UpdateEvent);
+            // 
             // GenerationForm
             // 
             this.AcceptButton = this.StartGenerationButton;
@@ -348,6 +419,8 @@
             this.groupBox5.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ChunkSizeUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -358,8 +431,6 @@
         private System.Windows.Forms.Button StartGenerationButton;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.ComboBox GridsComboBox;
-        private System.Windows.Forms.Button GridsManagerButton;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ListView AgesView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -379,5 +450,11 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown ChunkSizeUpDown;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox ChunksCountBox;
+        private System.Windows.Forms.ComboBox WorkingAreaBox;
     }
 }
