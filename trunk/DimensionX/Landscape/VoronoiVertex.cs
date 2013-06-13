@@ -9,7 +9,7 @@ using LandscapeGeneration.PathFind;
 
 namespace LandscapeGeneration
 {
-    public class Vertex : IPointF
+    public class VoronoiVertex : IPointF
     {
         public float m_fX = 0;
         public float m_fY = 0;
@@ -45,38 +45,38 @@ namespace LandscapeGeneration
 
         public long m_iID = s_iCounter++;
 
-        public List<Vertex> m_cVertexes = new List<Vertex>();
+        public List<VoronoiVertex> m_cVertexes = new List<VoronoiVertex>();
 
         public List<long> m_cLinksTmp = new List<long>();
 
-        public Location[] m_aLocations;
+        public LocationOld[] m_aLocations;
 
-        internal List<Location> m_cLocationsBuild = new List<Location>();
+        internal List<LocationOld> m_cLocationsBuild = new List<LocationOld>();
 
         public List<long> m_cLocationsTmp = new List<long>();
 
-        public Vertex()
+        public VoronoiVertex()
         {
             m_fX = 0f;
             m_fY = 0f;
             m_fZ = 0f;
         }
 
-        public Vertex(float fX, float fY, float fZ)
+        public VoronoiVertex(float fX, float fY, float fZ)
         {
             m_fX = fX;
             m_fY = fY;
             m_fZ = fZ;
         }
 
-        public Vertex(BTVector pVector)
+        public VoronoiVertex(BTVector pVector)
         {
             m_fX = (float)pVector.data[0];
             m_fY = (float)pVector.data[1];
             m_fZ = 0;
         }
 
-        public Vertex(BinaryReader binReader)
+        public VoronoiVertex(BinaryReader binReader)
         {
             m_iID = binReader.ReadInt64();
 
@@ -103,11 +103,11 @@ namespace LandscapeGeneration
             binWriter.Write((double)m_fZ);
 
             binWriter.Write(m_cVertexes.Count);
-            foreach (Vertex pVertex in m_cVertexes)
+            foreach (VoronoiVertex pVertex in m_cVertexes)
                 binWriter.Write(pVertex.m_iID);
 
             binWriter.Write(m_cLocationsBuild.Count);
-            foreach (Location pLocation in m_cLocationsBuild)
+            foreach (LocationOld pLocation in m_cLocationsBuild)
                 binWriter.Write(pLocation.m_iID);
         }
 
@@ -117,7 +117,7 @@ namespace LandscapeGeneration
         }
 
         //TODO: для замкнутых (цилиндрических, сферических) миров - вычислять угловые координаты и работать с ними
-        internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t)
+        internal void PointOnCurve(VoronoiVertex p0, VoronoiVertex p1, VoronoiVertex p2, VoronoiVertex p3, float t)
         {
             for (int i = 0; i < m_aLocations.Length; i++)
                 if (m_aLocations[i].Forbidden || m_aLocations[i].Owner == null)

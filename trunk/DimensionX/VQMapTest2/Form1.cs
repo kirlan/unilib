@@ -518,7 +518,7 @@ namespace VQMapTest2
         {
             do
             {
-                m_pTPFStart = m_pWorld.m_pGrid.m_aLocations[Rnd.Get(m_pWorld.m_pGrid.m_aLocations.Length)];
+                m_pTPFStart = m_pWorld.m_pPlanet.m_aLocations[Rnd.Get(m_pWorld.m_pPlanet.m_aLocations.Length)];
             }
             while (m_pTPFStart.Forbidden || 
                    (m_pTPFStart.Owner as LandX).IsWater || 
@@ -527,7 +527,7 @@ namespace VQMapTest2
 
             do
             {
-                m_pTPFFinish = m_pWorld.m_pGrid.m_aLocations[Rnd.Get(m_pWorld.m_pGrid.m_aLocations.Length)];
+                m_pTPFFinish = m_pWorld.m_pPlanet.m_aLocations[Rnd.Get(m_pWorld.m_pPlanet.m_aLocations.Length)];
             }
             while (m_pTPFFinish.Forbidden || 
                    m_pTPFFinish == m_pTPFStart || 

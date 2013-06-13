@@ -1038,8 +1038,8 @@ namespace MapDrawEngine
             for (int i = 0; i < QUADRANTS_COUNT; i++)
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
                 {
-                    float fQuadX = m_pWorld.m_pGrid.RX * i * 2 / QUADRANTS_COUNT;
-                    float fQuadY = m_pWorld.m_pGrid.RY * j * 2 / QUADRANTS_COUNT;
+                    float fQuadX = m_pWorld.m_pPlanet.RX * i * 2 / QUADRANTS_COUNT;
+                    float fQuadY = m_pWorld.m_pPlanet.RY * j * 2 / QUADRANTS_COUNT;
                     m_aQuadrants[i, j].Normalize(fQuadX, fQuadY);
                 }
 
@@ -1136,13 +1136,13 @@ namespace MapDrawEngine
 
                 //если карта зациклена по горизонтали, нужно строить отражения и 
                 //контур пересекает нулевой меридиан, то строим отражение!
-                if (m_pWorld.m_pGrid.m_bCycled && bMirror && bCross)
+                if (m_pWorld.m_pPlanet.m_bCycled && bMirror && bCross)
                 {
                     //определяем, на западе или на востоке будем строить отражение
                     if (pFirstLine.m_pPoint1.X > 0)
-                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pPlanet.RX * 2, out bCross, out aQuads));
                     else
-                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pPlanet.RX * 2, out bCross, out aQuads));
 
                     //определяем, через какие квадранты оно проходит
                     for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1189,13 +1189,13 @@ namespace MapDrawEngine
 
             //если карта зациклена по горизонтали, нужно строить отражения и 
             //контур пересекает нулевой меридиан, то строим отражение!
-            if (m_pWorld.m_pGrid.m_bCycled && bMirror && bCross)
+            if (m_pWorld.m_pPlanet.m_bCycled && bMirror && bCross)
             {
                 //определяем, на западе или на востоке будем строить отражение
                 if (pFirstLine.m_pPoint1.X > 0)
-                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pPlanet.RX * 2, out bCross, out aQuads));
                 else
-                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pPlanet.RX * 2, out bCross, out aQuads));
 
                 //определяем, через какие квадранты оно проходит
                 for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1237,32 +1237,32 @@ namespace MapDrawEngine
             do
             {
                 //в каком квадранте лежит первая точка линии
-                int iQuad1X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-                int iQuad1Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+                int iQuad1X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.X + m_pWorld.m_pPlanet.RX) / (2*m_pWorld.m_pPlanet.RX));
+                int iQuad1Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.Y + m_pWorld.m_pPlanet.RY) / (2*m_pWorld.m_pPlanet.RY));
 
                 if (iQuad1X >= 0 && iQuad1X < QUADRANTS_COUNT && iQuad1Y >= 0 && iQuad1Y < QUADRANTS_COUNT)
                     aQuadrants[iQuad1X, iQuad1Y] = true;
 
                 //в каком квадранте лежит вторая точка линии
-                int iQuad2X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-                int iQuad2Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+                int iQuad2X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.X + m_pWorld.m_pPlanet.RX) / (2*m_pWorld.m_pPlanet.RX));
+                int iQuad2Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.Y + m_pWorld.m_pPlanet.RY) / (2*m_pWorld.m_pPlanet.RY));
 
                 if (iQuad2X >= 0 && iQuad2X < QUADRANTS_COUNT && iQuad2Y >= 0 && iQuad2Y < QUADRANTS_COUNT)
                     aQuadrants[iQuad2X, iQuad2Y] = true;
 
                 //пересекает-ли линия нулевой меридиан?
                 float fDX = fShift;
-                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pWorld.m_pGrid.RX)
+                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pWorld.m_pPlanet.RX)
                 {
                     //определимся, где у нас была предыдущая часть контура - на западе или на востоке?
                     //в зависимости от этого вычислим смещение для оставшейся части контура, чтобы 
                     //не было разрыва
-                    fDX += fLastPointX < fShift ? -m_pWorld.m_pGrid.RX * 2 : m_pWorld.m_pGrid.RX * 2;
+                    fDX += fLastPointX < fShift ? -m_pWorld.m_pPlanet.RX * 2 : m_pWorld.m_pPlanet.RX * 2;
                     bCross = true;
                 }
 
-                if (pLine.m_pPoint2.X > m_pWorld.m_pGrid.RX ||
-                    pLine.m_pPoint2.X < -m_pWorld.m_pGrid.RX)
+                if (pLine.m_pPoint2.X > m_pWorld.m_pPlanet.RX ||
+                    pLine.m_pPoint2.X < -m_pWorld.m_pPlanet.RX)
                     bCross = true;
 
                 cBorder.Add(ShiftPoint(pLine.m_pPoint2, fDX));
@@ -1288,7 +1288,7 @@ namespace MapDrawEngine
         /// <returns>смещённая точка</returns>
         private PointF ShiftPoint(IPointF pPoint, float fDX)
         {
-            return new PointF(m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pWorld.m_pGrid.RY + pPoint.Y);
+            return new PointF(m_pWorld.m_pPlanet.RX + pPoint.X + fDX, m_pWorld.m_pPlanet.RY + pPoint.Y);
         }
 
         /// <summary>
@@ -1299,7 +1299,7 @@ namespace MapDrawEngine
         /// <returns>смещённая точка</returns>
         private PointF ShiftPoint(PointF pPoint, float fDX)
         {
-            return new PointF(m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pWorld.m_pGrid.RY + pPoint.Y);
+            return new PointF(m_pWorld.m_pPlanet.RX + pPoint.X + fDX, m_pWorld.m_pPlanet.RY + pPoint.Y);
         }
 
         /// <summary>
@@ -1308,11 +1308,11 @@ namespace MapDrawEngine
         /// <param name="pLoc">локация, содержащая метку</param>
         private void AddLocationSign(LocationX pLoc)
         {
-            float fPointX = m_pWorld.m_pGrid.RX + pLoc.m_pCenter.X;
-            float fPointY = m_pWorld.m_pGrid.RY + pLoc.m_pCenter.Y;
+            float fPointX = m_pWorld.m_pPlanet.RX + pLoc.m_pCenter.X;
+            float fPointY = m_pWorld.m_pPlanet.RY + pLoc.m_pCenter.Y;
 
-            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.m_pCenter.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.m_pCenter.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.m_pCenter.X + m_pWorld.m_pPlanet.RX) / (2*m_pWorld.m_pPlanet.RX));
+            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.m_pCenter.Y + m_pWorld.m_pPlanet.RY) / (2*m_pWorld.m_pPlanet.RY));
 
             if (iQuadX < 0 || iQuadX >= QUADRANTS_COUNT || iQuadY < 0 || iQuadY >= QUADRANTS_COUNT)
                 return;
@@ -1450,15 +1450,15 @@ namespace MapDrawEngine
 
             //если мир закольцован и построенная линия пересекает нулевой меридиан,
             //то построим для неё отражение
-            if (m_pWorld.m_pGrid.m_bCycled && bCross)
+            if (m_pWorld.m_pPlanet.m_bCycled && bCross)
             {
                 if (pRoad.m_aPoints[0].X > 0)
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.m_pPlanet.RX * 2, out bCross, out aQuads));
                 }
                 else
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.m_pPlanet.RX * 2, out bCross, out aQuads));
                 }
             }
 
@@ -1490,24 +1490,24 @@ namespace MapDrawEngine
             {
                 //пересекает-ли линия от предыдущей точки к текущей нулевой меридиан?
                 float fDX = fShift;
-                if (Math.Abs(fLastPointX - pPoint.X - fShift) > m_pWorld.m_pGrid.RX)
+                if (Math.Abs(fLastPointX - pPoint.X - fShift) > m_pWorld.m_pPlanet.RX)
                 {
                     //определимся, где у нас была предыдущая часть линии - на западе или на востоке?
                     //в зависимости от этого вычислим смещение для оставшейся части линии, чтобы 
                     //не было разрыва
-                    fDX += fLastPointX < fShift ? -m_pWorld.m_pGrid.RX * 2 : m_pWorld.m_pGrid.RX * 2;
+                    fDX += fLastPointX < fShift ? -m_pWorld.m_pPlanet.RX * 2 : m_pWorld.m_pPlanet.RX * 2;
                     bCross = true;
                 }
                 
-                if (pPoint.X > m_pWorld.m_pGrid.RX ||
-                    pPoint.X < -m_pWorld.m_pGrid.RX)
+                if (pPoint.X > m_pWorld.m_pPlanet.RX ||
+                    pPoint.X < -m_pWorld.m_pPlanet.RX)
                     bCross = true;
                 
                 cRoadLine.Add(ShiftPoint(pPoint, fDX));
 
                 //в каком квадранте лежит новая точка линии
-                int iQuadX = (int)(QUADRANTS_COUNT * (pPoint.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-                int iQuadY = (int)(QUADRANTS_COUNT * (pPoint.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+                int iQuadX = (int)(QUADRANTS_COUNT * (pPoint.X + m_pWorld.m_pPlanet.RX) / (2*m_pWorld.m_pPlanet.RX));
+                int iQuadY = (int)(QUADRANTS_COUNT * (pPoint.Y + m_pWorld.m_pPlanet.RY) / (2*m_pWorld.m_pPlanet.RY));
 
                 if (iQuadX >= 0 && iQuadX < QUADRANTS_COUNT && iQuadY >= 0 && iQuadY < QUADRANTS_COUNT)
                     aQuadrants[iQuadX, iQuadY] = true;
@@ -1543,7 +1543,7 @@ namespace MapDrawEngine
             //соотношение высоты и ширины координатной сетки мира
             float fK = 1;
             if (m_pWorld != null)
-                fK = (float)m_pWorld.m_pGrid.RY / m_pWorld.m_pGrid.RX;
+                fK = (float)m_pWorld.m_pPlanet.RY / m_pWorld.m_pPlanet.RX;
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 980 пикселей
@@ -1557,7 +1557,7 @@ namespace MapDrawEngine
 
             //коэффициент для перевода координат из абсолютной системы координат в экранную
             if (m_pWorld != null)
-                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.m_pGrid.RX * 2);
+                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.m_pPlanet.RX * 2);
 
             //если холст уже окна рисования, вычислим смещение для центрирования холста
             m_iShiftX = (ClientRectangle.Width - m_pCanvas.Width) / 2;
@@ -1570,8 +1570,8 @@ namespace MapDrawEngine
             m_pDrawFrame.Height = m_pCanvas.Height;
 
             //размеры одного квадранта в экранных координатах из рассчёта сетки квадрантов 8х8
-            m_fOneQuadWidth = m_fActualScale * m_pWorld.m_pGrid.RX * 2 / QUADRANTS_COUNT;
-            m_fOneQuadHeight = m_fActualScale * m_pWorld.m_pGrid.RY * 2 / QUADRANTS_COUNT;
+            m_fOneQuadWidth = m_fActualScale * m_pWorld.m_pPlanet.RX * 2 / QUADRANTS_COUNT;
+            m_fOneQuadHeight = m_fActualScale * m_pWorld.m_pPlanet.RY * 2 / QUADRANTS_COUNT;
 
             //размеры отображаемого участка карты в квадрантах
             //+2 потому что 1 квадрант мы отображаем всегда и нужно ещё иметь запас в 1 квадрант на случай, 
@@ -1638,7 +1638,7 @@ namespace MapDrawEngine
             if (m_pWorld == null)
                 return;
 
-            if (m_pWorld.m_pGrid.m_bCycled)
+            if (m_pWorld.m_pPlanet.m_bCycled)
                 m_pDrawFrame.X = iX;
             else
                 m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width));
@@ -1690,7 +1690,7 @@ namespace MapDrawEngine
             gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Ocean.m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
-            if (m_pWorld == null || m_pWorld.m_pGrid.m_aLocations.Length == 0)
+            if (m_pWorld == null || m_pWorld.m_pPlanet.m_aLocations.Length == 0)
                 return;
 
             //координаты квадранта, в котором находится левый верхний угол отображаемого участка карты

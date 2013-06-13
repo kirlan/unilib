@@ -7,6 +7,7 @@ using Random;
 using SimpleVectors;
 using LandscapeGeneration.PathFind;
 using System.Drawing;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace LandscapeGeneration
 {
@@ -17,7 +18,7 @@ namespace LandscapeGeneration
         where CONT:Continent<AREA, LAND, LTI>, new()
         where LTI:LandTypeInfo, new()
     {
-        public LocationsGrid<LOC> m_pGrid = null;
+        public Cube<LOC> m_pPlanet = null;
 
         public LAND[] m_aLands = null;
 
@@ -40,16 +41,6 @@ namespace LandscapeGeneration
         protected int m_iOceansPercentage = 60;
 
         private int m_iContinentsCount = 5;
-
-        private bool m_bGreatOcean = true;
-        /// <summary>
-        /// Y-координата экватора
-        /// </summary>
-        private int m_iEquator = 0;
-        /// <summary>
-        /// Расстояние от экватора до полюсов
-        /// </summary>
-        private int m_iPole = 0;
 
         public virtual void PresetLandTypesInfo()
         {
@@ -91,40 +82,34 @@ namespace LandscapeGeneration
         /// Генерация мира
         /// </summary>
         /// <param name="iLocations">Общее количество `локаций` - минимальных "кирпичиков" мира.</param>
-        /// <param name="iLands">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.
+        /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.
         /// Сопредельные земли с одинаковым типом объединяются в 'зоны'</param>
-        /// <param name="iLandMasses">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
+        /// <param name="iLandMassesDiversity">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
         /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
-        /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
-        /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
-        public Landscape(LocationsGrid<LOC> cLocations, int iContinents, bool bGreatOcean, int iLands, int iLandMasses, int iOcean, int iEquator, int iPole, LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        public Landscape(int iLocationsCount, int iFaceSize, WorkingArea eArea, int iContinents, int iLandsDiversity, int iLandMassesDiversity, int iOcean, Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
-            m_pGrid = cLocations;
+            m_pPlanet = new Cube<LOC>(iLocationsCount, iFaceSize, eArea, BeginStep, ProgressStep);
 
-            m_pGrid.Load(BeginStep, ProgressStep);
-
-            if (iLands > m_pGrid.m_iLocationsCount)
-                throw new ArgumentException("Lands count can't be greater then locations count!");
-            if (iLandMasses > iLands)
-                throw new ArgumentException("Land masses count can't be greater then lands count!");
+            //if (iLandsDensity > iLocationsCount)
+            //    throw new ArgumentException("Lands count can't be greater then locations count!");
+            //if (iLandMassesDensity > iLandsDensity)
+            //    throw new ArgumentException("Land masses count can't be greater then lands count!");
             if (iOcean > 90 || iOcean < 10)
                 throw new ArgumentException("Oceans percent can't be less then 10 or greater then 100!");
 
-            m_iLandsCount = iLands;
-            m_iLandMassesCount = iLandMasses;
+            m_iLandsCount = m_pPlanet.m_aLocations.Length/(2 + iLandsDiversity/25);
+            m_iLandMassesCount = m_pPlanet.m_aLocations.Length/(6 + iLandMassesDiversity*2);
             m_iOceansPercentage = iOcean;
             m_iContinentsCount = iContinents;
-            m_bGreatOcean = bGreatOcean;
 
             PresetLandTypesInfo();
 
-            m_iEquator = 2 * m_pGrid.RY * iEquator / 100 - m_pGrid.RY;
-            m_iPole = 2 * m_pGrid.RY * iPole / 100;
-
             ShapeWorld(BeginStep, ProgressStep);
+
+            m_pPlanet.BuildNormals();
         }
 
-        private void ShapeWorld(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void ShapeWorld(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             BuildLands(BeginStep, ProgressStep);
 
@@ -145,7 +130,7 @@ namespace LandscapeGeneration
 
         private void AddPeaks()
         {
-            foreach(LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -181,44 +166,44 @@ namespace LandscapeGeneration
             {
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Plains)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea. m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Savanna)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Tundra)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Swamp)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Desert)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Forest)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Jungle)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Taiga)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Mountains)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
-                SmoothBorder(pCont.m_cFirstLines);
+                SmoothBorder(pCont.m_cOrdered);
             }
 
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -227,25 +212,12 @@ namespace LandscapeGeneration
             }
         }
 
-        private void SmoothBorder(List<Line> cFirstLines)
+        private void SmoothBorder(List<List<Vertex>> cFirstLines)
         {
-            foreach (Line pFistLine in cFirstLines)
+            float fTrueR = m_pPlanet.R;
+
+            foreach (var ordered in cFirstLines)
             {
-                List<Vertex> ordered = new List<Vertex>();
-
-                Line pLine = pFistLine;
-
-                float fTrueR = m_pGrid.RX / (float)Math.PI;
-                if(m_pGrid.m_eShape == WorldShape.Planet)
-                    fTrueR = (float)Math.Sqrt(pLine.m_pPoint2.X * pLine.m_pPoint2.X + pLine.m_pPoint2.Y * pLine.m_pPoint2.Y + pLine.m_pPoint2.Z * pLine.m_pPoint2.Z);
-
-                do
-                {
-                    ordered.Add(pLine.m_pPoint2);
-                    pLine = pLine.m_pNext;
-                }
-                while (pLine != pFistLine);
-
                 if (ordered.Count < 5)
                     continue;
 
@@ -268,20 +240,10 @@ namespace LandscapeGeneration
 
                 for (int i = 0; i < ordered.Count; i++)
                 {
-                    if (m_pGrid.m_eShape == WorldShape.Ringworld)
-                    {
-                        float fDist = (float)Math.Sqrt(ordered[i].X * ordered[i].X + ordered[i].Z * ordered[i].Z);
-                        ordered[i].X = fTrueR * ordered[i].X / fDist;
-                        ordered[i].Z = fTrueR * ordered[i].Z / fDist;
-                    } 
-                    
-                    if (m_pGrid.m_eShape == WorldShape.Planet)
-                    {
-                        float fDist = (float)Math.Sqrt(ordered[i].X * ordered[i].X + ordered[i].Y * ordered[i].Y + ordered[i].Z * ordered[i].Z);
-                        ordered[i].X = fTrueR * ordered[i].X / fDist;
-                        ordered[i].Y = fTrueR * ordered[i].Y / fDist;
-                        ordered[i].Z = fTrueR * ordered[i].Z / fDist;
-                    }
+                    float fDist = (float)Math.Sqrt(ordered[i].X * ordered[i].X + ordered[i].Y * ordered[i].Y + ordered[i].Z * ordered[i].Z);
+                    ordered[i].X = fTrueR * ordered[i].X / fDist;
+                    ordered[i].Y = fTrueR * ordered[i].Y / fDist;
+                    ordered[i].Z = fTrueR * ordered[i].Z / fDist;
                 }
             }
         }
@@ -291,9 +253,9 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildLands(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildLands(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building lands...", m_iLandsCount + m_pGrid.m_aLocations.Length / m_iLandsCount + m_pGrid.m_aLocations.Length + m_iLandsCount); 
+            BeginStep("Building lands...", m_iLandsCount + m_pPlanet.m_aLocations.Length / m_iLandsCount + m_pPlanet.m_aLocations.Length + m_iLandsCount); 
             
             List<LAND> cLands = new List<LAND>();
             for (int i = 0; i < m_iLandsCount; i++)
@@ -301,13 +263,13 @@ namespace LandscapeGeneration
                 int iIndex;
                 do
                 {
-                    iIndex = Rnd.Get(m_pGrid.m_aLocations.Length);
+                    iIndex = Rnd.Get(m_pPlanet.m_aLocations.Length);
                 }
-                while (m_pGrid.m_aLocations[iIndex].Forbidden || 
-                       m_pGrid.m_aLocations[iIndex].Owner != null);
+                while (m_pPlanet.m_aLocations[iIndex].Forbidden || 
+                       m_pPlanet.m_aLocations[iIndex].Owner != null);
                 
                 LAND pLand = new LAND();
-                pLand.Start(m_pGrid.m_aLocations[iIndex]);
+                pLand.Start(m_pPlanet.m_aLocations[iIndex]);
                 cLands.Add(pLand);
                 ProgressStep();
             }
@@ -328,7 +290,7 @@ namespace LandscapeGeneration
             while (bContinue);
 
 //            BeginStep("Fixing void lands...", m_pGrid.m_aLocations.Length);
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (!pLoc.Forbidden && pLoc.Owner == null)
                 {
@@ -355,7 +317,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildLandMasses(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildLandMasses(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building landmasses...", m_iLandMassesCount + m_aLands.Length / m_iLandMassesCount + m_aLands.Length + m_iLandMassesCount); 
             List<LandMass<LAND>> cLandMasses = new List<LandMass<LAND>>();
@@ -419,7 +381,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildContinents(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildContinents(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             int iMaxOceanCount = m_iLandsCount * m_iOceansPercentage / 100;
             int iOceanCount = 0;
@@ -431,7 +393,7 @@ namespace LandscapeGeneration
             BeginStep("Building  continents...", m_iContinentsCount + m_iContinentsCount); 
             foreach (LandMass<LAND> pLandMass in m_aLandMasses)
             {
-                if (pLandMass.Forbidden || (m_bGreatOcean && pLandMass.HaveForbiddenBorders()))
+                if (pLandMass.Forbidden || pLandMass.HaveForbiddenBorders())
                 {
                     pLandMass.IsWater = true;
                     iOceanCount += pLandMass.m_cContents.Count;
@@ -567,7 +529,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void AddCoastral(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void AddCoastral(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting coastral regions...", m_aLands.Length);
             foreach (LAND pLand in m_aLands)
@@ -642,7 +604,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void AddMountains(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void AddMountains(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting mountain regions...", m_aLands.Length);
             foreach (LAND pLand in m_aLands)
@@ -702,7 +664,7 @@ namespace LandscapeGeneration
             }
         }
 
-        private void AddLakes(int iOneChanceFrom, LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void AddLakes(int iOneChanceFrom, Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting lake regions...", m_aLands.Length);
             foreach (LAND pLand in m_aLands)
@@ -730,8 +692,23 @@ namespace LandscapeGeneration
                 ProgressStep();
             }
         }
+        
+        private float GetTemperature(Vertex pVertex)
+        {
+            float fNorthX = m_pPlanet.R / (float)Math.Sqrt(3);
+            float fNorthY = m_pPlanet.R / (float)Math.Sqrt(3);
+            float fNorthZ = m_pPlanet.R / (float)Math.Sqrt(3);
 
-        private void CalculateHumidity(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+            float fDistNorth = (float)Math.Sqrt((pVertex.m_fX - fNorthX) * (pVertex.m_fX - fNorthX) + (pVertex.m_fY - fNorthY) * (pVertex.m_fY - fNorthY) + (pVertex.m_fZ - fNorthZ) * (pVertex.m_fZ - fNorthZ));
+            float fDistSouth = (float)Math.Sqrt((pVertex.m_fX + fNorthX) * (pVertex.m_fX + fNorthX) + (pVertex.m_fY + fNorthY) * (pVertex.m_fY + fNorthY) + (pVertex.m_fZ + fNorthZ) * (pVertex.m_fZ + fNorthZ));
+
+            if (fDistNorth < fDistSouth)
+                return fDistNorth / (m_pPlanet.R * (float)Math.Sqrt(2));
+            else
+                return fDistSouth / (m_pPlanet.R * (float)Math.Sqrt(2));
+        }
+
+        private void CalculateHumidity(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Calculating humidity...", m_aLands.Length);
 
@@ -747,7 +724,7 @@ namespace LandscapeGeneration
                             LAND pLinkedLand = pLink as LAND;
 
                             //удалённость точки от экватора 0..1
-                            float fTemperatureMod = Math.Abs((m_iEquator - pLinkedLand.Y) / m_iPole);
+                            float fTemperatureMod = 1 - GetTemperature(pLinkedLand);//Math.Abs((m_iEquator - pLinkedLand.Y) / m_iPole);
 
                             fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;// *fTemperatureMod;
                             pLinkedLand.Humidity = (int)(fTemperatureMod - 5 + Rnd.Get(10.0f));
@@ -807,7 +784,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildAreas(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildAreas(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
             //Make seas
             foreach (LAND pLand in m_aLands)
@@ -832,7 +809,7 @@ namespace LandscapeGeneration
             {
                 if (pLand.Type == null)
                 {
-                    float fTemperature = (1 - Math.Abs((m_iEquator - (pLand as ILand).Y) / m_iPole))*8.0f;
+                    float fTemperature = GetTemperature(pLand)*8.0f;
 
                     fTemperature = (float)(0.1875 * Math.Pow(2, fTemperature));
 
@@ -893,9 +870,9 @@ namespace LandscapeGeneration
         public float m_fMaxDepth = 0;
         public float m_fMaxHeight = 0;
 
-        protected void CalculateElevations(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        protected void CalculateElevations(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Calculating elevation...", m_pGrid.m_aLocations.Length);
+            BeginStep("Calculating elevation...", m_pPlanet.m_aLocations.Length);
 
             List<LOC> cOcean = new List<LOC>();
             List<LOC> cLand = new List<LOC>();
@@ -915,7 +892,7 @@ namespace LandscapeGeneration
                 {
                     foreach (LOC pLoc in pLand.m_cContents)
                     {
-                        pLoc.H = -1;
+                        pLoc.H = -(float)m_pPlanet.R / 150;
 
                         ProgressStep();
 
@@ -965,7 +942,7 @@ namespace LandscapeGeneration
             List<LOC> cWaveFront = new List<LOC>();
 
             //с океаном всё просто - чем дальше от берега, тем глубже
-            m_fMaxDepth = -2;
+            m_fMaxDepth = (float)m_pPlanet.R / 75;//-2;
             while (cOcean.Count > 0)
             {
                 cWaveFront.Clear();
@@ -993,7 +970,7 @@ namespace LandscapeGeneration
                 cOcean.Clear();
                 cOcean.AddRange(cWaveFront);
 
-                m_fMaxDepth -= 2;
+                m_fMaxDepth -= (m_pPlanet.R + m_fMaxDepth)/75 ;//2;
             }
 
             //с сушей сложнее...
@@ -1032,7 +1009,7 @@ namespace LandscapeGeneration
                             continue;
 
                         cLand.Add(pLink);
-                        pLink.H = 1;
+                        pLink.H = (float)m_pPlanet.R / 150;
                     }
                     cHeights.Remove(pLoc.H);
                     cUnfinished.Remove(pLoc.H);
@@ -1059,27 +1036,27 @@ namespace LandscapeGeneration
             SmoothVertexes();
             SmoothVertexes();
 
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
 
                 if (pLoc.H < 0)
                 {
-                    Line pLine = pLoc.m_pFirstLine;
+                    var pLine = pLoc.m_pFirstLine;
                     do
                     {
-                        if (pLine.m_pPoint1.m_fHeight > 0)
-                            pLine.m_pPoint1.m_fHeight = 0;
+                        if (pLine.m_pPoint1.m_fH > 0)
+                            pLine.m_pPoint1.m_fH = 0;
 
-                        if (pLine.m_pPoint2.m_fHeight > 0)
-                            pLine.m_pPoint2.m_fHeight = 0;
+                        if (pLine.m_pPoint2.m_fH > 0)
+                            pLine.m_pPoint2.m_fH = 0;
 
-                        if (pLine.m_pMidPoint.m_fHeight > 0)
-                            pLine.m_pMidPoint.m_fHeight = 0;
+                        if (pLine.m_pMidPoint.m_fH > 0)
+                            pLine.m_pMidPoint.m_fH = 0;
 
-                        if (pLine.m_pInnerPoint.m_fHeight > 0)
-                            pLine.m_pInnerPoint.m_fHeight = 0;
+                        if (pLine.m_pInnerPoint.m_fH > 0)
+                            pLine.m_pInnerPoint.m_fH = 0;
 
                         pLine = pLine.m_pNext;
                     }
@@ -1088,20 +1065,20 @@ namespace LandscapeGeneration
 
                 if (pLoc.H > 0)
                 {
-                    Line pLine = pLoc.m_pFirstLine;
+                    var pLine = pLoc.m_pFirstLine;
                     do
                     {
-                        if (pLine.m_pPoint1.m_fHeight < 0)
-                            pLine.m_pPoint1.m_fHeight = 0;
+                        if (pLine.m_pPoint1.m_fH < 0)
+                            pLine.m_pPoint1.m_fH = 0;
 
-                        if (pLine.m_pPoint2.m_fHeight < 0)
-                            pLine.m_pPoint2.m_fHeight = 0;
+                        if (pLine.m_pPoint2.m_fH < 0)
+                            pLine.m_pPoint2.m_fH = 0;
 
-                        if (pLine.m_pMidPoint.m_fHeight < 0)
-                            pLine.m_pMidPoint.m_fHeight = 0;
+                        if (pLine.m_pMidPoint.m_fH < 0)
+                            pLine.m_pMidPoint.m_fH = 0;
 
-                        if (pLine.m_pInnerPoint.m_fHeight < 0)
-                            pLine.m_pInnerPoint.m_fHeight = 0;
+                        if (pLine.m_pInnerPoint.m_fH < 0)
+                            pLine.m_pInnerPoint.m_fH = 0;
 
                         pLine = pLine.m_pNext;
                     }
@@ -1112,20 +1089,20 @@ namespace LandscapeGeneration
 
         private void CalculateVertexes()
         {
-            foreach (Vertex pVertex in m_pGrid.m_aVertexes)
+            foreach (Vertex pVertex in m_pPlanet.m_aVertexes)
             {
-                pVertex.m_fHeight = 0;
+                pVertex.m_fH = 0;
 
                 float fTotalWeight = 0;
                 bool bOcean = false;
                 bool bLand = false;
-                foreach (LOC pLoc in pVertex.m_aLocations)
+                foreach (LOC pLoc in pVertex.m_cLocations)
                 {
                     if (pLoc.Forbidden || pLoc.Owner == null)
                         continue;
 
                     float fLinkElevation = (pLoc.Owner as LAND).Type.m_fElevation;
-                    pVertex.m_fHeight += pLoc.H / fLinkElevation;
+                    pVertex.m_fH += pLoc.H / fLinkElevation;
                     fTotalWeight += 1 / fLinkElevation;
 
                     if (pLoc.H > 0)
@@ -1135,26 +1112,26 @@ namespace LandscapeGeneration
                 }
 
                 if (fTotalWeight > 0)
-                    pVertex.m_fHeight /= fTotalWeight;
+                    pVertex.m_fH /= fTotalWeight;
 
                 if (bOcean && bLand)
-                    pVertex.m_fHeight = 0;
+                    pVertex.m_fH = 0;
             }
 
             //коррекция высот средних и внутренних точек границ локаций:
             //выста средних точек должна учитывать не только высоты смежных локаций, но так же и высоты смежных вершин,
             //а высота внутренних точек должны быть где-то между высотами центральной точки и средней точки, ближе к центральной
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
 
-                Line pLine = pLoc.m_pFirstLine;
+                var pLine = pLoc.m_pFirstLine;
                 do
                 {
-                    pLine.m_pMidPoint.m_fHeight = (4*pLine.m_pMidPoint.m_fHeight + pLine.m_pPoint1.m_fHeight + pLine.m_pPoint2.m_fHeight)/6;
+                    pLine.m_pMidPoint.m_fH = (4*pLine.m_pMidPoint.m_fH + pLine.m_pPoint1.m_fH + pLine.m_pPoint2.m_fH)/6;
 
-                    pLine.m_pInnerPoint.m_fHeight = (pLine.m_pMidPoint.m_fHeight + pLine.m_pInnerPoint.m_fHeight + pLoc.H) / 3;
+                    pLine.m_pInnerPoint.m_fH = (pLine.m_pMidPoint.m_fH + pLine.m_pInnerPoint.m_fH + pLoc.H) / 3;
 
                     pLine = pLine.m_pNext;
                 }
@@ -1164,26 +1141,26 @@ namespace LandscapeGeneration
 
         private void SmoothVertexes()
         {
-            foreach (Vertex pVertex in m_pGrid.m_aVertexes)
-            {
-                if (float.IsNaN(pVertex.m_fHeight))
-                    continue;
+            //foreach (Vertex pVertex in m_pPlanet.m_aVertexes)
+            //{
+            //    if (float.IsNaN(pVertex.m_fH))
+            //        continue;
 
-                foreach (Vertex pLink in pVertex.m_cVertexes)
-                {
-                    if (float.IsNaN(pLink.m_fHeight))
-                        continue;
+            //    foreach (Vertex pLink in pVertex.m_cVertexes)
+            //    {
+            //        if (float.IsNaN(pLink.m_fHeight))
+            //            continue;
 
-                    float fDist = (float)Math.Sqrt((pVertex.m_fX - pLink.m_fX) * (pVertex.m_fX - pLink.m_fX) +
-                                                  (pVertex.m_fY - pLink.m_fY) * (pVertex.m_fY - pLink.m_fY));
+            //        float fDist = (float)Math.Sqrt((pVertex.m_fX - pLink.m_fX) * (pVertex.m_fX - pLink.m_fX) +
+            //                                      (pVertex.m_fY - pLink.m_fY) * (pVertex.m_fY - pLink.m_fY));
 
-                    if (fDist < 50)
-                    {
-                        pVertex.m_fHeight = (pVertex.m_fHeight + pLink.m_fHeight) / 2;
-                        pLink.m_fHeight = pVertex.m_fHeight;
-                    }
-                }
-            }
+            //        if (fDist < 50)
+            //        {
+            //            pVertex.m_fHeight = (pVertex.m_fHeight + pLink.m_fHeight) / 2;
+            //            pLink.m_fHeight = pVertex.m_fHeight;
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>
@@ -1193,7 +1170,7 @@ namespace LandscapeGeneration
         /// <param name="fMaxElevation"></param>
         private void SmoothMap(float fMaxElevation)
         {
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -1242,13 +1219,12 @@ namespace LandscapeGeneration
         private void NoiseMap()
         {
             PerlinNoise perlinNoise = new PerlinNoise(99);
-            double widthDivisor = 0.5 / (double)m_pGrid.RX;
-            double heightDivisor = 0.5 / (double)m_pGrid.RY;
+            double fDivisor = 0.5 / (double)m_pPlanet.R;
 
 
             float vMin = 0;
             float vMax = 0;
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.H < 0)
                     continue;
@@ -1257,11 +1233,11 @@ namespace LandscapeGeneration
                 // that's the reason of the strange code
                 float v = (float)(
                     // First octave
-                    (perlinNoise.Noise(16 * pLoc.X * widthDivisor, 16 * pLoc.Y * heightDivisor, -0.5) + 1) / 2 * 0.5 +
+                    (perlinNoise.Noise(16 * pLoc.X * fDivisor, 16 * pLoc.Y * fDivisor, 16 * pLoc.Z * fDivisor) + 1) / 2 * 0.5 +
                     // Second octave
-                    (perlinNoise.Noise(32 * pLoc.X * widthDivisor, 32 * pLoc.Y * heightDivisor, 0) + 1) / 2 * 0.3 +
+                    (perlinNoise.Noise(32 * pLoc.X * fDivisor, 32 * pLoc.Y * fDivisor, 32 * pLoc.Z * fDivisor) + 1) / 2 * 0.3 +
                     // Third octave
-                    (perlinNoise.Noise(64 * pLoc.X * widthDivisor, 64 * pLoc.Y * heightDivisor, +0.5) + 1) / 2 * 0.2);
+                    (perlinNoise.Noise(64 * pLoc.X * fDivisor, 64 * pLoc.Y * fDivisor, 64 * pLoc.Z * fDivisor) + 1) / 2 * 0.2);
 
                 v = v - 0.5f;
 
@@ -1379,11 +1355,11 @@ namespace LandscapeGeneration
             return pNode2.m_cLinks[pNode1];
         }
 
-        private void BuildTransportGrid(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildTransportGrid(Cube<LOC>.BeginStepDelegate BeginStep, Cube<LOC>.ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building transportation links...", m_pGrid.m_aLocations.Length + m_aLands.Length + m_aLandMasses.Length);
+            BeginStep("Building transportation links...", m_pPlanet.m_aLocations.Length + m_aLands.Length + m_aLandMasses.Length);
 
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pPlanet.m_aLocations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)// || pLoc.m_bBorder)
                     continue;

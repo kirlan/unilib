@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TestCubePlanet
+namespace PlanetDrawXNAEngine
 {
     public class ArcBallCamera
     {
@@ -251,7 +251,7 @@ namespace TestCubePlanet
             Vector3? pCharacter = GetSurface(FocusPoint, out m_pFocusedSquare);
             if (pCharacter.HasValue)
             {
-                pCharacter += Vector3.Normalize(pCharacter.Value) / FlatScale;// *1.2f;
+                pCharacter += Vector3.Normalize(pCharacter.Value) * Square.m_fLandHeightMultiplier; // / FlatScale;// *1.2f;
                 Position += pCharacter.Value - FocusPoint;
                 FocusPoint = pCharacter.Value;
             }

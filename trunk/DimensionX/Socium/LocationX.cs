@@ -6,6 +6,7 @@ using System.Drawing;
 using LandscapeGeneration;
 using Socium.Settlements;
 using LandscapeGeneration.PathFind;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace Socium
 {

@@ -98,7 +98,7 @@ namespace MapDrawXNAEngine
         }
 #endregion
 
-        public Vertex m_pOwner;
+        public VoronoiVertex m_pOwner;
 
         public Vector3 m_pPosition = new Vector3(0);
         public Vector3 m_pNormal = new Vector3(0);
@@ -110,13 +110,13 @@ namespace MapDrawXNAEngine
 
         public Microsoft.Xna.Framework.Color m_pColor = Microsoft.Xna.Framework.Color.Black;
 
-        public GeoData(Vertex pOwner, WorldShape eShape, float fMultiplier)
+        public GeoData(VoronoiVertex pOwner, WorldShape eShape, float fMultiplier)
         {
             m_pOwner = pOwner;
             m_pPosition = GetPosition(pOwner, eShape, fMultiplier);
         }
 
-        public GeoData(Vertex pOwner, WorldShape eShape, float fHeight, float fMultiplier)
+        public GeoData(VoronoiVertex pOwner, WorldShape eShape, float fHeight, float fMultiplier)
         {
             m_pOwner = pOwner;
             m_pPosition = GetPosition(pOwner, eShape, fHeight, fMultiplier);
@@ -127,12 +127,12 @@ namespace MapDrawXNAEngine
     {
         public GeoData[] m_aLinked;
 
-        public GeoData2(Vertex pOwner, WorldShape eShape, float fMultiplier)
+        public GeoData2(VoronoiVertex pOwner, WorldShape eShape, float fMultiplier)
             : base(pOwner, eShape, fMultiplier)
         {
         }
 
-        public GeoData2(Vertex pOwner, WorldShape eShape, float fHeight, float fMultiplier)
+        public GeoData2(VoronoiVertex pOwner, WorldShape eShape, float fHeight, float fMultiplier)
             : base(pOwner, eShape, fHeight, fMultiplier)
         {
         }

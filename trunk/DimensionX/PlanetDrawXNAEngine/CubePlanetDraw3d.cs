@@ -16,8 +16,12 @@ using UniLibXNA;
 using Random;
 using Microsoft.VisualBasic.Devices;
 using ContentLoader;
+using Socium;
+using LandscapeGeneration.PlanetBuilder;
+using LandscapeGeneration;
+using Socium.Settlements;
 
-namespace TestCubePlanet
+namespace PlanetDrawXNAEngine
 {
     /// <summary>
     /// Example control inherits from GraphicsDeviceControl, which allows it to
@@ -33,28 +37,28 @@ namespace TestCubePlanet
 
         private Face[] m_aFaces = new Face[6];
 
-        private Cube m_pCube = null;
+        private World m_pWorld = null;
 
-        private void MyInit(Cube pCube)
+        private void MyInit(World pWorld)
         {
             if (GraphicsDevice != null)
             {
                 int index = 0;
-                foreach (var pFace in pCube.m_cFaces)
+                foreach (var pFace in pWorld.m_pPlanet.m_cFaces)
                 {
-                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pCube.R, Shader.m_aTreeModels, Shader.m_aPalmModels, Shader.m_aPineModels, Shader.m_pTreeTexture);
+                    m_aFaces[index++] = new Face(GraphicsDevice, pFace.Value, pWorld.m_pPlanet.R, pWorld.m_fMaxHeight, Shader.m_aTreeModels, Shader.m_aPalmModels, Shader.m_aPineModels, Shader.m_pTreeTexture);
                 }
 
                 m_pCamera = new ArcBallCamera(GraphicsDevice);
-                m_pCamera.Initialize(pCube.R, m_aFaces);
+                m_pCamera.Initialize(pWorld.m_pPlanet.R, m_aFaces);
 
-                Shader.SetFog(m_eSkyColor, pCube.R + 15, 0.001f);
+                Shader.SetFog(m_eSkyColor, pWorld.m_pPlanet.R + 15, 0.001f);
             }
         }
 
         public void Clear()
         {
-            m_pCube = null;
+            m_pWorld = null;
             for (int iFace = 0; iFace < m_aFaces.Length; iFace++ )
             {
                 if (m_aFaces[iFace] != null)
@@ -72,15 +76,15 @@ namespace TestCubePlanet
             }
         }
 
-        public void Assign(Cube pCube)
+        public void Assign(World pWorld)
         {
-            m_pCube = null;
+            m_pWorld = null;
 
-            MyInit(pCube);
+            MyInit(pWorld);
             
             Square.ClearQueues();
 
-            m_pCube = pCube;
+            m_pWorld = pWorld;
         }
 
         //DumbCamera m_pCamera = null;
@@ -101,9 +105,9 @@ namespace TestCubePlanet
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
 
-            if (m_pCube != null)
+            if (m_pWorld != null)
             {
-                MyInit(m_pCube);
+                MyInit(m_pWorld);
             }
 
             timer = Stopwatch.StartNew();
@@ -151,12 +155,12 @@ namespace TestCubePlanet
             set 
             { 
                 m_bShowFrustum = value;
-                if (m_pCube != null)
+                if (m_pWorld != null)
                 {
                     if (m_bShowFrustum)
                         Shader.SetFog(m_eSkyColor, 1, 0);
                     else
-                        Shader.SetFog(m_eSkyColor, m_pCube.R + 15, 0.001f);
+                        Shader.SetFog(m_eSkyColor, m_pWorld.m_pPlanet.R + 15, 0.001f);
                 }
             }
         }
@@ -338,7 +342,7 @@ namespace TestCubePlanet
             m_fFrameTime = timer.Elapsed.TotalMilliseconds - lastTime;
             lastTime = timer.Elapsed.TotalMilliseconds; 
             
-            if (m_pCube == null)
+            if (m_pWorld == null)
                 return;
 
             UpdateCamera();
@@ -412,7 +416,7 @@ namespace TestCubePlanet
             //DrawSun();
 
             //Рисуем водную поверхность и видимый через неё подводный мир
-            Shader.PrepareDrawWater((float)lastTime / 500.0f, m_pCamera.m_pHorizonNormal * m_pCube.R - m_pCamera.FocusPoint);
+            Shader.PrepareDrawWater((float)lastTime / 500.0f, m_pCamera.m_pHorizonNormal * m_pWorld.m_pPlanet.R - m_pCamera.FocusPoint);
             //Shader.PrepareDrawWater((float)Math.Sin(lastTime / 500.0f), m_pCamera.Direction);
             foreach (var pSquare in Square.s_pVisibleQueue)
             {
@@ -660,7 +664,7 @@ namespace TestCubePlanet
         /// </summary>
         public void UpdatePicking(int x, int y)
         {
-            if (m_pCube == null)
+            if (m_pWorld == null)
                 return;
 
             // Look up a collision ray based on the current cursor position. See the
@@ -683,6 +687,9 @@ namespace TestCubePlanet
                 // Do we have a per-triangle intersection with this model?
                 if (intersection != null)
                 {
+                    if (UpdateFocus(m_pSelectedSquare.m_pChunk.m_aLocations[m_iFocusedLocation]))
+                        UpdateTooltipString(); 
+                    
                     m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
                     return;
                 }
@@ -720,6 +727,10 @@ namespace TestCubePlanet
 
                                 m_pSelectedSquare = pSquare;
 
+                                // Store vertex positions so we can display the picked triangle.
+                                if (UpdateFocus(m_pSelectedSquare.m_pChunk.m_aLocations[iLoc]))
+                                    UpdateTooltipString();
+
                                 m_pCurrentPicking = m_pCursorRay.Position + Vector3.Normalize(m_pCursorRay.Direction) * intersection;
                             }
                         }
@@ -730,5 +741,172 @@ namespace TestCubePlanet
                 m_pCurrentPicking = null;
         }
 
+        /// <summary>
+        /// Континент, над которым находится указатель мыши.
+        /// </summary>
+        private ContinentX m_pFocusedContinent = null;
+
+        private LandMass<LandX> m_pFocusedLandMass = null;
+
+        /// <summary>
+        /// Континент, над которым находится указатель мыши.
+        /// </summary>
+        public ContinentX ContinentInFocus
+        {
+            get { return m_pFocusedContinent; }
+        }
+
+        /// <summary>
+        /// Провинция, над которой находится указатель мыши.
+        /// </summary>
+        private Province m_pFocusedProvince = null;
+
+        /// <summary>
+        /// Государство, над которым находится указатель мыши.
+        /// </summary>
+        private State m_pFocusedState = null;
+
+        /// <summary>
+        /// Земля, над которой находится указатель мыши.
+        /// </summary>
+        private LandX m_pFocusedLand = null;
+
+        /// <summary>
+        /// Земля, над которой находится указатель мыши.
+        /// </summary>
+        public LandX LandInFocus
+        {
+            get { return m_pFocusedLand; }
+        }
+
+        /// <summary>
+        /// Локация, над которой находится указатель мыши.
+        /// </summary>
+        private LocationX m_pFocusedLocation = null;
+
+        /// <summary>
+        /// Локация, над которой находится указатель мыши.
+        /// </summary>
+        public LocationX LocationInFocus
+        {
+            get { return m_pFocusedLocation; }
+        }
+        
+        /// <summary>
+        /// Определяет, что находится под курсором.
+        /// </summary>
+        /// <returns>true - если какая-то суша, false - если просто океан</returns>
+        private bool UpdateFocus(LocationX pLoc)
+        {
+            if (m_pWorld == null)
+                return false;
+
+            if (m_pFocusedLocation == pLoc)
+                return false;
+
+            m_pFocusedLocation = pLoc;
+            m_pFocusedLand = null;
+            m_pFocusedLandMass = null;
+            m_pFocusedContinent = null;
+            m_pFocusedProvince = null;
+            m_pFocusedState = null;
+
+            if (m_pFocusedLocation != null)
+            {
+                m_pFocusedLand = m_pFocusedLocation.Owner as LandX;
+                if (m_pFocusedLand != null)
+                {
+                    m_pFocusedLandMass = m_pFocusedLand.Owner as LandMass<LandX>;
+                    if (m_pFocusedLandMass != null)
+                        m_pFocusedContinent = m_pFocusedLandMass.Owner as ContinentX;
+
+                    m_pFocusedProvince = m_pFocusedLand.m_pProvince;
+                    if (m_pFocusedProvince != null)
+                        m_pFocusedState = m_pFocusedProvince.Owner as State;
+                }
+            }
+
+            return true;
+        }
+        
+        public string sToolTip = "";
+
+        private void UpdateTooltipString()
+        {
+            sToolTip = "";
+
+            if (m_pFocusedContinent != null)
+                sToolTip += m_pFocusedContinent.ToString();
+
+            if (m_pFocusedLand != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n - ";
+
+                sToolTip += m_pFocusedLand.ToString();
+            }
+
+            if (m_pFocusedState != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n   - ";
+
+                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pInfo.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pNation);
+            }
+
+            if (m_pFocusedProvince != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n     - ";
+
+                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pNation);
+
+                //sToolTip += "\n          [";
+
+                //foreach(var pNation in m_pFocusedProvince.m_cNationsCount)
+                //sToolTip += string.Format("{0}: {1}, ", pNation.Key, pNation.Value);
+                //sToolTip += "]";
+            }
+
+            if (m_pFocusedLocation != null)
+            {
+                if (sToolTip.Length > 0)
+                    sToolTip += "\n       - ";
+
+                sToolTip += m_pFocusedLocation.ToString();
+
+                if (m_pFocusedLocation.m_pSettlement != null && m_pFocusedLocation.m_pSettlement.m_cBuildings.Count > 0)
+                {
+                    Dictionary<string, int> cBuildings = new Dictionary<string, int>();
+
+                    foreach (Building pBuilding in m_pFocusedLocation.m_pSettlement.m_cBuildings)
+                    {
+                        int iCount = 0;
+                        cBuildings.TryGetValue(pBuilding.ToString(), out iCount);
+                        cBuildings[pBuilding.ToString()] = iCount + 1;
+                    }
+
+                    foreach (var vBuilding in cBuildings)
+                        sToolTip += "\n         - " + vBuilding.Key + "  x" + vBuilding.Value.ToString();
+                }
+
+                if (m_pFocusedLocation.m_cHaveRoadTo.Count > 0)
+                {
+                    sToolTip += "\nHave roads to:";
+                    foreach (var pRoad in m_pFocusedLocation.m_cHaveRoadTo)
+                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_eLevel.ToString() + "]";
+                }
+
+                if (m_pFocusedLocation.m_cHaveSeaRouteTo.Count > 0)
+                {
+                    sToolTip += "\nHave sea routes to:";
+                    foreach (LocationX pRoute in m_pFocusedLocation.m_cHaveSeaRouteTo)
+                        sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName;
+                }
+            }
+
+            //if (toolTip1.GetToolTip(this) != sToolTip)
+            //    toolTip1.SetToolTip(this, sToolTip);
+        }
     }
 }

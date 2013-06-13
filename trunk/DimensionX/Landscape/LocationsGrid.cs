@@ -11,6 +11,7 @@ using SimpleVectors;
 
 namespace LandscapeGeneration
 {
+    /*
     public enum GridType
     {
         Square,
@@ -50,7 +51,7 @@ namespace LandscapeGeneration
     }
 
     public class LocationsGrid<LOC>
-        where LOC : Location, new()
+        where LOC : LocationOld, new()
     {
         /// <summary>
         /// Расстояние от экватора до полюса. 
@@ -83,7 +84,7 @@ namespace LandscapeGeneration
 
         public LOC[] m_aLocations = null;
 
-        public Vertex[] m_aVertexes = null;
+        public VoronoiVertex[] m_aVertexes = null;
 
         public WorldShape m_eShape = WorldShape.Plain;
 
@@ -182,7 +183,7 @@ namespace LandscapeGeneration
             foreach (LOC pLoc in m_aLocations)
                 pLoc.FillBorderWithKeys();
 
-            List<Vertex> cVertexes = new List<Vertex>();
+            List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
             RestoreVoronoi(ref cVertexes, ref cFacesDic);
 
             m_aVertexes = cVertexes.ToArray();
@@ -193,7 +194,7 @@ namespace LandscapeGeneration
             return true;
         }
 
-        private bool RestoreVoronoi(ref List<Vertex> cVertexes, ref Dictionary<LOC, List<LOC[]>> cFacesDic)
+        private bool RestoreVoronoi(ref List<VoronoiVertex> cVertexes, ref Dictionary<LOC, List<LOC[]>> cFacesDic)
         {
             float fTrueR = m_iRX / (float)Math.PI;
 
@@ -323,8 +324,8 @@ namespace LandscapeGeneration
                     else
                         pRight = aWheel[i + 1];
 
-                    Vertex pVertexA = null;
-                    Vertex pVertexB = null;
+                    VoronoiVertex pVertexA = null;
+                    VoronoiVertex pVertexB = null;
 
                     //проверим, возможно эти вершины у нас уже вычислены
                     if (pLoc1.BorderWith.ContainsKey(pLeft) && pLoc1.BorderWith[pLeft].Count > 0)
@@ -347,12 +348,12 @@ namespace LandscapeGeneration
 
                     if (pVertexA == null)
                     {
-                        pVertexA = new Vertex((pLoc1.X + pLoc2.X + pLeft.X) / 3, (pLoc1.Y + pLoc2.Y + pLeft.Y) / 3, (pLoc1.Z + pLoc2.Z + pLeft.Z) / 3);
+                        pVertexA = new VoronoiVertex((pLoc1.X + pLoc2.X + pLeft.X) / 3, (pLoc1.Y + pLoc2.Y + pLeft.Y) / 3, (pLoc1.Z + pLoc2.Z + pLeft.Z) / 3);
                         cVertexes.Add(pVertexA);
                     }
                     if (pVertexB == null)
                     {
-                        pVertexB = new Vertex((pLoc1.X + pLoc2.X + pRight.X) / 3, (pLoc1.Y + pLoc2.Y + pRight.Y) / 3, (pLoc1.Z + pLoc2.Z + pRight.Z) / 3);
+                        pVertexB = new VoronoiVertex((pLoc1.X + pLoc2.X + pRight.X) / 3, (pLoc1.Y + pLoc2.Y + pRight.Y) / 3, (pLoc1.Z + pLoc2.Z + pRight.Z) / 3);
                         cVertexes.Add(pVertexB);
                     }
 
@@ -363,9 +364,9 @@ namespace LandscapeGeneration
                     if (!pVertexB.m_cVertexes.Contains(pVertexA))
                         pVertexB.m_cVertexes.Add(pVertexA);
 
-                    Vertex pMidPoint = new Vertex((pVertexA.X + pVertexB.X) / 2, (pVertexA.Y + pVertexB.Y) / 2, (pVertexA.Z + pVertexB.Z) / 2);
-                    Vertex pLoc1Point = new Vertex((pLoc1.X + pMidPoint.X) / 2, (pLoc1.Y + pMidPoint.Y) / 2, (pLoc1.Z + pMidPoint.Z) / 2);
-                    Vertex pLoc2Point = new Vertex((pLoc2.X + pMidPoint.X) / 2, (pLoc2.Y + pMidPoint.Y) / 2, (pLoc2.Z + pMidPoint.Z) / 2);
+                    VoronoiVertex pMidPoint = new VoronoiVertex((pVertexA.X + pVertexB.X) / 2, (pVertexA.Y + pVertexB.Y) / 2, (pVertexA.Z + pVertexB.Z) / 2);
+                    VoronoiVertex pLoc1Point = new VoronoiVertex((pLoc1.X + pMidPoint.X) / 2, (pLoc1.Y + pMidPoint.Y) / 2, (pLoc1.Z + pMidPoint.Z) / 2);
+                    VoronoiVertex pLoc2Point = new VoronoiVertex((pLoc2.X + pMidPoint.X) / 2, (pLoc2.Y + pMidPoint.Y) / 2, (pLoc2.Z + pMidPoint.Z) / 2);
 
                     cVertexes.Add(pMidPoint);
                     cVertexes.Add(pLoc1Point);
@@ -518,8 +519,8 @@ namespace LandscapeGeneration
 
             //Строим диаграмму вороного - определяем границы локаций
             VoronoiGraph graph = Fortune.ComputeVoronoiGraph(cData.Keys);
-            Dictionary<BTVector, Vertex> cVertexes = new Dictionary<BTVector, Vertex>();
-            List<Vertex> cMidPoints = new List<Vertex>();
+            Dictionary<BTVector, VoronoiVertex> cVertexes = new Dictionary<BTVector, VoronoiVertex>();
+            List<VoronoiVertex> cMidPoints = new List<VoronoiVertex>();
 
             //Переводим данные из диаграммы Вороного в наш формат
             try
@@ -548,9 +549,9 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="pFrom">этот вертекс будет удалён</param>
         /// <param name="pTo">этот останется</param>
-        private void MergeVertex(Vertex pFrom, Vertex pTo)
+        private void MergeVertex(VoronoiVertex pFrom, VoronoiVertex pTo)
         {
-            foreach (Location pLoc in pFrom.m_cLocationsBuild)
+            foreach (LocationOld pLoc in pFrom.m_cLocationsBuild)
             {
                 foreach (var vLine in pLoc.m_cBorderWith)
                     foreach (Line pLine in vLine.Value)
@@ -560,7 +561,7 @@ namespace LandscapeGeneration
                     pTo.m_cLocationsBuild.Add(pLoc);
             }
 
-            foreach (Vertex pLink in pFrom.m_cVertexes)
+            foreach (VoronoiVertex pLink in pFrom.m_cVertexes)
             {
                 if (pLink == pFrom)
                     continue;
@@ -579,12 +580,12 @@ namespace LandscapeGeneration
         /// </summary>
         private void MergeVertexes()
         {
-            List<Vertex> cOutspace = new List<Vertex>();
-            foreach (Vertex pVertex in m_aVertexes)
+            List<VoronoiVertex> cOutspace = new List<VoronoiVertex>();
+            foreach (VoronoiVertex pVertex in m_aVertexes)
             {
                 if (pVertex.m_fX < -RX)
                 {
-                    foreach (Vertex pDouble in m_aVertexes)
+                    foreach (VoronoiVertex pDouble in m_aVertexes)
                     {
                         if (pDouble.m_fY == pVertex.m_fY && pDouble.m_fX == pVertex.m_fX + RX * 2)
                         {
@@ -608,7 +609,7 @@ namespace LandscapeGeneration
                 }
                 if (pVertex.m_fX > RX)
                 {
-                    foreach (Vertex pDouble in m_aVertexes)
+                    foreach (VoronoiVertex pDouble in m_aVertexes)
                     {
                         if (pDouble.m_fY == pVertex.m_fY && pDouble.m_fX == pVertex.m_fX - RX * 2)
                         {
@@ -632,9 +633,9 @@ namespace LandscapeGeneration
                 }
             }
 
-            List<Vertex> cVertexes = new List<Vertex>();
+            List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
             cVertexes.AddRange(m_aVertexes);
-            foreach (Vertex pOut in cOutspace)
+            foreach (VoronoiVertex pOut in cOutspace)
             {
                 pOut.m_fX = -1;
                 pOut.m_fY = -1;
@@ -664,7 +665,7 @@ namespace LandscapeGeneration
                 pLoc.Y = (float)((float)m_iRY * fRo);
             }
 
-            foreach (Vertex pVertex in m_aVertexes)
+            foreach (VoronoiVertex pVertex in m_aVertexes)
             {
                 float fRo = (float)pVertex.Y / m_iRY;
                 float fPhy = (float)Math.PI * pVertex.X / m_iRX;
@@ -675,7 +676,7 @@ namespace LandscapeGeneration
             }
         }
 
-        private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, Vertex> cVertexes, List<Vertex> cMidPoints, VoronoiEdge pEdge)
+        private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, VoronoiVertex> cVertexes, List<VoronoiVertex> cMidPoints, VoronoiEdge pEdge)
         {
             LOC pLoc1 = null;
             LOC pLoc2 = null;
@@ -720,14 +721,14 @@ namespace LandscapeGeneration
 
             //при необходимости, создадим новые вертексы для вершин добавляемой грани
             if (!cVertexes.ContainsKey(pEdge.VVertexA))
-                cVertexes[pEdge.VVertexA] = new Vertex(pEdge.VVertexA);
+                cVertexes[pEdge.VVertexA] = new VoronoiVertex(pEdge.VVertexA);
 
-            Vertex pVertexA = cVertexes[pEdge.VVertexA];
+            VoronoiVertex pVertexA = cVertexes[pEdge.VVertexA];
 
             if (!cVertexes.ContainsKey(pEdge.VVertexB))
-                cVertexes[pEdge.VVertexB] = new Vertex(pEdge.VVertexB);
+                cVertexes[pEdge.VVertexB] = new VoronoiVertex(pEdge.VVertexB);
 
-            Vertex pVertexB = cVertexes[pEdge.VVertexB];
+            VoronoiVertex pVertexB = cVertexes[pEdge.VVertexB];
 
             if (pVertexA == pVertexB)
                 throw new Exception("Vertexes too close!");
@@ -750,7 +751,7 @@ namespace LandscapeGeneration
 
             if (bSwap)
             {
-                Vertex pVertexC = pVertexA;
+                VoronoiVertex pVertexC = pVertexA;
                 pVertexA = pVertexB;
                 pVertexB = pVertexC;
             }
@@ -761,19 +762,19 @@ namespace LandscapeGeneration
             if (!pVertexB.m_cVertexes.Contains(pVertexA))
                 pVertexB.m_cVertexes.Add(pVertexA);
 
-            Vertex pMidPoint = new Vertex((pVertexA.X + pVertexB.X)/2, (pVertexA.Y + pVertexB.Y)/2, (pVertexA.Z + pVertexB.Z)/2);
+            VoronoiVertex pMidPoint = new VoronoiVertex((pVertexA.X + pVertexB.X)/2, (pVertexA.Y + pVertexB.Y)/2, (pVertexA.Z + pVertexB.Z)/2);
             //pMidPoint.m_cVertexes.Add(pVertexA);
             //pMidPoint.m_cVertexes.Add(pVertexB);
             //pVertexA.m_cVertexes.Add(pMidPoint);
             //pVertexB.m_cVertexes.Add(pMidPoint);
 
-            Vertex pLoc1Point = (pLoc1 != null && pLoc1.m_pOrigin == null) ? 
-                new Vertex((pLoc1.X + pMidPoint.X) / 2, (pLoc1.Y + pMidPoint.Y) / 2, (pLoc1.Z + pMidPoint.Z) / 2) : 
-                new Vertex(pMidPoint.X, pMidPoint.Y, pMidPoint.Z);
+            VoronoiVertex pLoc1Point = (pLoc1 != null && pLoc1.m_pOrigin == null) ? 
+                new VoronoiVertex((pLoc1.X + pMidPoint.X) / 2, (pLoc1.Y + pMidPoint.Y) / 2, (pLoc1.Z + pMidPoint.Z) / 2) : 
+                new VoronoiVertex(pMidPoint.X, pMidPoint.Y, pMidPoint.Z);
 
-            Vertex pLoc2Point = (pLoc2 != null && pLoc2.m_pOrigin == null) ? 
-                new Vertex((pLoc2.X + pMidPoint.X) / 2, (pLoc2.Y + pMidPoint.Y) / 2, (pLoc2.Z + pMidPoint.Z) / 2) : 
-                new Vertex(pMidPoint.X, pMidPoint.Y, pMidPoint.Z);
+            VoronoiVertex pLoc2Point = (pLoc2 != null && pLoc2.m_pOrigin == null) ? 
+                new VoronoiVertex((pLoc2.X + pMidPoint.X) / 2, (pLoc2.Y + pMidPoint.Y) / 2, (pLoc2.Z + pMidPoint.Z) / 2) : 
+                new VoronoiVertex(pMidPoint.X, pMidPoint.Y, pMidPoint.Z);
 
             cMidPoints.Add(pMidPoint);
             cMidPoints.Add(pLoc1Point);
@@ -1172,7 +1173,7 @@ namespace LandscapeGeneration
                     new BinaryWriter(fs.GetStream(FileMode.OpenOrCreate, FileAccess.Write)))
                 {
                     binWriter.Write(m_aVertexes.Length);
-                    foreach (Vertex pVertex in m_aVertexes)
+                    foreach (VoronoiVertex pVertex in m_aVertexes)
                     {
                         pVertex.Save(binWriter);
                     }
@@ -1376,13 +1377,13 @@ namespace LandscapeGeneration
                         // Reset the position in the stream to zero.
                         binReader.BaseStream.Seek(0, SeekOrigin.Begin);
 
-                        Dictionary<long, Vertex> cTempDicVertex = new Dictionary<long, Vertex>();
+                        Dictionary<long, VoronoiVertex> cTempDicVertex = new Dictionary<long, VoronoiVertex>();
                         int iVertexesCount = binReader.ReadInt32();
                         if (BeginStep != null)
                             BeginStep("Loading vertexes...", iVertexesCount * 2);
                         for (int i = 0; i < iVertexesCount; i++)
                         {
-                            Vertex pVertexLoc = new Vertex(binReader);
+                            VoronoiVertex pVertexLoc = new VoronoiVertex(binReader);
 
                             cTempDicVertex[pVertexLoc.m_iID] = pVertexLoc;
 
@@ -1390,10 +1391,10 @@ namespace LandscapeGeneration
                                 ProgressStep();
                         }
 
-                        m_aVertexes = new List<Vertex>(cTempDicVertex.Values).ToArray();
+                        m_aVertexes = new List<VoronoiVertex>(cTempDicVertex.Values).ToArray();
 
                         //Восстанавливаем словарь соседей
-                        foreach (Vertex pVertex in m_aVertexes)
+                        foreach (VoronoiVertex pVertex in m_aVertexes)
                         {
                             foreach (long iID in pVertex.m_cLinksTmp)
                             {
@@ -1437,9 +1438,9 @@ namespace LandscapeGeneration
                         }
 
                         //Восстанавливаем словарь соседей для вертексов
-                        foreach (Vertex pVertex in m_aVertexes)
+                        foreach (VoronoiVertex pVertex in m_aVertexes)
                         {
-                            pVertex.m_aLocations = new Location[pVertex.m_cLocationsTmp.Count];
+                            pVertex.m_aLocations = new LocationOld[pVertex.m_cLocationsTmp.Count];
                             int iIndex = 0;
                             foreach (long iID in pVertex.m_cLocationsTmp)
                             {
@@ -1495,4 +1496,5 @@ namespace LandscapeGeneration
             return m_sDescription + " (" + pInfo.Name + ")";
         }
     }
+     */
 }

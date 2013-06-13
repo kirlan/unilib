@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LandscapeGeneration.PlanetBuilder;
 namespace LandscapeGeneration
 {
     public interface ITerritory
@@ -7,7 +8,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Границы с другими такими же объектами
         /// </summary>
-        Dictionary<object, List<Line>> BorderWith { get; }
+        Dictionary<object, List<Location.Edge>> BorderWith { get; }
         bool Forbidden { get; }
         object Owner { get; set; }
         float PerimeterLength { get; }
