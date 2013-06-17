@@ -17,17 +17,17 @@ namespace WorldGeneration
     {
         MapPreset[] m_aWorldMaps = new MapPreset[] 
         {
-            new MapPreset("Gondwana", "One big continent ocuppies 33% of world surface.", 40, 14, 1, 66),
-            new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface.", 40, 14, 5, 66),
-            new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface.", 40, 50, 30, 66),
+            new MapPreset("Gondwana", "One big continent ocuppies 33% of world surface.", 15, 25, 1, 66),
+            new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface.", 15, 25, 5, 66),
+            new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface.", 100, 100, 30, 66),
         };
 
         MapPreset[] m_aPartialMaps = new MapPreset[] 
         {
-            new MapPreset("Atlantis", "Traditional adventure map of 1 one big continent, with a complex coastral line.", 80, 25, 1, 50),
-            new MapPreset("Duality", "2 big continents, divided by a wide ocean.", 80, 25, 2, 75),
-            new MapPreset("Mediterranean", "Mediterranean-like region - there are 3 big continents, divided by a narrow sea.", 80, 25, 3, 50),
-            new MapPreset("Islands Paradise", "Archipelago of about 15 small islands.", 0, 100, 15, 90),
+            new MapPreset("Atlantis", "Traditional adventure map of 1 one big continent, with a complex coastral line.", 15, 25, 1, 50),
+            new MapPreset("Duality", "2 big continents, divided by a wide ocean.", 15, 25, 2, 75),
+            new MapPreset("Mediterranean", "Mediterranean-like region - there are 3 big continents, divided by a narrow sea.", 15, 25, 3, 50),
+            new MapPreset("Islands Paradise", "Archipelago of about 15 small islands.", 100, 100, 15, 90),
         };
 
         private WorkingArea m_eWorkingArea = WorkingArea.WholeSphere;

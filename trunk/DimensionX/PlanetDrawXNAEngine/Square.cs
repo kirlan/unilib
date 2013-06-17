@@ -614,12 +614,12 @@ namespace PlanetDrawXNAEngine
                                     {
                                         if (pLoc.m_eType == RegionType.Volcano)
                                         {
-                                            g.m_aLandPoints[vertexWaterIndex[pLine.m_pInnerPoint]].Position = GetPosition(pLoc, pLine.m_pInnerPoint.m_fH + 6 + Rnd.Get(3f));
-                                            g.m_aLandPoints[vertexWaterIndex[pLine.m_pInnerPoint]].Position = (g.m_aLandPoints[vertexWaterIndex[pLine.m_pInnerPoint]].Position + g.m_aLandPoints[index].Position) / 2;
+                                            g.m_aLandPoints[vertexIndex[pLine.m_pInnerPoint]].Position = GetPosition(pLoc, pLine.m_pInnerPoint.m_fH + 6 + Rnd.Get(3f));
+                                            g.m_aLandPoints[vertexIndex[pLine.m_pInnerPoint]].Position = (g.m_aLandPoints[vertexIndex[pLine.m_pInnerPoint]].Position + g.m_aLandPoints[index].Position) / 2;
                                         }
                                         else
                                         {
-                                            g.m_aLandPoints[vertexWaterIndex[pLine.m_pInnerPoint]].Position = GetPosition(pLoc, pLine.m_pInnerPoint.m_fH + 1.5f + Rnd.Get(1f));
+                                            g.m_aLandPoints[vertexIndex[pLine.m_pInnerPoint]].Position = GetPosition(pLoc, pLine.m_pInnerPoint.m_fH + 1.5f + Rnd.Get(1f));
                                         }
 
                                         pLine = pLine.m_pNext;
