@@ -65,7 +65,7 @@ namespace PlanetDrawXNAEngine
             Vector3 pAxis = Vector3.Cross(Vector3.Up, pUp);
             pAxis.Normalize();
             float fRotAngle = (float)Math.Acos(Vector3.Dot(Vector3.Up, pUp));
-            worldMatrix = Matrix.CreateScale(fScale * 10, fScale * 40, fScale * 10) * Matrix.CreateRotationY(fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(pPosition);
+            worldMatrix = Matrix.CreateScale(fScale * 10, fScale * 80, fScale * 10) * Matrix.CreateRotationY(fAngle) * Matrix.CreateFromAxisAngle(pAxis, fRotAngle) * Matrix.CreateTranslation(pPosition);
 
             //boneTransforms = new Matrix[m_pModel.Bones.Count];
             //m_pModel.CopyAbsoluteBoneTransformsTo(boneTransforms);

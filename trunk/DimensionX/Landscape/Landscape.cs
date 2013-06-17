@@ -1211,7 +1211,7 @@ namespace LandscapeGeneration
                     if (pLoc.H > 0)
                         pLoc.H = Math.Max(0.1f, fTotal / fTotalWeight);
                     else
-                        pLoc.H = Math.Min(-0.1f, fTotal / fTotalWeight);
+                        pLoc.H = Math.Min(-0.5f, fTotal / fTotalWeight);
                 }
             }
         }

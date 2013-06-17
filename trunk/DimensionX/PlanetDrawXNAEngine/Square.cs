@@ -825,7 +825,7 @@ namespace PlanetDrawXNAEngine
                                 }
                                 if (eLT != LandType.Ocean && eLT != LandType.Coastral)
                                 {
-                                    float fScale = 0.15f; //0.015f;
+                                    float fScale = 0.07f; //0.015f;
                                     fScale *= (float)(70 / Math.Sqrt(120000));
 
                                     if (eLT == LandType.Forest || eLT == LandType.Taiga || eLT == LandType.Jungle)
