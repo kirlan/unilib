@@ -39,15 +39,14 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовуюКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.сменитьМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.отменаToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label4 = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовуюМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.переименоватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,7 +69,20 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label5 = new System.Windows.Forms.Label();
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.listBox1 = new System.Windows.Forms.CheckedListBox();
+            this.listView3 = new System.Windows.Forms.ListView();
+            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
             columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -122,22 +134,24 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 124);
+            this.tabControl1.Location = new System.Drawing.Point(0, 152);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(770, 344);
+            this.tabControl1.Size = new System.Drawing.Size(770, 316);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.listView3);
+            this.tabPage1.Controls.Add(this.listBox1);
+            this.tabPage1.Controls.Add(this.label5);
             this.tabPage1.Controls.Add(this.listView1);
             this.tabPage1.Controls.Add(this.label4);
-            this.tabPage1.Controls.Add(this.listBox1);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(762, 318);
+            this.tabPage1.Size = new System.Drawing.Size(762, 290);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "События";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -150,32 +164,43 @@
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
-            this.columnHeader6});
+            this.columnHeader7,
+            this.columnHeader8,
+            this.columnHeader9,
+            this.columnHeader6,
+            this.columnHeader10});
             this.listView1.ContextMenuStrip = this.contextMenuStrip2;
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.Location = new System.Drawing.Point(132, 19);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(622, 290);
+            this.listView1.Size = new System.Drawing.Size(622, 133);
             this.listView1.TabIndex = 3;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
             this.columnHeader1.Text = "ID";
+            this.columnHeader1.Width = 70;
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Название";
-            this.columnHeader2.Width = 330;
+            this.columnHeader2.Text = "Категория";
+            this.columnHeader2.Width = 65;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Условия";
+            this.columnHeader6.Width = 163;
             // 
             // contextMenuStrip2
             // 
             this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.добавитьНовуюКартуToolStripMenuItem,
             this.удалитьКартуToolStripMenuItem,
-            this.сменитьМастьToolStripMenuItem,
             this.редактироватьToolStripMenuItem,
             this.toolStripMenuItem2,
             this.отменаToolStripMenuItem1});
@@ -187,18 +212,13 @@
             this.добавитьНовуюКартуToolStripMenuItem.Name = "добавитьНовуюКартуToolStripMenuItem";
             this.добавитьНовуюКартуToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.добавитьНовуюКартуToolStripMenuItem.Text = "Добавить новое событие...";
+            this.добавитьНовуюКартуToolStripMenuItem.Click += new System.EventHandler(this.добавитьНовуюКартуToolStripMenuItem_Click);
             // 
             // удалитьКартуToolStripMenuItem
             // 
             this.удалитьКартуToolStripMenuItem.Name = "удалитьКартуToolStripMenuItem";
             this.удалитьКартуToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.удалитьКартуToolStripMenuItem.Text = "Удалить событие";
-            // 
-            // сменитьМастьToolStripMenuItem
-            // 
-            this.сменитьМастьToolStripMenuItem.Name = "сменитьМастьToolStripMenuItem";
-            this.сменитьМастьToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.сменитьМастьToolStripMenuItem.Text = "Сменить категорию";
             // 
             // редактироватьToolStripMenuItem
             // 
@@ -220,24 +240,11 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(131, 3);
+            this.label4.Location = new System.Drawing.Point(129, 3);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 13);
             this.label4.TabIndex = 2;
             this.label4.Text = "События:";
-            // 
-            // listBox1
-            // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.listBox1.ContextMenuStrip = this.contextMenuStrip1;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(6, 19);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(120, 290);
-            this.listBox1.TabIndex = 1;
-            this.listBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseDown);
-            this.listBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseMove);
             // 
             // contextMenuStrip1
             // 
@@ -297,7 +304,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(762, 318);
+            this.tabPage2.Size = new System.Drawing.Size(762, 290);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Параметры";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -313,7 +320,7 @@
             this.listView2.GridLines = true;
             this.listView2.Location = new System.Drawing.Point(3, 3);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(756, 312);
+            this.listView2.Size = new System.Drawing.Size(756, 284);
             this.listView2.TabIndex = 0;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -369,14 +376,17 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.comboBox1);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.label6);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 24);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(770, 100);
+            this.panel1.Size = new System.Drawing.Size(770, 128);
             this.panel1.TabIndex = 2;
             // 
             // textBox2
@@ -418,10 +428,112 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Название модуля:";
             // 
-            // columnHeader6
+            // label5
             // 
-            this.columnHeader6.Text = "Условия";
-            this.columnHeader6.Width = 95;
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(129, 157);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(53, 13);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Реакции:";
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Приоритет";
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Частота";
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Повторяемость";
+            this.columnHeader9.Width = 22;
+            // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "Текст";
+            this.columnHeader10.Width = 157;
+            // 
+            // listBox1
+            // 
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBox1.ContextMenuStrip = this.contextMenuStrip1;
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.IntegralHeight = false;
+            this.listBox1.Location = new System.Drawing.Point(6, 19);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(120, 263);
+            this.listBox1.TabIndex = 5;
+            this.listBox1.DoubleClick += new System.EventHandler(this.переименоватьToolStripMenuItem_Click);
+            this.listBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseDown);
+            this.listBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseMove);
+            // 
+            // listView3
+            // 
+            this.listView3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listView3.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader11,
+            this.columnHeader12,
+            this.columnHeader13,
+            this.columnHeader14});
+            this.listView3.FullRowSelect = true;
+            this.listView3.GridLines = true;
+            this.listView3.Location = new System.Drawing.Point(132, 173);
+            this.listView3.Name = "listView3";
+            this.listView3.Size = new System.Drawing.Size(622, 109);
+            this.listView3.TabIndex = 6;
+            this.listView3.UseCompatibleStateImageBehavior = false;
+            this.listView3.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader11
+            // 
+            this.columnHeader11.Text = "Имя";
+            this.columnHeader11.Width = 117;
+            // 
+            // columnHeader12
+            // 
+            this.columnHeader12.Text = "Видимость";
+            this.columnHeader12.Width = 23;
+            // 
+            // columnHeader13
+            // 
+            this.columnHeader13.Text = "Условия";
+            this.columnHeader13.Width = 196;
+            // 
+            // columnHeader14
+            // 
+            this.columnHeader14.Text = "Последствия";
+            this.columnHeader14.Width = 264;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(119, 100);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(541, 21);
+            this.comboBox1.TabIndex = 4;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(666, 98);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(92, 23);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Выбрать";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 103);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(109, 13);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Графический пакет:";
             // 
             // Form1
             // 
@@ -457,7 +569,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox textBox2;
@@ -473,7 +584,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem добавитьНовуюКартуToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem удалитьКартуToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem сменитьМастьToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem редактироватьToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem отменаToolStripMenuItem1;
@@ -493,6 +603,20 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem отменаToolStripMenuItem2;
         private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ListView listView3;
+        private System.Windows.Forms.CheckedListBox listBox1;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.ColumnHeader columnHeader10;
+        private System.Windows.Forms.ColumnHeader columnHeader11;
+        private System.Windows.Forms.ColumnHeader columnHeader12;
+        private System.Windows.Forms.ColumnHeader columnHeader13;
+        private System.Windows.Forms.ColumnHeader columnHeader14;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label6;
     }
 }
 

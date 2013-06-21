@@ -16,7 +16,7 @@ namespace Persona
         /// <summary>
         /// Описание события
         /// </summary>
-        public string m_sText;
+        public string m_sText = "Описание события";
 
         /// <summary>
         /// Список условий при выполнении которых следует выводить это описание.
