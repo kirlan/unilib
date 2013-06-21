@@ -34,8 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,6 +47,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditDomain.cs">
@@ -51,6 +57,12 @@
     </Compile>
     <Compile Include="EditDomain.Designer.cs">
       <DependentUpon>EditDomain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditEvent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditEvent.Designer.cs">
+      <DependentUpon>EditEvent.cs</DependentUpon>
     </Compile>
     <Compile Include="Event.cs" />
     <Compile Include="Consequences\Consequence.cs" />
@@ -77,6 +89,9 @@
     <EmbeddedResource Include="EditDomain.resx">
       <DependentUpon>EditDomain.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EditEvent.resx">
+      <DependentUpon>EditEvent.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -98,6 +113,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UniLibControls\UniLibControls.csproj">
+      <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
+      <Name>UniLibControls</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
