@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Persona.Parameters;
 
 namespace Persona
 {
@@ -33,9 +34,22 @@ namespace Persona
         public List<Event> m_cEvents = new List<Event>();
 
         /// <summary>
-        /// Список параметров, описывающих игровую ситуацию в конкретный момент времени.
+        /// Список числовых параметров, описывающих игровую ситуацию в конкретный момент времени.
+        /// Числовые параметры могут участвовать в условиях сравнения и попадания в диапазон.
         /// </summary>
-        public List<Parameter> m_cParameters = new List<Parameter>();
+        public List<NumericParameter> m_cNumericParameters = new List<NumericParameter>();
+
+        /// <summary>
+        /// Список логических параметров, описывающих игровую ситуацию в конкретный момент времени.
+        /// Логические параметры могут участвовать в условиях проверки истинности.
+        /// </summary>
+        public List<BoolParameter> m_cBoolParameters = new List<BoolParameter>();
+
+        /// <summary>
+        /// Список строковых параметров, описывающих игровую ситуацию в конкретный момент времени.
+        /// Строковые параметры не могут участвовать ни в каких условиях.
+        /// </summary>
+        public List<StringParameter> m_cStringParameters = new List<StringParameter>();
 
         public Module()
         {

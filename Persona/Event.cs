@@ -9,12 +9,12 @@ namespace Persona
     /// <summary>
     /// Игровое событие
     /// </summary>
-    class Event
+    public class Event
     {
         /// <summary>
         /// Идентификатор события. Используется только при редактировании модуля, для навигации по списку событий.
         /// </summary>
-        public string m_sID = "Новое событие";
+        public string m_sID = "Event " + Guid.NewGuid().ToString();
 
         /// <summary>
         /// Область жизни, к которой относится это событие.
