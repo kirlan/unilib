@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Persona.Consequences
 {
-    abstract class Consequence
+    public abstract class Consequence
     {
     }
 }

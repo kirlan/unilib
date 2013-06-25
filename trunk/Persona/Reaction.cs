@@ -9,7 +9,7 @@ namespace Persona
     /// <summary>
     /// Возможная реакция персонажа на событие.
     /// </summary>
-    class Reaction
+    public class Reaction
     {
         /// <summary>
         /// Если true, то реакция будет отображаться в общем списке, даже если условие не выполняется,

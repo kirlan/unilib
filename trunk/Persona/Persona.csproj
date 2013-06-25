@@ -52,6 +52,24 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EditConditionComparsion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditConditionComparsion.Designer.cs">
+      <DependentUpon>EditConditionComparsion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditConditionRange.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditConditionRange.Designer.cs">
+      <DependentUpon>EditConditionRange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditConditionStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditConditionStatus.Designer.cs">
+      <DependentUpon>EditConditionStatus.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditDomain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,12 +98,24 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Parameter.cs" />
+    <Compile Include="Parameters\BoolParameter.cs" />
+    <Compile Include="Parameters\NumericParameter.cs" />
+    <Compile Include="Parameters\Parameter.cs" />
+    <Compile Include="Parameters\StringParameter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reaction.cs" />
     <Compile Include="Situation.cs" />
     <Compile Include="Domain.cs" />
+    <EmbeddedResource Include="EditConditionComparsion.resx">
+      <DependentUpon>EditConditionComparsion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditConditionRange.resx">
+      <DependentUpon>EditConditionRange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditConditionStatus.resx">
+      <DependentUpon>EditConditionStatus.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EditDomain.resx">
       <DependentUpon>EditDomain.cs</DependentUpon>
     </EmbeddedResource>

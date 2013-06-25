@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -35,17 +36,29 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.contextMenuStrip_Conditions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.добавитьНовоеУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.сравнение2хПараметровToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.попаданиеПараметраВДиапазонToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.проверкаИстинностиФлагаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.удалитьУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.отменаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label4 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label6 = new System.Windows.Forms.Label();
             this.listBox2 = new System.Windows.Forms.ListBox();
+            this.contextMenuStrip_Consequences = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.добавитьНовоеПоследствиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.редактироватьToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.удалитьПоследствиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.отменаToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label7 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
@@ -54,11 +67,16 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
+            this.contextMenuStrip_Conditions.SuspendLayout();
+            this.contextMenuStrip_Consequences.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.tableLayoutPanel3.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -128,7 +146,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(329, 20);
             this.textBox1.TabIndex = 1;
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label2
             // 
@@ -163,6 +180,7 @@
             // listBox1
             // 
             this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listBox1.ContextMenuStrip = this.contextMenuStrip_Conditions;
             this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(141, 55);
@@ -170,6 +188,75 @@
             this.tableLayoutPanel1.SetRowSpan(this.listBox1, 3);
             this.listBox1.Size = new System.Drawing.Size(329, 72);
             this.listBox1.TabIndex = 5;
+            this.listBox1.DoubleClick += new System.EventHandler(this.EditConditionToolStripMenuItem_Click);
+            this.listBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseDown);
+            // 
+            // contextMenuStrip_Conditions
+            // 
+            this.contextMenuStrip_Conditions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьНовоеУсловиеToolStripMenuItem,
+            this.редактироватьToolStripMenuItem,
+            this.удалитьУсловиеToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.отменаToolStripMenuItem});
+            this.contextMenuStrip_Conditions.Name = "contextMenuStrip_Conditions";
+            this.contextMenuStrip_Conditions.Size = new System.Drawing.Size(211, 120);
+            // 
+            // добавитьНовоеУсловиеToolStripMenuItem
+            // 
+            this.добавитьНовоеУсловиеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.сравнение2хПараметровToolStripMenuItem,
+            this.попаданиеПараметраВДиапазонToolStripMenuItem,
+            this.проверкаИстинностиФлагаToolStripMenuItem});
+            this.добавитьНовоеУсловиеToolStripMenuItem.Name = "добавитьНовоеУсловиеToolStripMenuItem";
+            this.добавитьНовоеУсловиеToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.добавитьНовоеУсловиеToolStripMenuItem.Text = "Добавить новое условие";
+            // 
+            // сравнение2хПараметровToolStripMenuItem
+            // 
+            this.сравнение2хПараметровToolStripMenuItem.Name = "сравнение2хПараметровToolStripMenuItem";
+            this.сравнение2хПараметровToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.сравнение2хПараметровToolStripMenuItem.Text = "Сравнение 2х параметров...";
+            this.сравнение2хПараметровToolStripMenuItem.Click += new System.EventHandler(this.AddConditionComparsionToolStripMenuItem_Click);
+            // 
+            // попаданиеПараметраВДиапазонToolStripMenuItem
+            // 
+            this.попаданиеПараметраВДиапазонToolStripMenuItem.Name = "попаданиеПараметраВДиапазонToolStripMenuItem";
+            this.попаданиеПараметраВДиапазонToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.попаданиеПараметраВДиапазонToolStripMenuItem.Text = "Попадание параметра в диапазон...";
+            this.попаданиеПараметраВДиапазонToolStripMenuItem.Click += new System.EventHandler(this.AddConditionRangeToolStripMenuItem_Click);
+            // 
+            // проверкаИстинностиФлагаToolStripMenuItem
+            // 
+            this.проверкаИстинностиФлагаToolStripMenuItem.Name = "проверкаИстинностиФлагаToolStripMenuItem";
+            this.проверкаИстинностиФлагаToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.проверкаИстинностиФлагаToolStripMenuItem.Text = "Проверка истинности флага...";
+            this.проверкаИстинностиФлагаToolStripMenuItem.Click += new System.EventHandler(this.AddConditionStatusToolStripMenuItem_Click);
+            // 
+            // редактироватьToolStripMenuItem
+            // 
+            this.редактироватьToolStripMenuItem.Name = "редактироватьToolStripMenuItem";
+            this.редактироватьToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.редактироватьToolStripMenuItem.Text = "Редактировать";
+            this.редактироватьToolStripMenuItem.Click += new System.EventHandler(this.EditConditionToolStripMenuItem_Click);
+            // 
+            // удалитьУсловиеToolStripMenuItem
+            // 
+            this.удалитьУсловиеToolStripMenuItem.Name = "удалитьУсловиеToolStripMenuItem";
+            this.удалитьУсловиеToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.удалитьУсловиеToolStripMenuItem.Text = "Удалить условие";
+            this.удалитьУсловиеToolStripMenuItem.Click += new System.EventHandler(this.RemoveConditionToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(207, 6);
+            // 
+            // отменаToolStripMenuItem
+            // 
+            this.отменаToolStripMenuItem.Name = "отменаToolStripMenuItem";
+            this.отменаToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.отменаToolStripMenuItem.Text = "Отмена";
             // 
             // label4
             // 
@@ -190,42 +277,6 @@
             this.tableLayoutPanel1.SetRowSpan(this.textBox2, 3);
             this.textBox2.Size = new System.Drawing.Size(329, 72);
             this.textBox2.TabIndex = 7;
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Controls.Add(this.button3, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.button2, 1, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 458);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(473, 36);
-            this.tableLayoutPanel2.TabIndex = 10;
-            // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button3.Location = new System.Drawing.Point(158, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Отмена";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(239, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "ОК";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label5
             // 
@@ -277,6 +328,7 @@
             // listBox2
             // 
             this.listBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listBox2.ContextMenuStrip = this.contextMenuStrip_Consequences;
             this.listBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox2.FormattingEnabled = true;
             this.listBox2.Location = new System.Drawing.Point(141, 289);
@@ -284,6 +336,46 @@
             this.tableLayoutPanel1.SetRowSpan(this.listBox2, 3);
             this.listBox2.Size = new System.Drawing.Size(329, 72);
             this.listBox2.TabIndex = 11;
+            // 
+            // contextMenuStrip_Consequences
+            // 
+            this.contextMenuStrip_Consequences.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьНовоеПоследствиеToolStripMenuItem,
+            this.редактироватьToolStripMenuItem1,
+            this.удалитьПоследствиеToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.отменаToolStripMenuItem1});
+            this.contextMenuStrip_Consequences.Name = "contextMenuStrip_Consequences";
+            this.contextMenuStrip_Consequences.Size = new System.Drawing.Size(235, 98);
+            // 
+            // добавитьНовоеПоследствиеToolStripMenuItem
+            // 
+            this.добавитьНовоеПоследствиеToolStripMenuItem.Name = "добавитьНовоеПоследствиеToolStripMenuItem";
+            this.добавитьНовоеПоследствиеToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+            this.добавитьНовоеПоследствиеToolStripMenuItem.Text = "Добавить новое последствие";
+            // 
+            // редактироватьToolStripMenuItem1
+            // 
+            this.редактироватьToolStripMenuItem1.Name = "редактироватьToolStripMenuItem1";
+            this.редактироватьToolStripMenuItem1.Size = new System.Drawing.Size(234, 22);
+            this.редактироватьToolStripMenuItem1.Text = "Редактировать";
+            // 
+            // удалитьПоследствиеToolStripMenuItem
+            // 
+            this.удалитьПоследствиеToolStripMenuItem.Name = "удалитьПоследствиеToolStripMenuItem";
+            this.удалитьПоследствиеToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+            this.удалитьПоследствиеToolStripMenuItem.Text = "Удалить последствие";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(231, 6);
+            // 
+            // отменаToolStripMenuItem1
+            // 
+            this.отменаToolStripMenuItem1.Name = "отменаToolStripMenuItem1";
+            this.отменаToolStripMenuItem1.Size = new System.Drawing.Size(234, 22);
+            this.отменаToolStripMenuItem1.Text = "Отмена";
             // 
             // label7
             // 
@@ -371,6 +463,42 @@
             this.radioButton2.Text = "случается однажды";
             this.radioButton2.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.button3, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.button2, 1, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 458);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(473, 36);
+            this.tableLayoutPanel2.TabIndex = 10;
+            // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.button3.Location = new System.Drawing.Point(158, 3);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Отмена";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(239, 3);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "ОК";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // EditEvent
             // 
             this.AcceptButton = this.button2;
@@ -383,14 +511,17 @@
             this.Controls.Add(this.tableLayoutPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "EditEvent";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Редактирование события";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
+            this.contextMenuStrip_Conditions.ResumeLayout(false);
+            this.contextMenuStrip_Consequences.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -423,5 +554,20 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip_Conditions;
+        private System.Windows.Forms.ToolStripMenuItem добавитьНовоеУсловиеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem сравнение2хПараметровToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem попаданиеПараметраВДиапазонToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem редактироватьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem удалитьУсловиеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem отменаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem проверкаИстинностиФлагаToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip_Consequences;
+        private System.Windows.Forms.ToolStripMenuItem добавитьНовоеПоследствиеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem редактироватьToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem удалитьПоследствиеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem отменаToolStripMenuItem1;
     }
 }
