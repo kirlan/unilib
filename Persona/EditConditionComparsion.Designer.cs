@@ -209,7 +209,7 @@
             this.radioButton1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radioButton1.Location = new System.Drawing.Point(3, 3);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(80, 19);
+            this.radioButton1.Size = new System.Drawing.Size(80, 20);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "<<";
@@ -222,7 +222,7 @@
             this.radioButton2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radioButton2.Location = new System.Drawing.Point(89, 3);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(82, 19);
+            this.radioButton2.Size = new System.Drawing.Size(82, 20);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = ">>";
@@ -233,9 +233,9 @@
             // 
             this.tableLayoutPanel3.SetColumnSpan(this.radioButton3, 2);
             this.radioButton3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton3.Location = new System.Drawing.Point(3, 28);
+            this.radioButton3.Location = new System.Drawing.Point(3, 29);
             this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(80, 19);
+            this.radioButton3.Size = new System.Drawing.Size(80, 20);
             this.radioButton3.TabIndex = 2;
             this.radioButton3.TabStop = true;
             this.radioButton3.Text = "<";
@@ -246,9 +246,9 @@
             // 
             this.tableLayoutPanel3.SetColumnSpan(this.radioButton4, 2);
             this.radioButton4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton4.Location = new System.Drawing.Point(89, 28);
+            this.radioButton4.Location = new System.Drawing.Point(89, 29);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(82, 19);
+            this.radioButton4.Size = new System.Drawing.Size(82, 20);
             this.radioButton4.TabIndex = 3;
             this.radioButton4.TabStop = true;
             this.radioButton4.Text = ">";
@@ -260,9 +260,9 @@
             this.radioButton5.Checked = true;
             this.tableLayoutPanel3.SetColumnSpan(this.radioButton5, 2);
             this.radioButton5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton5.Location = new System.Drawing.Point(46, 53);
+            this.radioButton5.Location = new System.Drawing.Point(46, 55);
             this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(80, 19);
+            this.radioButton5.Size = new System.Drawing.Size(80, 20);
             this.radioButton5.TabIndex = 0;
             this.radioButton5.TabStop = true;
             this.radioButton5.Text = "==";
