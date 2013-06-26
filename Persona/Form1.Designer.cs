@@ -61,14 +61,19 @@
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip_Events = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовуюКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.удалитьКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.удалитьКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.отменаToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.ParametersTypesListBox = new System.Windows.Forms.ListBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.ParametersListView = new System.Windows.Forms.ListView();
+            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip_Parameters = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовыйПараметрToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,11 +89,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.ParametersTypesListBox = new System.Windows.Forms.ListBox();
-            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -363,19 +363,19 @@
             this.добавитьНовуюКартуToolStripMenuItem.Text = "Добавить новое событие...";
             this.добавитьНовуюКартуToolStripMenuItem.Click += new System.EventHandler(this.AddEventToolStripMenuItem_Click);
             // 
-            // удалитьКартуToolStripMenuItem
-            // 
-            this.удалитьКартуToolStripMenuItem.Name = "удалитьКартуToolStripMenuItem";
-            this.удалитьКартуToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.удалитьКартуToolStripMenuItem.Text = "Удалить событие";
-            this.удалитьКартуToolStripMenuItem.Click += new System.EventHandler(this.RemoveEventToolStripMenuItem_Click);
-            // 
             // редактироватьToolStripMenuItem
             // 
             this.редактироватьToolStripMenuItem.Name = "редактироватьToolStripMenuItem";
             this.редактироватьToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.редактироватьToolStripMenuItem.Text = "Редактировать";
             this.редактироватьToolStripMenuItem.Click += new System.EventHandler(this.EditEventToolStripMenuItem_Click);
+            // 
+            // удалитьКартуToolStripMenuItem
+            // 
+            this.удалитьКартуToolStripMenuItem.Name = "удалитьКартуToolStripMenuItem";
+            this.удалитьКартуToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.удалитьКартуToolStripMenuItem.Text = "Удалить событие";
+            this.удалитьКартуToolStripMenuItem.Click += new System.EventHandler(this.RemoveEventToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -420,6 +420,40 @@
             this.tabPage2.Text = "Параметры";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // ParametersTypesListBox
+            // 
+            this.ParametersTypesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.ParametersTypesListBox.FormattingEnabled = true;
+            this.ParametersTypesListBox.IntegralHeight = false;
+            this.ParametersTypesListBox.Items.AddRange(new object[] {
+            "Числовые",
+            "Логические",
+            "Строковые"});
+            this.ParametersTypesListBox.Location = new System.Drawing.Point(6, 19);
+            this.ParametersTypesListBox.Name = "ParametersTypesListBox";
+            this.ParametersTypesListBox.Size = new System.Drawing.Size(120, 263);
+            this.ParametersTypesListBox.TabIndex = 5;
+            this.ParametersTypesListBox.SelectedIndexChanged += new System.EventHandler(this.ParametersTypesListBox_SelectedIndexChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(3, 3);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(101, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "Типы параметров:";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(129, 3);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(69, 13);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "Параметры:";
+            // 
             // ParametersListView
             // 
             this.ParametersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -439,6 +473,16 @@
             this.ParametersListView.UseCompatibleStateImageBehavior = false;
             this.ParametersListView.View = System.Windows.Forms.View.Details;
             // 
+            // columnHeader15
+            // 
+            this.columnHeader15.Text = "Группа";
+            this.columnHeader15.Width = 107;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Скрытый";
+            this.columnHeader4.Width = 22;
+            // 
             // columnHeader5
             // 
             this.columnHeader5.Text = "Описание";
@@ -453,35 +497,37 @@
             this.toolStripMenuItem3,
             this.отменаToolStripMenuItem2});
             this.contextMenuStrip_Parameters.Name = "contextMenuStrip3";
-            this.contextMenuStrip_Parameters.Size = new System.Drawing.Size(231, 98);
+            this.contextMenuStrip_Parameters.Size = new System.Drawing.Size(231, 120);
             // 
             // добавитьНовыйПараметрToolStripMenuItem
             // 
             this.добавитьНовыйПараметрToolStripMenuItem.Name = "добавитьНовыйПараметрToolStripMenuItem";
             this.добавитьНовыйПараметрToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.добавитьНовыйПараметрToolStripMenuItem.Text = "Добавить новый параметр...";
+            this.добавитьНовыйПараметрToolStripMenuItem.Click += new System.EventHandler(this.добавитьНовыйПараметрToolStripMenuItem_Click);
             // 
             // редактироватьToolStripMenuItem1
             // 
             this.редактироватьToolStripMenuItem1.Name = "редактироватьToolStripMenuItem1";
-            this.редактироватьToolStripMenuItem1.Size = new System.Drawing.Size(221, 22);
+            this.редактироватьToolStripMenuItem1.Size = new System.Drawing.Size(230, 22);
             this.редактироватьToolStripMenuItem1.Text = "Редактировать...";
+            this.редактироватьToolStripMenuItem1.Click += new System.EventHandler(this.редактироватьToolStripMenuItem1_Click);
             // 
             // удалитьToolStripMenuItem
             // 
             this.удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
-            this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.удалитьToolStripMenuItem.Text = "Удалить параметр";
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(218, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(227, 6);
             // 
             // отменаToolStripMenuItem2
             // 
             this.отменаToolStripMenuItem2.Name = "отменаToolStripMenuItem2";
-            this.отменаToolStripMenuItem2.Size = new System.Drawing.Size(221, 22);
+            this.отменаToolStripMenuItem2.Size = new System.Drawing.Size(230, 22);
             this.отменаToolStripMenuItem2.Text = "Отмена";
             // 
             // panel1
@@ -563,50 +609,6 @@
             this.label6.Size = new System.Drawing.Size(109, 13);
             this.label6.TabIndex = 6;
             this.label6.Text = "Графический пакет:";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(129, 3);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(69, 13);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "Параметры:";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(3, 3);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(101, 13);
-            this.label9.TabIndex = 4;
-            this.label9.Text = "Типы параметров:";
-            // 
-            // ParametersTypesListBox
-            // 
-            this.ParametersTypesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.ParametersTypesListBox.FormattingEnabled = true;
-            this.ParametersTypesListBox.IntegralHeight = false;
-            this.ParametersTypesListBox.Items.AddRange(new object[] {
-            "Числовые",
-            "Логические",
-            "Строковые"});
-            this.ParametersTypesListBox.Location = new System.Drawing.Point(6, 19);
-            this.ParametersTypesListBox.Name = "ParametersTypesListBox";
-            this.ParametersTypesListBox.Size = new System.Drawing.Size(120, 263);
-            this.ParametersTypesListBox.TabIndex = 5;
-            this.ParametersTypesListBox.SelectedIndexChanged += new System.EventHandler(this.ParametersTypesListBox_SelectedIndexChanged);
-            // 
-            // columnHeader15
-            // 
-            this.columnHeader15.Text = "Группа";
-            this.columnHeader15.Width = 107;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Скрытый";
-            this.columnHeader4.Width = 22;
             // 
             // Form1
             // 
