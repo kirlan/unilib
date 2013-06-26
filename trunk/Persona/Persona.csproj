@@ -82,6 +82,18 @@
     <Compile Include="EditEvent.Designer.cs">
       <DependentUpon>EditEvent.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditParameterNumeric.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditParameterNumeric.Designer.cs">
+      <DependentUpon>EditParameterNumeric.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditRange.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditRange.Designer.cs">
+      <DependentUpon>EditRange.cs</DependentUpon>
+    </Compile>
     <Compile Include="Event.cs" />
     <Compile Include="Consequences\Consequence.cs" />
     <Compile Include="Consequences\SystemCommand.cs" />
@@ -121,6 +133,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditEvent.resx">
       <DependentUpon>EditEvent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditParameterNumeric.resx">
+      <DependentUpon>EditParameterNumeric.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditRange.resx">
+      <DependentUpon>EditRange.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

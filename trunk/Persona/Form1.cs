@@ -178,7 +178,10 @@ namespace Persona
                 cKills.Add(pItem);
 
             foreach (var pItem in cKills)
+            {
                 EventsListView.Items.Remove(pItem);
+                m_pModule.m_cEvents.Remove(pItem.Tag as Event);
+            }
         }
 
         private void EditEventToolStripMenuItem_Click(object sender, EventArgs e)
@@ -236,6 +239,55 @@ namespace Persona
                 case 2:
                     foreach (var pParam in m_pModule.m_cStringParameters)
                         AddParameterInfo(pParam);
+                    break;
+            }
+        }
+
+        private void добавитьНовыйПараметрToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            switch (ParametersTypesListBox.SelectedIndex)
+            {
+                case 0:
+                    {
+                        NumericParameter pParam = new NumericParameter();
+                        EditParameterNumeric pForm = new EditParameterNumeric(pParam);
+                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            m_pModule.m_cNumericParameters.Add(pParam);
+                            AddParameterInfo(pParam);
+                        }
+                    }
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+            }
+        }
+
+        private void редактироватьToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (ParametersListView.SelectedItems.Count == 0)
+                return;
+
+            switch (ParametersTypesListBox.SelectedIndex)
+            {
+                case 0:
+                    {
+                        NumericParameter pParam = ParametersListView.SelectedItems[0].Tag as NumericParameter;
+                        EditParameterNumeric pForm = new EditParameterNumeric(pParam);
+                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            ParametersListView.SelectedItems[0].Text = pParam.m_sName;
+                            ParametersListView.SelectedItems[0].SubItems[1].Text = pParam.m_sGroup;
+                            ParametersListView.SelectedItems[0].SubItems[2].Text = pParam.m_bHidden ? "#" : "-";
+                            ParametersListView.SelectedItems[0].SubItems[3].Text = pParam.m_sComment;
+                        }
+                    }
+                    break;
+                case 1:
+                    break;
+                case 2:
                     break;
             }
         }
