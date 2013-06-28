@@ -69,6 +69,12 @@ namespace nsUniLibXML
                 GetIntAttribute(xmlNode, attribute, ref iResult);
                 pResult = iResult;
             }
+            if (pResult is float)
+            {
+                float fResult = (float)pResult;
+                GetFloatAttribute(xmlNode, attribute, ref fResult);
+                pResult = fResult;
+            }
             if (pResult is bool)
             {
                 bool bResult = (bool)pResult;
@@ -116,6 +122,23 @@ namespace nsUniLibXML
             {
                 int.TryParse(xmlNode.Attributes[attribute].Value, out iResult);
                 return iResult;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Считывает из xml-ноды атрибут.
+        /// Если такого атрибута нет, то возвращается 0.
+        /// </summary>
+        /// <param name="xmlNode">нода, владеющая атрибутом</param>
+        /// <param name="attribute">имя атрибута</param>
+        /// <returns>значение атрибута</returns>
+        public float GetFloatAttribute(XmlNode xmlNode, string attribute, ref float fResult)
+        {
+            if (xmlNode.Attributes[attribute] != null)
+            {
+                float.TryParse(xmlNode.Attributes[attribute].Value, out fResult);
+                return fResult;
             }
             return 0;
         }
