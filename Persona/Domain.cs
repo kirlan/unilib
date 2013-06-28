@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using nsUniLibXML;
+using System.Xml;
 
 namespace Persona
 {
@@ -23,9 +25,19 @@ namespace Persona
             m_sName = sName;
         }
 
+        public Domain(UniLibXML pXml, XmlNode pParamNode)
+        {
+            pXml.GetStringAttribute(pParamNode, "name", ref m_sName);
+        }
+
         public override string ToString()
         {
             return m_sName;
+        }
+
+        internal void WriteXML(UniLibXML pXml, XmlNode pDomainNode)
+        {
+            pXml.AddAttribute(pDomainNode, "name", m_sName);
         }
     }
 }

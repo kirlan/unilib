@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Persona.Consequences;
+using nsUniLibXML;
+using System.Xml;
+using Persona.Conditions;
+using Persona.Parameters;
 
 namespace Persona
 {
@@ -74,6 +78,157 @@ namespace Persona
         public Event(Domain pDomain)
         {
             m_pDomain = pDomain;
+        }
+
+        public Event(UniLibXML pXml, XmlNode pParamNode, List<Domain> cDomains, List<Parameter> cParams)
+        {
+            pXml.GetStringAttribute(pParamNode, "id", ref m_sID);
+
+            string sDomain = "";
+            pXml.GetStringAttribute(pParamNode, "domain", ref sDomain);
+            foreach (Domain pDomain in cDomains)
+                if (pDomain.m_sName == sDomain)
+                {
+                    m_pDomain = pDomain;
+                    break;
+                }
+
+            pXml.GetStringAttribute(pParamNode, "description", ref m_pDescription.m_sText);
+            pXml.GetBoolAttribute(pParamNode, "repeat", ref m_bRepeatable);
+            pXml.GetIntAttribute(pParamNode, "priority", ref m_iPriority);
+            pXml.GetIntAttribute(pParamNode, "probability", ref m_iProbability);
+
+            foreach (XmlNode pSubNode in pParamNode.ChildNodes)
+            {
+                if (pSubNode.Name == "Conditions")
+                {
+                    foreach (XmlNode pConditionNode in pSubNode.ChildNodes)
+                    {
+                        if (pConditionNode.Name == "Range")
+                        {
+                            ConditionRange pCondition = new ConditionRange(pXml, pConditionNode, cParams);
+                            m_pDescription.m_cConditions.Add(pCondition);
+                        }
+                        if (pConditionNode.Name == "Comparsion")
+                        {
+                            ConditionComparsion pCondition = new ConditionComparsion(pXml, pConditionNode, cParams);
+                            m_pDescription.m_cConditions.Add(pCondition);
+                        }
+                        if (pConditionNode.Name == "Status")
+                        {
+                            ConditionStatus pCondition = new ConditionStatus(pXml, pConditionNode, cParams);
+                            m_pDescription.m_cConditions.Add(pCondition);
+                        }
+                    }
+                }
+                if (pSubNode.Name == "Alternatives")
+                {
+                    foreach (XmlNode pSituationNode in pSubNode.ChildNodes)
+                    {
+                        if (pSituationNode.Name == "Situation")
+                        {
+                            Situation pSituation = new Situation(pXml, pSituationNode, cParams);
+                            m_cAlternateDescriptions.Add(pSituation);
+                        }
+                    }
+                }
+                if (pSubNode.Name == "Consequences")
+                {
+                    foreach (XmlNode pConsequenceNode in pSubNode.ChildNodes)
+                    {
+                        if (pConsequenceNode.Name == "ParameterChange")
+                        {
+                            ParameterChange pConsequence = new ParameterChange(pXml, pConsequenceNode, cParams);
+                            m_cConsequences.Add(pConsequence);
+                        }
+                        if (pConsequenceNode.Name == "ParameterSet")
+                        {
+                            ParameterSet pConsequence = new ParameterSet(pXml, pConsequenceNode, cParams);
+                            m_cConsequences.Add(pConsequence);
+                        }
+                        if (pConsequenceNode.Name == "SystemCommand")
+                        {
+                            SystemCommand pConsequence = new SystemCommand(pXml, pConsequenceNode, cParams);
+                            m_cConsequences.Add(pConsequence);
+                        }
+                    }
+                }
+                if (pSubNode.Name == "Reactions")
+                {
+                    foreach (XmlNode pReactionNode in pSubNode.ChildNodes)
+                    {
+                        if (pReactionNode.Name == "Reaction")
+                        {
+                            Reaction pReaction = new Reaction(pXml, pReactionNode, cParams);
+                            m_cReactions.Add(pReaction);
+                        }
+                    }
+                }
+            }
+        }
+
+        internal void WriteXML(UniLibXML pXml, XmlNode pEventNode)
+        {
+            pXml.AddAttribute(pEventNode, "id", m_sID);
+            pXml.AddAttribute(pEventNode, "domain", m_pDomain.m_sName);
+            pXml.AddAttribute(pEventNode, "description", m_pDescription.m_sText);
+            pXml.AddAttribute(pEventNode, "repeat", m_bRepeatable);
+            pXml.AddAttribute(pEventNode, "priority", m_iPriority);
+            pXml.AddAttribute(pEventNode, "probability", m_iProbability);
+
+            XmlNode pConditionsNode = pXml.CreateNode(pEventNode, "Conditions");
+            foreach (Condition pCondition in m_pDescription.m_cConditions)
+            {
+                if (pCondition is ConditionRange)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Range");
+                    pCondition.SaveXML(pXml, pConditionNode);
+                }
+                if (pCondition is ConditionComparsion)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Comparsion");
+                    pCondition.SaveXML(pXml, pConditionNode);
+                }
+                if (pCondition is ConditionStatus)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Status");
+                    pCondition.SaveXML(pXml, pConditionNode);
+                }
+            }
+
+            XmlNode pAlternativesNode = pXml.CreateNode(pEventNode, "Alternatives");
+            foreach (Situation pSituation in m_cAlternateDescriptions)
+            {
+                XmlNode pSituationNode = pXml.CreateNode(pAlternativesNode, "Situation");
+                pSituation.SaveXML(pXml, pSituationNode);
+            }
+
+            XmlNode pConsequencesNode = pXml.CreateNode(pEventNode, "Consequences");
+            foreach (Consequence pConsequence in m_cConsequences)
+            {
+                if (pConsequence is ParameterChange)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "ParameterChange");
+                    pConsequence.SaveXML(pXml, pConditionNode);
+                }
+                if (pConsequence is ParameterSet)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "ParameterSet");
+                    pConsequence.SaveXML(pXml, pConditionNode);
+                }
+                if (pConsequence is SystemCommand)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "SystemCommand");
+                    pConsequence.SaveXML(pXml, pConditionNode);
+                }
+            }
+
+            XmlNode pReactionsNode = pXml.CreateNode(pEventNode, "Reactions");
+            foreach (Reaction pReaction in m_cReactions)
+            {
+                XmlNode pReactionNode = pXml.CreateNode(pReactionsNode, "Reaction");
+                pReaction.SaveXML(pXml, pReactionNode);
+            }
         }
     }
 }

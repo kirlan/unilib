@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Persona.Parameters;
+using nsUniLibXML;
+using System.Xml;
 
 namespace Persona.Consequences
 {
@@ -12,6 +15,35 @@ namespace Persona.Consequences
     {
         public Parameter m_pParam;
 
-        public string m_sDelta;
+        public float m_fDelta;
+
+        public ParameterChange()
+        {
+        }
+
+        public ParameterChange(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
+        {
+            string sParam = "";
+            pXml.GetStringAttribute(pParamNode, "param", ref sParam);
+            foreach (Parameter pParam in cParams)
+                if (pParam.m_sName == sParam)
+                {
+                    m_pParam = pParam;
+                    break;
+                }
+
+            pXml.GetFloatAttribute(pParamNode, "delta", ref m_fDelta);
+        }
+
+        internal override void SaveXML(UniLibXML pXml, XmlNode pConsequenceNode)
+        {
+            pXml.AddAttribute(pConsequenceNode, "param", m_pParam.m_sName);
+            pXml.AddAttribute(pConsequenceNode, "delta", m_fDelta);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1:+#.##;#.##}", m_pParam != null ? m_pParam.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР", m_fDelta);
+        }
     }
 }
