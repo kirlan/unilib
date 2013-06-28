@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Persona.Consequences;
+using Persona.Conditions;
+using nsUniLibXML;
+using System.Xml;
+using Persona.Parameters;
 
 namespace Persona
 {
@@ -39,5 +43,111 @@ namespace Persona
         /// реакции пользователем.
         /// </summary>
         public List<Consequence> m_cConsequences = new List<Consequence>();
+
+        public Reaction()
+        { 
+        }
+
+        public Reaction(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
+        {
+            pXml.GetStringAttribute(pParamNode, "name", ref m_sName);
+            pXml.GetStringAttribute(pParamNode, "result", ref m_sResult);
+            pXml.GetBoolAttribute(pParamNode, "visible", ref m_bAlwaysVisible);
+
+            foreach (XmlNode pSubNode in pParamNode.ChildNodes)
+            {
+                if (pSubNode.Name == "Conditions")
+                {
+                    foreach (XmlNode pConditionNode in pSubNode.ChildNodes)
+                    {
+                        if (pConditionNode.Name == "Range")
+                        {
+                            ConditionRange pCondition = new ConditionRange(pXml, pConditionNode, cParams);
+                            m_cConditions.Add(pCondition);
+                        }
+                        if (pConditionNode.Name == "Comparsion")
+                        {
+                            ConditionComparsion pCondition = new ConditionComparsion(pXml, pConditionNode, cParams);
+                            m_cConditions.Add(pCondition);
+                        }
+                        if (pConditionNode.Name == "Status")
+                        {
+                            ConditionStatus pCondition = new ConditionStatus(pXml, pConditionNode, cParams);
+                            m_cConditions.Add(pCondition);
+                        }
+                    }
+                }
+
+                if (pSubNode.Name == "Consequences")
+                {
+                    foreach (XmlNode pConsequenceNode in pSubNode.ChildNodes)
+                    {
+                        if (pConsequenceNode.Name == "ParameterChange")
+                        {
+                            ParameterChange pConsequence = new ParameterChange(pXml, pConsequenceNode, cParams);
+                            m_cConsequences.Add(pConsequence);
+                        }
+                        if (pConsequenceNode.Name == "ParameterSet")
+                        {
+                            ParameterSet pConsequence = new ParameterSet(pXml, pConsequenceNode, cParams);
+                            m_cConsequences.Add(pConsequence);
+                        }
+                        if (pConsequenceNode.Name == "SystemCommand")
+                        {
+                            SystemCommand pConsequence = new SystemCommand(pXml, pConsequenceNode, cParams);
+                            m_cConsequences.Add(pConsequence);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        internal void SaveXML(UniLibXML pXml, XmlNode pReactionNode)
+        {
+            pXml.AddAttribute(pReactionNode, "name", m_sName);
+            pXml.AddAttribute(pReactionNode, "result", m_sResult);
+            pXml.AddAttribute(pReactionNode, "visible", m_bAlwaysVisible);
+
+            XmlNode pConditionsNode = pXml.CreateNode(pReactionNode, "Conditions");
+            foreach (Condition pCondition in m_cConditions)
+            {
+                if (pCondition is ConditionRange)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Range");
+                    pCondition.SaveXML(pXml, pConditionNode);
+                }
+                if (pCondition is ConditionComparsion)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Comparsion");
+                    pCondition.SaveXML(pXml, pConditionNode);
+                }
+                if (pCondition is ConditionStatus)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Status");
+                    pCondition.SaveXML(pXml, pConditionNode);
+                }
+            }
+
+            XmlNode pConsequencesNode = pXml.CreateNode(pReactionNode, "Consequences");
+            foreach (Consequence pConsequence in m_cConsequences)
+            {
+                if (pConsequence is ParameterChange)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "ParameterChange");
+                    pConsequence.SaveXML(pXml, pConditionNode);
+                }
+                if (pConsequence is ParameterSet)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "ParameterSet");
+                    pConsequence.SaveXML(pXml, pConditionNode);
+                }
+                if (pConsequence is SystemCommand)
+                {
+                    XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "SystemCommand");
+                    pConsequence.SaveXML(pXml, pConditionNode);
+                }
+            }
+        }
     }
 }

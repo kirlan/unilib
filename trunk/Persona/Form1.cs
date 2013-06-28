@@ -291,5 +291,22 @@ namespace Persona
                     break;
             }
         }
+
+        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_pModule.SaveXML(saveFileDialog1.FileName);
+            }
+        }
+
+        private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_pModule.LoadXML(openFileDialog1.FileName);
+                UpdateModuleInfo();
+            }
+        }
     }
 }

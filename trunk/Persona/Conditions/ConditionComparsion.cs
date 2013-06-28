@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Persona.Parameters;
+using nsUniLibXML;
+using System.Xml;
 
 namespace Persona.Conditions
 {
@@ -51,6 +53,31 @@ namespace Persona.Conditions
             m_pParam2 = pParam2;
         }
 
+        public ConditionComparsion(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
+            : base(pXml, pParamNode, cParams)
+        {
+            string sParam = "";
+            pXml.GetStringAttribute(pParamNode, "param2", ref sParam);
+            foreach (Parameter pParam in cParams)
+                if (pParam.m_sName == sParam)
+                {
+                    m_pParam2 = pParam;
+                    break;
+                }
+
+            object temp = m_eType;
+            pXml.GetEnumAttribute(pParamNode, "relation", typeof(ComparsionType), ref temp);
+            m_eType = (ComparsionType)temp;
+        }
+
+        internal override void SaveXML(UniLibXML pXml, XmlNode pConditionNode)
+        {
+            base.SaveXML(pXml, pConditionNode);
+
+            pXml.AddAttribute(pConditionNode, "param2", m_pParam2.m_sName);
+            pXml.AddAttribute(pConditionNode, "relation", m_eType);
+        }
+    
         public override string ToString()
         {
             string sType = "?";
