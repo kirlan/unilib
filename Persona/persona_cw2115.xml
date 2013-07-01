@@ -30,8 +30,8 @@
         <Range name = "(C) сиськи как сиськи" min = "3" max = "3">
         <Range name = "(D) в самый раз" min = "4" max = "4">
         <Range name = "(DD) D хорошо, а DD лучше" min = "5" max = "5">
-        <Range name = "(E) импланты, однозначно" min = "6" max = "6">
-        <Range name = "(F) силикона мало не бывает" min = "7" max = "7">
+        <Range name = "(E) силикон рулит" min = "6" max = "6">
+        <Range name = "(F) силикона много не бывает" min = "7" max = "7">
         <Range name = "(G) авиабомбы" min = "8" max = "8">
         <Range name = "(H) хиросима" min = "9" max = "9">
       </Numeric>
@@ -158,15 +158,47 @@
       <Numeric name="ДМТ" group="наркота" hidden="False" value="10" />
       <Numeric name="Носферату" group="наркота" hidden="False" value="10" />
       <Bool name="Выбран персонаж" group="Системный" hidden="True" value="False" />
+      <Numeric name="Локация" group="" hidden="False" value="0" >
+        <Range name = "Апартаменты" min = "0" max = "0">
+        <Range name = "Бар" min = "1" max = "1">
+        <Range name = "Клиника" min = "2" max = "2">
+        <Range name = "Хирургия" min = "3" max = "3">
+        <Range name = "Рынок" min = "4" max = "4">
+        <Range name = "Полицейский участок" min = "5" max = "5">
+        <Range name = "Банк" min = "6" max = "6">
+        <Range name = "Парк" min = "7" max = "7">
+        <Range name = "Пляж" min = "8" max = "8">
+        <Range name = "Заброшенная ж-д станция" min = "9" max = "9">
+        <Range name = "Заброшенная автостоянка" min = "10" max = "10">
+        <Range name = "Улица" min = "11" max = "11">
+        <Range name = "Клуб" min = "12" max = "12">
+        <Range name = "Бордель" min = "13" max = "13">
+        <Range name = "Порностудия" min = "14" max = "14">
+        <Range name = "Эскорт-агентство" min = "15" max = "15">
+        <Range name = "Комната в отеле" min = "16" max = "16">
+        <Range name = "Особняк" min = "17" max = "17">
+        <Range name = "Яхта" min = "18" max = "18">
+        <Range name = "Элитный клуб" min = "19" max = "19">
+        <Range name = "Деловая встреча" min = "20" max = "20">
+        <Range name = "Фуршет" min = "21" max = "21">
+      </Numeric>
+      <Numeric name="Работа" group="" hidden="False" value="0" >
+        <Range name = "Уличная шлюха" min = "0" max = "0">
+        <Range name = "Стриптизёрша" min = "1" max = "1">
+        <Range name = "Шлюха в борделе" min = "2" max = "2">
+        <Range name = "Порноактриса" min = "3" max = "3">
+        <Range name = "Эскорт" min = "4" max = "4">
+      </Numeric>
     </Parameters>
     <Domains>
       <Domain name="Тина" />
       <Domain name="Мэри" />
       <Domain name="Джейн" />
       <Domain name="Ал" />
+      <Domain name="Карта" />
     </Domains>
     <Events>
-      <Event id="newGame_Tina" domain="Тина" description="Тина - профессиональная модель. Она жила в пентхаусе, работала со знаменитыми кутурье и никогда не знала нужды... До тех пор, пока однажды не была похищена, изнасилована и выброшена в трущобах без денег и документов. У неё фантастическое тело, но нет никакого опыта." repeat="False" priority="1" probability="1">
+      <Event id="newGame_Tina" domain="Тина" description="Тина - профессиональная модель. Она жила в пентхаусе, работала со знаменитыми кутурье и никогда не знала нужды... До тех пор, пока однажды не была похищена, изнасилована и выброшена в трущобах без денег и документов. У неё фантастическое тело, но нет никакого опыта." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -200,7 +232,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="newGame_Mary" domain="Мэри" description="Мэри выросла в трущобах и никогда не знала другой жизни. Её мать была шлюхой, она никогда не знала кто её отец, у неё дюжина братьев и сестёр, а торговать своим телом она начала в 12. Она не королева красоты, но опыта у неё хоть отбавляй." repeat="False" priority="1" probability="1">
+      <Event id="newGame_Mary" domain="Мэри" description="Мэри выросла в трущобах и никогда не знала другой жизни. Её мать была шлюхой, она никогда не знала кто её отец, у неё дюжина братьев и сестёр, а торговать своим телом она начала в 12. Она не королева красоты, но опыта у неё хоть отбавляй." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -234,7 +266,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="newGame_Jane" domain="Джейн" description="Джейн была обычной девушкой из хорошей семьи, но в колледже связалась с дурной компанией. Вскоре её отчислили из колледжа, а затем она убежала из дома. Её парень предложил ей заняться проституцией, чтобы заработать на наркоту, и так она и поступила. Она привлекательна и имеет неплохой опыт." repeat="False" priority="1" probability="1">
+      <Event id="newGame_Jane" domain="Джейн" description="Джейн была обычной девушкой из хорошей семьи, но в колледже связалась с дурной компанией. Вскоре её отчислили из колледжа, а затем она убежала из дома. Её парень предложил ей заняться проституцией, чтобы заработать на наркоту, и так она и поступила. Она привлекательна и имеет неплохой опыт." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -268,7 +300,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="newGame_Al" domain="Ал" description="Ал - транс. Он всегда мечтал быть женщиной. Его родители выгнали его из дома, когда он заявил, что он гей. После этого уже 2 года он живёт в трущобах. Со своим частично модифицированным телом он выглядит как некрасивая девушка с огромной грудью." repeat="False" priority="1" probability="1">
+      <Event id="newGame_Al" domain="Ал" description="Ал - транс. Он всегда мечтал быть женщиной. Его родители выгнали его из дома, когда он заявил, что он гей. После этого уже 2 года он живёт в трущобах. Со своим частично модифицированным телом он выглядит как некрасивая девушка с огромной грудью." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -298,6 +330,198 @@
             <Conditions />
             <Consequences>
               <SystemCommand command="Return" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="travel" domain="Карта" description="Город велик, но в нём не так много мест, которые стоит посетить." repeat="True" priority="1" probability="1">
+        <Conditions />
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Вернуться в апартаменты" visible="False">
+            <Conditions>
+              <Range param="Локация" min="0" max="0" inverse="True" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="0" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в апартаментах" visible="False">
+            <Conditions>
+              <Range param="Локация" min="0" max="0" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти в бар" visible="False">
+            <Conditions>
+              <Range param="Локация" min="1" max="1" inverse="True" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в баре" visible="False">
+            <Conditions>
+              <Range param="Локация" min="1" max="1" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти в клинику" visible="False">
+            <Conditions>
+              <Range param="Локация" min="2" max="2" inverse="True" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="2" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в клинике" visible="False">
+            <Conditions>
+              <Range param="Локация" min="2" max="2" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Обратиться к хирургам" visible="False">
+            <Conditions>
+              <Range param="Локация" min="3" max="3" inverse="True" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="3" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в палате" visible="False">
+            <Conditions>
+              <Range param="Локация" min="3" max="3" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти на рынок" visible="False">
+            <Conditions>
+              <Range param="Локация" min="4" max="4" inverse="True" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="4" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться на рынке" visible="False">
+            <Conditions>
+              <Range param="Локация" min="4" max="4" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти в полицию" visible="False">
+            <Conditions>
+              <Range param="Локация" min="5" max="5" inverse="True" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="5" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в участке" visible="False">
+            <Conditions>
+              <Range param="Локация" min="5" max="5" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти в банк" visible="False">
+            <Conditions>
+              <Range param="Локация" min="6" max="6" inverse="True" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="6" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в банке" visible="False">
+            <Conditions>
+              <Range param="Локация" min="6" max="6" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>        
+          <Reaction name="Пойти на улицу" visible="False">
+            <Conditions>
+              <Range param="Локация" min="11" max="11" inverse="True" />
+              <Range param="Работа" min="0" max="0" inverse="False" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="11" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться на улице" visible="False">
+            <Conditions>
+              <Range param="Локация" min="11" max="11" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти в клуб" visible="False">
+            <Conditions>
+              <Range param="Локация" min="12" max="12" inverse="True" />
+              <Range param="Работа" min="1" max="1" inverse="False" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="12" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в клубе" visible="False">
+            <Conditions>
+              <Range param="Локация" min="12" max="12" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти в бордель" visible="False">
+            <Conditions>
+              <Range param="Локация" min="13" max="13" inverse="True" />
+              <Range param="Работа" min="2" max="2" inverse="False" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="13" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в борделе" visible="False">
+            <Conditions>
+              <Range param="Локация" min="13" max="13" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти на съёмки" visible="False">
+            <Conditions>
+              <Range param="Локация" min="14" max="14" inverse="True" />
+              <Range param="Работа" min="3" max="3" inverse="False" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="14" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться на съёмочной площадке" visible="False">
+            <Conditions>
+              <Range param="Локация" min="14" max="14" inverse="False" />
+            </Conditions>
+            <Consequences>
+            </Consequences>
+          </Reaction>
+          <Reaction name="Пойти в агентство" visible="False">
+            <Conditions>
+              <Range param="Локация" min="15" max="15" inverse="True" />
+              <Range param="Работа" min="4" max="4" inverse="False" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Локация" value="15" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Остаться в агентстве" visible="False">
+            <Conditions>
+              <Range param="Локация" min="15" max="15" inverse="False" />
+            </Conditions>
+            <Consequences>
             </Consequences>
           </Reaction>
         </Reactions>
