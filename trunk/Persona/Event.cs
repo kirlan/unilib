@@ -23,7 +23,7 @@ namespace Persona
         /// <summary>
         /// Область жизни, к которой относится это событие.
         /// </summary>
-        public Domain m_pDomain;
+        public Action m_pAction;
 
         /// <summary>
         /// <para>Множитель вероятности события.</para>
@@ -75,21 +75,41 @@ namespace Persona
         /// </summary>
         public List<Consequence> m_cConsequences = new List<Consequence>();
 
-        public Event(Domain pDomain)
+        public Event(Action pAction)
         {
-            m_pDomain = pDomain;
+            m_pAction = pAction;
         }
 
-        public Event(UniLibXML pXml, XmlNode pParamNode, List<Domain> cDomains, List<Parameter> cParams)
+        public Event(Event pOrigin)
+        {
+            m_sID = pOrigin.m_sID + " (копия)";
+            m_pAction = pOrigin.m_pAction;
+            m_pDescription = new Situation(pOrigin.m_pDescription);
+            m_iProbability = pOrigin.m_iProbability;
+            m_iPriority = pOrigin.m_iPriority;
+            m_bRepeatable = pOrigin.m_bRepeatable;
+
+            foreach (var pCondition in pOrigin.m_cAlternateDescriptions)
+                m_cAlternateDescriptions.Add(new Situation(pCondition));
+
+            foreach (var pConsequence in pOrigin.m_cConsequences)
+                m_cConsequences.Add(pConsequence.Clone());
+
+            foreach (var pReaction in pOrigin.m_cReactions)
+                m_cReactions.Add(new Reaction(pReaction));
+        }
+
+        public Event(UniLibXML pXml, XmlNode pParamNode, List<Action> cActions, List<Parameter> cParams)
         {
             pXml.GetStringAttribute(pParamNode, "id", ref m_sID);
 
-            string sDomain = "";
-            pXml.GetStringAttribute(pParamNode, "domain", ref sDomain);
-            foreach (Domain pDomain in cDomains)
-                if (pDomain.m_sName == sDomain)
+            string sAction = "";
+            if(pXml.GetStringAttribute(pParamNode, "domain", ref sAction) == "")
+                pXml.GetStringAttribute(pParamNode, "action", ref sAction);
+            foreach (Action pAction in cActions)
+                if (pAction.m_sName == sAction)
                 {
-                    m_pDomain = pDomain;
+                    m_pAction = pAction;
                     break;
                 }
 
@@ -164,13 +184,12 @@ namespace Persona
                         }
                     }
                 }
-            }
-        }
+            }        }
 
         internal void WriteXML(UniLibXML pXml, XmlNode pEventNode)
         {
             pXml.AddAttribute(pEventNode, "id", m_sID);
-            pXml.AddAttribute(pEventNode, "domain", m_pDomain.m_sName);
+            pXml.AddAttribute(pEventNode, "action", m_pAction.m_sName);
             pXml.AddAttribute(pEventNode, "description", m_pDescription.m_sText);
             pXml.AddAttribute(pEventNode, "repeat", m_bRepeatable);
             pXml.AddAttribute(pEventNode, "priority", m_iPriority);
@@ -213,12 +232,12 @@ namespace Persona
                 }
                 if (pConsequence is ParameterSet)
                 {
-                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "ParameterSet");
+                    XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "ParameterSet");
                     pConsequence.SaveXML(pXml, pConditionNode);
                 }
                 if (pConsequence is SystemCommand)
                 {
-                    XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "SystemCommand");
+                    XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "SystemCommand");
                     pConsequence.SaveXML(pXml, pConditionNode);
                 }
             }

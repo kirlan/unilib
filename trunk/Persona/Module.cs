@@ -28,9 +28,9 @@ namespace Persona
         public string m_sDescription = "Описание отсутствует";
 
         /// <summary>
-        /// Список категорий событий, например - "Секс", "Работа", "Учёба"...
+        /// Список действий, порождающих события, например - "Секс", "Работа", "Учёба"...
         /// </summary>
-        public List<Domain> m_cDomains = new List<Domain>();
+        public List<Action> m_cActions = new List<Action>();
         
         /// <summary>
         /// Список возможных событий.
@@ -60,10 +60,10 @@ namespace Persona
             m_sName = "КиберШлюха 2115";
             m_sDescription = "История о нелёгкой жизни уличной шлюхи в трущобах киберпанковского мира.";
 
-            m_cDomains.Add(new Domain("Тина"));
-            m_cDomains.Add(new Domain("Мэри"));
-            m_cDomains.Add(new Domain("Джейн"));
-            m_cDomains.Add(new Domain("Ал"));
+            m_cActions.Add(new Action("Тина"));
+            m_cActions.Add(new Action("Мэри"));
+            m_cActions.Add(new Action("Джейн"));
+            m_cActions.Add(new Action("Ал"));
 
             m_cNumericParameters.Add(new NumericParameter("Сообразительность", "Основные"));
             m_cNumericParameters.Add(new NumericParameter("Репутация", "Основные"));
@@ -88,7 +88,7 @@ namespace Persona
 
             m_cBoolParameters.Add(new BoolParameter("Персонаж выбран", "Системный"));
 
-            Event pTina = new Event(m_cDomains[0]);
+            Event pTina = new Event(m_cActions[0]);
             pTina.m_sID = "newGame_Tina";
             pTina.m_pDescription.m_sText = "Тина - профессиональная модель. Она жила в пентхаусе, работала со знаменитыми кутурье и никогда не знала нужды... До тех пор, пока однажды не была похищена, изнасилована и выброшена в трущобах без денег и документов. У неё фантастическое тело, но нет никакого опыта.";
             pTina.m_pDescription.m_cConditions.Add(new ConditionStatus(m_cBoolParameters[0]));
@@ -102,7 +102,7 @@ namespace Persona
             pTina.m_cReactions.Add(pTinaCancel);
             m_cEvents.Add(pTina);
 
-            Event pMary = new Event(m_cDomains[1]);
+            Event pMary = new Event(m_cActions[1]);
             pMary.m_sID = "newGame_Mary";
             pMary.m_pDescription.m_sText = "Мэри выросла в трущобах и никогда не знала другой жизни. Её мать была шлюхой, она никогда не знала кто её отец, у неё дюжина братьев и сестёр, а торговать своим телом она начала в 12. Она не королева красоты, но опыта у неё хоть отбавляй.";
             pMary.m_pDescription.m_cConditions.Add(new ConditionStatus(m_cBoolParameters[0]));
@@ -116,7 +116,7 @@ namespace Persona
             pMary.m_cReactions.Add(pMaryCancel);
             m_cEvents.Add(pMary);
 
-            Event pJane = new Event(m_cDomains[2]);
+            Event pJane = new Event(m_cActions[2]);
             pJane.m_sID = "newGame_Jane";
             pJane.m_pDescription.m_sText = "Джейн была обычной девушкой из хорошей семьи, но в колледже связалась с дурной компанией. Вскоре её отчислили из колледжа, а затем она убежала из дома. Её парень предложил ей заняться проституцией, чтобы заработать на наркоту, и так она и поступила. Она привлекательна и имеет неплохой опыт.";
             pJane.m_pDescription.m_cConditions.Add(new ConditionStatus(m_cBoolParameters[0]));
@@ -130,7 +130,7 @@ namespace Persona
             pJane.m_cReactions.Add(pJaneCancel);
             m_cEvents.Add(pJane);
 
-            Event pAl = new Event(m_cDomains[3]);
+            Event pAl = new Event(m_cActions[3]);
             pAl.m_sID = "newGame_Al";
             pAl.m_pDescription.m_sText = "Ал - транс. Он всегда мечтал быть женщиной. Его родители выгнали его из дома, когда он заявил, что он гей. После этого уже 2 года он живёт в трущобах. Со своим частично модифицированным телом он выглядит как некрасивая девушка с огромной грудью.";
             pAl.m_pDescription.m_cConditions.Add(new ConditionStatus(m_cBoolParameters[0]));
@@ -170,11 +170,11 @@ namespace Persona
                 pParam.WriteXML(pXml, pParamNode);
             }
 
-            XmlNode pDomainsNode = pXml.CreateNode(pModuleNode, "Domains");
-            foreach (Domain pDomain in m_cDomains)
+            XmlNode pActionsNode = pXml.CreateNode(pModuleNode, "Actions");
+            foreach (Action pAction in m_cActions)
             {
-                XmlNode pDomainNode = pXml.CreateNode(pDomainsNode, "Domain");
-                pDomain.WriteXML(pXml, pDomainNode);
+                XmlNode pActionNode = pXml.CreateNode(pActionsNode, "Action");
+                pAction.WriteXML(pXml, pActionNode);
             }
 
             XmlNode pEventsNode = pXml.CreateNode(pModuleNode, "Events");
@@ -197,7 +197,7 @@ namespace Persona
             m_cNumericParameters.Clear();
             m_cBoolParameters.Clear();
             m_cStringParameters.Clear();
-            m_cDomains.Clear();
+            m_cActions.Clear();
             m_cEvents.Clear();
 
             if (pXml.Root.ChildNodes.Count == 1 && pXml.Root.ChildNodes[0].Name == "Module")
@@ -237,8 +237,19 @@ namespace Persona
                         {
                             if (pDomainNode.Name == "Domain")
                             {
-                                Domain pDomain = new Domain(pXml, pDomainNode);
-                                m_cDomains.Add(pDomain);
+                                Action pDomain = new Action(pXml, pDomainNode);
+                                m_cActions.Add(pDomain);
+                            }
+                        }
+                    }
+                    if (pSection.Name == "Actions")
+                    {
+                        foreach (XmlNode pActionNode in pSection.ChildNodes)
+                        {
+                            if (pActionNode.Name == "Action")
+                            {
+                                Action pAction = new Action(pXml, pActionNode);
+                                m_cActions.Add(pAction);
                             }
                         }
                     }
@@ -258,7 +269,7 @@ namespace Persona
                         {
                             if (pEventNode.Name == "Event")
                             {
-                                Event pEvent = new Event(pXml, pEventNode, m_cDomains, cParams);
+                                Event pEvent = new Event(pXml, pEventNode, m_cActions, cParams);
                                 m_cEvents.Add(pEvent);
                             }
                         }

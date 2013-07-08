@@ -2,203 +2,205 @@
 <Persona>
   <Module name="КиберШлюха 2115" desc="История о нелёгкой жизни уличной шлюхи в трущобах киберпанковского мира.">
     <Parameters>
-      <Numeric name="Авторитет" group="Основные" hidden="False" value="0" >
-        <Range name = "(0) лёгкая добыча для любого" min = "0" max = "0"/>
-        <Range name = "(1) лёгкая добыча почти для любого" min = "1" max = "1"/>
-        <Range name = "(2) может постоять за себя" min = "2" max = "2"/>
-        <Range name = "(3) есть кое-какие связи" min = "3" max = "3"/>
-        <Range name = "(4) часть системы" min = "4" max = "4"/>
-        <Range name = "(5) заметная фигура" min = "5" max = "5"/>
-        <Range name = "(6) королева улиц" min = "6" max = "6"/>
+      <Numeric name="Авторитет" group="Основные" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) лёгкая добыча для любого" min="0" max="0" />
+        <Range name="(1) лёгкая добыча почти для любого" min="1" max="1" />
+        <Range name="(2) может постоять за себя" min="2" max="2" />
+        <Range name="(3) есть кое-какие связи" min="3" max="3" />
+        <Range name="(4) часть системы" min="4" max="4" />
+        <Range name="(5) заметная фигура" min="5" max="5" />
+        <Range name="(6) королева улиц" min="6" max="6" />
       </Numeric>
-      <Numeric name="Репутация" group="Основные" hidden="False" value="0" >
-        <Range name = "(0) бесполезный кусок мяса" min = "0" max = "0"/>
-        <Range name = "(1) кусок мяса с дыркой" min = "1" max = "1"/>
-        <Range name = "(2) дешёвка" min = "2" max = "2"/>
-        <Range name = "(3) востребованный товар" min = "3" max = "3"/>
-        <Range name = "(4) ходовой товар" min = "4" max = "4"/>
-        <Range name = "(5) секс-бомба местного масштаба" min = "5" max = "5"/>
-        <Range name = "(6) большие перспективы" min = "6" max = "6"/>
-        <Range name = "(7) дорогая штучка" min = "7" max = "7"/>
-        <Range name = "(8) секс-идол" min = "8" max = "8"/>
-        <Range name = "(9) просто звезда" min = "9" max = "9"/>
-        <Range name = "(10) супер-звезда" min = "10" max = "10"/>
+      <Numeric name="Репутация" group="Основные" comment="" hidden="False" value="0" min="0" max="10">
+        <Range name="(0) бесполезный кусок мяса" min="0" max="0" />
+        <Range name="(1) кусок мяса с дыркой" min="1" max="1" />
+        <Range name="(2) дешёвка" min="2" max="2" />
+        <Range name="(3) востребованный товар" min="3" max="3" />
+        <Range name="(4) ходовой товар" min="4" max="4" />
+        <Range name="(5) секс-бомба местного масштаба" min="5" max="5" />
+        <Range name="(6) большие перспективы" min="6" max="6" />
+        <Range name="(7) дорогая штучка" min="7" max="7" />
+        <Range name="(8) секс-идол" min="8" max="8" />
+        <Range name="(9) просто звезда" min="9" max="9" />
+        <Range name="(10) супер-звезда" min="10" max="10" />
       </Numeric>
-      <Numeric name="Размер груди" group="Основные" hidden="False" value="0" >
-        <Range name = "(A) не повезло" min = "1" max = "1"/>
-        <Range name = "(B) чуть больше, чем ничего" min = "2" max = "2"/>
-        <Range name = "(C) сиськи как сиськи" min = "3" max = "3"/>
-        <Range name = "(D) в самый раз" min = "4" max = "4"/>
-        <Range name = "(DD) D хорошо, а DD лучше" min = "5" max = "5"/>
-        <Range name = "(E) силикон рулит" min = "6" max = "6"/>
-        <Range name = "(F) силикона много не бывает" min = "7" max = "7"/>
-        <Range name = "(G) авиабомбы" min = "8" max = "8"/>
-        <Range name = "(H) хиросима" min = "9" max = "9"/>
+      <Numeric name="Размер груди" group="Основные" comment="" hidden="False" value="0" min="1" max="9">
+        <Range name="(A) не повезло" min="1" max="1" />
+        <Range name="(B) чуть больше, чем ничего" min="2" max="2" />
+        <Range name="(C) сиськи как сиськи" min="3" max="3" />
+        <Range name="(D) в самый раз" min="4" max="4" />
+        <Range name="(DD) D хорошо, а DD лучше" min="5" max="5" />
+        <Range name="(E) силикон рулит" min="6" max="6" />
+        <Range name="(F) силикона много не бывает" min="7" max="7" />
+        <Range name="(G) авиабомбы" min="8" max="8" />
+        <Range name="(H) хиросима" min="9" max="9" />
       </Numeric>
-      <Numeric name="Красота" group="Основные" hidden="False" value="0" >
-        <Range name = "(0) выродок" min = "0" max = "0"/>
-        <Range name = "(1) самая уродливая шлюха в городе" min = "1" max = "1"/>
-        <Range name = "(2) просто уродина" min = "2" max = "2"/>
-        <Range name = "(3) обычная шлюха" min = "3" max = "3"/>
-        <Range name = "(4) довольно привлекательна" min = "4" max = "4"/>
-        <Range name = "(5) весьма секси" min = "5" max = "5"/>
-        <Range name = "(6) отличное тело" min = "6" max = "6"/>
-        <Range name = "(7) типичный продукт пластической хирургии" min = "7" max = "7"/>
-        <Range name = "(8) работа хорошего пластического хирурга" min = "8" max = "8"/>
-        <Range name = "(9) шедевр пластической хирургии" min = "9" max = "9"/>
-        <Range name = "(10) ангел во плоти" min = "10" max = "10"/>
+      <Numeric name="Красота" group="Основные" comment="" hidden="False" value="0" min="0" max="10">
+        <Range name="(0) выродок" min="0" max="0" />
+        <Range name="(1) самая уродливая шлюха в городе" min="1" max="1" />
+        <Range name="(2) просто уродина" min="2" max="2" />
+        <Range name="(3) обычная шлюха" min="3" max="3" />
+        <Range name="(4) довольно привлекательна" min="4" max="4" />
+        <Range name="(5) весьма секси" min="5" max="5" />
+        <Range name="(6) отличное тело" min="6" max="6" />
+        <Range name="(7) типичный продукт пластической хирургии" min="7" max="7" />
+        <Range name="(8) работа хорошего пластического хирурга" min="8" max="8" />
+        <Range name="(9) шедевр пластической хирургии" min="9" max="9" />
+        <Range name="(10) ангел во плоти" min="10" max="10" />
       </Numeric>
-      <Numeric name="Настроение" group="Вторичные" hidden="False" value="5" >
-        <Range name = "(-5) полный мрак" min = "0" max = "0"/>
-        <Range name = "(-4) жёсткий депресняк" min = "1" max = "1"/>
-        <Range name = "(-3) депресняк" min = "2" max = "2"/>
-        <Range name = "(-2) херовое" min = "3" max = "3"/>
-        <Range name = "(-1) так себе" min = "4" max = "4"/>
-        <Range name = "(0) нормаль" min = "5" max = "5"/>
-        <Range name = "(+1) ОК" min = "6" max = "6"/>
-        <Range name = "(+2) отличное" min = "7" max = "7"/>
-        <Range name = "(+3) супер" min = "8" max = "8"/>
-        <Range name = "(+4) эйфория" min = "9" max = "9"/>
-        <Range name = "(+5) нирвана" min = "10" max = "10"/>
+      <Numeric name="Настроение" group="Вторичные" comment="" hidden="False" value="5" min="0" max="10">
+        <Range name="(-5) полный мрак" min="0" max="0" />
+        <Range name="(-4) жёсткий депресняк" min="1" max="1" />
+        <Range name="(-3) депресняк" min="2" max="2" />
+        <Range name="(-2) херовое" min="3" max="3" />
+        <Range name="(-1) так себе" min="4" max="4" />
+        <Range name="(0) нормаль" min="5" max="5" />
+        <Range name="(+1) ОК" min="6" max="6" />
+        <Range name="(+2) отличное" min="7" max="7" />
+        <Range name="(+3) супер" min="8" max="8" />
+        <Range name="(+4) эйфория" min="9" max="9" />
+        <Range name="(+5) нирвана" min="10" max="10" />
       </Numeric>
-      <Numeric name="Здоровье" group="Вторичные" hidden="False" value="0" >
-        <Range name = "(0) при смерти" min = "0" max = "0"/>
-        <Range name = "(1) боль и бессилие" min = "1" max = "1"/>
-        <Range name = "(2) хреновое" min = "2" max = "2"/>
-        <Range name = "(3) бывало и лучше" min = "3" max = "3"/>
-        <Range name = "(4) сносное" min = "4" max = "4"/>
-        <Range name = "(5) ОК" min = "5" max = "5"/>
-        <Range name = "(6) отличное" min = "6" max = "6"/>
+      <Numeric name="Здоровье" group="Вторичные" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) при смерти" min="0" max="0" />
+        <Range name="(1) боль и бессилие" min="1" max="1" />
+        <Range name="(2) хреновое" min="2" max="2" />
+        <Range name="(3) бывало и лучше" min="3" max="3" />
+        <Range name="(4) сносное" min="4" max="4" />
+        <Range name="(5) ОК" min="5" max="5" />
+        <Range name="(6) отличное" min="6" max="6" />
       </Numeric>
-      <Numeric name="Энергия" group="Вторичные" hidden="False" value="0" >
-        <Range name = "(0) по нулям" min = "0" max = "0"/>
-        <Range name = "(1) без задних ног" min = "1" max = "1"/>
-        <Range name = "(2) жуткая усталость" min = "2" max = "2"/>
-        <Range name = "(3) лёгкая усталость" min = "3" max = "3"/>
-        <Range name = "(4) нормаль" min = "4" max = "4"/>
-        <Range name = "(5) бодрячком" min = "5" max = "5"/>
-        <Range name = "(6) полна сил" min = "6" max = "6"/>
-        <Range name = "(7) способна на многое" min = "7" max = "7"/>
-        <Range name = "(8) энерджайзер" min = "8" max = "8"/>
-        <Range name = "(9) море по колено" min = "9" max = "9"/>
-        <Range name = "(10) пропеллер в жопе" min = "10" max = "10"/>
+      <Numeric name="Энергия" group="Вторичные" comment="" hidden="False" value="0" min="0" max="10">
+        <Range name="(0) по нулям" min="0" max="0" />
+        <Range name="(1) без задних ног" min="1" max="1" />
+        <Range name="(2) жуткая усталость" min="2" max="2" />
+        <Range name="(3) лёгкая усталость" min="3" max="3" />
+        <Range name="(4) нормаль" min="4" max="4" />
+        <Range name="(5) бодрячком" min="5" max="5" />
+        <Range name="(6) полна сил" min="6" max="6" />
+        <Range name="(7) способна на многое" min="7" max="7" />
+        <Range name="(8) энерджайзер" min="8" max="8" />
+        <Range name="(9) море по колено" min="9" max="9" />
+        <Range name="(10) пропеллер в жопе" min="10" max="10" />
       </Numeric>
-      <Numeric name="Интоксикация" group="Вторичные" hidden="False" value="0" >
-        <Range name = "(0) чисто" min = "0" max = "0"/>
-        <Range name = "(1) почти чисто" min = "1" max = "1"/>
-        <Range name = "(2) есть чуток" min = "2" max = "2"/>
-        <Range name = "(3) в самый раз" min = "3" max = "3"/>
-        <Range name = "(4) достаточно" min = "4" max = "4"/>
-        <Range name = "(5) полная доза" min = "5" max = "5"/>
-        <Range name = "(6) перебор" min = "6" max = "6"/>
-        <Range name = "(7) опасный уровень" min = "7" max = "7"/>
-        <Range name = "(8) на грани" min = "8" max = "8"/>
-        <Range name = "(9) за гранью" min = "9" max = "9"/>
-        <Range name = "(10) смертельная доза" min = "10" max = "10"/>
+      <Numeric name="Интоксикация" group="Вторичные" comment="" hidden="False" value="0" min="0" max="10">
+        <Range name="(0) чисто" min="0" max="0" />
+        <Range name="(1) почти чисто" min="1" max="1" />
+        <Range name="(2) есть чуток" min="2" max="2" />
+        <Range name="(3) в самый раз" min="3" max="3" />
+        <Range name="(4) достаточно" min="4" max="4" />
+        <Range name="(5) полная доза" min="5" max="5" />
+        <Range name="(6) перебор" min="6" max="6" />
+        <Range name="(7) опасный уровень" min="7" max="7" />
+        <Range name="(8) на грани" min="8" max="8" />
+        <Range name="(9) за гранью" min="9" max="9" />
+        <Range name="(10) смертельная доза" min="10" max="10" />
       </Numeric>
-      <Numeric name="Орал" group="Опыт" hidden="False" value="0" >
-        <Range name = "(0) девственница" min = "0" max = "0"/>
-        <Range name = "(1) просто дырка для спермы" min = "1" max = "1"/>
-        <Range name = "(2) любительница" min = "2" max = "2"/>
-        <Range name = "(3) опытная" min = "3" max = "3"/>
-        <Range name = "(4) профессионалка" min = "4" max = "4"/>
-        <Range name = "(5) легенда" min = "5" max = "5"/>
-        <Range name = "(6) супер-звезда" min = "6" max = "6"/>
-      </Numeric>      
-      <Numeric name="Анал" group="Опыт" hidden="False" value="0" >
-        <Range name = "(0) девственница" min = "0" max = "0"/>
-        <Range name = "(1) просто дырка для спермы" min = "1" max = "1"/>
-        <Range name = "(2) любительница" min = "2" max = "2"/>
-        <Range name = "(3) опытная" min = "3" max = "3"/>
-        <Range name = "(4) профессионалка" min = "4" max = "4"/>
-        <Range name = "(5) легенда" min = "5" max = "5"/>
-        <Range name = "(6) супер-звезда" min = "6" max = "6"/>
-      </Numeric>      
-      <Numeric name="Традиционный секс" group="Опыт" hidden="False" value="0" >
-        <Range name = "(0) девственница" min = "0" max = "0"/>
-        <Range name = "(1) просто дырка для спермы" min = "1" max = "1"/>
-        <Range name = "(2) любительница" min = "2" max = "2"/>
-        <Range name = "(3) опытная" min = "3" max = "3"/>
-        <Range name = "(4) профессионалка" min = "4" max = "4"/>
-        <Range name = "(5) легенда" min = "5" max = "5"/>
-        <Range name = "(6) супер-звезда" min = "6" max = "6"/>
-      </Numeric>      
-      <Numeric name="Лесби" group="Опыт" hidden="False" value="0" >
-        <Range name = "(0) девственница" min = "0" max = "0"/>
-        <Range name = "(1) деревенщина" min = "1" max = "1"/>
-        <Range name = "(2) любительница" min = "2" max = "2"/>
-        <Range name = "(3) опытная" min = "3" max = "3"/>
-        <Range name = "(4) профессионалка" min = "4" max = "4"/>
-        <Range name = "(5) легенда" min = "5" max = "5"/>
-        <Range name = "(6) супер-звезда" min = "6" max = "6"/>
-      </Numeric>      
-      <Numeric name="Садо-мазо" group="Опыт" hidden="False" value="0" >
-        <Range name = "(0) ноль как есть" min = "0" max = "0"/>
-        <Range name = "(1) деревенщина" min = "1" max = "1"/>
-        <Range name = "(2) любительница" min = "2" max = "2"/>
-        <Range name = "(3) опытная" min = "3" max = "3"/>
-        <Range name = "(4) профессионалка" min = "4" max = "4"/>
-        <Range name = "(5) легенда" min = "5" max = "5"/>
-        <Range name = "(6) супер-звезда" min = "6" max = "6"/>
-      </Numeric>      
-      <Numeric name="Эксгибиционизм" group="Опыт" hidden="False" value="0" >
-        <Range name = "(0) ноль как есть" min = "0" max = "0"/>
-        <Range name = "(1) деревенщина" min = "1" max = "1"/>
-        <Range name = "(2) любительница" min = "2" max = "2"/>
-        <Range name = "(3) опытная" min = "3" max = "3"/>
-        <Range name = "(4) профессионалка" min = "4" max = "4"/>
-        <Range name = "(5) легенда" min = "5" max = "5"/>
-        <Range name = "(6) супер-звезда" min = "6" max = "6"/>
-      </Numeric>      
-      <Numeric name="Наличка" group="Деньги" hidden="False" value="0" />
-      <Numeric name="Банковский счёт" group="Деньги" hidden="False" value="0" />
-      <Numeric name="Долг" group="Деньги" hidden="False" value="0" />
-      <Numeric name="Огонёк" group="наркота" hidden="False" value="10" />
-      <Numeric name="Лучик" group="наркота" hidden="False" value="10" />
-      <Numeric name="ДМТ" group="наркота" hidden="False" value="10" />
-      <Numeric name="Носферату" group="наркота" hidden="False" value="10" />
+      <Numeric name="Орал" group="Опыт" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) девственница" min="0" max="0" />
+        <Range name="(1) просто дырка для спермы" min="1" max="1" />
+        <Range name="(2) любительница" min="2" max="2" />
+        <Range name="(3) опытная" min="3" max="3" />
+        <Range name="(4) профессионалка" min="4" max="4" />
+        <Range name="(5) легенда" min="5" max="5" />
+        <Range name="(6) супер-звезда" min="6" max="6" />
+      </Numeric>
+      <Numeric name="Анал" group="Опыт" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) девственница" min="0" max="0" />
+        <Range name="(1) просто дырка для спермы" min="1" max="1" />
+        <Range name="(2) любительница" min="2" max="2" />
+        <Range name="(3) опытная" min="3" max="3" />
+        <Range name="(4) профессионалка" min="4" max="4" />
+        <Range name="(5) легенда" min="5" max="5" />
+        <Range name="(6) супер-звезда" min="6" max="6" />
+      </Numeric>
+      <Numeric name="Традиционный секс" group="Опыт" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) девственница" min="0" max="0" />
+        <Range name="(1) просто дырка для спермы" min="1" max="1" />
+        <Range name="(2) любительница" min="2" max="2" />
+        <Range name="(3) опытная" min="3" max="3" />
+        <Range name="(4) профессионалка" min="4" max="4" />
+        <Range name="(5) легенда" min="5" max="5" />
+        <Range name="(6) супер-звезда" min="6" max="6" />
+      </Numeric>
+      <Numeric name="Лесби" group="Опыт" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) девственница" min="0" max="0" />
+        <Range name="(1) деревенщина" min="1" max="1" />
+        <Range name="(2) любительница" min="2" max="2" />
+        <Range name="(3) опытная" min="3" max="3" />
+        <Range name="(4) профессионалка" min="4" max="4" />
+        <Range name="(5) легенда" min="5" max="5" />
+        <Range name="(6) супер-звезда" min="6" max="6" />
+      </Numeric>
+      <Numeric name="Садо-мазо" group="Опыт" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) ноль как есть" min="0" max="0" />
+        <Range name="(1) деревенщина" min="1" max="1" />
+        <Range name="(2) любительница" min="2" max="2" />
+        <Range name="(3) опытная" min="3" max="3" />
+        <Range name="(4) профессионалка" min="4" max="4" />
+        <Range name="(5) легенда" min="5" max="5" />
+        <Range name="(6) супер-звезда" min="6" max="6" />
+      </Numeric>
+      <Numeric name="Эксгибиционизм" group="Опыт" comment="" hidden="False" value="0" min="0" max="6">
+        <Range name="(0) ноль как есть" min="0" max="0" />
+        <Range name="(1) деревенщина" min="1" max="1" />
+        <Range name="(2) любительница" min="2" max="2" />
+        <Range name="(3) опытная" min="3" max="3" />
+        <Range name="(4) профессионалка" min="4" max="4" />
+        <Range name="(5) легенда" min="5" max="5" />
+        <Range name="(6) супер-звезда" min="6" max="6" />
+      </Numeric>
+      <Numeric name="Наличка" group="Деньги" comment="" hidden="False" value="0" min="0" max="100000" />
+      <Numeric name="Банковский счёт" group="Деньги" comment="" hidden="False" value="0" min="0" max="1E+07" />
+      <Numeric name="Долг" group="Деньги" comment="" hidden="False" value="0" min="0" max="1000000" />
+      <Numeric name="Огонёк" group="наркота" comment="" hidden="False" value="10" min="0" max="10000" />
+      <Numeric name="Лучик" group="наркота" comment="" hidden="False" value="10" min="0" max="10000" />
+      <Numeric name="ДМТ" group="наркота" comment="" hidden="False" value="10" min="0" max="10000" />
+      <Numeric name="Носферату" group="наркота" comment="" hidden="False" value="10" min="0" max="10000" />
+      <Numeric name="Локация" group="" comment="" hidden="False" value="0" min="0" max="21">
+        <Range name="Апартаменты" min="0" max="0" />
+        <Range name="Бар" min="1" max="1" />
+        <Range name="Клиника" min="2" max="2" />
+        <Range name="Хирургия" min="3" max="3" />
+        <Range name="Рынок" min="4" max="4" />
+        <Range name="Полицейский участок" min="5" max="5" />
+        <Range name="Банк" min="6" max="6" />
+        <Range name="Парк" min="7" max="7" />
+        <Range name="Пляж" min="8" max="8" />
+        <Range name="Заброшенная ж-д станция" min="9" max="9" />
+        <Range name="Заброшенная автостоянка" min="10" max="10" />
+        <Range name="Улица" min="11" max="11" />
+        <Range name="Клуб" min="12" max="12" />
+        <Range name="Бордель" min="13" max="13" />
+        <Range name="Порностудия" min="14" max="14" />
+        <Range name="Эскорт-агентство" min="15" max="15" />
+        <Range name="Комната в отеле" min="16" max="16" />
+        <Range name="Особняк" min="17" max="17" />
+        <Range name="Яхта" min="18" max="18" />
+        <Range name="Элитный клуб" min="19" max="19" />
+        <Range name="Деловая встреча" min="20" max="20" />
+        <Range name="Фуршет" min="21" max="21" />
+      </Numeric>
+      <Numeric name="Работа" group="" comment="" hidden="False" value="0" min="0" max="4">
+        <Range name="Уличная шлюха" min="0" max="0" />
+        <Range name="Стриптизёрша" min="1" max="1" />
+        <Range name="Шлюха в борделе" min="2" max="2" />
+        <Range name="Порноактриса" min="3" max="3" />
+        <Range name="Эскорт" min="4" max="4" />
+      </Numeric>
       <Bool name="Выбран персонаж" group="Системный" hidden="True" value="False" />
-      <Numeric name="Локация" group="" hidden="False" value="0" >
-        <Range name = "Апартаменты" min = "0" max = "0"/>
-        <Range name = "Бар" min = "1" max = "1"/>
-        <Range name = "Клиника" min = "2" max = "2"/>
-        <Range name = "Хирургия" min = "3" max = "3"/>
-        <Range name = "Рынок" min = "4" max = "4"/>
-        <Range name = "Полицейский участок" min = "5" max = "5"/>
-        <Range name = "Банк" min = "6" max = "6"/>
-        <Range name = "Парк" min = "7" max = "7"/>
-        <Range name = "Пляж" min = "8" max = "8"/>
-        <Range name = "Заброшенная ж-д станция" min = "9" max = "9"/>
-        <Range name = "Заброшенная автостоянка" min = "10" max = "10"/>
-        <Range name = "Улица" min = "11" max = "11"/>
-        <Range name = "Клуб" min = "12" max = "12"/>
-        <Range name = "Бордель" min = "13" max = "13"/>
-        <Range name = "Порностудия" min = "14" max = "14"/>
-        <Range name = "Эскорт-агентство" min = "15" max = "15"/>
-        <Range name = "Комната в отеле" min = "16" max = "16"/>
-        <Range name = "Особняк" min = "17" max = "17"/>
-        <Range name = "Яхта" min = "18" max = "18"/>
-        <Range name = "Элитный клуб" min = "19" max = "19"/>
-        <Range name = "Деловая встреча" min = "20" max = "20"/>
-        <Range name = "Фуршет" min = "21" max = "21"/>
-      </Numeric>
-      <Numeric name="Работа" group="" hidden="False" value="0" >
-        <Range name = "Уличная шлюха" min = "0" max = "0"/>
-        <Range name = "Стриптизёрша" min = "1" max = "1"/>
-        <Range name = "Шлюха в борделе" min = "2" max = "2"/>
-        <Range name = "Порноактриса" min = "3" max = "3"/>
-        <Range name = "Эскорт" min = "4" max = "4"/>
-      </Numeric>
     </Parameters>
-    <Domains>
-      <Domain name="Тина" />
-      <Domain name="Мэри" />
-      <Domain name="Джейн" />
-      <Domain name="Ал" />
-      <Domain name="Карта" />
-    </Domains>
+    <Actions>
+      <Action name="Тина" />
+      <Action name="Мэри" />
+      <Action name="Джейн" />
+      <Action name="Ал" />
+      <Action name="Идти" />
+      <Action name="Закинуться" />
+      <Action name="Поспать" />
+    </Actions>
     <Events>
-      <Event id="newGame_Tina" domain="Тина" description="Тина - профессиональная модель. Она жила в пентхаусе, работала со знаменитыми кутурье и никогда не знала нужды... До тех пор, пока однажды не была похищена, изнасилована и выброшена в трущобах без денег и документов. У неё фантастическое тело, но нет никакого опыта." repeat="False" priority="100" probability="1">
+      <Event id="newGame_Tina" action="Тина" description="Тина - профессиональная модель. Она жила в пентхаусе, работала со знаменитыми кутурье и никогда не знала нужды... До тех пор, пока однажды не была похищена, изнасилована и выброшена в трущобах без денег и документов. У неё фантастическое тело, но нет никакого опыта." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -232,7 +234,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="newGame_Mary" domain="Мэри" description="Мэри выросла в трущобах и никогда не знала другой жизни. Её мать была шлюхой, она никогда не знала кто её отец, у неё дюжина братьев и сестёр, а торговать своим телом она начала в 12. Она не королева красоты, но опыта у неё хоть отбавляй." repeat="False" priority="100" probability="1">
+      <Event id="newGame_Mary" action="Мэри" description="Мэри выросла в трущобах и никогда не знала другой жизни. Её мать была шлюхой, она никогда не знала кто её отец, у неё дюжина братьев и сестёр, а торговать своим телом она начала в 12. Она не королева красоты, но опыта у неё хоть отбавляй." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -266,7 +268,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="newGame_Jane" domain="Джейн" description="Джейн была обычной девушкой из хорошей семьи, но в колледже связалась с дурной компанией. Вскоре её отчислили из колледжа, а затем она убежала из дома. Её парень предложил ей заняться проституцией, чтобы заработать на наркоту, и так она и поступила. Она привлекательна и имеет неплохой опыт." repeat="False" priority="100" probability="1">
+      <Event id="newGame_Jane" action="Джейн" description="Джейн была обычной девушкой из хорошей семьи, но в колледже связалась с дурной компанией. Вскоре её отчислили из колледжа, а затем она убежала из дома. Её парень предложил ей заняться проституцией, чтобы заработать на наркоту, и так она и поступила. Она привлекательна и имеет неплохой опыт." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -300,7 +302,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="newGame_Al" domain="Ал" description="Ал - транс. Он всегда мечтал быть женщиной. Его родители выгнали его из дома, когда он заявил, что он гей. После этого уже 2 года он живёт в трущобах. Со своим частично модифицированным телом он выглядит как некрасивая девушка с огромной грудью." repeat="False" priority="100" probability="1">
+      <Event id="newGame_Al" action="Ал" description="Ал - транс. Он всегда мечтал быть женщиной. Его родители выгнали его из дома, когда он заявил, что он гей. После этого уже 2 года он живёт в трущобах. Со своим частично модифицированным телом он выглядит как некрасивая девушка с огромной грудью." repeat="False" priority="100" probability="1">
         <Conditions>
           <Status param="Выбран персонаж" inverse="True" />
         </Conditions>
@@ -334,14 +336,14 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="travel" domain="Карта" description="Город велик, но в нём не так много мест, которые стоит посетить." repeat="True" priority="1" probability="1">
+      <Event id="travel" action="Идти" description="Город велик, но в нём не так много мест, которые стоит посетить." repeat="True" priority="1" probability="1">
         <Conditions />
         <Alternatives />
         <Consequences />
         <Reactions>
           <Reaction name="Вернуться в апартаменты" visible="False">
             <Conditions>
-              <Range param="Локация" min="0" max="0" inverse="True" />
+              <Range param="Локация" inverse="True" min="0" max="0" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="0" />
@@ -349,179 +351,320 @@
           </Reaction>
           <Reaction name="Остаться в апартаментах" visible="False">
             <Conditions>
-              <Range param="Локация" min="0" max="0" inverse="False" />
+              <Range param="Локация" inverse="False" min="0" max="0" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
           <Reaction name="Пойти в бар" visible="False">
             <Conditions>
-              <Range param="Локация" min="1" max="1" inverse="True" />
+              <Range param="Локация" inverse="True" min="1" max="1" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="1" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в баре" visible="False" >
+          <Reaction name="Остаться в баре" visible="False">
             <Conditions>
-              <Range param="Локация" min="1" max="1" inverse="False" />
+              <Range param="Локация" inverse="False" min="1" max="1" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти в клинику" visible="False" >
+          <Reaction name="Пойти в клинику" visible="False">
             <Conditions>
-              <Range param="Локация" min="2" max="2" inverse="True" />
+              <Range param="Локация" inverse="True" min="2" max="2" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="2" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в клинике" visible="False" >
+          <Reaction name="Остаться в клинике" visible="False">
             <Conditions>
-              <Range param="Локация" min="2" max="2" inverse="False" />
+              <Range param="Локация" inverse="False" min="2" max="2" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Обратиться к хирургам" visible="False" >
+          <Reaction name="Обратиться к хирургам" visible="False">
             <Conditions>
-              <Range param="Локация" min="3" max="3" inverse="True" />
+              <Range param="Локация" inverse="True" min="3" max="3" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="3" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в палате" visible="False" >
+          <Reaction name="Остаться в палате" visible="False">
             <Conditions>
-              <Range param="Локация" min="3" max="3" inverse="False" />
+              <Range param="Локация" inverse="False" min="3" max="3" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти на рынок" visible="False" >
+          <Reaction name="Пойти на рынок" visible="False">
             <Conditions>
-              <Range param="Локация" min="4" max="4" inverse="True" />
+              <Range param="Локация" inverse="True" min="4" max="4" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="4" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться на рынке" visible="False" >
+          <Reaction name="Остаться на рынке" visible="False">
             <Conditions>
-              <Range param="Локация" min="4" max="4" inverse="False" />
+              <Range param="Локация" inverse="False" min="4" max="4" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти в полицию" visible="False" >
+          <Reaction name="Пойти в полицию" visible="False">
             <Conditions>
-              <Range param="Локация" min="5" max="5" inverse="True" />
+              <Range param="Локация" inverse="True" min="5" max="5" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="5" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в участке" visible="False" >
+          <Reaction name="Остаться в участке" visible="False">
             <Conditions>
-              <Range param="Локация" min="5" max="5" inverse="False" />
+              <Range param="Локация" inverse="False" min="5" max="5" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти в банк" visible="False" >
+          <Reaction name="Пойти в банк" visible="False">
             <Conditions>
-              <Range param="Локация" min="6" max="6" inverse="True" />
+              <Range param="Локация" inverse="True" min="6" max="6" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="6" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в банке" visible="False" >
+          <Reaction name="Остаться в банке" visible="False">
             <Conditions>
-              <Range param="Локация" min="6" max="6" inverse="False" />
+              <Range param="Локация" inverse="False" min="6" max="6" />
             </Conditions>
-            <Consequences>
-            </Consequences>
-          </Reaction>        
-          <Reaction name="Пойти на улицу" visible="False" >
+            <Consequences />
+          </Reaction>
+          <Reaction name="Пойти на улицу" visible="False">
             <Conditions>
-              <Range param="Локация" min="11" max="11" inverse="True" />
-              <Range param="Работа" min="0" max="0" inverse="False" />
+              <Range param="Локация" inverse="True" min="11" max="11" />
+              <Range param="Работа" inverse="False" min="0" max="0" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="11" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться на улице" visible="False" >
+          <Reaction name="Остаться на улице" visible="False">
             <Conditions>
-              <Range param="Локация" min="11" max="11" inverse="False" />
+              <Range param="Локация" inverse="False" min="11" max="11" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти в клуб" visible="False" >
+          <Reaction name="Пойти в клуб" visible="False">
             <Conditions>
-              <Range param="Локация" min="12" max="12" inverse="True" />
-              <Range param="Работа" min="1" max="1" inverse="False" />
+              <Range param="Локация" inverse="True" min="12" max="12" />
+              <Range param="Работа" inverse="False" min="1" max="1" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="12" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в клубе" visible="False" >
+          <Reaction name="Остаться в клубе" visible="False">
             <Conditions>
-              <Range param="Локация" min="12" max="12" inverse="False" />
+              <Range param="Локация" inverse="False" min="12" max="12" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти в бордель" visible="False" >
+          <Reaction name="Пойти в бордель" visible="False">
             <Conditions>
-              <Range param="Локация" min="13" max="13" inverse="True" />
-              <Range param="Работа" min="2" max="2" inverse="False" />
+              <Range param="Локация" inverse="True" min="13" max="13" />
+              <Range param="Работа" inverse="False" min="2" max="2" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="13" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в борделе" visible="False" >
+          <Reaction name="Остаться в борделе" visible="False">
             <Conditions>
-              <Range param="Локация" min="13" max="13" inverse="False" />
+              <Range param="Локация" inverse="False" min="13" max="13" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти на съёмки" visible="False" >
+          <Reaction name="Пойти на съёмки" visible="False">
             <Conditions>
-              <Range param="Локация" min="14" max="14" inverse="True" />
-              <Range param="Работа" min="3" max="3" inverse="False" />
+              <Range param="Локация" inverse="True" min="14" max="14" />
+              <Range param="Работа" inverse="False" min="3" max="3" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="14" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться на съёмочной площадке" visible="False" >
+          <Reaction name="Остаться на съёмочной площадке" visible="False">
             <Conditions>
-              <Range param="Локация" min="14" max="14" inverse="False" />
+              <Range param="Локация" inverse="False" min="14" max="14" />
             </Conditions>
-            <Consequences>
-            </Consequences>
+            <Consequences />
           </Reaction>
-          <Reaction name="Пойти в агентство" visible="False" >
+          <Reaction name="Пойти в агентство" visible="False">
             <Conditions>
-              <Range param="Локация" min="15" max="15" inverse="True" />
-              <Range param="Работа" min="4" max="4" inverse="False" />
+              <Range param="Локация" inverse="True" min="15" max="15" />
+              <Range param="Работа" inverse="False" min="4" max="4" />
             </Conditions>
             <Consequences>
               <ParameterSet param="Локация" value="15" />
             </Consequences>
           </Reaction>
-          <Reaction name="Остаться в агентстве" visible="False" >
+          <Reaction name="Остаться в агентстве" visible="False">
             <Conditions>
-              <Range param="Локация" min="15" max="15" inverse="False" />
+              <Range param="Локация" inverse="False" min="15" max="15" />
+            </Conditions>
+            <Consequences />
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="drugs" action="Закинуться" description="Колёса - единственное, что помогает выжить в трущобах." repeat="True" priority="1" probability="1">
+        <Conditions />
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="&quot;Огонёк&quot; - дешёвый галлюциноген. Помогает выйти за пределы этого мира, но не все находят дорогу назад..." result="" visible="True">
+            <Conditions>
+              <Range param="Огонёк" inverse="False" min="1" max="10000" />
             </Conditions>
             <Consequences>
+              <ParameterChange param="Огонёк" delta="-1" />
+              <ParameterChange param="Настроение" delta="2" />
+              <ParameterChange param="Интоксикация" delta="6" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="&quot;Лучик&quot; - дешёвый и популярный стимулятор. Поможет продержаться на ногах немного дольше." result="" visible="True">
+            <Conditions>
+              <Range param="Лучик" inverse="False" min="1" max="10000" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Лучик" delta="-1" />
+              <ParameterChange param="Энергия" delta="3" />
+              <ParameterChange param="Интоксикация" delta="1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="ДМТ в 10 раз дороже, чем &quot;Огонёк&quot;, но оно того стоит. Отличное настроение гарантировано - и гораздо безопаснее." result="" visible="True">
+            <Conditions>
+              <Range param="ДМТ" inverse="False" min="1" max="10000" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="ДМТ" delta="-1" />
+              <ParameterChange param="Настроение" delta="5" />
+              <ParameterChange param="Интоксикация" delta="4" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="&quot;Носферату&quot; - король вечеринок. Одной таблетки достаточно чтобы колбаситься сутки напролёт без перерыва." result="" visible="True">
+            <Conditions>
+              <Range param="Носферату" inverse="False" min="1" max="10000" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Носферату" delta="-1" />
+              <ParameterChange param="Энергия" delta="10" />
+              <ParameterChange param="Интоксикация" delta="4" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="apt_sleep_death" action="Поспать" description="Сон пришёл как избавление от боли и страха... Избавление навсегда.&#xD;&#xA;&#xD;&#xA;Когда полиция нашла тело, коронёр определил причину смерти как &quot;множественные внутренние повреждения, несовместимые с жизнью&quot;." repeat="False" priority="100" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+          <Range param="Здоровье" inverse="False" min="0" max="0" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Конец..." result="Вот так всё и закончилось... Тяжела жизнь трущёбной шлюхи. Тяжела - но коротка." visible="False">
+            <Conditions />
+            <Consequences>
+              <SystemCommand command="GameOver" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="apt_sleep_intox" action="Поспать" description="Вы проснулись от собственного крика, в луже собственного пота. Кажется, во сне вас пытался съесть гигантский пончик или что-то такое..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+          <Range param="Интоксикация" inverse="False" min="6" max="10" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Хватит валяться" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <ParameterChange param="Настроение" delta="2" />
+              <ParameterChange param="Интоксикация" delta="-1" />
+              <ParameterChange param="Здоровье" delta="1" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="apt_sleep_intox2" action="Поспать" description="Вы проснулись от собственного крика, в луже собственного пота. Кажется, во сне вас пытался съесть гигантский пончик или что-то такое..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+          <Range param="Интоксикация" inverse="False" min="7" max="10" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Хватит валяться" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <ParameterChange param="Настроение" delta="2" />
+              <ParameterChange param="Интоксикация" delta="-1" />
+              <ParameterChange param="Здоровье" delta="1" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="apt_sleep_intox3" action="Поспать" description="Вы проснулись от собственного крика, в луже собственного пота. Кажется, во сне вас пытался съесть гигантский пончик или что-то такое..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+          <Range param="Интоксикация" inverse="False" min="8" max="10" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Хватит валяться" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <ParameterChange param="Настроение" delta="2" />
+              <ParameterChange param="Интоксикация" delta="-1" />
+              <ParameterChange param="Здоровье" delta="1" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="apt_sleep_intox4" action="Поспать" description="Вы проснулись от собственного крика, в луже собственного пота. Кажется, во сне вас пытался съесть гигантский пончик или что-то такое..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+          <Range param="Интоксикация" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Хватит валяться" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <ParameterChange param="Настроение" delta="2" />
+              <ParameterChange param="Интоксикация" delta="-1" />
+              <ParameterChange param="Здоровье" delta="1" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="apt_sleep_intox5" action="Поспать" description="Вы проснулись от собственного крика, в луже собственного пота. Кажется, во сне вас пытался съесть гигантский пончик или что-то такое..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+          <Range param="Интоксикация" inverse="False" min="10" max="10" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Хватит валяться" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <ParameterChange param="Настроение" delta="2" />
+              <ParameterChange param="Интоксикация" delta="-1" />
+              <ParameterChange param="Здоровье" delta="1" />
             </Consequences>
           </Reaction>
         </Reactions>

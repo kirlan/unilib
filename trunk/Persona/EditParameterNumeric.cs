@@ -16,8 +16,7 @@ namespace Persona
 
         private void AddRangeInfo(NumericParameter.Range pRange)
         {
-            ListViewItem pItem = new ListViewItem();
-            pItem.SubItems.Add(string.Format("{0} .. {1}", pRange.m_fMin, pRange.m_fMax));
+            ListViewItem pItem = new ListViewItem(string.Format("{0} .. {1}", pRange.m_fMin, pRange.m_fMax));
             pItem.SubItems.Add(pRange.m_sDescription);
 
             pItem.Tag = pRange;
@@ -44,6 +43,8 @@ namespace Persona
             textBox2.Text = m_pParam.m_sComment;
 
             numericUpDown1.Value = (decimal)m_pParam.m_fDefaultValue;
+            numericUpDown2.Value = (decimal)m_pParam.m_fMin;
+            numericUpDown3.Value = (decimal)m_pParam.m_fMax;
 
             listView1.Items.Clear();
             foreach (var pRange in m_pParam.m_cRanges)
@@ -59,7 +60,7 @@ namespace Persona
         {
             NumericParameter.Range pRange = new NumericParameter.Range();
 
-            EditRange pForm = new EditRange(pRange);
+            EditRange pForm = new EditRange(pRange, (float)numericUpDown2.Value, (float)numericUpDown3.Value);
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 //m_pParam.m_cRanges.Add(pRange);
@@ -74,7 +75,7 @@ namespace Persona
 
             NumericParameter.Range pRange = listView1.SelectedItems[0].Tag as NumericParameter.Range;
 
-            EditRange pForm = new EditRange(pRange);
+            EditRange pForm = new EditRange(pRange, (float)numericUpDown2.Value, (float)numericUpDown3.Value);
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 listView1.SelectedItems[0].Text = string.Format("{0} .. {1}", pRange.m_fMin, pRange.m_fMax);
@@ -102,6 +103,8 @@ namespace Persona
             m_pParam.m_bHidden = radioButton7.Checked;
             m_pParam.m_sComment = textBox2.Text;
             m_pParam.m_fDefaultValue = (float)numericUpDown1.Value;
+            m_pParam.m_fMin = (float)numericUpDown2.Value;
+            m_pParam.m_fMax = (float)numericUpDown3.Value;
             m_pParam.m_cRanges.Clear();
             foreach (ListViewItem pItem in listView1.Items)
                 m_pParam.m_cRanges.Add(pItem.Tag as NumericParameter.Range);

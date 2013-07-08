@@ -56,6 +56,14 @@ namespace Persona
             }
         }
 
+        public Situation(Situation pOrigin)
+        {
+            m_sText = pOrigin.m_sText;
+
+            foreach (var pCondition in pOrigin.m_cConditions)
+                m_cConditions.Add(pCondition.Clone());
+        }
+
         internal void SaveXML(UniLibXML pXml, XmlNode pSituationNode)
         {
             pXml.AddAttribute(pSituationNode, "description", m_sText);

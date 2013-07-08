@@ -1,6 +1,6 @@
 ﻿namespace Persona
 {
-    partial class EditDomain
+    partial class EditAction
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditDomain));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditAction));
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -49,9 +49,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 13);
+            this.label1.Size = new System.Drawing.Size(110, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Название категории:";
+            this.label1.Text = "Название действия:";
             // 
             // textBox1
             // 
@@ -150,7 +150,7 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(282, 36);
             this.tableLayoutPanel1.TabIndex = 9;
             // 
-            // EditDomain
+            // EditAction
             // 
             this.AcceptButton = this.button2;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -166,9 +166,9 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Name = "EditDomain";
+            this.Name = "EditAction";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Редактирование категории";
+            this.Text = "Редактирование действия";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);

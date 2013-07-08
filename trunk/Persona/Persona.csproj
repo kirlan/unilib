@@ -70,11 +70,29 @@
     <Compile Include="EditConditionStatus.Designer.cs">
       <DependentUpon>EditConditionStatus.cs</DependentUpon>
     </Compile>
-    <Compile Include="EditDomain.cs">
+    <Compile Include="EditConsequenceCommand.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditDomain.Designer.cs">
-      <DependentUpon>EditDomain.cs</DependentUpon>
+    <Compile Include="EditConsequenceCommand.Designer.cs">
+      <DependentUpon>EditConsequenceCommand.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditConsequenceSet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditConsequenceSet.Designer.cs">
+      <DependentUpon>EditConsequenceSet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditConsequenceChange.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditConsequenceChange.Designer.cs">
+      <DependentUpon>EditConsequenceChange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditAction.Designer.cs">
+      <DependentUpon>EditAction.cs</DependentUpon>
     </Compile>
     <Compile Include="EditEvent.cs">
       <SubType>Form</SubType>
@@ -93,6 +111,12 @@
     </Compile>
     <Compile Include="EditRange.Designer.cs">
       <DependentUpon>EditRange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditReaction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditReaction.Designer.cs">
+      <DependentUpon>EditReaction.cs</DependentUpon>
     </Compile>
     <Compile Include="Event.cs" />
     <Compile Include="Consequences\Consequence.cs" />
@@ -118,7 +142,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reaction.cs" />
     <Compile Include="Situation.cs" />
-    <Compile Include="Domain.cs" />
+    <Compile Include="Action.cs" />
     <EmbeddedResource Include="EditConditionComparsion.resx">
       <DependentUpon>EditConditionComparsion.cs</DependentUpon>
     </EmbeddedResource>
@@ -128,8 +152,17 @@
     <EmbeddedResource Include="EditConditionStatus.resx">
       <DependentUpon>EditConditionStatus.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditDomain.resx">
-      <DependentUpon>EditDomain.cs</DependentUpon>
+    <EmbeddedResource Include="EditConsequenceChange.resx">
+      <DependentUpon>EditConsequenceChange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditConsequenceCommand.resx">
+      <DependentUpon>EditConsequenceCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditConsequenceSet.resx">
+      <DependentUpon>EditConsequenceSet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditAction.resx">
+      <DependentUpon>EditAction.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EditEvent.resx">
       <DependentUpon>EditEvent.cs</DependentUpon>
@@ -139,6 +172,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditRange.resx">
       <DependentUpon>EditRange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditReaction.resx">
+      <DependentUpon>EditReaction.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

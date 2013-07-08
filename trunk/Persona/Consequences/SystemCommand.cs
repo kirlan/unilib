@@ -11,7 +11,7 @@ namespace Persona.Consequences
     /// <summary>
     /// Возможное последствие разыгранного события - системная команда.
     /// </summary>
-    class SystemCommand : Consequence
+    public class SystemCommand : Consequence
     {
         public enum ActionType
         { 
@@ -68,6 +68,13 @@ namespace Persona.Consequences
                     break;
             }
             return sResult;
+        }
+
+        public override Consequence Clone()
+        {
+            SystemCommand pNew = new SystemCommand(m_eAction);
+
+            return pNew;
         }
     }
 }

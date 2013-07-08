@@ -29,6 +29,11 @@ namespace Persona.Parameters
             /// Название диапазона
             /// </summary>
             public string m_sDescription;
+
+            public override string ToString()
+            {
+                return string.Format("{0}..{1} [{2}]", m_fMin, m_fMax, m_sDescription);
+            }
         }
 
         /// <summary>
@@ -44,7 +49,17 @@ namespace Persona.Parameters
         /// вместо числового значения.
         /// </summary>
         public List<Range> m_cRanges = new List<Range>();
+        
+        /// <summary>
+        /// Минимальное возможное значение
+        /// </summary>
+        public float m_fMin = 0;
 
+        /// <summary>
+        /// Максимальное возможное значение
+        /// </summary>
+        public float m_fMax = 100;
+        
         public NumericParameter()
         { 
         }
@@ -59,6 +74,8 @@ namespace Persona.Parameters
             : base(pXml, pParamNode)
         {
             pXml.GetFloatAttribute(pParamNode, "value", ref m_fDefaultValue);
+            pXml.GetFloatAttribute(pParamNode, "min", ref m_fMin);
+            pXml.GetFloatAttribute(pParamNode, "max", ref m_fMax);
 
             foreach (XmlNode pSubNode in pParamNode.ChildNodes)
             {
@@ -79,6 +96,8 @@ namespace Persona.Parameters
             base.WriteXML(pXml, pParamNode);
 
             pXml.AddAttribute(pParamNode, "value", m_fDefaultValue);
+            pXml.AddAttribute(pParamNode, "min", m_fMin);
+            pXml.AddAttribute(pParamNode, "max", m_fMax);
 
             foreach (Range pRange in m_cRanges)
             {
