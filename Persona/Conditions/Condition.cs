@@ -47,5 +47,7 @@ namespace Persona.Conditions
             pXml.AddAttribute(pConditionNode, "param", m_pParam1.m_sName);
             pXml.AddAttribute(pConditionNode, "inverse", m_bNot);
         }
+
+        public abstract Condition Clone();
     }
 }

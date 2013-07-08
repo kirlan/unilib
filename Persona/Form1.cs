@@ -24,7 +24,7 @@ namespace Persona
         private void AddEventInfo(Event pEvent)
         {
             ListViewItem pItem = new ListViewItem(pEvent.m_sID.ToString());
-            pItem.SubItems.Add(pEvent.m_pDomain.m_sName);
+            pItem.SubItems.Add(pEvent.m_pAction.m_sName);
             pItem.SubItems.Add(pEvent.m_iPriority.ToString());
             pItem.SubItems.Add(pEvent.m_iProbability.ToString());
             pItem.SubItems.Add(pEvent.m_bRepeatable ? "+" : "-");
@@ -48,8 +48,8 @@ namespace Persona
             ModuleNameBox.Text = m_pModule.m_sName;
             ModuleDescBox.Text = m_pModule.m_sDescription;
 
-            CategoriesListBox.Items.Clear();
-            CategoriesListBox.Items.AddRange(m_pModule.m_cDomains.ToArray());
+            ActionsListBox.Items.Clear();
+            ActionsListBox.Items.AddRange(m_pModule.m_cActions.ToArray());
 
             EventsListView.Items.Clear();
             foreach (var pEvent in m_pModule.m_cEvents)
@@ -66,57 +66,85 @@ namespace Persona
 
         private void AddCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (EditDomain pForm = new EditDomain(new Domain("Новая категория")))
+            using (EditAction pForm = new EditAction(new Action("Новое действие")))
             {
                 if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    m_pModule.m_cDomains.Add(pForm.m_pDomain);
-                    CategoriesListBox.Items.Add(pForm.m_pDomain);
+                    m_pModule.m_cActions.Add(pForm.m_pAction);
+                    ActionsListBox.Items.Add(pForm.m_pAction);
                 }
             }
         }
 
         private void EditCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CategoriesListBox.SelectedItem == null)
+            if (ActionsListBox.SelectedItem == null)
                 return;
 
-            using (EditDomain pForm = new EditDomain(CategoriesListBox.SelectedItem as Domain))
+            using (EditAction pForm = new EditAction(ActionsListBox.SelectedItem as Action))
             {
                 if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    CategoriesListBox.Refresh();
+                    ActionsListBox.Refresh();
                 }
             }
         }
 
         private void RemoveCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CategoriesListBox.SelectedItem == null)
+            if (ActionsListBox.SelectedItem == null)
                 return;
 
-            m_pModule.m_cDomains.Remove(CategoriesListBox.SelectedItem as Domain);
-            CategoriesListBox.Items.Remove(CategoriesListBox.SelectedItem);
+            m_pModule.m_cActions.Remove(ActionsListBox.SelectedItem as Action);
+            ActionsListBox.Items.Remove(ActionsListBox.SelectedItem);
         }
 
-        private int m_iFocusedDomain = -1;
+        private int m_iFocusedAction = -1;
 
-        private void CategoriesListBox_MouseDown(object sender, MouseEventArgs e)
+        private void ActionsListBox_MouseDown(object sender, MouseEventArgs e)
         {
-            if (m_iFocusedDomain != -1)
-                if (CategoriesListBox.GetItemRectangle(m_iFocusedDomain).Contains(e.Location))
+            if (m_iFocusedAction != -1)
+                if (ActionsListBox.GetItemRectangle(m_iFocusedAction).Contains(e.Location))
                     return;
 
-            for (int i = 0; i < CategoriesListBox.Items.Count; i++)
+            for (int i = 0; i < ActionsListBox.Items.Count; i++)
             {
-                if (CategoriesListBox.GetItemRectangle(i).Contains(e.Location))
+                if (ActionsListBox.GetItemRectangle(i).Contains(e.Location))
                 {
-                    m_iFocusedDomain = i;
+                    m_iFocusedAction = i;
                     break;
                 }
             } 
             
-            CategoriesListBox.SelectedIndex = m_iFocusedDomain;
+            ActionsListBox.SelectedIndex = m_iFocusedAction;
+        }
+
+        private void AddReactionInfo(Reaction pReaction)
+        {
+            ListViewItem pItem = new ListViewItem(pReaction.m_sName);
+            pItem.SubItems.Add(pReaction.m_bAlwaysVisible ? "!" : "?");
+
+            string conditions = "";
+            foreach (var pCondition in pReaction.m_cConditions)
+            {
+                if (conditions.Length > 0)
+                    conditions += " И ";
+                conditions += pCondition.ToString();
+            }
+            pItem.SubItems.Add(conditions);
+
+            string commands = "";
+            foreach (var pCommand in pReaction.m_cConsequences)
+            {
+                if (commands.Length > 0)
+                    commands += ", ";
+                commands += pCommand.ToString();
+            }
+            pItem.SubItems.Add(commands);
+
+            pItem.Tag = pReaction;
+
+            ReactionsListView.Items.Add(pItem);
         }
 
         private void EventsListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -128,42 +156,17 @@ namespace Persona
 
             ReactionsListView.Items.Clear();
             foreach (Reaction pReaction in pEvent.m_cReactions)
-            {
-                ListViewItem pItem = new ListViewItem(pReaction.m_sName);
-                pItem.SubItems.Add(pReaction.m_bAlwaysVisible ? "!" : "?");
-                
-                string conditions = "";
-                foreach (var pCondition in pReaction.m_cConditions)
-                {
-                    if (conditions.Length > 0)
-                        conditions += " И ";
-                    conditions += pCondition.ToString();
-                }
-                pItem.SubItems.Add(conditions);
-            
-                string commands = "";
-                foreach (var pCommand in pReaction.m_cConsequences)
-                {
-                    if (commands.Length > 0)
-                        commands += ", ";
-                    commands += pCommand.ToString();
-                }
-                pItem.SubItems.Add(commands);
-
-                pItem.Tag = pReaction;
-
-                ReactionsListView.Items.Add(pItem);
-            }
+                AddReactionInfo(pReaction);
         }
 
         private void AddEventToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_pModule.m_cDomains.Count == 0)
+            if (m_pModule.m_cActions.Count == 0)
                 return;
 
-            Event pEvent = new Event(m_pModule.m_cDomains[0]);
+            Event pEvent = new Event(m_pModule.m_cActions[0]);
 
-            EditEvent pForm = new EditEvent(pEvent, m_pModule.m_cDomains, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters);
+            EditEvent pForm = new EditEvent(pEvent, m_pModule.m_cActions, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 m_pModule.m_cEvents.Add(pEvent);
@@ -189,12 +192,12 @@ namespace Persona
             if (EventsListView.SelectedItems.Count == 0)
                 return;
 
-            EditEvent pForm = new EditEvent(EventsListView.SelectedItems[0].Tag as Event, m_pModule.m_cDomains, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters);
+            EditEvent pForm = new EditEvent(EventsListView.SelectedItems[0].Tag as Event, m_pModule.m_cActions, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ListViewItem pItem = EventsListView.SelectedItems[0];
                 pItem.SubItems[0].Text = pForm.m_pEvent.m_sID.ToString();
-                pItem.SubItems[1].Text = pForm.m_pEvent.m_pDomain.m_sName;
+                pItem.SubItems[1].Text = pForm.m_pEvent.m_pAction.m_sName;
                 pItem.SubItems[2].Text = pForm.m_pEvent.m_iPriority.ToString();
                 pItem.SubItems[3].Text = pForm.m_pEvent.m_iProbability.ToString();
                 pItem.SubItems[4].Text = pForm.m_pEvent.m_bRepeatable ? "+" : "-";
@@ -306,6 +309,90 @@ namespace Persona
             {
                 m_pModule.LoadXML(openFileDialog1.FileName);
                 UpdateModuleInfo();
+            }
+        }
+
+        private void AddReactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (EventsListView.SelectedItems.Count == 0)
+                return;
+
+            Reaction pReaction = new Reaction();
+            EditReaction pForm = new EditReaction(pReaction, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Event pEvent = EventsListView.SelectedItems[0].Tag as Event;
+                pEvent.m_cReactions.Add(pReaction);
+
+                AddReactionInfo(pReaction);
+            }
+        }
+
+        private void EditReactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (EventsListView.SelectedItems.Count == 0)
+                return;
+
+            if (ReactionsListView.SelectedItems.Count == 0)
+                return;
+
+            EditReaction pForm = new EditReaction(ReactionsListView.SelectedItems[0].Tag as Reaction, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                ListViewItem pItem = ReactionsListView.SelectedItems[0];
+                pItem.SubItems[0].Text = pForm.m_pReaction.m_sName.ToString();
+                pItem.SubItems[1].Text = pForm.m_pReaction.m_bAlwaysVisible ? "!" : "?";
+                
+                string conditions = "";
+                foreach (var pCondition in pForm.m_pReaction.m_cConditions)
+                {
+                    if (conditions.Length > 0)
+                        conditions += " И ";
+                    conditions += pCondition.ToString();
+                }
+                pItem.SubItems[2].Text = conditions;
+                
+                string commands = "";
+                foreach (var pCommand in pForm.m_pReaction.m_cConsequences)
+                {
+                    if (commands.Length > 0)
+                        commands += ", ";
+                    commands += pCommand.ToString();
+                }
+                pItem.SubItems[3].Text = commands;
+            }
+        }
+
+        private void toolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+            if (EventsListView.SelectedItems.Count == 0)
+                return;
+
+            Event pEvent = EventsListView.SelectedItems[0].Tag as Event;
+
+            List<ListViewItem> cKills = new List<ListViewItem>();
+            foreach (ListViewItem pItem in ReactionsListView.SelectedItems)
+                cKills.Add(pItem);
+
+            foreach (var pItem in cKills)
+            {
+                ReactionsListView.Items.Remove(pItem);
+                pEvent.m_cReactions.Remove(pItem.Tag as Reaction);
+            }
+        }
+
+        private void CopyEventToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (EventsListView.SelectedItems.Count == 0)
+                return;
+
+            Event pEvent = new Event(EventsListView.SelectedItems[0].Tag as Event);
+
+            EditEvent pForm = new EditEvent(pEvent, m_pModule.m_cActions, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_pModule.m_cEvents.Add(pEvent);
+                AddEventInfo(pEvent);
             }
         }
     }

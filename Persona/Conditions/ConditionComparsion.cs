@@ -101,5 +101,14 @@ namespace Persona.Conditions
             }
             return string.Format("{0} {1}{2} {3}", m_pParam1 != null ? m_pParam1.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР 1", m_bNot ? "НЕ " : "", sType, m_pParam2 != null ? m_pParam2.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР 2");
         }
+
+        public override Condition Clone()
+        {
+            ConditionComparsion pNew = new ConditionComparsion(m_pParam1, m_pParam2);
+            pNew.m_eType = m_eType;
+            pNew.m_bNot = m_bNot;
+
+            return pNew;
+        }
     }
 }

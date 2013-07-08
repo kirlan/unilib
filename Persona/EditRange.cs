@@ -14,13 +14,18 @@ namespace Persona
     {
         NumericParameter.Range m_pRange;
 
-        public EditRange(NumericParameter.Range pRange)
+        public EditRange(NumericParameter.Range pRange, float fMin, float fMax)
         {
             InitializeComponent();
 
             m_pRange = pRange;
 
             textBox1.Text = m_pRange.m_sDescription;
+
+            numericUpDown1.Minimum = (decimal)fMin;
+            numericUpDown2.Minimum = (decimal)fMin;
+            numericUpDown1.Maximum = (decimal)fMax;
+            numericUpDown2.Maximum = (decimal)fMax;
 
             numericUpDown1.Value = (decimal)m_pRange.m_fMin;
             numericUpDown2.Value = (decimal)m_pRange.m_fMax;

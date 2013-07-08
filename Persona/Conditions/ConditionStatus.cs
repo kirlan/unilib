@@ -32,5 +32,13 @@ namespace Persona.Conditions
         {
             return string.Format("{0}{1}", m_bNot ? "НЕ " : "", m_pParam1 != null ? m_pParam1.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР");
         }
+
+        public override Condition Clone()
+        {
+            ConditionStatus pNew = new ConditionStatus(m_pParam1);
+            pNew.m_bNot = m_bNot;
+
+            return pNew;
+        }
     }
 }

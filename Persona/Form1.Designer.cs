@@ -36,21 +36,7 @@
             this.проверитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.EventsFilterBox = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.ReactionsListView = new System.Windows.Forms.ListView();
-            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.CategoriesListBox = new System.Windows.Forms.CheckedListBox();
-            this.contextMenuStrip_Categories = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.добавитьНовуюМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.переименоватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.удалитьМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.отменаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label5 = new System.Windows.Forms.Label();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.EventsListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -62,11 +48,36 @@
             this.contextMenuStrip_Events = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовуюКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.клонироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.отменаToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label4 = new System.Windows.Forms.Label();
+            this.ReactionsListView = new System.Windows.Forms.ListView();
+            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.contextMenuStrip_Reactions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
+            this.label5 = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.ActionsListBox = new System.Windows.Forms.CheckedListBox();
+            this.contextMenuStrip_Actions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.добавитьНовуюМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.переименоватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.удалитьМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.отменаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label3 = new System.Windows.Forms.Label();
+            this.EventsFilterBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.ParametersTypesListBox = new System.Windows.Forms.ListBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -95,8 +106,17 @@
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.contextMenuStrip_Categories.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.contextMenuStrip_Events.SuspendLayout();
+            this.contextMenuStrip_Reactions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            this.contextMenuStrip_Actions.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.contextMenuStrip_Parameters.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -147,155 +167,46 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 152);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(770, 316);
+            this.tabControl1.Size = new System.Drawing.Size(770, 413);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.EventsFilterBox);
-            this.tabPage1.Controls.Add(this.label7);
-            this.tabPage1.Controls.Add(this.ReactionsListView);
-            this.tabPage1.Controls.Add(this.CategoriesListBox);
-            this.tabPage1.Controls.Add(this.label5);
-            this.tabPage1.Controls.Add(this.EventsListView);
-            this.tabPage1.Controls.Add(this.label4);
-            this.tabPage1.Controls.Add(this.label3);
+            this.tabPage1.Controls.Add(this.splitContainer1);
+            this.tabPage1.Controls.Add(this.splitContainer2);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(762, 290);
+            this.tabPage1.Size = new System.Drawing.Size(762, 387);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "События";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // EventsFilterBox
+            // splitContainer1
             // 
-            this.EventsFilterBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.EventsFilterBox.Location = new System.Drawing.Point(6, 173);
-            this.EventsFilterBox.Multiline = true;
-            this.EventsFilterBox.Name = "EventsFilterBox";
-            this.EventsFilterBox.Size = new System.Drawing.Size(120, 109);
-            this.EventsFilterBox.TabIndex = 8;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(129, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // label7
+            // splitContainer1.Panel1
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 157);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(50, 13);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Фильтр:";
+            this.splitContainer1.Panel1.Controls.Add(this.EventsListView);
+            this.splitContainer1.Panel1.Controls.Add(this.label4);
+            this.splitContainer1.Panel1.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
             // 
-            // ReactionsListView
+            // splitContainer1.Panel2
             // 
-            this.ReactionsListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ReactionsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader11,
-            this.columnHeader12,
-            this.columnHeader13,
-            this.columnHeader14});
-            this.ReactionsListView.FullRowSelect = true;
-            this.ReactionsListView.GridLines = true;
-            this.ReactionsListView.Location = new System.Drawing.Point(132, 173);
-            this.ReactionsListView.Name = "ReactionsListView";
-            this.ReactionsListView.Size = new System.Drawing.Size(622, 109);
-            this.ReactionsListView.TabIndex = 6;
-            this.ReactionsListView.UseCompatibleStateImageBehavior = false;
-            this.ReactionsListView.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader11
-            // 
-            this.columnHeader11.Text = "Имя";
-            this.columnHeader11.Width = 117;
-            // 
-            // columnHeader12
-            // 
-            this.columnHeader12.Text = "Видимость";
-            this.columnHeader12.Width = 23;
-            // 
-            // columnHeader13
-            // 
-            this.columnHeader13.Text = "Условия";
-            this.columnHeader13.Width = 196;
-            // 
-            // columnHeader14
-            // 
-            this.columnHeader14.Text = "Последствия";
-            this.columnHeader14.Width = 264;
-            // 
-            // CategoriesListBox
-            // 
-            this.CategoriesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.CategoriesListBox.ContextMenuStrip = this.contextMenuStrip_Categories;
-            this.CategoriesListBox.FormattingEnabled = true;
-            this.CategoriesListBox.IntegralHeight = false;
-            this.CategoriesListBox.Location = new System.Drawing.Point(6, 19);
-            this.CategoriesListBox.Name = "CategoriesListBox";
-            this.CategoriesListBox.Size = new System.Drawing.Size(120, 133);
-            this.CategoriesListBox.TabIndex = 5;
-            this.CategoriesListBox.DoubleClick += new System.EventHandler(this.EditCategoryToolStripMenuItem_Click);
-            this.CategoriesListBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CategoriesListBox_MouseDown);
-            // 
-            // contextMenuStrip_Categories
-            // 
-            this.contextMenuStrip_Categories.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.добавитьНовуюМастьToolStripMenuItem,
-            this.переименоватьToolStripMenuItem,
-            this.удалитьМастьToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.отменаToolStripMenuItem});
-            this.contextMenuStrip_Categories.Name = "contextMenuStrip1";
-            this.contextMenuStrip_Categories.Size = new System.Drawing.Size(237, 98);
-            // 
-            // добавитьНовуюМастьToolStripMenuItem
-            // 
-            this.добавитьНовуюМастьToolStripMenuItem.Name = "добавитьНовуюМастьToolStripMenuItem";
-            this.добавитьНовуюМастьToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.добавитьНовуюМастьToolStripMenuItem.Text = "Добавить новую категорию...";
-            this.добавитьНовуюМастьToolStripMenuItem.Click += new System.EventHandler(this.AddCategoryToolStripMenuItem_Click);
-            // 
-            // переименоватьToolStripMenuItem
-            // 
-            this.переименоватьToolStripMenuItem.Name = "переименоватьToolStripMenuItem";
-            this.переименоватьToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.переименоватьToolStripMenuItem.Text = "Переименовать";
-            this.переименоватьToolStripMenuItem.Click += new System.EventHandler(this.EditCategoryToolStripMenuItem_Click);
-            // 
-            // удалитьМастьToolStripMenuItem
-            // 
-            this.удалитьМастьToolStripMenuItem.Name = "удалитьМастьToolStripMenuItem";
-            this.удалитьМастьToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.удалитьМастьToolStripMenuItem.Text = "Удалить категорию";
-            this.удалитьМастьToolStripMenuItem.Click += new System.EventHandler(this.RemoveCategoryToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(233, 6);
-            // 
-            // отменаToolStripMenuItem
-            // 
-            this.отменаToolStripMenuItem.Name = "отменаToolStripMenuItem";
-            this.отменаToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.отменаToolStripMenuItem.Text = "Отмена";
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(129, 157);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(53, 13);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Реакции:";
+            this.splitContainer1.Panel2.Controls.Add(this.ReactionsListView);
+            this.splitContainer1.Panel2.Controls.Add(this.label5);
+            this.splitContainer1.Panel2.Controls.Add(this.panel3);
+            this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.splitContainer1.Size = new System.Drawing.Size(630, 381);
+            this.splitContainer1.SplitterDistance = 247;
+            this.splitContainer1.TabIndex = 9;
             // 
             // EventsListView
             // 
-            this.EventsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.EventsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -305,11 +216,12 @@
             this.columnHeader6,
             this.columnHeader10});
             this.EventsListView.ContextMenuStrip = this.contextMenuStrip_Events;
+            this.EventsListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EventsListView.FullRowSelect = true;
             this.EventsListView.GridLines = true;
-            this.EventsListView.Location = new System.Drawing.Point(132, 19);
+            this.EventsListView.Location = new System.Drawing.Point(3, 13);
             this.EventsListView.Name = "EventsListView";
-            this.EventsListView.Size = new System.Drawing.Size(622, 133);
+            this.EventsListView.Size = new System.Drawing.Size(624, 234);
             this.EventsListView.TabIndex = 3;
             this.EventsListView.UseCompatibleStateImageBehavior = false;
             this.EventsListView.View = System.Windows.Forms.View.Details;
@@ -323,7 +235,7 @@
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Категория";
+            this.columnHeader2.Text = "Действие";
             this.columnHeader2.Width = 65;
             // 
             // columnHeader7
@@ -354,11 +266,12 @@
             this.contextMenuStrip_Events.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.добавитьНовуюКартуToolStripMenuItem,
             this.редактироватьToolStripMenuItem,
+            this.клонироватьToolStripMenuItem,
             this.удалитьКартуToolStripMenuItem,
             this.toolStripMenuItem2,
             this.отменаToolStripMenuItem1});
             this.contextMenuStrip_Events.Name = "contextMenuStrip2";
-            this.contextMenuStrip_Events.Size = new System.Drawing.Size(222, 98);
+            this.contextMenuStrip_Events.Size = new System.Drawing.Size(222, 142);
             // 
             // добавитьНовуюКартуToolStripMenuItem
             // 
@@ -373,6 +286,13 @@
             this.редактироватьToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.редактироватьToolStripMenuItem.Text = "Редактировать";
             this.редактироватьToolStripMenuItem.Click += new System.EventHandler(this.EditEventToolStripMenuItem_Click);
+            // 
+            // клонироватьToolStripMenuItem
+            // 
+            this.клонироватьToolStripMenuItem.Name = "клонироватьToolStripMenuItem";
+            this.клонироватьToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.клонироватьToolStripMenuItem.Text = "Клонировать";
+            this.клонироватьToolStripMenuItem.Click += new System.EventHandler(this.CopyEventToolStripMenuItem_Click);
             // 
             // удалитьКартуToolStripMenuItem
             // 
@@ -395,20 +315,233 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(129, 3);
+            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label4.Location = new System.Drawing.Point(3, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 13);
             this.label4.TabIndex = 2;
             this.label4.Text = "События:";
             // 
+            // ReactionsListView
+            // 
+            this.ReactionsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader11,
+            this.columnHeader12,
+            this.columnHeader13,
+            this.columnHeader14});
+            this.ReactionsListView.ContextMenuStrip = this.contextMenuStrip_Reactions;
+            this.ReactionsListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ReactionsListView.FullRowSelect = true;
+            this.ReactionsListView.GridLines = true;
+            this.ReactionsListView.Location = new System.Drawing.Point(3, 17);
+            this.ReactionsListView.Name = "ReactionsListView";
+            this.ReactionsListView.Size = new System.Drawing.Size(624, 113);
+            this.ReactionsListView.TabIndex = 6;
+            this.ReactionsListView.UseCompatibleStateImageBehavior = false;
+            this.ReactionsListView.View = System.Windows.Forms.View.Details;
+            this.ReactionsListView.ItemActivate += new System.EventHandler(this.EditReactionToolStripMenuItem_Click);
+            // 
+            // columnHeader11
+            // 
+            this.columnHeader11.Text = "Имя";
+            this.columnHeader11.Width = 117;
+            // 
+            // columnHeader12
+            // 
+            this.columnHeader12.Text = "Видимость";
+            this.columnHeader12.Width = 23;
+            // 
+            // columnHeader13
+            // 
+            this.columnHeader13.Text = "Условия";
+            this.columnHeader13.Width = 196;
+            // 
+            // columnHeader14
+            // 
+            this.columnHeader14.Text = "Последствия";
+            this.columnHeader14.Width = 264;
+            // 
+            // contextMenuStrip_Reactions
+            // 
+            this.contextMenuStrip_Reactions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem4,
+            this.toolStripMenuItem5,
+            this.toolStripMenuItem6,
+            this.toolStripSeparator1,
+            this.toolStripMenuItem7});
+            this.contextMenuStrip_Reactions.Name = "contextMenuStrip2";
+            this.contextMenuStrip_Reactions.Size = new System.Drawing.Size(227, 98);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(226, 22);
+            this.toolStripMenuItem4.Text = "Добавить новую реакцию...";
+            this.toolStripMenuItem4.Click += new System.EventHandler(this.AddReactionToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(226, 22);
+            this.toolStripMenuItem5.Text = "Редактировать";
+            this.toolStripMenuItem5.Click += new System.EventHandler(this.EditReactionToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(226, 22);
+            this.toolStripMenuItem6.Text = "Удалить реакцию";
+            this.toolStripMenuItem6.Click += new System.EventHandler(this.toolStripMenuItem6_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(223, 6);
+            // 
+            // toolStripMenuItem7
+            // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(226, 22);
+            this.toolStripMenuItem7.Text = "Отмена";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label5.Location = new System.Drawing.Point(3, 4);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(53, 13);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Реакции:";
+            // 
+            // panel3
+            // 
+            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel3.Location = new System.Drawing.Point(3, 0);
+            this.panel3.Name = "panel3";
+            this.panel3.Padding = new System.Windows.Forms.Padding(2);
+            this.panel3.Size = new System.Drawing.Size(624, 4);
+            this.panel3.TabIndex = 7;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.splitContainer2.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.ActionsListBox);
+            this.splitContainer2.Panel1.Controls.Add(this.label3);
+            this.splitContainer2.Panel1.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.EventsFilterBox);
+            this.splitContainer2.Panel2.Controls.Add(this.label7);
+            this.splitContainer2.Panel2.Controls.Add(this.panel2);
+            this.splitContainer2.Panel2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.splitContainer2.Size = new System.Drawing.Size(126, 381);
+            this.splitContainer2.SplitterDistance = 190;
+            this.splitContainer2.TabIndex = 10;
+            // 
+            // ActionsListBox
+            // 
+            this.ActionsListBox.ContextMenuStrip = this.contextMenuStrip_Actions;
+            this.ActionsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ActionsListBox.FormattingEnabled = true;
+            this.ActionsListBox.IntegralHeight = false;
+            this.ActionsListBox.Location = new System.Drawing.Point(3, 13);
+            this.ActionsListBox.Name = "ActionsListBox";
+            this.ActionsListBox.Size = new System.Drawing.Size(120, 177);
+            this.ActionsListBox.TabIndex = 5;
+            this.ActionsListBox.DoubleClick += new System.EventHandler(this.EditCategoryToolStripMenuItem_Click);
+            this.ActionsListBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ActionsListBox_MouseDown);
+            // 
+            // contextMenuStrip_Actions
+            // 
+            this.contextMenuStrip_Actions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьНовуюМастьToolStripMenuItem,
+            this.переименоватьToolStripMenuItem,
+            this.удалитьМастьToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.отменаToolStripMenuItem});
+            this.contextMenuStrip_Actions.Name = "contextMenuStrip1";
+            this.contextMenuStrip_Actions.Size = new System.Drawing.Size(224, 98);
+            // 
+            // добавитьНовуюМастьToolStripMenuItem
+            // 
+            this.добавитьНовуюМастьToolStripMenuItem.Name = "добавитьНовуюМастьToolStripMenuItem";
+            this.добавитьНовуюМастьToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.добавитьНовуюМастьToolStripMenuItem.Text = "Добавить новое действие...";
+            this.добавитьНовуюМастьToolStripMenuItem.Click += new System.EventHandler(this.AddCategoryToolStripMenuItem_Click);
+            // 
+            // переименоватьToolStripMenuItem
+            // 
+            this.переименоватьToolStripMenuItem.Name = "переименоватьToolStripMenuItem";
+            this.переименоватьToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.переименоватьToolStripMenuItem.Text = "Редактировать";
+            this.переименоватьToolStripMenuItem.Click += new System.EventHandler(this.EditCategoryToolStripMenuItem_Click);
+            // 
+            // удалитьМастьToolStripMenuItem
+            // 
+            this.удалитьМастьToolStripMenuItem.Name = "удалитьМастьToolStripMenuItem";
+            this.удалитьМастьToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.удалитьМастьToolStripMenuItem.Text = "Удалить действие";
+            this.удалитьМастьToolStripMenuItem.Click += new System.EventHandler(this.RemoveCategoryToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(233, 6);
+            // 
+            // отменаToolStripMenuItem
+            // 
+            this.отменаToolStripMenuItem.Name = "отменаToolStripMenuItem";
+            this.отменаToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.отменаToolStripMenuItem.Text = "Отмена";
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 3);
+            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label3.Location = new System.Drawing.Point(3, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(63, 13);
+            this.label3.Size = new System.Drawing.Size(60, 13);
             this.label3.TabIndex = 0;
-            this.label3.Text = "Категории:";
+            this.label3.Text = "Действия:";
+            // 
+            // EventsFilterBox
+            // 
+            this.EventsFilterBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.EventsFilterBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EventsFilterBox.Location = new System.Drawing.Point(3, 17);
+            this.EventsFilterBox.Multiline = true;
+            this.EventsFilterBox.Name = "EventsFilterBox";
+            this.EventsFilterBox.Size = new System.Drawing.Size(120, 170);
+            this.EventsFilterBox.TabIndex = 8;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label7.Location = new System.Drawing.Point(3, 4);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(50, 13);
+            this.label7.TabIndex = 7;
+            this.label7.Text = "Фильтр:";
+            // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(3, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Padding = new System.Windows.Forms.Padding(2);
+            this.panel2.Size = new System.Drawing.Size(120, 4);
+            this.panel2.TabIndex = 9;
             // 
             // tabPage2
             // 
@@ -419,7 +552,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(762, 290);
+            this.tabPage2.Size = new System.Drawing.Size(762, 387);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Параметры";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -434,9 +567,9 @@
             "Числовые",
             "Логические",
             "Строковые"});
-            this.ParametersTypesListBox.Location = new System.Drawing.Point(6, 19);
+            this.ParametersTypesListBox.Location = new System.Drawing.Point(6, 16);
             this.ParametersTypesListBox.Name = "ParametersTypesListBox";
-            this.ParametersTypesListBox.Size = new System.Drawing.Size(120, 263);
+            this.ParametersTypesListBox.Size = new System.Drawing.Size(120, 368);
             this.ParametersTypesListBox.TabIndex = 5;
             this.ParametersTypesListBox.SelectedIndexChanged += new System.EventHandler(this.ParametersTypesListBox_SelectedIndexChanged);
             // 
@@ -469,13 +602,15 @@
             this.columnHeader4,
             this.columnHeader5});
             this.ParametersListView.ContextMenuStrip = this.contextMenuStrip_Parameters;
+            this.ParametersListView.FullRowSelect = true;
             this.ParametersListView.GridLines = true;
-            this.ParametersListView.Location = new System.Drawing.Point(132, 19);
+            this.ParametersListView.Location = new System.Drawing.Point(132, 16);
             this.ParametersListView.Name = "ParametersListView";
-            this.ParametersListView.Size = new System.Drawing.Size(622, 263);
+            this.ParametersListView.Size = new System.Drawing.Size(624, 368);
             this.ParametersListView.TabIndex = 0;
             this.ParametersListView.UseCompatibleStateImageBehavior = false;
             this.ParametersListView.View = System.Windows.Forms.View.Details;
+            this.ParametersListView.ItemActivate += new System.EventHandler(this.редактироватьToolStripMenuItem1_Click);
             // 
             // columnHeader15
             // 
@@ -501,7 +636,7 @@
             this.toolStripMenuItem3,
             this.отменаToolStripMenuItem2});
             this.contextMenuStrip_Parameters.Name = "contextMenuStrip3";
-            this.contextMenuStrip_Parameters.Size = new System.Drawing.Size(231, 120);
+            this.contextMenuStrip_Parameters.Size = new System.Drawing.Size(231, 98);
             // 
             // добавитьНовыйПараметрToolStripMenuItem
             // 
@@ -610,9 +745,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(12, 103);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(109, 13);
+            this.label6.Size = new System.Drawing.Size(98, 13);
             this.label6.TabIndex = 6;
-            this.label6.Text = "Графический пакет:";
+            this.label6.Text = "Иконки действий:";
             // 
             // saveFileDialog1
             // 
@@ -631,7 +766,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(770, 468);
+            this.ClientSize = new System.Drawing.Size(770, 565);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
@@ -642,9 +777,21 @@
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.contextMenuStrip_Categories.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.contextMenuStrip_Events.ResumeLayout(false);
+            this.contextMenuStrip_Reactions.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            this.contextMenuStrip_Actions.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.contextMenuStrip_Parameters.ResumeLayout(false);
@@ -680,7 +827,7 @@
         private System.Windows.Forms.ToolStripMenuItem редактироватьToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem отменаToolStripMenuItem1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip_Categories;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip_Actions;
         private System.Windows.Forms.ToolStripMenuItem добавитьНовуюМастьToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem переименоватьToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem удалитьМастьToolStripMenuItem;
@@ -697,7 +844,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListView ReactionsListView;
-        private System.Windows.Forms.CheckedListBox CategoriesListBox;
+        private System.Windows.Forms.CheckedListBox ActionsListBox;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
         private System.Windows.Forms.ColumnHeader columnHeader9;
@@ -718,6 +865,17 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip_Reactions;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripMenuItem клонироватьToolStripMenuItem;
     }
 }
 

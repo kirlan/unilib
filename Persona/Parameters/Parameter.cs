@@ -52,5 +52,10 @@ namespace Persona.Parameters
             pXml.AddAttribute(pParamNode, "comment", m_sComment);
             pXml.AddAttribute(pParamNode, "hidden", m_bHidden);
         }
+
+        public override string ToString()
+        {
+            return m_sGroup + ": " + m_sName;
+        }
     }
 }

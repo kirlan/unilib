@@ -12,17 +12,17 @@ using System.Windows.Media.Imaging;
 
 namespace Persona
 {
-    public partial class EditDomain : Form
+    public partial class EditAction : Form
     {
-        public Domain m_pDomain;
+        public Action m_pAction;
 
-        public EditDomain(Domain pDomain)
+        public EditAction(Action pAction)
         {
             InitializeComponent();
 
-            m_pDomain = pDomain;
+            m_pAction = pAction;
 
-            textBox1.Text = pDomain.m_sName;
+            textBox1.Text = pAction.m_sName;
 
             imageList1.Images.Clear();
             imageList1.ImageSize = new Size(40, 40);
@@ -49,7 +49,7 @@ namespace Persona
 
         private void button2_Click(object sender, EventArgs e)
         {
-            m_pDomain.m_sName = textBox1.Text;
+            m_pAction.m_sName = textBox1.Text;
 
             DialogResult = DialogResult.OK;
         }

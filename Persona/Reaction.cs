@@ -45,7 +45,20 @@ namespace Persona
         public List<Consequence> m_cConsequences = new List<Consequence>();
 
         public Reaction()
-        { 
+        {
+        }
+
+        public Reaction(Reaction pOrigin)
+        {
+            m_sName = pOrigin.m_sName;
+            m_sResult = pOrigin.m_sResult;
+            m_bAlwaysVisible = pOrigin.m_bAlwaysVisible;
+
+            foreach (var pCondition in pOrigin.m_cConditions)
+                m_cConditions.Add(pCondition.Clone());
+
+            foreach (var pConsequence in pOrigin.m_cConsequences)
+                m_cConsequences.Add(pConsequence.Clone());
         }
 
         public Reaction(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)

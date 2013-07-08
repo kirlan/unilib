@@ -25,7 +25,10 @@ namespace Persona.Conditions
 
         public ConditionRange(Parameter pParam)
             : base(pParam)
-        { 
+        {
+            NumericParameter pNum = pParam as NumericParameter;
+            m_fMinValue = pNum.m_fMin;
+            m_fMaxValue = pNum.m_fMax;
         }
 
         public ConditionRange(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
@@ -45,7 +48,33 @@ namespace Persona.Conditions
 
         public override string ToString()
         {
-            return string.Format("{0} в {1}({2}..{3})", m_pParam1 != null ? m_pParam1.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР", m_bNot ? "НЕ " : "", m_fMinValue, m_fMaxValue);
+            string sRange = string.Format("в {0}..{1}", m_fMinValue, m_fMaxValue);
+            if(m_pParam1 != null)
+            {
+                NumericParameter pParam = m_pParam1 as NumericParameter;
+                foreach (var pRange in pParam.m_cRanges)
+                {
+                    if (pRange.m_fMin == m_fMinValue && pRange.m_fMax == m_fMaxValue)
+                    {
+                        if (pRange.m_fMin == pRange.m_fMax)
+                            sRange = "[" + pRange.m_sDescription + "]";
+                        else 
+                            sRange += " [" + pRange.m_sDescription + "]";
+                        break;
+                    }
+                }
+            }
+            return string.Format("{0} {1}{2}", m_pParam1 != null ? m_pParam1.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР", m_bNot ? "НЕ " : "", sRange);
+        }
+
+        public override Condition Clone()
+        {
+            ConditionRange pNew = new ConditionRange(m_pParam1);
+            pNew.m_fMinValue = m_fMinValue;
+            pNew.m_fMaxValue = m_fMaxValue;
+            pNew.m_bNot = m_bNot;
+
+            return pNew;
         }
     }
 }
