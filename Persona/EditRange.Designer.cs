@@ -195,6 +195,7 @@
             this.Controls.Add(this.tableLayoutPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "EditRange";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "EditRange";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();

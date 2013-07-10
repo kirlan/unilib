@@ -201,17 +201,17 @@ namespace Persona
                 if (pCondition is ConditionRange)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Range");
-                    pCondition.SaveXML(pXml, pConditionNode);
+                    pCondition.WriteXML(pXml, pConditionNode);
                 }
                 if (pCondition is ConditionComparsion)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Comparsion");
-                    pCondition.SaveXML(pXml, pConditionNode);
+                    pCondition.WriteXML(pXml, pConditionNode);
                 }
                 if (pCondition is ConditionStatus)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pConditionsNode, "Status");
-                    pCondition.SaveXML(pXml, pConditionNode);
+                    pCondition.WriteXML(pXml, pConditionNode);
                 }
             }
 
@@ -219,7 +219,7 @@ namespace Persona
             foreach (Situation pSituation in m_cAlternateDescriptions)
             {
                 XmlNode pSituationNode = pXml.CreateNode(pAlternativesNode, "Situation");
-                pSituation.SaveXML(pXml, pSituationNode);
+                pSituation.WriteXML(pXml, pSituationNode);
             }
 
             XmlNode pConsequencesNode = pXml.CreateNode(pEventNode, "Consequences");
@@ -228,17 +228,17 @@ namespace Persona
                 if (pConsequence is ParameterChange)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "ParameterChange");
-                    pConsequence.SaveXML(pXml, pConditionNode);
+                    pConsequence.WriteXML(pXml, pConditionNode);
                 }
                 if (pConsequence is ParameterSet)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "ParameterSet");
-                    pConsequence.SaveXML(pXml, pConditionNode);
+                    pConsequence.WriteXML(pXml, pConditionNode);
                 }
                 if (pConsequence is SystemCommand)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pConsequencesNode, "SystemCommand");
-                    pConsequence.SaveXML(pXml, pConditionNode);
+                    pConsequence.WriteXML(pXml, pConditionNode);
                 }
             }
 
@@ -246,7 +246,7 @@ namespace Persona
             foreach (Reaction pReaction in m_cReactions)
             {
                 XmlNode pReactionNode = pXml.CreateNode(pReactionsNode, "Reaction");
-                pReaction.SaveXML(pXml, pReactionNode);
+                pReaction.WriteXML(pXml, pReactionNode);
             }
         }
     }

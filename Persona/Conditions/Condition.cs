@@ -42,7 +42,7 @@ namespace Persona.Conditions
             pXml.GetBoolAttribute(pParamNode, "inverse", ref m_bNot);
         }
 
-        internal virtual void SaveXML(UniLibXML pXml, XmlNode pConditionNode)
+        internal virtual void WriteXML(UniLibXML pXml, XmlNode pConditionNode)
         {
             pXml.AddAttribute(pConditionNode, "param", m_pParam1.m_sName);
             pXml.AddAttribute(pConditionNode, "inverse", m_bNot);

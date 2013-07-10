@@ -100,6 +100,12 @@
     <Compile Include="EditEvent.Designer.cs">
       <DependentUpon>EditEvent.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditParameterBool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditParameterBool.Designer.cs">
+      <DependentUpon>EditParameterBool.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditParameterNumeric.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,6 +123,12 @@
     </Compile>
     <Compile Include="EditReaction.Designer.cs">
       <DependentUpon>EditReaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditTrigger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditTrigger.Designer.cs">
+      <DependentUpon>EditTrigger.cs</DependentUpon>
     </Compile>
     <Compile Include="Event.cs" />
     <Compile Include="Consequences\Consequence.cs" />
@@ -143,6 +155,7 @@
     <Compile Include="Reaction.cs" />
     <Compile Include="Situation.cs" />
     <Compile Include="Action.cs" />
+    <Compile Include="Trigger.cs" />
     <EmbeddedResource Include="EditConditionComparsion.resx">
       <DependentUpon>EditConditionComparsion.cs</DependentUpon>
     </EmbeddedResource>
@@ -167,6 +180,9 @@
     <EmbeddedResource Include="EditEvent.resx">
       <DependentUpon>EditEvent.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EditParameterBool.resx">
+      <DependentUpon>EditParameterBool.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EditParameterNumeric.resx">
       <DependentUpon>EditParameterNumeric.cs</DependentUpon>
     </EmbeddedResource>
@@ -175,6 +191,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditReaction.resx">
       <DependentUpon>EditReaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditTrigger.resx">
+      <DependentUpon>EditTrigger.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

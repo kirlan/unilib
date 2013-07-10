@@ -47,13 +47,6 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.listBox2 = new System.Windows.Forms.ListBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.button3 = new System.Windows.Forms.Button();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.button2 = new System.Windows.Forms.Button();
             this.contextMenuStrip_Consequences = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовоеПоследствиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.заданиеЗначенияПараметраToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,11 +56,18 @@
             this.удалитьПоследствиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.отменаToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.button3 = new System.Windows.Forms.Button();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.button2 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.contextMenuStrip_Conditions.SuspendLayout();
+            this.contextMenuStrip_Consequences.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.contextMenuStrip_Consequences.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -264,6 +264,75 @@
             this.tableLayoutPanel1.SetRowSpan(this.listBox2, 7);
             this.listBox2.Size = new System.Drawing.Size(322, 176);
             this.listBox2.TabIndex = 11;
+            this.listBox2.DoubleClick += new System.EventHandler(this.EditConsequenceToolStripMenuItem1_Click);
+            this.listBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox2_MouseDown);
+            // 
+            // contextMenuStrip_Consequences
+            // 
+            this.contextMenuStrip_Consequences.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьНовоеПоследствиеToolStripMenuItem,
+            this.редактироватьToolStripMenuItem1,
+            this.удалитьПоследствиеToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.отменаToolStripMenuItem1});
+            this.contextMenuStrip_Consequences.Name = "contextMenuStrip_Consequences";
+            this.contextMenuStrip_Consequences.Size = new System.Drawing.Size(235, 98);
+            // 
+            // добавитьНовоеПоследствиеToolStripMenuItem
+            // 
+            this.добавитьНовоеПоследствиеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.заданиеЗначенияПараметраToolStripMenuItem,
+            this.изменениеЗначенияПараметраToolStripMenuItem,
+            this.системнаяКомандаToolStripMenuItem});
+            this.добавитьНовоеПоследствиеToolStripMenuItem.Name = "добавитьНовоеПоследствиеToolStripMenuItem";
+            this.добавитьНовоеПоследствиеToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+            this.добавитьНовоеПоследствиеToolStripMenuItem.Text = "Добавить новое последствие";
+            // 
+            // заданиеЗначенияПараметраToolStripMenuItem
+            // 
+            this.заданиеЗначенияПараметраToolStripMenuItem.Name = "заданиеЗначенияПараметраToolStripMenuItem";
+            this.заданиеЗначенияПараметраToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
+            this.заданиеЗначенияПараметраToolStripMenuItem.Text = "Задание значения параметра...";
+            this.заданиеЗначенияПараметраToolStripMenuItem.Click += new System.EventHandler(this.AddConsequenceSetToolStripMenuItem_Click);
+            // 
+            // изменениеЗначенияПараметраToolStripMenuItem
+            // 
+            this.изменениеЗначенияПараметраToolStripMenuItem.Name = "изменениеЗначенияПараметраToolStripMenuItem";
+            this.изменениеЗначенияПараметраToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
+            this.изменениеЗначенияПараметраToolStripMenuItem.Text = "Изменение значения параметра...";
+            this.изменениеЗначенияПараметраToolStripMenuItem.Click += new System.EventHandler(this.AddConsequenceChangeToolStripMenuItem_Click);
+            // 
+            // системнаяКомандаToolStripMenuItem
+            // 
+            this.системнаяКомандаToolStripMenuItem.Name = "системнаяКомандаToolStripMenuItem";
+            this.системнаяКомандаToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
+            this.системнаяКомандаToolStripMenuItem.Text = "Системная команда...";
+            this.системнаяКомандаToolStripMenuItem.Click += new System.EventHandler(this.AddConsequenceCommandToolStripMenuItem_Click);
+            // 
+            // редактироватьToolStripMenuItem1
+            // 
+            this.редактироватьToolStripMenuItem1.Name = "редактироватьToolStripMenuItem1";
+            this.редактироватьToolStripMenuItem1.Size = new System.Drawing.Size(234, 22);
+            this.редактироватьToolStripMenuItem1.Text = "Редактировать";
+            this.редактироватьToolStripMenuItem1.Click += new System.EventHandler(this.EditConsequenceToolStripMenuItem1_Click);
+            // 
+            // удалитьПоследствиеToolStripMenuItem
+            // 
+            this.удалитьПоследствиеToolStripMenuItem.Name = "удалитьПоследствиеToolStripMenuItem";
+            this.удалитьПоследствиеToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+            this.удалитьПоследствиеToolStripMenuItem.Text = "Удалить последствие";
+            this.удалитьПоследствиеToolStripMenuItem.Click += new System.EventHandler(this.DeleteConsequenceToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(231, 6);
+            // 
+            // отменаToolStripMenuItem1
+            // 
+            this.отменаToolStripMenuItem1.Name = "отменаToolStripMenuItem1";
+            this.отменаToolStripMenuItem1.Size = new System.Drawing.Size(234, 22);
+            this.отменаToolStripMenuItem1.Text = "Отмена";
             // 
             // label9
             // 
@@ -351,73 +420,6 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // contextMenuStrip_Consequences
-            // 
-            this.contextMenuStrip_Consequences.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.добавитьНовоеПоследствиеToolStripMenuItem,
-            this.редактироватьToolStripMenuItem1,
-            this.удалитьПоследствиеToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.отменаToolStripMenuItem1});
-            this.contextMenuStrip_Consequences.Name = "contextMenuStrip_Consequences";
-            this.contextMenuStrip_Consequences.Size = new System.Drawing.Size(235, 98);
-            // 
-            // добавитьНовоеПоследствиеToolStripMenuItem
-            // 
-            this.добавитьНовоеПоследствиеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.заданиеЗначенияПараметраToolStripMenuItem,
-            this.изменениеЗначенияПараметраToolStripMenuItem,
-            this.системнаяКомандаToolStripMenuItem});
-            this.добавитьНовоеПоследствиеToolStripMenuItem.Name = "добавитьНовоеПоследствиеToolStripMenuItem";
-            this.добавитьНовоеПоследствиеToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-            this.добавитьНовоеПоследствиеToolStripMenuItem.Text = "Добавить новое последствие";
-            // 
-            // заданиеЗначенияПараметраToolStripMenuItem
-            // 
-            this.заданиеЗначенияПараметраToolStripMenuItem.Name = "заданиеЗначенияПараметраToolStripMenuItem";
-            this.заданиеЗначенияПараметраToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.заданиеЗначенияПараметраToolStripMenuItem.Text = "Задание значения параметра...";
-            this.заданиеЗначенияПараметраToolStripMenuItem.Click += new System.EventHandler(this.AddConsequenceSetToolStripMenuItem_Click);
-            // 
-            // изменениеЗначенияПараметраToolStripMenuItem
-            // 
-            this.изменениеЗначенияПараметраToolStripMenuItem.Name = "изменениеЗначенияПараметраToolStripMenuItem";
-            this.изменениеЗначенияПараметраToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.изменениеЗначенияПараметраToolStripMenuItem.Text = "Изменение значения параметра...";
-            this.изменениеЗначенияПараметраToolStripMenuItem.Click += new System.EventHandler(this.AddConsequenceChangeToolStripMenuItem_Click);
-            // 
-            // системнаяКомандаToolStripMenuItem
-            // 
-            this.системнаяКомандаToolStripMenuItem.Name = "системнаяКомандаToolStripMenuItem";
-            this.системнаяКомандаToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.системнаяКомандаToolStripMenuItem.Text = "Системная команда...";
-            this.системнаяКомандаToolStripMenuItem.Click += new System.EventHandler(this.AddConsequenceCommandToolStripMenuItem_Click);
-            // 
-            // редактироватьToolStripMenuItem1
-            // 
-            this.редактироватьToolStripMenuItem1.Name = "редактироватьToolStripMenuItem1";
-            this.редактироватьToolStripMenuItem1.Size = new System.Drawing.Size(234, 22);
-            this.редактироватьToolStripMenuItem1.Text = "Редактировать";
-            this.редактироватьToolStripMenuItem1.Click += new System.EventHandler(this.EditConsequenceToolStripMenuItem1_Click);
-            // 
-            // удалитьПоследствиеToolStripMenuItem
-            // 
-            this.удалитьПоследствиеToolStripMenuItem.Name = "удалитьПоследствиеToolStripMenuItem";
-            this.удалитьПоследствиеToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-            this.удалитьПоследствиеToolStripMenuItem.Text = "Удалить последствие";
-            this.удалитьПоследствиеToolStripMenuItem.Click += new System.EventHandler(this.DeleteConsequenceToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(231, 6);
-            // 
-            // отменаToolStripMenuItem1
-            // 
-            this.отменаToolStripMenuItem1.Name = "отменаToolStripMenuItem1";
-            this.отменаToolStripMenuItem1.Size = new System.Drawing.Size(234, 22);
-            this.отменаToolStripMenuItem1.Text = "Отмена";
-            // 
             // EditReaction
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -429,15 +431,16 @@
             this.Controls.Add(this.tableLayoutPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "EditReaction";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Редактирование реакции";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.contextMenuStrip_Conditions.ResumeLayout(false);
+            this.contextMenuStrip_Consequences.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
-            this.contextMenuStrip_Consequences.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

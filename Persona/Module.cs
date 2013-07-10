@@ -31,11 +31,16 @@ namespace Persona
         /// Список действий, порождающих события, например - "Секс", "Работа", "Учёба"...
         /// </summary>
         public List<Action> m_cActions = new List<Action>();
-        
+
         /// <summary>
         /// Список возможных событий.
         /// </summary>
         public List<Event> m_cEvents = new List<Event>();
+
+        /// <summary>
+        /// Список триггеров.
+        /// </summary>
+        public List<Trigger> m_cTriggers = new List<Trigger>();
 
         /// <summary>
         /// Список числовых параметров, описывающих игровую ситуацию в конкретный момент времени.
@@ -184,6 +189,13 @@ namespace Persona
                 pEvent.WriteXML(pXml, pEventNode);
             }
 
+            XmlNode pTriggersNode = pXml.CreateNode(pModuleNode, "Triggers");
+            foreach (Trigger pTrigger in m_cTriggers)
+            {
+                XmlNode pTriggerNode = pXml.CreateNode(pTriggersNode, "Trigger");
+                pTrigger.WriteXML(pXml, pTriggerNode);
+            }
+
             pXml.Write(sFilename);
         }
 
@@ -199,6 +211,7 @@ namespace Persona
             m_cStringParameters.Clear();
             m_cActions.Clear();
             m_cEvents.Clear();
+            m_cTriggers.Clear();
 
             if (pXml.Root.ChildNodes.Count == 1 && pXml.Root.ChildNodes[0].Name == "Module")
             {
@@ -255,22 +268,33 @@ namespace Persona
                     }
                 }
 
+                List<Parameter> cParams = new List<Parameter>();
+                cParams.AddRange(m_cNumericParameters);
+                cParams.AddRange(m_cBoolParameters);
+                cParams.AddRange(m_cStringParameters);
+
                 //События считываем в отдельном цикле, т.к. для них нам обязательно нужно, чтобы домены и параметры были уже считаны.
                 foreach (XmlNode pSection in pModuleNode.ChildNodes)
                 {
                     if (pSection.Name == "Events")
                     {
-                        List<Parameter> cParams = new List<Parameter>();
-                        cParams.AddRange(m_cNumericParameters);
-                        cParams.AddRange(m_cBoolParameters);
-                        cParams.AddRange(m_cStringParameters);
-
                         foreach (XmlNode pEventNode in pSection.ChildNodes)
                         {
                             if (pEventNode.Name == "Event")
                             {
                                 Event pEvent = new Event(pXml, pEventNode, m_cActions, cParams);
                                 m_cEvents.Add(pEvent);
+                            }
+                        }
+                    }
+                    if (pSection.Name == "Triggers")
+                    {
+                        foreach (XmlNode pTriggerNode in pSection.ChildNodes)
+                        {
+                            if (pTriggerNode.Name == "Trigger")
+                            {
+                                Trigger pTrigger = new Trigger(pXml, pTriggerNode, cParams);
+                                m_cTriggers.Add(pTrigger);
                             }
                         }
                     }

@@ -37,7 +37,7 @@ namespace Persona.Consequences
             pXml.GetStringAttribute(pParamNode, "value", ref m_sNewValue);
         }
         
-        internal override void SaveXML(UniLibXML pXml, XmlNode pConsequenceNode)
+        internal override void WriteXML(UniLibXML pXml, XmlNode pConsequenceNode)
         {
             pXml.AddAttribute(pConsequenceNode, "param", m_pParam.m_sName);
             pXml.AddAttribute(pConsequenceNode, "value", m_sNewValue);

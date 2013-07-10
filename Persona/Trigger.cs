@@ -2,39 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Persona.Consequences;
 using Persona.Conditions;
-using nsUniLibXML;
-using System.Xml;
+using Persona.Consequences;
 using Persona.Parameters;
+using System.Xml;
+using nsUniLibXML;
 
 namespace Persona
 {
     /// <summary>
-    /// Возможная реакция персонажа на событие.
+    /// Триггер - событие, происходящее не в ответ на какое-то действие игрока, а как реакция игрового мира на изменение
+    /// каких-то параметров. Например - если время перевалило через 24 часа, то сбросить счётчик часов и увеличить счётчик дней.
     /// </summary>
-    public class Reaction
+    public class Trigger
     {
         /// <summary>
-        /// Если true, то реакция будет отображаться в общем списке, даже если условие не выполняется,
-        /// просто её нельзя будет выбрать.
+        /// <para>Повторяемость события. </para>
+        /// <para>Если true, то событие может происходить неограниченное количество раз, 
+        /// иначе - только 1 раз за игровую сессию. </para>
         /// </summary>
-        public bool m_bAlwaysVisible;
+        public bool m_bRepeatable = true;
 
         /// <summary>
-        /// Краткое описание реакции, как оно будет выводиться в списке возможных реакций для пользователя.
+        /// Идентификатор события. Используется только при редактировании модуля, для навигации по списку событий.
         /// </summary>
-        public string m_sName;
-        /// <summary>
-        /// Полное описание реакции и её последствий, как оно будет выводиться в игровой лог после того,
-        /// как пользователь выбрал эту реакцию.
-        /// </summary>
-        public string m_sResult;
+        public string m_sID = "Trigger " + Guid.NewGuid().ToString();
 
         /// <summary>
         /// Список условий, при которых эта реакция доступна.
         /// Условия в списке связываются друг с другом логическим И.
-        /// При m_bAlwaysVisible==false недоступные реакции не будут отображаться в предоставляемом игроку списке, иначе - будут, но выбрать их всё-равно нельзя.
         /// </summary>
         public List<Condition> m_cConditions = new List<Condition>();
 
@@ -44,15 +40,14 @@ namespace Persona
         /// </summary>
         public List<Consequence> m_cConsequences = new List<Consequence>();
 
-        public Reaction()
+        public Trigger()
         {
         }
 
-        public Reaction(Reaction pOrigin)
+        public Trigger(Trigger pOrigin)
         {
-            m_sName = pOrigin.m_sName;
-            m_sResult = pOrigin.m_sResult;
-            m_bAlwaysVisible = pOrigin.m_bAlwaysVisible;
+            m_sID = pOrigin.m_sID;
+            m_bRepeatable = pOrigin.m_bRepeatable;
 
             foreach (var pCondition in pOrigin.m_cConditions)
                 m_cConditions.Add(pCondition.Clone());
@@ -61,11 +56,10 @@ namespace Persona
                 m_cConsequences.Add(pConsequence.Clone());
         }
 
-        public Reaction(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
+        public Trigger(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
         {
-            pXml.GetStringAttribute(pParamNode, "name", ref m_sName);
-            pXml.GetStringAttribute(pParamNode, "result", ref m_sResult);
-            pXml.GetBoolAttribute(pParamNode, "visible", ref m_bAlwaysVisible);
+            pXml.GetStringAttribute(pParamNode, "id", ref m_sID);
+            pXml.GetBoolAttribute(pParamNode, "repeat", ref m_bRepeatable);
 
             foreach (XmlNode pSubNode in pParamNode.ChildNodes)
             {
@@ -118,9 +112,8 @@ namespace Persona
 
         internal void WriteXML(UniLibXML pXml, XmlNode pReactionNode)
         {
-            pXml.AddAttribute(pReactionNode, "name", m_sName);
-            pXml.AddAttribute(pReactionNode, "result", m_sResult);
-            pXml.AddAttribute(pReactionNode, "visible", m_bAlwaysVisible);
+            pXml.AddAttribute(pReactionNode, "id", m_sID);
+            pXml.AddAttribute(pReactionNode, "repeat", m_bRepeatable);
 
             XmlNode pConditionsNode = pXml.CreateNode(pReactionNode, "Conditions");
             foreach (Condition pCondition in m_cConditions)

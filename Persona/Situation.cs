@@ -64,7 +64,7 @@ namespace Persona
                 m_cConditions.Add(pCondition.Clone());
         }
 
-        internal void SaveXML(UniLibXML pXml, XmlNode pSituationNode)
+        internal void WriteXML(UniLibXML pXml, XmlNode pSituationNode)
         {
             pXml.AddAttribute(pSituationNode, "description", m_sText);
 
@@ -73,17 +73,17 @@ namespace Persona
                 if (pCondition is ConditionRange)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pSituationNode, "Range");
-                    pCondition.SaveXML(pXml, pConditionNode);
+                    pCondition.WriteXML(pXml, pConditionNode);
                 }
                 if (pCondition is ConditionComparsion)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pSituationNode, "Comparsion");
-                    pCondition.SaveXML(pXml, pConditionNode);
+                    pCondition.WriteXML(pXml, pConditionNode);
                 }
                 if (pCondition is ConditionStatus)
                 {
                     XmlNode pConditionNode = pXml.CreateNode(pSituationNode, "Status");
-                    pCondition.SaveXML(pXml, pConditionNode);
+                    pCondition.WriteXML(pXml, pConditionNode);
                 }
             }
         }

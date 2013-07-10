@@ -38,9 +38,9 @@ namespace Persona.Conditions
             pXml.GetFloatAttribute(pParamNode, "max", ref m_fMaxValue);
         }
 
-        internal override void SaveXML(UniLibXML pXml, XmlNode pConditionNode)
+        internal override void WriteXML(UniLibXML pXml, XmlNode pConditionNode)
         {
-            base.SaveXML(pXml, pConditionNode);
+            base.WriteXML(pXml, pConditionNode);
 
             pXml.AddAttribute(pConditionNode, "min", m_fMinValue);
             pXml.AddAttribute(pConditionNode, "max", m_fMaxValue);

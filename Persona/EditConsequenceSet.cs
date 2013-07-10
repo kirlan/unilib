@@ -128,5 +128,22 @@ namespace Persona
 
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            NumericParameter pParam = comboBox1.SelectedItem as NumericParameter;
+
+            comboBox2.Items.Clear();
+            comboBox2.Items.AddRange(pParam.m_cRanges.ToArray());
+
+            foreach (var pRange in pParam.m_cRanges)
+            {
+                if ((float)numericUpDown1.Value >= pRange.m_fMin && (float)numericUpDown1.Value <= pRange.m_fMax)
+                {
+                    comboBox2.SelectedItem = pRange;
+                    break;
+                }
+            }
+        }
     }
 }

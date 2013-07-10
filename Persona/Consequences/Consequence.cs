@@ -9,7 +9,7 @@ namespace Persona.Consequences
 {
     public abstract class Consequence
     {
-        internal abstract void SaveXML(UniLibXML pXml, XmlNode pConsequenceNode);
+        internal abstract void WriteXML(UniLibXML pXml, XmlNode pConsequenceNode);
 
         public abstract Consequence Clone();
     }

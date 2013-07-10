@@ -339,6 +339,8 @@
             this.tableLayoutPanel1.SetRowSpan(this.listBox2, 3);
             this.listBox2.Size = new System.Drawing.Size(329, 72);
             this.listBox2.TabIndex = 11;
+            this.listBox2.DoubleClick += new System.EventHandler(this.EditConsequenceToolStripMenuItem1_Click);
+            this.listBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox2_MouseDown);
             // 
             // contextMenuStrip_Consequences
             // 
@@ -540,6 +542,7 @@
             this.Controls.Add(this.tableLayoutPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "EditEvent";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Редактирование события";
             this.tableLayoutPanel1.ResumeLayout(false);

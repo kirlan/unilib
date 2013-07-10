@@ -41,7 +41,7 @@ namespace Persona.Consequences
             pXml.GetFloatAttribute(pParamNode, "delta", ref m_fDelta);
         }
 
-        internal override void SaveXML(UniLibXML pXml, XmlNode pConsequenceNode)
+        internal override void WriteXML(UniLibXML pXml, XmlNode pConsequenceNode)
         {
             pXml.AddAttribute(pConsequenceNode, "param", m_pParam.m_sName);
             pXml.AddAttribute(pConsequenceNode, "delta", m_fDelta);

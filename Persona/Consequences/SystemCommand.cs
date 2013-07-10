@@ -47,7 +47,7 @@ namespace Persona.Consequences
             m_eAction = (ActionType)temp;
         }
 
-        internal override void SaveXML(UniLibXML pXml, XmlNode pConsequenceNode)
+        internal override void WriteXML(UniLibXML pXml, XmlNode pConsequenceNode)
         {
             pXml.AddAttribute(pConsequenceNode, "command", m_eAction);
         }
