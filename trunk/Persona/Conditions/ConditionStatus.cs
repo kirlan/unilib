@@ -23,9 +23,9 @@ namespace Persona.Conditions
         {
         }
 
-        internal override void SaveXML(UniLibXML pXml, XmlNode pConditionNode)
+        internal override void WriteXML(UniLibXML pXml, XmlNode pConditionNode)
         {
-            base.SaveXML(pXml, pConditionNode);
+            base.WriteXML(pXml, pConditionNode);
         }
 
         public override string ToString()

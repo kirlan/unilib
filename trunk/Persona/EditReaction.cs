@@ -64,6 +64,7 @@ namespace Persona
 
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
+
         private void AddConditionComparsionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Parameter pParam1 = null;
@@ -147,9 +148,11 @@ namespace Persona
 
         private void listBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (m_iFocusedCondition != -1)
+            if (m_iFocusedCondition != -1 && m_iFocusedCondition < listBox1.Items.Count)
                 if (listBox1.GetItemRectangle(m_iFocusedCondition).Contains(e.Location))
                     return;
+            
+            m_iFocusedCondition = -1;
 
             for (int i = 0; i < listBox1.Items.Count; i++)
             {
@@ -256,6 +259,28 @@ namespace Persona
             {
                 listBox2.Items.Add(pConsequence);
             }
+        }
+
+        private int m_iFocusedConsequence = -1;
+
+        private void listBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (m_iFocusedConsequence != -1 && m_iFocusedConsequence < listBox2.Items.Count)
+                if (listBox2.GetItemRectangle(m_iFocusedConsequence).Contains(e.Location))
+                    return;
+            
+            m_iFocusedConsequence = -1;
+
+            for (int i = 0; i < listBox2.Items.Count; i++)
+            {
+                if (listBox2.GetItemRectangle(i).Contains(e.Location))
+                {
+                    m_iFocusedConsequence = i;
+                    break;
+                }
+            }
+
+            listBox2.SelectedIndex = m_iFocusedConsequence;
         }
     }
 }

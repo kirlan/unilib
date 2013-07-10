@@ -18,6 +18,18 @@ namespace Persona
         {
             InitializeComponent();
 
+            foreach (ColumnHeader pColumn in EventsListView.Columns)
+                m_cEventsColumnWidths[pColumn.Index] = (float)pColumn.Width / EventsListView.ClientSize.Width;
+
+            foreach (ColumnHeader pColumn in ReactionsListView.Columns)
+                m_cReactionsColumnWidths[pColumn.Index] = (float)pColumn.Width / ReactionsListView.ClientSize.Width;
+
+            foreach (ColumnHeader pColumn in TriggersListView.Columns)
+                m_cTriggersColumnWidths[pColumn.Index] = (float)pColumn.Width / TriggersListView.ClientSize.Width;
+
+            foreach (ColumnHeader pColumn in ParametersListView.Columns)
+                m_cParametersColumnWidths[pColumn.Index] = (float)pColumn.Width / ParametersListView.ClientSize.Width;
+
             UpdateModuleInfo();
         }
 
@@ -59,6 +71,12 @@ namespace Persona
 
             if (EventsListView.Items.Count > 0)
                 EventsListView.Items[0].Selected = true;
+
+            TriggersListView.Items.Clear();
+            foreach (var pTrigger in m_pModule.m_cTriggers)
+            {
+                AddTriggerInfo(pTrigger);
+            }
 
             ParametersTypesListBox.SelectedIndex = 0;
             ParametersTypesListBox_SelectedIndexChanged(this, new EventArgs());
@@ -103,9 +121,11 @@ namespace Persona
 
         private void ActionsListBox_MouseDown(object sender, MouseEventArgs e)
         {
-            if (m_iFocusedAction != -1)
+            if (m_iFocusedAction != -1 && m_iFocusedAction < ActionsListBox.Items.Count)
                 if (ActionsListBox.GetItemRectangle(m_iFocusedAction).Contains(e.Location))
                     return;
+
+            m_iFocusedAction = -1;
 
             for (int i = 0; i < ActionsListBox.Items.Count; i++)
             {
@@ -145,6 +165,34 @@ namespace Persona
             pItem.Tag = pReaction;
 
             ReactionsListView.Items.Add(pItem);
+        }
+
+        private void AddTriggerInfo(Trigger pTrigger)
+        {
+            ListViewItem pItem = new ListViewItem(pTrigger.m_sID);
+            pItem.SubItems.Add(pTrigger.m_bRepeatable ? "+" : "-");
+
+            string conditions = "";
+            foreach (var pCondition in pTrigger.m_cConditions)
+            {
+                if (conditions.Length > 0)
+                    conditions += " И ";
+                conditions += pCondition.ToString();
+            }
+            pItem.SubItems.Add(conditions);
+
+            string commands = "";
+            foreach (var pCommand in pTrigger.m_cConsequences)
+            {
+                if (commands.Length > 0)
+                    commands += ", ";
+                commands += pCommand.ToString();
+            }
+            pItem.SubItems.Add(commands);
+
+            pItem.Tag = pTrigger;
+
+            TriggersListView.Items.Add(pItem);
         }
 
         private void EventsListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -246,7 +294,7 @@ namespace Persona
             }
         }
 
-        private void добавитьНовыйПараметрToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AddParameterToolStripMenuItem_Click(object sender, EventArgs e)
         {
             switch (ParametersTypesListBox.SelectedIndex)
             {
@@ -262,13 +310,22 @@ namespace Persona
                     }
                     break;
                 case 1:
+                    {
+                        BoolParameter pParam = new BoolParameter();
+                        EditParameterBool pForm = new EditParameterBool(pParam);
+                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            m_pModule.m_cBoolParameters.Add(pParam);
+                            AddParameterInfo(pParam);
+                        }
+                    }
                     break;
                 case 2:
                     break;
             }
         }
 
-        private void редактироватьToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void EditParameterToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (ParametersListView.SelectedItems.Count == 0)
                 return;
@@ -289,6 +346,17 @@ namespace Persona
                     }
                     break;
                 case 1:
+                    {
+                        BoolParameter pParam = ParametersListView.SelectedItems[0].Tag as BoolParameter;
+                        EditParameterBool pForm = new EditParameterBool(pParam);
+                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            ParametersListView.SelectedItems[0].Text = pParam.m_sName;
+                            ParametersListView.SelectedItems[0].SubItems[1].Text = pParam.m_sGroup;
+                            ParametersListView.SelectedItems[0].SubItems[2].Text = pParam.m_bHidden ? "#" : "-";
+                            ParametersListView.SelectedItems[0].SubItems[3].Text = pParam.m_sComment;
+                        }
+                    }
                     break;
                 case 2:
                     break;
@@ -393,6 +461,180 @@ namespace Persona
             {
                 m_pModule.m_cEvents.Add(pEvent);
                 AddEventInfo(pEvent);
+            }
+        }
+
+        private Dictionary<int, float> m_cEventsColumnWidths = new Dictionary<int, float>();
+
+        private void EventsListView_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            m_cEventsColumnWidths[e.ColumnIndex] = (float)EventsListView.Columns[e.ColumnIndex].Width / EventsListView.ClientSize.Width;
+        }
+
+        private void EventsListView_SizeChanged(object sender, EventArgs e)
+        {
+            foreach (ColumnHeader pColumn in EventsListView.Columns)
+                pColumn.Width = (int)(m_cEventsColumnWidths[pColumn.Index] * EventsListView.ClientSize.Width);
+        }
+
+        private Dictionary<int, float> m_cReactionsColumnWidths = new Dictionary<int, float>();
+
+        private void ReactionsListView_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            m_cReactionsColumnWidths[e.ColumnIndex] = (float)ReactionsListView.Columns[e.ColumnIndex].Width / ReactionsListView.ClientSize.Width;
+        }
+
+        private void ReactionsListView_SizeChanged(object sender, EventArgs e)
+        {
+            foreach (ColumnHeader pColumn in ReactionsListView.Columns)
+                pColumn.Width = (int)(m_cReactionsColumnWidths[pColumn.Index] * ReactionsListView.ClientSize.Width);
+        }
+
+        private Dictionary<int, float> m_cParametersColumnWidths = new Dictionary<int, float>();
+
+        private void ParametersListView_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            m_cParametersColumnWidths[e.ColumnIndex] = (float)ParametersListView.Columns[e.ColumnIndex].Width / ParametersListView.ClientSize.Width;
+        }
+
+        private void ParametersListView_SizeChanged(object sender, EventArgs e)
+        {
+            foreach (ColumnHeader pColumn in ParametersListView.Columns)
+                pColumn.Width = (int)(m_cParametersColumnWidths[pColumn.Index] * ParametersListView.ClientSize.Width);
+        }
+
+        private void CopyReactionToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (EventsListView.SelectedItems.Count == 0)
+                return;
+
+            if (ReactionsListView.SelectedItems.Count == 0)
+                return;
+
+            Reaction pReaction = new Reaction(ReactionsListView.SelectedItems[0].Tag as Reaction);
+            EditReaction pForm = new EditReaction(pReaction, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Event pEvent = EventsListView.SelectedItems[0].Tag as Event;
+                pEvent.m_cReactions.Add(pReaction);
+
+                AddReactionInfo(pReaction);
+            }
+        }
+
+        private Dictionary<int, float> m_cTriggersColumnWidths = new Dictionary<int, float>();
+
+        private void TriggersListView_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            m_cTriggersColumnWidths[e.ColumnIndex] = (float)TriggersListView.Columns[e.ColumnIndex].Width / TriggersListView.ClientSize.Width;
+        }
+
+        private void TriggersListView_SizeChanged(object sender, EventArgs e)
+        {
+            foreach (ColumnHeader pColumn in TriggersListView.Columns)
+                pColumn.Width = (int)(m_cTriggersColumnWidths[pColumn.Index] * TriggersListView.ClientSize.Width);
+        }
+
+        private void toolStripMenuItem8_Click(object sender, EventArgs e)
+        {
+            Trigger pTrigger = new Trigger();
+
+            EditTrigger pForm = new EditTrigger(pTrigger, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_pModule.m_cTriggers.Add(pTrigger);
+                AddTriggerInfo(pTrigger);
+            }
+        }
+
+        private void toolStripMenuItem9_Click(object sender, EventArgs e)
+        {
+            if (TriggersListView.SelectedItems.Count == 0)
+                return;
+
+            EditTrigger pForm = new EditTrigger(TriggersListView.SelectedItems[0].Tag as Trigger, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                ListViewItem pItem = TriggersListView.SelectedItems[0];
+                pItem.SubItems[0].Text = pForm.m_pTrigger.m_sID.ToString();
+                pItem.SubItems[1].Text = pForm.m_pTrigger.m_bRepeatable ? "+" : "-";
+
+                string conditions = "";
+                foreach (var pCondition in pForm.m_pTrigger.m_cConditions)
+                {
+                    if (conditions.Length > 0)
+                        conditions += " И ";
+                    conditions += pCondition.ToString();
+                }
+                pItem.SubItems[2].Text = conditions;
+
+                string commands = "";
+                foreach (var pCommand in pForm.m_pTrigger.m_cConsequences)
+                {
+                    if (commands.Length > 0)
+                        commands += ", ";
+                    commands += pCommand.ToString();
+                }
+                pItem.SubItems[3].Text = commands;
+            }
+        }
+
+        private void toolStripMenuItem10_Click(object sender, EventArgs e)
+        {
+            if (TriggersListView.SelectedItems.Count == 0)
+                return;
+
+            Trigger pTrigger = new Trigger(TriggersListView.SelectedItems[0].Tag as Trigger);
+            EditTrigger pForm = new EditTrigger(pTrigger, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_pModule.m_cTriggers.Add(pTrigger);
+
+                AddTriggerInfo(pTrigger);
+            }
+        }
+
+        private void toolStripMenuItem11_Click(object sender, EventArgs e)
+        {
+            List<ListViewItem> cKills = new List<ListViewItem>();
+            foreach (ListViewItem pItem in TriggersListView.SelectedItems)
+                cKills.Add(pItem);
+
+            foreach (var pItem in cKills)
+            {
+                TriggersListView.Items.Remove(pItem);
+                m_pModule.m_cTriggers.Remove(pItem.Tag as Trigger);
+            }
+        }
+
+        private void DeleteParameterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ParametersListView.SelectedItems.Count == 0)
+                return;
+
+            switch (ParametersTypesListBox.SelectedIndex)
+            {
+                case 0:
+                    {
+                        NumericParameter pParam = ParametersListView.SelectedItems[0].Tag as NumericParameter;
+                        ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
+                        m_pModule.m_cNumericParameters.Remove(pParam);
+                    }
+                    break;
+                case 1:
+                    {
+                        BoolParameter pParam = ParametersListView.SelectedItems[0].Tag as BoolParameter;
+                        ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
+                        m_pModule.m_cBoolParameters.Remove(pParam);
+                    }
+                    break;
+                case 2:
+                    {
+                        StringParameter pParam = ParametersListView.SelectedItems[0].Tag as StringParameter;
+                        ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
+                        m_pModule.m_cStringParameters.Remove(pParam);
+                    }
+                    break;
             }
         }
     }

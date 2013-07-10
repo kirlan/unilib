@@ -70,9 +70,9 @@ namespace Persona.Conditions
             m_eType = (ComparsionType)temp;
         }
 
-        internal override void SaveXML(UniLibXML pXml, XmlNode pConditionNode)
+        internal override void WriteXML(UniLibXML pXml, XmlNode pConditionNode)
         {
-            base.SaveXML(pXml, pConditionNode);
+            base.WriteXML(pXml, pConditionNode);
 
             pXml.AddAttribute(pConditionNode, "param2", m_pParam2.m_sName);
             pXml.AddAttribute(pConditionNode, "relation", m_eType);

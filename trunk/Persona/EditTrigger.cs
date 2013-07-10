@@ -6,66 +6,39 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Persona.Consequences;
-using Persona.Conditions;
 using Persona.Parameters;
+using Persona.Conditions;
+using Persona.Consequences;
 
 namespace Persona
 {
-    public partial class EditEvent : Form
+    public partial class EditTrigger : Form
     {
-        public Event m_pEvent;
+        public Trigger m_pTrigger;
 
         public List<NumericParameter> m_cNumeric = new List<NumericParameter>();
         public List<BoolParameter> m_cBool = new List<BoolParameter>();
         public List<StringParameter> m_cString = new List<StringParameter>();
 
-        public EditEvent(Event pEvent, List<Action> cActions, List<NumericParameter> cNumeric, List<BoolParameter> cBool, List<StringParameter> cString)
+        public EditTrigger(Trigger pTrigger, List<NumericParameter> cNumeric, List<BoolParameter> cBool, List<StringParameter> cString)
         {
             InitializeComponent();
-
-            m_pEvent = pEvent;
+        
+            m_pTrigger = pTrigger;
 
             m_cNumeric = cNumeric;
             m_cBool = cBool;
             m_cString = cString;
 
-            textBox1.Text = m_pEvent.m_sID;
-
-            comboBox1.Items.Clear();
-            comboBox1.Items.AddRange(cActions.ToArray());
-            comboBox1.SelectedItem = m_pEvent.m_pAction;
+            textBox1.Text = m_pTrigger.m_sID;
 
             listBox1.Items.Clear();
-            listBox1.Items.AddRange(m_pEvent.m_pDescription.m_cConditions.ToArray());
-
-            textBox2.Text = m_pEvent.m_pDescription.m_sText;
-
-            listView1.Items.Clear();
-            foreach (var pAlternate in m_pEvent.m_cAlternateDescriptions)
-            {
-                string conditions = "";
-                foreach (var pCondition in pAlternate.m_cConditions)
-                {
-                    if (conditions.Length > 0)
-                        conditions += " И ";
-                    conditions += pCondition.ToString();
-                }
-
-                ListViewItem pItem = new ListViewItem(conditions);
-                pItem.SubItems.Add(pAlternate.m_sText);
-                
-                pItem.Tag = pAlternate;
-                listView1.Items.Add(pItem);
-            }
+            listBox1.Items.AddRange(m_pTrigger.m_cConditions.ToArray());
 
             listBox2.Items.Clear();
-            listBox2.Items.AddRange(m_pEvent.m_cConsequences.ToArray());
+            listBox2.Items.AddRange(m_pTrigger.m_cConsequences.ToArray());
 
-            numericUpDown1.Value = m_pEvent.m_iPriority;
-            numericUpDown2.Value = m_pEvent.m_iProbability;
-
-            if (m_pEvent.m_bRepeatable)
+            if (m_pTrigger.m_bRepeatable)
                 radioButton1.Checked = true;
             else
                 radioButton2.Checked = true;
@@ -73,29 +46,17 @@ namespace Persona
 
         private void button2_Click(object sender, EventArgs e)
         {
-            m_pEvent.m_sID = textBox1.Text;
-            
-            m_pEvent.m_pAction = comboBox1.SelectedItem as Action;
-            
-            m_pEvent.m_pDescription.m_cConditions.Clear();
+            m_pTrigger.m_sID = textBox1.Text;
+
+            m_pTrigger.m_cConditions.Clear();
             foreach (Condition pCondition in listBox1.Items)
-                m_pEvent.m_pDescription.m_cConditions.Add(pCondition);
+                m_pTrigger.m_cConditions.Add(pCondition);
 
-            m_pEvent.m_pDescription.m_sText = textBox2.Text;
-
-            m_pEvent.m_cAlternateDescriptions.Clear();
-            foreach (ListViewItem pItem in listView1.Items)
-                m_pEvent.m_cAlternateDescriptions.Add(pItem.Tag as Situation);
-
-            m_pEvent.m_cConsequences.Clear();
+            m_pTrigger.m_cConsequences.Clear();
             foreach (Consequence pConsequence in listBox2.Items)
-                m_pEvent.m_cConsequences.Add(pConsequence);
+                m_pTrigger.m_cConsequences.Add(pConsequence);
 
-            m_pEvent.m_iPriority = (int)numericUpDown1.Value;
-
-            m_pEvent.m_iProbability = (int)numericUpDown2.Value;
-
-            m_pEvent.m_bRepeatable = radioButton1.Checked;
+            m_pTrigger.m_bRepeatable = radioButton1.Checked;
 
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
@@ -186,7 +147,7 @@ namespace Persona
             if (m_iFocusedCondition != -1 && m_iFocusedCondition < listBox1.Items.Count)
                 if (listBox1.GetItemRectangle(m_iFocusedCondition).Contains(e.Location))
                     return;
-
+            
             m_iFocusedCondition = -1;
 
             for (int i = 0; i < listBox1.Items.Count; i++)
@@ -241,20 +202,20 @@ namespace Persona
         {
             Parameter pParam = null;
             string sValue = "";
-            if(m_cNumeric.Count> 0)
+            if (m_cNumeric.Count > 0)
             {
                 pParam = m_cNumeric[0];
                 sValue = "0";
             }
-            else if(m_cBool.Count > 0)
+            else if (m_cBool.Count > 0)
             {
                 pParam = m_cBool[0];
                 sValue = true.ToString();
             }
-            else if(m_cString.Count > 0)
+            else if (m_cString.Count > 0)
                 pParam = m_cString[0];
 
-            if(pParam == null)
+            if (pParam == null)
                 return;
 
             ParameterSet pConsequence = new ParameterSet(pParam, sValue);
