@@ -2951,15 +2951,14 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_001_0" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_001_1" action="Ждать клиента" description="Простой работяга. Предлагает $20 за быстрый секс без затей." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="0" max="2" />
         </Conditions>
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $5 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="0" max="0" />
             </Conditions>
@@ -2972,7 +2971,7 @@
               <ParameterChange param="Традиционный секс" delta="1" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
+          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил, заплатив сколько договаривались..." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="1" max="1" />
             </Conditions>
@@ -2985,7 +2984,7 @@
               <ParameterChange param="Традиционный секс" delta="0,05" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался доволен и от щедрот накинул ещё $5 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="2" max="2" />
             </Conditions>
@@ -2998,7 +2997,7 @@
               <ParameterChange param="Традиционный секс" delta="0,01" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался очень доволен и от щедрот накинул ещё $10 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="3" max="3" />
             </Conditions>
@@ -3011,7 +3010,7 @@
               <ParameterChange param="Традиционный секс" delta="0,005" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
+          <Reaction name="Согласиться" result="Клиент явно впечатлён вашим мастерством и заплатил $15 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="4" max="4" />
             </Conditions>
@@ -3024,7 +3023,7 @@
               <ParameterChange param="Традиционный секс" delta="0,01" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
+          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен и заплатил вдвое против изначально оговоренной суммы." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="5" max="5" />
             </Conditions>
@@ -3037,7 +3036,7 @@
               <ParameterChange param="Традиционный секс" delta="0,006" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
+          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось. Уходя, он заплатил тройную цену и сказал, что за такое никаких денег не жалко." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="6" max="6" />
             </Conditions>
@@ -3045,7 +3044,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="45" />
+              <ParameterChange param="Наличка" delta="60" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
             </Consequences>
           </Reaction>
@@ -3058,122 +3057,15 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_001_1" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_002_1" action="Ждать клиента" description="Шестёрка в банде - гонора много, денег поменьше. Предлагает $25 за быстрый перепихон." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="1" max="3" />
+          <Range param="Привлекательность" inverse="False" min="2" max="10" />
         </Conditions>
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="18" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="24" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="30" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,006" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="36" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,006" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="42" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="48" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="54" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_001_2" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="2" max="4" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $5 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="0" max="0" />
             </Conditions>
@@ -3186,7 +3078,7 @@
               <ParameterChange param="Традиционный секс" delta="1" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
+          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил, заплатив сколько договаривались..." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="1" max="1" />
             </Conditions>
@@ -3194,108 +3086,14 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="26" />
+              <ParameterChange param="Наличка" delta="25" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,05" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался доволен и от щедрот накинул ещё $5 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="33" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="40" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="46" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="53" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="60" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_001_3" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="3" max="5" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="23" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="1" max="1" />
             </Conditions>
             <Consequences>
               <ParameterChange param="Время суток" delta="1" />
@@ -3303,23 +3101,10 @@
               <ParameterChange param="Настроение" delta="-1" />
               <ParameterChange param="Наличка" delta="30" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="38" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался очень доволен и от щедрот накинул ещё $10 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="3" max="3" />
             </Conditions>
@@ -3327,12 +3112,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="46" />
+              <ParameterChange param="Наличка" delta="35" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
+          <Reaction name="Согласиться" result="Клиент явно впечатлён вашим мастерством и заплатил $20 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="4" max="4" />
             </Conditions>
@@ -3340,12 +3125,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="53" />
+              <ParameterChange param="Наличка" delta="45" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
+          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен и заплатил вдвое против изначально оговоренной суммы." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="5" max="5" />
             </Conditions>
@@ -3353,12 +3138,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="61" />
+              <ParameterChange param="Наличка" delta="50" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
+          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось. Уходя, он заплатил тройную цену и сказал, что за такое никаких денег не жалко." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="6" max="6" />
             </Conditions>
@@ -3366,7 +3151,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="69" />
+              <ParameterChange param="Наличка" delta="75" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
             </Consequences>
           </Reaction>
@@ -3379,15 +3164,15 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_001_4" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_003_1" action="Ждать клиента" description="&quot;Пиджак&quot; из делового квартала. Предлагает $30 за быстрый секс." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="4" max="6" />
+          <Range param="Привлекательность" inverse="False" min="4" max="10" />
         </Conditions>
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $5 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="0" max="0" />
             </Conditions>
@@ -3400,210 +3185,9 @@
               <ParameterChange param="Традиционный секс" delta="1" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
+          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил, заплатив сколько договаривались..." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="33" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="42" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="50" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="58" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="67" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="75" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_001_5" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="5" max="7" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="28" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="37" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="47" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="56" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="65" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="75" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="84" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_001_6" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="6" max="8" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="0" max="0" />
             </Conditions>
             <Consequences>
               <ParameterChange param="Время суток" delta="1" />
@@ -3611,12 +3195,25 @@
               <ParameterChange param="Настроение" delta="-1" />
               <ParameterChange param="Наличка" delta="30" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="1" />
+              <ParameterChange param="Традиционный секс" delta="0,05" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался доволен и от щедрот накинул ещё $5 сверху." visible="False">
             <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="1" max="1" />
+              <Range param="Традиционный секс" inverse="False" min="2" max="2" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="35" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Традиционный секс" delta="0,007" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент остался очень доволен и от щедрот накинул ещё $10 сверху." visible="False">
+            <Conditions>
+              <Range param="Традиционный секс" inverse="False" min="3" max="3" />
             </Conditions>
             <Consequences>
               <ParameterChange param="Время суток" delta="1" />
@@ -3624,12 +3221,12 @@
               <ParameterChange param="Настроение" delta="-1" />
               <ParameterChange param="Наличка" delta="40" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,05" />
+              <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
+          <Reaction name="Согласиться" result="Клиент явно впечатлён вашим мастерством и заплатил $20 сверху." visible="False">
             <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="2" max="2" />
+              <Range param="Традиционный секс" inverse="False" min="4" max="4" />
             </Conditions>
             <Consequences>
               <ParameterChange param="Время суток" delta="1" />
@@ -3640,9 +3237,9 @@
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
+          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен и заплатил вдвое против изначально оговоренной суммы." visible="False">
             <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="3" max="3" />
+              <Range param="Традиционный секс" inverse="False" min="5" max="5" />
             </Conditions>
             <Consequences>
               <ParameterChange param="Время суток" delta="1" />
@@ -3653,33 +3250,7 @@
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="70" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Традиционный секс" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="80" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Традиционный секс" delta="0,007" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
+          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось. Уходя, он заплатил тройную цену и сказал, что за такое никаких денег не жалко." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="6" max="6" />
             </Conditions>
@@ -3700,15 +3271,15 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_001_7" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_004_1" action="Ждать клиента" description="Небогатый турист, охотник за экзотикой. Предлагает $40 за обычный секс." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="7" max="9" />
+          <Range param="Привлекательность" inverse="False" min="6" max="10" />
         </Conditions>
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $10 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="0" max="0" />
             </Conditions>
@@ -3716,12 +3287,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="33" />
+              <ParameterChange param="Наличка" delta="30" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="1" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
+          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил, заплатив сколько договаривались..." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="1" max="1" />
             </Conditions>
@@ -3729,12 +3300,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="44" />
+              <ParameterChange param="Наличка" delta="40" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,05" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался доволен и от щедрот накинул ещё $10 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="2" max="2" />
             </Conditions>
@@ -3742,12 +3313,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="55" />
+              <ParameterChange param="Наличка" delta="50" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался очень доволен и от щедрот накинул ещё $20 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="3" max="3" />
             </Conditions>
@@ -3755,12 +3326,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="66" />
+              <ParameterChange param="Наличка" delta="60" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
+          <Reaction name="Согласиться" result="Клиент явно впечатлён вашим мастерством и заплатил $30 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="4" max="4" />
             </Conditions>
@@ -3768,12 +3339,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="77" />
+              <ParameterChange param="Наличка" delta="70" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
+          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен и заплатил вдвое против изначально оговоренной суммы." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="5" max="5" />
             </Conditions>
@@ -3781,12 +3352,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="88" />
+              <ParameterChange param="Наличка" delta="80" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
+          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось. Уходя, он заплатил тройную цену и сказал, что за такое никаких денег не жалко." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="6" max="6" />
             </Conditions>
@@ -3794,7 +3365,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="99" />
+              <ParameterChange param="Наличка" delta="120" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
             </Consequences>
           </Reaction>
@@ -3807,7 +3378,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_001_8" action="Ждать клиента" description="Обычный перепихон, без затей." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_005_1" action="Ждать клиента" description="Богатый турист, любитель посорить деньгами. Предлагает $50 за быстрый трах." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
           <Range param="Привлекательность" inverse="False" min="8" max="10" />
@@ -3815,7 +3386,7 @@
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $15 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="0" max="0" />
             </Conditions>
@@ -3828,7 +3399,7 @@
               <ParameterChange param="Традиционный секс" delta="1" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил. Он выглядел удовлетворённым, но не более того..." visible="False">
+          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил, заплатив сколько договаривались..." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="1" max="1" />
             </Conditions>
@@ -3836,12 +3407,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="47" />
+              <ParameterChange param="Наличка" delta="50" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,05" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Сделав своё дело, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался доволен и от щедрот накинул ещё $10 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="2" max="2" />
             </Conditions>
@@ -3849,12 +3420,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="58" />
+              <ParameterChange param="Наличка" delta="60" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
+          <Reaction name="Согласиться" result="Клиент остался очень доволен и от щедрот накинул ещё $20 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="3" max="3" />
             </Conditions>
@@ -3867,7 +3438,7 @@
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
+          <Reaction name="Согласиться" result="Клиент явно впечатлён вашим мастерством и заплатил $35 сверху." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="4" max="4" />
             </Conditions>
@@ -3875,12 +3446,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="82" />
+              <ParameterChange param="Наличка" delta="85" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен." visible="False">
+          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен и заплатил вдвое против изначально оговоренной суммы." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="5" max="5" />
             </Conditions>
@@ -3888,12 +3459,12 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="93" />
+              <ParameterChange param="Наличка" delta="100" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Традиционный секс" delta="0,007" />
             </Consequences>
           </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
+          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось. Уходя, он заплатил тройную цену и сказал, что за такое никаких денег не жалко." visible="False">
             <Conditions>
               <Range param="Традиционный секс" inverse="False" min="6" max="6" />
             </Conditions>
@@ -3901,7 +3472,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="105" />
+              <ParameterChange param="Наличка" delta="150" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
             </Consequences>
           </Reaction>
@@ -3914,15 +3485,121 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_002_0" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_001_2" action="Ждать клиента" description="Простой работяга. Предлагает $10 за то чтобы ты ему быстренько отсосала." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="0" max="2" />
         </Conditions>
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $5 меньше чем обещал." visible="False">
+            <Conditions>
+              <Range param="Орал" inverse="False" min="0" max="0" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="5" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Орал" delta="1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил, заплатив сколько договаривались..." visible="False">
+            <Conditions>
+              <Range param="Орал" inverse="False" min="1" max="1" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="10" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Орал" delta="0,05" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент остался доволен и от щедрот накинул ещё пару баксов сверху." visible="False">
+            <Conditions>
+              <Range param="Орал" inverse="False" min="2" max="2" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="12" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Орал" delta="0,01" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент остался очень доволен и от щедрот накинул ещё $5 сверху." visible="False">
+            <Conditions>
+              <Range param="Орал" inverse="False" min="3" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="15" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Орал" delta="0,005" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент явно впечатлён вашим мастерством и заплатил $7 сверху." visible="False">
+            <Conditions>
+              <Range param="Орал" inverse="False" min="4" max="4" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="17" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Орал" delta="0,01" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Вы высосали клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен и заплатил вдвое против изначально оговоренной суммы." visible="False">
+            <Conditions>
+              <Range param="Орал" inverse="False" min="5" max="5" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="20" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Орал" delta="0,006" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось. Уходя, он заплатил тройную цену и сказал, что за такое никаких денег не жалко." visible="False">
+            <Conditions>
+              <Range param="Орал" inverse="False" min="6" max="6" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="30" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Отказаться" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Настроение" delta="-1" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="streets_wait_jack_002_2" action="Ждать клиента" description="Шестёрка в банде - гонора много, денег поменьше. Предлагает $15 за отсос." repeat="True" priority="1" probability="10">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="11" max="11" />
+          <Range param="Привлекательность" inverse="False" min="2" max="10" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $5 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Орал" inverse="False" min="0" max="0" />
             </Conditions>
@@ -3943,221 +3620,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="13" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Кончив, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="17" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="20" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,005" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="23" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы высосали клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="27" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,006" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="30" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_002_1" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="1" max="3" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="13" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он выглядел облегчённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="17" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Кончив, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="22" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="26" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,005" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="30" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы высосали клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="35" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,006" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="39" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_002_2" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="2" max="4" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
               <ParameterChange param="Наличка" delta="15" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он выглядел облегчённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="20" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Орал" delta="0,05" />
             </Consequences>
@@ -4235,15 +3698,15 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_002_3" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_003_2" action="Ждать клиента" description="&quot;Пиджак&quot; из делового квартала. Предлагает $20 за простой минет." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="3" max="5" />
+          <Range param="Привлекательность" inverse="False" min="4" max="10" />
         </Conditions>
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $5 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Орал" inverse="False" min="0" max="0" />
             </Conditions>
@@ -4251,114 +3714,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="18" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он выглядел облегчённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="24" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Кончив, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="30" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="36" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,005" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="42" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы высосали клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="48" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,006" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="54" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_002_4" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="4" max="6" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="20" />
+              <ParameterChange param="Наличка" delta="15" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Орал" delta="1" />
             </Consequences>
@@ -4449,15 +3805,15 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_002_5" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_004_2" action="Ждать клиента" description="Небогатый турист, охотник за экзотикой. Предлагает $25 за обычный минет." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="5" max="7" />
+          <Range param="Привлекательность" inverse="False" min="6" max="10" />
         </Conditions>
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $10 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Орал" inverse="False" min="0" max="0" />
             </Conditions>
@@ -4465,114 +3821,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="23" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он выглядел облегчённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="30" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Кончив, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="38" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="46" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,005" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="53" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы высосали клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="61" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,006" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="69" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_002_6" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="6" max="8" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="25" />
+              <ParameterChange param="Наличка" delta="15" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Орал" delta="1" />
             </Consequences>
@@ -4663,114 +3912,7 @@
           </Reaction>
         </Reactions>
       </Event>
-      <Event id="streets_wait_jack_002_7" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
-        <Conditions>
-          <Range param="Локация" inverse="False" min="11" max="11" />
-          <Range param="Привлекательность" inverse="False" min="7" max="9" />
-        </Conditions>
-        <Alternatives />
-        <Consequences />
-        <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="0" max="0" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="28" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="1" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он выглядел облегчённым, но не более того..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="1" max="1" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="37" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,05" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Кончив, клиент свалил. Похоже, ему понравилось, и он заплатил немного больше чем собирался..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="2" max="2" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="47" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен..." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="3" max="3" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="56" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,005" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент остался явно впечатлён вашим мастерством." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="4" max="4" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="65" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Вы высосали клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя. Он остался очень доволен." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="5" max="5" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="75" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-              <ParameterChange param="Орал" delta="0,006" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
-            <Conditions>
-              <Range param="Орал" inverse="False" min="6" max="6" />
-            </Conditions>
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Энергия" delta="-1" />
-              <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="84" />
-              <ParameterChange param="Обслужено клиентов" delta="0,01" />
-            </Consequences>
-          </Reaction>
-          <Reaction name="Отказаться" result="" visible="False">
-            <Conditions />
-            <Consequences>
-              <ParameterChange param="Время суток" delta="1" />
-              <ParameterChange param="Настроение" delta="-1" />
-            </Consequences>
-          </Reaction>
-        </Reactions>
-      </Event>
-      <Event id="streets_wait_jack_002_8" action="Ждать клиента" description="Просто отсос." repeat="True" priority="1" probability="10">
+      <Event id="streets_wait_jack_005_2" action="Ждать клиента" description="Богатый турист, любитель посорить деньгами. Предлагает $30 за банальный минет." repeat="True" priority="1" probability="10">
         <Conditions>
           <Range param="Локация" inverse="False" min="11" max="11" />
           <Range param="Привлекательность" inverse="False" min="8" max="10" />
@@ -4778,7 +3920,7 @@
         <Alternatives />
         <Consequences />
         <Reactions>
-          <Reaction name="Согласиться" result="Спустив, клиент молча свалил. Он не выглядел довольным, но это и понятно..." visible="False">
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $10 меньше чем обещал." visible="False">
             <Conditions>
               <Range param="Орал" inverse="False" min="0" max="0" />
             </Conditions>
@@ -4786,7 +3928,7 @@
               <ParameterChange param="Время суток" delta="1" />
               <ParameterChange param="Энергия" delta="-1" />
               <ParameterChange param="Настроение" delta="-1" />
-              <ParameterChange param="Наличка" delta="30" />
+              <ParameterChange param="Наличка" delta="20" />
               <ParameterChange param="Обслужено клиентов" delta="0,01" />
               <ParameterChange param="Орал" delta="1" />
             </Consequences>
@@ -4859,6 +4001,112 @@
           <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось." visible="False">
             <Conditions>
               <Range param="Орал" inverse="False" min="6" max="6" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="90" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Отказаться" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Настроение" delta="-1" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="streets_wait_jack_001_3" action="Ждать клиента" description="Простой работяга. Предлагает $30 за трах в жопу." repeat="True" priority="1" probability="10">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="11" max="11" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Согласиться" result="Клиент ушёл злой и неудовлетворённый, заплатив на $10 меньше чем обещал." visible="False">
+            <Conditions>
+              <Range param="Анал" inverse="False" min="0" max="0" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="20" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Анал" delta="1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Сделав своё дело, клиент молча свалил, заплатив сколько договаривались..." visible="False">
+            <Conditions>
+              <Range param="Анал" inverse="False" min="1" max="1" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="30" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Анал" delta="0,05" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент остался доволен и от щедрот накинул ещё $5 сверху." visible="False">
+            <Conditions>
+              <Range param="Анал" inverse="False" min="2" max="2" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="35" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Анал" delta="0,01" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент явно остался весьма доволен...Клиент остался очень доволен и от щедрот накинул ещё $10 сверху." visible="False">
+            <Conditions>
+              <Range param="Анал" inverse="False" min="3" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="40" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Анал" delta="0,005" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент явно впечатлён вашим мастерством и заплатил $20 сверху." visible="False">
+            <Conditions>
+              <Range param="Анал" inverse="False" min="4" max="4" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="50" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Анал" delta="0,01" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Вы выдоили клиента досуха. Ему потребовалось некоторое время, чтобы прийдти в себя после секса. Он остался очень доволен и заплатил вдвое против изначально оговоренной суммы." visible="False">
+            <Conditions>
+              <Range param="Анал" inverse="False" min="5" max="5" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Время суток" delta="1" />
+              <ParameterChange param="Энергия" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <ParameterChange param="Наличка" delta="60" />
+              <ParameterChange param="Обслужено клиентов" delta="0,01" />
+              <ParameterChange param="Анал" delta="0,006" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Согласиться" result="Клиент бился в экстазе и кончил несколько раз... В какой-то момент вам даже показалось, что он вот-вот откинет копыта, но обошлось. Уходя, он заплатил тройную цену и сказал, что за такое никаких денег не жалко." visible="False">
+            <Conditions>
+              <Range param="Анал" inverse="False" min="6" max="6" />
             </Conditions>
             <Consequences>
               <ParameterChange param="Время суток" delta="1" />
