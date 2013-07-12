@@ -180,7 +180,7 @@ namespace Persona
                 ParameterSet pConsequence = listBox2.SelectedItem as ParameterSet;
                 EditConsequenceSet pForm = new EditConsequenceSet(pConsequence, m_cNumeric, m_cBool, m_cString);
                 if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    listBox2.Refresh();
+                    listBox2.PerformLayout();
             }
             if (listBox2.SelectedItem is ParameterChange)
             {

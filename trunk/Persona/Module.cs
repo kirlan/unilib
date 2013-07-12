@@ -43,6 +43,11 @@ namespace Persona
         public List<Trigger> m_cTriggers = new List<Trigger>();
 
         /// <summary>
+        /// Список функций.
+        /// </summary>
+        public List<Function> m_cFunctions = new List<Function>();
+
+        /// <summary>
         /// Список числовых параметров, описывающих игровую ситуацию в конкретный момент времени.
         /// Числовые параметры могут участвовать в условиях сравнения и попадания в диапазон.
         /// </summary>
@@ -196,6 +201,13 @@ namespace Persona
                 pTrigger.WriteXML(pXml, pTriggerNode);
             }
 
+            XmlNode pFunctionsNode = pXml.CreateNode(pModuleNode, "Functions");
+            foreach (Function pFunction in m_cFunctions)
+            {
+                XmlNode pFunctionNode = pXml.CreateNode(pFunctionsNode, "Function");
+                pFunction.WriteXML(pXml, pFunctionNode);
+            }
+
             pXml.Write(sFilename);
         }
 
@@ -212,6 +224,7 @@ namespace Persona
             m_cActions.Clear();
             m_cEvents.Clear();
             m_cTriggers.Clear();
+            m_cFunctions.Clear();
 
             if (pXml.Root.ChildNodes.Count == 1 && pXml.Root.ChildNodes[0].Name == "Module")
             {
@@ -295,6 +308,17 @@ namespace Persona
                             {
                                 Trigger pTrigger = new Trigger(pXml, pTriggerNode, cParams);
                                 m_cTriggers.Add(pTrigger);
+                            }
+                        }
+                    }
+                    if (pSection.Name == "Functions")
+                    {
+                        foreach (XmlNode pFunctionNode in pSection.ChildNodes)
+                        {
+                            if (pFunctionNode.Name == "Function")
+                            {
+                                Function pFunction = new Function(pXml, pFunctionNode, cParams);
+                                m_cFunctions.Add(pFunction);
                             }
                         }
                     }
