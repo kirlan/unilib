@@ -37,6 +37,14 @@ namespace Persona.Parameters
         { 
         }
 
+        public Parameter(Parameter pOrigin)
+        {
+            m_sName = pOrigin.m_sName + " (копия)";
+            m_sGroup = pOrigin.m_sGroup;
+            m_sComment = pOrigin.m_sComment;
+            m_bHidden = pOrigin.m_bHidden;
+        }
+
         public Parameter(UniLibXML pXml, XmlNode pParamNode)
         {
             pXml.GetStringAttribute(pParamNode, "name", ref m_sName);

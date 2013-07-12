@@ -15,7 +15,13 @@ namespace Persona.Parameters
         public bool m_bDefaultValue = false;
 
         public BoolParameter()
-        { 
+        {
+        }
+
+        public BoolParameter(BoolParameter pOrigin)
+            :base(pOrigin)
+        {
+            m_bDefaultValue = pOrigin.m_bDefaultValue;
         }
 
         public BoolParameter(string sName, string sGroup)

@@ -184,7 +184,10 @@ namespace Persona
                 ParameterSet pConsequence = listBox2.SelectedItem as ParameterSet;
                 EditConsequenceSet pForm = new EditConsequenceSet(pConsequence, m_cNumeric, m_cBool, m_cString);
                 if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
                     listBox2.Refresh();
+                    s_pLastConsequence = pConsequence;
+                }
             }
             if (listBox2.SelectedItem is ParameterChange)
             {
@@ -202,22 +205,33 @@ namespace Persona
             }
         }
 
+        private static ParameterSet s_pLastConsequence = null;
+
         private void AddConsequenceSetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Parameter pParam = null;
             string sValue = "";
-            if (m_cNumeric.Count > 0)
+
+            if (s_pLastConsequence == null)
             {
-                pParam = m_cNumeric[0];
-                sValue = "0";
+                if (m_cNumeric.Count > 0)
+                {
+                    pParam = m_cNumeric[0];
+                    sValue = "0";
+                }
+                else if (m_cBool.Count > 0)
+                {
+                    pParam = m_cBool[0];
+                    sValue = true.ToString();
+                }
+                else if (m_cString.Count > 0)
+                    pParam = m_cString[0];
             }
-            else if (m_cBool.Count > 0)
+            else
             {
-                pParam = m_cBool[0];
-                sValue = true.ToString();
+                pParam = s_pLastConsequence.m_pParam;
+                sValue = s_pLastConsequence.m_sNewValue;
             }
-            else if (m_cString.Count > 0)
-                pParam = m_cString[0];
 
             if (pParam == null)
                 return;
@@ -227,6 +241,7 @@ namespace Persona
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 listBox2.Items.Add(pConsequence);
+                s_pLastConsequence = pConsequence;
             }
         }
 

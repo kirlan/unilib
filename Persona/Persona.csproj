@@ -100,6 +100,12 @@
     <Compile Include="EditEvent.Designer.cs">
       <DependentUpon>EditEvent.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditFunction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditFunction.Designer.cs">
+      <DependentUpon>EditFunction.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditParameterBool.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,6 +130,12 @@
     <Compile Include="EditReaction.Designer.cs">
       <DependentUpon>EditReaction.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditRule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditRule.Designer.cs">
+      <DependentUpon>EditRule.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditTrigger.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,6 +151,7 @@
     <Compile Include="Conditions\ConditionComparsion.cs" />
     <Compile Include="Conditions\ConditionRange.cs" />
     <Compile Include="Conditions\ConditionStatus.cs" />
+    <Compile Include="Function.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -180,6 +193,9 @@
     <EmbeddedResource Include="EditEvent.resx">
       <DependentUpon>EditEvent.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EditFunction.resx">
+      <DependentUpon>EditFunction.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EditParameterBool.resx">
       <DependentUpon>EditParameterBool.cs</DependentUpon>
     </EmbeddedResource>
@@ -191,6 +207,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditReaction.resx">
       <DependentUpon>EditReaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditRule.resx">
+      <DependentUpon>EditRule.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EditTrigger.resx">
       <DependentUpon>EditTrigger.cs</DependentUpon>

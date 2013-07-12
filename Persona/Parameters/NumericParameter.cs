@@ -30,6 +30,17 @@ namespace Persona.Parameters
             /// </summary>
             public string m_sDescription;
 
+            public Range()
+            { 
+            }
+
+            public Range(Range pOrigin)
+            {
+                m_fMin = pOrigin.m_fMin;
+                m_fMax = pOrigin.m_fMax;
+                m_sDescription = pOrigin.m_sDescription;
+            }
+
             public override string ToString()
             {
                 return string.Format("{0}..{1} [{2}]", m_fMin, m_fMax, m_sDescription);
@@ -59,9 +70,20 @@ namespace Persona.Parameters
         /// Максимальное возможное значение
         /// </summary>
         public float m_fMax = 100;
-        
+
         public NumericParameter()
-        { 
+        {
+        }
+
+        public NumericParameter(NumericParameter pOrigin)
+            :base(pOrigin)
+        {
+            m_fDefaultValue = pOrigin.m_fDefaultValue;
+            m_fMin = pOrigin.m_fMin;
+            m_fMax = pOrigin.m_fMax;
+
+            foreach (var pRange in pOrigin.m_cRanges)
+                m_cRanges.Add(new Range(pRange));
         }
 
         public NumericParameter(string sName, string sGroup)
