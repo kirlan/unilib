@@ -14,6 +14,11 @@ namespace Persona.Parameters
         /// </summary>
         public string m_sDefaultValue = "";
 
+        /// <summary>
+        /// Значение в течение игры.
+        /// </summary>
+        public string m_sValue = "";
+
         public StringParameter(UniLibXML pXml, XmlNode pParamNode)
             : base(pXml, pParamNode)
         {
@@ -25,6 +30,11 @@ namespace Persona.Parameters
             base.WriteXML(pXml, pParamNode);
 
             pXml.AddAttribute(pParamNode, "value", m_sDefaultValue);
+        }
+
+        public override void Init()
+        {
+            m_sValue = m_sDefaultValue;
         }
     }
 }

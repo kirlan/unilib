@@ -18,6 +18,11 @@ namespace Persona
         {
             InitializeComponent();
 
+            ParameterStringPanel.Location = new Point(0,0);
+            ParameterStringPanel.Size = ParameterPanel.ClientSize;
+            ParameterStringPanel.Visible = true;
+            ParameterStringPanel.Enabled = false;
+
             m_pConsequence = pConsequence;
 
             switch (m_pConsequence.m_eAction)
@@ -30,6 +35,11 @@ namespace Persona
                     break;
                 case SystemCommand.ActionType.Return:
                     radioButton3.Checked = true;
+                    break;
+                case SystemCommand.ActionType.SetDescription:
+                    radioButton4.Checked = true;
+                    ParameterStringPanel.Enabled = true;
+                    ParameterTextBox.Text = m_pConsequence.m_pValue as string;
                     break;
             }
         }
@@ -45,7 +55,18 @@ namespace Persona
             if (radioButton3.Checked)
                 m_pConsequence.m_eAction = SystemCommand.ActionType.Return;
 
+            if (radioButton4.Checked)
+            {
+                m_pConsequence.m_eAction = SystemCommand.ActionType.Return;
+                m_pConsequence.m_pValue = ParameterTextBox.Text;
+            }
+
             DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            ParameterStringPanel.Enabled = radioButton4.Checked;
         }
     }
 }

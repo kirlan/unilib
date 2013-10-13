@@ -12,5 +12,7 @@ namespace Persona.Consequences
         internal abstract void WriteXML(UniLibXML pXml, XmlNode pConsequenceNode);
 
         public abstract Consequence Clone();
+
+        internal abstract void Apply(Module pModule);
     }
 }

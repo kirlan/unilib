@@ -76,5 +76,14 @@ namespace Persona.Conditions
 
             return pNew;
         }
+
+        public override bool Check()
+        {
+            float fValue = (m_pParam1 as NumericParameter).m_fValue;
+
+            bool bRes = (fValue >= m_fMinValue && fValue <= m_fMaxValue);
+
+            return m_bNot ? !bRes : bRes;
+        }
     }
 }

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ColumnHeader columnHeader3;
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.загрузитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,7 +44,7 @@
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip_Events = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip_Events = new System.Windows.Forms.ContextMenuStrip();
             this.добавитьНовуюКартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.клонироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +57,7 @@
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip_Reactions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip_Reactions = new System.Windows.Forms.ContextMenuStrip();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.клонироватьToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,7 +68,7 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.ActionsListBox = new System.Windows.Forms.CheckedListBox();
-            this.contextMenuStrip_Actions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip_Actions = new System.Windows.Forms.ContextMenuStrip();
             this.добавитьНовуюМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.переименоватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьМастьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,7 +84,7 @@
             this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip_Triggers = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip_Triggers = new System.Windows.Forms.ContextMenuStrip();
             this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripMenuItem();
@@ -95,8 +94,9 @@
             this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripMenuItem();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label12 = new System.Windows.Forms.Label();
             this.FunctionsListBox = new System.Windows.Forms.ListBox();
-            this.contextMenuStrip_Functions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip_Functions = new System.Windows.Forms.ContextMenuStrip();
             this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripMenuItem();
@@ -105,7 +105,7 @@
             this.RulesListView = new System.Windows.Forms.ListView();
             this.columnHeader22 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip_Rules = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip_Rules = new System.Windows.Forms.ContextMenuStrip();
             this.toolStripMenuItem17 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,7 +121,7 @@
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip_Parameters = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip_Parameters = new System.Windows.Forms.ContextMenuStrip();
             this.добавитьНовыйПараметрToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактироватьToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.клонироватьToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -138,7 +138,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.label12 = new System.Windows.Forms.Label();
             columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -200,6 +199,7 @@
             this.проверитьToolStripMenuItem.Name = "проверитьToolStripMenuItem";
             this.проверитьToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
             this.проверитьToolStripMenuItem.Text = "Проверить";
+            this.проверитьToolStripMenuItem.Click += new System.EventHandler(this.проверитьToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
@@ -742,6 +742,15 @@
             this.tabPage4.Text = "Функции";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(129, 3);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(273, 13);
+            this.label12.TabIndex = 11;
+            this.label12.Text = "Правила вычисления значения выбранной функции:";
+            // 
             // FunctionsListBox
             // 
             this.FunctionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1121,15 +1130,6 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Файлы XML|*.xml|Все файлы|*.*";
             this.openFileDialog1.Title = "Считывание игрового модуля \"Персона\"";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(129, 3);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(273, 13);
-            this.label12.TabIndex = 11;
-            this.label12.Text = "Правила вычисления значения выбранной функции:";
             // 
             // Form1
             // 

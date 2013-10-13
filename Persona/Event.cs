@@ -249,5 +249,37 @@ namespace Persona
                 pReaction.WriteXML(pXml, pReactionNode);
             }
         }
+
+        internal List<Reaction> GetPossibleReactions()
+        {
+            List<Reaction> cPossible = new List<Reaction>();
+
+            foreach (Reaction pReaction in m_cReactions)
+            {
+                bool bPossible = true;
+
+                foreach (Condition pCondition in pReaction.m_cConditions)
+                {
+                    if (!pCondition.Check())
+                    {
+                        bPossible = false;
+                        break;
+                    }
+                }
+
+                if (pReaction.m_bAlwaysVisible || pReaction.Possible())
+                {
+                    cPossible.Add(pReaction);
+                }
+            }
+
+            return cPossible;
+        }
+
+        internal void PostReaction(Module pModule)
+        {
+            foreach (Consequence pConsequence in m_cConsequences)
+                pConsequence.Apply(pModule);
+        }
     }
 }

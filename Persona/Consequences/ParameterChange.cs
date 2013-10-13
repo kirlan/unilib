@@ -58,5 +58,19 @@ namespace Persona.Consequences
 
             return pNew;
         }
+
+        internal override void Apply(Module pModule)
+        {
+            NumericParameter pParam = m_pParam as NumericParameter;
+
+            if (pParam == null)
+                return;
+
+            pParam.m_fValue += m_fDelta;
+            if (pParam.m_fValue < pParam.m_fMin)
+                pParam.m_fValue = pParam.m_fMin;
+            if (pParam.m_fValue > pParam.m_fMax)
+                pParam.m_fValue = pParam.m_fMax;
+        }
     }
 }

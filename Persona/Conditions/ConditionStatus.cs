@@ -40,5 +40,12 @@ namespace Persona.Conditions
 
             return pNew;
         }
+
+        public override bool Check()
+        {
+            bool bValue = (m_pParam1 as BoolParameter).m_bValue;
+
+            return m_bNot ? !bValue : bValue;
+        }
     }
 }

@@ -86,5 +86,42 @@ namespace Persona.Consequences
 
             return pNew;
         }
+
+        internal override void Apply(Module pModule)
+        {
+            if (m_pParam is NumericParameter)
+            {
+                NumericParameter pParam = m_pParam as NumericParameter;
+
+                float fValue;
+                if (float.TryParse(m_sNewValue, out fValue))
+                    pParam.m_fValue = fValue;
+
+                if (pParam.m_fValue < pParam.m_fMin)
+                    pParam.m_fValue = pParam.m_fMin;
+                if (pParam.m_fValue > pParam.m_fMax)
+                    pParam.m_fValue = pParam.m_fMax;
+            }
+            if (m_pParam is BoolParameter)
+            {
+                BoolParameter pParam = m_pParam as BoolParameter;
+
+                bool bNewValue = true;
+                if (!bool.TryParse(m_sNewValue, out bNewValue))
+                {
+                    float fNewValue = 0;
+                    float.TryParse(m_sNewValue, out fNewValue);
+                    bNewValue = (fNewValue > 0);
+                }
+
+                pParam.m_bValue = bNewValue;
+            }
+            if (m_pParam is StringParameter)
+            {
+                StringParameter pParam = m_pParam as StringParameter;
+
+                pParam.m_sValue = m_sNewValue;
+            }
+        }
     }
 }

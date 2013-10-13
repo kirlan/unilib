@@ -65,5 +65,7 @@ namespace Persona.Parameters
         {
             return m_sGroup + ": " + m_sName;
         }
+
+        public abstract void Init();
     }
 }
