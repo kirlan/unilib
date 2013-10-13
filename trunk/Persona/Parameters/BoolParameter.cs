@@ -14,6 +14,11 @@ namespace Persona.Parameters
         /// </summary>
         public bool m_bDefaultValue = false;
 
+        /// <summary>
+        /// Значение в течение игры.
+        /// </summary>
+        public bool m_bValue = false;
+
         public BoolParameter()
         {
         }
@@ -41,6 +46,11 @@ namespace Persona.Parameters
             base.WriteXML(pXml, pParamNode);
 
             pXml.AddAttribute(pParamNode, "value", m_bDefaultValue);
+        }
+
+        public override void Init()
+        {
+            m_bValue = m_bDefaultValue;
         }
     }
 }

@@ -49,5 +49,7 @@ namespace Persona.Conditions
         }
 
         public abstract Condition Clone();
+
+        public abstract bool Check();
     }
 }

@@ -162,5 +162,24 @@ namespace Persona
                 }
             }
         }
+
+        internal bool Possible()
+        {
+            foreach (Condition pCondition in m_cConditions)
+            {
+                if (!pCondition.Check())
+                    return false;
+            }
+
+            return true;
+        }
+
+        internal string Execute(Module pModule)
+        {
+            foreach (Consequence pConsequence in m_cConsequences)
+                pConsequence.Apply(pModule);
+                
+            return m_sResult;
+        }
     }
 }

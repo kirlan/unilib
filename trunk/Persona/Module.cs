@@ -14,18 +14,24 @@ namespace Persona
     /// Игровой модуль. Содержит набор ситуаций, список категорий по которым эти ситуации распределены и 
     /// список параметров, описывающих игровую ситуацию в конкретный момент времени.
     /// </summary>
-    class Module
+    public class Module
     {
         /// <summary>
         /// Короткое имя модуля.
         /// </summary>
         public string m_sName = "Новый модуль";
-        
+
         /// <summary>
         /// Длинное описание модуля, модет содержать в себе описание игрового мира, в котором происходит действие,
         /// предысторию событий, указания на то, чего следует ожидать игрокам...
         /// </summary>
         public string m_sDescription = "Описание отсутствует";
+
+        /// <summary>
+        /// Текст, выводимый при выборе действий, например - описывающий текущую локацию или ситуацию.
+        /// В XML не пишется, изменяется при помощи специальной команды.
+        /// </summary>
+        public string m_sHeader = "";
 
         /// <summary>
         /// Список действий, порождающих события, например - "Секс", "Работа", "Учёба"...
@@ -324,6 +330,134 @@ namespace Persona
                     }
                 }
             }
+        }
+
+        public bool m_bGameOver = false;
+
+        public void Start()
+        {
+            foreach (var pParam in m_cNumericParameters)
+                pParam.Init();
+            foreach (var pParam in m_cBoolParameters)
+                pParam.Init();
+            foreach (var pParam in m_cStringParameters)
+                pParam.Init();
+
+            m_bGameOver = false;
+        }
+
+        public bool m_bRollback = false;
+
+        public bool m_bRandomRound = false;
+
+        public List<Action> GetPossibleActions()
+        {
+            Dictionary<Action, int> cPossible = new Dictionary<Action, int>();
+
+            int iMaxPriority = int.MinValue;
+
+            if (!m_bGameOver)
+            {
+                foreach (Event pEvent in m_cEvents)
+                {
+                    if (cPossible.ContainsKey(pEvent.m_pAction))
+                    {
+                        if (cPossible[pEvent.m_pAction] < pEvent.m_iPriority)
+                        {
+                            cPossible[pEvent.m_pAction] = pEvent.m_iPriority;
+                            if (iMaxPriority < pEvent.m_iPriority)
+                                iMaxPriority = pEvent.m_iPriority;
+                        }
+                        continue;
+                    }
+
+                    bool bPossible = true;
+
+                    foreach (Condition pCondition in pEvent.m_pDescription.m_cConditions)
+                    {
+                        if (!pCondition.Check())
+                        {
+                            bPossible = false;
+                            break;
+                        }
+                    }
+
+                    if (bPossible)
+                    {
+                        cPossible[pEvent.m_pAction] = pEvent.m_iPriority;
+                        if (iMaxPriority < pEvent.m_iPriority)
+                            iMaxPriority = pEvent.m_iPriority;
+                    }
+                }
+            }
+
+            List<Action> cAvailable = new List<Action>();
+
+            foreach (var pEvent in cPossible)
+                if (pEvent.Value == iMaxPriority)
+                    cAvailable.Add(pEvent.Key);
+
+            if (!m_bRollback)
+                m_cPinnedEvents.Clear();
+
+            m_bRollback = false;
+
+            return cAvailable;
+        }
+
+        private Dictionary<Action, Event> m_cPinnedEvents = new Dictionary<Action, Event>();
+
+        internal Event DoAction(Action pAction)
+        {
+            if (m_bGameOver)
+                return null;
+
+            if (m_cPinnedEvents.ContainsKey(pAction))
+                return m_cPinnedEvents[pAction];
+
+            List<Event> cPossible = new List<Event>();
+
+            int iMaxPriority = int.MinValue;
+
+            foreach (Event pEvent in m_cEvents)
+            {
+                if (pEvent.m_pAction.m_sName != pAction.m_sName)
+                    continue;
+
+                bool bPossible = true;
+
+                foreach (Condition pCondition in pEvent.m_pDescription.m_cConditions)
+                {
+                    if (!pCondition.Check())
+                    {
+                        bPossible = false;
+                        break;
+                    }
+                }
+
+                if (bPossible)
+                {
+                    for (int i = 0; i < pEvent.m_iProbability; i++ )
+                        cPossible.Add(pEvent);
+                    if (iMaxPriority < pEvent.m_iPriority)
+                        iMaxPriority = pEvent.m_iPriority;
+                }
+            }
+
+            List<Event> cAvailable = new List<Event>();
+
+            foreach (var pEvent in cPossible)
+                if (pEvent.m_iPriority == iMaxPriority)
+                    cAvailable.Add(pEvent);
+
+            if (cAvailable.Count == 0)
+                return null;
+
+            Event pSelected = cAvailable[Random.Rnd.Get(cAvailable.Count)];
+
+            m_cPinnedEvents[pAction] = pSelected;
+
+            return pSelected;
         }
     }
 }

@@ -110,5 +110,38 @@ namespace Persona.Conditions
 
             return pNew;
         }
+
+        public override bool Check()
+        {
+            float fMin = (m_pParam1 as NumericParameter).m_fMin < (m_pParam2 as NumericParameter).m_fMin ? (m_pParam1 as NumericParameter).m_fMin : (m_pParam2 as NumericParameter).m_fMin;
+            float fMax = (m_pParam1 as NumericParameter).m_fMax > (m_pParam2 as NumericParameter).m_fMax ? (m_pParam1 as NumericParameter).m_fMax : (m_pParam2 as NumericParameter).m_fMax;
+
+            float A = fMin + (m_pParam1 as NumericParameter).m_fValue;
+            float B = A - fMax;
+            float C = (m_pParam2 as NumericParameter).m_fValue - (m_pParam1 as NumericParameter).m_fValue;
+
+            bool bRes = false;
+
+            switch (m_eType)
+            {
+                case ComparsionType.LOLO:
+                    bRes = C > A;
+                    break;
+                case ComparsionType.LO:
+                    bRes = C > 0;
+                    break;
+                case ComparsionType.EQ:
+                    bRes = C == 0;
+                    break;
+                case ComparsionType.HIHI:
+                    bRes = C < B;   //C < 0 && |C| > 100-A
+                    break;
+                case ComparsionType.HI:
+                    bRes = C < 0;
+                    break;
+            }
+
+            return m_bNot ? !bRes : bRes;
+        }
     }
 }

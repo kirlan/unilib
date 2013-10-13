@@ -52,6 +52,12 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlignedFlowContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="AlignedFlowContainer.Designer.cs">
+      <DependentUpon>AlignedFlowContainer.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditConditionComparsion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,6 +174,12 @@
     <Compile Include="Reaction.cs" />
     <Compile Include="Situation.cs" />
     <Compile Include="Action.cs" />
+    <Compile Include="TestPlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestPlay.Designer.cs">
+      <DependentUpon>TestPlay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Trigger.cs" />
     <EmbeddedResource Include="EditConditionComparsion.resx">
       <DependentUpon>EditConditionComparsion.cs</DependentUpon>
@@ -226,6 +238,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="TestPlay.resx">
+      <DependentUpon>TestPlay.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -237,6 +252,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Random\Random.csproj">
+      <Project>{BE1D4BE6-74FA-41DD-A9EA-4B2CB3C8CC28}</Project>
+      <Name>Random</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UniLibControls\UniLibControls.csproj">
       <Project>{EA9578D1-D3BB-48DB-8757-CC9CE3787996}</Project>
       <Name>UniLibControls</Name>

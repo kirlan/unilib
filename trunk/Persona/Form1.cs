@@ -961,5 +961,11 @@ namespace Persona
             if (tabControl1.SelectedIndex == 2)
                 FunctionsListBox_SelectedIndexChanged(sender, e);
         }
+
+        private void проверитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TestPlay pForm = new TestPlay(m_pModule);
+            pForm.ShowDialog();
+        }
     }
 }

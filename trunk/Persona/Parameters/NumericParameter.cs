@@ -53,6 +53,11 @@ namespace Persona.Parameters
         public float m_fDefaultValue = 0;
 
         /// <summary>
+        /// Значение в течение игры.
+        /// </summary>
+        public float m_fValue = 0;
+
+        /// <summary>
         /// Набор диапазонов для отображения пользователю. 
         /// Чисто интерфейсная штука, может быть пустым.
         /// Если текущее значение параметра попадает в один из диапазонов,
@@ -128,6 +133,11 @@ namespace Persona.Parameters
                 pXml.AddAttribute(pRangeNode, "min", pRange.m_fMin);
                 pXml.AddAttribute(pRangeNode, "max", pRange.m_fMax);
             }
+        }
+
+        public override void Init()
+        {
+            m_fValue = m_fDefaultValue;
         }
     }
 }
