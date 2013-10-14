@@ -114,7 +114,9 @@ namespace Persona
                 {
                     m_pParam = pParam;
                     break;
-                } 
+                }
+
+            m_pParam.m_pFunction = this;
             
             foreach (XmlNode pSubNode in pParamNode.ChildNodes)
             {

@@ -33,6 +33,11 @@ namespace Persona.Parameters
         /// </summary>
         public string m_sComment;
 
+        /// <summary>
+        /// Ссылка на функцию для автоматического вычисления значения параметра.
+        /// </summary>
+        public Function m_pFunction = null;
+
         public Parameter()
         { 
         }

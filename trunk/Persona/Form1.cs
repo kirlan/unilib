@@ -82,11 +82,14 @@ namespace Persona
                 AddTriggerInfo(pTrigger);
             }
 
-            FunctionsListBox.Items.Clear();
-            FunctionsListBox.Items.AddRange(m_pModule.m_cFunctions.ToArray());
+            ParametersListView.Items.Clear();
 
-            ParametersTypesListBox.SelectedIndex = 0;
-            ParametersTypesListBox_SelectedIndexChanged(this, new EventArgs());
+            foreach (var pParam in m_pModule.m_cNumericParameters)
+                AddParameterInfo(pParam);
+            foreach (var pParam in m_pModule.m_cBoolParameters)
+                AddParameterInfo(pParam);
+            foreach (var pParam in m_pModule.m_cStringParameters)
+                AddParameterInfo(pParam);
         }
 
         private void AddCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -273,63 +276,35 @@ namespace Persona
         {
             ListViewItem pItem = new ListViewItem(pParam.m_sName);
             pItem.SubItems.Add(pParam.m_sGroup);
+            if (pParam is NumericParameter)
+                pItem.SubItems.Add("Числовой");
+            if (pParam is BoolParameter)
+                pItem.SubItems.Add("Логический");
+            if (pParam is StringParameter)
+                pItem.SubItems.Add("Строковый");
             pItem.SubItems.Add(pParam.m_bHidden ? "#" : "-");
+            pItem.SubItems.Add(pParam.m_pFunction == null ? " " : "F");
             pItem.SubItems.Add(pParam.m_sComment);
 
             pItem.Tag = pParam;
             ParametersListView.Items.Add(pItem);
         }
 
-        private void ParametersTypesListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void UpdateParameterInfo(ListViewItem pItem)
         {
-            ParametersListView.Items.Clear();
+            Parameter pParam  = pItem.Tag as Parameter;
 
-            switch (ParametersTypesListBox.SelectedIndex)
-            {
-                case 0:
-                    foreach (var pParam in m_pModule.m_cNumericParameters)
-                        AddParameterInfo(pParam);
-                    break;
-                case 1:
-                    foreach (var pParam in m_pModule.m_cBoolParameters)
-                        AddParameterInfo(pParam);
-                    break;
-                case 2:
-                    foreach (var pParam in m_pModule.m_cStringParameters)
-                        AddParameterInfo(pParam);
-                    break;
-            }
-        }
-
-        private void AddParameterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            switch (ParametersTypesListBox.SelectedIndex)
-            {
-                case 0:
-                    {
-                        NumericParameter pParam = new NumericParameter();
-                        EditParameterNumeric pForm = new EditParameterNumeric(pParam);
-                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            m_pModule.m_cNumericParameters.Add(pParam);
-                            AddParameterInfo(pParam);
-                        }
-                    }
-                    break;
-                case 1:
-                    {
-                        BoolParameter pParam = new BoolParameter();
-                        EditParameterBool pForm = new EditParameterBool(pParam);
-                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            m_pModule.m_cBoolParameters.Add(pParam);
-                            AddParameterInfo(pParam);
-                        }
-                    }
-                    break;
-                case 2:
-                    break;
-            }
+            pItem.Text = pParam.m_sName;
+            pItem.SubItems[1].Text = pParam.m_sGroup;
+            if (pParam is NumericParameter)
+                pItem.SubItems[2].Text = "Числовой";
+            if (pParam is BoolParameter)
+                pItem.SubItems[2].Text = "Логический";
+            if (pParam is StringParameter)
+                pItem.SubItems[2].Text = "Строковый";
+            pItem.SubItems[3].Text = pParam.m_bHidden ? "#" : "-";
+            pItem.SubItems[4].Text = pParam.m_pFunction == null ? " " : "F";
+            pItem.SubItems[5].Text = pParam.m_sComment;
         }
 
         private void EditParameterToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -337,36 +312,25 @@ namespace Persona
             if (ParametersListView.SelectedItems.Count == 0)
                 return;
 
-            switch (ParametersTypesListBox.SelectedIndex)
+            Parameter pPar = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            if(pPar is NumericParameter)
             {
-                case 0:
-                    {
-                        NumericParameter pParam = ParametersListView.SelectedItems[0].Tag as NumericParameter;
-                        EditParameterNumeric pForm = new EditParameterNumeric(pParam);
-                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            ParametersListView.SelectedItems[0].Text = pParam.m_sName;
-                            ParametersListView.SelectedItems[0].SubItems[1].Text = pParam.m_sGroup;
-                            ParametersListView.SelectedItems[0].SubItems[2].Text = pParam.m_bHidden ? "#" : "-";
-                            ParametersListView.SelectedItems[0].SubItems[3].Text = pParam.m_sComment;
-                        }
-                    }
-                    break;
-                case 1:
-                    {
-                        BoolParameter pParam = ParametersListView.SelectedItems[0].Tag as BoolParameter;
-                        EditParameterBool pForm = new EditParameterBool(pParam);
-                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            ParametersListView.SelectedItems[0].Text = pParam.m_sName;
-                            ParametersListView.SelectedItems[0].SubItems[1].Text = pParam.m_sGroup;
-                            ParametersListView.SelectedItems[0].SubItems[2].Text = pParam.m_bHidden ? "#" : "-";
-                            ParametersListView.SelectedItems[0].SubItems[3].Text = pParam.m_sComment;
-                        }
-                    }
-                    break;
-                case 2:
-                    break;
+                NumericParameter pParam = ParametersListView.SelectedItems[0].Tag as NumericParameter;
+                EditParameterNumeric pForm = new EditParameterNumeric(pParam);
+                if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    UpdateParameterInfo(ParametersListView.SelectedItems[0]);
+                }
+            }
+            if(pPar is BoolParameter)
+            {
+                BoolParameter pParam = ParametersListView.SelectedItems[0].Tag as BoolParameter;
+                EditParameterBool pForm = new EditParameterBool(pParam);
+                if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    UpdateParameterInfo(ParametersListView.SelectedItems[0]);
+                }
             }
         }
 
@@ -619,29 +583,25 @@ namespace Persona
             if (ParametersListView.SelectedItems.Count == 0)
                 return;
 
-            switch (ParametersTypesListBox.SelectedIndex)
+            Parameter pPar = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            if(pPar is NumericParameter)
             {
-                case 0:
-                    {
-                        NumericParameter pParam = ParametersListView.SelectedItems[0].Tag as NumericParameter;
-                        ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
-                        m_pModule.m_cNumericParameters.Remove(pParam);
-                    }
-                    break;
-                case 1:
-                    {
-                        BoolParameter pParam = ParametersListView.SelectedItems[0].Tag as BoolParameter;
-                        ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
-                        m_pModule.m_cBoolParameters.Remove(pParam);
-                    }
-                    break;
-                case 2:
-                    {
-                        StringParameter pParam = ParametersListView.SelectedItems[0].Tag as StringParameter;
-                        ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
-                        m_pModule.m_cStringParameters.Remove(pParam);
-                    }
-                    break;
+                NumericParameter pParam = ParametersListView.SelectedItems[0].Tag as NumericParameter;
+                ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
+                m_pModule.m_cNumericParameters.Remove(pParam);
+            }
+            if (pPar is BoolParameter)
+            {
+                BoolParameter pParam = ParametersListView.SelectedItems[0].Tag as BoolParameter;
+                ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
+                m_pModule.m_cBoolParameters.Remove(pParam);
+            }
+            if (pPar is StringParameter)
+            {
+                StringParameter pParam = ParametersListView.SelectedItems[0].Tag as StringParameter;
+                ParametersListView.Items.Remove(ParametersListView.SelectedItems[0]);
+                m_pModule.m_cStringParameters.Remove(pParam);
             }
         }
 
@@ -650,70 +610,28 @@ namespace Persona
             if (ParametersListView.SelectedItems.Count == 0)
                 return;
 
-            switch (ParametersTypesListBox.SelectedIndex)
+            Parameter pPar = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            if(pPar is NumericParameter)
             {
-                case 0:
-                    {
-                        NumericParameter pParam = new NumericParameter(ParametersListView.SelectedItems[0].Tag as NumericParameter);
-                        EditParameterNumeric pForm = new EditParameterNumeric(pParam);
-                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            m_pModule.m_cNumericParameters.Add(pParam);
-                            AddParameterInfo(pParam);
-                        }
-                    }
-                    break;
-                case 1:
-                    {
-                        BoolParameter pParam = new BoolParameter(ParametersListView.SelectedItems[0].Tag as BoolParameter);
-                        EditParameterBool pForm = new EditParameterBool(pParam);
-                        if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            m_pModule.m_cBoolParameters.Add(pParam);
-                            AddParameterInfo(pParam);
-                        }
-                    }
-                    break;
-                case 2:
-                    break;
+                NumericParameter pParam = new NumericParameter(ParametersListView.SelectedItems[0].Tag as NumericParameter);
+                EditParameterNumeric pForm = new EditParameterNumeric(pParam);
+                if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    m_pModule.m_cNumericParameters.Add(pParam);
+                    AddParameterInfo(pParam);
+                }
             }
-        }
-
-        private void AddFunctionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Parameter pParam = null;
-            string sValue = "";
-            if (m_pModule.m_cNumericParameters.Count > 0)
+            if (pPar is BoolParameter)
             {
-                pParam = m_pModule.m_cNumericParameters[0];
-                sValue = "0";
+                BoolParameter pParam = new BoolParameter(ParametersListView.SelectedItems[0].Tag as BoolParameter);
+                EditParameterBool pForm = new EditParameterBool(pParam);
+                if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    m_pModule.m_cBoolParameters.Add(pParam);
+                    AddParameterInfo(pParam);
+                }
             }
-            else if (m_pModule.m_cBoolParameters.Count > 0)
-            {
-                pParam = m_pModule.m_cBoolParameters[0];
-                sValue = true.ToString();
-            }
-            else if (m_pModule.m_cStringParameters.Count > 0)
-                pParam = m_pModule.m_cStringParameters[0];
-
-            if (pParam == null)
-                return;
-
-            Function pFunction = new Function(pParam);
-
-            EditFunction pForm = new EditFunction(pFunction, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
-            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                m_pModule.m_cFunctions.Add(pFunction);
-                FunctionsListBox.Items.Add(pForm.m_pFunction);
-
-                FunctionsListBox.SelectedItem = pForm.m_pFunction;
-            }
-        }
-
-        private void contextMenuStrip_Actions_Opening(object sender, CancelEventArgs e)
-        {
-
         }
 
         private string GetRuleValue(Function pFunction, Function.Rule pRule)
@@ -773,44 +691,6 @@ namespace Persona
             RulesListView.Items.Add(pItem);
         }
 
-        private void FunctionsListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (FunctionsListBox.SelectedItem == null)
-                return;
-
-            Function pFunction = FunctionsListBox.SelectedItem as Function;
-
-            RulesListView.Items.Clear();
-
-            foreach (Function.Rule pRule in pFunction.m_cRules)
-            {
-                AddRuleInfo(pFunction, pRule);
-            }
-        }
-
-        private void EditFunctionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (FunctionsListBox.SelectedItem == null)
-                return;
-
-            Function pFunction = FunctionsListBox.SelectedItem as Function;
-
-            EditFunction pForm = new EditFunction(pFunction, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
-            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                FunctionsListBox.Refresh();
-            }
-        }
-
-        private void DeleteFunctionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (FunctionsListBox.SelectedItem == null)
-                return;
-
-            m_pModule.m_cFunctions.Remove(FunctionsListBox.SelectedItem as Function);
-            FunctionsListBox.Items.Remove(FunctionsListBox.SelectedItem);
-        }
-
         private Dictionary<int, float> m_cRulesColumnWidths = new Dictionary<int, float>();
 
         private void RulesListView_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
@@ -826,16 +706,34 @@ namespace Persona
 
         private void AddRuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (FunctionsListBox.SelectedItem == null)
+            if (ParametersListView.SelectedItems.Count == 0)
                 return;
 
-            Function pFunction = FunctionsListBox.SelectedItem as Function;
+            Parameter pSelectedParam = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            RulesListView.Items.Clear();
+
+            Function pFunction = pSelectedParam.m_pFunction;
+
+            bool bNewFunction = false;
+            if (pFunction == null)
+            {
+                pFunction = new Function(pSelectedParam);
+                bNewFunction = true;
+            }
 
             Function.Rule pRule = new Function.Rule();
 
             EditRule pForm = new EditRule(pFunction, pRule, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                if (bNewFunction)
+                {
+                    m_pModule.m_cFunctions.Add(pFunction);
+                    pSelectedParam.m_pFunction = pFunction;
+                    UpdateParameterInfo(ParametersListView.SelectedItems[0]);
+                }
+
                 pFunction.m_cRules.Add(pRule);
 
                 AddRuleInfo(pFunction, pRule);
@@ -844,17 +742,20 @@ namespace Persona
 
         private void EditRuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (FunctionsListBox.SelectedItem == null)
+            if (ParametersListView.SelectedItems.Count == 0)
                 return;
 
             if (RulesListView.SelectedItems.Count == 0)
                 return;
 
-            Function pFunction = FunctionsListBox.SelectedItem as Function;
+            Parameter pSelectedParam = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            if (pSelectedParam.m_pFunction == null)
+                return;
 
             Function.Rule pRule = RulesListView.SelectedItems[0].Tag as Function.Rule;
 
-            EditRule pForm = new EditRule(pFunction, pRule, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            EditRule pForm = new EditRule(pSelectedParam.m_pFunction, pRule, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ListViewItem pItem = RulesListView.SelectedItems[0];
@@ -866,36 +767,43 @@ namespace Persona
                     conditions += pCondition.ToString();
                 }
                 pItem.SubItems[0].Text = conditions;
-                pItem.SubItems[1].Text = GetRuleValue(pFunction, pRule);
+                pItem.SubItems[1].Text = GetRuleValue(pSelectedParam.m_pFunction, pRule);
             }
         }
 
         private void CopyRuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (FunctionsListBox.SelectedItem == null)
+            if (ParametersListView.SelectedItems.Count == 0)
                 return;
 
             if (RulesListView.SelectedItems.Count == 0)
                 return;
 
-            Function pFunction = FunctionsListBox.SelectedItem as Function;
+            Parameter pSelectedParam = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            if (pSelectedParam.m_pFunction == null)
+                return;
+
             Function.Rule pRule = new Function.Rule(RulesListView.SelectedItems[0].Tag as Function.Rule);
 
-            EditRule pForm = new EditRule(pFunction, pRule, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
+            EditRule pForm = new EditRule(pSelectedParam.m_pFunction, pRule, m_pModule.m_cNumericParameters, m_pModule.m_cBoolParameters, m_pModule.m_cStringParameters);
             if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                pFunction.m_cRules.Add(pRule);
+                pSelectedParam.m_pFunction.m_cRules.Add(pRule);
 
-                AddRuleInfo(pFunction, pRule);
+                AddRuleInfo(pSelectedParam.m_pFunction, pRule);
             }
         }
 
         private void DeleteRuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (FunctionsListBox.SelectedItem == null)
+            if (ParametersListView.SelectedItems.Count == 0)
                 return;
 
-            Function pFunction = FunctionsListBox.SelectedItem as Function;
+            Parameter pSelectedParam = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            if (pSelectedParam.m_pFunction == null)
+                return;
 
             List<ListViewItem> cKills = new List<ListViewItem>();
             foreach (ListViewItem pItem in RulesListView.SelectedItems)
@@ -904,7 +812,14 @@ namespace Persona
             foreach (var pItem in cKills)
             {
                 RulesListView.Items.Remove(pItem);
-                pFunction.m_cRules.Remove(pItem.Tag as Function.Rule);
+                pSelectedParam.m_pFunction.m_cRules.Remove(pItem.Tag as Function.Rule);
+            }
+
+            if (pSelectedParam.m_pFunction.m_cRules.Count == 0)
+            {
+                m_pModule.m_cFunctions.Remove(pSelectedParam.m_pFunction);
+                pSelectedParam.m_pFunction = null;
+                UpdateParameterInfo(ParametersListView.SelectedItems[0]);
             }
         }
 
@@ -940,7 +855,7 @@ namespace Persona
                 {
                     pFunction = new Function(pParamSet.m_pParam);
                     m_pModule.m_cFunctions.Add(pFunction);
-                    FunctionsListBox.Items.Add(pFunction);
+                    pParamSet.m_pParam.m_pFunction = pFunction;
                 }
 
                 Function.Rule pRule = new Function.Rule();
@@ -956,16 +871,57 @@ namespace Persona
             }
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (tabControl1.SelectedIndex == 2)
-                FunctionsListBox_SelectedIndexChanged(sender, e);
-        }
-
         private void проверитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TestPlay pForm = new TestPlay(m_pModule);
             pForm.ShowDialog();
+        }
+
+        private void ParametersListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(ParametersListView.SelectedItems.Count == 0)
+                return;
+
+            Parameter pSelectedParam = ParametersListView.SelectedItems[0].Tag as Parameter;
+
+            RulesListView.Items.Clear();
+
+            foreach (Function pFunction in m_pModule.m_cFunctions)
+                if (pFunction.m_pParam == pSelectedParam)
+                {
+                    foreach (Function.Rule pRule in pFunction.m_cRules)
+                    {
+                        AddRuleInfo(pFunction, pRule);
+                    }
+                    return;
+                }
+        }
+
+        private void числовойToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NumericParameter pParam = new NumericParameter();
+            EditParameterNumeric pForm = new EditParameterNumeric(pParam);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_pModule.m_cNumericParameters.Add(pParam);
+                AddParameterInfo(pParam);
+            }
+        }
+
+        private void логическийToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BoolParameter pParam = new BoolParameter();
+            EditParameterBool pForm = new EditParameterBool(pParam);
+            if (pForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_pModule.m_cBoolParameters.Add(pParam);
+                AddParameterInfo(pParam);
+            }
+        }
+
+        private void строковыйToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
