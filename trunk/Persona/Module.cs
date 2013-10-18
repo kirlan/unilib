@@ -71,6 +71,11 @@ namespace Persona
         /// </summary>
         public List<StringParameter> m_cStringParameters = new List<StringParameter>();
 
+        /// <summary>
+        /// Список коллекций объектов. Коллекции могут содержать в себе, например, информацию обо всех доступных в игре NPC или всех доступных локациях...
+        /// </summary>
+        public List<ObjectsCollection> m_cCollections = new List<ObjectsCollection>();
+
         public Module()
         {
             m_sName = "КиберШлюха 2115";
@@ -193,6 +198,13 @@ namespace Persona
                 pAction.WriteXML(pXml, pActionNode);
             }
 
+            XmlNode pCollectionsNode = pXml.CreateNode(pModuleNode, "Collections");
+            foreach (ObjectsCollection pCollection in m_cCollections)
+            {
+                XmlNode pCollectionNode = pXml.CreateNode(pCollectionsNode, "Collection");
+                pCollection.WriteXML(pXml, pCollectionNode);
+            }
+
             XmlNode pEventsNode = pXml.CreateNode(pModuleNode, "Events");
             foreach (Event pEvent in m_cEvents)
             {
@@ -231,6 +243,7 @@ namespace Persona
             m_cEvents.Clear();
             m_cTriggers.Clear();
             m_cFunctions.Clear();
+            m_cCollections.Clear();
 
             if (pXml.Root.ChildNodes.Count == 1 && pXml.Root.ChildNodes[0].Name == "Module")
             {
@@ -259,6 +272,18 @@ namespace Persona
                             {
                                 StringParameter pParam = new StringParameter(pXml, pParamNode);
                                 m_cStringParameters.Add(pParam);
+                            }
+                        }
+                    }
+
+                    if (pSection.Name == "Collections")
+                    {
+                        foreach (XmlNode pCollectionNode in pSection.ChildNodes)
+                        {
+                            if (pCollectionNode.Name == "Collection")
+                            {
+                                ObjectsCollection pCollection = new ObjectsCollection(pXml, pCollectionNode);
+                                m_cCollections.Add(pCollection);
                             }
                         }
                     }
@@ -342,6 +367,9 @@ namespace Persona
                 pParam.Init();
             foreach (var pParam in m_cStringParameters)
                 pParam.Init();
+
+            foreach (var pCollection in m_cCollections)
+                pCollection.Init();
 
             m_bGameOver = false;
         }

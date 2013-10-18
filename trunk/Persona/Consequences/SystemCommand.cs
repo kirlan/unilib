@@ -99,6 +99,10 @@ namespace Persona.Consequences
             return pNew;
         }
 
+        /// <summary>
+        /// Выполнить команду
+        /// </summary>
+        /// <param name="pModule">модуль, состояние которого будет меняться</param>
         internal override void Apply(Module pModule)
         {
             switch (m_eAction)

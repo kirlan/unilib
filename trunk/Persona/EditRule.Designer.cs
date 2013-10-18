@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.contextMenuStrip_Conditions = new System.Windows.Forms.ContextMenuStrip();
+            this.contextMenuStrip_Conditions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовоеУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.сравнение2хПараметровToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.попаданиеПараметраВДиапазонToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();

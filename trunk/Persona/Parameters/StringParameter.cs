@@ -19,6 +19,12 @@ namespace Persona.Parameters
         /// </summary>
         public string m_sValue = "";
 
+        public StringParameter(StringParameter pOrigin)
+            :base(pOrigin)
+        {
+            m_sDefaultValue = pOrigin.m_sDefaultValue;
+        }
+    
         public StringParameter(UniLibXML pXml, XmlNode pParamNode)
             : base(pXml, pParamNode)
         {

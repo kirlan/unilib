@@ -126,6 +126,12 @@
             this.toolStripMenuItem21 = new System.Windows.Forms.ToolStripMenuItem();
             this.label8 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.listView1 = new System.Windows.Forms.ListView();
+            this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader25 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.GraphicSelectionBox = new System.Windows.Forms.ComboBox();
@@ -136,12 +142,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader25 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader26 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -210,9 +211,9 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 152);
@@ -729,9 +730,10 @@
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(6, 3);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(410, 13);
+            this.label10.Size = new System.Drawing.Size(459, 13);
             this.label10.TabIndex = 0;
-            this.label10.Text = "Триггеры - это события, случающиеся сами собой, а не по инициативе игрока.";
+            this.label10.Text = "Триггеры - это события, автоматически происходящие в начале каждого игрового хода" +
+    ".";
             // 
             // tabPage2
             // 
@@ -1015,8 +1017,61 @@
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(762, 387);
             this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Картотека";
+            this.tabPage4.Text = "Объекты";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // listView1
+            // 
+            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader24,
+            this.columnHeader25,
+            this.columnHeader26});
+            this.listView1.Location = new System.Drawing.Point(131, 16);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(624, 368);
+            this.listView1.TabIndex = 3;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader24
+            // 
+            this.columnHeader24.Text = "ID";
+            // 
+            // columnHeader25
+            // 
+            this.columnHeader25.Text = "Частота";
+            // 
+            // listBox1
+            // 
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.IntegralHeight = false;
+            this.listBox1.Location = new System.Drawing.Point(6, 16);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(120, 368);
+            this.listBox1.TabIndex = 2;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(131, 3);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(122, 13);
+            this.label11.TabIndex = 1;
+            this.label11.Text = "Объекты в коллекции:";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 3);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(65, 13);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "Коллекции:";
             // 
             // panel1
             // 
@@ -1111,49 +1166,10 @@
             this.openFileDialog1.Filter = "Файлы XML|*.xml|Все файлы|*.*";
             this.openFileDialog1.Title = "Считывание игрового модуля \"Персона\"";
             // 
-            // label9
+            // columnHeader26
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 3);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(86, 13);
-            this.label9.TabIndex = 0;
-            this.label9.Text = "Типы карточек:";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(131, 3);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(57, 13);
-            this.label11.TabIndex = 1;
-            this.label11.Text = "Карточки:";
-            // 
-            // listBox1
-            // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.IntegralHeight = false;
-            this.listBox1.Location = new System.Drawing.Point(6, 16);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(120, 368);
-            this.listBox1.TabIndex = 2;
-            // 
-            // listView1
-            // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader24,
-            this.columnHeader25});
-            this.listView1.Location = new System.Drawing.Point(131, 16);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(624, 368);
-            this.listView1.TabIndex = 3;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.columnHeader26.Text = "Свойства";
+            this.columnHeader26.Width = 460;
             // 
             // Form1
             // 
@@ -1320,6 +1336,7 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ColumnHeader columnHeader26;
     }
 }
 

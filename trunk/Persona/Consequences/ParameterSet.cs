@@ -87,6 +87,10 @@ namespace Persona.Consequences
             return pNew;
         }
 
+        /// <summary>
+        /// Выполнить команду
+        /// </summary>
+        /// <param name="pModule">не используется, может быть null</param>
         internal override void Apply(Module pModule)
         {
             if (m_pParam is NumericParameter)
