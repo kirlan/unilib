@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -35,7 +36,7 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.contextMenuStrip_Conditions = new System.Windows.Forms.ContextMenuStrip();
+            this.contextMenuStrip_Conditions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовоеУсловиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.сравнение2хПараметровToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.попаданиеПараметраВДиапазонToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,7 +53,7 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label6 = new System.Windows.Forms.Label();
             this.listBox2 = new System.Windows.Forms.ListBox();
-            this.contextMenuStrip_Consequences = new System.Windows.Forms.ContextMenuStrip();
+            this.contextMenuStrip_Consequences = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьНовоеПоследствиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.заданиеЗначенияПараметраToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.изменениеЗначенияПараметраToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
