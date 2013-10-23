@@ -50,6 +50,35 @@ namespace Persona
         /// </summary>
         public List<ParameterSet> m_cValues = new List<ParameterSet>();
 
+        public CollectedObject(int iID, List<NumericParameter> cNumericParameters, List<BoolParameter> cBoolParameters, List<StringParameter> cStringParameters)
+        {
+            m_iID = iID;
+
+            foreach (var pParam in cNumericParameters)
+            {
+                NumericParameter pNewParam = new NumericParameter(pParam);
+                m_cNumericParameters.Add(pNewParam);
+                ParameterSet pValueSet = new ParameterSet(pNewParam, pNewParam.m_fDefaultValue.ToString());
+                m_cValues.Add(pValueSet);
+            }
+
+            foreach (var pParam in cBoolParameters)
+            {
+                BoolParameter pNewParam = new BoolParameter(pParam);
+                m_cBoolParameters.Add(pNewParam);
+                ParameterSet pValueSet = new ParameterSet(pNewParam, pNewParam.m_bDefaultValue.ToString());
+                m_cValues.Add(pValueSet);
+            }
+
+            foreach (var pParam in cStringParameters)
+            {
+                StringParameter pNewParam = new StringParameter(pParam);
+                m_cStringParameters.Add(pNewParam);
+                ParameterSet pValueSet = new ParameterSet(pNewParam, pNewParam.m_sDefaultValue);
+                m_cValues.Add(pValueSet);
+            }
+        }
+
         public CollectedObject(UniLibXML pXml, XmlNode pObjectNode, List<Parameter> cCollectionParams)
         {
             pXml.GetIntAttribute(pObjectNode, "id", ref m_iID);
@@ -64,11 +93,11 @@ namespace Persona
                 if (pParam is StringParameter)
                     m_cStringParameters.Add(new StringParameter(pParam as StringParameter));
             }
-            
+
             List<Parameter> cParams = new List<Parameter>();
             cParams.AddRange(m_cNumericParameters);
             cParams.AddRange(m_cBoolParameters);
-            cParams.AddRange(m_cStringParameters); 
+            cParams.AddRange(m_cStringParameters);
 
             foreach (XmlNode pValueNode in pObjectNode.ChildNodes)
             {

@@ -59,6 +59,12 @@
       <DependentUpon>AlignedFlowContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="CollectedObject.cs" />
+    <Compile Include="EditCollection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditCollection.Designer.cs">
+      <DependentUpon>EditCollection.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditConditionComparsion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -183,6 +189,9 @@
       <DependentUpon>TestPlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Trigger.cs" />
+    <EmbeddedResource Include="EditCollection.resx">
+      <DependentUpon>EditCollection.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EditConditionComparsion.resx">
       <DependentUpon>EditConditionComparsion.cs</DependentUpon>
     </EmbeddedResource>

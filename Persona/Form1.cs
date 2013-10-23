@@ -69,18 +69,14 @@ namespace Persona
 
             EventsListView.Items.Clear();
             foreach (var pEvent in m_pModule.m_cEvents)
-            {
                 AddEventInfo(pEvent);
-            }
 
             if (EventsListView.Items.Count > 0)
                 EventsListView.Items[0].Selected = true;
 
             TriggersListView.Items.Clear();
             foreach (var pTrigger in m_pModule.m_cTriggers)
-            {
                 AddTriggerInfo(pTrigger);
-            }
 
             ParametersListView.Items.Clear();
 
@@ -90,6 +86,11 @@ namespace Persona
                 AddParameterInfo(pParam);
             foreach (var pParam in m_pModule.m_cStringParameters)
                 AddParameterInfo(pParam);
+
+            CollectionsListBox.Items.Clear();
+            CollectionsListBox.Items.AddRange(m_pModule.m_cCollections.ToArray());
+            if (CollectionsListBox.Items.Count > 0)
+                CollectionsListBox.SelectedIndex = 0;
         }
 
         private void AddCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -922,6 +923,38 @@ namespace Persona
         private void строковыйToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void CollectionsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CollectionsListBox.SelectedIndex == -1)
+                return;
+
+            CollectedItemsListView.Items.Clear();
+
+            ObjectsCollection pColl = CollectionsListBox.SelectedItem as ObjectsCollection;
+
+            foreach (var pItem in pColl.m_cObjects)
+            {
+                ListViewItem pNewLine = new ListViewItem(pItem.Value.m_iID.ToString());
+                pNewLine.SubItems.Add(pItem.Value.m_iProbability.ToString());
+
+                string sValues = "";
+                foreach (var pValue in pItem.Value.m_cValues)
+                {
+                    if (sValues.Length > 0)
+                        sValues += ", ";
+
+                    sValues += pValue.m_pParam.m_sName;
+                    sValues += " = ";
+                    sValues += pValue.m_sNewValue;
+                }
+
+                pNewLine.SubItems.Add(sValues);
+
+                pNewLine.Tag = pItem;
+                CollectedItemsListView.Items.Add(pNewLine);
+            }
         }
     }
 }
