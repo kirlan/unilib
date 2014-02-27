@@ -50,7 +50,7 @@ namespace nsUniLibXML
             xmlDoc.Load(file);
 
             file.Close();
-
+            file.Dispose();
             return true;
         }
 
@@ -205,7 +205,7 @@ namespace nsUniLibXML
             xmlDoc.Save(file);
 
             file.Close();
-
+            file.Dispose();
             return true;
         }
 
