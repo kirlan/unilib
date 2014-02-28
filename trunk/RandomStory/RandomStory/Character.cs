@@ -22,6 +22,8 @@ namespace RandomStory
 
         public int m_iRelationsCounter = 1;
 
+        public char[] m_aFlags = null;
+
         public Character(Repository pRep, World pWorld, bool bVoyagersAllowed, bool bElite, Character pRelative, string sRelationAdjective)
         {
             m_pHomeWorld = pWorld;
@@ -53,12 +55,9 @@ namespace RandomStory
                 if (m_pHomeWorld.m_sName != pWorld.m_sName)
                     m_cPerks.Add(pRelative.m_cPerks[0]);
 
-                m_sRace = m_pHomeWorld.GetRandomRace(pRelative.m_sRace);
+                m_sRace = m_pHomeWorld.GetRandomRace(pRelative.m_sRace, ref m_aFlags);
 
-                if (Rnd.OneChanceFrom(3))
-                    m_cPerks.Add(string.Format("{0} родственник {1}", Rnd.OneChanceFrom(2) ? "близкий":"дальний", pRelative.m_sRelationAdjective));
-                else
-                    m_cPerks.Add(string.Format("{0} знакомый {1}", Rnd.OneChanceFrom(2) ? "давний" : "случайный", pRelative.m_sRelationAdjective));
+                m_cPerks.Add(string.Format("{0} {1}", pRep.GetRandomRelation(ref m_aFlags), pRelative.m_sRelationAdjective));
 
                 pRelative.m_iRelationsCounter *= 2;
                 m_iRelationsCounter = pRelative.m_iRelationsCounter;
@@ -78,16 +77,16 @@ namespace RandomStory
                     }
                 }
 
-                m_sRace = m_pHomeWorld.GetRandomRace();
+                m_sRace = m_pHomeWorld.GetRandomRace(ref m_aFlags);
             }
             //m_bMale = Rnd.OneChanceFrom(2);
 
-            m_sProfession = bElite ? m_pHomeWorld.GetRandomProfessionEvil() : m_pHomeWorld.GetRandomProfession();
+            m_sProfession = bElite ? m_pHomeWorld.GetRandomProfessionElite(ref m_aFlags) : m_pHomeWorld.GetRandomProfession(ref m_aFlags);
 
             int iPerksCount = 2 + Rnd.Get(2);
             for (int i = 0; i < iPerksCount; i++)
             {
-                string sPerk = m_pHomeWorld.GetRandomPerk(m_cPerks);
+                string sPerk = m_pHomeWorld.GetRandomPerk(m_cPerks, ref m_aFlags);
                 if(!string.IsNullOrWhiteSpace(sPerk))
                     m_cPerks.Add(sPerk);
             }
@@ -95,7 +94,6 @@ namespace RandomStory
 
         public override string ToString()
         {
-            //StringBuilder sResult = new StringBuilder(string.Format("{0} - {1}, {2}", m_bMale ? "мужчина" : "женщина", m_sRace, m_sProfession));
             StringBuilder sResult = new StringBuilder(string.Format("{0}, {1}", m_sRace, m_sProfession));
 
             foreach (string sPerk in m_cPerks)

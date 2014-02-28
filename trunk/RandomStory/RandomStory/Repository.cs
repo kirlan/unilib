@@ -44,6 +44,8 @@ namespace RandomStory
 
         public List<string> m_cSolutions = new List<string>();
 
+        public List<string> m_cRelations = new List<string>();
+
         public Repository()
         {
             m_pCommon.m_sName = "Общие параметры";
@@ -69,6 +71,8 @@ namespace RandomStory
                 XmlNode pWorldNode = pXml.CreateNode(pWorlds, "World");
                 pWorld.WriteXML(pXml, pWorldNode);
             }
+
+            StringsHelper.WriteXML(pXml, pModuleNode, "Relations", m_cRelations);
 
             StringsHelper.WriteXML(pXml, pModuleNode, "Problems", m_cProblems);
             StringsHelper.WriteXML(pXml, pModuleNode, "Solutions", m_cSolutions);
@@ -116,6 +120,9 @@ namespace RandomStory
                             }
                         }
                     }
+
+                    if (pSection.Name == "Relations")
+                        StringsHelper.ReadXML(pXml, pSection, ref m_cRelations);
 
                     if (pSection.Name == "Problems")
                         StringsHelper.ReadXML(pXml, pSection, ref m_cProblems);
@@ -172,12 +179,19 @@ namespace RandomStory
 
         public string GetRandomProblem()
         {
-            return StringsHelper.GetRandom(m_cProblems, "просто беда");
+            char[] aFlags = null;
+            return StringsHelper.GetRandom(m_cProblems, "просто беда", ref aFlags);
         }
 
         public string GetRandomSolution()
         {
-            return StringsHelper.GetRandom(m_cSolutions, "как-то само рассосалось");
+            char[] aFlags = null;
+            return StringsHelper.GetRandom(m_cSolutions, "как-то само рассосалось", ref aFlags);
+        }
+
+        public string GetRandomRelation(ref char[] aFlags)
+        {
+            return StringsHelper.GetRandom(m_cRelations, "случайный знакомый", ref aFlags);
         }
 
         internal void MarkPossibleWorlds(List<World> cAllowed)
@@ -216,7 +230,7 @@ namespace RandomStory
                         sLog.AppendLine(sRemoved);
                     sLog.AppendLine("");
                 }
-                cLog = StringsHelper.RemoveCommon(ref pWorld.m_cProfessionsEvil, m_pCommon.m_cProfessionsEvil);
+                cLog = StringsHelper.RemoveCommon(ref pWorld.m_cProfessionsElite, m_pCommon.m_cProfessionsElite);
                 if (cLog.Count > 0)
                 {
                     sLog.AppendLine(string.Format("{0} записей в списке профессий злодея '{1}' дублируются в списке '{2}' - удалены:", cLog.Count, pWorld.ToString(), m_pCommon.ToString()));
@@ -270,9 +284,9 @@ namespace RandomStory
             }
             if (pNewCommon.m_cRaces.Count > 0)
             {
-                StringsHelper.Merge(ref m_pCommon.m_cProfessionsEvil, pNewCommon.m_cProfessionsEvil);
-                sLog.AppendLine(string.Format("{0} записей перенесены в список профессий злодея '{1}':", pNewCommon.m_cProfessionsEvil.Count, m_pCommon.ToString()));
-                foreach (string sAdded in pNewCommon.m_cProfessionsEvil)
+                StringsHelper.Merge(ref m_pCommon.m_cProfessionsElite, pNewCommon.m_cProfessionsElite);
+                sLog.AppendLine(string.Format("{0} записей перенесены в список профессий злодея '{1}':", pNewCommon.m_cProfessionsElite.Count, m_pCommon.ToString()));
+                foreach (string sAdded in pNewCommon.m_cProfessionsElite)
                     sLog.AppendLine(sAdded);
                 sLog.AppendLine("");
             }
