@@ -20,7 +20,7 @@ namespace RandomStory
 
         public List<string> m_cProfessions = new List<string>();
 
-        public List<string> m_cProfessionsEvil = new List<string>();
+        public List<string> m_cProfessionsElite = new List<string>();
 
         public List<string> m_cLocations = new List<string>();
 
@@ -40,7 +40,7 @@ namespace RandomStory
                 m_cRaces.AddRange(cWorlds[0].m_cRaces);
                 m_cPerks.AddRange(cWorlds[0].m_cPerks);
                 m_cProfessions.AddRange(cWorlds[0].m_cProfessions);
-                m_cProfessionsEvil.AddRange(cWorlds[0].m_cProfessionsEvil);
+                m_cProfessionsElite.AddRange(cWorlds[0].m_cProfessionsElite);
                 m_cLocations.AddRange(cWorlds[0].m_cLocations);
                 m_cItems.AddRange(cWorlds[0].m_cItems);
 
@@ -51,7 +51,7 @@ namespace RandomStory
                     StringsHelper.KeepCommon(ref m_cRaces, pOther.m_cRaces);
                     StringsHelper.KeepCommon(ref m_cPerks, pOther.m_cPerks);
                     StringsHelper.KeepCommon(ref m_cProfessions, pOther.m_cProfessions);
-                    StringsHelper.KeepCommon(ref m_cProfessionsEvil, pOther.m_cProfessionsEvil);
+                    StringsHelper.KeepCommon(ref m_cProfessionsElite, pOther.m_cProfessionsElite);
                     StringsHelper.KeepCommon(ref m_cLocations, pOther.m_cLocations);
                     StringsHelper.KeepCommon(ref m_cItems, pOther.m_cItems);
                 }
@@ -62,7 +62,7 @@ namespace RandomStory
                 StringsHelper.RemoveCommon(ref pOther.m_cRaces, m_cRaces);
                 StringsHelper.RemoveCommon(ref pOther.m_cPerks, m_cPerks);
                 StringsHelper.RemoveCommon(ref pOther.m_cProfessions, m_cProfessions);
-                StringsHelper.RemoveCommon(ref pOther.m_cProfessionsEvil, m_cProfessionsEvil);
+                StringsHelper.RemoveCommon(ref pOther.m_cProfessionsElite, m_cProfessionsElite);
                 StringsHelper.RemoveCommon(ref pOther.m_cLocations, m_cLocations);
                 StringsHelper.RemoveCommon(ref pOther.m_cItems, m_cItems);
             }
@@ -81,7 +81,9 @@ namespace RandomStory
                 if (pSubNode.Name == "Professions")
                     StringsHelper.ReadXML(pXml, pSubNode, ref m_cProfessions);
                 if (pSubNode.Name == "ProfessionsEvil")
-                    StringsHelper.ReadXML(pXml, pSubNode, ref m_cProfessionsEvil);
+                    StringsHelper.ReadXML(pXml, pSubNode, ref m_cProfessionsElite);
+                if (pSubNode.Name == "ProfessionsElite")
+                    StringsHelper.ReadXML(pXml, pSubNode, ref m_cProfessionsElite);
                 if (pSubNode.Name == "Locations")
                     StringsHelper.ReadXML(pXml, pSubNode, ref m_cLocations);
                 if (pSubNode.Name == "Artefacts")
@@ -99,7 +101,7 @@ namespace RandomStory
                 m_cRaces.AddRange(pBase1.m_cRaces);
                 m_cPerks.AddRange(pBase1.m_cPerks);
                 m_cProfessions.AddRange(pBase1.m_cProfessions);
-                m_cProfessionsEvil.AddRange(pBase1.m_cProfessionsEvil);
+                m_cProfessionsElite.AddRange(pBase1.m_cProfessionsElite);
                 m_cLocations.AddRange(pBase1.m_cLocations);
                 m_cItems.AddRange(pBase1.m_cItems);
             }
@@ -116,7 +118,7 @@ namespace RandomStory
                 StringsHelper.Merge(pBase1.m_cRaces, pBase2.m_cRaces, ref m_cRaces);
                 StringsHelper.Merge(pBase1.m_cPerks, pBase2.m_cPerks, ref m_cPerks);
                 StringsHelper.Merge(pBase1.m_cProfessions, pBase2.m_cProfessions, ref m_cProfessions);
-                StringsHelper.Merge(pBase1.m_cProfessionsEvil, pBase2.m_cProfessionsEvil, ref m_cProfessionsEvil);
+                StringsHelper.Merge(pBase1.m_cProfessionsElite, pBase2.m_cProfessionsElite, ref m_cProfessionsElite);
                 StringsHelper.Merge(pBase1.m_cLocations, pBase2.m_cLocations, ref m_cLocations);
                 StringsHelper.Merge(pBase1.m_cItems, pBase2.m_cItems, ref m_cItems);
             }
@@ -129,7 +131,7 @@ namespace RandomStory
             StringsHelper.WriteXML(pXml, pWorldNode, "Races", m_cRaces);
             StringsHelper.WriteXML(pXml, pWorldNode, "Perks", m_cPerks);
             StringsHelper.WriteXML(pXml, pWorldNode, "Professions", m_cProfessions);
-            StringsHelper.WriteXML(pXml, pWorldNode, "ProfessionsEvil", m_cProfessionsEvil);
+            StringsHelper.WriteXML(pXml, pWorldNode, "ProfessionsElite", m_cProfessionsElite);
             StringsHelper.WriteXML(pXml, pWorldNode, "Locations", m_cLocations);
             StringsHelper.WriteXML(pXml, pWorldNode, "Artefacts", m_cItems);
         }
@@ -142,7 +144,7 @@ namespace RandomStory
                 return m_sName;
         }
 
-        public string GetRandomProfession()
+        public string GetRandomProfession(ref char[] aFlags)
         {
             List<string> cMerged = m_cProfessions;
             if (m_pCommon != null)
@@ -150,32 +152,21 @@ namespace RandomStory
                 cMerged = new List<string>();
                 StringsHelper.Merge(m_cProfessions, m_pCommon.m_cProfessions, ref cMerged);
             }
-            return StringsHelper.GetRandom(cMerged, "бездельник");
+            return StringsHelper.GetRandom(cMerged, "бездельник", ref aFlags);
         }
 
-        public string GetRandomProfessionEvil()
+        public string GetRandomProfessionElite(ref char[] aFlags)
         {
-            List<string> cMerged = m_cProfessionsEvil;
+            List<string> cMerged = m_cProfessionsElite;
             if (m_pCommon != null)
             {
                 cMerged = new List<string>();
-                StringsHelper.Merge(m_cProfessionsEvil, m_pCommon.m_cProfessionsEvil, ref cMerged);
+                StringsHelper.Merge(m_cProfessionsElite, m_pCommon.m_cProfessionsElite, ref cMerged);
             }
-            return StringsHelper.GetRandom(cMerged, "злодей");
+            return StringsHelper.GetRandom(cMerged, "злодей", ref aFlags);
         }
 
-        public string GetRandomRace()
-        {
-            List<string> cMerged = m_cRaces;
-            if (m_pCommon != null)
-            {
-                cMerged = new List<string>();
-                StringsHelper.Merge(m_cRaces, m_pCommon.m_cRaces, ref cMerged);
-            }
-            return StringsHelper.GetRandom(cMerged, "человек");
-        }
-
-        public string GetRandomRace(string sRelative)
+        public string GetRandomRace(ref char[] aFlags)
         {
             List<string> cMerged = m_cRaces;
             if (m_pCommon != null)
@@ -183,7 +174,18 @@ namespace RandomStory
                 cMerged = new List<string>();
                 StringsHelper.Merge(m_cRaces, m_pCommon.m_cRaces, ref cMerged);
             }
-            return StringsHelper.GetRelative(cMerged, sRelative);
+            return StringsHelper.GetRandom(cMerged, "человек", ref aFlags);
+        }
+
+        public string GetRandomRace(string sRelative, ref char[] aFlags)
+        {
+            List<string> cMerged = m_cRaces;
+            if (m_pCommon != null)
+            {
+                cMerged = new List<string>();
+                StringsHelper.Merge(m_cRaces, m_pCommon.m_cRaces, ref cMerged);
+            }
+            return StringsHelper.GetRelative(cMerged, sRelative, ref aFlags);
         }
 
         public string GetRandomLocation(List<string> cExceptions)
@@ -194,10 +196,11 @@ namespace RandomStory
                 cMerged = new List<string>();
                 StringsHelper.Merge(m_cLocations, m_pCommon.m_cLocations, ref cMerged);
             }
-            return StringsHelper.GetRandom(cMerged, cExceptions);
+            char[] aFlags = null;
+            return StringsHelper.GetRandom(cMerged, cExceptions, ref aFlags);
         }
 
-        public string GetRandomPerk(List<string> cExceptions)
+        public string GetRandomPerk(List<string> cExceptions, ref char[] aFlags)
         {
             List<string> cMerged = m_cPerks;
             if (m_pCommon != null)
@@ -205,7 +208,7 @@ namespace RandomStory
                 cMerged = new List<string>();
                 StringsHelper.Merge(m_cPerks, m_pCommon.m_cPerks, ref cMerged);
             }
-            return StringsHelper.GetRandom(cMerged, cExceptions);
+            return StringsHelper.GetRandom(cMerged, cExceptions, ref aFlags);
         }
 
         public string GetRandomArtefact()
@@ -216,7 +219,8 @@ namespace RandomStory
                 cMerged = new List<string>();
                 StringsHelper.Merge(m_cItems, m_pCommon.m_cItems, ref cMerged);
             }
-            return StringsHelper.GetRandom(cMerged, "штуковина");
+            char[] aFlags = null;
+            return StringsHelper.GetRandom(cMerged, "штуковина", ref aFlags);
         }
     }
 }

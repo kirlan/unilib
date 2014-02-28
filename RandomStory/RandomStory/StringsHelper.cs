@@ -38,30 +38,57 @@ namespace RandomStory
             }
         }
 
-        public static string GetRandom(List<string> cStrings)
+        public static char[] GetFlags(ref string sStr)
         {
-            return GetRandom(cStrings, new List<string>(), string.Empty);
+            StringBuilder sFlags = new StringBuilder();
+
+            bool bFound;
+            do
+            {
+                bFound = false;
+                int iPos1 = sStr.IndexOf('[');
+                if (iPos1 != -1)
+                {
+                    int iPos2 = sStr.IndexOf(']', iPos1);
+                    if (iPos2 != -1)
+                    {
+                        sFlags.Append(sStr.Substring(iPos1 + 1, iPos2 - iPos1 - 1));
+                        sStr = sStr.Remove(iPos1, iPos2 - iPos1 + 1);
+                        bFound = true;
+                    }
+                }
+            }
+            while (bFound);
+
+            return sFlags.ToString().ToCharArray();
         }
 
-        public static string GetRandom(List<string> cStrings, string sDefault)
+        public static string GetRandom(List<string> cStrings, ref char[] aFlags)
         {
-            return GetRandom(cStrings, new List<string>(), sDefault);
+            return GetRandom(cStrings, new List<string>(), string.Empty, ref aFlags);
         }
 
-        public static string GetRandom(List<string> cStrings, List<string> cExceptions)
+        public static string GetRandom(List<string> cStrings, string sDefault, ref char[] aFlags)
         {
-            return GetRandom(cStrings, cExceptions, string.Empty);
+            return GetRandom(cStrings, new List<string>(), sDefault, ref aFlags);
         }
 
-        public static string GetRandom(List<string> cStrings, List<string> cExceptions, string sDefault)
+        public static string GetRandom(List<string> cStrings, List<string> cExceptions, ref char[] aFlags)
+        {
+            return GetRandom(cStrings, cExceptions, string.Empty, ref aFlags);
+        }
+
+        public static string GetRandom(List<string> cStrings, List<string> cExceptions, string sDefault, ref char[] aFlags)
         {
             if (cStrings.Count > cExceptions.Count)
             {
+                int iCounter = 1000;
                 do
                 {
+                    iCounter--;
                     string sItem = cStrings[Rnd.Get(cStrings.Count)];
                     string[] aItems = sItem.Split(new char[] { '\\', '/', '|' });
-                    
+
                     bool bException = false;
                     foreach (string sItm in aItems)
                         if (cExceptions.Contains(sItm))
@@ -70,25 +97,109 @@ namespace RandomStory
                     if (bException)
                         continue;
 
-                    sItem = aItems[Rnd.Get(aItems.Length)];
+                    if (aFlags != null)
+                    {
+                        List<string> cTrueItems = new List<string>();
+                        List<string> cPossibleItems = new List<string>();
+                        for (int i = 0; i < aItems.Length; i++)
+                        {
+                            string sItm = aItems[i];
+                            char[] aItmFlags = StringsHelper.GetFlags(ref sItm);
+                            if (aItmFlags.Length == 0)
+                                cPossibleItems.Add(sItm);
 
-                    if (!cExceptions.Contains(sItem))
-                        return sItem;
+                            if(aFlags.Length == aItmFlags.Length)
+                            {
+                                if (aFlags.Length == 0)
+                                    cTrueItems.Add(sItm);
+                                else
+                                { 
+                                    bool bOK = true;
+                                    foreach (char chFlag1 in aFlags)
+                                        if (!aItmFlags.Contains(chFlag1))
+                                            bOK = false;
+                                    if(bOK)
+                                        cTrueItems.Add(sItm);
+                                }
+                            }
+                        }
+
+                        if (cTrueItems.Count > 0)
+                            aItems = cTrueItems.ToArray();
+                        else
+                            aItems = cPossibleItems.ToArray();
+                    }
+
+                    if (aItems.Length > 0)
+                    {
+                        sItem = aItems[Rnd.Get(aItems.Length)];
+
+                        char[] aItemFlags = StringsHelper.GetFlags(ref sItem);
+
+                        if (!cExceptions.Contains(sItem))
+                        {
+                            if (aFlags == null)
+                                aFlags = aItemFlags;
+                            return sItem;
+                        }
+                    }
                 }
-                while (true);
+                while (iCounter>0);
             }
 
             return sDefault;
         }
 
-        public static string GetRelative(List<string> cStrings, string sRelative)
+        public static string GetRelative(List<string> cStrings, string sRelative, ref char[] aFlags)
         {
             foreach (string sItem in cStrings)
             {
                 string[] aItems = sItem.Split(new char[] { '\\', '/', '|' });
-                if (aItems.Contains(sRelative))
+
+                if (aFlags != null)
                 {
-                    return aItems[Rnd.Get(aItems.Length)];
+                    List<string> cTrueItems = new List<string>();
+                    List<string> cPossibleItems = new List<string>();
+                    for (int i = 0; i < aItems.Length; i++)
+                    {
+                        string sItm = aItems[i];
+                        char[] aItmFlags = StringsHelper.GetFlags(ref sItm);
+                        if (aItmFlags.Length == 0)
+                            cPossibleItems.Add(sItm);
+
+                        if (aFlags.Length == aItmFlags.Length)
+                        {
+                            if (aFlags.Length == 0)
+                                cTrueItems.Add(sItm);
+                            else
+                            {
+                                bool bOK = true;
+                                foreach (char chFlag1 in aFlags)
+                                    if (!aItmFlags.Contains(chFlag1))
+                                        bOK = false;
+                                if (bOK)
+                                    cTrueItems.Add(sItm);
+                            }
+                        }
+                    }
+
+                    if (cTrueItems.Count > 0)
+                        aItems = cTrueItems.ToArray();
+                    else
+                        aItems = cPossibleItems.ToArray();
+                }
+
+                for (int i = 0; i < aItems.Length; i++)
+                {
+                    string sItm = aItems[i];
+                    char[] aItmFlags = StringsHelper.GetFlags(ref sItm);
+                    if (sItm.Equals(sRelative))
+                    {
+                        if (aFlags == null)
+                            aFlags = aItmFlags;
+
+                        return sItm;
+                    }
                 }
             }
 

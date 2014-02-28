@@ -69,7 +69,7 @@ namespace RandomStory
             racesTextBox.Lines = pSelectedWorld.m_cRaces.ToArray();
             perksTextBox.Lines = pSelectedWorld.m_cPerks.ToArray();
             professionsTextBox.Lines = pSelectedWorld.m_cProfessions.ToArray();
-            professionsEvilTextBox.Lines = pSelectedWorld.m_cProfessionsEvil.ToArray();
+            professionsEvilTextBox.Lines = pSelectedWorld.m_cProfessionsElite.ToArray();
             locationsTextBox.Lines = pSelectedWorld.m_cLocations.ToArray();
             itemsTextBox.Lines = pSelectedWorld.m_cItems.ToArray();
 
@@ -157,8 +157,8 @@ namespace RandomStory
             if (pSelectedWorld == null)
                 return;
 
-            pSelectedWorld.m_cProfessionsEvil.Clear();
-            pSelectedWorld.m_cProfessionsEvil.AddRange(professionsEvilTextBox.Lines);
+            pSelectedWorld.m_cProfessionsElite.Clear();
+            pSelectedWorld.m_cProfessionsElite.AddRange(professionsEvilTextBox.Lines);
         }
 
         private void itemsTextBox_TextChanged(object sender, EventArgs e)

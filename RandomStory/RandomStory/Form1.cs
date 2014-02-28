@@ -16,6 +16,10 @@ namespace RandomStory
         public Form1()
         {
             InitializeComponent();
+
+            string sStr = "[F]male or female[M]";
+            char[] aFlags = null;
+            aFlags = StringsHelper.GetFlags(ref sStr);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -45,6 +49,7 @@ namespace RandomStory
         {
             WorldsEdit pForm = new WorldsEdit(m_pRepository);
             pForm.ShowDialog();
+            m_pRepository.SaveXML();
 
             bool bAllChecked = (checkedListBox1.CheckedItems.Count == checkedListBox1.Items.Count);
 
@@ -110,20 +115,29 @@ namespace RandomStory
             RichTextBoxAppend("Главный герой:\r\n", true, false, false);
             RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pHero));
 
+            if (pStory.m_pTutor != null)
+            {
+                RichTextBoxAppend("Покровитель/наставник героя:\r\n", true, false, false);
+                RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pTutor));
+            }
+
+            if (pStory.m_pHelper != null)
+            {
+                RichTextBoxAppend("Спутник героя:\r\n", true, false, false);
+                RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pHelper));
+            }
+
             RichTextBoxAppend("Проблема:\r\n", true, false, false);
             RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_sProblem));
-
-            RichTextBoxAppend("Покровитель/наставник героя:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pTutor == null ? "-" : pStory.m_pTutor.ToString()));
-
-            RichTextBoxAppend("Спутник героя:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pHelper == null ? "-" : pStory.m_pHelper.ToString()));
 
             RichTextBoxAppend("Главный злодей:\r\n", true, false, false);
             RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pVillain));
 
-            RichTextBoxAppend("Помощник злодея:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pMinion == null ? "-" : pStory.m_pMinion.ToString()));
+            if (pStory.m_pMinion != null)
+            {
+                RichTextBoxAppend("Помощник злодея:\r\n", true, false, false);
+                RichTextBoxAppend(string.Format("{0}\r\n\r\n",  pStory.m_pMinion));
+            }
 
             RichTextBoxAppend("Решение:\r\n", true, false, false);
             RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_sSolution));
@@ -147,6 +161,7 @@ namespace RandomStory
         {
             ProblemsEdit pForm = new ProblemsEdit(m_pRepository);
             pForm.ShowDialog();
+            m_pRepository.SaveXML();
         }
 
         private void считатьБазуToolStripMenuItem_Click(object sender, EventArgs e)
@@ -180,6 +195,13 @@ namespace RandomStory
 
             if (e.NewValue == CheckState.Unchecked && checkedListBox1.CheckedItems.Count == 1)
                 button1.Enabled = false;
+        }
+
+        private void отношенияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CharactersEdit pForm = new CharactersEdit(m_pRepository);
+            pForm.ShowDialog();
+            m_pRepository.SaveXML();
         }
     }
 }
