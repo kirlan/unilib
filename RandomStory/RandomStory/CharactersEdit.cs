@@ -26,8 +26,7 @@ namespace RandomStory
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            m_pRepository.m_cRelations.Clear();
-            m_pRepository.m_cRelations.AddRange(textBox1.Lines);
+            m_pRepository.m_cRelations = new Strings(textBox1.Lines);
         }
     }
 }

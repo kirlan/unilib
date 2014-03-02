@@ -120,6 +120,9 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>563, 17</value>
+  </metadata>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
@@ -129,6 +132,23 @@
   <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>408, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>563, 17</value>
+  </metadata>
+  <data name="checkedListBox1.ToolTip" xml:space="preserve">
+    <value>Википедия: "Се́ттинг (от англ. setting — «обстановка», «помещение», «установка», 
+«оправа») — среда, в которой происходит действие художественного 
+произведения, настольной или компьютерной игры; место, время и условия 
+действия."
+
+Полностью выбранные сеттинги (чёрная галочка) могут быть использованы
+как основной сеттинг сюжета. Если выбрано несколько сеттингов, сюжет будет
+построен на комбинации двух или больше сеттингов из числа выбранных.
+
+Частично выбранные сеттинги (серая галочка) могут быть использованы для 
+описания происхождения персонажей-"попаданцев" - в случае, если их 
+использование в сюжете разрешено.</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>43</value>
   </metadata>

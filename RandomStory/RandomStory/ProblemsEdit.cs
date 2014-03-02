@@ -30,14 +30,12 @@ namespace RandomStory
 
         private void problemsTextBox_TextChanged(object sender, EventArgs e)
         {
-            m_pRepository.m_cProblems.Clear();
-            m_pRepository.m_cProblems.AddRange(problemsTextBox.Lines);
+            m_pRepository.m_cProblems = new Strings(problemsTextBox.Lines);
         }
 
         private void solutionsTextBox_TextChanged(object sender, EventArgs e)
         {
-            m_pRepository.m_cSolutions.Clear();
-            m_pRepository.m_cSolutions.AddRange(solutionsTextBox.Lines);
+            m_pRepository.m_cSolutions = new Strings(solutionsTextBox.Lines);
         }
     }
 }
