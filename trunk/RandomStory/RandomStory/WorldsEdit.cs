@@ -21,15 +21,15 @@ namespace RandomStory
 
             worldsListBox.Items.Clear();
             worldsListBox.Items.Add(m_pRepository.m_pCommon);
-            worldsListBox.Items.AddRange(m_pRepository.m_cWorlds.ToArray());
+            worldsListBox.Items.AddRange(m_pRepository.m_cAllSettings.ToArray());
         }
 
         private void добавитьМирToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            World pNewWorld = new World();
+            Setting pNewWorld = new Setting();
             pNewWorld.m_pCommon = m_pRepository.m_pCommon;
 
-            m_pRepository.m_cWorlds.Add(pNewWorld);
+            m_pRepository.m_cAllSettings.Add(pNewWorld);
             worldsListBox.SelectedIndex = worldsListBox.Items.Add(pNewWorld);
         }
 
@@ -47,7 +47,7 @@ namespace RandomStory
             if (MessageBox.Show(string.Format("Действительно хотите удалить мир '{0}'", worldsListBox.SelectedItem), "Удалить мир", MessageBoxButtons.YesNo) == DialogResult.No)
                 return;
 
-            m_pRepository.m_cWorlds.Remove(worldsListBox.SelectedItem as World);
+            m_pRepository.m_cAllSettings.Remove(worldsListBox.SelectedItem as Setting);
             worldsListBox.Items.Remove(worldsListBox.SelectedItem);
         }
 
@@ -56,7 +56,7 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
@@ -81,7 +81,7 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
@@ -96,13 +96,12 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
 
-            pSelectedWorld.m_cRaces.Clear();
-            pSelectedWorld.m_cRaces.AddRange(racesTextBox.Lines);
+            pSelectedWorld.m_cRaces = new Strings(racesTextBox.Lines);
         }
 
         private void perksTextBox_TextChanged(object sender, EventArgs e)
@@ -110,13 +109,12 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
 
-            pSelectedWorld.m_cPerks.Clear();
-            pSelectedWorld.m_cPerks.AddRange(perksTextBox.Lines);
+            pSelectedWorld.m_cPerks = new Strings(perksTextBox.Lines);
         }
 
         private void professionsTextBox_TextChanged(object sender, EventArgs e)
@@ -124,13 +122,12 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
 
-            pSelectedWorld.m_cProfessions.Clear();
-            pSelectedWorld.m_cProfessions.AddRange(professionsTextBox.Lines);
+            pSelectedWorld.m_cProfessions = new Strings(professionsTextBox.Lines);
         }
 
         private void locationsTextBox_TextChanged(object sender, EventArgs e)
@@ -138,13 +135,12 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
 
-            pSelectedWorld.m_cLocations.Clear();
-            pSelectedWorld.m_cLocations.AddRange(locationsTextBox.Lines);
+            pSelectedWorld.m_cLocations = new Strings(locationsTextBox.Lines);
         }
 
         private void professionsEvilTextBox_TextChanged(object sender, EventArgs e)
@@ -152,13 +148,12 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
 
-            pSelectedWorld.m_cProfessionsElite.Clear();
-            pSelectedWorld.m_cProfessionsElite.AddRange(professionsEvilTextBox.Lines);
+            pSelectedWorld.m_cProfessionsElite = new Strings(professionsEvilTextBox.Lines);
         }
 
         private void itemsTextBox_TextChanged(object sender, EventArgs e)
@@ -166,13 +161,12 @@ namespace RandomStory
             if (worldsListBox.SelectedIndex == -1)
                 return;
 
-            World pSelectedWorld = worldsListBox.SelectedItem as World;
+            Setting pSelectedWorld = worldsListBox.SelectedItem as Setting;
 
             if (pSelectedWorld == null)
                 return;
 
-            pSelectedWorld.m_cItems.Clear();
-            pSelectedWorld.m_cItems.AddRange(itemsTextBox.Lines);
+            pSelectedWorld.m_cItems = new Strings(itemsTextBox.Lines);
         }
 
         private void WorldsEdit_FormClosed(object sender, FormClosedEventArgs e)

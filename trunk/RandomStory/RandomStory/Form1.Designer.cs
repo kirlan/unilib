@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.редактироватьБазуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.считатьБазуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,8 +39,7 @@
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.мирыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.проблемыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.попаданцыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.отношенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
@@ -51,7 +51,9 @@
             this.отменаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.отношенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -60,8 +62,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.редактироватьБазуToolStripMenuItem,
-            this.выходToolStripMenuItem,
-            this.настройкиToolStripMenuItem});
+            this.выходToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(668, 24);
@@ -129,30 +130,23 @@
             this.проблемыToolStripMenuItem.Text = "Проблемы и решения...";
             this.проблемыToolStripMenuItem.Click += new System.EventHandler(this.проблемыToolStripMenuItem_Click);
             // 
-            // настройкиToolStripMenuItem
+            // отношенияToolStripMenuItem
             // 
-            this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.попаданцыToolStripMenuItem});
-            this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
-            this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
-            this.настройкиToolStripMenuItem.Text = "Настройки";
-            // 
-            // попаданцыToolStripMenuItem
-            // 
-            this.попаданцыToolStripMenuItem.CheckOnClick = true;
-            this.попаданцыToolStripMenuItem.Name = "попаданцыToolStripMenuItem";
-            this.попаданцыToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.попаданцыToolStripMenuItem.Text = "Попаданцы";
+            this.отношенияToolStripMenuItem.Name = "отношенияToolStripMenuItem";
+            this.отношенияToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.отношенияToolStripMenuItem.Text = "Отношения...";
+            this.отношенияToolStripMenuItem.Click += new System.EventHandler(this.отношенияToolStripMenuItem_Click);
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(141, 488);
+            this.button1.Location = new System.Drawing.Point(374, 489);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(387, 31);
+            this.button1.Size = new System.Drawing.Size(143, 31);
             this.button1.TabIndex = 2;
             this.button1.Text = "Новый сюжет!";
+            this.toolTip1.SetToolTip(this.button1, "Формирует новый сюжет с использованием выбранной\r\nкомбинации сеттингов.");
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -179,8 +173,9 @@
             this.checkedListBox1.IntegralHeight = false;
             this.checkedListBox1.Location = new System.Drawing.Point(0, 44);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(215, 436);
+            this.checkedListBox1.Size = new System.Drawing.Size(215, 411);
             this.checkedListBox1.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.checkedListBox1, resources.GetString("checkedListBox1.ToolTip"));
             this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox1_ItemCheck);
             // 
             // contextMenuStrip1
@@ -242,18 +237,42 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Используемые сеттинги:";
             // 
-            // отношенияToolStripMenuItem
+            // checkBox1
             // 
-            this.отношенияToolStripMenuItem.Name = "отношенияToolStripMenuItem";
-            this.отношенияToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.отношенияToolStripMenuItem.Text = "Отношения...";
-            this.отношенияToolStripMenuItem.Click += new System.EventHandler(this.отношенияToolStripMenuItem_Click);
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(13, 462);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(145, 17);
+            this.checkBox1.TabIndex = 6;
+            this.checkBox1.Text = "Разрешить попаданцев";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button2.Location = new System.Drawing.Point(36, 489);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(143, 31);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "Случайная комбинация";
+            this.toolTip1.SetToolTip(this.button2, "Формирует новую комбинацию сеттингов.");
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutoPopDelay = 10000;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 100;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(668, 525);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.checkedListBox1);
@@ -294,10 +313,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem отменаToolStripMenuItem;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem попаданцыToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem отношенияToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 
