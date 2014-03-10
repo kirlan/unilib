@@ -117,31 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>327, 17</value>
-  </metadata>
-  <data name="worldsListBox.ToolTip" xml:space="preserve">
-    <value>Мир определяет место и время действия истории. Национальный состав героев, 
-технологичейский уровень, наиболее распространённые профессии, возможные 
-места действия, имеющие значение индивидуальные качества...
-
-При создании сюжета мир истории может формироваться как комбинация 
-нескольких "простых" миров - в этом случае это может быть как единый мир, 
-сочетающий в себе черты своих компонентов (например, межзвёздная 
-империя, построенная по образу и подобию античной Римской империи), 
-так и совокупность нескольких ареалов действия, по которым перемещается 
-герой (например, часть приключений может присходить в цивилизованном 
-мире середины XX века, а часть - в стране примитивных дикарей).</value>
-  </data>
-  <metadata name="contextMenuStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>172, 17</value>
-  </metadata>
-  <data name="janresListBox.ToolTip" xml:space="preserve">
-    <value>Жанр определяет законы, по которым действует история, добавляя в мир 
-истории необходимые для соответствующего жанра элементы. Например,
-какая фэнтези без магов? А какой вестерн без ковбоев и шерифа?</value>
-  </data>
 </root>

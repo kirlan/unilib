@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Random;
+using Microsoft.Win32;
 
 namespace RandomStory
 {
@@ -18,25 +18,54 @@ namespace RandomStory
         {
             InitializeComponent();
 
-            string sStr = "[F]male or female[M]";
-            char[] aFlags = null;
-            aFlags = Strings.GetFlags(ref sStr);
+            panel2.Dock = DockStyle.Fill;
         }
+
+        private SettingSelect m_pSelectSetting;
 
         private void Form1_Load(object sender, EventArgs e)
         {
             m_pRepository.LoadXML();
-            checkedListBox1.Items.Clear();
-            checkedListBox1.Items.AddRange(m_pRepository.m_cAllSettings.ToArray());
 
-            button2_Click(sender, e);
-            button1_Click(sender, e);
+            m_pSelectSetting = new SettingSelect(m_pRepository);
+
+            RegistryKey key = null;
+            try
+            {
+                key = Application.CommonAppDataRegistry;//Registry.LocalMachine.OpenSubKey("SOFTWARE\\RandomStoryKvB", true);
+
+                эспрессрежимToolStripMenuItem.Checked = (int)key.GetValue("Express", 0) > 0;
+
+                key.Close();
+            }
+            catch (Exception ex)
+            {
+                if (key != null)
+                    key.Close();
+            }
+            
+            ClearUI();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             if(e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.ApplicationExitCall)
                 m_pRepository.SaveXML();
+
+            RegistryKey key = null;
+            try
+            {
+                key = Application.CommonAppDataRegistry;//Registry.LocalMachine.OpenSubKey("SOFTWARE\\RandomStoryKvB", true);
+
+                key.SetValue("Express", эспрессрежимToolStripMenuItem.Checked ? 1:0);
+
+                key.Close();
+            }
+            catch (Exception ex)
+            {
+                if (key != null)
+                    key.Close();
+            }
         }
 
         private void выходToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -50,131 +79,10 @@ namespace RandomStory
             pForm.ShowDialog();
             m_pRepository.SaveXML();
 
-            bool bAllChecked = (checkedListBox1.CheckedItems.Count == checkedListBox1.Items.Count);
-
-            List<Setting> cAllowed = new List<Setting>();
-            List<Setting> cPrimed = new List<Setting>();
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
-            {
-                CheckState eState = checkedListBox1.GetItemCheckState(i);
-
-                if (eState == CheckState.Unchecked)
-                    continue;
-
-                Setting pItem = checkedListBox1.Items[i] as Setting;
-                if (eState == CheckState.Checked)
-                    cPrimed.Add(pItem);
-                else
-                    cAllowed.Add(pItem);
-            }
-            
-            checkedListBox1.Items.Clear();
-            checkedListBox1.Items.AddRange(m_pRepository.m_cAllSettings.ToArray());
-
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
-            {
-                if (bAllChecked || cPrimed.Contains(checkedListBox1.Items[i]))
-                    checkedListBox1.SetItemCheckState(i, CheckState.Checked);
-                else if (cAllowed.Contains(checkedListBox1.Items[i]))
-                    checkedListBox1.SetItemCheckState(i, CheckState.Indeterminate);
-            }
+            m_pSelectSetting.Update();
         }
 
-        private void RichTextBoxAppend(string sText)
-        {
-            RichTextBoxAppend(sText, false, false, false, richTextBox1.ForeColor);
-        }
-
-        private void RichTextBoxAppend(string sText, bool bBold, bool bItalic, bool bUnderline)
-        {
-            RichTextBoxAppend(sText, bBold, bItalic, bUnderline, richTextBox1.ForeColor);
-        }
-
-        private void RichTextBoxAppend(string sText, bool bBold, bool bItalic, bool bUnderline, Color eColor)
-        {
-            int iSelectionStart = richTextBox1.SelectionStart;
-            richTextBox1.Select(iSelectionStart, 0);
-            richTextBox1.SelectedText = sText;
-            richTextBox1.Select(iSelectionStart, sText.Length);
-
-            Font pFont = richTextBox1.Font;
-            FontStyle eStyle = FontStyle.Regular;
-            if(bBold)
-                eStyle |= FontStyle.Bold;
-            if(bItalic)
-                eStyle |= FontStyle.Italic;
-            if(bUnderline)
-                eStyle |= FontStyle.Underline;
-            richTextBox1.SelectionFont = new Font(pFont.Name, pFont.Size, eStyle);
-            richTextBox1.SelectionColor = eColor;
-            richTextBox1.SelectionAlignment = HorizontalAlignment.Center;
-
-            richTextBox1.Select(iSelectionStart + sText.Length, 0);
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            List<Setting> cAllowed = new List<Setting>();
-            List<Setting> cPrimed = new List<Setting>();
-            for (int i=0; i<checkedListBox1.Items.Count; i++)
-            {
-                CheckState eState = checkedListBox1.GetItemCheckState(i);
-
-                if (eState == CheckState.Unchecked)
-                    continue;
-
-                Setting pItem = checkedListBox1.Items[i] as Setting;
-                if (eState == CheckState.Checked)
-                    cPrimed.Add(pItem);
-                else
-                    cAllowed.Add(pItem);
-            }
-
-            m_pRepository.MarkPossibleWorlds(cAllowed, cPrimed);
-
-            Story pStory = new Story(m_pRepository, checkBox1.Checked);
-
-            richTextBox1.Clear();
-
-            RichTextBoxAppend("Сеттинг:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pSetting));
-
-            RichTextBoxAppend("Главный герой:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pHero));
-
-            if (pStory.m_pTutor != null)
-            {
-                RichTextBoxAppend("Покровитель/наставник героя:\r\n", true, false, false);
-                RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pTutor));
-            }
-
-            if (pStory.m_pHelper != null)
-            {
-                RichTextBoxAppend("Спутник героя:\r\n", true, false, false);
-                RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pHelper));
-            }
-
-            RichTextBoxAppend("Проблема:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_sProblem));
-
-            RichTextBoxAppend("Антагонист:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_pVillain));
-
-            if (pStory.m_pMinion != null)
-            {
-                RichTextBoxAppend("Помощник антагониста:\r\n", true, false, false);
-                RichTextBoxAppend(string.Format("{0}\r\n\r\n",  pStory.m_pMinion));
-            }
-
-            RichTextBoxAppend("Решение:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_sSolution));
-
-            RichTextBoxAppend("Ключевой предмет:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_sKeyItem));
-
-            RichTextBoxAppend("Места основных событий:\r\n", true, false, false);
-            RichTextBoxAppend(string.Format("{0}\r\n\r\n", pStory.m_cLocations.ToString()));
-        }
+        private Story m_pStory = null;
 
         private void проблемыToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -195,52 +103,6 @@ namespace RandomStory
                 m_pRepository.SaveXML(saveFileDialog1.FileName);
         }
 
-        private void пометитьВсеToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            checkedListBox1.ItemCheck -= new ItemCheckEventHandler(checkedListBox1_ItemCheck);
-            
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
-                checkedListBox1.SetItemCheckState(i, CheckState.Checked);
-
-            checkedListBox1.ItemCheck += new ItemCheckEventHandler(checkedListBox1_ItemCheck);
-            button1.Enabled = checkedListBox1.CheckedItems.Count > 0;
-        }
-
-        private void снятьПометкиСоВсехToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            checkedListBox1.ItemCheck -= new ItemCheckEventHandler(checkedListBox1_ItemCheck); 
-            
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
-                checkedListBox1.SetItemCheckState(i, CheckState.Unchecked);
-        
-            checkedListBox1.ItemCheck += new ItemCheckEventHandler(checkedListBox1_ItemCheck);
-            button1.Enabled = false;
-        }
-
-        private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            switch (e.CurrentValue)
-            {
-                case CheckState.Checked:
-                    e.NewValue = CheckState.Indeterminate;
-                    break;
-
-                case CheckState.Indeterminate:
-                    e.NewValue = CheckState.Unchecked;
-                    break;
-
-                case CheckState.Unchecked:
-                    e.NewValue = CheckState.Checked;
-                    break;
-            }
-
-            if (e.NewValue == CheckState.Checked)
-                button1.Enabled = true;
-
-            if (e.NewValue != CheckState.Checked && checkedListBox1.CheckedItems.Count == 1)
-                button1.Enabled = false;
-        }
-
         private void отношенияToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CharactersEdit pForm = new CharactersEdit(m_pRepository);
@@ -248,46 +110,318 @@ namespace RandomStory
             m_pRepository.SaveXML();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void тестToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            checkBox1.Checked = Rnd.OneChanceFrom(2);
 
-            if (checkedListBox1.Items.Count > 0)
+        }
+
+        private void glassButton1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ClearUI()
+        {
+            glassPanelEvents.Visible = false;
+            glassPanelHelper.Visible = false;
+            glassPanelHero.Visible = false;
+            glassPanelItems.Visible = false;
+            glassPanelMinion.Visible = false;
+            glassPanelPlaces.Visible = false;
+            glassPanelProblem.Visible = false;
+            glassPanelSolution.Visible = false;
+            glassPanelTutor.Visible = false;
+            glassPanelVillain.Visible = false;
+
+            glassPanelEvents.Enabled = true;
+            glassPanelHelper.Enabled = true;
+            glassPanelHero.Enabled = true;
+            glassPanelItems.Enabled = true;
+            glassPanelMinion.Enabled = true;
+            glassPanelPlaces.Enabled = true;
+            glassPanelProblem.Enabled = true;
+            glassPanelSolution.Enabled = true;
+            glassPanelTutor.Enabled = true;
+            glassPanelVillain.Enabled = true;
+
+            glassButtonEvents.Text = "?";
+            glassButtonHelper.Text = "?";
+            glassButtonHero.Text = "?";
+            glassButtonItems.Text = "?";
+            glassButtonMinion.Text = "?";
+            glassButtonPlaces.Text = "?";
+            glassButtonProblem.Text = "?";
+            glassButtonSetting.Text = "?";
+            glassButtonSolution.Text = "?";
+            glassButtonTutor.Text = "?";
+            glassButtonVillain.Text = "?";
+
+            exportButton.Enabled = false;
+
+            UpdateCompletitionPercent();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (m_pSelectSetting.ShowDialog() == DialogResult.OK)
             {
-                checkedListBox1.ItemCheck -= new ItemCheckEventHandler(checkedListBox1_ItemCheck);
+                ClearUI();
 
-                for(int i=0; i<checkedListBox1.Items.Count; i++)
-                    checkedListBox1.SetItemCheckState(i, CheckState.Unchecked);
+                m_pRepository.MarkPossibleSettings(m_pSelectSetting.m_cAllowedWorlds, m_pSelectSetting.m_cPrimedWorlds, m_pSelectSetting.m_cAllowedJanres, m_pSelectSetting.m_cPrimedJanres);
+                m_pStory = new Story(m_pRepository, m_pSelectSetting.Voyagers);
 
-                int iSetting1 = Rnd.Get(checkedListBox1.Items.Count);
-                int iSetting2 = -1;
-                checkedListBox1.SetItemCheckState(iSetting1, CheckState.Checked);
-
-                if (checkedListBox1.Items.Count > 1 && Rnd.OneChanceFrom(2))
+                if (интерактивныйРежимToolStripMenuItem.Checked)
                 {
-                    do
-                    {
-                        iSetting2 = Rnd.Get(checkedListBox1.Items.Count);
-                    }
-                    while (iSetting2 == iSetting1);
+                    glassButtonSetting.Text = m_pStory.m_pSetting.ToString();
+                    glassPanelHero.Visible = true;
+                }
+                else
+                {
+                    m_pStory.BuildFullStory();
 
-                    checkedListBox1.SetItemCheckState(iSetting2, CheckState.Checked);
+                    glassPanelEvents.Visible = true;
+                    glassPanelHelper.Visible = true;
+                    glassPanelHero.Visible = true;
+                    glassPanelItems.Visible = true;
+                    glassPanelMinion.Visible = true;
+                    glassPanelPlaces.Visible = true;
+                    glassPanelProblem.Visible = true;
+                    glassPanelSolution.Visible = true;
+                    glassPanelTutor.Visible = true;
+                    glassPanelVillain.Visible = true; 
+                    
+                    glassButtonSetting.Text = m_pStory.m_pSetting.ToString();
+                    glassButtonHero.Text = m_pStory.m_pHero.ToString();
+
+                    if (m_pStory.m_pTutor != null)
+                        glassButtonTutor.Text = m_pStory.m_pTutor.ToString();
+
+                    if (m_pStory.m_pHelper != null)
+                        glassButtonHelper.Text = m_pStory.m_pHelper.ToString();
+
+                    glassButtonProblem.Text = m_pStory.m_sProblem;
+                    glassButtonVillain.Text = m_pStory.m_pVillain.ToString();
+
+                    if (m_pStory.m_pMinion != null)
+                        glassButtonMinion.Text = m_pStory.m_pMinion.ToString();
+
+                    glassButtonSolution.Text = m_pStory.m_sSolution;
+                    glassButtonItems.Text = m_pStory.m_cKeyItems.ToString("\n");
+                    glassButtonPlaces.Text = m_pStory.m_cLocations.ToString("\n");
+                    glassButtonEvents.Text = m_pStory.m_cEvents.ToString("\n");
                 }
 
-                if (checkedListBox1.Items.Count > 2)
-                {
-                    int iSetting3;
-                    do
-                    {
-                        iSetting3 = Rnd.Get(checkedListBox1.Items.Count);
-                    }
-                    while (iSetting3 == iSetting1 || iSetting3 == iSetting2);
-
-                    checkedListBox1.SetItemCheckState(iSetting3, CheckState.Indeterminate);
-                }
-
-                checkedListBox1.ItemCheck += new ItemCheckEventHandler(checkedListBox1_ItemCheck);
+                UpdateCompletitionPercent();
             }
+        }
+
+        private void glassButtonSetting_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void UpdateCompletitionPercent()
+        {
+            int iTotal = 7;
+            int iComplete = 0;
+
+            if (m_pStory != null)
+            {
+                if (m_pStory.m_pHero != null)
+                    iComplete++;
+                if (m_pStory.m_pVillain != null)
+                    iComplete++;
+                if (!string.IsNullOrWhiteSpace(m_pStory.m_sProblem))
+                    iComplete++;
+                if (!string.IsNullOrWhiteSpace(m_pStory.m_sSolution))
+                    iComplete++;
+                if (m_pStory.m_cKeyItems.Count > 0)
+                    iComplete++;
+                if (m_pStory.m_cLocations.Count > 0)
+                    iComplete++;
+                if (m_pStory.m_cEvents.Count > 0)
+                    iComplete++;
+                if (m_pStory.m_pTutor != null)
+                {
+                    iTotal++;
+                    iComplete++;
+                }
+                if (m_pStory.m_pHelper != null)
+                {
+                    iTotal++;
+                    iComplete++;
+                }
+                if (m_pStory.m_pMinion != null)
+                {
+                    iTotal++;
+                    iComplete++;
+                }
+            }
+
+            label1.Text = string.Format("{0:P0}", (double)iComplete/iTotal);
+
+            Font pFont = label1.Font;
+            label1.Font = new Font(pFont, iTotal == iComplete ? FontStyle.Bold : FontStyle.Regular);
+
+            exportButton.Enabled = (iTotal == iComplete);
+        }
+
+        private void glassButtonHero_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Герой:", m_pStory.GetRandomHero, m_pStory.m_pHero);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetHero(pForm.SelectedItem as Character);
+                glassButtonHero.Text = m_pStory.m_pHero.ToString();
+                glassPanelVillain.Visible = true;
+                glassPanelHelper.Visible = true;
+                glassPanelTutor.Visible = true;
+                glassButtonSetting.Enabled = false;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonVillain_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Антагонист:", m_pStory.GetRandomVillain, m_pStory.m_pVillain);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetVillain(pForm.SelectedItem as Character);
+                glassButtonVillain.Text = m_pStory.m_pVillain.ToString();
+                glassPanelProblem.Visible = true;
+                glassPanelMinion.Visible = true;
+                //if (m_pStory.m_pVillain.m_pRelative != null && m_pStory.m_pVillain.m_pRelative == m_pStory.m_pHero)
+                //    glassButtonHero.Enabled = false;
+                //if (m_pStory.m_pVillain.m_pRelative != null && m_pStory.m_pVillain.m_pRelative == m_pStory.m_pTutor)
+                //    glassButtonTutor.Enabled = false;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonTutor_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Наставник/покровитель героя:", m_pStory.GetRandomTutor, m_pStory.m_pTutor);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetTutor(pForm.SelectedItem as Character);
+                glassButtonTutor.Text = m_pStory.m_pTutor.ToString();
+                //if (m_pStory.m_pTutor.m_pRelative != null && m_pStory.m_pTutor.m_pRelative == m_pStory.m_pVillain)
+                //    glassButtonVillain.Enabled = false;
+                //if (m_pStory.m_pTutor.m_pRelative != null && m_pStory.m_pTutor.m_pRelative == m_pStory.m_pHero)
+                //    glassButtonHero.Enabled = false;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonHelper_Click(object sender, EventArgs e)
+        {
+           Randomizer pForm = new Randomizer("Спутник героя:", m_pStory.GetRandomHelper, m_pStory.m_pHelper);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetHelper(pForm.SelectedItem as Character);
+                glassButtonHelper.Text = m_pStory.m_pHelper.ToString();
+                //if (m_pStory.m_pHelper.m_pRelative != null && m_pStory.m_pHelper.m_pRelative == m_pStory.m_pVillain)
+                //    glassButtonVillain.Enabled = false;
+                //if (m_pStory.m_pHelper.m_pRelative != null && m_pStory.m_pHelper.m_pRelative == m_pStory.m_pHero)
+                //    glassButtonHero.Enabled = false;
+                //if (m_pStory.m_pHelper.m_pRelative != null && m_pStory.m_pHelper.m_pRelative == m_pStory.m_pTutor)
+                //    glassButtonTutor.Enabled = false;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonMinion_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Помощник антагониста:", m_pStory.GetRandomMinion, m_pStory.m_pMinion);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetMinion(pForm.SelectedItem as Character);
+                glassButtonMinion.Text = m_pStory.m_pMinion.ToString();
+                //if (m_pStory.m_pMinion.m_pRelative != null && m_pStory.m_pMinion.m_pRelative == m_pStory.m_pVillain)
+                //    glassButtonVillain.Enabled = false;
+                //if (m_pStory.m_pMinion.m_pRelative != null && m_pStory.m_pMinion.m_pRelative == m_pStory.m_pHero)
+                //    glassButtonHero.Enabled = false;
+                //if (m_pStory.m_pMinion.m_pRelative != null && m_pStory.m_pMinion.m_pRelative == m_pStory.m_pTutor)
+                //    glassButtonTutor.Enabled = false;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonProblem_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Проблема:", m_pStory.GetRandomProblem, m_pStory.m_sProblem);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetProblem(pForm.SelectedItem as string);
+                glassButtonProblem.Text = m_pStory.m_sProblem;
+                glassPanelSolution.Visible = true;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonSolution_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Решение:", m_pStory.GetRandomSolution, m_pStory.m_sSolution);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetSolution(pForm.SelectedItem as string);
+                glassButtonSolution.Text = m_pStory.m_sSolution;
+                glassPanelItems.Visible = true;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonItems_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Ключевые предметы:", m_pStory.GetRandomItems, m_pStory.m_cKeyItems);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetItems(pForm.SelectedItem as Strings);
+                glassButtonItems.Text = m_pStory.m_cKeyItems.ToString("\n");
+                glassPanelPlaces.Visible = true;
+                glassPanelEvents.Visible = true;
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonPlaces_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Основные локации:", m_pStory.GetRandomPlaces, m_pStory.m_cLocations);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetPlaces(pForm.SelectedItem as Strings);
+                glassButtonPlaces.Text = m_pStory.m_cLocations.ToString("\n");
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void glassButtonEvents_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("Ключевые сцены:", m_pStory.GetRandomEvents, m_pStory.m_cEvents);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetEvents(pForm.SelectedItem as Strings);
+                glassButtonEvents.Text = m_pStory.m_cEvents.ToString("\n");
+                UpdateCompletitionPercent();
+            }
+        }
+
+        private void эспрессрежимToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            интерактивныйРежимToolStripMenuItem.Checked = !эспрессрежимToolStripMenuItem.Checked;
+            label1.Visible = интерактивныйРежимToolStripMenuItem.Checked;
+        }
+
+        private void интерактивныйРежимToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            эспрессрежимToolStripMenuItem.Checked = !интерактивныйРежимToolStripMenuItem.Checked;
+            label1.Visible = интерактивныйРежимToolStripMenuItem.Checked;
+        }
+
+        private void экспортироватьИсториюToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportForm pForm = new ExportForm(m_pStory);
+
+            pForm.ShowDialog();
         }
     }
 }
