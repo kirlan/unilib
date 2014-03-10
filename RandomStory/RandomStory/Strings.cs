@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using nsUniLibXML;
+using System.Linq;
 using System.Xml;
 using Random;
+using System.Threading.Tasks;
 
 namespace RandomStory
 {
@@ -48,7 +49,10 @@ namespace RandomStory
                 m_cStrings.Add(sStr);
         }
 
-
+        public int Count
+        {
+            get { return m_cStrings.Count; }
+        }
 
         public string this[int key]
         {
@@ -72,8 +76,15 @@ namespace RandomStory
                     string sName = "";
                     pXml.GetStringAttribute(pItemNode, "name", ref sName);
 
-                    if (!string.IsNullOrWhiteSpace(sName))
-                        m_cStrings.Add(sName);
+                    sName = sName.Trim();
+
+                    if (string.IsNullOrWhiteSpace(sName))
+                        continue;
+
+                    if (m_cStrings.Contains(sName))
+                        continue;
+
+                    m_cStrings.Add(sName);
                 }
             }
         }
@@ -269,47 +280,46 @@ namespace RandomStory
             return sRelative;
         }
 
+        private static readonly char[] s_aSeparators = new char[] { '\\', '/', '|' };
+
         public string[] Merge(Strings cBase2)
         {
             List<string> cResult = new List<string>();
 
-            foreach (string sStr in cBase2.m_cStrings)
+            foreach (string sString2 in cBase2.m_cStrings)
             {
-                if (m_cStrings.Contains(sStr))
+                if (m_cStrings.Contains(sString2))
                     continue;
 
-                string[] aItems2 = sStr.Split(new char[] { '\\', '/', '|' });
+                string[] aItems2 = sString2.Split(s_aSeparators);
                 bool bMerged = false;
                 for (int i = 0; i < m_cStrings.Count; i++)
                 {
-                    string[] aItems1 = m_cStrings[i].Split(new char[] { '\\', '/', '|' });
-
                     bool bNeedMerge = false;
                     foreach (string sItem2 in aItems2)
                     {
-                        if (aItems1.Contains(sItem2))
+                        if (m_cStrings[i].Contains(sItem2))
                         {
                             bNeedMerge = true;
+                            break;
                         }
                     }
 
                     if (bNeedMerge)
                     {
-                        foreach (string sItem2 in aItems2)
+                        foreach(string sItem2 in aItems2)
                         {
-                            if (!aItems1.Contains(sItem2))
-                            {
+                            if (!m_cStrings[i].Contains(sItem2))
                                 m_cStrings[i] += string.Format("\\{0}", sItem2);
-                            }
                         }
                         bMerged = true;
                     }
                 }
 
                 if (!bMerged)
-                    m_cStrings.Add(sStr);
+                    m_cStrings.Add(sString2);
 
-                cResult.Add(sStr);
+                cResult.Add(sString2);
             }
 
             return cResult.ToArray();

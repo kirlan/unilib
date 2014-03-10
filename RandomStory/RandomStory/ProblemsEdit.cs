@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -25,6 +24,9 @@ namespace RandomStory
             solutionsTextBox.Clear();
             solutionsTextBox.Lines = m_pRepository.m_cSolutions.ToArray();
 
+            eventsTextBox.Clear();
+            eventsTextBox.Lines = m_pRepository.m_cEvents.ToArray();
+
             problemsTextBox.Select(0,0);
         }
 
@@ -36,6 +38,11 @@ namespace RandomStory
         private void solutionsTextBox_TextChanged(object sender, EventArgs e)
         {
             m_pRepository.m_cSolutions = new Strings(solutionsTextBox.Lines);
+        }
+
+        private void eventsTextBox_TextChanged(object sender, EventArgs e)
+        {
+            m_pRepository.m_cEvents = new Strings(eventsTextBox.Lines);
         }
     }
 }

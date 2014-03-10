@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Random
@@ -147,6 +146,12 @@ namespace Random
             return rnd.NextDouble()*(iChances1 * 10000 + iChances2 * 10000) < iChances1 * 10000;
         }
 
+        /// <summary>
+        /// Возвращает true в iChances1 случаях и false в iChances2 случаях
+        /// </summary>
+        /// <param name="iChances1"></param>
+        /// <param name="iChances2"></param>
+        /// <returns></returns>
         public static bool ChooseOne(int iChances1, int iChances2)
         {
             return rnd.Next(iChances1 + iChances2) < iChances1;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using nsUniLibXML;
 using System.Xml;
@@ -101,6 +100,15 @@ namespace RandomStory
             }
         }
 
+        public static string GetName(Setting pBase1, Setting pBase2)
+        {
+            Strings cBase1 = new Strings(pBase1.m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
+            Strings cBase2 = new Strings(pBase2.m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
+            Strings cName = new Strings(cBase1, cBase2);
+
+            return cName.ToString(" / ");
+        }
+
         /// <summary>
         /// Создаёт новый смешанный сеттинг, объединяющий все строки из двух образующих сеттингов.
         /// </summary>
@@ -110,7 +118,7 @@ namespace RandomStory
         {
             m_pCommon = pBase1.m_pCommon;
 
-            if (pBase1 == pBase2)
+            if (pBase1.Equals(pBase2))
             {
                 m_sName = pBase1.m_sName;
                 m_cRaces = new Strings(pBase1.m_cRaces);
@@ -161,6 +169,14 @@ namespace RandomStory
         {
             Strings cName1 = new Strings(m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
             Strings cName2 = new Strings(pOther.m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
+
+            return cName1.Equals(cName2);
+        }
+
+        public bool Equals(string sOtherName)
+        {
+            Strings cName1 = new Strings(m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
+            Strings cName2 = new Strings(sOtherName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
 
             return cName1.Equals(cName2);
         }
@@ -216,17 +232,23 @@ namespace RandomStory
             return cMerged.GetRandom(cExceptions, ref aFlags);
         }
 
+        private Strings m_cMergedPerks = null;
+
         public string GetRandomPerk(Strings cExceptions, ref char[] aFlags)
         {
+            if (m_cMergedPerks == null)
+                //m_cMergedPerks = new Strings(m_cPerks, m_pCommon.m_cPerks);
+                m_cMergedPerks = new Strings(m_pCommon.m_cPerks, m_cPerks);
+            
             Strings cMerged = m_cPerks;
-            if (m_pCommon != null && Rnd.OneChanceFrom(2))
+            if (m_pCommon != null && Rnd.ChooseOne((int)Math.Sqrt(m_pCommon.m_cPerks.Count), (int)Math.Sqrt(m_cPerks.Count)))
             {
-                cMerged = new Strings(m_cPerks, m_pCommon.m_cPerks);
+                cMerged = m_cMergedPerks;
             }
             return cMerged.GetRandom(cExceptions, ref aFlags);
         }
 
-        public string GetRandomArtefact()
+        public string GetRandomArtefact(Strings cExceptions)
         {
             Strings cMerged = m_cItems;
             if (m_pCommon != null)
@@ -234,7 +256,7 @@ namespace RandomStory
                 cMerged = new Strings(m_cItems, m_pCommon.m_cItems);
             }
             char[] aFlags = null;
-            return cMerged.GetRandom("штуковина", ref aFlags);
+            return cMerged.GetRandom(cExceptions, "штуковина", ref aFlags);
         }
     }
 }

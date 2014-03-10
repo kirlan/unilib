@@ -29,10 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WorldsEdit));
             this.worldsListBox = new System.Windows.Forms.ListBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.добавитьМирToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьМирToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.перенестиВЖанрыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.отменаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
@@ -56,6 +58,19 @@
             this.racesTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.nameTextBox = new System.Windows.Forms.TextBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.janresListBox = new System.Windows.Forms.ListBox();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.перенестиВМирыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.label9 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -64,18 +79,23 @@
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.panel7.SuspendLayout();
+            this.panel8.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // worldsListBox
             // 
-            this.worldsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.worldsListBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.worldsListBox.ContextMenuStrip = this.contextMenuStrip1;
+            this.worldsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.worldsListBox.FormattingEnabled = true;
-            this.worldsListBox.Location = new System.Drawing.Point(12, 12);
+            this.worldsListBox.Location = new System.Drawing.Point(0, 13);
             this.worldsListBox.Name = "worldsListBox";
-            this.worldsListBox.Size = new System.Drawing.Size(145, 472);
+            this.worldsListBox.Size = new System.Drawing.Size(145, 223);
             this.worldsListBox.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.worldsListBox, resources.GetString("worldsListBox.ToolTip"));
             this.worldsListBox.SelectedIndexChanged += new System.EventHandler(this.worldsListBox_SelectedIndexChanged);
             // 
             // contextMenuStrip1
@@ -83,34 +103,42 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.добавитьМирToolStripMenuItem,
             this.удалитьМирToolStripMenuItem,
+            this.перенестиВЖанрыToolStripMenuItem,
             this.toolStripMenuItem1,
             this.отменаToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(171, 76);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(186, 98);
             // 
             // добавитьМирToolStripMenuItem
             // 
             this.добавитьМирToolStripMenuItem.Name = "добавитьМирToolStripMenuItem";
-            this.добавитьМирToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.добавитьМирToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.добавитьМирToolStripMenuItem.Text = "Добавить сеттинг";
             this.добавитьМирToolStripMenuItem.Click += new System.EventHandler(this.добавитьМирToolStripMenuItem_Click);
             // 
             // удалитьМирToolStripMenuItem
             // 
             this.удалитьМирToolStripMenuItem.Name = "удалитьМирToolStripMenuItem";
-            this.удалитьМирToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.удалитьМирToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.удалитьМирToolStripMenuItem.Text = "Удалить сеттинг";
             this.удалитьМирToolStripMenuItem.Click += new System.EventHandler(this.удалитьМирToolStripMenuItem_Click);
+            // 
+            // перенестиВЖанрыToolStripMenuItem
+            // 
+            this.перенестиВЖанрыToolStripMenuItem.Name = "перенестиВЖанрыToolStripMenuItem";
+            this.перенестиВЖанрыToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.перенестиВЖанрыToolStripMenuItem.Text = "Перенести в Жанры";
+            this.перенестиВЖанрыToolStripMenuItem.Click += new System.EventHandler(this.перенестиВЖанрыToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 6);
             // 
             // отменаToolStripMenuItem
             // 
             this.отменаToolStripMenuItem.Name = "отменаToolStripMenuItem";
-            this.отменаToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.отменаToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.отменаToolStripMenuItem.Text = "Отмена";
             // 
             // label1
@@ -185,8 +213,8 @@
             this.panel5.Controls.Add(this.itemsTextBox);
             this.panel5.Controls.Add(this.label6);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(282, 289);
-            this.panel5.Margin = new System.Windows.Forms.Padding(0, 3, 3, 0);
+            this.panel5.Location = new System.Drawing.Point(285, 289);
+            this.panel5.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(280, 141);
             this.panel5.TabIndex = 4;
@@ -346,9 +374,9 @@
             this.label2.Location = new System.Drawing.Point(-3, 0);
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(37, 13);
+            this.label2.Size = new System.Drawing.Size(72, 13);
             this.label2.TabIndex = 0;
-            this.label2.Text = "Расы:";
+            this.label2.Text = "Расы/нации:";
             // 
             // nameTextBox
             // 
@@ -360,15 +388,135 @@
             this.nameTextBox.TabIndex = 3;
             this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.panel7, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.panel8, 0, 1);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(12, 12);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(145, 472);
+            this.tableLayoutPanel2.TabIndex = 4;
+            // 
+            // panel7
+            // 
+            this.panel7.Controls.Add(this.worldsListBox);
+            this.panel7.Controls.Add(this.label8);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel7.Location = new System.Drawing.Point(0, 0);
+            this.panel7.Margin = new System.Windows.Forms.Padding(0);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(145, 236);
+            this.panel7.TabIndex = 0;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label8.Location = new System.Drawing.Point(0, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(39, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Миры:";
+            // 
+            // panel8
+            // 
+            this.panel8.Controls.Add(this.janresListBox);
+            this.panel8.Controls.Add(this.label9);
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel8.Location = new System.Drawing.Point(0, 241);
+            this.panel8.Margin = new System.Windows.Forms.Padding(0, 5, 0, 0);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(145, 231);
+            this.panel8.TabIndex = 1;
+            // 
+            // janresListBox
+            // 
+            this.janresListBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.janresListBox.ContextMenuStrip = this.contextMenuStrip2;
+            this.janresListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.janresListBox.FormattingEnabled = true;
+            this.janresListBox.IntegralHeight = false;
+            this.janresListBox.Location = new System.Drawing.Point(0, 13);
+            this.janresListBox.Name = "janresListBox";
+            this.janresListBox.Size = new System.Drawing.Size(145, 218);
+            this.janresListBox.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.janresListBox, resources.GetString("janresListBox.ToolTip"));
+            this.janresListBox.SelectedIndexChanged += new System.EventHandler(this.janresListBox_SelectedIndexChanged);
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.toolStripMenuItem3,
+            this.перенестиВМирыToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.toolStripMenuItem4});
+            this.contextMenuStrip2.Name = "contextMenuStrip1";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(180, 98);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(179, 22);
+            this.toolStripMenuItem2.Text = "Добавить сеттинг";
+            this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(179, 22);
+            this.toolStripMenuItem3.Text = "Удалить сеттинг";
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
+            // 
+            // перенестиВМирыToolStripMenuItem
+            // 
+            this.перенестиВМирыToolStripMenuItem.Name = "перенестиВМирыToolStripMenuItem";
+            this.перенестиВМирыToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.перенестиВМирыToolStripMenuItem.Text = "Перенести в Миры";
+            this.перенестиВМирыToolStripMenuItem.Click += new System.EventHandler(this.перенестиВМирыToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(176, 6);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(179, 22);
+            this.toolStripMenuItem4.Text = "Отмена";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label9.Location = new System.Drawing.Point(0, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(47, 13);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "Жанры:";
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutoPopDelay = 10000;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 100;
+            // 
             // WorldsEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(743, 500);
+            this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.worldsListBox);
             this.Name = "WorldsEdit";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -388,6 +536,12 @@
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
+            this.contextMenuStrip2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -422,5 +576,19 @@
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.TextBox professionsEvilTextBox;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.ListBox janresListBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem перенестиВЖанрыToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem перенестиВМирыToolStripMenuItem;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
