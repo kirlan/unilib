@@ -4,27 +4,49 @@
     <Common name="Общие параметры">
       <Races />
       <Perks>
-        <Item name="несдержанный/[F]несдержанная/флегматичный/[F]флегматичная" />
-        <Item name="эгоист/альтруист/[F]эгоистка/[F]альтруистка" />
+        <Item name="богатый/[F]богатая/бедный/[F]бедная" />
+        <Item name="блондин/[F]блондинка/брюнет/[F]брюнетка/рыжий/[F]рыжая" />
+        <Item name="всегда чисто выбрит/бородач/[F]шикарные волосы/[F]носит короткую стрижку" />
+        <Item name="любит украшения" />
+        <Item name="очень умён/[F]очень умна" />
+        <Item name="ловкий/[F]ловкая/неуклюжий/[F]неуклюжая" />
+        <Item name="очень сильный/[F]очень сильная" />
+        <Item name="худой/[F]худая/полный/[F]полная" />
+        <Item name="высокий/[F]высокая/низкого роста/[F]низкого роста" />
         <Item name="подросток/молодой/старый/[F]молодая/[F]старая" />
-        <Item name="бабник/импотент/[F]сексуально-озабоченная/[F]фригидна" />
-        <Item name="сорвиголова" />
-        <Item name="гений" />
-        <Item name="хитрец" />
-        <Item name="обаяшка" />
-        <Item name="страдает комплексом неполноценности" />
-        <Item name="зануда" />
-        <Item name="беспринципный/[F]беспринципная" />
-        <Item name="страдает амнезией" />
-        <Item name="гурман" />
-        <Item name="любит выпить" />
+        <Item name="обаятельный/[F]обаятельная/харизматичный/[F]харизматичная" />
+        <Item name="модник/[F]модница" />
+        <Item name="сорвиголова/[F]сорвиголова/осторожный/[F]осторожная" />
         <Item name="религиозный фанатик/[F]религиозная фанатичка" />
-        <Item name="грубиян/[F]склочная" />
-        <Item name="скрывает страшную тайну" />
-        <Item name="транжира" />
-        <Item name="однорукий/[F]однорукая" />
+        <Item name="рассеяный/[F]рассеяная" />
+        <Item name="любит выпить" />
+        <Item name="страдает амнезией" />
+        <Item name="плохое зрение" />
         <Item name="одноглазый/[F]одноглазая" />
+        <Item name="безжалостный/[F]безжалостная" />
+        <Item name="благородный/[F]благородная" />
+        <Item name="азартный/[F]азартная" />
+        <Item name="страдает комплексом неполноценности" />
+        <Item name="гурман" />
+        <Item name="бабник/импотент/[F]нимфоманка/[F]фригидна" />
+        <Item name="клептоман/[F]клептоманка" />
+        <Item name="скептик/[F]скептик/легковерный/[F]легковерная" />
+        <Item name="ленивый/[F]ленивая/деятельный/[F]деятельная" />
+        <Item name="самоуверенный/[F]самоуверенная" />
+        <Item name="страдает от ночных кошмаров" />
         <Item name="одноногий/хромой/[F]хромая" />
+        <Item name="однорукий/[F]однорукая" />
+        <Item name="боится темноты" />
+        <Item name="боится грязи" />
+        <Item name="интроверт/экстраверт" />
+        <Item name="боится закрытых пространств/боится открытых пространств" />
+        <Item name="боится высоты" />
+        <Item name="боится насекомых" />
+        <Item name="боится воды" />
+        <Item name="скрывает грязную тайну/скрывает страшную тайну" />
+        <Item name="аутсайдер" />
+        <Item name="мечтатель/[F]мечтательница" />
+        <Item name="нервный тик" />
         <Item name="не знал своих родителей/[F]не знала своих родителей" />
         <Item name="вырос в приёмной семье/[F]выросла в приёмной семье" />
       </Perks>
@@ -32,6 +54,7 @@
         <Item name="вор/[F]воровка" />
         <Item name="убийца" />
         <Item name="торговец" />
+        <Item name="авантюрист/[F]авантюристка" />
       </Professions>
       <ProfessionsElite />
       <Locations>
@@ -48,31 +71,43 @@
       <Artefacts>
         <Item name="дивное украшение" />
         <Item name="родовая реликвия" />
+        <Item name="яд" />
+        <Item name="письмо" />
       </Artefacts>
     </Common>
-    <Settings>
-      <Setting name="Историческая античность">
+    <Worlds>
+      <World name="Античность">
         <Races>
           <Item name="эллин/[F]эллинка" />
+          <Item name="спартанец/[F]спартанка" />
           <Item name="египтянин/[F]египтянка" />
           <Item name="ассириец/[F]ассирийка" />
           <Item name="нубиец/[F]нубийка" />
           <Item name="римлянин/[F]римлянка" />
           <Item name="индус/[F]индуска" />
           <Item name="викинг/[F]северянка" />
+          <Item name="[F]амазонка" />
         </Races>
         <Perks>
           <Item name="горбун/[F]мужеподобная" />
+          <Item name="из древнего рода" />
         </Perks>
         <Professions>
           <Item name="жрец/[F]жрица" />
-          <Item name="бард" />
-          <Item name="поэт/[F]поэтесса" />
           <Item name="писец" />
           <Item name="[F]гетера" />
+          <Item name="[F]танцовщица" />
+          <Item name="предсказатель/[F]гадалка" />
+          <Item name="астролог" />
+          <Item name="караванщик/[F]караванщица" />
           <Item name="воин" />
+          <Item name="лучник/[F]лучница" />
           <Item name="гладиатор" />
           <Item name="стражник" />
+          <Item name="нищий/[F]нищая" />
+          <Item name="рыбак/[F]рыбачка" />
+          <Item name="лесоруб" />
+          <Item name="моряк" />
           <Item name="возница" />
           <Item name="лекарь" />
           <Item name="крестьянин/[F]крестьянка" />
@@ -93,36 +128,53 @@
           <Item name="храм" />
           <Item name="лагерь разбойников" />
           <Item name="гладиаторская арена" />
+          <Item name="Египет" />
+          <Item name="Ассирия" />
+          <Item name="Афины" />
+          <Item name="Спарта" />
+          <Item name="Римская Империя" />
+          <Item name="Индия" />
+          <Item name="Северные земли" />
         </Locations>
         <Artefacts>
-          <Item name="символ власти" />
-          <Item name="яд" />
-          <Item name="письмо" />
+          <Item name="корона" />
+          <Item name="драгоценный камень" />
+          <Item name="локон волос" />
+          <Item name="портрет" />
+          <Item name="старая карта" />
+          <Item name="секретная карта" />
+          <Item name="оружие предков" />
+          <Item name="доспехи предков" />
+          <Item name="древний манускрипт" />
         </Artefacts>
-      </Setting>
-      <Setting name="Историческое средневековье">
+      </World>
+      <World name="Средневековье">
         <Races>
-          <Item name="варвар/[F]варварша" />
-          <Item name="саксонц/[F]саксонка" />
-          <Item name="франк/[F]франкийка" />
-          <Item name="рус/[F]русская" />
+          <Item name="северянин/[F]северянка" />
+          <Item name="южанин/[F]южанка" />
+          <Item name="кочевник/[F]кочевница" />
+          <Item name="славянин/[F]славянка" />
           <Item name="китаец/[F]китаянка" />
           <Item name="индус/[F]индуска" />
           <Item name="монгол/[F]монголка" />
         </Races>
         <Perks>
           <Item name="горбун/[F]мужеподобная" />
+          <Item name="из древнего рода" />
         </Perks>
         <Professions>
+          <Item name="нищий/[F]нищая" />
+          <Item name="отшельник/[F]отшельница" />
           <Item name="монах/[F]монахиня" />
           <Item name="бард" />
           <Item name="[F]проститутка" />
           <Item name="воин" />
           <Item name="стражник" />
+          <Item name="травник/[F]травница" />
           <Item name="лекарь" />
-          <Item name="крестьянин" />
+          <Item name="крестьянин/[F]крестьянка" />
           <Item name="кузнец" />
-          <Item name="трактирщик" />
+          <Item name="трактирщик/[F]трактирщица" />
           <Item name="рыцарь" />
           <Item name="разбойник/[F]разбойница" />
           <Item name="принц/[F]принцесса" />
@@ -140,23 +192,40 @@
           <Item name="лагерь разбойников" />
           <Item name="замок" />
           <Item name="кладбище" />
+          <Item name="Северные земли/Северное королевство" />
+          <Item name="Южные земли/Южное королевство" />
+          <Item name="Восточные земли/Восточное королевство" />
+          <Item name="Западные земли/Западное королевство" />
+          <Item name="лес/Лесное королевство" />
+          <Item name="Империя" />
+          <Item name="Островное королевство" />
+          <Item name="Заморское королевство" />
         </Locations>
         <Artefacts>
-          <Item name="символ власти" />
-          <Item name="яд" />
-          <Item name="письмо" />
+          <Item name="корона" />
+          <Item name="драгоценный камень" />
+          <Item name="локон волос" />
+          <Item name="портрет" />
+          <Item name="оружие предков" />
+          <Item name="доспехи предков" />
+          <Item name="перстень с секретом" />
+          <Item name="кулон с секретом" />
+          <Item name="древний манускрипт" />
         </Artefacts>
-      </Setting>
-      <Setting name="Исторический ренессанс">
+      </World>
+      <World name="Ренессанс">
         <Races>
           <Item name="англичанин/[F]англичанка" />
           <Item name="француз/[F]француженка" />
           <Item name="русский/[F]русская" />
           <Item name="итальянец/[F]итальянка" />
           <Item name="испанец/[F]испанка" />
+          <Item name="индус/[F]индуска" />
+          <Item name="араб/[F]арабка" />
         </Races>
         <Perks>
           <Item name="горбун/[F]мужеподобная" />
+          <Item name="из древнего рода" />
         </Perks>
         <Professions>
           <Item name="монах/[F]монахиня" />
@@ -201,16 +270,163 @@
           <Item name="казармы" />
           <Item name="трактир" />
           <Item name="кладбище" />
+          <Item name="Старый Свет" />
+          <Item name="Новый Свет" />
+          <Item name="Ближний Восток" />
+          <Item name="Дальний Восток" />
         </Locations>
         <Artefacts>
-          <Item name="яд" />
-          <Item name="письмо" />
           <Item name="картина" />
           <Item name="скульптура" />
           <Item name="пиратская карта" />
+          <Item name="секретные чертежи" />
+          <Item name="драгоценный камень" />
+          <Item name="локон волос" />
+          <Item name="портрет" />
+          <Item name="старая карта" />
+          <Item name="оружие предков" />
+          <Item name="перстень с секретом" />
+          <Item name="кулон с секретом" />
+          <Item name="древний манускрипт" />
         </Artefacts>
-      </Setting>
-      <Setting name="Историческая середина XX века">
+      </World>
+      <World name="Индустриальная революция">
+        <Races>
+          <Item name="американец/[F]американка" />
+          <Item name="англичанин/[F]англичанка" />
+          <Item name="француз/[F]француженка" />
+          <Item name="русский/[F]русская" />
+          <Item name="итальянец/[F]итальянка" />
+          <Item name="испанец/[F]испанка" />
+          <Item name="китаец/[F]китаянка" />
+          <Item name="японец/[F]японка" />
+          <Item name="индус/[F]индуска" />
+          <Item name="негр/[F]негритянка" />
+        </Races>
+        <Perks />
+        <Professions>
+          <Item name="телохранитель/[F]телохранительница" />
+          <Item name="священник/[F]монахиня" />
+          <Item name="певец/[F]певица" />
+          <Item name="поэт/[F]поэтесса" />
+          <Item name="актёр/[F]актриса" />
+          <Item name="танцор/[F]танцовщица" />
+          <Item name="путешественник/[F]путешественница" />
+          <Item name="писатель" />
+          <Item name="музыкант" />
+          <Item name="художник" />
+          <Item name="скульптор" />
+          <Item name="инженер" />
+          <Item name="изобретатель" />
+          <Item name="врач" />
+          <Item name="журналист" />
+          <Item name="[F]проститутка" />
+          <Item name="полицейский/[F]полицейская" />
+          <Item name="частный детектив" />
+          <Item name="фермер/[F]фермерша" />
+          <Item name="шахтёр" />
+          <Item name="авиатор/[F]авиаторша" />
+          <Item name="моряк" />
+          <Item name="шпион/[F]шпионка" />
+          <Item name="служащий/[F]служащая" />
+          <Item name="повстанец" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="оккультист/[F]оккультистка" />
+          <Item name="известный политик" />
+          <Item name="офицер полиции" />
+          <Item name="частный детектив" />
+          <Item name="генерал" />
+          <Item name="фабрикант" />
+          <Item name="банкир" />
+          <Item name="выдающийся изобретатель" />
+          <Item name="известный путешественник/[F]известная путешественница" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="Старый Свет" />
+          <Item name="Новый Свет" />
+          <Item name="Ближний Восток" />
+          <Item name="Дальний Восток" />
+          <Item name="колонии" />
+          <Item name="метрополия" />
+        </Locations>
+        <Artefacts />
+      </World>
+      <World name="Барсум">
+        <Races>
+          <Item name="красный марсианин/[F]красная марсианка" />
+          <Item name="зелёный марсианин/[F]зелёная марсианка" />
+          <Item name="чёрный марсианин/[F]чёрная марсианка" />
+          <Item name="белый венерианин/[F]белая венерианка" />
+          <Item name="синий венерианин/[F]синяя венерианка" />
+          <Item name="желтый венерианин/[F]желтая венерианка" />
+          <Item name="селенит/[F]селенитка" />
+        </Races>
+        <Perks>
+          <Item name="из древнего рода" />
+        </Perks>
+        <Professions>
+          <Item name="жрец/[F]жрица" />
+          <Item name="писец" />
+          <Item name="[F]гетера" />
+          <Item name="[F]танцовщица" />
+          <Item name="стрелок" />
+          <Item name="воин" />
+          <Item name="лучник/[F]лучница" />
+          <Item name="гладиатор" />
+          <Item name="стражник" />
+          <Item name="нищий/[F]нищая" />
+          <Item name="рыбак/[F]рыбачка" />
+          <Item name="матрос" />
+          <Item name="лекарь" />
+          <Item name="крестьянин/[F]крестьянка" />
+          <Item name="разбойник/[F]разбойница" />
+          <Item name="раб/[F]рабыня" />
+          <Item name="беглый раб/[F]беглая рабыня" />
+          <Item name="принц/[F]принцесса" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="царь/[F]царица" />
+          <Item name="принц/[F]принцесса" />
+          <Item name="вожак разбойников" />
+          <Item name="богатый торговец" />
+          <Item name="прославленный воин" />
+          <Item name="философ" />
+          <Item name="верховный жрец/[F]верховная жрица" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="порт" />
+          <Item name="храм" />
+          <Item name="лагерь разбойников" />
+          <Item name="гладиаторская арена" />
+          <Item name="забытый храм" />
+          <Item name="разрушенный храм" />
+          <Item name="разрушенная гробница" />
+          <Item name="покинутый город" />
+          <Item name="пустыня/пески Марса" />
+          <Item name="побережье/открытое море/каналы Марса" />
+          <Item name="болота Венеры" />
+          <Item name="лес/джунгли/джунгли Венеры" />
+        </Locations>
+        <Artefacts>
+          <Item name="корона" />
+          <Item name="секретные чертежи" />
+          <Item name="драгоценный камень" />
+          <Item name="деталь древнего механизма" />
+          <Item name="локон волос" />
+          <Item name="чудесный элексир" />
+          <Item name="портрет" />
+          <Item name="старая карта" />
+          <Item name="секретная карта" />
+          <Item name="оружие предков" />
+          <Item name="доспехи предков" />
+          <Item name="перстень с секретом" />
+          <Item name="кулон с секретом" />
+          <Item name="древний манускрипт" />
+          <Item name="странное зелье" />
+        </Artefacts>
+      </World>
+      <World name="XX век">
         <Races>
           <Item name="американец/[F]американка" />
           <Item name="англичанин/[F]англичанка" />
@@ -225,14 +441,17 @@
           <Item name="индеец/[F]индианка" />
         </Races>
         <Perks>
+          <Item name="бабник/импотент/гомосексуалист/[F]нимфоманка/[F]фригидна/[F]лесбиянка" />
           <Item name="наркоман/[F]наркоманка" />
-          <Item name="миллионер/[F]миллионерша" />
         </Perks>
         <Professions>
+          <Item name="студент/[F]студентка" />
+          <Item name="телохранитель/[F]телохранительница" />
           <Item name="священник/[F]монахиня" />
           <Item name="певец/[F]певица" />
           <Item name="поэт/[F]поэтесса" />
           <Item name="актёр/[F]актриса" />
+          <Item name="танцор/[F]танцовщица" />
           <Item name="писатель" />
           <Item name="музыкант" />
           <Item name="художник" />
@@ -242,9 +461,11 @@
           <Item name="химик" />
           <Item name="биолог" />
           <Item name="инженер" />
+          <Item name="археолог" />
+          <Item name="&quot;чёрный&quot; археолог" />
           <Item name="врач" />
           <Item name="журналист" />
-          <Item name="[F]проститутка" />
+          <Item name="жиголо/[F]проститутка" />
           <Item name="морпех" />
           <Item name="спецназовец" />
           <Item name="полицейский/[F]полицейская" />
@@ -287,19 +508,30 @@
           <Item name="бордель" />
           <Item name="военная база" />
           <Item name="бар" />
+          <Item name="Европа" />
+          <Item name="Азия" />
+          <Item name="Ближний Восток" />
+          <Item name="Африка" />
+          <Item name="Австралия" />
+          <Item name="Арктика" />
+          <Item name="Антарктида" />
+          <Item name="Северная Америка" />
+          <Item name="Южная Америка" />
+          <Item name="Полинезия" />
+          <Item name="Россия" />
         </Locations>
         <Artefacts>
-          <Item name="яд" />
-          <Item name="письмо" />
           <Item name="картина" />
           <Item name="скульптура" />
           <Item name="секретные чертежи" />
           <Item name="компромат" />
           <Item name="видеокассета" />
           <Item name="химическая формула" />
+          <Item name="драгоценный камень" />
+          <Item name="портрет" />
         </Artefacts>
-      </Setting>
-      <Setting name="Историческое начало XXI века">
+      </World>
+      <World name="Начало XXI века">
         <Races>
           <Item name="американец/[F]американка" />
           <Item name="европеец/[F]европейка" />
@@ -312,17 +544,20 @@
           <Item name="австралиец/[F]австралийка" />
         </Races>
         <Perks>
-          <Item name="бабник/импотент/гомосексуалист/[F]сексуально-озабоченная/[F]фригидна/[F]лесбиянка" />
+          <Item name="бабник/импотент/гомосексуалист/[F]нимфоманка/[F]фригидна/[F]лесбиянка" />
           <Item name="наркоман/[F]наркоманка" />
-          <Item name="миллионер/[F]миллионерша" />
         </Perks>
         <Professions>
+          <Item name="студент/[F]студентка" />
+          <Item name="телохранитель/[F]телохранительница" />
           <Item name="священник/[F]монахиня" />
           <Item name="физик" />
           <Item name="химик" />
           <Item name="биолог" />
           <Item name="микробиолог" />
           <Item name="психолог" />
+          <Item name="археолог" />
+          <Item name="&quot;чёрный&quot; археолог" />
           <Item name="робототехник" />
           <Item name="адвокат" />
           <Item name="журналист" />
@@ -349,6 +584,7 @@
           <Item name="шахтёр" />
           <Item name="пилот" />
           <Item name="бандит" />
+          <Item name="наркоторговец" />
           <Item name="спецагент" />
           <Item name="наёмник/[F]наёмница" />
           <Item name="программист" />
@@ -360,6 +596,9 @@
           <Item name="спецагент" />
           <Item name="наркобарон" />
           <Item name="известный политик" />
+          <Item name="советник" />
+          <Item name="консул" />
+          <Item name="посол" />
           <Item name="босс мафии" />
           <Item name="частный детектив" />
           <Item name="генерал" />
@@ -384,130 +623,245 @@
           <Item name="военная база" />
           <Item name="секретная лаборатория" />
           <Item name="бар" />
+          <Item name="Европа" />
+          <Item name="Азия" />
+          <Item name="Ближний Восток" />
+          <Item name="Африка" />
+          <Item name="Австралия" />
+          <Item name="Арктика" />
+          <Item name="Антарктида" />
+          <Item name="Северная Америка" />
+          <Item name="Южная Америка" />
+          <Item name="Полинезия" />
+          <Item name="Россия" />
         </Locations>
         <Artefacts>
-          <Item name="яд" />
-          <Item name="письмо" />
           <Item name="картина" />
           <Item name="скульптура" />
           <Item name="секретные чертежи" />
           <Item name="компромат" />
           <Item name="DVD/флешка" />
           <Item name="химическая формула" />
+          <Item name="конфиденциальная информация" />
+          <Item name="секретные документы" />
+          <Item name="ключ к шифру" />
         </Artefacts>
-      </Setting>
-      <Setting name="Античная мифология">
+      </World>
+      <World name="Ближнее будущее">
         <Races>
-          <Item name="эллин/[F]эллинка" />
-          <Item name="египтянин/[F]египтянка" />
-          <Item name="ассириец/[F]ассирийка" />
-          <Item name="нубиец/[F]нубийка" />
-          <Item name="римлянин/[F]римлянка" />
-          <Item name="индус/[F]индуска" />
-          <Item name="викинг/[F]северянка" />
+          <Item name="белый мужчина/[F]белая женщина" />
+          <Item name="азиат/[F]азиатка" />
+          <Item name="негр/[F]негритянка" />
+          <Item name="марсианин/[F]марсианка" />
+          <Item name="венерианин/[F]венерианка" />
+          <Item name="селенит/[F]селенитка" />
+        </Races>
+        <Perks>
+          <Item name="бабник/импотент/гомосексуалист/[F]нимфоманка/[F]фригидна/[F]лесбиянка" />
+          <Item name="наркоман/[F]наркоманка" />
+        </Perks>
+        <Professions>
+          <Item name="студент/[F]студентка" />
+          <Item name="телохранитель/[F]телохранительница" />
+          <Item name="священник/[F]монахиня" />
+          <Item name="колонист/[F]колонистка" />
+          <Item name="физик" />
+          <Item name="химик" />
+          <Item name="биолог" />
+          <Item name="микробиолог" />
+          <Item name="кибернетик" />
+          <Item name="психолог" />
+          <Item name="музыкант" />
+          <Item name="жиголо/[F]проститутка" />
+          <Item name="наркоторговец" />
+          <Item name="солдат" />
+          <Item name="полицейский/[F]полицейская" />
+          <Item name="фермер/[F]фермерша" />
+          <Item name="шахтёр" />
+          <Item name="пилот" />
+          <Item name="астронавт" />
+          <Item name="археолог" />
+          <Item name="&quot;чёрный&quot; археолог" />
+          <Item name="врач" />
+          <Item name="спецагент" />
+          <Item name="наёмник/[F]наёмница" />
+          <Item name="хакер" />
+          <Item name="служащий корпорации/[F]служащая корпорации" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="диктатор" />
+          <Item name="спецагент" />
+          <Item name="известный политик" />
+          <Item name="советник" />
+          <Item name="консул" />
+          <Item name="посол" />
+          <Item name="частный детектив" />
+          <Item name="адмирал" />
+          <Item name="медиамагнат" />
+          <Item name="банкир" />
+          <Item name="босс мафии" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="космопорт" />
+          <Item name="джунгли" />
+          <Item name="открытый космос" />
+          <Item name="космическая станция" />
+          <Item name="космический корабль" />
+          <Item name="полицейский участок" />
+          <Item name="бордель" />
+          <Item name="военная база" />
+          <Item name="бар" />
+          <Item name="пояс астероидов" />
+          <Item name="кольца Сатурна" />
+          <Item name="спутники Юпитера" />
+          <Item name="хвост кометы" />
+          <Item name="ядро кометы" />
+          <Item name="Европа" />
+          <Item name="Азия" />
+          <Item name="Ближний Восток" />
+          <Item name="Африка" />
+          <Item name="Америка" />
+          <Item name="Россия" />
+          <Item name="Марс" />
+          <Item name="Венера" />
+          <Item name="Луна" />
+          <Item name="Меркурий" />
+          <Item name="Плутон" />
+          <Item name="Нептун" />
+        </Locations>
+        <Artefacts>
+          <Item name="зашифрованное сообщение" />
+          <Item name="секретные данные" />
+          <Item name="компромат" />
+        </Artefacts>
+      </World>
+      <World name="Дальнее будущее">
+        <Races>
+          <Item name="белый мужчина/[F]белая женщина" />
+          <Item name="азиат/[F]азиатка" />
+          <Item name="негр/[F]негритянка" />
+        </Races>
+        <Perks>
+          <Item name="бабник/импотент/гомосексуалист/[F]нимфоманка/[F]фригидна/[F]лесбиянка" />
+          <Item name="наркоман/[F]наркоманка" />
+        </Perks>
+        <Professions>
+          <Item name="телохранитель/[F]телохранительница" />
+          <Item name="священник/[F]монахиня" />
+          <Item name="колонист/[F]колонистка" />
+          <Item name="физик" />
+          <Item name="химик" />
+          <Item name="биолог" />
+          <Item name="ксенобиолог" />
+          <Item name="микробиолог" />
+          <Item name="ксеноархеолог" />
+          <Item name="&quot;чёрный&quot; археолог" />
+          <Item name="психолог" />
+          <Item name="музыкант" />
+          <Item name="жиголо/[F]проститутка" />
+          <Item name="наркоторговец" />
+          <Item name="солдат" />
+          <Item name="полицейский/[F]полицейская" />
+          <Item name="фермер/[F]фермерша" />
+          <Item name="шахтёр" />
+          <Item name="пилот" />
+          <Item name="врач" />
+          <Item name="спецагент" />
+          <Item name="наёмник/[F]наёмница" />
+          <Item name="хакер" />
+          <Item name="служащий корпорации/[F]служащая корпорации" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="диктатор" />
+          <Item name="спецагент" />
+          <Item name="известный политик" />
+          <Item name="советник" />
+          <Item name="консул" />
+          <Item name="посол" />
+          <Item name="частный детектив" />
+          <Item name="адмирал" />
+          <Item name="медиамагнат" />
+          <Item name="банкир" />
+          <Item name="босс мафии" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="космопорт" />
+          <Item name="джунгли" />
+          <Item name="открытый космос" />
+          <Item name="космическая станция" />
+          <Item name="боевой звездолёт" />
+          <Item name="торговый звездолёт" />
+          <Item name="транспортный звездолёт" />
+          <Item name="подпространство/гиперпространство" />
+          <Item name="храм/монастырь/церковь" />
+          <Item name="полицейский участок" />
+          <Item name="бордель" />
+          <Item name="военная база" />
+          <Item name="бар" />
+          <Item name="Земля/Солнечная система" />
+          <Item name="независимая колония" />
+          <Item name="Альянс" />
+          <Item name="Империя" />
+          <Item name="Конфедерация" />
+          <Item name="Содружество" />
+        </Locations>
+        <Artefacts>
+          <Item name="зашифрованное сообщение" />
+          <Item name="инопланетная скульптура" />
+          <Item name="голограмма" />
+          <Item name="секретные данные" />
+          <Item name="компромат" />
+        </Artefacts>
+      </World>
+    </Worlds>
+    <Janres>
+      <Janre name="Мифология">
+        <Races>
           <Item name="кентавр/[F]кентаврица" />
           <Item name="минотавр/[F]минотавриха" />
           <Item name="наг/[F]нага" />
         </Races>
         <Perks>
-          <Item name="ребёнок/подросток/молодой/старый/древний" />
-          <Item name="горбун/[F]мужеподобная" />
           <Item name="сын бога/[F]дочь бога" />
           <Item name="любимчик богов/[F]любимица богов" />
         </Perks>
-        <Professions>
-          <Item name="жрец/[F]жрица" />
-          <Item name="бард" />
-          <Item name="поэт/[F]поэтесса" />
-          <Item name="актёр/[F]актриса" />
-          <Item name="философ" />
-          <Item name="[F]гетера" />
-          <Item name="воин" />
-          <Item name="стражник/[F]стражница" />
-          <Item name="возница" />
-          <Item name="лекарь" />
-          <Item name="крестьянин/[F]крестьянка" />
-        </Professions>
+        <Professions />
         <ProfessionsElite>
-          <Item name="царь/[F]царица" />
-          <Item name="вожак разбойников" />
-          <Item name="богатый торговец" />
-          <Item name="прославленный воин" />
-          <Item name="философ" />
-          <Item name="верховный жрец/[F]верховная жрица" />
           <Item name="бог/[F]богиня" />
           <Item name="забытый бог/[F]забытая богиня" />
           <Item name="оракул" />
         </ProfessionsElite>
         <Locations>
-          <Item name="порт" />
-          <Item name="храм" />
-          <Item name="лагерь разбойников" />
           <Item name="забытый храм" />
           <Item name="разрушенный храм" />
           <Item name="разрушенная гробница" />
           <Item name="покинутый город" />
-          <Item name="гладиаторская арена" />
           <Item name="обитель богов" />
           <Item name="мир мёртвых" />
         </Locations>
         <Artefacts>
-          <Item name="символ власти" />
-          <Item name="яд" />
-          <Item name="письмо" />
           <Item name="божественное оружие" />
           <Item name="божественный доспех" />
         </Artefacts>
-      </Setting>
-      <Setting name="Низкая фэнтези">
-        <Races>
-          <Item name="мужчина/[F]женщина" />
-          <Item name="северянин/[F]северянка" />
-          <Item name="южанин/[F]южанка" />
-          <Item name="кочевник/[F]кочевница" />
-          <Item name="эльф/[F]эльфийка" />
-          <Item name="гном/[F]гномиха" />
-          <Item name="орк/[F]орчиха" />
-          <Item name="хоббит/[F]хоббитянка" />
-        </Races>
+      </Janre>
+      <Janre name="Низкая фэнтези">
+        <Races />
         <Perks>
-          <Item name="ребёнок/подросток/молодой/старый/древний/[F]молодая/[F]старая/[F]древняя" />
-          <Item name="горбун/[F]мужеподобная" />
-          <Item name="из древнего рода" />
+          <Item name="воплощение древней Силы" />
         </Perks>
         <Professions>
-          <Item name="монах/[F]монахиня" />
-          <Item name="бард" />
-          <Item name="воин" />
-          <Item name="стражник/[F]стражница" />
-          <Item name="лекарь" />
-          <Item name="крестьянин/[F]крестьянка" />
-          <Item name="кузнец" />
-          <Item name="отшельник/[F]отшельница" />
-          <Item name="рыцарь" />
-          <Item name="разбойник/[F]разбойница" />
           <Item name="шаман" />
           <Item name="алхимик" />
           <Item name="чернокнижник/[F]ведьма" />
           <Item name="принц/[F]принцесса" />
         </Professions>
         <ProfessionsElite>
-          <Item name="король/[F]королева" />
-          <Item name="принц/[F]принцесса" />
-          <Item name="вожак разбойников" />
-          <Item name="богатый торговец" />
-          <Item name="прославленный рыцарь" />
           <Item name="шаман" />
           <Item name="алхимик" />
           <Item name="чернокнижник/[F]ведьма" />
           <Item name="служитель древних богов/[F]служительница древних богов" />
         </ProfessionsElite>
         <Locations>
-          <Item name="порт" />
-          <Item name="храм" />
-          <Item name="лагерь разбойников" />
-          <Item name="замок" />
-          <Item name="кладбище" />
           <Item name="забытый храм" />
           <Item name="разрушенный храм" />
           <Item name="покинутый город" />
@@ -517,20 +871,291 @@
           <Item name="башня мага" />
         </Locations>
         <Artefacts>
-          <Item name="символ власти" />
-          <Item name="яд" />
-          <Item name="письмо" />
           <Item name="зачарованное оружие" />
           <Item name="зачарованный доспех" />
           <Item name="проклятое оружие" />
           <Item name="проклятый доспех" />
         </Artefacts>
-      </Setting>
-      <Setting name="Высокая фэнтези">
+      </Janre>
+      <Janre name="Высокая фэнтези">
+        <Races />
+        <Perks />
+        <Professions>
+          <Item name="маг/[F]колдунья" />
+          <Item name="алхимик" />
+          <Item name="чернокнижник/[F]ведьма" />
+          <Item name="ученик мага/[F]ученица мага" />
+          <Item name="некромант" />
+          <Item name="принц/[F]принцесса" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="служитель древних богов/[F]служительница древних богов" />
+          <Item name="алхимик" />
+          <Item name="маг/[F]колдунья" />
+          <Item name="чернокнижник/[F]ведьма" />
+          <Item name="некромант" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="забытый храм" />
+          <Item name="разрушенный храм" />
+          <Item name="покинутый город" />
+          <Item name="разрушенный замок" />
+          <Item name="пещеры" />
+          <Item name="алхимическая лаборатория" />
+          <Item name="башня мага" />
+          <Item name="магическая академия" />
+        </Locations>
+        <Artefacts>
+          <Item name="зачарованное оружие" />
+          <Item name="зачарованный доспех" />
+          <Item name="проклятое оружие" />
+          <Item name="проклятый доспех" />
+          <Item name="магический артефакт" />
+        </Artefacts>
+      </Janre>
+      <Janre name="Супергерои">
+        <Races />
+        <Perks>
+          <Item name="может летать" />
+          <Item name="может становиться невидимым/[F]может становиться невидимой" />
+          <Item name="неуязвим для пуль/[F]неуязвима дял пуль" />
+          <Item name="невероятно силён/[F]невероятно сильна" />
+          <Item name="невероятно быстр/[F]невероятно быстра" />
+          <Item name="телепат/[F]телепатка" />
+          <Item name="ясновидец/[F]ясновидящая" />
+          <Item name="может проходить сквозь стены" />
+          <Item name="может принимать любой облик" />
+          <Item name="бессмертен/[F]бессмертна" />
+          <Item name="карлик/гигант" />
+        </Perks>
+        <Professions />
+        <ProfessionsElite />
+        <Locations />
+        <Artefacts>
+          <Item name="сверхъестественный артефакт" />
+        </Artefacts>
+      </Janre>
+      <Janre name="Киберпанк">
         <Races>
-          <Item name="мужчина/[F]женщина" />
-          <Item name="северянин/[F]северянка" />
-          <Item name="южанин/[F]южанка" />
+          <Item name="искуственный интеллект" />
+        </Races>
+        <Perks>
+          <Item name="бабник/импотент/гомосексуалист/[F]сексуально-озабоченная/[F]фригидна/[F]лесбиянка" />
+          <Item name="наркоман/[F]наркоманка" />
+          <Item name="одноглазый/[F]одноглазая/один глаз искуственный/оба глаза искуственные/[F]один глаз  искуственный/[F]оба глаза искуственные" />
+          <Item name="однорукий/[F]однорукая/одна рука механическая/обе руки механические/[F]одна рука механическая/[F]обе руки механические" />
+          <Item name="одноногий/хромой/[F]хромая/одна нога механическая/обе ноги механические/[F]одна нога механическая/[F]обе ноги механические" />
+          <Item name="имеет усиленный скелет" />
+          <Item name="имеет скрытое в теле оружие" />
+          <Item name="имплантирована подкожная броня" />
+          <Item name="имеет усиленную мускулатуру" />
+          <Item name="имеет татуировку на лице/имеет татуировку на всём теле" />
+          <Item name="имеет необычный цвет кожи" />
+          <Item name="имеет искуственные рожки" />
+          <Item name="всегда чисто выбрит/бородач/[F]шикарные волосы/[F]носит короткую стрижку/безволосый/[F]безволосая" />
+        </Perks>
+        <Professions>
+          <Item name="уличный самурай" />
+        </Professions>
+        <ProfessionsElite />
+        <Locations>
+          <Item name="подпольная клиника" />
+          <Item name="виртуальная реальность" />
+        </Locations>
+        <Artefacts>
+          <Item name="особый наркотик" />
+        </Artefacts>
+      </Janre>
+      <Janre name="Космоопера">
+        <Races />
+        <Perks />
+        <Professions>
+          <Item name="проповедник/[F]проповедница" />
+          <Item name="космический пират/[F]космическая пиратка" />
+          <Item name="контрабандист/[F]контрабандистка" />
+          <Item name="охотник за головами/[F]охотница за головами" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="вожак космических пиратов" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="база космических пиратов" />
+          <Item name="притон контрабандистов" />
+          <Item name="руины неизвестной цивилизации" />
+        </Locations>
+        <Artefacts>
+          <Item name="пиратская карта" />
+        </Artefacts>
+      </Janre>
+      <Janre name="Мистика">
+        <Races />
+        <Perks>
+          <Item name="одержим демоном/[F]одержима демоном" />
+          <Item name="из древнего рода" />
+          <Item name="вампир/оборотень/вервольф" />
+          <Item name="призрак" />
+        </Perks>
+        <Professions>
+          <Item name="охотник на нечисть/охотник на нежить/[F]охотница на нечисть/[F]охотница на нежить" />
+          <Item name="алхимик" />
+          <Item name="чернокнижник/[F]ведьма" />
+          <Item name="заклинатель демонов/[F]заклинательница демонов" />
+          <Item name="некромант" />
+          <Item name="колдун вуду" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="охотник на нечисть/охотник на нежить/[F]охотница на нечисть/[F]охотница на нежить" />
+          <Item name="алхимик" />
+          <Item name="чернокнижник/[F]ведьма" />
+          <Item name="некромант" />
+          <Item name="заклинатель демонов/[F]заклинательница демонов" />
+          <Item name="колдун вуду" />
+          <Item name="служитель древних богов/[F]служительница древних богов" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="замок" />
+          <Item name="кладбище" />
+          <Item name="забытый храм" />
+          <Item name="разрушенный храм" />
+          <Item name="забытая гробница" />
+          <Item name="покинутый город" />
+          <Item name="разрушенный замок" />
+          <Item name="пещеры" />
+          <Item name="зачарованная башня" />
+          <Item name="склеп" />
+          <Item name="катакомбы" />
+          <Item name="потусторонний мир" />
+        </Locations>
+        <Artefacts>
+          <Item name="зачарованное оружие" />
+          <Item name="проклятое оружие" />
+          <Item name="магический артефакт" />
+          <Item name="древняя рукопись" />
+          <Item name="таинственный ключ" />
+        </Artefacts>
+      </Janre>
+      <Janre name="Вестерн">
+        <Races>
+          <Item name="абориген/[F]аборигенка" />
+        </Races>
+        <Perks />
+        <Professions>
+          <Item name="вольный стрелок" />
+          <Item name="раб/[F]рабыня" />
+          <Item name="беглый раб/[F]беглая рабыня" />
+          <Item name="каторжник/[F]каторжница" />
+          <Item name="беглый каторжник/[F]беглая каторжница" />
+          <Item name="старатель/[F]старательница" />
+          <Item name="воин/[F]воительница" />
+          <Item name="охотник/[F]охотница" />
+          <Item name="солдат" />
+          <Item name="дезертир" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="старатель/[F]старательница" />
+          <Item name="вожак бандитов" />
+          <Item name="беглый каторжник/[F]беглая каторжница" />
+          <Item name="шериф" />
+          <Item name="вождь племени" />
+          <Item name="шаман/[F]шаманка" />
+          <Item name="прославленный воин/[F]прославленная воительница" />
+          <Item name="прославленный охотник/[F]прославленная охотница" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="салун" />
+          <Item name="степь" />
+          <Item name="ущелье" />
+          <Item name="река" />
+          <Item name="золотой прииск" />
+          <Item name="поезд" />
+          <Item name="церковь" />
+        </Locations>
+        <Artefacts />
+      </Janre>
+      <Janre name="Конспирология">
+        <Races />
+        <Perks>
+          <Item name="телепат/[F]телепатка" />
+          <Item name="псионик" />
+        </Perks>
+        <Professions>
+          <Item name="культист/[F]культистка" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="секретный агент" />
+          <Item name="лидер религиозной секты" />
+          <Item name="руководитель секретной лаборатории" />
+          <Item name="магистр тайного ордена" />
+          <Item name="глава тайного братства" />
+          <Item name="руководитель секретного подразделения" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="секретная лаборатория" />
+          <Item name="секретное хранилище" />
+          <Item name="секретный полигон" />
+          <Item name="остатки инопланетного корабля" />
+          <Item name="инопланетный корабль" />
+          <Item name="древние руины" />
+          <Item name="затопленные руины" />
+          <Item name="древнее святилище" />
+        </Locations>
+        <Artefacts>
+          <Item name="конфиденциальная информация" />
+          <Item name="секретные документы" />
+          <Item name="компромат" />
+          <Item name="ключ к шифру" />
+          <Item name="химическая формула" />
+          <Item name="инопланетный артефакт" />
+        </Artefacts>
+      </Janre>
+      <Janre name="Пост-апокалипсис">
+        <Races />
+        <Perks>
+          <Item name="мутант" />
+          <Item name="зараженный/[F]зараженная" />
+          <Item name="ускоренный метаболизм/замедленный метаболизм" />
+        </Perks>
+        <Professions>
+          <Item name="рейнджер" />
+          <Item name="бандит" />
+          <Item name="мародёр" />
+        </Professions>
+        <ProfessionsElite>
+          <Item name="прославленный рейнжер" />
+          <Item name="вожак бандитов" />
+        </ProfessionsElite>
+        <Locations>
+          <Item name="оазис" />
+          <Item name="река" />
+          <Item name="убежище" />
+          <Item name="покинутый город" />
+          <Item name="поселение выживших" />
+          <Item name="поселение мутантов" />
+          <Item name="склад оружия" />
+          <Item name="укреплённый лагерь" />
+        </Locations>
+        <Artefacts>
+          <Item name="вакцина" />
+          <Item name="мутаген" />
+          <Item name="лекарства" />
+          <Item name="семена" />
+        </Artefacts>
+      </Janre>
+      <Janre name="+Фэнтезийные расы (мин.)">
+        <Races>
+          <Item name="эльф/[F]эльфийка" />
+          <Item name="гном/[F]гномиха" />
+          <Item name="орк/[F]орчиха" />
+          <Item name="хоббит/[F]хоббитянка" />
+        </Races>
+        <Perks />
+        <Professions />
+        <ProfessionsElite />
+        <Locations />
+        <Artefacts />
+      </Janre>
+      <Janre name="+Фэнтезийные расы (макс.)">
+        <Races>
           <Item name="полуэльф/[F]полуэльфийка" />
           <Item name="высший эльф/[F]высшая эльфийка" />
           <Item name="лесной эльф/[F]лесная эльфийка" />
@@ -544,602 +1169,49 @@
           <Item name="огр/[F]огриха" />
           <Item name="тролль/[F]троллиха" />
         </Races>
-        <Perks>
-          <Item name="ребёнок/подросток/молодой/старый/древний/[F]молодая/[F]старая/[F]древняя" />
-          <Item name="горбун/[F]мужеподобная" />
-          <Item name="из древнего рода" />
-        </Perks>
-        <Professions>
-          <Item name="монах/[F]монахиня" />
-          <Item name="бард" />
-          <Item name="[F]проститутка" />
-          <Item name="воин" />
-          <Item name="стражник/[F]стражница" />
-          <Item name="лекарь" />
-          <Item name="крестьянин/[F]крестьянка" />
-          <Item name="рыцарь" />
-          <Item name="разбойник/[F]разбойница" />
-          <Item name="маг/[F]колдунья" />
-          <Item name="алхимик" />
-          <Item name="чернокнижник/[F]ведьма" />
-          <Item name="ученик мага/[F]ученица мага" />
-          <Item name="некромант" />
-          <Item name="принц/[F]принцесса" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="король/[F]королева" />
-          <Item name="принц/[F]принцесса" />
-          <Item name="вожак разбойников" />
-          <Item name="богатый торговец" />
-          <Item name="прославленный рыцарь" />
-          <Item name="служитель древних богов/[F]служительница древних богов" />
-          <Item name="алхимик" />
-          <Item name="маг/[F]колдунья" />
-          <Item name="чернокнижник/[F]ведьма" />
-          <Item name="некромант" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="храм" />
-          <Item name="лагерь разбойников" />
-          <Item name="замок" />
-          <Item name="кладбище" />
-          <Item name="забытый храм" />
-          <Item name="разрушенный храм" />
-          <Item name="покинутый город" />
-          <Item name="разрушенный замок" />
-          <Item name="гладиаторская арена" />
-          <Item name="пещеры" />
-          <Item name="алхимическая лаборатория" />
-          <Item name="башня мага" />
-          <Item name="магическая академия" />
-        </Locations>
-        <Artefacts>
-          <Item name="символ власти" />
-          <Item name="яд" />
-          <Item name="письмо" />
-          <Item name="зачарованное оружие" />
-          <Item name="зачарованный доспех" />
-          <Item name="проклятое оружие" />
-          <Item name="проклятый доспех" />
-          <Item name="магический артефакт" />
-        </Artefacts>
-      </Setting>
-      <Setting name="Супергерои">
-        <Races>
-          <Item name="американец/[F]американка" />
-          <Item name="англичанин/[F]англичанка" />
-          <Item name="француз/[F]француженка" />
-          <Item name="русский/[F]русская" />
-          <Item name="итальянец/[F]итальянка" />
-          <Item name="испанец/[F]испанка" />
-          <Item name="китаец/[F]китаянка" />
-          <Item name="японец/[F]японка" />
-          <Item name="индус/[F]индуска" />
-          <Item name="негр/[F]негритянка" />
-          <Item name="индеец/[F]индианка" />
-        </Races>
-        <Perks>
-          <Item name="тугодум" />
-          <Item name="бабник/импотент/гомосексуалист/[F]сексуально-озабоченная/[F]фригидна/[F]лесбиянка" />
-          <Item name="наркоман/[F]наркоманка" />
-          <Item name="миллионер/[F]миллионерша" />
-          <Item name="может летать" />
-          <Item name="может становиться невидимым/[F]может становиться невидимой" />
-          <Item name="неуязвим для пуль/[F]неуязвима дял пуль" />
-          <Item name="невероятно силён/[F]невероятно сильна" />
-          <Item name="невероятно быстр/[F]невероятно быстра" />
-          <Item name="телепат/[F]телепатка" />
-          <Item name="ясновидец/[F]ясновидящая" />
-          <Item name="может проходить сквозь стены" />
-          <Item name="может принимать любой облик" />
-          <Item name="бессмертен/[F]бессмертна" />
-          <Item name="карлик/гигант" />
-        </Perks>
-        <Professions>
-          <Item name="священник/[F]монахиня" />
-          <Item name="певец/[F]певица" />
-          <Item name="поэт/[F]поэтесса" />
-          <Item name="актёр/[F]актриса" />
-          <Item name="писатель" />
-          <Item name="музыкант" />
-          <Item name="художник" />
-          <Item name="скульптор" />
-          <Item name="физик" />
-          <Item name="физик-ядерщик" />
-          <Item name="химик" />
-          <Item name="биолог" />
-          <Item name="врач" />
-          <Item name="инженер" />
-          <Item name="журналист" />
-          <Item name="[F]проститутка" />
-          <Item name="солдат" />
-          <Item name="полицейский" />
-          <Item name="фермер/[F]фермерша" />
-          <Item name="шахтёр" />
-          <Item name="лётчик/[F]лётчица" />
-          <Item name="гангстер" />
-          <Item name="спецагент" />
-          <Item name="служащий/[F]служащая" />
-          <Item name="супергерой/[F]супергероиня" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="диктатор" />
-          <Item name="спецагент" />
-          <Item name="наркобарон" />
-          <Item name="известный политик" />
-          <Item name="босс мафии" />
-          <Item name="частный детектив" />
-          <Item name="генерал" />
-          <Item name="медиамагнат" />
-          <Item name="фабрикант" />
-          <Item name="банкир" />
-          <Item name="выдающийся физик" />
-          <Item name="выдающийся химик" />
-          <Item name="выдающийся биолог" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="джунгли" />
-          <Item name="храм/монастырь/церковь" />
-          <Item name="притон гангстеров" />
-          <Item name="полицейский участок" />
-          <Item name="стадион" />
-          <Item name="бордель" />
-          <Item name="военная база" />
-          <Item name="бар" />
-        </Locations>
-        <Artefacts>
-          <Item name="яд" />
-          <Item name="письмо" />
-          <Item name="картина" />
-          <Item name="скульптура" />
-          <Item name="секретные чертежи" />
-          <Item name="компромат" />
-          <Item name="сверхъестественный артефакт" />
-        </Artefacts>
-      </Setting>
-      <Setting name="Киберпанк">
-        <Races>
-          <Item name="американец/[F]американка" />
-          <Item name="европеец/[F]европейка" />
-          <Item name="русский/[F]русская" />
-          <Item name="китаец/[F]китаянка" />
-          <Item name="японец/[F]японка" />
-          <Item name="индус/[F]индуска" />
-          <Item name="негр/[F]негритянка" />
-          <Item name="араб/[F]арабка" />
-          <Item name="искуственный интеллект" />
-        </Races>
-        <Perks>
-          <Item name="бабник/импотент/гомосексуалист/[F]сексуально-озабоченная/[F]фригидна/[F]лесбиянка" />
-          <Item name="наркоман/[F]наркоманка" />
-          <Item name="миллионер/[F]миллионерша" />
-          <Item name="киборг" />
-        </Perks>
-        <Professions>
-          <Item name="священник/[F]монахиня" />
-          <Item name="физик" />
-          <Item name="химик" />
-          <Item name="биолог" />
-          <Item name="микробиолог" />
-          <Item name="робототехник" />
-          <Item name="певец/[F]певица" />
-          <Item name="музыкант" />
-          <Item name="актёр/[F]актриса" />
-          <Item name="писатель/[F]писательница" />
-          <Item name="жиголо/[F]проститутка" />
-          <Item name="стриптизёр/[F]стриптизёрша" />
-          <Item name="топ-модель" />
-          <Item name="врач" />
-          <Item name="пластический хирург" />
-          <Item name="солдат" />
-          <Item name="полицейский/[F]полицейская" />
-          <Item name="фермер/[F]фермерша" />
-          <Item name="шахтёр" />
-          <Item name="пилот" />
-          <Item name="бандит" />
-          <Item name="наркоторговец" />
-          <Item name="уличный самурай" />
-          <Item name="спецагент" />
-          <Item name="наёмник/[F]наёмница" />
-          <Item name="программист" />
-          <Item name="хакер" />
-          <Item name="офисный работник" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="диктатор" />
-          <Item name="спецагент" />
-          <Item name="наркобарон" />
-          <Item name="известный политик" />
-          <Item name="босс мафии" />
-          <Item name="частный детектив" />
-          <Item name="генерал" />
-          <Item name="медиамагнат" />
-          <Item name="фабрикант" />
-          <Item name="банкир" />
-          <Item name="выдающийся физик" />
-          <Item name="выдающийся химик" />
-          <Item name="выдающийся биолог" />
-          <Item name="выдающийся микробиолог" />
-          <Item name="глава террористической организации" />
-          <Item name="лидер религиозной секты" />
-          <Item name="владелец киностудии" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="джунгли" />
-          <Item name="храм/монастырь/церковь" />
-          <Item name="база террористов" />
-          <Item name="полицейский участок" />
-          <Item name="стадион" />
-          <Item name="бордель" />
-          <Item name="военная база" />
-          <Item name="подпольная клиника" />
-          <Item name="бар" />
-          <Item name="виртуальная реальность" />
-        </Locations>
-        <Artefacts>
-          <Item name="яд" />
-          <Item name="конфиденциальная информация" />
-          <Item name="секретные документы" />
-          <Item name="компромат" />
-          <Item name="особый наркотик" />
-          <Item name="ключ к шифру" />
-          <Item name="химическая формула" />
-        </Artefacts>
-      </Setting>
-      <Setting name="Космоопера">
-        <Races>
-          <Item name="мужчина/[F]женщина" />
-          <Item name="инсектоидный инопланетянин/[F]инсектоидная инопланетянка" />
-          <Item name="гуманоидный инопланетянин/[F]гуманоидная инопланетянка" />
-          <Item name="звероподобный инопланетянин/[F]звероподобная инопланетянка" />
-          <Item name="негуманоидный инопланетянин" />
-          <Item name="искуственный интеллект" />
-        </Races>
-        <Perks>
-          <Item name="бабник/импотент/гомосексуалист/[F]сексуально-озабоченная/[F]фригидна/[F]лесбиянка" />
-          <Item name="наркоман/[F]наркоманка" />
-          <Item name="миллионер/[F]миллионерша" />
-          <Item name="телепат/[F]телепатка" />
-          <Item name="псионик" />
-          <Item name="киборг" />
-        </Perks>
-        <Professions>
-          <Item name="священник/[F]монахиня" />
-          <Item name="проповедник/[F]проповедница" />
-          <Item name="физик" />
-          <Item name="химик" />
-          <Item name="биолог" />
-          <Item name="ксенобиолог" />
-          <Item name="микробиолог" />
-          <Item name="психолог" />
-          <Item name="музыкант" />
-          <Item name="жиголо/[F]проститутка" />
-          <Item name="наркоторговец" />
-          <Item name="солдат" />
-          <Item name="полицейский/[F]полицейская" />
-          <Item name="фермер/[F]фермерша" />
-          <Item name="шахтёр" />
-          <Item name="пилот" />
-          <Item name="космический пират" />
-          <Item name="врач" />
-          <Item name="спецагент" />
-          <Item name="наёмник/[F]наёмница" />
-          <Item name="хакер" />
-          <Item name="служащий корпорации/[F]служащая корпорации" />
-          <Item name="контрабандист/[F]контрабандистка" />
-          <Item name="охотник за головами/[F]охотница за головами" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="диктатор" />
-          <Item name="спецагент" />
-          <Item name="известный политик" />
-          <Item name="частный детектив" />
-          <Item name="адмирал" />
-          <Item name="медиамагнат" />
-          <Item name="банкир" />
-          <Item name="лидер религиозной секты" />
-          <Item name="вожак космических пиратов" />
-          <Item name="босс мафии" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="космопорт" />
-          <Item name="джунгли" />
-          <Item name="открытый космос" />
-          <Item name="космическая станция" />
-          <Item name="боевой звездолёт" />
-          <Item name="торговый звездолёт" />
-          <Item name="транспортный звездолёт" />
-          <Item name="подпространство/гиперпространство" />
-          <Item name="храм/монастырь/церковь" />
-          <Item name="база космических пиратов" />
-          <Item name="полицейский участок" />
-          <Item name="бордель" />
-          <Item name="военная база" />
-          <Item name="бар" />
-          <Item name="притон контрабандистов" />
-          <Item name="руины неизвестной цивилизации" />
-        </Locations>
-        <Artefacts>
-          <Item name="зашифрованное сообщение" />
-          <Item name="инопланетная скульптура" />
-          <Item name="голограмма" />
-          <Item name="секретные данные" />
-          <Item name="компромат" />
-          <Item name="пиратская карта" />
-        </Artefacts>
-      </Setting>
-      <Setting name="Мистика">
-        <Races>
-          <Item name="мужчина/[F]женщина" />
-        </Races>
-        <Perks>
-          <Item name="горбун/[F]мужеподобная" />
-          <Item name="одержим демоном/[F]одержима демоном" />
-          <Item name="из древнего рода" />
-          <Item name="вампир/оборотень/вервольф" />
-          <Item name="призрак" />
-        </Perks>
-        <Professions>
-          <Item name="монах/[F]монахиня" />
-          <Item name="охотник на нечисть/охотник на нежить/[F]охотница на нечисть/[F]охотница на нежить" />
-          <Item name="поэт/[F]поэтесса" />
-          <Item name="музыкант" />
-          <Item name="лекарь" />
-          <Item name="алхимик" />
-          <Item name="чернокнижник/[F]ведьма" />
-          <Item name="заклинатель демонов/[F]заклинательница демонов" />
-          <Item name="некромант" />
-          <Item name="колдун вуду" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="охотник на нечисть/охотник на нежить/[F]охотница на нечисть/[F]охотница на нежить" />
-          <Item name="алхимик" />
-          <Item name="чернокнижник/[F]ведьма" />
-          <Item name="некромант" />
-          <Item name="заклинатель демонов/[F]заклинательница демонов" />
-          <Item name="колдун вуду" />
-          <Item name="служитель древних богов/[F]служительница древних богов" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="храм" />
-          <Item name="лагерь разбойников" />
-          <Item name="замок" />
-          <Item name="кладбище" />
-          <Item name="забытый храм" />
-          <Item name="разрушенный храм" />
-          <Item name="забытая гробница" />
-          <Item name="покинутый город" />
-          <Item name="разрушенный замок" />
-          <Item name="пещеры" />
-          <Item name="алхимическая лаборатория" />
-          <Item name="зачарованная башня" />
-          <Item name="склеп" />
-          <Item name="катакомбы" />
-          <Item name="потусторонний мир" />
-        </Locations>
-        <Artefacts>
-          <Item name="зачарованное оружие" />
-          <Item name="проклятое оружие" />
-          <Item name="магический артефакт" />
-          <Item name="древняя рукопись" />
-          <Item name="таинственный ключ" />
-        </Artefacts>
-      </Setting>
-      <Setting name="Комедия">
-        <Races />
-        <Perks>
-          <Item name="ребёнок/подросток/молодой/старый/[F]молодая/[F]старая" />
-          <Item name="силач/слабак/[F]сильная/[F]слабая" />
-          <Item name="сорвиголова/трусоват/[F]сорвиголова/[F]трусовата" />
-          <Item name="гений/глупец/[F]гений/[F]глупая" />
-          <Item name="медлительный/[F]медлительная" />
-          <Item name="наивный/[F]наивная" />
-          <Item name="карлик/[F]карлица" />
-        </Perks>
+        <Perks />
         <Professions />
         <ProfessionsElite />
         <Locations />
         <Artefacts />
-      </Setting>
-      <Setting name="Дикий Запад">
+      </Janre>
+      <Janre name="+Инопланетяне">
         <Races>
-          <Item name="белый мужчина/[F]белая женщина" />
-          <Item name="негр/[F]негритянка" />
-          <Item name="индеец/[F]индианка" />
-        </Races>
-        <Perks />
-        <Professions>
-          <Item name="ковбой" />
-          <Item name="раб/[F]рабыня" />
-          <Item name="беглый раб/[F]беглая рабыня" />
-          <Item name="каторжник/[F]каторжница" />
-          <Item name="беглый каторжник/[F]беглая каторжница" />
-          <Item name="священник/[F]монахиня" />
-          <Item name="врач" />
-          <Item name="фермер/[F]фермерша" />
-          <Item name="трактирщик" />
-          <Item name="охотник/[F]охотница" />
-          <Item name="золотоискатель/[F]золотоискательница" />
-          <Item name="плантатор" />
-          <Item name="солдат" />
-          <Item name="дезертир" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="золотоискатель/[F]золотоискательница" />
-          <Item name="вожак бандитов" />
-          <Item name="беглый каторжник/[F]беглая каторжница" />
-          <Item name="шериф" />
-          <Item name="вождь племени" />
-          <Item name="шаман" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="салун" />
-          <Item name="степь" />
-          <Item name="ущелье" />
-          <Item name="река" />
-          <Item name="золотой прииск" />
-          <Item name="поезд" />
-          <Item name="церковь" />
-        </Locations>
-        <Artefacts />
-      </Setting>
-      <Setting name="Конспирология">
-        <Races>
-          <Item name="американец/[F]американка" />
-          <Item name="европеец/[F]европейка" />
-          <Item name="русский/[F]русская" />
-          <Item name="китаец/[F]китаянка" />
-          <Item name="японец/[F]японка" />
-          <Item name="негр/[F]негритянка" />
           <Item name="инсектоидный инопланетянин/[F]инсектоидная инопланетянка" />
           <Item name="гуманоидный инопланетянин/[F]гуманоидная инопланетянка" />
+          <Item name="звероподобный инопланетянин/[F]звероподобная инопланетянка" />
           <Item name="негуманоидный инопланетянин" />
         </Races>
-        <Perks>
-          <Item name="бабник/импотент/гомосексуалист/[F]сексуально-озабоченная/[F]фригидна/[F]лесбиянка" />
-          <Item name="наркоман/[F]наркоманка" />
-          <Item name="миллионер/[F]миллионерша" />
-          <Item name="телепат/[F]телепатка" />
-          <Item name="псионик" />
-        </Perks>
-        <Professions>
-          <Item name="физик" />
-          <Item name="химик" />
-          <Item name="биолог" />
-          <Item name="микробиолог" />
-          <Item name="певец/[F]певица" />
-          <Item name="музыкант" />
-          <Item name="актёр/[F]актриса" />
-          <Item name="топ-модель" />
-          <Item name="врач" />
-          <Item name="солдат" />
-          <Item name="полицейский/[F]полицейская" />
-          <Item name="фермер/[F]фермерша" />
-          <Item name="шахтёр" />
-          <Item name="пилот" />
-          <Item name="наркоторговец" />
-          <Item name="секретный агент" />
-          <Item name="офисный работник" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="диктатор" />
-          <Item name="секретный агент" />
-          <Item name="наркобарон" />
-          <Item name="известный политик" />
-          <Item name="босс мафии" />
-          <Item name="генерал" />
-          <Item name="банкир" />
-          <Item name="выдающийся физик" />
-          <Item name="выдающийся химик" />
-          <Item name="выдающийся биолог" />
-          <Item name="выдающийся микробиолог" />
-          <Item name="лидер религиозной секты" />
-          <Item name="руководитель секретной лаборатории" />
-          <Item name="магистр тайного ордена" />
-          <Item name="глава тайного братства" />
-          <Item name="руководитель секретного подразделения" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="джунгли" />
-          <Item name="полицейский участок" />
-          <Item name="военная база" />
-          <Item name="бар" />
-          <Item name="секретная лаборатория" />
-          <Item name="секретное хранилище" />
-          <Item name="секретный полигон" />
-          <Item name="остатки инопланетного корабля" />
-          <Item name="инопланетный корабль" />
-        </Locations>
-        <Artefacts>
-          <Item name="конфиденциальная информация" />
-          <Item name="секретные документы" />
-          <Item name="компромат" />
-          <Item name="ключ к шифру" />
-          <Item name="химическая формула" />
-          <Item name="инопланетный артефакт" />
-        </Artefacts>
-      </Setting>
-      <Setting name="Пост-апокалипсис">
-        <Races>
-          <Item name="американец/[F]американка" />
-          <Item name="европеец/[F]европейка" />
-          <Item name="русский/[F]русская" />
-          <Item name="китаец/[F]китаянка" />
-          <Item name="японец/[F]японка" />
-          <Item name="негр/[F]негритянка" />
-        </Races>
-        <Perks>
-          <Item name="мутант" />
-          <Item name="зараженный/[F]зараженная" />
-          <Item name="бабник/импотент/гомосексуалист/[F]сексуально-озабоченная/[F]фригидна/[F]лесбиянка" />
-          <Item name="наркоман/[F]наркоманка" />
-        </Perks>
-        <Professions>
-          <Item name="рейнджер" />
-          <Item name="бандит" />
-          <Item name="мародёр" />
-          <Item name="шериф" />
-          <Item name="охотник/[F]охотница" />
-          <Item name="наёмник/[F]наёмница" />
-          <Item name="учитель/[F]учительница" />
-          <Item name="врач" />
-          <Item name="механик" />
-          <Item name="электрик" />
-        </Professions>
-        <ProfessionsElite>
-          <Item name="прославленный рейнжер" />
-          <Item name="вожак бандитов" />
-          <Item name="шериф" />
-          <Item name="известный охотник/[F]известная охотница" />
-          <Item name="лидер наёмников" />
-        </ProfessionsElite>
-        <Locations>
-          <Item name="оазис" />
-          <Item name="река" />
-          <Item name="убежище" />
-          <Item name="покинутый город" />
-          <Item name="поселение выживших" />
-          <Item name="поселение мутантов" />
-          <Item name="военная база" />
-        </Locations>
-        <Artefacts>
-          <Item name="водяной чип" />
-          <Item name="атомная батарейка" />
-          <Item name="вакцина" />
-          <Item name="мутаген" />
-          <Item name="лекарства" />
-          <Item name="патроны" />
-          <Item name="бензин" />
-          <Item name="семена" />
-        </Artefacts>
-      </Setting>
-    </Settings>
-    <Relations>
-      <Item name="давний знакомый/[F]давняя знакомая" />
+        <Perks />
+        <Professions />
+        <ProfessionsElite />
+        <Locations />
+        <Artefacts />
+      </Janre>
+    </Janres>
+    <BloodRelations>
       <Item name="близкий родственник/[F]близкая родственница" />
-      <Item name="любовник/[F]любовница" />
-      <Item name="друг детства/[F]подруга детства" />
       <Item name="дядя/[F]тётя" />
       <Item name="дальний родственник/[F]дальняя родственница" />
-      <Item name="случайный знакомый/[F]случайная знакомая" />
       <Item name="брат/[F]сестра" />
+    </BloodRelations>
+    <OtherRelations>
+      <Item name="давний знакомый/[F]давняя знакомая" />
+      <Item name="любовник/[F]любовница" />
+      <Item name="друг детства/[F]подруга детства" />
+      <Item name="случайный знакомый/[F]случайная знакомая" />
       <Item name="бывший подопечный/[F]бывшая подопечная" />
       <Item name="бывший наставник/[F]бывшая наставница" />
-    </Relations>
+    </OtherRelations>
     <Problems>
-      <Item name="герой влюблён, но антагонист против того, чтобы они были вместе." />
+      <Item name="герой влюблён, но антагонист против того, чтобы любовники были вместе." />
       <Item name="герой и антагонист влюблены в одного и того же персонажа - кому достанется счастье?" />
       <Item name="герой хочет разбогатеть, но для этого необходимо одолеть антагониста." />
       <Item name="герой завидует антагонисту и хочет завладеть каким-то его имуществом." />
       <Item name="герой завидует положению антагониста в обществе и хочет занять его место." />
       <Item name="герою угрожает опасность, одолеть которую возможно лишь с помощью чего-то, принадлежащего антагонисту (охраняемого антагонистом)." />
       <Item name="герой болен, но чтобы достать лекарство - необходимо одолеть антагониста." />
-      <Item name="друг (спутник, покровитель...) героя влюблён, но антагонист против того, чтобы они были вместе." />
+      <Item name="друг (спутник, покровитель...) героя влюблён, но антагонист против того, чтобы любовники были вместе." />
       <Item name="друг (спутник, покровитель...) героя и антагонист влюблены в одного и того же персонажа - кому достанется счастье?" />
       <Item name="друг (спутник, покровитель...) героя хочет разбогатеть, но для этого необходимо одолеть антагониста." />
       <Item name="друг (спутник, покровитель...) героя завидует антагонисту и хочет завладеть каким-то его имуществом." />
@@ -1242,6 +1314,105 @@
       <Item name="принять поражение - и поклясться отомстить" />
       <Item name="принять поражение - но сделать так, чтобы антагонист пожалел о своей победе" />
       <Item name="втереться в доверие антагонисту, а затем воспользоваться этим" />
+      <Item name="Deus Ex Machina - в последний момент, когда надежды уже не осталось, появляется неожиданный могущественный союзник" />
+      <Item name="дорогой герою персонаж (спутник, наставник...) жертвует собой ради победы" />
     </Solutions>
+    <Events>
+      <Item name="любовное свидание" />
+      <Item name="честная сделка" />
+      <Item name="мошенническая сделка" />
+      <Item name="засада" />
+      <Item name="честный поединок" />
+      <Item name="драка" />
+      <Item name="участие в битве" />
+      <Item name="наблюдение за битвой" />
+      <Item name="шантаж" />
+      <Item name="саботаж" />
+      <Item name="расследование" />
+      <Item name="азартная игра" />
+      <Item name="переговоры" />
+      <Item name="погоня" />
+      <Item name="бегство" />
+      <Item name="отдых" />
+      <Item name="нападение диких зверей" />
+      <Item name="апгрейд экипировки" />
+      <Item name="тренировка" />
+      <Item name="празднование" />
+      <Item name="шпионаж" />
+      <Item name="кража" />
+      <Item name="ограбление" />
+      <Item name="убийство" />
+      <Item name="укрытие" />
+      <Item name="плен" />
+      <Item name="попытка убийства" />
+      <Item name="видения (сон, грёзы...)" />
+      <Item name="открытие себя" />
+      <Item name="смерть друга" />
+      <Item name="смерть родственника" />
+      <Item name="попытка самоубийства" />
+      <Item name="совет (совещание)" />
+      <Item name="расставание" />
+      <Item name="маскарад" />
+      <Item name="неожиданная встреча" />
+      <Item name="предательство" />
+      <Item name="спор" />
+      <Item name="соревнование" />
+      <Item name="жестокий розыгрыш" />
+      <Item name="прозрение (осознание истины)" />
+      <Item name="обучение (тренировка)" />
+      <Item name="экзамен" />
+      <Item name="проваленный экзамен" />
+      <Item name="выбор из двух зол" />
+      <Item name="разрыв отношений" />
+      <Item name="семейная ссора" />
+      <Item name="внезапная страсть" />
+      <Item name="анонимная угроза" />
+      <Item name="неожиданное везение" />
+      <Item name="крупный выигрыш" />
+      <Item name="крупный проигрыш" />
+      <Item name="эпидемия" />
+      <Item name="кораблекрушение" />
+      <Item name="природная катастрофа" />
+      <Item name="гнев стихии" />
+      <Item name="спортивное состязание" />
+      <Item name="бюрократические препоны" />
+      <Item name="рассказ очевидца" />
+      <Item name="воспоминания" />
+      <Item name="блеф" />
+      <Item name="резня" />
+      <Item name="казнь" />
+      <Item name="праздник" />
+      <Item name="диверсия" />
+      <Item name="жертва" />
+      <Item name="религиозное таинство" />
+      <Item name="выздоровление" />
+      <Item name="необдуманный риск" />
+      <Item name="вынужденная сделка" />
+      <Item name="донос" />
+      <Item name="лжесвидетельство" />
+      <Item name="свадьба" />
+      <Item name="гулянка" />
+      <Item name="признание" />
+      <Item name="создание шедевра" />
+      <Item name="уничтожение шедевра" />
+      <Item name="исполнение мечты" />
+      <Item name="разрушение мечты" />
+      <Item name="крушение всех надежд" />
+      <Item name="новая надежда" />
+      <Item name="новая угроза" />
+      <Item name="старый недруг" />
+      <Item name="бунт" />
+      <Item name="неожиданный союзник" />
+      <Item name="встреча с невозможным" />
+      <Item name="новое знакомство" />
+      <Item name="роковая ошибка" />
+      <Item name="фатальная небрежность" />
+      <Item name="смена власти" />
+      <Item name="всё или ничего" />
+      <Item name="раскрытие заговора" />
+      <Item name="заговор" />
+      <Item name="неожиданное известие" />
+      <Item name="взлом" />
+    </Events>
   </Module>
 </RandomStory>
