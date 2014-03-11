@@ -120,4 +120,15 @@
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>104, 17</value>
+  </metadata>
+  <data name="label3.ToolTip" xml:space="preserve">
+    <value>С помощью фильтра можно ограничить выборку вариантов,
+исключив строки не содержащие заданных слов или буквосочетаний.
+
+Например, фильтр "англ;пират;люб" позволит ограничить выборку 
+персонажей только английскими пиратами, состоящими в
+любовной связи с кем-либо из других персонажей.</value>
+  </data>
 </root>

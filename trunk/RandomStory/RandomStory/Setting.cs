@@ -23,7 +23,11 @@ namespace RandomStory
 
         public Strings m_cLocations = new Strings();
 
+        public Strings m_cGeography = new Strings();
+
         public Strings m_cItems = new Strings();
+
+        public Strings m_cEvents = new Strings();
 
         public Setting()
         {
@@ -46,7 +50,9 @@ namespace RandomStory
                 m_cProfessions = new Strings(cSettings[0].m_cProfessions);
                 m_cProfessionsElite = new Strings(cSettings[0].m_cProfessionsElite);
                 m_cLocations = new Strings(cSettings[0].m_cLocations);
+                m_cGeography = new Strings(cSettings[0].m_cGeography);
                 m_cItems = new Strings(cSettings[0].m_cItems);
+                m_cEvents = new Strings(cSettings[0].m_cEvents);
 
                 for (int i = 1; i < cSettings.Count; i++)
                 {
@@ -57,7 +63,9 @@ namespace RandomStory
                     m_cProfessions.KeepCommon(pOther.m_cProfessions);
                     m_cProfessionsElite.KeepCommon(pOther.m_cProfessionsElite);
                     m_cLocations.KeepCommon(pOther.m_cLocations);
+                    m_cGeography.KeepCommon(pOther.m_cGeography);
                     m_cItems.KeepCommon(pOther.m_cItems);
+                    m_cEvents.KeepCommon(pOther.m_cEvents);
                 }
             }
 
@@ -68,7 +76,9 @@ namespace RandomStory
                 pOther.m_cProfessions.RemoveCommon(m_cProfessions);
                 pOther.m_cProfessionsElite.RemoveCommon(m_cProfessionsElite);
                 pOther.m_cLocations.RemoveCommon(m_cLocations);
+                pOther.m_cGeography.RemoveCommon(m_cGeography);
                 pOther.m_cItems.RemoveCommon(m_cItems);
+                pOther.m_cEvents.RemoveCommon(m_cEvents);
             }
         }
 
@@ -95,8 +105,12 @@ namespace RandomStory
                     m_cProfessionsElite = new Strings(pXml, pSubNode);
                 if (pSubNode.Name == "Locations")
                     m_cLocations = new Strings(pXml, pSubNode);
+                if (pSubNode.Name == "Geography")
+                    m_cGeography = new Strings(pXml, pSubNode);
                 if (pSubNode.Name == "Artefacts")
                     m_cItems = new Strings(pXml, pSubNode);
+                if (pSubNode.Name == "Events")
+                    m_cEvents = new Strings(pXml, pSubNode);
             }
         }
 
@@ -126,7 +140,9 @@ namespace RandomStory
                 m_cProfessions = new Strings(pBase1.m_cProfessions);
                 m_cProfessionsElite = new Strings(pBase1.m_cProfessionsElite);
                 m_cLocations = new Strings(pBase1.m_cLocations);
+                m_cGeography = new Strings(pBase1.m_cGeography);
                 m_cItems = new Strings(pBase1.m_cItems);
+                m_cEvents = new Strings(pBase1.m_cEvents);
             }
             else
             {
@@ -141,7 +157,9 @@ namespace RandomStory
                 m_cProfessions = new Strings(pBase1.m_cProfessions, pBase2.m_cProfessions);
                 m_cProfessionsElite = new Strings(pBase1.m_cProfessionsElite, pBase2.m_cProfessionsElite);
                 m_cLocations = new Strings(pBase1.m_cLocations, pBase2.m_cLocations);
+                m_cGeography = new Strings(pBase1.m_cGeography, pBase2.m_cGeography);
                 m_cItems = new Strings(pBase1.m_cItems, pBase2.m_cItems);
+                m_cEvents = new Strings(pBase1.m_cEvents, pBase2.m_cEvents);
             }
         }
 
@@ -153,8 +171,10 @@ namespace RandomStory
             m_cPerks.WriteXML(pXml, pWorldNode, "Perks");
             m_cProfessions.WriteXML(pXml, pWorldNode, "Professions");
             m_cProfessionsElite.WriteXML(pXml, pWorldNode, "ProfessionsElite");
+            m_cGeography.WriteXML(pXml, pWorldNode, "Geography");
             m_cLocations.WriteXML(pXml, pWorldNode, "Locations");
             m_cItems.WriteXML(pXml, pWorldNode, "Artefacts");
+            m_cEvents.WriteXML(pXml, pWorldNode, "Events");
         }
 
         public override string ToString()
@@ -232,6 +252,17 @@ namespace RandomStory
             return cMerged.GetRandom(cExceptions, ref aFlags);
         }
 
+        public string GetRandomGeography(Strings cExceptions)
+        {
+            Strings cMerged = m_cGeography;
+            if (m_pCommon != null)
+            {
+                cMerged = new Strings(m_cGeography, m_pCommon.m_cGeography);
+            }
+            char[] aFlags = null;
+            return cMerged.GetRandom(cExceptions, ref aFlags);
+        }
+
         private Strings m_cMergedPerks = null;
 
         public string GetRandomPerk(Strings cExceptions, ref char[] aFlags)
@@ -257,6 +288,17 @@ namespace RandomStory
             }
             char[] aFlags = null;
             return cMerged.GetRandom(cExceptions, "штуковина", ref aFlags);
+        }
+
+        public string GetRandomEvent(Strings cExceptions)
+        {
+            Strings cMerged = m_cEvents;
+            if (m_pCommon != null)
+            {
+                cMerged = new Strings(m_cEvents, m_pCommon.m_cEvents);
+            }
+            char[] aFlags = null;
+            return cMerged.GetRandom(cExceptions, ref aFlags);
         }
     }
 }

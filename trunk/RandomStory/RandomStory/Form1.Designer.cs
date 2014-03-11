@@ -45,9 +45,8 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button3 = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.label4 = new System.Windows.Forms.Label();
             this.glassPanelSetting = new MiscControls.GlassPanel(this.components);
             this.glassButtonSetting = new MiscControls.GlassButton();
             this.label14 = new System.Windows.Forms.Label();
@@ -81,16 +80,19 @@
             this.glassPanelEvents = new MiscControls.GlassPanel(this.components);
             this.glassButtonEvents = new MiscControls.GlassButton();
             this.label10 = new System.Windows.Forms.Label();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.exportButton = new System.Windows.Forms.Button();
             this.glassButton3 = new MiscControls.GlassButton();
-            this.label4 = new System.Windows.Forms.Label();
             this.glassButton2 = new MiscControls.GlassButton();
             this.label3 = new System.Windows.Forms.Label();
             this.glassPanel2 = new MiscControls.GlassPanel(this.components);
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.exportButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.glassPanelGeography = new MiscControls.GlassPanel(this.components);
+            this.glassButtonGeography = new MiscControls.GlassButton();
+            this.label15 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.glassPanelSetting.SuspendLayout();
             this.glassPanelMinion.SuspendLayout();
@@ -103,8 +105,10 @@
             this.glassPanelSolution.SuspendLayout();
             this.glassPanelPlaces.SuspendLayout();
             this.glassPanelEvents.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
             this.glassPanel2.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.glassPanelGeography.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -115,7 +119,7 @@
             this.настройкиToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(685, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(837, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -232,27 +236,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // button3
-            // 
-            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button3.Location = new System.Drawing.Point(33, 13);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(144, 32);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Новый сюжет!";
-            this.toolTip1.SetToolTip(this.button3, "Формирует новый сюжет с использованием выбранной\r\nкомбинации сеттингов.");
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.tableLayoutPanel3);
-            this.panel2.Controls.Add(this.tableLayoutPanel4);
-            this.panel2.Location = new System.Drawing.Point(282, 49);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(361, 448);
-            this.panel2.TabIndex = 10;
-            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
@@ -274,31 +257,46 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.25F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 6.25F));
             this.tableLayoutPanel3.Controls.Add(this.glassPanelSetting, 3, 0);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelMinion, 7, 3);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelHelper, 0, 3);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelVillain, 6, 2);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelHero, 1, 2);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelItems, 7, 6);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelTutor, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelProblem, 1, 5);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelSolution, 1, 7);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelPlaces, 12, 1);
-            this.tableLayoutPanel3.Controls.Add(this.glassPanelEvents, 12, 4);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelMinion, 7, 4);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelHelper, 0, 4);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelVillain, 6, 3);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelHero, 1, 3);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelItems, 7, 7);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelTutor, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelProblem, 1, 6);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelSolution, 1, 8);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelPlaces, 12, 2);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelEvents, 12, 5);
+            this.tableLayoutPanel3.Controls.Add(this.glassPanelGeography, 5, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 9;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.38356F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 17.12329F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 17.12329F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.561643F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.561643F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.561643F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.561643F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.561643F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.561643F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(361, 390);
+            this.tableLayoutPanel3.RowCount = 10;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.57524F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.57213F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.97053F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.97053F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.485261F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.485261F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.485261F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.485261F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.485261F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.485261F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(837, 595);
             this.tableLayoutPanel3.TabIndex = 0;
+            // 
+            // label4
+            // 
+            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label4.ForeColor = System.Drawing.Color.Black;
+            this.label4.Location = new System.Drawing.Point(5, 5);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(80, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Антагонист:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // glassPanelSetting
             // 
@@ -309,11 +307,11 @@
             this.glassPanelSetting.CornerRadius = 0;
             this.glassPanelSetting.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelSetting.InnerBorderColor = System.Drawing.Color.Gainsboro;
-            this.glassPanelSetting.Location = new System.Drawing.Point(69, 3);
+            this.glassPanelSetting.Location = new System.Drawing.Point(159, 3);
             this.glassPanelSetting.Name = "glassPanelSetting";
             this.glassPanelSetting.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelSetting.Padding = new System.Windows.Forms.Padding(1);
-            this.glassPanelSetting.Size = new System.Drawing.Size(214, 50);
+            this.glassPanelSetting.Size = new System.Drawing.Size(514, 68);
             this.glassPanelSetting.TabIndex = 14;
             // 
             // glassButtonSetting
@@ -330,7 +328,7 @@
             this.glassButtonSetting.Location = new System.Drawing.Point(1, 21);
             this.glassButtonSetting.Name = "glassButtonSetting";
             this.glassButtonSetting.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonSetting.Size = new System.Drawing.Size(212, 28);
+            this.glassButtonSetting.Size = new System.Drawing.Size(512, 46);
             this.glassButtonSetting.TabIndex = 4;
             this.glassButtonSetting.Text = "?";
             this.glassButtonSetting.Click += new System.EventHandler(this.glassButtonSetting_Click);
@@ -342,7 +340,7 @@
             this.label14.ForeColor = System.Drawing.Color.Black;
             this.label14.Location = new System.Drawing.Point(1, 1);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(212, 20);
+            this.label14.Size = new System.Drawing.Size(512, 20);
             this.label14.TabIndex = 0;
             this.label14.Text = "Сеттинг:";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -356,12 +354,12 @@
             this.glassPanelMinion.CornerRadius = 0;
             this.glassPanelMinion.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelMinion.InnerBorderColor = System.Drawing.Color.Orange;
-            this.glassPanelMinion.Location = new System.Drawing.Point(157, 191);
+            this.glassPanelMinion.Location = new System.Drawing.Point(367, 329);
             this.glassPanelMinion.Name = "glassPanelMinion";
             this.glassPanelMinion.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelMinion.Padding = new System.Windows.Forms.Padding(1);
             this.tableLayoutPanel3.SetRowSpan(this.glassPanelMinion, 2);
-            this.glassPanelMinion.Size = new System.Drawing.Size(104, 60);
+            this.glassPanelMinion.Size = new System.Drawing.Size(254, 82);
             this.glassPanelMinion.TabIndex = 13;
             // 
             // glassButtonMinion
@@ -377,7 +375,7 @@
             this.glassButtonMinion.Location = new System.Drawing.Point(1, 21);
             this.glassButtonMinion.Name = "glassButtonMinion";
             this.glassButtonMinion.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonMinion.Size = new System.Drawing.Size(102, 38);
+            this.glassButtonMinion.Size = new System.Drawing.Size(252, 60);
             this.glassButtonMinion.TabIndex = 4;
             this.glassButtonMinion.Text = "?";
             this.glassButtonMinion.Click += new System.EventHandler(this.glassButtonMinion_Click);
@@ -389,7 +387,7 @@
             this.label6.ForeColor = System.Drawing.Color.Black;
             this.label6.Location = new System.Drawing.Point(1, 1);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(102, 20);
+            this.label6.Size = new System.Drawing.Size(252, 20);
             this.label6.TabIndex = 2;
             this.label6.Text = "Помощник антагониста:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -403,12 +401,12 @@
             this.glassPanelHelper.CornerRadius = 0;
             this.glassPanelHelper.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelHelper.InnerBorderColor = System.Drawing.Color.LightGreen;
-            this.glassPanelHelper.Location = new System.Drawing.Point(3, 191);
+            this.glassPanelHelper.Location = new System.Drawing.Point(3, 329);
             this.glassPanelHelper.Name = "glassPanelHelper";
             this.glassPanelHelper.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelHelper.Padding = new System.Windows.Forms.Padding(1);
             this.tableLayoutPanel3.SetRowSpan(this.glassPanelHelper, 2);
-            this.glassPanelHelper.Size = new System.Drawing.Size(104, 60);
+            this.glassPanelHelper.Size = new System.Drawing.Size(254, 82);
             this.glassPanelHelper.TabIndex = 12;
             // 
             // glassButtonHelper
@@ -424,7 +422,7 @@
             this.glassButtonHelper.Location = new System.Drawing.Point(1, 21);
             this.glassButtonHelper.Name = "glassButtonHelper";
             this.glassButtonHelper.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonHelper.Size = new System.Drawing.Size(102, 38);
+            this.glassButtonHelper.Size = new System.Drawing.Size(252, 60);
             this.glassButtonHelper.TabIndex = 4;
             this.glassButtonHelper.Text = "?";
             this.glassButtonHelper.Click += new System.EventHandler(this.glassButtonHelper_Click);
@@ -436,7 +434,7 @@
             this.label5.ForeColor = System.Drawing.Color.Black;
             this.label5.Location = new System.Drawing.Point(1, 1);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 20);
+            this.label5.Size = new System.Drawing.Size(252, 20);
             this.label5.TabIndex = 2;
             this.label5.Text = "Спутник героя:";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -450,11 +448,11 @@
             this.glassPanelVillain.CornerRadius = 0;
             this.glassPanelVillain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelVillain.InnerBorderColor = System.Drawing.Color.OrangeRed;
-            this.glassPanelVillain.Location = new System.Drawing.Point(135, 125);
+            this.glassPanelVillain.Location = new System.Drawing.Point(315, 240);
             this.glassPanelVillain.Name = "glassPanelVillain";
             this.glassPanelVillain.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelVillain.Padding = new System.Windows.Forms.Padding(1);
-            this.glassPanelVillain.Size = new System.Drawing.Size(104, 60);
+            this.glassPanelVillain.Size = new System.Drawing.Size(254, 83);
             this.glassPanelVillain.TabIndex = 11;
             // 
             // glassButtonVillain
@@ -470,7 +468,7 @@
             this.glassButtonVillain.Location = new System.Drawing.Point(1, 21);
             this.glassButtonVillain.Name = "glassButtonVillain";
             this.glassButtonVillain.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonVillain.Size = new System.Drawing.Size(102, 38);
+            this.glassButtonVillain.Size = new System.Drawing.Size(252, 61);
             this.glassButtonVillain.TabIndex = 4;
             this.glassButtonVillain.Text = "?";
             this.glassButtonVillain.Click += new System.EventHandler(this.glassButtonVillain_Click);
@@ -482,7 +480,7 @@
             this.label13.ForeColor = System.Drawing.Color.Black;
             this.label13.Location = new System.Drawing.Point(1, 1);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(102, 20);
+            this.label13.Size = new System.Drawing.Size(252, 20);
             this.label13.TabIndex = 2;
             this.label13.Text = "Антагонист:";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -496,11 +494,11 @@
             this.glassPanelHero.CornerRadius = 0;
             this.glassPanelHero.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelHero.InnerBorderColor = System.Drawing.Color.Gold;
-            this.glassPanelHero.Location = new System.Drawing.Point(25, 125);
+            this.glassPanelHero.Location = new System.Drawing.Point(55, 240);
             this.glassPanelHero.Name = "glassPanelHero";
             this.glassPanelHero.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelHero.Padding = new System.Windows.Forms.Padding(1);
-            this.glassPanelHero.Size = new System.Drawing.Size(104, 60);
+            this.glassPanelHero.Size = new System.Drawing.Size(254, 83);
             this.glassPanelHero.TabIndex = 10;
             // 
             // glassButtonHero
@@ -516,9 +514,10 @@
             this.glassButtonHero.Location = new System.Drawing.Point(1, 21);
             this.glassButtonHero.Name = "glassButtonHero";
             this.glassButtonHero.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonHero.Size = new System.Drawing.Size(102, 38);
+            this.glassButtonHero.Size = new System.Drawing.Size(252, 61);
             this.glassButtonHero.TabIndex = 4;
-            this.glassButtonHero.Text = "?";
+            this.glassButtonHero.Text = "аааааааааааааааааа ааааааааааааааааааа бббббббббббб бббббббббббббббб вввввввввввв" +
+    "ввв вввввввввввввв гггггггггггг ггггггггггггггггг дддддддддддд дддддддддд";
             this.glassButtonHero.Click += new System.EventHandler(this.glassButtonHero_Click);
             // 
             // label12
@@ -528,7 +527,7 @@
             this.label12.ForeColor = System.Drawing.Color.Black;
             this.label12.Location = new System.Drawing.Point(1, 1);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(102, 20);
+            this.label12.Size = new System.Drawing.Size(252, 20);
             this.label12.TabIndex = 2;
             this.label12.Text = "Герой:";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -542,12 +541,12 @@
             this.glassPanelItems.CornerRadius = 0;
             this.glassPanelItems.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelItems.InnerBorderColor = System.Drawing.Color.LightSteelBlue;
-            this.glassPanelItems.Location = new System.Drawing.Point(157, 290);
+            this.glassPanelItems.Location = new System.Drawing.Point(367, 461);
             this.glassPanelItems.Name = "glassPanelItems";
             this.glassPanelItems.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelItems.Padding = new System.Windows.Forms.Padding(1);
             this.tableLayoutPanel3.SetRowSpan(this.glassPanelItems, 2);
-            this.glassPanelItems.Size = new System.Drawing.Size(82, 60);
+            this.glassPanelItems.Size = new System.Drawing.Size(202, 82);
             this.glassPanelItems.TabIndex = 9;
             // 
             // glassButtonItems
@@ -563,7 +562,7 @@
             this.glassButtonItems.Location = new System.Drawing.Point(1, 21);
             this.glassButtonItems.Name = "glassButtonItems";
             this.glassButtonItems.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonItems.Size = new System.Drawing.Size(80, 38);
+            this.glassButtonItems.Size = new System.Drawing.Size(200, 60);
             this.glassButtonItems.TabIndex = 4;
             this.glassButtonItems.Text = "?";
             this.glassButtonItems.Click += new System.EventHandler(this.glassButtonItems_Click);
@@ -575,7 +574,7 @@
             this.label11.ForeColor = System.Drawing.Color.Black;
             this.label11.Location = new System.Drawing.Point(1, 1);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(80, 20);
+            this.label11.Size = new System.Drawing.Size(200, 20);
             this.label11.TabIndex = 2;
             this.label11.Text = "Ключевые предметы:";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -588,12 +587,12 @@
             this.glassPanelTutor.Controls.Add(this.label2);
             this.glassPanelTutor.CornerRadius = 0;
             this.glassPanelTutor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.glassPanelTutor.InnerBorderColor = System.Drawing.Color.Cyan;
-            this.glassPanelTutor.Location = new System.Drawing.Point(3, 59);
+            this.glassPanelTutor.InnerBorderColor = System.Drawing.Color.PaleTurquoise;
+            this.glassPanelTutor.Location = new System.Drawing.Point(3, 151);
             this.glassPanelTutor.Name = "glassPanelTutor";
             this.glassPanelTutor.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelTutor.Padding = new System.Windows.Forms.Padding(1);
-            this.glassPanelTutor.Size = new System.Drawing.Size(104, 60);
+            this.glassPanelTutor.Size = new System.Drawing.Size(254, 83);
             this.glassPanelTutor.TabIndex = 0;
             // 
             // glassButtonTutor
@@ -609,7 +608,7 @@
             this.glassButtonTutor.Location = new System.Drawing.Point(1, 21);
             this.glassButtonTutor.Name = "glassButtonTutor";
             this.glassButtonTutor.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonTutor.Size = new System.Drawing.Size(102, 38);
+            this.glassButtonTutor.Size = new System.Drawing.Size(252, 61);
             this.glassButtonTutor.TabIndex = 4;
             this.glassButtonTutor.Text = "?";
             this.glassButtonTutor.Click += new System.EventHandler(this.glassButtonTutor_Click);
@@ -621,7 +620,7 @@
             this.label2.ForeColor = System.Drawing.Color.Black;
             this.label2.Location = new System.Drawing.Point(1, 1);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 20);
+            this.label2.Size = new System.Drawing.Size(252, 20);
             this.label2.TabIndex = 0;
             this.label2.Text = "Наставник/покровитель героя:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -635,12 +634,12 @@
             this.glassPanelProblem.CornerRadius = 0;
             this.glassPanelProblem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelProblem.InnerBorderColor = System.Drawing.Color.Gold;
-            this.glassPanelProblem.Location = new System.Drawing.Point(25, 257);
+            this.glassPanelProblem.Location = new System.Drawing.Point(55, 417);
             this.glassPanelProblem.Name = "glassPanelProblem";
             this.glassPanelProblem.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelProblem.Padding = new System.Windows.Forms.Padding(1);
             this.tableLayoutPanel3.SetRowSpan(this.glassPanelProblem, 2);
-            this.glassPanelProblem.Size = new System.Drawing.Size(126, 60);
+            this.glassPanelProblem.Size = new System.Drawing.Size(306, 82);
             this.glassPanelProblem.TabIndex = 4;
             // 
             // glassButtonProblem
@@ -656,7 +655,7 @@
             this.glassButtonProblem.Location = new System.Drawing.Point(1, 21);
             this.glassButtonProblem.Name = "glassButtonProblem";
             this.glassButtonProblem.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonProblem.Size = new System.Drawing.Size(124, 38);
+            this.glassButtonProblem.Size = new System.Drawing.Size(304, 60);
             this.glassButtonProblem.TabIndex = 4;
             this.glassButtonProblem.Text = "?";
             this.glassButtonProblem.Click += new System.EventHandler(this.glassButtonProblem_Click);
@@ -668,7 +667,7 @@
             this.label7.ForeColor = System.Drawing.Color.Black;
             this.label7.Location = new System.Drawing.Point(1, 1);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(124, 20);
+            this.label7.Size = new System.Drawing.Size(304, 20);
             this.label7.TabIndex = 2;
             this.label7.Text = "Проблема:";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -682,12 +681,12 @@
             this.glassPanelSolution.CornerRadius = 0;
             this.glassPanelSolution.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelSolution.InnerBorderColor = System.Drawing.Color.Turquoise;
-            this.glassPanelSolution.Location = new System.Drawing.Point(25, 323);
+            this.glassPanelSolution.Location = new System.Drawing.Point(55, 505);
             this.glassPanelSolution.Name = "glassPanelSolution";
             this.glassPanelSolution.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelSolution.Padding = new System.Windows.Forms.Padding(1);
             this.tableLayoutPanel3.SetRowSpan(this.glassPanelSolution, 2);
-            this.glassPanelSolution.Size = new System.Drawing.Size(126, 64);
+            this.glassPanelSolution.Size = new System.Drawing.Size(306, 87);
             this.glassPanelSolution.TabIndex = 5;
             // 
             // glassButtonSolution
@@ -703,7 +702,7 @@
             this.glassButtonSolution.Location = new System.Drawing.Point(1, 21);
             this.glassButtonSolution.Name = "glassButtonSolution";
             this.glassButtonSolution.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonSolution.Size = new System.Drawing.Size(124, 42);
+            this.glassButtonSolution.Size = new System.Drawing.Size(304, 65);
             this.glassButtonSolution.TabIndex = 4;
             this.glassButtonSolution.Text = "?";
             this.glassButtonSolution.Click += new System.EventHandler(this.glassButtonSolution_Click);
@@ -715,7 +714,7 @@
             this.label8.ForeColor = System.Drawing.Color.Black;
             this.label8.Location = new System.Drawing.Point(1, 1);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(124, 20);
+            this.label8.Size = new System.Drawing.Size(304, 20);
             this.label8.TabIndex = 2;
             this.label8.Text = "Решение:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -729,12 +728,12 @@
             this.glassPanelPlaces.CornerRadius = 0;
             this.glassPanelPlaces.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelPlaces.InnerBorderColor = System.Drawing.Color.DarkSlateBlue;
-            this.glassPanelPlaces.Location = new System.Drawing.Point(267, 59);
+            this.glassPanelPlaces.Location = new System.Drawing.Point(627, 151);
             this.glassPanelPlaces.Name = "glassPanelPlaces";
             this.glassPanelPlaces.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelPlaces.Padding = new System.Windows.Forms.Padding(1);
             this.tableLayoutPanel3.SetRowSpan(this.glassPanelPlaces, 3);
-            this.glassPanelPlaces.Size = new System.Drawing.Size(91, 159);
+            this.glassPanelPlaces.Size = new System.Drawing.Size(207, 216);
             this.glassPanelPlaces.TabIndex = 6;
             // 
             // glassButtonPlaces
@@ -750,7 +749,7 @@
             this.glassButtonPlaces.Location = new System.Drawing.Point(1, 21);
             this.glassButtonPlaces.Name = "glassButtonPlaces";
             this.glassButtonPlaces.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonPlaces.Size = new System.Drawing.Size(89, 137);
+            this.glassButtonPlaces.Size = new System.Drawing.Size(205, 194);
             this.glassButtonPlaces.TabIndex = 4;
             this.glassButtonPlaces.Text = "?";
             this.glassButtonPlaces.Click += new System.EventHandler(this.glassButtonPlaces_Click);
@@ -762,7 +761,7 @@
             this.label9.ForeColor = System.Drawing.Color.Black;
             this.label9.Location = new System.Drawing.Point(1, 1);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(89, 20);
+            this.label9.Size = new System.Drawing.Size(205, 20);
             this.label9.TabIndex = 2;
             this.label9.Text = "Основные локации:";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -776,12 +775,12 @@
             this.glassPanelEvents.CornerRadius = 0;
             this.glassPanelEvents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glassPanelEvents.InnerBorderColor = System.Drawing.Color.Fuchsia;
-            this.glassPanelEvents.Location = new System.Drawing.Point(267, 224);
+            this.glassPanelEvents.Location = new System.Drawing.Point(627, 373);
             this.glassPanelEvents.Name = "glassPanelEvents";
             this.glassPanelEvents.OuterBorderColor = System.Drawing.Color.LemonChiffon;
             this.glassPanelEvents.Padding = new System.Windows.Forms.Padding(1);
             this.tableLayoutPanel3.SetRowSpan(this.glassPanelEvents, 5);
-            this.glassPanelEvents.Size = new System.Drawing.Size(91, 163);
+            this.glassPanelEvents.Size = new System.Drawing.Size(207, 219);
             this.glassPanelEvents.TabIndex = 7;
             // 
             // glassButtonEvents
@@ -797,7 +796,7 @@
             this.glassButtonEvents.Location = new System.Drawing.Point(1, 21);
             this.glassButtonEvents.Name = "glassButtonEvents";
             this.glassButtonEvents.OuterBorderColor = System.Drawing.Color.Transparent;
-            this.glassButtonEvents.Size = new System.Drawing.Size(89, 141);
+            this.glassButtonEvents.Size = new System.Drawing.Size(205, 197);
             this.glassButtonEvents.TabIndex = 3;
             this.glassButtonEvents.Text = "?";
             this.glassButtonEvents.Click += new System.EventHandler(this.glassButtonEvents_Click);
@@ -809,51 +808,10 @@
             this.label10.ForeColor = System.Drawing.Color.Black;
             this.label10.Location = new System.Drawing.Point(1, 1);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(89, 20);
+            this.label10.Size = new System.Drawing.Size(205, 20);
             this.label10.TabIndex = 2;
             this.label10.Text = "Ключевые сцены:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tableLayoutPanel4
-            // 
-            this.tableLayoutPanel4.ColumnCount = 4;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Controls.Add(this.button3, 1, 0);
-            this.tableLayoutPanel4.Controls.Add(this.label1, 3, 0);
-            this.tableLayoutPanel4.Controls.Add(this.exportButton, 2, 0);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 390);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.Padding = new System.Windows.Forms.Padding(0, 10, 0, 10);
-            this.tableLayoutPanel4.RowCount = 1;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(361, 58);
-            this.tableLayoutPanel4.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(333, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(25, 38);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "label1";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // exportButton
-            // 
-            this.exportButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.exportButton.Enabled = false;
-            this.exportButton.Location = new System.Drawing.Point(183, 13);
-            this.exportButton.Name = "exportButton";
-            this.exportButton.Size = new System.Drawing.Size(144, 32);
-            this.exportButton.TabIndex = 4;
-            this.exportButton.Text = "Экспорт";
-            this.exportButton.UseVisualStyleBackColor = true;
-            this.exportButton.Click += new System.EventHandler(this.экспортироватьИсториюToolStripMenuItem_Click);
             // 
             // glassButton3
             // 
@@ -866,18 +824,6 @@
             this.glassButton3.Size = new System.Drawing.Size(80, 34);
             this.glassButton3.TabIndex = 3;
             this.glassButton3.Text = "американец, супергерой, может принимать любой облик, миллионер, беспринципный";
-            // 
-            // label4
-            // 
-            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(5, 5);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Антагонист:";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // glassButton2
             // 
@@ -917,11 +863,120 @@
             this.glassPanel2.Size = new System.Drawing.Size(88, 57);
             this.glassPanel2.TabIndex = 1;
             // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 4;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Controls.Add(this.button3, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.label1, 3, 0);
+            this.tableLayoutPanel4.Controls.Add(this.exportButton, 2, 0);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 595);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.Padding = new System.Windows.Forms.Padding(0, 10, 0, 10);
+            this.tableLayoutPanel4.RowCount = 1;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(837, 58);
+            this.tableLayoutPanel4.TabIndex = 1;
+            // 
+            // exportButton
+            // 
+            this.exportButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.exportButton.Enabled = false;
+            this.exportButton.Location = new System.Drawing.Point(421, 13);
+            this.exportButton.Name = "exportButton";
+            this.exportButton.Size = new System.Drawing.Size(144, 32);
+            this.exportButton.TabIndex = 4;
+            this.exportButton.Text = "Экспорт";
+            this.exportButton.UseVisualStyleBackColor = true;
+            this.exportButton.Click += new System.EventHandler(this.экспортироватьИсториюToolStripMenuItem_Click);
+            // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(571, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(263, 38);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "label1";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // button3
+            // 
+            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button3.Location = new System.Drawing.Point(271, 13);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(144, 32);
+            this.button3.TabIndex = 2;
+            this.button3.Text = "Новый сюжет!";
+            this.toolTip1.SetToolTip(this.button3, "Формирует новый сюжет с использованием выбранной\r\nкомбинации сеттингов.");
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.tableLayoutPanel3);
+            this.panel2.Controls.Add(this.tableLayoutPanel4);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 24);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(837, 653);
+            this.panel2.TabIndex = 10;
+            // 
+            // glassPanelGeography
+            // 
+            this.glassPanelGeography.BackColor = System.Drawing.Color.Khaki;
+            this.tableLayoutPanel3.SetColumnSpan(this.glassPanelGeography, 6);
+            this.glassPanelGeography.Controls.Add(this.glassButtonGeography);
+            this.glassPanelGeography.Controls.Add(this.label15);
+            this.glassPanelGeography.CornerRadius = 0;
+            this.glassPanelGeography.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.glassPanelGeography.InnerBorderColor = System.Drawing.Color.Gold;
+            this.glassPanelGeography.Location = new System.Drawing.Point(263, 77);
+            this.glassPanelGeography.Name = "glassPanelGeography";
+            this.glassPanelGeography.OuterBorderColor = System.Drawing.Color.LemonChiffon;
+            this.glassPanelGeography.Padding = new System.Windows.Forms.Padding(1);
+            this.glassPanelGeography.Size = new System.Drawing.Size(306, 68);
+            this.glassPanelGeography.TabIndex = 15;
+            // 
+            // glassButtonGeography
+            // 
+            this.glassButtonGeography.AlternativeFocusBorderColor = System.Drawing.Color.Transparent;
+            this.glassButtonGeography.BackColor = System.Drawing.Color.Cornsilk;
+            this.glassButtonGeography.CornerRadius = 0;
+            this.glassButtonGeography.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.glassButtonGeography.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.glassButtonGeography.ForeColor = System.Drawing.Color.Black;
+            this.glassButtonGeography.GlowColor = System.Drawing.Color.White;
+            this.glassButtonGeography.InnerBorderColor = System.Drawing.Color.LightGoldenrodYellow;
+            this.glassButtonGeography.Location = new System.Drawing.Point(1, 21);
+            this.glassButtonGeography.Name = "glassButtonGeography";
+            this.glassButtonGeography.OuterBorderColor = System.Drawing.Color.Transparent;
+            this.glassButtonGeography.Size = new System.Drawing.Size(304, 46);
+            this.glassButtonGeography.TabIndex = 4;
+            this.glassButtonGeography.Text = "?";
+            this.glassButtonGeography.Click += new System.EventHandler(this.glassButtonGeography_Click);
+            // 
+            // label15
+            // 
+            this.label15.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label15.ForeColor = System.Drawing.Color.Black;
+            this.label15.Location = new System.Drawing.Point(1, 1);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(304, 20);
+            this.label15.TabIndex = 0;
+            this.label15.Text = "География действия:";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(685, 604);
+            this.ClientSize = new System.Drawing.Size(837, 677);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -932,7 +987,6 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.panel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.glassPanelSetting.ResumeLayout(false);
             this.glassPanelMinion.ResumeLayout(false);
@@ -945,8 +999,10 @@
             this.glassPanelSolution.ResumeLayout(false);
             this.glassPanelPlaces.ResumeLayout(false);
             this.glassPanelEvents.ResumeLayout(false);
-            this.tableLayoutPanel4.ResumeLayout(false);
             this.glassPanel2.ResumeLayout(false);
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.glassPanelGeography.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -967,7 +1023,6 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem отношенияToolStripMenuItem;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private MiscControls.GlassPanel glassPanelTutor;
         private System.Windows.Forms.Label label2;
@@ -1004,16 +1059,20 @@
         private MiscControls.GlassButton glassButtonProblem;
         private MiscControls.GlassButton glassButtonSolution;
         private MiscControls.GlassButton glassButtonPlaces;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.Button button3;
         private MiscControls.GlassPanel glassPanelSetting;
         private MiscControls.GlassButton glassButtonSetting;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem эспрессрежимToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem интерактивныйРежимToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button exportButton;
+        private System.Windows.Forms.Panel panel2;
+        private MiscControls.GlassPanel glassPanelGeography;
+        private MiscControls.GlassButton glassButtonGeography;
+        private System.Windows.Forms.Label label15;
     }
 }
 

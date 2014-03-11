@@ -122,6 +122,7 @@ namespace RandomStory
 
         private void ClearUI()
         {
+            glassPanelGeography.Visible = false;
             glassPanelEvents.Visible = false;
             glassPanelHelper.Visible = false;
             glassPanelHero.Visible = false;
@@ -133,6 +134,7 @@ namespace RandomStory
             glassPanelTutor.Visible = false;
             glassPanelVillain.Visible = false;
 
+            glassPanelGeography.Enabled = true;
             glassPanelEvents.Enabled = true;
             glassPanelHelper.Enabled = true;
             glassPanelHero.Enabled = true;
@@ -144,6 +146,7 @@ namespace RandomStory
             glassPanelTutor.Enabled = true;
             glassPanelVillain.Enabled = true;
 
+            glassButtonGeography.Text = "?";
             glassButtonEvents.Text = "?";
             glassButtonHelper.Text = "?";
             glassButtonHero.Text = "?";
@@ -172,13 +175,14 @@ namespace RandomStory
 
                 if (интерактивныйРежимToolStripMenuItem.Checked)
                 {
-                    glassButtonSetting.Text = m_pStory.m_pSetting.ToString();
-                    glassPanelHero.Visible = true;
+                    glassButtonSetting.Text = m_pStory.ToString();
+                    glassPanelGeography.Visible = true;
                 }
                 else
                 {
                     m_pStory.BuildFullStory();
 
+                    glassPanelGeography.Visible = true;
                     glassPanelEvents.Visible = true;
                     glassPanelHelper.Visible = true;
                     glassPanelHero.Visible = true;
@@ -190,7 +194,8 @@ namespace RandomStory
                     glassPanelTutor.Visible = true;
                     glassPanelVillain.Visible = true; 
                     
-                    glassButtonSetting.Text = m_pStory.m_pSetting.ToString();
+                    glassButtonSetting.Text = m_pStory.ToString();
+                    glassButtonGeography.Text = m_pStory.m_cGeography.ToString();
                     glassButtonHero.Text = m_pStory.m_pHero.ToString();
 
                     if (m_pStory.m_pTutor != null)
@@ -221,11 +226,13 @@ namespace RandomStory
 
         private void UpdateCompletitionPercent()
         {
-            int iTotal = 7;
+            int iTotal = 8;
             int iComplete = 0;
 
             if (m_pStory != null)
             {
+                if (m_pStory.m_cGeography.Count > 0)
+                    iComplete++;
                 if (m_pStory.m_pHero != null)
                     iComplete++;
                 if (m_pStory.m_pVillain != null)
@@ -422,6 +429,19 @@ namespace RandomStory
             ExportForm pForm = new ExportForm(m_pStory);
 
             pForm.ShowDialog();
+        }
+
+        private void glassButtonGeography_Click(object sender, EventArgs e)
+        {
+            Randomizer pForm = new Randomizer("География действия:", m_pStory.GetRandomGeography, m_pStory.m_cGeography);
+            if (pForm.ShowDialog() == DialogResult.OK)
+            {
+                m_pStory.SetGeography(pForm.SelectedItem as Strings);
+                glassButtonGeography.Text = m_pStory.m_cGeography.ToString();
+                glassPanelHero.Visible = true;
+                glassButtonSetting.Enabled = false;
+                UpdateCompletitionPercent();
+            }
         }
     }
 }

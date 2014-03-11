@@ -72,7 +72,9 @@ namespace RandomStory
             professionsTextBox.Lines = pSelectedSetting.m_cProfessions.ToArray();
             professionsEvilTextBox.Lines = pSelectedSetting.m_cProfessionsElite.ToArray();
             locationsTextBox.Lines = pSelectedSetting.m_cLocations.ToArray();
+            geographyTextBox.Lines = pSelectedSetting.m_cGeography.ToArray();
             itemsTextBox.Lines = pSelectedSetting.m_cItems.ToArray();
+            eventsTextBox.Lines = pSelectedSetting.m_cEvents.ToArray();
 
             nameTextBox.Enabled = (pSelectedSetting.m_pCommon != null);
         }
@@ -233,6 +235,22 @@ namespace RandomStory
 
             m_pRepository.m_cJanres.Remove(pNewWorld);
             janresListBox.Items.Remove(pNewWorld);
+        }
+
+        private void geographyTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (pSelectedSetting == null)
+                return;
+
+            pSelectedSetting.m_cGeography = new Strings(geographyTextBox.Lines);
+        }
+
+        private void eventsTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (pSelectedSetting == null)
+                return;
+
+            pSelectedSetting.m_cEvents = new Strings(eventsTextBox.Lines);
         }
     }
 }
