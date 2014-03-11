@@ -57,13 +57,12 @@
         <Item name="авантюрист/[F]авантюристка" />
       </Professions>
       <ProfessionsElite />
+      <Geography />
       <Locations>
         <Item name="дворец правителя" />
         <Item name="поле боя" />
         <Item name="лес" />
         <Item name="пустыня" />
-        <Item name="побережье" />
-        <Item name="открытое море" />
         <Item name="логово злодея" />
         <Item name="жилище героя" />
         <Item name="тюрьма" />
@@ -74,6 +73,104 @@
         <Item name="яд" />
         <Item name="письмо" />
       </Artefacts>
+      <Events>
+        <Item name="любовное свидание" />
+        <Item name="честная сделка" />
+        <Item name="мошенническая сделка" />
+        <Item name="засада" />
+        <Item name="честный поединок" />
+        <Item name="драка" />
+        <Item name="участие в битве" />
+        <Item name="наблюдение за битвой" />
+        <Item name="шантаж" />
+        <Item name="саботаж" />
+        <Item name="расследование" />
+        <Item name="азартная игра" />
+        <Item name="переговоры" />
+        <Item name="погоня" />
+        <Item name="бегство" />
+        <Item name="отдых" />
+        <Item name="нападение диких зверей" />
+        <Item name="апгрейд экипировки" />
+        <Item name="тренировка" />
+        <Item name="празднование" />
+        <Item name="шпионаж" />
+        <Item name="кража" />
+        <Item name="ограбление" />
+        <Item name="убийство" />
+        <Item name="укрытие" />
+        <Item name="плен" />
+        <Item name="попытка убийства" />
+        <Item name="видения (сон, грёзы...)" />
+        <Item name="открытие себя" />
+        <Item name="смерть друга" />
+        <Item name="смерть родственника" />
+        <Item name="попытка самоубийства" />
+        <Item name="совет (совещание)" />
+        <Item name="расставание" />
+        <Item name="маскарад" />
+        <Item name="неожиданная встреча" />
+        <Item name="предательство" />
+        <Item name="спор" />
+        <Item name="соревнование" />
+        <Item name="жестокий розыгрыш" />
+        <Item name="прозрение (осознание истины)" />
+        <Item name="обучение (тренировка)" />
+        <Item name="экзамен" />
+        <Item name="проваленный экзамен" />
+        <Item name="выбор из двух зол" />
+        <Item name="разрыв отношений" />
+        <Item name="семейная ссора" />
+        <Item name="внезапная страсть" />
+        <Item name="анонимная угроза" />
+        <Item name="неожиданное везение" />
+        <Item name="крупный выигрыш" />
+        <Item name="крупный проигрыш" />
+        <Item name="эпидемия" />
+        <Item name="кораблекрушение" />
+        <Item name="природная катастрофа" />
+        <Item name="гнев стихии" />
+        <Item name="спортивное состязание" />
+        <Item name="бюрократические препоны" />
+        <Item name="рассказ очевидца" />
+        <Item name="воспоминания" />
+        <Item name="блеф" />
+        <Item name="резня" />
+        <Item name="казнь" />
+        <Item name="праздник" />
+        <Item name="диверсия" />
+        <Item name="жертва" />
+        <Item name="религиозное таинство" />
+        <Item name="выздоровление" />
+        <Item name="необдуманный риск" />
+        <Item name="вынужденная сделка" />
+        <Item name="донос" />
+        <Item name="лжесвидетельство" />
+        <Item name="свадьба" />
+        <Item name="гулянка" />
+        <Item name="признание" />
+        <Item name="создание шедевра" />
+        <Item name="уничтожение шедевра" />
+        <Item name="исполнение мечты" />
+        <Item name="разрушение мечты" />
+        <Item name="крушение всех надежд" />
+        <Item name="новая надежда" />
+        <Item name="новая угроза" />
+        <Item name="старый недруг" />
+        <Item name="бунт" />
+        <Item name="неожиданный союзник" />
+        <Item name="встреча с невозможным" />
+        <Item name="новое знакомство" />
+        <Item name="роковая ошибка" />
+        <Item name="фатальная небрежность" />
+        <Item name="смена власти" />
+        <Item name="всё или ничего" />
+        <Item name="раскрытие заговора" />
+        <Item name="заговор" />
+        <Item name="неожиданное известие" />
+        <Item name="взлом" />
+        <Item name="обретение утраченного" />
+      </Events>
     </Common>
     <Worlds>
       <World name="Античность">
@@ -98,7 +195,7 @@
           <Item name="[F]гетера" />
           <Item name="[F]танцовщица" />
           <Item name="предсказатель/[F]гадалка" />
-          <Item name="астролог" />
+          <Item name="звездочёт" />
           <Item name="караванщик/[F]караванщица" />
           <Item name="воин" />
           <Item name="лучник/[F]лучница" />
@@ -123,11 +220,7 @@
           <Item name="философ" />
           <Item name="верховный жрец/[F]верховная жрица" />
         </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="храм" />
-          <Item name="лагерь разбойников" />
-          <Item name="гладиаторская арена" />
+        <Geography>
           <Item name="Египет" />
           <Item name="Ассирия" />
           <Item name="Афины" />
@@ -135,6 +228,14 @@
           <Item name="Римская Империя" />
           <Item name="Индия" />
           <Item name="Северные земли" />
+        </Geography>
+        <Locations>
+          <Item name="порт" />
+          <Item name="храм" />
+          <Item name="лагерь разбойников" />
+          <Item name="гладиаторская арена" />
+          <Item name="побережье" />
+          <Item name="открытое море" />
         </Locations>
         <Artefacts>
           <Item name="корона" />
@@ -147,6 +248,7 @@
           <Item name="доспехи предков" />
           <Item name="древний манускрипт" />
         </Artefacts>
+        <Events />
       </World>
       <World name="Средневековье">
         <Races>
@@ -186,20 +288,24 @@
           <Item name="богатый торговец" />
           <Item name="прославленный рыцарь" />
         </ProfessionsElite>
+        <Geography>
+          <Item name="Северные земли/Северное королевство" />
+          <Item name="Южные земли/Южное королевство" />
+          <Item name="Восточные земли/Восточное королевство" />
+          <Item name="Западные земли/Западное королевство" />
+          <Item name="Лесное королевство" />
+          <Item name="Империя" />
+          <Item name="Островное королевство" />
+          <Item name="Заморское королевство" />
+        </Geography>
         <Locations>
           <Item name="порт" />
           <Item name="храм" />
           <Item name="лагерь разбойников" />
           <Item name="замок" />
           <Item name="кладбище" />
-          <Item name="Северные земли/Северное королевство" />
-          <Item name="Южные земли/Южное королевство" />
-          <Item name="Восточные земли/Восточное королевство" />
-          <Item name="Западные земли/Западное королевство" />
-          <Item name="лес/Лесное королевство" />
-          <Item name="Империя" />
-          <Item name="Островное королевство" />
-          <Item name="Заморское королевство" />
+          <Item name="побережье" />
+          <Item name="открытое море" />
         </Locations>
         <Artefacts>
           <Item name="корона" />
@@ -212,6 +318,7 @@
           <Item name="кулон с секретом" />
           <Item name="древний манускрипт" />
         </Artefacts>
+        <Events />
       </World>
       <World name="Ренессанс">
         <Races>
@@ -260,6 +367,12 @@
           <Item name="прославленный бретёр" />
           <Item name="легендарный стрелок" />
         </ProfessionsElite>
+        <Geography>
+          <Item name="Старый Свет" />
+          <Item name="Новый Свет" />
+          <Item name="Ближний Восток" />
+          <Item name="Дальний Восток" />
+        </Geography>
         <Locations>
           <Item name="порт" />
           <Item name="монастырь" />
@@ -270,10 +383,8 @@
           <Item name="казармы" />
           <Item name="трактир" />
           <Item name="кладбище" />
-          <Item name="Старый Свет" />
-          <Item name="Новый Свет" />
-          <Item name="Ближний Восток" />
-          <Item name="Дальний Восток" />
+          <Item name="побережье" />
+          <Item name="открытое море" />
         </Locations>
         <Artefacts>
           <Item name="картина" />
@@ -289,6 +400,7 @@
           <Item name="кулон с секретом" />
           <Item name="древний манускрипт" />
         </Artefacts>
+        <Events />
       </World>
       <World name="Индустриальная революция">
         <Races>
@@ -342,25 +454,31 @@
           <Item name="выдающийся изобретатель" />
           <Item name="известный путешественник/[F]известная путешественница" />
         </ProfessionsElite>
-        <Locations>
+        <Geography>
           <Item name="Старый Свет" />
           <Item name="Новый Свет" />
           <Item name="Ближний Восток" />
           <Item name="Дальний Восток" />
           <Item name="колонии" />
           <Item name="метрополия" />
+        </Geography>
+        <Locations>
+          <Item name="побережье" />
+          <Item name="открытое море" />
         </Locations>
         <Artefacts />
+        <Events />
       </World>
-      <World name="Барсум">
+      <World name="Другой мир">
         <Races>
-          <Item name="красный марсианин/[F]красная марсианка" />
-          <Item name="зелёный марсианин/[F]зелёная марсианка" />
-          <Item name="чёрный марсианин/[F]чёрная марсианка" />
-          <Item name="белый венерианин/[F]белая венерианка" />
-          <Item name="синий венерианин/[F]синяя венерианка" />
-          <Item name="желтый венерианин/[F]желтая венерианка" />
-          <Item name="селенит/[F]селенитка" />
+          <Item name="красный мужчина/[F]красная женщина" />
+          <Item name="зелёный мужчина/[F]зелёная женщина" />
+          <Item name="чёрный мужчина/[F]чёрная женщина" />
+          <Item name="белый мужчина/[F]белая женщина" />
+          <Item name="синий мужчина/[F]синяя женщина" />
+          <Item name="желтый мужчина/[F]желтая женщина" />
+          <Item name="крылатый мужчина/[F]крылатая женщина" />
+          <Item name="инсектоид" />
         </Races>
         <Perks>
           <Item name="из древнего рода" />
@@ -394,6 +512,18 @@
           <Item name="философ" />
           <Item name="верховный жрец/[F]верховная жрица" />
         </ProfessionsElite>
+        <Geography>
+          <Item name="Страна красных людей/Земли красных людей" />
+          <Item name="Страна зелёных людей/Земли зелёных людей" />
+          <Item name="Страна чёрных людей/Земли чёрных людей" />
+          <Item name="Страна белых людей/Земли белых людей" />
+          <Item name="Страна синих людей/Земли синих людей" />
+          <Item name="Страна жёлтых людей/Земли жёлтых людей" />
+          <Item name="Страна крылатых людей/Земли крылатых людей" />
+          <Item name="Страна инсектоидов/Земли инсектоидов" />
+          <Item name="Покинутые Земли" />
+          <Item name="Мёртвые Земли" />
+        </Geography>
         <Locations>
           <Item name="порт" />
           <Item name="храм" />
@@ -403,10 +533,6 @@
           <Item name="разрушенный храм" />
           <Item name="разрушенная гробница" />
           <Item name="покинутый город" />
-          <Item name="пустыня/пески Марса" />
-          <Item name="побережье/открытое море/каналы Марса" />
-          <Item name="болота Венеры" />
-          <Item name="лес/джунгли/джунгли Венеры" />
         </Locations>
         <Artefacts>
           <Item name="корона" />
@@ -425,6 +551,7 @@
           <Item name="древний манускрипт" />
           <Item name="странное зелье" />
         </Artefacts>
+        <Events />
       </World>
       <World name="XX век">
         <Races>
@@ -498,16 +625,7 @@
           <Item name="выдающийся химик" />
           <Item name="выдающийся биолог" />
         </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="джунгли" />
-          <Item name="храм/монастырь/церковь" />
-          <Item name="притон гангстеров" />
-          <Item name="полицейский участок" />
-          <Item name="стадион" />
-          <Item name="бордель" />
-          <Item name="военная база" />
-          <Item name="бар" />
+        <Geography>
           <Item name="Европа" />
           <Item name="Азия" />
           <Item name="Ближний Восток" />
@@ -519,6 +637,19 @@
           <Item name="Южная Америка" />
           <Item name="Полинезия" />
           <Item name="Россия" />
+        </Geography>
+        <Locations>
+          <Item name="порт" />
+          <Item name="джунгли" />
+          <Item name="храм/монастырь/церковь" />
+          <Item name="притон гангстеров" />
+          <Item name="полицейский участок" />
+          <Item name="стадион" />
+          <Item name="бордель" />
+          <Item name="военная база" />
+          <Item name="бар" />
+          <Item name="побережье" />
+          <Item name="открытое море" />
         </Locations>
         <Artefacts>
           <Item name="картина" />
@@ -530,6 +661,7 @@
           <Item name="драгоценный камень" />
           <Item name="портрет" />
         </Artefacts>
+        <Events />
       </World>
       <World name="Начало XXI века">
         <Races>
@@ -612,17 +744,7 @@
           <Item name="лидер религиозной секты" />
           <Item name="владелец киностудии" />
         </ProfessionsElite>
-        <Locations>
-          <Item name="порт" />
-          <Item name="джунгли" />
-          <Item name="храм/монастырь/церковь" />
-          <Item name="база террористов" />
-          <Item name="полицейский участок" />
-          <Item name="стадион" />
-          <Item name="бордель" />
-          <Item name="военная база" />
-          <Item name="секретная лаборатория" />
-          <Item name="бар" />
+        <Geography>
           <Item name="Европа" />
           <Item name="Азия" />
           <Item name="Ближний Восток" />
@@ -634,6 +756,20 @@
           <Item name="Южная Америка" />
           <Item name="Полинезия" />
           <Item name="Россия" />
+        </Geography>
+        <Locations>
+          <Item name="порт" />
+          <Item name="джунгли" />
+          <Item name="храм/монастырь/церковь" />
+          <Item name="база террористов" />
+          <Item name="полицейский участок" />
+          <Item name="стадион" />
+          <Item name="бордель" />
+          <Item name="военная база" />
+          <Item name="секретная лаборатория" />
+          <Item name="бар" />
+          <Item name="побережье" />
+          <Item name="открытое море" />
         </Locations>
         <Artefacts>
           <Item name="картина" />
@@ -646,6 +782,7 @@
           <Item name="секретные документы" />
           <Item name="ключ к шифру" />
         </Artefacts>
+        <Events />
       </World>
       <World name="Ближнее будущее">
         <Races>
@@ -701,21 +838,7 @@
           <Item name="банкир" />
           <Item name="босс мафии" />
         </ProfessionsElite>
-        <Locations>
-          <Item name="космопорт" />
-          <Item name="джунгли" />
-          <Item name="открытый космос" />
-          <Item name="космическая станция" />
-          <Item name="космический корабль" />
-          <Item name="полицейский участок" />
-          <Item name="бордель" />
-          <Item name="военная база" />
-          <Item name="бар" />
-          <Item name="пояс астероидов" />
-          <Item name="кольца Сатурна" />
-          <Item name="спутники Юпитера" />
-          <Item name="хвост кометы" />
-          <Item name="ядро кометы" />
+        <Geography>
           <Item name="Европа" />
           <Item name="Азия" />
           <Item name="Ближний Восток" />
@@ -728,12 +851,28 @@
           <Item name="Меркурий" />
           <Item name="Плутон" />
           <Item name="Нептун" />
+          <Item name="пояс астероидов" />
+          <Item name="кольца Сатурна" />
+          <Item name="спутники Юпитера" />
+        </Geography>
+        <Locations>
+          <Item name="космопорт" />
+          <Item name="джунгли" />
+          <Item name="открытый космос" />
+          <Item name="космическая станция" />
+          <Item name="космический корабль" />
+          <Item name="полицейский участок" />
+          <Item name="бордель" />
+          <Item name="военная база" />
+          <Item name="бар" />
+          <Item name="ядро кометы" />
         </Locations>
         <Artefacts>
           <Item name="зашифрованное сообщение" />
           <Item name="секретные данные" />
           <Item name="компромат" />
         </Artefacts>
+        <Events />
       </World>
       <World name="Дальнее будущее">
         <Races>
@@ -784,6 +923,14 @@
           <Item name="банкир" />
           <Item name="босс мафии" />
         </ProfessionsElite>
+        <Geography>
+          <Item name="Земля/Солнечная система" />
+          <Item name="независимая колония" />
+          <Item name="Альянс" />
+          <Item name="Империя" />
+          <Item name="Конфедерация" />
+          <Item name="Содружество" />
+        </Geography>
         <Locations>
           <Item name="космопорт" />
           <Item name="джунгли" />
@@ -798,12 +945,6 @@
           <Item name="бордель" />
           <Item name="военная база" />
           <Item name="бар" />
-          <Item name="Земля/Солнечная система" />
-          <Item name="независимая колония" />
-          <Item name="Альянс" />
-          <Item name="Империя" />
-          <Item name="Конфедерация" />
-          <Item name="Содружество" />
         </Locations>
         <Artefacts>
           <Item name="зашифрованное сообщение" />
@@ -812,6 +953,7 @@
           <Item name="секретные данные" />
           <Item name="компромат" />
         </Artefacts>
+        <Events />
       </World>
     </Worlds>
     <Janres>
@@ -831,6 +973,7 @@
           <Item name="забытый бог/[F]забытая богиня" />
           <Item name="оракул" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="забытый храм" />
           <Item name="разрушенный храм" />
@@ -843,6 +986,10 @@
           <Item name="божественное оружие" />
           <Item name="божественный доспех" />
         </Artefacts>
+        <Events>
+          <Item name="гнев богов/гнев бога/гнев богини" />
+          <Item name="помощь бога/помощь богини/помощь богов" />
+        </Events>
       </Janre>
       <Janre name="Низкая фэнтези">
         <Races />
@@ -861,6 +1008,7 @@
           <Item name="чернокнижник/[F]ведьма" />
           <Item name="служитель древних богов/[F]служительница древних богов" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="забытый храм" />
           <Item name="разрушенный храм" />
@@ -876,6 +1024,7 @@
           <Item name="проклятое оружие" />
           <Item name="проклятый доспех" />
         </Artefacts>
+        <Events />
       </Janre>
       <Janre name="Высокая фэнтези">
         <Races />
@@ -895,6 +1044,7 @@
           <Item name="чернокнижник/[F]ведьма" />
           <Item name="некромант" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="забытый храм" />
           <Item name="разрушенный храм" />
@@ -912,6 +1062,7 @@
           <Item name="проклятый доспех" />
           <Item name="магический артефакт" />
         </Artefacts>
+        <Events />
       </Janre>
       <Janre name="Супергерои">
         <Races />
@@ -930,10 +1081,12 @@
         </Perks>
         <Professions />
         <ProfessionsElite />
+        <Geography />
         <Locations />
         <Artefacts>
           <Item name="сверхъестественный артефакт" />
         </Artefacts>
+        <Events />
       </Janre>
       <Janre name="Киберпанк">
         <Races>
@@ -958,6 +1111,7 @@
           <Item name="уличный самурай" />
         </Professions>
         <ProfessionsElite />
+        <Geography />
         <Locations>
           <Item name="подпольная клиника" />
           <Item name="виртуальная реальность" />
@@ -965,6 +1119,9 @@
         <Artefacts>
           <Item name="особый наркотик" />
         </Artefacts>
+        <Events>
+          <Item name="взлом сети" />
+        </Events>
       </Janre>
       <Janre name="Космоопера">
         <Races />
@@ -978,6 +1135,7 @@
         <ProfessionsElite>
           <Item name="вожак космических пиратов" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="база космических пиратов" />
           <Item name="притон контрабандистов" />
@@ -986,6 +1144,10 @@
         <Artefacts>
           <Item name="пиратская карта" />
         </Artefacts>
+        <Events>
+          <Item name="налёт пиратов" />
+          <Item name="гибель планеты" />
+        </Events>
       </Janre>
       <Janre name="Мистика">
         <Races />
@@ -1012,6 +1174,7 @@
           <Item name="колдун вуду" />
           <Item name="служитель древних богов/[F]служительница древних богов" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="замок" />
           <Item name="кладбище" />
@@ -1033,6 +1196,11 @@
           <Item name="древняя рукопись" />
           <Item name="таинственный ключ" />
         </Artefacts>
+        <Events>
+          <Item name="открытие портала" />
+          <Item name="атака нежити" />
+          <Item name="атака нечисти" />
+        </Events>
       </Janre>
       <Janre name="Вестерн">
         <Races>
@@ -1061,22 +1229,25 @@
           <Item name="прославленный воин/[F]прославленная воительница" />
           <Item name="прославленный охотник/[F]прославленная охотница" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="салун" />
-          <Item name="степь" />
           <Item name="ущелье" />
-          <Item name="река" />
           <Item name="золотой прииск" />
           <Item name="поезд" />
           <Item name="церковь" />
         </Locations>
         <Artefacts />
+        <Events>
+          <Item name="дуэль" />
+        </Events>
       </Janre>
       <Janre name="Конспирология">
         <Races />
         <Perks>
           <Item name="телепат/[F]телепатка" />
           <Item name="псионик" />
+          <Item name="из параллельного мира" />
         </Perks>
         <Professions>
           <Item name="культист/[F]культистка" />
@@ -1089,6 +1260,7 @@
           <Item name="глава тайного братства" />
           <Item name="руководитель секретного подразделения" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="секретная лаборатория" />
           <Item name="секретное хранилище" />
@@ -1107,6 +1279,7 @@
           <Item name="химическая формула" />
           <Item name="инопланетный артефакт" />
         </Artefacts>
+        <Events />
       </Janre>
       <Janre name="Пост-апокалипсис">
         <Races />
@@ -1124,6 +1297,7 @@
           <Item name="прославленный рейнжер" />
           <Item name="вожак бандитов" />
         </ProfessionsElite>
+        <Geography />
         <Locations>
           <Item name="оазис" />
           <Item name="река" />
@@ -1140,6 +1314,7 @@
           <Item name="лекарства" />
           <Item name="семена" />
         </Artefacts>
+        <Events />
       </Janre>
       <Janre name="+Фэнтезийные расы (мин.)">
         <Races>
@@ -1151,8 +1326,15 @@
         <Perks />
         <Professions />
         <ProfessionsElite />
+        <Geography>
+          <Item name="Эльфийское королевство" />
+          <Item name="Гномское королевство" />
+          <Item name="Орочье королевство" />
+          <Item name="Хоббитский край" />
+        </Geography>
         <Locations />
         <Artefacts />
+        <Events />
       </Janre>
       <Janre name="+Фэнтезийные расы (макс.)">
         <Races>
@@ -1172,8 +1354,20 @@
         <Perks />
         <Professions />
         <ProfessionsElite />
+        <Geography>
+          <Item name="Королевство высших эльфов" />
+          <Item name="Королевство лесных эльфов" />
+          <Item name="Королевство тёмных эльфов" />
+          <Item name="Гномское королевство" />
+          <Item name="Орочье королевство" />
+          <Item name="Гоблинское королевство" />
+          <Item name="Королевство кобольдов" />
+          <Item name="Огрское королевство" />
+          <Item name="Королевство троллей" />
+        </Geography>
         <Locations />
         <Artefacts />
+        <Events />
       </Janre>
       <Janre name="+Инопланетяне">
         <Races>
@@ -1185,8 +1379,15 @@
         <Perks />
         <Professions />
         <ProfessionsElite />
+        <Geography>
+          <Item name="Улей инсектоидов" />
+          <Item name="Город гуманоидов" />
+          <Item name="Поселение зверолюдей" />
+          <Item name="Логово негуманоидов" />
+        </Geography>
         <Locations />
         <Artefacts />
+        <Events />
       </Janre>
     </Janres>
     <BloodRelations>
@@ -1315,104 +1516,8 @@
       <Item name="принять поражение - но сделать так, чтобы антагонист пожалел о своей победе" />
       <Item name="втереться в доверие антагонисту, а затем воспользоваться этим" />
       <Item name="Deus Ex Machina - в последний момент, когда надежды уже не осталось, появляется неожиданный могущественный союзник" />
+      <Item name="герой жертвует собой ради победы" />
       <Item name="дорогой герою персонаж (спутник, наставник...) жертвует собой ради победы" />
     </Solutions>
-    <Events>
-      <Item name="любовное свидание" />
-      <Item name="честная сделка" />
-      <Item name="мошенническая сделка" />
-      <Item name="засада" />
-      <Item name="честный поединок" />
-      <Item name="драка" />
-      <Item name="участие в битве" />
-      <Item name="наблюдение за битвой" />
-      <Item name="шантаж" />
-      <Item name="саботаж" />
-      <Item name="расследование" />
-      <Item name="азартная игра" />
-      <Item name="переговоры" />
-      <Item name="погоня" />
-      <Item name="бегство" />
-      <Item name="отдых" />
-      <Item name="нападение диких зверей" />
-      <Item name="апгрейд экипировки" />
-      <Item name="тренировка" />
-      <Item name="празднование" />
-      <Item name="шпионаж" />
-      <Item name="кража" />
-      <Item name="ограбление" />
-      <Item name="убийство" />
-      <Item name="укрытие" />
-      <Item name="плен" />
-      <Item name="попытка убийства" />
-      <Item name="видения (сон, грёзы...)" />
-      <Item name="открытие себя" />
-      <Item name="смерть друга" />
-      <Item name="смерть родственника" />
-      <Item name="попытка самоубийства" />
-      <Item name="совет (совещание)" />
-      <Item name="расставание" />
-      <Item name="маскарад" />
-      <Item name="неожиданная встреча" />
-      <Item name="предательство" />
-      <Item name="спор" />
-      <Item name="соревнование" />
-      <Item name="жестокий розыгрыш" />
-      <Item name="прозрение (осознание истины)" />
-      <Item name="обучение (тренировка)" />
-      <Item name="экзамен" />
-      <Item name="проваленный экзамен" />
-      <Item name="выбор из двух зол" />
-      <Item name="разрыв отношений" />
-      <Item name="семейная ссора" />
-      <Item name="внезапная страсть" />
-      <Item name="анонимная угроза" />
-      <Item name="неожиданное везение" />
-      <Item name="крупный выигрыш" />
-      <Item name="крупный проигрыш" />
-      <Item name="эпидемия" />
-      <Item name="кораблекрушение" />
-      <Item name="природная катастрофа" />
-      <Item name="гнев стихии" />
-      <Item name="спортивное состязание" />
-      <Item name="бюрократические препоны" />
-      <Item name="рассказ очевидца" />
-      <Item name="воспоминания" />
-      <Item name="блеф" />
-      <Item name="резня" />
-      <Item name="казнь" />
-      <Item name="праздник" />
-      <Item name="диверсия" />
-      <Item name="жертва" />
-      <Item name="религиозное таинство" />
-      <Item name="выздоровление" />
-      <Item name="необдуманный риск" />
-      <Item name="вынужденная сделка" />
-      <Item name="донос" />
-      <Item name="лжесвидетельство" />
-      <Item name="свадьба" />
-      <Item name="гулянка" />
-      <Item name="признание" />
-      <Item name="создание шедевра" />
-      <Item name="уничтожение шедевра" />
-      <Item name="исполнение мечты" />
-      <Item name="разрушение мечты" />
-      <Item name="крушение всех надежд" />
-      <Item name="новая надежда" />
-      <Item name="новая угроза" />
-      <Item name="старый недруг" />
-      <Item name="бунт" />
-      <Item name="неожиданный союзник" />
-      <Item name="встреча с невозможным" />
-      <Item name="новое знакомство" />
-      <Item name="роковая ошибка" />
-      <Item name="фатальная небрежность" />
-      <Item name="смена власти" />
-      <Item name="всё или ничего" />
-      <Item name="раскрытие заговора" />
-      <Item name="заговор" />
-      <Item name="неожиданное известие" />
-      <Item name="взлом" />
-    </Events>
   </Module>
 </RandomStory>
