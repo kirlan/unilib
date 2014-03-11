@@ -21,6 +21,8 @@ namespace RandomStory
 
         public Setting m_pSetting;
 
+        public Strings m_cGeography = new Strings();
+
         public Strings m_cLocations = new Strings();
 
         public Strings m_cEvents = new Strings();
@@ -33,10 +35,13 @@ namespace RandomStory
 
         private bool m_bVoyagersAllowed;
 
+        private bool m_bVoyagersAllowedRes;
+
         public Story(Repository pRepository, bool bVoyagers)
         {
             m_pRepository = pRepository;
             m_bVoyagersAllowed = bVoyagers;
+            m_bVoyagersAllowedRes = m_bVoyagersAllowed;
 
             m_pSetting = m_pRepository.GetPrimeSetting();
 //            m_pSetting = m_pRepository.GetRandomSetting(1, true);
@@ -213,6 +218,25 @@ namespace RandomStory
             m_cKeyItems = cKeyItems;
         }
 
+        public Strings GetRandomGeography()
+        {
+            Strings cGeography = new Strings();
+            int iGeographyCount = 2 + Rnd.GetExp(3,3);
+            for (int i = 0; i < iGeographyCount; i++)
+            {
+                string sLoc = m_pSetting.GetRandomGeography(cGeography);
+                if (!string.IsNullOrWhiteSpace(sLoc))
+                    cGeography.Add(sLoc);
+            }
+
+            return cGeography;
+        }
+
+        public void SetGeography(Strings cGeography)
+        {
+            m_cGeography = cGeography;
+        }
+
         public Strings GetRandomPlaces()
         {
             Strings cLocations = new Strings();
@@ -235,10 +259,10 @@ namespace RandomStory
         public Strings GetRandomEvents()
         {
             Strings cEvents = new Strings();
-            int iEventsCount = 8 + Rnd.Get(6);
+            int iEventsCount = 8 + Rnd.Get(4);
             for (int i = 0; i < iEventsCount; i++)
             {
-                string sEvent = m_pRepository.GetRandomEvent(cEvents);
+                string sEvent = m_pSetting.GetRandomEvent(cEvents);
                 if (!string.IsNullOrWhiteSpace(sEvent))
                     cEvents.Add(sEvent);
             }
@@ -255,6 +279,8 @@ namespace RandomStory
         {
             if (m_pSetting == null)
                 return;
+
+            SetGeography(GetRandomGeography());
 
             SetHero(GetRandomHero());
 
@@ -275,6 +301,16 @@ namespace RandomStory
 
             SetProblem(GetRandomProblem());
             SetSolution(GetRandomSolution());
+        }
+        public override string ToString()
+        {
+            if (m_pSetting == null)
+                return base.ToString();
+
+            if(m_bVoyagersAllowedRes)
+                return m_pSetting.ToString() + " / +Попаданцы";
+
+            return m_pSetting.ToString();
         }
     }
 }

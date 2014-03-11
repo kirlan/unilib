@@ -71,6 +71,12 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.label9 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.geographyTextBox = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.eventsTextBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -83,6 +89,8 @@
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
+            this.panel9.SuspendLayout();
+            this.panel10.SuspendLayout();
             this.SuspendLayout();
             // 
             // worldsListBox
@@ -93,7 +101,7 @@
             this.worldsListBox.FormattingEnabled = true;
             this.worldsListBox.Location = new System.Drawing.Point(0, 13);
             this.worldsListBox.Name = "worldsListBox";
-            this.worldsListBox.Size = new System.Drawing.Size(145, 223);
+            this.worldsListBox.Size = new System.Drawing.Size(145, 251);
             this.worldsListBox.TabIndex = 0;
             this.toolTip1.SetToolTip(this.worldsListBox, resources.GetString("worldsListBox.ToolTip"));
             this.worldsListBox.SelectedIndexChanged += new System.EventHandler(this.worldsListBox_SelectedIndexChanged);
@@ -158,20 +166,24 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.panel10, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panel9, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel6, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.panel5, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panel5, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.panel4, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel2, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(166, 54);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(565, 430);
+            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(571, 487);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // panel6
@@ -179,10 +191,10 @@
             this.panel6.Controls.Add(this.professionsEvilTextBox);
             this.panel6.Controls.Add(this.label7);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel6.Location = new System.Drawing.Point(0, 289);
+            this.panel6.Location = new System.Drawing.Point(0, 245);
             this.panel6.Margin = new System.Windows.Forms.Padding(0, 3, 3, 0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(279, 141);
+            this.panel6.Size = new System.Drawing.Size(282, 118);
             this.panel6.TabIndex = 5;
             // 
             // professionsEvilTextBox
@@ -194,7 +206,7 @@
             this.professionsEvilTextBox.Multiline = true;
             this.professionsEvilTextBox.Name = "professionsEvilTextBox";
             this.professionsEvilTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.professionsEvilTextBox.Size = new System.Drawing.Size(279, 125);
+            this.professionsEvilTextBox.Size = new System.Drawing.Size(282, 102);
             this.professionsEvilTextBox.TabIndex = 1;
             this.professionsEvilTextBox.TextChanged += new System.EventHandler(this.professionsEvilTextBox_TextChanged);
             // 
@@ -213,10 +225,10 @@
             this.panel5.Controls.Add(this.itemsTextBox);
             this.panel5.Controls.Add(this.label6);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(285, 289);
+            this.panel5.Location = new System.Drawing.Point(288, 366);
             this.panel5.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(280, 141);
+            this.panel5.Size = new System.Drawing.Size(283, 121);
             this.panel5.TabIndex = 4;
             // 
             // itemsTextBox
@@ -228,7 +240,7 @@
             this.itemsTextBox.Multiline = true;
             this.itemsTextBox.Name = "itemsTextBox";
             this.itemsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.itemsTextBox.Size = new System.Drawing.Size(280, 125);
+            this.itemsTextBox.Size = new System.Drawing.Size(283, 105);
             this.itemsTextBox.TabIndex = 1;
             this.itemsTextBox.TextChanged += new System.EventHandler(this.itemsTextBox_TextChanged);
             // 
@@ -247,10 +259,10 @@
             this.panel4.Controls.Add(this.locationsTextBox);
             this.panel4.Controls.Add(this.label5);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel4.Location = new System.Drawing.Point(285, 146);
+            this.panel4.Location = new System.Drawing.Point(288, 124);
             this.panel4.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(280, 140);
+            this.panel4.Size = new System.Drawing.Size(283, 118);
             this.panel4.TabIndex = 3;
             // 
             // locationsTextBox
@@ -262,7 +274,7 @@
             this.locationsTextBox.Multiline = true;
             this.locationsTextBox.Name = "locationsTextBox";
             this.locationsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.locationsTextBox.Size = new System.Drawing.Size(280, 124);
+            this.locationsTextBox.Size = new System.Drawing.Size(283, 102);
             this.locationsTextBox.TabIndex = 1;
             this.locationsTextBox.TextChanged += new System.EventHandler(this.locationsTextBox_TextChanged);
             // 
@@ -281,10 +293,10 @@
             this.panel3.Controls.Add(this.professionsTextBox);
             this.panel3.Controls.Add(this.label4);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(0, 146);
+            this.panel3.Location = new System.Drawing.Point(0, 124);
             this.panel3.Margin = new System.Windows.Forms.Padding(0, 3, 3, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(279, 140);
+            this.panel3.Size = new System.Drawing.Size(282, 118);
             this.panel3.TabIndex = 2;
             // 
             // professionsTextBox
@@ -296,7 +308,7 @@
             this.professionsTextBox.Multiline = true;
             this.professionsTextBox.Name = "professionsTextBox";
             this.professionsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.professionsTextBox.Size = new System.Drawing.Size(279, 124);
+            this.professionsTextBox.Size = new System.Drawing.Size(282, 102);
             this.professionsTextBox.TabIndex = 1;
             this.professionsTextBox.TextChanged += new System.EventHandler(this.professionsTextBox_TextChanged);
             // 
@@ -315,10 +327,10 @@
             this.panel2.Controls.Add(this.perksTextBox);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(285, 0);
-            this.panel2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
+            this.panel2.Location = new System.Drawing.Point(0, 366);
+            this.panel2.Margin = new System.Windows.Forms.Padding(0, 3, 3, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(280, 140);
+            this.panel2.Size = new System.Drawing.Size(282, 121);
             this.panel2.TabIndex = 1;
             // 
             // perksTextBox
@@ -330,7 +342,7 @@
             this.perksTextBox.Multiline = true;
             this.perksTextBox.Name = "perksTextBox";
             this.perksTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.perksTextBox.Size = new System.Drawing.Size(280, 124);
+            this.perksTextBox.Size = new System.Drawing.Size(282, 105);
             this.perksTextBox.TabIndex = 1;
             this.perksTextBox.TextChanged += new System.EventHandler(this.perksTextBox_TextChanged);
             // 
@@ -352,7 +364,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(0, 0, 3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(279, 140);
+            this.panel1.Size = new System.Drawing.Size(282, 118);
             this.panel1.TabIndex = 0;
             // 
             // racesTextBox
@@ -364,7 +376,7 @@
             this.racesTextBox.Multiline = true;
             this.racesTextBox.Name = "racesTextBox";
             this.racesTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.racesTextBox.Size = new System.Drawing.Size(279, 124);
+            this.racesTextBox.Size = new System.Drawing.Size(282, 102);
             this.racesTextBox.TabIndex = 1;
             this.racesTextBox.TextChanged += new System.EventHandler(this.racesTextBox_TextChanged);
             // 
@@ -384,12 +396,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.nameTextBox.Location = new System.Drawing.Point(166, 28);
             this.nameTextBox.Name = "nameTextBox";
-            this.nameTextBox.Size = new System.Drawing.Size(565, 20);
+            this.nameTextBox.Size = new System.Drawing.Size(571, 20);
             this.nameTextBox.TabIndex = 3;
             this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
             // 
             // tableLayoutPanel2
             // 
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.panel7, 0, 0);
@@ -400,7 +414,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(145, 472);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(145, 529);
             this.tableLayoutPanel2.TabIndex = 4;
             // 
             // panel7
@@ -411,7 +425,7 @@
             this.panel7.Location = new System.Drawing.Point(0, 0);
             this.panel7.Margin = new System.Windows.Forms.Padding(0);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(145, 236);
+            this.panel7.Size = new System.Drawing.Size(145, 264);
             this.panel7.TabIndex = 0;
             // 
             // label8
@@ -429,10 +443,10 @@
             this.panel8.Controls.Add(this.janresListBox);
             this.panel8.Controls.Add(this.label9);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel8.Location = new System.Drawing.Point(0, 241);
+            this.panel8.Location = new System.Drawing.Point(0, 269);
             this.panel8.Margin = new System.Windows.Forms.Padding(0, 5, 0, 0);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(145, 231);
+            this.panel8.Size = new System.Drawing.Size(145, 260);
             this.panel8.TabIndex = 1;
             // 
             // janresListBox
@@ -444,7 +458,7 @@
             this.janresListBox.IntegralHeight = false;
             this.janresListBox.Location = new System.Drawing.Point(0, 13);
             this.janresListBox.Name = "janresListBox";
-            this.janresListBox.Size = new System.Drawing.Size(145, 218);
+            this.janresListBox.Size = new System.Drawing.Size(145, 247);
             this.janresListBox.TabIndex = 1;
             this.toolTip1.SetToolTip(this.janresListBox, resources.GetString("janresListBox.ToolTip"));
             this.janresListBox.SelectedIndexChanged += new System.EventHandler(this.janresListBox_SelectedIndexChanged);
@@ -508,11 +522,79 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.geographyTextBox);
+            this.panel9.Controls.Add(this.label10);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel9.Location = new System.Drawing.Point(288, 0);
+            this.panel9.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(283, 118);
+            this.panel9.TabIndex = 6;
+            // 
+            // geographyTextBox
+            // 
+            this.geographyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.geographyTextBox.Location = new System.Drawing.Point(0, 16);
+            this.geographyTextBox.Multiline = true;
+            this.geographyTextBox.Name = "geographyTextBox";
+            this.geographyTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.geographyTextBox.Size = new System.Drawing.Size(283, 102);
+            this.geographyTextBox.TabIndex = 1;
+            this.geographyTextBox.TextChanged += new System.EventHandler(this.geographyTextBox_TextChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(-3, 0);
+            this.label10.Margin = new System.Windows.Forms.Padding(0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "География:";
+            // 
+            // panel10
+            // 
+            this.panel10.Controls.Add(this.eventsTextBox);
+            this.panel10.Controls.Add(this.label11);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel10.Location = new System.Drawing.Point(288, 245);
+            this.panel10.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(283, 118);
+            this.panel10.TabIndex = 7;
+            // 
+            // eventsTextBox
+            // 
+            this.eventsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.eventsTextBox.Location = new System.Drawing.Point(0, 16);
+            this.eventsTextBox.Multiline = true;
+            this.eventsTextBox.Name = "eventsTextBox";
+            this.eventsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.eventsTextBox.Size = new System.Drawing.Size(283, 102);
+            this.eventsTextBox.TabIndex = 1;
+            this.eventsTextBox.TextChanged += new System.EventHandler(this.eventsTextBox_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(-3, 0);
+            this.label11.Margin = new System.Windows.Forms.Padding(0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(117, 13);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Возможные события:";
+            // 
             // WorldsEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(743, 500);
+            this.ClientSize = new System.Drawing.Size(749, 557);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -542,6 +624,10 @@
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
             this.contextMenuStrip2.ResumeLayout(false);
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -590,5 +676,11 @@
         private System.Windows.Forms.ToolStripMenuItem перенестиВЖанрыToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem перенестиВМирыToolStripMenuItem;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Panel panel10;
+        private System.Windows.Forms.TextBox eventsTextBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Panel panel9;
+        private System.Windows.Forms.TextBox geographyTextBox;
+        private System.Windows.Forms.Label label10;
     }
 }

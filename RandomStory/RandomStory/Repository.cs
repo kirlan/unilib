@@ -50,8 +50,6 @@ namespace RandomStory
 
         public Strings m_cOtherRelations = new Strings();
 
-        public Strings m_cEvents = new Strings();
-
         public Repository()
         {
             m_pCommon.m_sName = "Общие параметры";
@@ -90,7 +88,6 @@ namespace RandomStory
 
             m_cProblems.WriteXML(pXml, pModuleNode, "Problems");
             m_cSolutions.WriteXML(pXml, pModuleNode, "Solutions");
-            m_cEvents.WriteXML(pXml, pModuleNode, "Events");
 
             pXml.Write(sFilename);
         }
@@ -187,7 +184,7 @@ namespace RandomStory
                         m_cSolutions = new Strings(pXml, pSection);
 
                     if (pSection.Name == "Events")
-                        m_cEvents = new Strings(pXml, pSection);
+                        m_pCommon.m_cEvents = new Strings(pXml, pSection);
                 }
             }
 
@@ -262,12 +259,6 @@ namespace RandomStory
         {
             char[] aFlags = null;
             return m_cSolutions.GetRandom("как-то само рассосалось", ref aFlags);
-        }
-
-        public string GetRandomEvent(Strings cExceptions)
-        {
-            char[] aFlags = null;
-            return m_cEvents.GetRandom(cExceptions, ref aFlags);
         }
 
         public string GetRandomBloodRelation(ref char[] aFlags)

@@ -82,6 +82,8 @@ namespace RandomStory
 
             timer1.Interval = 80 + Rnd.Get(40);
             timer1.Enabled = true;
+
+            label1.Focus();
         }
 
         private static string m_sFilter = "";
@@ -151,6 +153,8 @@ namespace RandomStory
                 }
             }
             UpdateFilterString();
+
+            label1.Focus();
         }
 
         private void UpdateFilterString()
@@ -159,6 +163,18 @@ namespace RandomStory
                 label3.Text = "Фильтр";
             else
                 label3.Text = string.Format("Фильтр: ({0})", m_sFilter);
+        }
+
+        private void Randomizer_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == ' ' && button2.Enabled)
+                button2_Click(sender, new EventArgs());
+        }
+
+        private void Randomizer_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if(e.KeyCode == Keys.Space && button2.Enabled)
+                button2_Click(sender, new EventArgs());
         }
     }
 }
