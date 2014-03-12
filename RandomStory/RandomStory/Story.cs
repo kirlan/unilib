@@ -49,7 +49,7 @@ namespace RandomStory
 
         public Character GetRandomHero()
         {
-            bool bVoyagersAllowed = m_bVoyagersAllowed;
+            bool bVoyagersAllowed = m_bVoyagersAllowed && Rnd.OneChanceFrom(2);
             if (m_pHero != null && m_pHero.m_pHomeSetting != m_pSetting)
                 bVoyagersAllowed = true;
             return new Character(m_pRepository, m_pSetting, bVoyagersAllowed, false, null, "героя");
@@ -58,7 +58,7 @@ namespace RandomStory
         public void SetHero(Character pCharacter)
         {
             m_pHero = pCharacter;
-            if (m_pHero.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(3))
+            if (m_pHero.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(4))
                 m_bVoyagersAllowed = false;
 
             FixRelations();
@@ -81,7 +81,7 @@ namespace RandomStory
             m_pTutor = pCharacter;
             if (m_pTutor.m_pRelative != null)
                 m_pTutor.m_pRelative.AddRelative();
-            if (m_pTutor.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(3))
+            if (m_pTutor.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(4))
                 m_bVoyagersAllowed = false;
 
             FixRelations();
@@ -104,7 +104,7 @@ namespace RandomStory
             m_pVillain = pCharacter;
             if (m_pVillain.m_pRelative != null)
                 m_pVillain.m_pRelative.AddRelative();
-            if (m_pVillain.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(3))
+            if (m_pVillain.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(4))
                 m_bVoyagersAllowed = false;
 
             FixRelations();
@@ -127,7 +127,7 @@ namespace RandomStory
             m_pMinion = pCharacter;
             if (m_pMinion.m_pRelative != null)
                 m_pMinion.m_pRelative.AddRelative();
-            if (m_pMinion.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(3))
+            if (m_pMinion.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(4))
                 m_bVoyagersAllowed = false;
 
             FixRelations();
@@ -152,7 +152,7 @@ namespace RandomStory
             m_pHelper = pCharacter;
             if (m_pHelper.m_pRelative != null)
                 m_pHelper.m_pRelative.AddRelative();
-            if (m_pHelper.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(3))
+            if (m_pHelper.m_pHomeSetting != m_pSetting && !Rnd.OneChanceFrom(4))
                 m_bVoyagersAllowed = false;
 
             FixRelations();
@@ -284,10 +284,10 @@ namespace RandomStory
 
             SetHero(GetRandomHero());
 
+            SetVillain(GetRandomVillain());
+
             if (Rnd.OneChanceFrom(2))
                 SetTutor(GetRandomTutor());
-
-            SetVillain(GetRandomVillain());
 
             if (Rnd.OneChanceFrom(2))
                 SetMinion(GetRandomMinion());

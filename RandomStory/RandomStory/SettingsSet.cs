@@ -23,7 +23,7 @@ namespace RandomStory
             }
         }
 
-        public Setting GetPrime()
+        public Setting GetPrime(bool bMerge)
         {
             if (m_cPrime == null || m_cPrime.Count == 0)
                 return null;
@@ -32,7 +32,12 @@ namespace RandomStory
             for (int i = 1; i < m_cPrime.Count; i++)
             {
                 if (!pWorld.Equals(m_cPrime[i]))
-                    pWorld = new Setting(pWorld, m_cPrime[i]);
+                {
+                    if(Rnd.OneChanceFrom(2))
+                        pWorld = new Setting(pWorld, m_cPrime[i], bMerge, bMerge || i > 1);
+                    else
+                        pWorld = new Setting(m_cPrime[i], pWorld, bMerge, bMerge || i > 1);
+                }
             }
 
             foreach (Setting pOriginal in m_cPrime)
@@ -43,7 +48,7 @@ namespace RandomStory
             return pWorld;
         }
 
-        public Setting GetRandom(int iCrossProbability)
+        public Setting GetRandom(int iCrossProbability, bool bMerge)
         {
             List<Setting> cSettings = m_cAllowed;
 
@@ -61,12 +66,12 @@ namespace RandomStory
                 if (iCrossProbability < 2)
                     iCrossProbability = 2;
 
-                Setting pSetting1 = Rnd.OneChanceFrom(iCrossProbability) ? GetRandom(iCrossProbability * iCrossProbability) : cSettings[Rnd.Get(cSettings.Count)];
+                Setting pSetting1 = Rnd.OneChanceFrom(iCrossProbability) ? GetRandom(iCrossProbability * iCrossProbability, bMerge) : cSettings[Rnd.Get(cSettings.Count)];
                 Setting pSetting2;
                 int iCounter = 5;
                 do
                 {
-                    pSetting2 = Rnd.OneChanceFrom(iCrossProbability) ? GetRandom(iCrossProbability * iCrossProbability) : cMerged[Rnd.Get(cMerged.Count)];
+                    pSetting2 = Rnd.OneChanceFrom(iCrossProbability) ? GetRandom(iCrossProbability * iCrossProbability, bMerge) : cMerged[Rnd.Get(cMerged.Count)];
                     iCounter--;
                 }
                 while (pSetting1.Equals(pSetting2) && iCounter > 0);
@@ -77,7 +82,7 @@ namespace RandomStory
                     if (pOriginal.Equals(sNewName))
                         return pOriginal;
 
-                Setting pNewSetting = new Setting(pSetting1, pSetting2);
+                Setting pNewSetting = new Setting(pSetting1, pSetting2, bMerge, bMerge);
                 m_cCross.Add(pNewSetting);
                 return pNewSetting;
             }
