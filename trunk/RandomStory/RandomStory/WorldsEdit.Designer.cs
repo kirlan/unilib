@@ -39,6 +39,12 @@
             this.отменаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.eventsTextBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.geographyTextBox = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.panel6 = new System.Windows.Forms.Panel();
             this.professionsEvilTextBox = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -71,14 +77,10 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.label9 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.panel9 = new System.Windows.Forms.Panel();
-            this.geographyTextBox = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.panel10 = new System.Windows.Forms.Panel();
-            this.eventsTextBox = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.panel10.SuspendLayout();
+            this.panel9.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -89,8 +91,6 @@
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
-            this.panel9.SuspendLayout();
-            this.panel10.SuspendLayout();
             this.SuspendLayout();
             // 
             // worldsListBox
@@ -185,6 +185,74 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(571, 487);
             this.tableLayoutPanel1.TabIndex = 2;
+            // 
+            // panel10
+            // 
+            this.panel10.Controls.Add(this.eventsTextBox);
+            this.panel10.Controls.Add(this.label11);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel10.Location = new System.Drawing.Point(288, 245);
+            this.panel10.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(283, 118);
+            this.panel10.TabIndex = 7;
+            // 
+            // eventsTextBox
+            // 
+            this.eventsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.eventsTextBox.Location = new System.Drawing.Point(0, 16);
+            this.eventsTextBox.Multiline = true;
+            this.eventsTextBox.Name = "eventsTextBox";
+            this.eventsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.eventsTextBox.Size = new System.Drawing.Size(283, 102);
+            this.eventsTextBox.TabIndex = 1;
+            this.eventsTextBox.TextChanged += new System.EventHandler(this.eventsTextBox_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(-3, 0);
+            this.label11.Margin = new System.Windows.Forms.Padding(0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(117, 13);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Возможные события:";
+            // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.geographyTextBox);
+            this.panel9.Controls.Add(this.label10);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel9.Location = new System.Drawing.Point(288, 0);
+            this.panel9.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(283, 118);
+            this.panel9.TabIndex = 6;
+            // 
+            // geographyTextBox
+            // 
+            this.geographyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.geographyTextBox.Location = new System.Drawing.Point(0, 16);
+            this.geographyTextBox.Multiline = true;
+            this.geographyTextBox.Name = "geographyTextBox";
+            this.geographyTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.geographyTextBox.Size = new System.Drawing.Size(283, 102);
+            this.geographyTextBox.TabIndex = 1;
+            this.geographyTextBox.TextChanged += new System.EventHandler(this.geographyTextBox_TextChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(-3, 0);
+            this.label10.Margin = new System.Windows.Forms.Padding(0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "География:";
             // 
             // panel6
             // 
@@ -522,74 +590,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // panel9
-            // 
-            this.panel9.Controls.Add(this.geographyTextBox);
-            this.panel9.Controls.Add(this.label10);
-            this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel9.Location = new System.Drawing.Point(288, 0);
-            this.panel9.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(283, 118);
-            this.panel9.TabIndex = 6;
-            // 
-            // geographyTextBox
-            // 
-            this.geographyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.geographyTextBox.Location = new System.Drawing.Point(0, 16);
-            this.geographyTextBox.Multiline = true;
-            this.geographyTextBox.Name = "geographyTextBox";
-            this.geographyTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.geographyTextBox.Size = new System.Drawing.Size(283, 102);
-            this.geographyTextBox.TabIndex = 1;
-            this.geographyTextBox.TextChanged += new System.EventHandler(this.geographyTextBox_TextChanged);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(-3, 0);
-            this.label10.Margin = new System.Windows.Forms.Padding(0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(65, 13);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "География:";
-            // 
-            // panel10
-            // 
-            this.panel10.Controls.Add(this.eventsTextBox);
-            this.panel10.Controls.Add(this.label11);
-            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel10.Location = new System.Drawing.Point(288, 245);
-            this.panel10.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(283, 118);
-            this.panel10.TabIndex = 7;
-            // 
-            // eventsTextBox
-            // 
-            this.eventsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.eventsTextBox.Location = new System.Drawing.Point(0, 16);
-            this.eventsTextBox.Multiline = true;
-            this.eventsTextBox.Name = "eventsTextBox";
-            this.eventsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.eventsTextBox.Size = new System.Drawing.Size(283, 102);
-            this.eventsTextBox.TabIndex = 1;
-            this.eventsTextBox.TextChanged += new System.EventHandler(this.eventsTextBox_TextChanged);
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(-3, 0);
-            this.label11.Margin = new System.Windows.Forms.Padding(0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(117, 13);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "Возможные события:";
-            // 
             // WorldsEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -606,6 +606,10 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WorldsEdit_FormClosed);
             this.contextMenuStrip1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.panel5.ResumeLayout(false);
@@ -624,10 +628,6 @@
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
             this.contextMenuStrip2.ResumeLayout(false);
-            this.panel9.ResumeLayout(false);
-            this.panel9.PerformLayout();
-            this.panel10.ResumeLayout(false);
-            this.panel10.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

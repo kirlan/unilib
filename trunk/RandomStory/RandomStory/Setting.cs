@@ -125,10 +125,15 @@ namespace RandomStory
 
         /// <summary>
         /// Создаёт новый смешанный сеттинг, объединяющий все строки из двух образующих сеттингов.
+        /// Параметры:
+        /// bMergePopulation - следует-ли использовать расы и географию из обоих сеттингов (true) или только из основного (false).
+        /// bMergeSocium - следует-ли использовать перки, профессии, локации, предметы и события из обоих сеттингов (true) или только из расширения (false)
         /// </summary>
-        /// <param name="pBase1"></param>
-        /// <param name="pBase2"></param>
-        public Setting(Setting pBase1, Setting pBase2)
+        /// <param name="pBase1">Основной сеттинг</param>
+        /// <param name="pBase2">Сеттинг-расширение</param>
+        /// <param name="bMergePopulation">следует-ли использовать расы и географию из обоих сеттингов (true) или только из основного (false)</param>
+        /// <param name="bMergeSocium">следует-ли использовать перки, профессии, локации, предметы и события из обоих сеттингов (true) или только из расширения (false)</param>
+        public Setting(Setting pBase1, Setting pBase2, bool bMergePopulation, bool bMergeSocium)
         {
             m_pCommon = pBase1.m_pCommon;
 
@@ -136,11 +141,11 @@ namespace RandomStory
             {
                 m_sName = pBase1.m_sName;
                 m_cRaces = new Strings(pBase1.m_cRaces);
+                m_cGeography = new Strings(pBase1.m_cGeography);
                 m_cPerks = new Strings(pBase1.m_cPerks);
                 m_cProfessions = new Strings(pBase1.m_cProfessions);
                 m_cProfessionsElite = new Strings(pBase1.m_cProfessionsElite);
                 m_cLocations = new Strings(pBase1.m_cLocations);
-                m_cGeography = new Strings(pBase1.m_cGeography);
                 m_cItems = new Strings(pBase1.m_cItems);
                 m_cEvents = new Strings(pBase1.m_cEvents);
             }
@@ -152,14 +157,35 @@ namespace RandomStory
 
                 m_sName = cName.ToString(" / ");
 
-                m_cRaces = new Strings(pBase1.m_cRaces, pBase2.m_cRaces);
-                m_cPerks = new Strings(pBase1.m_cPerks, pBase2.m_cPerks);
-                m_cProfessions = new Strings(pBase1.m_cProfessions, pBase2.m_cProfessions);
-                m_cProfessionsElite = new Strings(pBase1.m_cProfessionsElite, pBase2.m_cProfessionsElite);
-                m_cLocations = new Strings(pBase1.m_cLocations, pBase2.m_cLocations);
-                m_cGeography = new Strings(pBase1.m_cGeography, pBase2.m_cGeography);
-                m_cItems = new Strings(pBase1.m_cItems, pBase2.m_cItems);
-                m_cEvents = new Strings(pBase1.m_cEvents, pBase2.m_cEvents);
+                if (bMergePopulation)
+                {
+                    m_cRaces = new Strings(pBase1.m_cRaces, pBase2.m_cRaces);
+                    m_cGeography = new Strings(pBase1.m_cGeography, pBase2.m_cGeography);
+                }
+                else
+                {
+                    m_cRaces = new Strings(pBase1.m_cRaces);
+                    m_cGeography = new Strings(pBase1.m_cGeography);
+                }
+
+                if (bMergeSocium)
+                {
+                    m_cPerks = new Strings(pBase1.m_cPerks, pBase2.m_cPerks);
+                    m_cProfessions = new Strings(pBase1.m_cProfessions, pBase2.m_cProfessions);
+                    m_cProfessionsElite = new Strings(pBase1.m_cProfessionsElite, pBase2.m_cProfessionsElite);
+                    m_cLocations = new Strings(pBase1.m_cLocations, pBase2.m_cLocations);
+                    m_cItems = new Strings(pBase1.m_cItems, pBase2.m_cItems);
+                    m_cEvents = new Strings(pBase1.m_cEvents, pBase2.m_cEvents);
+                }
+                else
+                {
+                    m_cPerks = new Strings(pBase2.m_cPerks);
+                    m_cProfessions = new Strings(pBase2.m_cProfessions);
+                    m_cProfessionsElite = new Strings(pBase2.m_cProfessionsElite);
+                    m_cLocations = new Strings(pBase2.m_cLocations);
+                    m_cItems = new Strings(pBase2.m_cItems);
+                    m_cEvents = new Strings(pBase2.m_cEvents);
+                }
             }
         }
 
@@ -190,7 +216,13 @@ namespace RandomStory
             Strings cName1 = new Strings(m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
             Strings cName2 = new Strings(pOther.m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
 
-            return cName1.Equals(cName2);
+            if (cName1.Count == 0 && cName2.Count == 0)
+                return true;
+
+            if (cName1.Count == 0 || cName2.Count == 0)
+                return false;
+
+            return cName1.Equals(cName2) && cName1[0] == cName2[0];
         }
 
         public bool Equals(string sOtherName)
@@ -198,7 +230,13 @@ namespace RandomStory
             Strings cName1 = new Strings(m_sName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
             Strings cName2 = new Strings(sOtherName.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries));
 
-            return cName1.Equals(cName2);
+            if (cName1.Count == 0 && cName2.Count == 0)
+                return true;
+
+            if (cName1.Count == 0 || cName2.Count == 0)
+                return false;
+
+            return cName1.Equals(cName2) && cName1[0] == cName2[0];
         }
 
         public string GetRandomProfession(ref char[] aFlags)

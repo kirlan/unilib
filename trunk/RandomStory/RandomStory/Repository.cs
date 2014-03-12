@@ -211,17 +211,17 @@ namespace RandomStory
 
         public Setting GetPrimeSetting()
         {
-            Setting pWorld = m_cPossibleWorlds.GetPrime();
+            Setting pWorld = m_cPossibleWorlds.GetPrime(false);
             if (pWorld == null)
                 return null;
 
-            Setting pJanre = m_cPossibleJanres.GetPrime();
+            Setting pJanre = m_cPossibleJanres.GetPrime(true);
             if (pJanre == null)
                 return null;
 
             m_cUsedSettings.Clear();
 
-            Setting pNewSetting = new Setting(pWorld, pJanre);
+            Setting pNewSetting = new Setting(pWorld, pJanre, true, true);
             m_cUsedSettings.Add(pNewSetting);
             return pNewSetting;
         }
@@ -230,11 +230,11 @@ namespace RandomStory
 
         public Setting GetRandomSetting()
         {
-            Setting pWorld = m_cPossibleWorlds.GetRandom(4);
+            Setting pWorld = m_cPossibleWorlds.GetRandom(4, false);
             if (pWorld == null)
                 return null;
 
-            Setting pJanre = m_cPossibleJanres.GetRandom(4);
+            Setting pJanre = m_cPossibleJanres.GetRandom(4, true);
             if (pJanre == null)
                 return null;
 
@@ -244,7 +244,7 @@ namespace RandomStory
                 if (pUsedSetting.Equals(sNewName))
                     return pUsedSetting;
 
-            Setting pNewSetting = new Setting(pWorld, pJanre);
+            Setting pNewSetting = new Setting(pWorld, pJanre, true, true);
             m_cUsedSettings.Add(pNewSetting);
             return pNewSetting;
         }
