@@ -28,10 +28,12 @@ namespace VixenQuest.Story
         Fisted,
         /// <summary>
         /// traditional vs. anal
+        /// у нас - активный анальный секс это ДАТЬ в жопу
         /// </summary>
         AssFucking,
         /// <summary>
         /// anal vs. traditional
+        /// у нас - пассивный анальный секс это ТРАХНУТЬ в жопу
         /// </summary>
         AssFucked,
         /// <summary>
@@ -60,8 +62,8 @@ namespace VixenQuest.Story
         Maso,
         Seducing,
         Seduced,
-        Pursue,
-        Evade,
+        //Pursue,
+        //Evade,
         Move,
         SellLoot,
         Bargain,
@@ -307,25 +309,25 @@ namespace VixenQuest.Story
            "Catched while masturbating",
         };
 
-        private static string[] m_aActPursue = 
-        {
-           "Catching",
-           "Capturing",
-           "Pursuing",
-           "Tracking",
-           "Chasing",
-            //"Coming to home of",
-            //"Seeking for",
-            //"Collecting rumors about"
-        };
+        //private static string[] m_aActPursue = 
+        //{
+        //   "Catching",
+        //   "Capturing",
+        //   "Pursuing",
+        //   "Tracking",
+        //   "Chasing",
+        //    //"Coming to home of",
+        //    //"Seeking for",
+        //    //"Collecting rumors about"
+        //};
 
-        private static string[] m_aActEvade = 
-        {
-           "Sneaking away",
-           "Escaping",
-           "Running",
-           "Hiding"
-        };
+        //private static string[] m_aActEvade = 
+        //{
+        //   "Sneaking away",
+        //   "Escaping",
+        //   "Running",
+        //   "Hiding"
+        //};
 
         public Opponent m_pTarget;
 
@@ -344,9 +346,9 @@ namespace VixenQuest.Story
                     sName = sName.Remove(sName.Length - 1);
                 if (Passive)
                 {
-                    if (m_eType == ActionType.Evade)
-                        return sName + " from " + m_pTarget.LongEncounterName + "...";
-                    else
+                    //if (m_eType == ActionType.Evade)
+                    //    return sName + " from " + m_pTarget.LongEncounterName + "...";
+                    //else
                         return sName + " by " + m_pTarget.LongEncounterName + "...";
                 }
                 else
@@ -360,104 +362,65 @@ namespace VixenQuest.Story
             switch (eType)
             {
                 case ActionType.Fucking:
-                    if(m_pTarget.HaveCunt)
-                    {
-                        if (pVixen.HaveDick && 
-                            (Rnd.OneChanceFrom(2) || m_pTarget.m_pRace.m_eSapience == Sapience.Animal))
-                            return "Fucking";
+                    return "Fucking";
+                case ActionType.Fisting:
+                    if (Rnd.OneChanceFrom(5))
+                        return "Footing";
+                    else
+                        if (Rnd.OneChanceFrom(4))
+                            return "Double-fisting";
                         else
-                        {
-                            if (Rnd.OneChanceFrom(5))
-                                return "Footing";
+                            if (Rnd.OneChanceFrom(3))
+                                return "Dildoing";
                             else
-                                if (Rnd.OneChanceFrom(4))
-                                    return "Double-fisting";
-                                else
-                                    if (Rnd.OneChanceFrom(3))
-                                        return "Dildoing";
-                                    else
-                                        return "Fisting";
-                        }
-                    }
-                    break;
+                                return "Fisting";
                 case ActionType.Fucked:
-                    if (pVixen.HaveCunt)
-                    {
-                        if (m_pTarget.HaveDick &&
-                            (Rnd.OneChanceFrom(2) || m_pTarget.m_pRace.m_eSapience == Sapience.Animal))
-                            return "Fucked";
-                        else
-                        {
-                            if (Rnd.OneChanceFrom(5))
-                                return "Footed";
-                            else
-                                if (Rnd.OneChanceFrom(4))
-                                    return "Double-fisted";
-                                else
-                                    if (Rnd.OneChanceFrom(3))
-                                        return "Dildoed";
-                                    else
-                                        return "Fisted";
-                        }
-                    }
-                    break;
-                case ActionType.AssFucking:
-                    if (pVixen.HaveDick &&
-                        (Rnd.OneChanceFrom(2) || m_pTarget.m_pRace.m_eSapience == Sapience.Animal))
-                        return "Ass-fucking";
+                    return "Fucked";
+                case ActionType.Fisted:
+                    if (Rnd.OneChanceFrom(5))
+                        return "Footed";
                     else
-                    {
                         if (Rnd.OneChanceFrom(4))
-                            return "Ass-footing";
+                            return "Double-fisted";
                         else
-                            if (Rnd.OneChanceFrom(2))
-                                return "Ass-fisting";
+                            if (Rnd.OneChanceFrom(3))
+                                return "Dildoed";
                             else
-                                return "Ass-dildoing";
-                    }
+                                return "Fisted";
                 case ActionType.AssFucked:
-                    if (m_pTarget.HaveDick &&
-                        (Rnd.OneChanceFrom(2) || m_pTarget.m_pRace.m_eSapience == Sapience.Animal))
-                        return "Fucked into ass";
+                    return "Ass-fucking";
+                case ActionType.AssFisting:
+                    if (Rnd.OneChanceFrom(4))
+                        return "Ass-footing";
                     else
-                    {
-                        if (Rnd.OneChanceFrom(4))
-                            return "Footed into ass";
+                        if (Rnd.OneChanceFrom(2))
+                            return "Ass-fisting";
                         else
-                            if (Rnd.OneChanceFrom(2))
-                                return "Fisted into ass";
-                            else
-                                return "Dildoed into ass";
-                    }
+                            return "Ass-dildoing";
+                case ActionType.AssFucking:
+                    return "Fucked into ass";
+                case ActionType.AssFisted:
+                    if (Rnd.OneChanceFrom(4))
+                        return "Footed into ass";
+                    else
+                        if (Rnd.OneChanceFrom(2))
+                            return "Fisted into ass";
+                        else
+                            return "Dildoed into ass";
                 case ActionType.OralFucking:
-                    if (Rnd.OneChanceFrom(4) && m_pTarget.m_pRace.m_eSapience != Sapience.Animal)
+                    if (m_pTarget.Gender == Gender.Male || (m_pTarget.Gender == Gender.Shemale && Rnd.OneChanceFrom(2)))
                     {
                         if (m_pTarget.m_iCount > 1)
-                            return "Licking assholes";
+                            return "Sucking cocks";
                         else
-                            return "Licking asshole";
+                            return "Sucking cock";
                     }
                     else
                     {
-                        if (m_pTarget.Gender == Gender.Male || (m_pTarget.Gender == Gender.Shemale && Rnd.OneChanceFrom(2)))
-                        {
-                            if (m_pTarget.m_iCount > 1)
-                                return "Sucking cocks";
-                            else
-                                return "Sucking cock";
-                        }
+                        if (m_pTarget.m_iCount > 1)
+                            return "Licking cunts";
                         else
-                        {
-                            if (Rnd.OneChanceFrom(4) && m_pTarget.m_pRace.m_eSapience != Sapience.Animal)
-                                return "Sucking breasts";
-                            else
-                            {
-                                if (m_pTarget.m_iCount > 1)
-                                    return "Licking cunts";
-                                else
-                                    return "Licking cunt";
-                            }
-                        }
+                            return "Licking cunt";
                     }
                 case ActionType.OralFucked:
                     if (pVixen.Gender == Gender.Male || (pVixen.Gender == Gender.Shemale && Rnd.OneChanceFrom(2) && m_pTarget.m_pRace.m_eSapience != Sapience.Animal))
@@ -492,13 +455,15 @@ namespace VixenQuest.Story
                 case ActionType.Maso:
                     part1 = Rnd.Get(m_aActMaso.Length);
                     return m_aActMaso[part1];
-                case ActionType.Pursue:
-                    part1 = Rnd.Get(m_aActPursue.Length);
-                    return m_aActPursue[part1];
-                default:
-                    part1 = Rnd.Get(m_aActEvade.Length);
-                    return m_aActEvade[part1];
+                //case ActionType.Pursue:
+                //    part1 = Rnd.Get(m_aActPursue.Length);
+                //    return m_aActPursue[part1];
+                //default:
+                //    part1 = Rnd.Get(m_aActEvade.Length);
+                //    return m_aActEvade[part1];
             }
+
+            return "Unknown action";
         }
 
         private bool IsActionPossible(ActionType eType, Vixen pVixen, Opponent pTarget)
@@ -536,10 +501,10 @@ namespace VixenQuest.Story
             //    eType == ActionType.AssFucking))
             //    return false;
 
-            if (eType == ActionType.AssFucking && !pVixen.HaveDick)
+            if (eType == ActionType.AssFucking && !pTarget.HaveDick)
                 return false;
 
-            if (eType == ActionType.AssFucked && !pTarget.HaveDick)
+            if (eType == ActionType.AssFucked && !pVixen.HaveDick)
                 return false;
 
             //if (eType == ActionType.AssFisting && pTarget.m_pRace.m_eSapience == Sapience.Animal)
@@ -566,9 +531,9 @@ namespace VixenQuest.Story
                 case ActionType.Fisting:
                     return VixenSkill.Foreplay;
                 case ActionType.AssFucked:
-                    return VixenSkill.Anal;
-                case ActionType.AssFucking:
                     return VixenSkill.Traditional;
+                case ActionType.AssFucking:
+                    return VixenSkill.Anal;
                 case ActionType.AssFisted:
                     return VixenSkill.Anal;
                 case ActionType.AssFisting:
@@ -607,9 +572,9 @@ namespace VixenQuest.Story
                 case ActionType.Fisting:
                     return VixenSkill.Traditional;
                 case ActionType.AssFucked:
-                    return VixenSkill.Traditional;
-                case ActionType.AssFucking:
                     return VixenSkill.Anal;
+                case ActionType.AssFucking:
+                    return VixenSkill.Traditional;
                 case ActionType.AssFisted:
                     return VixenSkill.Foreplay;
                 case ActionType.AssFisting:
@@ -876,8 +841,8 @@ namespace VixenQuest.Story
                    m_eType == ActionType.Fisted ||
                    m_eType == ActionType.Maso ||
                    m_eType == ActionType.OralFucked ||
-                   m_eType == ActionType.Seduced ||
-                   m_eType == ActionType.Evade)
+                   m_eType == ActionType.Seduced)// ||
+                   //m_eType == ActionType.Evade)
                     return true;
                 else
                     return false;
@@ -898,18 +863,18 @@ namespace VixenQuest.Story
             {
                 switch (m_eType)
                 {
-                    case ActionType.Evade:
-                        if (Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]); 
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
-                    case ActionType.Pursue:
-                        if (Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
+                    //case ActionType.Evade:
+                    //    if (Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]); 
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
+                    //case ActionType.Pursue:
+                    //    if (Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
                     case ActionType.Seduced:
                         if (Passive)
                             iResult = Math.Max(pVixen.Stats[Stat.Beauty], m_pTarget.Stats[Stat.Beauty]);
@@ -944,18 +909,18 @@ namespace VixenQuest.Story
             {
                 switch (m_eType)
                 {
-                    case ActionType.Evade:
-                        if (!Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
-                    case ActionType.Pursue:
-                        if (!Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
+                    //case ActionType.Evade:
+                    //    if (!Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
+                    //case ActionType.Pursue:
+                    //    if (!Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
                     case ActionType.Seduced:
                         if (!Passive)
                             iResult = Math.Max(pVixen.Stats[Stat.Beauty], m_pTarget.Stats[Stat.Beauty]);
@@ -991,12 +956,12 @@ namespace VixenQuest.Story
         {
             switch (m_eType)
             {
-                case ActionType.Evade:
-                    CalcStatSuccess(pVixen, Stat.Force);
-                    break;
-                case ActionType.Pursue:
-                    CalcStatSuccess(pVixen, Stat.Force);
-                    break;
+                //case ActionType.Evade:
+                //    CalcStatSuccess(pVixen, Stat.Presence);
+                //    break;
+                //case ActionType.Pursue:
+                //    CalcStatSuccess(pVixen, Stat.Presence);
+                //    break;
                 case ActionType.Seduced:
                     CalcStatSuccess(pVixen, Stat.Beauty);
                     break;

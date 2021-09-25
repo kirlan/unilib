@@ -81,7 +81,7 @@ namespace VixenQuest
 
         private void Sado(Opponent pTarget)
         {
-            string sNameOf = pTarget.SingleName.Trim();
+            string sNameOf = pTarget.GetDescription();
             if (sNameOf.EndsWith("s"))
                 sNameOf += "'";
             else

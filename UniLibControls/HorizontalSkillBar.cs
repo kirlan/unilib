@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using nsUniLibControls;
+using Random;
 
 namespace MiscControls
 {
@@ -169,6 +170,12 @@ namespace MiscControls
             }
         }
 
+        public bool Bouncing
+        {
+            get { return timer1.Enabled; }
+            set { timer1.Enabled = value; }
+        }
+
         private int m_iMaxValue = 10;
         public int MaxValue
         {
@@ -205,13 +212,15 @@ namespace MiscControls
 
         public void SetValue(int iValue, int iTime)
         {
+            m_iValue = iValue;
+
             if (m_iValue > m_iMaxValue)
                 m_iValue = m_iMaxValue;
 
             if (m_iValue < m_iMinValue)
                 m_iValue = m_iMinValue;
 
-            m_iShouldBeWidth = (int)((float)(panel1.ClientRectangle.Width) / (float)(m_iMaxValue - m_iMinValue) * (float)iValue);
+            m_iShouldBeWidth = (int)((float)(panel1.ClientRectangle.Width) / (float)(m_iMaxValue - m_iMinValue) * (float)m_iValue);
 
             MyRepaint();
         }
@@ -227,9 +236,21 @@ namespace MiscControls
         {
             panel1.BackColor = m_eColor00;
 
+            double fShouldBeWidth = m_iShouldBeWidth;
+
+            if (Bouncing)
+            {
+                int iWidth = (int)(fShouldBeWidth + (fShouldBeWidth / 2 - Rnd.Get(fShouldBeWidth)) / 6);
+
+                if (fShouldBeWidth > iWidth)
+                    fShouldBeWidth -= Rnd.Get((fShouldBeWidth - iWidth) / 2);
+                else
+                    fShouldBeWidth += Rnd.Get((iWidth - fShouldBeWidth) / 2);
+            }
+
             double fIntervalWidth = (double)panel1.ClientRectangle.Width / 9.0;
-            int iInterval = (int)((float)m_iShouldBeWidth / fIntervalWidth);
-            int iDelta = m_iShouldBeWidth - (int)(iInterval * fIntervalWidth);
+            int iInterval = (int)(fShouldBeWidth / fIntervalWidth);
+            int iDelta = (int)(fShouldBeWidth - (iInterval * fIntervalWidth));
 
             KColor color1 = new KColor();
             KColor color2 = new KColor();
@@ -278,14 +299,24 @@ namespace MiscControls
             }
             
             KColor color3 = new KColor();
-            color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue) * (float)iDelta / fIntervalWidth);
+            if (color2.Hue - color1.Hue > 180)
+                color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue - 360) * (float)iDelta / fIntervalWidth);
+            else if (color2.Hue - color1.Hue < -180)
+                color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue + 360) * (float)iDelta / fIntervalWidth);
+            else
+                color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue) * (float)iDelta / fIntervalWidth);
             color3.Lightness = color1.Lightness + (int)((float)(color2.Lightness - color1.Lightness) * (float)iDelta / fIntervalWidth);
             color3.Saturation = color1.Saturation + (int)((float)(color2.Saturation - color1.Saturation) * (float)iDelta / fIntervalWidth);
 
             panel2.BackColor = color3.RGB;
-            panel2.Width = m_iShouldBeWidth;
+            panel2.Width = (int)fShouldBeWidth;
 
             Invalidate();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            MyRepaint();
         }
     }
 }

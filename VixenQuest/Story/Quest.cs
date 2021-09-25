@@ -141,7 +141,7 @@ namespace VixenQuest.Story
                     else
                         iDifference = iDifference * 2;
 
-                if (!pVixen.WannaFuck(aPretendents[index]) && (!aPretendents[index].WannaFuck(pVixen) || bBoss))
+                if (!pVixen.WannaFuck(aPretendents[index]) || (!aPretendents[index].WannaFuck(pVixen) || bBoss))
                     iDifference = int.MaxValue;
 
                 if (pBestPretendent == null || iBestDifference > iDifference)

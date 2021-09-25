@@ -124,16 +124,16 @@ namespace VixenQuest.Story
 
                 //определим тип третьего действия - результат встречи с оппонентом
                 ActionType eFirstAction = ActionType.Rest;
-                if (pVixen.WannaFuck(m_pTarget) && m_pTarget.WannaFuck(pVixen) && Rnd.OneChanceFrom(2))
+                if (pVixen.WannaFuck(m_pTarget) && m_pTarget.WannaFuck(pVixen))// && Rnd.OneChanceFrom(2))
                     eFirstAction = ActionType.Seducing; //оба готовы друг-друга трахнуть - будет секс
                 else
                 {
-                    if (pVixen.WannaFuck(m_pTarget))
-                        eFirstAction = ActionType.Pursue; //ГГ готов трахнуть оппонента, но оппонент этого не хочет - ловим оппонента
-                    else
-                        if (m_pTarget.WannaFuck(pVixen))
-                            eFirstAction = ActionType.Evade;//Оппонент ловит ГГ
-                        else
+                    //if (pVixen.WannaFuck(m_pTarget))
+                    //    eFirstAction = ActionType.Pursue; //ГГ готов трахнуть оппонента, но оппонент этого не хочет - ловим оппонента
+                    //else
+                    //    if (m_pTarget.WannaFuck(pVixen))
+                    //        eFirstAction = ActionType.Evade;//Оппонент ловит ГГ
+                    //    else
                             return; //никто никого не хочет - разошлись как в море корабли
                 }
 
@@ -215,25 +215,25 @@ namespace VixenQuest.Story
         /// <returns></returns>
         private VQAction AddAction(Vixen pVixen, VQAction pLastAction, int iVixenTiredness, int iTargetTiredness)
         {
-            //мы убегали...
-            if (pLastAction.m_eType == ActionType.Evade)
-            {
-                if (pLastAction.Success)
-                    return null; //...и нас не поймали
-                else
-                    //if (iTargetTiredness < m_pTarget.Stats[Stat.Potency])
-                        return AddPassiveSexAction(pVixen, pLastAction.m_pLocation); //...и нас поймали
-                    //else
-                    //    return null; //...и нас поймали бы, если бы у преследователя не кончились силы
-            }
-            //мы догоняли...
-            if (pLastAction.m_eType == ActionType.Pursue)
-            {
-                if (pLastAction.Success)// && iVixenTiredness < pVixen.EffectiveStats[Stat.Potency])
-                    return AddActiveSexAction(pVixen, pLastAction.m_pLocation); //...и догнали!
-                else
-                    return null; //...и не догнали :(
-            }
+            ////мы убегали...
+            //if (pLastAction.m_eType == ActionType.Evade)
+            //{
+            //    if (pLastAction.Success)
+            //        return null; //...и нас не поймали
+            //    else
+            //        //if (iTargetTiredness < m_pTarget.Stats[Stat.Potency])
+            //            return AddPassiveSexAction(pVixen, pLastAction.m_pLocation); //...и нас поймали
+            //        //else
+            //        //    return null; //...и нас поймали бы, если бы у преследователя не кончились силы
+            //}
+            ////мы догоняли...
+            //if (pLastAction.m_eType == ActionType.Pursue)
+            //{
+            //    if (pLastAction.Success)// && iVixenTiredness < pVixen.EffectiveStats[Stat.Potency])
+            //        return AddActiveSexAction(pVixen, pLastAction.m_pLocation); //...и догнали!
+            //    else
+            //        return null; //...и не догнали :(
+            //}
             //прелюдия к сексу
             if (pLastAction.m_eType == ActionType.Seducing)
             {
@@ -259,32 +259,23 @@ namespace VixenQuest.Story
                 pLastAction.m_eType == ActionType.OralFucked ||
                 pLastAction.m_eType == ActionType.Maso)
             {
-                if ((pLastAction.Passive || iTargetTiredness >= m_pTarget.Stats[Stat.Potency]) &&
-                    iVixenTiredness < pVixen.EffectiveStats[Stat.Potency])
+                if (!pLastAction.Passive || iTargetTiredness >= m_pTarget.Stats[Stat.Potency])
                 {
-                    //инициатива была не на нашей стороне, но противник устал, а мы - нет
-                    //мы хотим его?
-                    if (pVixen.WannaFuck(m_pTarget))
+                    //инициатива была на нашей стороне или противник устал
+                    //мы хотим его? у нас ещё есть силы?
+                    if (pVixen.WannaFuck(m_pTarget) && iVixenTiredness < pVixen.EffectiveStats[Stat.Potency])
                         return AddActiveSexAction(pVixen, pLastAction.m_pLocation); //да - значит теперь инициатива наша
                     else
-                        return new VQAction(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Evade); //нет - просто сматываемся
+                        return null;// new VQAction(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Evade); //нет - просто сматываемся
                 }
                 else
-                    //мы устали ИЛИ в прошлом действии инициатива была наша - меняемся ролями
-                    //если у оппонента ещё есть силы
-                    if (iTargetTiredness < m_pTarget.Stats[Stat.Potency])
-                    {
-                        //и он хочет нас
-                        if(m_pTarget.WannaFuck(pVixen))
-                            return AddPassiveSexAction(pVixen, pLastAction.m_pLocation); //то он нас трахает
-                        else
-                            return new VQAction(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Pursue); //иначе - сматывается
-                    }
-                    //else
-                    //    if (iVixenTiredness < pVixen.EffectiveStats[Stat.Potency] * 3)
-                    //        return AddActiveSexAction(pVixen, pLastAction.m_pLocation);
-                    //    else
-                    //        return null;
+                {
+                    //иницитива не наша, у противника есть силы и он хочет нас
+                    if (m_pTarget.WannaFuck(pVixen))
+                        return AddPassiveSexAction(pVixen, pLastAction.m_pLocation); //то он нас трахает
+                    else
+                        return null;//new VQAction(pVixen, pLastAction.m_pLocation, m_pTarget, ActionType.Pursue); //иначе - сматывается
+                }
             }
 
             return null;
@@ -310,10 +301,11 @@ namespace VixenQuest.Story
                 cChances.Add(pVixen.Skills[VixenSkill.Oral]);
             
             //анальный секс
-            if (!pVixen.HaveDick)
+            //у нас - активный анальный секс это ДАТЬ в жопу
+            if (!m_pTarget.HaveDick)
                 cChances.Add(0);
             else
-                cChances.Add(pVixen.Skills[VixenSkill.Traditional]);
+                cChances.Add(pVixen.Skills[VixenSkill.Anal]);
             
             //садо-мазо
             //животные не знают, что такое садо-мазо
@@ -328,11 +320,12 @@ namespace VixenQuest.Story
             if (!m_pTarget.HaveCunt)
                 cChances.Add(0);
             else
-                cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
+                cChances.Add(pVixen.Skills[VixenSkill.Foreplay]);
 
             //анальный фистинг
+            //в отличие от секса, активный фистинг - это всё же делать фистинг, а не получать его
             //животные делать фистинг не обучены
-            cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
+            cChances.Add(pVixen.Skills[VixenSkill.Foreplay]);
 
             int iChoosen = Rnd.ChooseOne(cChances, 3);
 
@@ -382,7 +375,8 @@ namespace VixenQuest.Story
             cChances.Add(m_pTarget.Skills[VixenSkill.Oral]);
             
             //анальный секс
-            if (!m_pTarget.HaveDick)
+            //у нас - активный анальный секс это ДАТЬ в жопу
+            if (!pVixen.HaveDick)
                 cChances.Add(0);
             else
                 cChances.Add(m_pTarget.Skills[VixenSkill.Anal]);
@@ -400,14 +394,14 @@ namespace VixenQuest.Story
             if (!pVixen.HaveCunt || m_pTarget.m_pRace.m_eSapience == Sapience.Animal)
                 cChances.Add(0);
             else
-                cChances.Add(m_pTarget.Skills[VixenSkill.Traditional]);
+                cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
 
             //анальный фистинг
             //животные делать фистинг не обучены
             if (m_pTarget.m_pRace.m_eSapience == Sapience.Animal)
                 cChances.Add(0);
             else
-                cChances.Add(m_pTarget.Skills[VixenSkill.Anal]);
+                cChances.Add(m_pTarget.Skills[VixenSkill.Foreplay]);
 
             int iChoosen = Rnd.ChooseOne(cChances, 3);
 
@@ -464,8 +458,8 @@ namespace VixenQuest.Story
                 if (m_pTarget == null)
                     return true;
 
-                if (CurrentAction.m_eType == ActionType.Evade || CurrentAction.m_eType == ActionType.Pursue)
-                    return CurrentAction.Success;
+                //if (CurrentAction.m_eType == ActionType.Evade || CurrentAction.m_eType == ActionType.Pursue)
+                //    return CurrentAction.Success;
 
                 if (CurrentAction.m_iTargetPotency < CurrentAction.m_iVixenPotency)
                     return true;

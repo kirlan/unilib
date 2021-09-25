@@ -176,7 +176,7 @@ namespace VixenQuest
             //    m_iBonus = (m_iBonus / 5) * 5;
             //}
 
-            m_eAffectedStat = Stat.Potency;
+            m_eAffectedStat = Stat.Beauty;
 
             m_sName = "+" + m_iBonus.ToString() + " " + m_sName;
             m_sNames = "+" + m_iBonus.ToString() + " " + m_sNames;

@@ -209,13 +209,15 @@ namespace MiscControls
 
         public void SetValue(int iValue, int iTime)
         {
+            m_iValue = iValue;
+
             if (m_iValue > m_iMaxValue)
                 m_iValue = m_iMaxValue;
 
             if (m_iValue < m_iMinValue)
                 m_iValue = m_iMinValue;
 
-            m_iShouldBeHeight = (int)((float)(panel1.ClientRectangle.Height) / (float)(m_iMaxValue - m_iMinValue) * (float)iValue);
+            m_iShouldBeHeight = (int)((float)(panel1.ClientRectangle.Height) / (float)(m_iMaxValue - m_iMinValue) * (float)m_iValue);
 
             MyRepaint();
         }
@@ -282,7 +284,12 @@ namespace MiscControls
             }
             
             KColor color3 = new KColor();
-            color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue) * (float)iDelta / fIntervalHeight);
+            if (color2.Hue - color1.Hue > 180)
+                color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue - 360) * (float)iDelta / fIntervalHeight);
+            else if (color2.Hue - color1.Hue < -180)
+                color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue + 360) * (float)iDelta / fIntervalHeight);
+            else
+                color3.Hue = color1.Hue + (int)((float)(color2.Hue - color1.Hue) * (float)iDelta / fIntervalHeight);
             color3.Lightness = color1.Lightness + (int)((float)(color2.Lightness - color1.Lightness) * (float)iDelta / fIntervalHeight);
             color3.Saturation = color1.Saturation + (int)((float)(color2.Saturation - color1.Saturation) * (float)iDelta / fIntervalHeight);
 

@@ -24,7 +24,7 @@ namespace VixenQuest.People
 
     public enum Stat
     {
-        Force,
+        //Presence,
         Beauty,
         Luck,
         Potency

@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Persona>
+  <Module name="Новый модуль" desc="Описание отсутствует">
+    <Parameters>
+      <Numeric name="Здоровье" group="Основные" comment="" hidden="False" value="10" min="0" max="10" format="0" />
+      <Numeric name="Радиация" group="Основные" comment="" hidden="False" value="0" min="0" max="10" format="0" />
+      <Numeric name="Локация" group="Системные" comment="" hidden="True" value="1" min="0" max="100" format="0">
+        <Range name="Пустоши" min="0" max="0" />
+        <Range name="Вход в Убежище" min="1" max="1" />
+        <Range name="Аройо" min="2" max="2" />
+      </Numeric>
+      <Numeric name="Время суток" group="Время" comment="" hidden="False" value="12" min="0" max="49" format="0">
+        <Range name="Ночь" min="0" max="5" />
+        <Range name="Утро" min="6" max="11" />
+        <Range name="День" min="12" max="17" />
+        <Range name="Вечер" min="18" max="23" />
+        <Range name="Следующая ночь" min="24" max="29" />
+        <Range name="Следующее утро" min="30" max="35" />
+        <Range name="Следующий день" min="36" max="41" />
+        <Range name="Следующий вечер" min="42" max="49" />
+        <Range name="Следующие сутки" min="24" max="49" />
+        <Range name="Светло" min="6" max="17" />
+      </Numeric>
+      <Numeric name="Дней прошло" group="Время" comment="" hidden="False" value="0" min="0" max="1000" format="0" />
+      <Numeric name="Оружие" group="Вещи" comment="" hidden="False" value="-1" min="-1" max="100" format="0">
+        <Range name="Пистолет" min="0" max="0" />
+        <Range name="Лазерный пистолет" min="1" max="1" />
+        <Range name="Бластер пришельцев" min="2" max="2" />
+        <Range name="Без оружия" min="-1" max="-1" />
+      </Numeric>
+      <Numeric name="Опыт" group="Развитие" comment="" hidden="False" value="0" min="0" max="100000" format="0" />
+      <Numeric name="Уровень" group="Развитие" comment="" hidden="False" value="1" min="1" max="100" format="0" />
+      <Numeric name="Нужно опыта" group="Развитие" comment="" hidden="True" value="0" min="0" max="100000" format="0" />
+      <Numeric name="Репутация в Аройо" group="Репутация" comment="" hidden="True" value="0" min="0" max="1" format="0">
+        <Range name="Чужак" min="0" max="0" />
+        <Range name="Гость" min="1" max="1" />
+      </Numeric>
+      <Numeric name="Антирадин" group="Вещи" comment="" hidden="False" value="0" min="0" max="100" format="0" />
+      <Numeric name="Аптечка" group="Вещи" comment="" hidden="False" value="0" min="0" max="100" format="0" />
+      <Bool name="Убежище живо" group="Сюжет" comment="" hidden="True" value="True" />
+      <Bool name="Найден водяной чип" group="Сюжет" comment="" hidden="True" value="False" />
+      <Bool name="Начало игры" group="Сюжет" comment="" hidden="True" value="True" />
+      <Bool name="Известна дорога в Аройо" group="Карта" comment="" hidden="True" value="False" />
+      <Bool name="Известна дорога в Пустоши" group="Карта" comment="" hidden="True" value="False" />
+    </Parameters>
+    <Actions>
+      <Action name="Идти в Убежище" />
+      <Action name="Иcкать выход" />
+      <Action name="КОНЕЦ" />
+      <Action name="Исследовать Пустоши" />
+      <Action name="НАЧАТЬ" />
+      <Action name="Идти в Аройо" />
+      <Action name="Идти в Пустоши" />
+      <Action name="Подойти к воротам" />
+      <Action name="Зайти к Старейшине" />
+      <Action name="Использовать аптечку" />
+      <Action name="Выпить Антирадин" />
+    </Actions>
+    <Collections>
+      <Collection name="Кубик">
+        <Parameters>
+          <Numeric name="Бросок" group="Кубик" comment="" hidden="True" value="1" min="1" max="6" format="0">
+            <Range name="1 к 2" min="1" max="3" />
+            <Range name="1 к 3" min="1" max="2" />
+            <Range name="1 к 6" min="1" max="1" />
+          </Numeric>
+        </Parameters>
+      </Collection>
+      <Collection name="Оружие">
+        <Parameters>
+          <Numeric name="Тип" group="Оружие" comment="" hidden="True" value="0" min="0" max="100" format="0">
+            <Range name="Пистолет" min="0" max="0" />
+            <Range name="Лазерный пистолет" min="1" max="1" />
+            <Range name="Бластер пришельцев" min="2" max="2" />
+          </Numeric>
+          <Numeric name="Убойная сила" group="Оружие" comment="" hidden="True" value="0" min="0" max="10" format="0" />
+        </Parameters>
+      </Collection>
+      <Collection name="Монстр">
+        <Parameters>
+          <Numeric name="Здоровье" group="Монстр" comment="" hidden="True" value="0" min="0" max="10" format="0" />
+          <Numeric name="Урон" group="Монстр" comment="" hidden="True" value="0" min="0" max="10" format="0" />
+          <String name="Имя" group="Монстр" comment="" hidden="True" value="" />
+        </Parameters>
+      </Collection>
+    </Collections>
+    <Flows>
+      <Flow name="Время (часы)" comment="" start="0" major="24" />
+    </Flows>
+    <Objects>
+      <Variant collection="Кубик" id="2" probability="1" unique="False" name="Кубик 2">
+        <Conditions />
+        <Value param="Кубик.Бросок" value="2" />
+      </Variant>
+      <Variant collection="Кубик" id="1" probability="1" unique="False" name="Кубик 1">
+        <Conditions />
+        <Value param="Кубик.Бросок" value="1" />
+      </Variant>
+      <Variant collection="Кубик" id="3" probability="1" unique="False" name="Кубик 3">
+        <Conditions />
+        <Value param="Кубик.Бросок" value="3" />
+      </Variant>
+      <Variant collection="Кубик" id="4" probability="1" unique="False" name="Кубик 4">
+        <Conditions />
+        <Value param="Кубик.Бросок" value="4" />
+      </Variant>
+      <Variant collection="Кубик" id="5" probability="1" unique="False" name="Кубик 5">
+        <Conditions />
+        <Value param="Кубик.Бросок" value="5" />
+      </Variant>
+      <Variant collection="Кубик" id="6" probability="1" unique="False" name="Кубик 6">
+        <Conditions />
+        <Value param="Кубик.Бросок" value="6" />
+      </Variant>
+      <Variant collection="Оружие" id="1" probability="1" unique="False" name="Пистолет">
+        <Conditions />
+        <Value param="Оружие.Тип" value="0" />
+        <Value param="Оружие.Убойная сила" value="1" />
+      </Variant>
+      <Variant collection="Оружие" id="2" probability="1" unique="False" name="Лазер">
+        <Conditions />
+        <Value param="Оружие.Тип" value="1" />
+        <Value param="Оружие.Убойная сила" value="5" />
+      </Variant>
+      <Variant collection="Оружие" id="3" probability="1" unique="False" name="Бластер">
+        <Conditions />
+        <Value param="Оружие.Тип" value="2" />
+        <Value param="Оружие.Убойная сила" value="10" />
+      </Variant>
+      <Variant collection="Монстр" id="1" probability="1" unique="False" name="Крыса">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="1" max="1" />
+        </Conditions>
+        <Value param="Монстр.Здоровье" value="1" />
+        <Value param="Монстр.Урон" value="1" />
+        <Value param="Монстр.Имя" value="Крыса" />
+      </Variant>
+      <Variant collection="Монстр" id="2" probability="1" unique="False" name="Радскорпион">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+        </Conditions>
+        <Value param="Монстр.Здоровье" value="5" />
+        <Value param="Монстр.Урон" value="2" />
+        <Value param="Монстр.Имя" value="Радскорпион" />
+      </Variant>
+    </Objects>
+    <Milestones>
+      <Milestone flow="Время (часы)" name="Запасы воды" repeat="False" position="9600">
+        <Conditions />
+        <Consequences>
+          <ParameterSet param="Убежище живо" value="False" />
+        </Consequences>
+      </Milestone>
+      <Milestone flow="Время (часы)" name="World update" repeat="True" position="1">
+        <Conditions />
+        <Consequences>
+          <CollectionShuffle collection="Кубик" />
+          <ParameterChange param="Время суток" delta="1" />
+          <CollectionShuffle collection="Монстр" />
+        </Consequences>
+      </Milestone>
+    </Milestones>
+    <Events>
+      <Event id="vault_dead" action="Идти в Убежище" description="Вы вернулись ко входу в Убежище и нажали кнопку интеркома... Никто не ответил... Ещё раз... Ещё... Потребовалось время, чтобы вы осознали, что прошло уже слишком много дней после поломки водяного чипа. Вы не успели их спасти. Все умерли." repeat="False" priority="1" probability="1">
+        <Conditions>
+          <Status param="Убежище живо" inverse="True" />
+          <Range param="Локация" inverse="False" min="1" max="1" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="False" flow="Время (часы)" />
+        </Consequences>
+        <Reactions>
+          <Reaction name="КОНЕЦ" result="" visible="True">
+            <Conditions />
+            <Consequences>
+              <SystemCommand command="GameOver" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="vault_save" action="Идти в Убежище" description="Вы вернулись ко входу в Убежище и нажали кнопку интеркома... Через несколько минут сквозь статику донёсся голос Хранителя:&#xD;&#xA;- Ну что, достал?" repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Status param="Убежище живо" inverse="False" />
+          <Range param="Локация" inverse="False" min="1" max="1" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="False" flow="Время (часы)" />
+        </Consequences>
+        <Reactions>
+          <Reaction name="Достал" result="- Да, он при мне. - отвечаете вы.&#xD;&#xA;- Отлично. Подожди немного, сейчас дверь откроют.&#xD;&#xA;&#xD;&#xA;Вы чувствуете невыразимое облегчение. Наконец-то всё позади. Вы победили. Вы спасли родное Убежище." visible="True">
+            <Conditions>
+              <Status param="Найден водяной чип" inverse="False" />
+            </Conditions>
+            <Consequences>
+              <SystemCommand command="GameOver" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Нет ещё" result="- Ну так и зачем припёрся? Когда найдёшь - тогда приходи.&#xD;&#xA;- Но...&#xD;&#xA;- У меня нет времени на пустяки!&#xD;&#xA;&#xD;&#xA;Индикатор связи на интеркоме гаснет." visible="True">
+            <Conditions />
+            <Consequences />
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="beginning_rat" action="Иcкать выход" description="Вы плутаете по пещерам в поисках выхода... Вдруг луч фонаря выхватывает на полу в десятке шагов перед вами грязный комок серого меха с парой злобных красных глаз.&#xD;&#xA;Крыса!" repeat="True" priority="1" probability="3">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="1" max="1" />
+          <Status param="Известна дорога в Пустоши" inverse="True" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="False" flow="Время (часы)" />
+        </Consequences>
+        <Reactions>
+          <Reaction name="Атаковать!" result="Кто победил - крыса или человек? Конечно же человек! Ведь вы - царь природы, венец творения и всё такое. А ещё у вас есть пистолет." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="False" min="1" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Опыт" delta="1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Атаковать!" result="Кто победил - крыса или человек? В конечном итоге, безусловно, вы. Пистолет - отличный аргумент.&#xD;&#xA;Однако, тварь успела добраться до вас и оставить пару на удивление болезненных укусов." visible="False">
+            <Conditions>
+              <Range param="Здоровье" inverse="False" min="2" max="10" />
+              <Range param="Кубик.Бросок" inverse="True" min="1" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Здоровье" delta="-1" />
+              <ParameterChange param="Опыт" delta="1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Атаковать!" result="Кто победил - крыса или человек? Увы, но царь природы в вашем лице в этот раз проиграл. Пистолет - отличный аргумент, но как оказалось, когти, зубы и природные инстинкты хищника, усиленные мутациями - не хуже..." visible="False">
+            <Conditions>
+              <Range param="Здоровье" inverse="False" min="0" max="1" />
+              <Range param="Кубик.Бросок" inverse="True" min="1" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Здоровье" value="0" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Сбежать" result="Лучшая победа - уклонение от схватки. Да, вы потеряли ещё час времени, но зато никто не пострадал. Самое главное - вы не пострадали." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="True" min="1" max="2" />
+            </Conditions>
+            <Consequences>
+              <FlowProgress progress="1" major="False" flow="Время (часы)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Сбежать" result="Лучшая победа - уклонение от схватки. Увы, эта стратегия не всегда срабатывает. Вы потеряли ещё час времени и получили пару на удивление болезненных укусов." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="False" min="1" max="2" />
+              <Range param="Здоровье" inverse="False" min="2" max="10" />
+            </Conditions>
+            <Consequences>
+              <FlowProgress progress="1" major="False" flow="Время (часы)" />
+              <ParameterChange param="Здоровье" delta="-1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Сбежать" result="Лучшая победа - уклонение от схватки. Увы, эта стратегия не всегда срабатывает. Тварь оказалась на удивление быстрой... и кусачей..." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="False" min="1" max="2" />
+              <Range param="Здоровье" inverse="False" min="0" max="1" />
+            </Conditions>
+            <Consequences>
+              <FlowProgress progress="1" major="False" flow="Время (часы)" />
+              <ParameterSet param="Здоровье" value="0" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="_death" action="КОНЕЦ" description="К сожалению, вам не удалось спасти своё Убежище. И никто не узнает, где именно в Пустошах остались белеть ваши кости..." repeat="False" priority="100" probability="1">
+        <Conditions>
+          <Range param="Здоровье" inverse="False" min="0" max="0" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="КОНЕЦ" result="" visible="False">
+            <Conditions />
+            <Consequences>
+              <SystemCommand command="GameOver" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="beginning_exit_day" action="Иcкать выход" description="Очередной поворот и... Вы слепнете. После мрака пещер свет дня кажется невыносимым.&#xD;&#xA;После того, как ваши глаза наконец привыкают, вы осматриваетесь. Перед вами лежит бескрайняя мёртвая пустыня. Пустоши." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Время суток" inverse="False" min="6" max="17" />
+          <Range param="Локация" inverse="False" min="1" max="1" />
+          <Status param="Известна дорога в Пустоши" inverse="True" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterSet param="Локация" value="0" />
+          <FlowProgress progress="1" major="False" flow="Время (часы)" />
+          <ParameterSet param="Известна дорога в Пустоши" value="True" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="beginning_exit_night" action="Иcкать выход" description="Очередной поворот и... Вы не сразу понимаете, что перед вами. Каменные стены расходятся в стороны, открывая огромное открытое пространство. Только подняв голову и увидев над собой звёзды, вы понимаете, что вышли на поверхность." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Время суток" inverse="True" min="6" max="17" />
+          <Range param="Локация" inverse="False" min="1" max="1" />
+          <Status param="Известна дорога в Пустоши" inverse="True" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterSet param="Локация" value="0" />
+          <FlowProgress progress="1" major="False" flow="Время (часы)" />
+          <ParameterSet param="Известна дорога в Пустоши" value="True" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="_start" action="НАЧАТЬ" description="Вы - один из обитателей Убежища-13, гигантского подземного поселения, построенного для спасения от ядерного удара. Пару дней назад в Убежище случилась беда - вышел из строя водяной чип. Без него система регенерации воды неработоспособна. Запасов осталось на 400 дней. Кто-то должен покинуть Убежище и найти замену.&#xD;&#xA;Выбор Хранителя пал на вас..." repeat="False" priority="100" probability="1">
+        <Conditions>
+          <Status param="Начало игры" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Покинуть убежище" result="Многотонная стальная дверь закрывается за вашей спиной. Перед вами - мрачный лабиринт подземных пещер. Похоже, чтобы выйти на поверхность тут придётся ещё поплутать..." visible="True">
+            <Conditions />
+            <Consequences>
+              <ParameterSet param="Начало игры" value="False" />
+              <CollectionSelect id="1" collection="Оружие" />
+              <ParameterSet param="Антирадин" value="10" />
+              <ParameterSet param="Аптечка" value="10" />
+              <ParameterSet param="Локация" value="1" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="wastes_explore_wander" action="Исследовать Пустоши" description="Целый день вы провели в пути... Увы - на вашем пути не попалось ничего интересного..." repeat="True" priority="1" probability="50">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="True" flow="Время (часы)" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="wastes_explore_radscorpion" action="Исследовать Пустоши" description="Вы шагаете по бескрайним пескам, обшаривая горизонт в поисках хоть чего-то приметного... Вдруг песок в десятке шагов от вас приходит в движение, на поверхности показывается блестящий хитиновый панцирь и длинный загнутый хвост с жалом на конце.&#xD;&#xA;Радскорпион!" repeat="True" priority="1" probability="20">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="True" flow="Время (часы)" />
+        </Consequences>
+        <Reactions>
+          <Reaction name="Атаковать!" result="Кто победил - насекомое или человек? Конечно же человек! Ведь вы - царь природы, венец творения и всё такое. А ещё у вас есть пистолет." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="False" min="1" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Опыт" delta="5" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Атаковать!" result="Кто победил - насекомое или человек? В конечном итоге, безусловно, вы. Пистолет - отличный аргумент.&#xD;&#xA;Однако, тварь успела добраться до вас и оставить пару на удивление болезненных укусов." visible="False">
+            <Conditions>
+              <Range param="Здоровье" inverse="False" min="2" max="10" />
+              <Range param="Кубик.Бросок" inverse="True" min="1" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Здоровье" delta="-1" />
+              <ParameterChange param="Опыт" delta="5" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Атаковать!" result="Кто победил - насекомое или человек? Увы, но царь природы в вашем лице в этот раз проиграл. Пистолет - отличный аргумент, но как оказалось, жало, клешни и природные инстинкты хищника, усиленные мутациями - не хуже..." visible="False">
+            <Conditions>
+              <Range param="Здоровье" inverse="False" min="0" max="1" />
+              <Range param="Кубик.Бросок" inverse="True" min="1" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Здоровье" value="0" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Сбежать" result="Лучшая победа - уклонение от схватки. Да, вы потеряли ещё час времени, но зато никто не пострадал. Самое главное - вы не пострадали." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="True" min="1" max="2" />
+            </Conditions>
+            <Consequences>
+              <FlowProgress progress="6" major="False" flow="Время (часы)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Сбежать" result="Лучшая победа - уклонение от схватки. Увы, эта стратегия не всегда срабатывает. Вы потеряли ещё час времени и получили пару на удивление болезненных ранений." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="False" min="1" max="2" />
+              <Range param="Здоровье" inverse="False" min="2" max="10" />
+            </Conditions>
+            <Consequences>
+              <FlowProgress progress="6" major="False" flow="Время (часы)" />
+              <ParameterChange param="Здоровье" delta="-1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Сбежать" result="Лучшая победа - уклонение от схватки. Увы, эта стратегия не всегда срабатывает. Тварь оказалась на удивление быстрой... и кусачей..." visible="False">
+            <Conditions>
+              <Range param="Кубик.Бросок" inverse="False" min="1" max="2" />
+              <Range param="Здоровье" inverse="False" min="0" max="1" />
+            </Conditions>
+            <Consequences>
+              <FlowProgress progress="6" major="False" flow="Время (часы)" />
+              <ParameterSet param="Здоровье" value="0" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="beginning_wander" action="Иcкать выход" description="Вы плутаете по пещерам в поисках выхода, но удача не попутствует вам..." repeat="True" priority="1" probability="3">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="1" max="1" />
+          <Status param="Известна дорога в Пустоши" inverse="True" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="False" flow="Время (часы)" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="wastes_explore_ufo" action="Исследовать Пустоши" description="Вы не верите своим глазам... Перед вами, наполовину занесённая песком, лежит самая настоящая летающая тарелка...&#xD;&#xA;В кабине вы находите скелет пришельца и пистолет странной формы." repeat="False" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="True" flow="Время (часы)" />
+          <CollectionSelect id="3" collection="Оружие" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="wastes_explore_aroyo" action="Исследовать Пустоши" description="Целый день вы провели в пути... Вдруг на горизонте вы замечаете тёмную полоску. Когда вы подходите ближе, становится ясно, что это частокол...&#xD;&#xA;Человеческое поселение!" repeat="False" priority="1" probability="10">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="0" max="0" />
+          <Status param="Известна дорога в Аройо" inverse="True" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <FlowProgress progress="1" major="True" flow="Время (часы)" />
+          <ParameterSet param="Известна дорога в Аройо" value="True" />
+          <ParameterSet param="Локация" value="2" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="goto_wastes" action="Идти в Пустоши" description="И снова перед вами бескрайние просторы Пустошей." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Status param="Известна дорога в Пустоши" inverse="False" />
+          <Range param="Локация" inverse="True" min="0" max="0" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterSet param="Локация" value="0" />
+          <FlowProgress progress="1" major="False" flow="Время (часы)" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="goto_Aroyo" action="Идти в Аройо" description="В Аройо не слишком рады вам, но и не гонят." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Status param="Известна дорога в Аройо" inverse="False" />
+          <Range param="Локация" inverse="True" min="2" max="2" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterSet param="Локация" value="2" />
+          <FlowProgress progress="1" major="True" flow="Время (часы)" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="goto_Vault" action="Идти в Убежище" description="Вы ступаете под своды пещеры, в глубине которой находится дверь в Убежище." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="True" min="1" max="1" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterSet param="Локация" value="1" />
+          <FlowProgress progress="1" major="True" flow="Время (часы)" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="aroyo_visit" action="Подойти к воротам" description="Вы подходите к воротам.&#xD;&#xA;- Кто такой? - слышится окрик с той стороны.&#xD;&#xA;- Странник. Я один. Что это за место? Могу я войти?&#xD;&#xA;После паузы ворота приоткрываются - ровно настолько, чтобы один человек мог протиснуться боком.&#xD;&#xA;- Заходи.&#xD;&#xA;Вы следуете приглашению. Внутри частокола - несколько убогих хижин, огород, загон для двухголовых коров... Придирчиво осмотрев вас с головы до ног, стражник кивает на одну из хижин:&#xD;&#xA;- Добро пожаловать в Аройо. Зайди к Старейшине, он хочет поговорить." repeat="False" priority="1" probability="1">
+        <Conditions>
+          <Range param="Репутация в Аройо" inverse="False" min="0" max="0" />
+          <Range param="Локация" inverse="False" min="2" max="2" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterSet param="Репутация в Аройо" value="1" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="aroyo_elder" action="Зайти к Старейшине" description="Вы рассказываете Старейшине Аройо свою историю. Он задумчиво кивает головой и смотрит в потолок. После паузы он снова смотрит на вас.&#xD;&#xA;- Нет, у нас в деревне нет того, что ты ищешь. Но я думаю, что знаю где может быть. Я расскажу тебе, если ты выполнишь одну мою просьбу..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Локация" inverse="False" min="2" max="2" />
+          <Range param="Репутация в Аройо" inverse="False" min="1" max="1" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Согласиться" result="Описание события" visible="False">
+            <Conditions />
+            <Consequences />
+          </Reaction>
+          <Reaction name="Отказаться" result="Описание события" visible="False">
+            <Conditions />
+            <Consequences />
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="items_medpack" action="Использовать аптечку" description="Вы используете одну из аптечек из своего запаса." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Аптечка" inverse="False" min="1" max="100" />
+          <Range param="Здоровье" inverse="False" min="1" max="9" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterChange param="Аптечка" delta="-1" />
+          <ParameterChange param="Здоровье" delta="5" />
+        </Consequences>
+        <Reactions />
+      </Event>
+      <Event id="items_antirad" action="Выпить Антирадин" description="Вы выпиваете одну таблетку Антирадина из своего запаса." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Range param="Антирадин" inverse="False" min="1" max="100" />
+          <Range param="Радиация" inverse="False" min="1" max="10" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <ParameterChange param="Антирадин" delta="-1" />
+          <ParameterChange param="Радиация" delta="-5" />
+        </Consequences>
+        <Reactions />
+      </Event>
+    </Events>
+    <Triggers>
+      <Trigger id="Новый день" repeat="True">
+        <Conditions>
+          <Range param="Время суток" inverse="False" min="24" max="49" />
+        </Conditions>
+        <Consequences>
+          <ParameterChange param="Время суток" delta="-24" />
+          <ParameterChange param="Дней прошло" delta="1" />
+        </Consequences>
+      </Trigger>
+      <Trigger id="Новый уровень" repeat="True">
+        <Conditions>
+          <Comparsion param="Опыт" inverse="False" param2="Нужно опыта" relation="HI" />
+        </Conditions>
+        <Consequences>
+          <ParameterChangeVariable param1="Опыт" param2="Нужно опыта" operation="SUB" />
+          <ParameterChange param="Уровень" delta="1" />
+        </Consequences>
+      </Trigger>
+    </Triggers>
+    <Functions>
+      <Function param="Нужно опыта">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Нужно опыта" value="10" />
+          </Consequences>
+          <Conditions>
+            <Range param="Уровень" inverse="False" min="1" max="1" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Нужно опыта" value="100.00" />
+          </Consequences>
+          <Conditions>
+            <Range param="Уровень" inverse="False" min="2" max="2" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Нужно опыта" value="1000.00" />
+          </Consequences>
+          <Conditions>
+            <Range param="Уровень" inverse="False" min="3" max="3" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Нужно опыта" value="10000.00" />
+          </Consequences>
+          <Conditions>
+            <Range param="Уровень" inverse="False" min="4" max="4" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Оружие">
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Оружие.Тип" param2="Оружие.Тип" operation="AVG" />
+          </Consequences>
+          <Conditions>
+            <Status param="Начало игры" inverse="True" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Оружие" value="-1" />
+          </Consequences>
+          <Conditions>
+            <Status param="Начало игры" inverse="False" />
+          </Conditions>
+        </Rule>
+      </Function>
+    </Functions>
+  </Module>
+</Persona>
