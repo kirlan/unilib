@@ -41,7 +41,7 @@ namespace WorldGeneration
 
             StartGenerationButton.Enabled = false;
             groupBox5.Enabled = false;
-            groupBox6.Enabled = false;
+            //groupBox6.Enabled = false;
             mapProperties1.Enabled = false;
         }
 

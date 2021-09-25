@@ -654,7 +654,7 @@ namespace LandscapeGeneration
             using (var arc = ZipArchive.OpenOnStream(fil))
             {
                 BinaryReader binReader =
-                    new BinaryReader(arc.GetFile("grid").GetStream());
+                    new BinaryReader(arc.GetFile("grid").Value.GetStream());
 
                 try
                 {
@@ -731,7 +731,7 @@ namespace LandscapeGeneration
             using (var arc = ZipArchive.OpenOnStream(fil))
             {
                 BinaryReader binReader =
-                    new BinaryReader(arc.GetFile("grid").GetStream());
+                    new BinaryReader(arc.GetFile("grid").Value.GetStream());
 
                 try
                 {
