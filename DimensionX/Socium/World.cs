@@ -1161,13 +1161,13 @@ namespace Socium
 
                         if (!pLinkedProvince.Forbidden && pLinkedProvince != pProvince)// && (!pLinkedProvince.m_pRace.m_bDying || pLinkedProvince.m_iTechLevel > pProvince.m_iTechLevel))
                         {
-                            int iHostility = pProvince.CalcHostility(pLinkedProvince);
-                            if (iHostility > 2)
-                            {
-                                pProvince.m_cConnectionString[pLinkedProvince] = string.Format("no road due to high hostility ({0})", iHostility);
-                                pLinkedProvince.m_cConnectionString[pProvince] = string.Format("no road due to high hostility ({0})", iHostility);
-                                continue;
-                            }
+                            //int iHostility = pProvince.CalcHostility(pLinkedProvince);
+                            //if (iHostility > 2)
+                            //{
+                            //    pProvince.m_cConnectionString[pLinkedProvince] = string.Format("no road due to high hostility ({0})", iHostility);
+                            //    pLinkedProvince.m_cConnectionString[pProvince] = string.Format("no road due to high hostility ({0})", iHostility);
+                            //    continue;
+                            //}
 
                             float fMinLength = float.MaxValue;
                             LocationX pBestTown1 = null;
@@ -1190,7 +1190,7 @@ namespace Socium
                                     }
                                 }
                             }
-                            if (pBestTown1 != null && State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0 && State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0)
+                            if (pBestTown1 != null && (State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0 || State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0))
                             {
                                 RoadQuality eMaxRoadLevel = RoadQuality.Country;
                                 foreach (var pRoad in pBestTown1.m_cRoads)
@@ -1204,6 +1204,10 @@ namespace Socium
                                 //    iRoadLevel = 1;
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad > 2 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad > 2)
                                 //    iRoadLevel = 3;
+
+                                if (State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxGroundRoad == 0 || 
+                                    State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_eMaxGroundRoad == 0)
+                                    eMaxRoadLevel = RoadQuality.Country;
 
                                 BuildRoad(pBestTown1, pBestTown2, eMaxRoadLevel, fCycleShift);
                                 pProvince.m_cConnectionString[pLinkedProvince] = "ok";
