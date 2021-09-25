@@ -175,11 +175,11 @@ namespace LandscapeGeneration
                     if (pArea.m_pType.m_eType == LandType.Taiga)
                         SmoothBorder(pArea.m_cFirstLines);
 
+                SmoothBorder(pCont.m_cFirstLines);
+
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Mountains)
                         SmoothBorder(pArea.m_cFirstLines);
-
-                SmoothBorder(pCont.m_cFirstLines);
             }
 
             foreach (LOC pLoc in m_pGrid.m_aLocations)
