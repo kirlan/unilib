@@ -19,7 +19,7 @@ namespace MapDrawEngine.Signs
             x = iX;
             y = iY;
 
-            r1 = 80;
+            r1 = 60;
 
             name = sName;
         }
