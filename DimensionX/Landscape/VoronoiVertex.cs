@@ -103,6 +103,10 @@ namespace LandscapeGeneration
 
         internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t, float fCycle, float smoothRate)
         {
+            for (int i = 0; i < m_aLocations.Length; i++)
+                if (m_aLocations[i].Forbidden || m_aLocations[i].Owner == null)
+                    return;
+
             if (smoothRate > 1.0f)
                 smoothRate = 1.0f;
             if (smoothRate < 0.0f)

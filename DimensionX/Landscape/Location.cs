@@ -128,8 +128,12 @@ namespace LandscapeGeneration
         /// </summary>
         public bool m_bBorder = false;
         public bool m_bGhost = false;
+        /// <summary>
+        /// Координаты центра локации нельзя смещать при вычислении сетки, т.к. она используется для формирования ровного края плоской карты
+        /// </summary>
+        public bool m_bFixed = false;
 
-        public long m_iID = 0;
+        public new long m_iID = 0;
 
         public int m_iGridX = -1;
         public int m_iGridY = -1;
@@ -233,6 +237,9 @@ namespace LandscapeGeneration
         /// </summary>
         public void CorrectCenter()
         {
+            if (m_pFirstLine == null)
+                m_bUnclosed = true;
+
             if (m_bUnclosed || m_bBorder)
                 return;
 

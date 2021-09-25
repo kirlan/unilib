@@ -86,18 +86,21 @@ namespace LandscapeGeneration
                         {
                             ImproveGrid();
                             bOK = CalculateVoronoi();
+
+                            if (bOK)
+                            {
+                                //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
+                                foreach (LOC pLoc in m_aLocations)
+                                {
+                                    pLoc.BuildBorder(m_iRX * 2);
+                                    pLoc.CorrectCenter();
+                                }
+                            }
                         }
                     }
                 }
             }
             while (!bOK);
-
-            //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-            foreach (LOC pLoc in m_aLocations)
-            {
-                pLoc.BuildBorder(m_iRX*2);
-                pLoc.CorrectCenter();
-            }
 
             m_sDescription = sDescription;
             m_bLoaded = true;
@@ -390,7 +393,7 @@ namespace LandscapeGeneration
 
             foreach (LOC pLoc in m_aLocations)
             {
-                if (!pLoc.m_bBorder && !pLoc.m_bGhost)
+                if (!pLoc.m_bBorder && !pLoc.m_bGhost && !pLoc.m_bFixed)
                 {
                     float fX = 0;
                     float fY = 0;
@@ -409,7 +412,9 @@ namespace LandscapeGeneration
                     if (iCount != 0)
                     {
                         LOC pImprovedLoc = new LOC();
-                        pImprovedLoc.Create(cLocations.Count, fX / iCount, fY / iCount);
+                        fX /= iCount;
+                        fY /= iCount;
+                        pImprovedLoc.Create(cLocations.Count, fX, fY);
                         pImprovedLoc.m_bBorder = false;
                         cLocations.Add(pImprovedLoc);
 
@@ -452,21 +457,25 @@ namespace LandscapeGeneration
                 LOC pLocation11 = new LOC();
                 pLocation11.Create(cLocations.Count, RX - xx, RY - dky);
                 pLocation11.m_bBorder = xx == 0 || xx == 2 * RX;//false;
+                pLocation11.m_bFixed = true;
                 cLocations.Add(pLocation11);
 
                 LOC pLocation12 = new LOC();
                 pLocation12.Create(cLocations.Count, RX - xx, RY + dky);
                 pLocation12.m_bBorder = true;
+                pLocation12.m_bFixed = true;
                 cLocations.Add(pLocation12);
 
                 LOC pLocation21 = new LOC();
                 pLocation21.Create(cLocations.Count, RX - xx, -RY - dky);
                 pLocation21.m_bBorder = true;
+                pLocation21.m_bFixed = true;
                 cLocations.Add(pLocation21);
 
                 LOC pLocation22 = new LOC();
                 pLocation22.Create(cLocations.Count, RX - xx, -RY + dky);
                 pLocation22.m_bBorder = xx == 0 || xx == 2 * RX;//false;
+                pLocation22.m_bFixed = true;
                 cLocations.Add(pLocation22);
 
                 if (m_bCycled)
@@ -477,6 +486,7 @@ namespace LandscapeGeneration
                     else
                         pLocation11Ghost.Create(cLocations.Count, pLocation11.X + RX * 2, pLocation11.Y, pLocation11);
                     pLocation11Ghost.m_bBorder = true;
+                    pLocation11Ghost.m_bFixed = true;
                     cLocations.Add(pLocation11Ghost);
 
                     LOC pLocation12Ghost = new LOC();
@@ -485,6 +495,7 @@ namespace LandscapeGeneration
                     else
                         pLocation12Ghost.Create(cLocations.Count, pLocation12.X + RX * 2, pLocation12.Y, pLocation12);
                     pLocation12Ghost.m_bBorder = true;
+                    pLocation12Ghost.m_bFixed = true;
                     cLocations.Add(pLocation12Ghost);
 
                     LOC pLocation21Ghost = new LOC();
@@ -493,6 +504,7 @@ namespace LandscapeGeneration
                     else
                         pLocation21Ghost.Create(cLocations.Count, pLocation21.X + RX * 2, pLocation21.Y, pLocation21);
                     pLocation21Ghost.m_bBorder = true;
+                    pLocation21Ghost.m_bFixed = true;
                     cLocations.Add(pLocation21Ghost);
 
                     LOC pLocation22Ghost = new LOC();
@@ -501,6 +513,7 @@ namespace LandscapeGeneration
                     else
                         pLocation22Ghost.Create(cLocations.Count, pLocation22.X + RX * 2, pLocation22.Y, pLocation22);
                     pLocation22Ghost.m_bBorder = true;
+                    pLocation22Ghost.m_bFixed = true;
                     cLocations.Add(pLocation22Ghost);
                 }
             }
@@ -514,21 +527,25 @@ namespace LandscapeGeneration
                     LOC pLocation11 = new LOC();
                     pLocation11.Create(cLocations.Count, RX - dkx, RY - yy);
                     pLocation11.m_bBorder = yy == 0 || yy == 2 * RY;//false;
+                    pLocation11.m_bFixed = true;
                     cLocations.Add(pLocation11);
 
                     LOC pLocation12 = new LOC();
                     pLocation12.Create(cLocations.Count, RX + dkx, RY - yy);
                     pLocation12.m_bBorder = true;
+                    pLocation12.m_bFixed = true;
                     cLocations.Add(pLocation12);
 
                     LOC pLocation21 = new LOC();
                     pLocation21.Create(cLocations.Count, -RX - dkx, RY - yy);
                     pLocation21.m_bBorder = true;
+                    pLocation21.m_bFixed = true;
                     cLocations.Add(pLocation21);
 
                     LOC pLocation22 = new LOC();
                     pLocation22.Create(cLocations.Count, -RX + dkx, RY - yy);
                     pLocation22.m_bBorder = yy == 0 || yy == 2 * RY;//false;
+                    pLocation22.m_bFixed = true;
                     cLocations.Add(pLocation22);
                 }
             }
