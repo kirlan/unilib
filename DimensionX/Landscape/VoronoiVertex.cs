@@ -85,8 +85,13 @@ namespace LandscapeGeneration
         //    return 100;
         //}
 
-        internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t, float fCycle)
+        internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t, float fCycle, float smoothRate)
         {
+            if (smoothRate > 1.0f)
+                smoothRate = 1.0f;
+            if (smoothRate < 0.0f)
+                smoothRate = 0.0f;
+
             float t2 = t * t; 
             float t3 = t2 * t;
 
@@ -122,13 +127,16 @@ namespace LandscapeGeneration
                     p3X -= fCycle;
             }
 
-            m_fX = 0.5f * ((2.0f * p1X) + (-p0X + p2X) * t + 
+            float newX = 0.5f * ((2.0f * p1X) + (-p0X + p2X) * t + 
                 (2.0f * p0X - 5.0f * p1X + 4 * p2X - p3X) * t2 + 
                 (-p0X + 3.0f * p1X - 3.0f * p2X + p3X) * t3); 
 
-            m_fY = 0.5f * ((2.0f * p1Y) + (-p0Y + p2Y) * t + 
+            float newY = 0.5f * ((2.0f * p1Y) + (-p0Y + p2Y) * t + 
                 (2.0f * p0Y - 5.0f * p1Y + 4 * p2Y - p3Y) * t2 + 
                 (-p0Y + 3.0f * p1Y - 3.0f * p2Y + p3Y) * t3);
+
+            m_fX = m_fX * (1.0f - smoothRate) + newX * smoothRate;
+            m_fY = m_fY * (1.0f - smoothRate) + newY * smoothRate;
 
             if (fCycle != 0.0f)
             {

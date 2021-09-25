@@ -134,7 +134,7 @@ namespace LandscapeGeneration
 
             BuildAreas(BeginStep, ProgressStep);
 
-            //SmoothAreas();
+            SmoothAreas();
 
             BuildTransportGrid(BeginStep, ProgressStep);
         }
@@ -209,21 +209,23 @@ namespace LandscapeGeneration
                 if (ordered.Count < 5)
                     continue;
 
+                float smoothRate = 0.2f;
+
                 for (int a = 0; a < 2; a++)
                 {
                     ordered[0].PointOnCurve(ordered[ordered.Count - 2], ordered[ordered.Count - 1], ordered[1],
-                                                 ordered[2], 0.5f, m_pGrid.CycleShift);
+                                                 ordered[2], 0.5f, m_pGrid.CycleShift, smoothRate);
                     ordered[1].PointOnCurve(ordered[ordered.Count - 1], ordered[0], ordered[2],
-                                                 ordered[3], 0.5f, m_pGrid.CycleShift);
+                                                 ordered[3], 0.5f, m_pGrid.CycleShift, smoothRate);
                     for (int i = 2; i < ordered.Count - 2; i++)
                     {
                         ordered[i].PointOnCurve(ordered[i - 2], ordered[i - 1], ordered[i + 1],
-                                                     ordered[i + 2], 0.5f, m_pGrid.CycleShift);
+                                                     ordered[i + 2], 0.5f, m_pGrid.CycleShift, smoothRate);
                     }
                     ordered[ordered.Count - 2].PointOnCurve(ordered[ordered.Count - 4], ordered[ordered.Count - 3], ordered[ordered.Count - 1],
-                                                 ordered[0], 0.5f, m_pGrid.CycleShift);
+                                                 ordered[0], 0.5f, m_pGrid.CycleShift, smoothRate);
                     ordered[ordered.Count - 1].PointOnCurve(ordered[ordered.Count - 3], ordered[ordered.Count - 2], ordered[0],
-                                                 ordered[1], 0.5f, m_pGrid.CycleShift);
+                                                 ordered[1], 0.5f, m_pGrid.CycleShift, smoothRate);
                 }
             }
         }
