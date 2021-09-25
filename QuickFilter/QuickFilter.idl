@@ -1,0 +1,113 @@
+//#######################################################################################
+// QuickFilter.idl : IDL source for QuickFilter.dll
+
+// This file will be processed by the MIDL tool to
+// produce the type library (QuickFilter.tlb) and marshalling code.
+//#######################################################################################
+import "oaidl.idl";
+import "ocidl.idl";
+#include "olectl.h"
+//## ====================================================================================
+[
+	uuid(89E33651-15F6-4145-B9CD-94F518073643),
+	version(1.1),
+	helpstring("QuickFilter 1.1 Type Library")
+]
+library QUICKFILTERLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	typedef enum NoOfColumnsValues{
+		fil2Columns = 2,
+		fil3Columns = 3,
+		fil4Columns = 4
+	}_NoOfColumnsValues;
+
+	[
+		object,
+		uuid(3A8AAEB8-5798-4ED2-8B58-9D92703F999E),
+		dual,
+		helpstring("IQFilter Interface"),
+		pointer_default(unique)
+	]
+	interface IQFilter : IDispatch
+	{
+		enum{
+			DISPID_QFILTER_NOOFCHECKFILTERS = 1,
+			DISPID_QFILTER_NOOFCOLUMNS,
+			DISPID_QFILTER_CHECKLABEL,
+			DISPID_QFILTER_DROPPEDWIDTH,
+			DISPID_QFILTER_CHECK,
+			DISPID_QFILTER_FIELD,
+			DISPID_QFILTER_CHECKFILTERIDS,
+			DISPID_QFILTER_CHECKFILTERTEXTS,
+			DISPID_QFILTER_SQLCHECKFILTER,
+			DISPID_QFILTER_TEXTCHECKFILTER,
+			DISPID_QFILTER_SQLFILTER,
+			DISPID_QFILTER_TEXTFILTER,
+
+			DISPID_QFILTER_ADDFOLDER,
+			DISPID_QFILTER_ADDSTRING,
+			DISPID_QFILTER_CHECKALL
+		};
+		[propget, id(DISPID_QFILTER_NOOFCHECKFILTERS), helpstring("property NoOfCheckFilters")] HRESULT NoOfCheckFilters([out, retval] long *pVal);
+		[propput, id(DISPID_QFILTER_NOOFCHECKFILTERS), helpstring("property NoOfCheckFilters")] HRESULT NoOfCheckFilters([in] long newVal);
+		[propget, id(DISPID_QFILTER_NOOFCOLUMNS), helpstring("property NoOfColumns")] HRESULT NoOfColumns([out, retval] enum NoOfColumnsValues *pVal);
+		[propput, id(DISPID_QFILTER_NOOFCOLUMNS), helpstring("property NoOfColumns")] HRESULT NoOfColumns([in] enum NoOfColumnsValues newVal);
+		[propget, id(DISPID_QFILTER_CHECKLABEL), helpstring("property CheckLabel")] HRESULT CheckLabel([in] long nFilter, [out, retval] BSTR *pVal);
+		[propput, id(DISPID_QFILTER_CHECKLABEL), helpstring("property CheckLabel")] HRESULT CheckLabel([in] long nFilter, [in] BSTR newVal);
+		[propget, id(DISPID_QFILTER_DROPPEDWIDTH), helpstring("property DroppedWidth")] HRESULT DroppedWidth([in] long nFilter, [out, retval] long *pVal);
+		[propput, id(DISPID_QFILTER_DROPPEDWIDTH), helpstring("property DroppedWidth")] HRESULT DroppedWidth([in] long nFilter, [in] long newVal);
+		[propget, id(DISPID_QFILTER_CHECK), helpstring("property Check")] HRESULT Check([in] long nFilter, [in] long nID, [out, retval] VARIANT_BOOL *pVal);
+		[propput, id(DISPID_QFILTER_CHECK), helpstring("property Check")] HRESULT Check([in] long nFilter, [in] long nID, [in] VARIANT_BOOL newVal);
+		[propget, id(DISPID_QFILTER_FIELD), helpstring("property Field")] HRESULT Field([in] long nFilter, [out, retval] BSTR *pVal);
+		[propput, id(DISPID_QFILTER_FIELD), helpstring("property Field")] HRESULT Field([in] long nFilter, [in] BSTR newVal);
+		[propget, id(DISPID_QFILTER_CHECKFILTERIDS), helpstring("property CheckFilterIDs")] HRESULT CheckFilterIDs([in] long nFilter, [out, retval] BSTR *pVal);
+		[propget, id(DISPID_QFILTER_CHECKFILTERTEXTS), helpstring("property CheckFilterTexts")] HRESULT CheckFilterTexts([in] long nFilter, [out, retval] BSTR *pVal);
+		[propget, id(DISPID_QFILTER_SQLCHECKFILTER), helpstring("property SQLCheckFilter")] HRESULT SQLCheckFilter([in] long nFilter, [out, retval] BSTR *pVal);
+		[propget, id(DISPID_QFILTER_TEXTCHECKFILTER), helpstring("property TextCheckFilter")] HRESULT TextCheckFilter([in] long nFilter, [out, retval] BSTR *pVal);
+		[propget, id(DISPID_QFILTER_SQLFILTER), helpstring("property SQLFilter")] HRESULT SQLFilter([out, retval] BSTR *pVal);
+		[propget, id(DISPID_QFILTER_TEXTFILTER), helpstring("property TextFilter")] HRESULT TextFilter([out, retval] BSTR *pVal);
+
+		[id(DISPID_QFILTER_ADDFOLDER), helpstring("method AddFolder")] HRESULT AddFolder([in] long nFilter, [in] BSTR bstrFolder);
+		[id(DISPID_QFILTER_ADDSTRING), helpstring("method AddString")] HRESULT AddString([in] long nFilter, [in] BSTR bstrString, [in] long nID, [in] long nLevel);
+		[id(DISPID_QFILTER_CHECKALL), helpstring("method CheckAll")] HRESULT CheckAll([in] long nFilter, [in] VARIANT_BOOL bCheck);
+
+        [id(DISPID_ABOUTBOX), helpstring("method AboutBox")] HRESULT AboutBox();
+	};
+
+	enum{
+		DISPID_QFILTER_CHANGE = 1
+	};
+	[
+		uuid(C2536D98-C6E8-4F31-B7FE-2AE079CB31A9),
+		helpstring("_IQFilterEvents Interface")
+	]
+	dispinterface _IQFilterEvents
+	{
+		properties:
+		methods:
+			[id(DISPID_QFILTER_CHANGE)] void Change();
+	};
+
+	[
+		uuid(9DC527A9-6C42-46F7-BD63-B82A60602D3F),
+		helpstring("QFilter Class")
+	]
+	coclass QFilter
+	{
+		[default] interface IQFilter;
+		[default, source] dispinterface _IQFilterEvents;
+	};
+	[
+		uuid(A1F7015A-ACFD-A36c-ADCC-A026EB203889),
+		helpstring("QFilterPropPageGeneral Class"),
+		hidden
+	]
+	coclass QFilterPropPageGeneral
+	{
+		interface IUnknown;
+	};
+};
+//#######################################################################################

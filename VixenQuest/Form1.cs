@@ -57,7 +57,7 @@ namespace VixenQuest
 
             ShowLog(true);
 
-            ActionBar.Maximum = ActionBar.ClientRectangle.Width;
+            ActionBar.MaxValue = ActionBar.ClientRectangle.Width;
             ActionBar.Value = 0;
 
             VixenPotency.SetFighter(m_pVixen.Name, m_pVixen.EffectiveStats[Stat.Potency]);
@@ -404,11 +404,11 @@ namespace VixenQuest
             {
                 StatsListView.Items.Clear();
 
-                ListViewItem newItem = new ListViewItem("Force");
-                newItem.SubItems.Add("");
-                StatsListView.Items.Add(newItem);
+                //ListViewItem newItem = new ListViewItem("Presence");
+                //newItem.SubItems.Add("");
+                //StatsListView.Items.Add(newItem);
 
-                newItem = new ListViewItem("Beauty");
+                ListViewItem newItem = new ListViewItem("Beauty");
                 newItem.SubItems.Add("");
                 StatsListView.Items.Add(newItem);
 
@@ -416,30 +416,30 @@ namespace VixenQuest
                 newItem.SubItems.Add("");
                 StatsListView.Items.Add(newItem);
 
-                newItem = new ListViewItem("Potency");
+                newItem = new ListViewItem("Endurance");
                 newItem.SubItems.Add("");
                 StatsListView.Items.Add(newItem);
             }
 
-            if (m_pVixen.StatsBonuses[Stat.Force] > 0)
-                StatsListView.Items[0].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Force].ToString() + " (" + m_pVixen.Stats[Stat.Force].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Force].ToString() + ")";
-            else
-                StatsListView.Items[0].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Force].ToString();
+            //if (m_pVixen.StatsBonuses[Stat.Presence] > 0)
+            //    StatsListView.Items[0].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Presence].ToString() + " (" + m_pVixen.Stats[Stat.Presence].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Presence].ToString() + ")";
+            //else
+            //    StatsListView.Items[0].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Presence].ToString();
 
             if (m_pVixen.StatsBonuses[Stat.Beauty] > 0)
-                StatsListView.Items[1].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Beauty].ToString() + " (" + m_pVixen.Stats[Stat.Beauty].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Beauty].ToString() + ")";
+                StatsListView.Items[0].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Beauty].ToString() + " (" + m_pVixen.Stats[Stat.Beauty].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Beauty].ToString() + ")";
             else
-                StatsListView.Items[1].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Beauty].ToString();
+                StatsListView.Items[0].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Beauty].ToString();
 
             if (m_pVixen.StatsBonuses[Stat.Luck] > 0)
-                StatsListView.Items[2].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Luck].ToString() + " (" + m_pVixen.Stats[Stat.Luck].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Luck].ToString() + ")";
+                StatsListView.Items[1].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Luck].ToString() + " (" + m_pVixen.Stats[Stat.Luck].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Luck].ToString() + ")";
             else
-                StatsListView.Items[2].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Luck].ToString();
+                StatsListView.Items[1].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Luck].ToString();
 
             if (m_pVixen.StatsBonuses[Stat.Potency] > 0)
-                StatsListView.Items[3].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Potency].ToString() + " (" + m_pVixen.Stats[Stat.Potency].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Potency].ToString() + ")";
+                StatsListView.Items[2].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Potency].ToString() + " (" + m_pVixen.Stats[Stat.Potency].ToString() + " + " + m_pVixen.StatsBonuses[Stat.Potency].ToString() + ")";
             else
-                StatsListView.Items[3].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Potency].ToString();
+                StatsListView.Items[2].SubItems[1].Text = m_pVixen.EffectiveStats[Stat.Potency].ToString();
         }
 
         private void UpdateTraits()
@@ -574,7 +574,7 @@ namespace VixenQuest
                 TargetPotency.Visible = false;
 
             ActionLabel.Text = "   " + m_pStoryLine.CurrentAction.m_sName;
-            m_iShouldBeValue = ActionBar.Maximum;
+            m_iShouldBeValue = ActionBar.MaxValue;
 
             //m_iShouldBeValue = m_pStoryLine.CurrentAction.m_iProgressPercent * ActionBar.Maximum / 100 + delta;
             //if (m_iShouldBeValue < 0)
@@ -588,7 +588,7 @@ namespace VixenQuest
             //if (delta < -Math.Sqrt(m_iShouldBeValue))
             //    deltaInc = 1;
 
-            ActionBar.Value = m_iOldValue + (m_iShouldBeValue - m_iOldValue) * m_iCurrentStep / m_iTotalSteps;
+            ActionBar.Value = m_iOldValue + (m_iShouldBeValue - m_iOldValue) * m_iCurrentStep / (m_iTotalSteps+1);
 
             if (m_iCurrentStep >= m_iTotalSteps)
             //            if (ActionBar.Value == m_iShouldBeValue)
@@ -614,10 +614,10 @@ namespace VixenQuest
                     m_iTotalSteps = 0;
                 m_iCurrentStep = 0;
 
-                m_bLastActionSuccess = m_pStoryLine.CurrentAction.m_iTargetPotency < m_pStoryLine.CurrentAction.m_iVixenPotency;
+                m_bLastActionSuccess = m_pStoryLine.CurrentAction.m_iVixenPotency == -1 || m_pStoryLine.CurrentAction.m_iTargetPotency < m_pStoryLine.CurrentAction.m_iVixenPotency;
 
                 bool bLastEncounterSuccess = m_pStoryLine.CurrentEncounter.Succcess;
-                bool bEvade = m_pStoryLine.CurrentAction.m_eType == ActionType.Evade;
+                //bool bEvade = m_pStoryLine.CurrentAction.m_eType == ActionType.Evade;
                 string sTargetName = "";
                 if (m_pStoryLine.CurrentEncounter.m_pTarget != null)
                 {
@@ -639,15 +639,15 @@ namespace VixenQuest
                     }
                     if (bLastEncounterSuccess && sTargetName != "")
                     {
-                        if (bEvade)
-                            AddToJournal("...Successfull!");
-                        else
-                        {
+                        //if (bEvade)
+                        //    AddToJournal("...Successfull!");
+                        //else
+                        //{
                             if (m_pVixen.m_sLastLoot != "")
                                 AddToJournal(sTargetName + " begs for mercy and offers " + m_pVixen.m_sLastLoot.ToLower() + ".");
                             else
                                 AddToJournal(sTargetName + " begs for mercy!");
-                        }
+                        //}
                     }
                 }
 
@@ -660,21 +660,24 @@ namespace VixenQuest
 
                 if (m_bLastActionSuccess)// VixenPotencyBar.Value > TargetPotencyBar.Value)
                 {
-                    if (m_pStoryLine.CurrentAction.m_eType == ActionType.Evade)
-                        ActionLabel.Text = "   Successfully escaped...";
-                    else
+                    if (TargetPotency.Visible)
+                    {
+                        //if (m_pStoryLine.CurrentAction.m_eType == ActionType.Evade)
+                        //    ActionLabel.Text = "   Successfully escaped...";
+                        //else
                         ActionLabel.Text = "   Departing - tired, but triumphant...";
 
-                    TargetPotency.ShowLose();
+                        TargetPotency.ShowLose();
+                        m_bShowViktoryMode = true;
+                    }
                 }
                 else
                 {
                     ActionLabel.Text = "   Left lying completely drained...";
 
                     VixenPotency.ShowLose();
+                    m_bShowViktoryMode = true;
                 }
-
-                m_bShowViktoryMode = true;
             }
             else
             {

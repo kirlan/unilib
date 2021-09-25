@@ -59,7 +59,7 @@ namespace Persona.Conditions
             string sParam = "";
             pXml.GetStringAttribute(pParamNode, "param2", ref sParam);
             foreach (Parameter pParam in cParams)
-                if (pParam.m_sName == sParam)
+                if (pParam.FullName == sParam)
                 {
                     m_pParam2 = pParam;
                     break;
@@ -74,7 +74,7 @@ namespace Persona.Conditions
         {
             base.WriteXML(pXml, pConditionNode);
 
-            pXml.AddAttribute(pConditionNode, "param2", m_pParam2.m_sName);
+            pXml.AddAttribute(pConditionNode, "param2", m_pParam2.FullName);
             pXml.AddAttribute(pConditionNode, "relation", m_eType);
         }
     
@@ -99,7 +99,7 @@ namespace Persona.Conditions
                     sType = "много больше";
                     break;
             }
-            return string.Format("{0} {1}{2} {3}", m_pParam1 != null ? m_pParam1.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР 1", m_bNot ? "НЕ " : "", sType, m_pParam2 != null ? m_pParam2.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР 2");
+            return string.Format("{0} {1}{2} {3}", m_pParam1 != null ? m_pParam1.FullName : "НЕВЕРНЫЙ ПАРАМЕТР 1", m_bNot ? "НЕ " : "", sType, m_pParam2 != null ? m_pParam2.FullName : "НЕВЕРНЫЙ ПАРАМЕТР 2");
         }
 
         public override Condition Clone()

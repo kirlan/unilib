@@ -1,0 +1,128 @@
+'########################################################################################
+'## FILE DESCRIPTION: Increments the build version of the application
+'########################################################################################
+Dim nCountSavedDocuments
+'## =====================================================================================
+'## VC++ doesn't provide any method for getting the path of the active project
+'## See the VB Script reference for more information on the VB Script functions 
+'## used in this function
+'## =====================================================================================
+Function GetProjectDir(FullName)
+ON ERROR RESUME NEXT
+	'## GET Proj Path
+	Dim proj_path
+	proj_path = Split(StrReverse(FullName),"\",-1,1)
+
+	'## GET the number of parameters
+	Dim count
+	count = UBound(proj_path)
+
+	'## GET full path
+	Dim full_path: full_path = ""
+	Dim i
+	for i = 1 to count 
+		full_path = full_path & "\" & proj_path(i)
+	next
+
+	'## GET Proj Dir
+	GetProjectDir = StrReverse(full_path)
+End Function
+
+'## =====================================================================================
+'## selection represents the TextSelection object
+'## count represents the position of the version number to be incremented
+'## incrementby represents a number that will be added to the existing version number
+'## =====================================================================================
+Sub ReplaceText(selection, count, incrementby)
+ON ERROR RESUME NEXT
+	'## SELECT TEXT
+	selection.WordRight dsMove, count
+	selection.WordRight dsExtend, 1
+
+	'## GET String
+	Dim str
+	str = selection.Text
+
+	'## INCREMENT
+	str = str + incrementby
+
+	'## REPLACE Selection
+	selection.Text = str
+End Sub
+
+'## =====================================================================================
+'## Set a counter for modified documents
+'## =====================================================================================
+Sub Application_DocumentSave (document)
+ON ERROR RESUME NEXT
+	If (document.Name <> "VersionNo.h") Then
+		nCountSavedDocuments = nCountSavedDocuments + 1
+	End If
+End Sub
+
+'## =====================================================================================
+'## When the workspace is open
+'## =====================================================================================
+Sub Application_WorkspaceOpen()
+ON ERROR RESUME NEXT
+	'## RESET
+	nCountSavedDocuments = 0
+End Sub
+
+'## =====================================================================================
+'## This event will be triggered after every build of a project
+'## You can check numError and/or numWarning to determine if you want to continue
+'## If numError <> 0 Then
+'##    exit sub
+'## Obtain the full path of the active project
+'## =====================================================================================
+Sub Application_BuildFinish(numError, numWarning)
+ON ERROR RESUME NEXT
+	'## ASSERT
+	If (numError <> 0) Then Exit Sub
+	If (numWarning <> 0) Then Exit Sub
+	If (nCountSavedDocuments = 0) Then Exit Sub
+
+	'## GET FullPath of Project + versionno.h
+	Dim full_path
+	full_path = GetProjectDir(ActiveProject.FullName)
+	full_path = full_path & "res\VersionNo.h"
+
+	'## OPEN the VersionNo.h file
+	Err.Clear
+		Documents.Open full_path
+	If (Err.Number <> 0) Then Exit Sub
+
+	'## OBTAIN the TextSelection object
+	Dim selection
+	set selection = ActiveDocument.Selection
+	selection.StartOfDocument 
+
+	'## INCREMENT macro FILEVER
+	ReplaceText selection, 9, 1
+
+	'## INCREMENT macro PRODUCTVER
+	selection.LineDown
+	selection.StartOfLine
+	ReplaceText selection, 9, 1
+
+	'## INCREMENT macro STRFILEVER
+	selection.LineDown
+	selection.StartOfLine
+	ReplaceText selection, 10, 1
+
+	'## INCREMENT macro STRPRODUCTVER
+	selection.LineDown
+	selection.StartOfLine
+	ReplaceText selection, 10, 1
+
+	'## SAVE
+	ActiveDocument.Save
+	ActiveDocument.Close
+
+	'## RESET
+	nCountSavedDocuments = 0
+
+	'## BUILD (the version is updated)
+	Application.Build
+End Sub 

@@ -1,0 +1,9 @@
+; QuickFilter.def : Declares the module parameters.
+
+LIBRARY      "QuickFilter.DLL"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer	PRIVATE

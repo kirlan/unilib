@@ -161,13 +161,13 @@ namespace VixenQuest
 
                 switch (m_eAffectedStat)
                 {
-                    case Stat.Force:
-                        m_sName = "+" + m_iBonus.ToString() + " Heavy " + m_sName.ToLower();
-                        m_sNames = "+" + m_iBonus.ToString() + " Heavy " + m_sNames.ToLower();
-                        break;
-                    case Stat.Beauty:
-                        m_sName = "+" + m_iBonus.ToString() + " Pretty " + m_sName.ToLower();
-                        m_sNames = "+" + m_iBonus.ToString() + " Pretty " + m_sNames.ToLower();
+                    //case Stat.Presence:
+                    //    m_sName = "+" + m_iBonus.ToString() + " Hypnotic " + m_sName.ToLower();
+                    //    m_sNames = "+" + m_iBonus.ToString() + " Hypnotic " + m_sNames.ToLower();
+                    //    break;
+                    case Stat.Potency:
+                        m_sName = "+" + m_iBonus.ToString() + " Magic " + m_sName.ToLower();
+                        m_sNames = "+" + m_iBonus.ToString() + " Magic " + m_sNames.ToLower();
                         break;
                     case Stat.Luck:
                         m_sName = "+" + m_iBonus.ToString() + " Lucky " + m_sName.ToLower();

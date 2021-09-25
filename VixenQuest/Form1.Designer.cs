@@ -126,7 +126,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.JournalTextBox = new System.Windows.Forms.RichTextBox();
-            this.ActionBar = new System.Windows.Forms.ProgressBar();
             this.ActionLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -140,8 +139,15 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.VixenPotency = new VixenQuest.HPBar();
             this.TargetPotency = new VixenQuest.HPBar();
+            this.ActionBar = new MiscControls.HorizontalSkillBar();
+            this.MultiplierLabel = new MiscControls.BorderLabel();
             this.saveVixenFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.EncounterPage = new System.Windows.Forms.TabPage();
+            this.MarketPage = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -167,12 +173,15 @@
             this.tabPage2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.EncounterPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -192,9 +201,9 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(924, 460);
-            this.splitContainer1.SplitterDistance = 235;
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
+            this.splitContainer1.Size = new System.Drawing.Size(450, 555);
+            this.splitContainer1.SplitterDistance = 185;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer5
@@ -213,8 +222,8 @@
             // 
             this.splitContainer5.Panel2.Controls.Add(this.CursesListView);
             this.splitContainer5.Panel2.Controls.Add(this.label15);
-            this.splitContainer5.Size = new System.Drawing.Size(229, 93);
-            this.splitContainer5.SplitterDistance = 46;
+            this.splitContainer5.Size = new System.Drawing.Size(179, 188);
+            this.splitContainer5.SplitterDistance = 92;
             this.splitContainer5.TabIndex = 11;
             // 
             // SpellsListView
@@ -228,7 +237,7 @@
             this.SpellsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.SpellsListView.Location = new System.Drawing.Point(0, 18);
             this.SpellsListView.Name = "SpellsListView";
-            this.SpellsListView.Size = new System.Drawing.Size(229, 28);
+            this.SpellsListView.Size = new System.Drawing.Size(179, 74);
             this.SpellsListView.TabIndex = 7;
             this.SpellsListView.UseCompatibleStateImageBehavior = false;
             this.SpellsListView.View = System.Windows.Forms.View.Details;
@@ -249,7 +258,7 @@
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label9.Location = new System.Drawing.Point(0, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(229, 18);
+            this.label9.Size = new System.Drawing.Size(179, 18);
             this.label9.TabIndex = 8;
             this.label9.Text = "Powers";
             // 
@@ -264,7 +273,7 @@
             this.CursesListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.CursesListView.Location = new System.Drawing.Point(0, 18);
             this.CursesListView.Name = "CursesListView";
-            this.CursesListView.Size = new System.Drawing.Size(229, 25);
+            this.CursesListView.Size = new System.Drawing.Size(179, 74);
             this.CursesListView.TabIndex = 1;
             this.CursesListView.UseCompatibleStateImageBehavior = false;
             this.CursesListView.View = System.Windows.Forms.View.Details;
@@ -285,9 +294,9 @@
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label15.Location = new System.Drawing.Point(0, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(229, 18);
+            this.label15.Size = new System.Drawing.Size(179, 18);
             this.label15.TabIndex = 0;
-            this.label15.Text = "Curses && Diceases";
+            this.label15.Text = "Curses && Diseases";
             // 
             // ExperienceBar
             // 
@@ -295,7 +304,7 @@
             this.ExperienceBar.Location = new System.Drawing.Point(3, 347);
             this.ExperienceBar.MarqueeAnimationSpeed = 0;
             this.ExperienceBar.Name = "ExperienceBar";
-            this.ExperienceBar.Size = new System.Drawing.Size(229, 17);
+            this.ExperienceBar.Size = new System.Drawing.Size(179, 17);
             this.ExperienceBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.ExperienceBar.TabIndex = 4;
             // 
@@ -306,7 +315,7 @@
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label8.Location = new System.Drawing.Point(3, 329);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(229, 18);
+            this.label8.Size = new System.Drawing.Size(179, 18);
             this.label8.TabIndex = 3;
             this.label8.Text = "Experience";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -329,7 +338,7 @@
             this.SkillsListView.Location = new System.Drawing.Point(3, 244);
             this.SkillsListView.Name = "SkillsListView";
             this.SkillsListView.Scrollable = false;
-            this.SkillsListView.Size = new System.Drawing.Size(229, 85);
+            this.SkillsListView.Size = new System.Drawing.Size(179, 85);
             this.SkillsListView.TabIndex = 10;
             this.SkillsListView.UseCompatibleStateImageBehavior = false;
             this.SkillsListView.View = System.Windows.Forms.View.Details;
@@ -351,7 +360,7 @@
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label14.Location = new System.Drawing.Point(3, 226);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(229, 18);
+            this.label14.Size = new System.Drawing.Size(179, 18);
             this.label14.TabIndex = 9;
             this.label14.Text = "Skills";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -374,7 +383,7 @@
             this.StatsListView.Location = new System.Drawing.Point(3, 157);
             this.StatsListView.Name = "StatsListView";
             this.StatsListView.Scrollable = false;
-            this.StatsListView.Size = new System.Drawing.Size(229, 69);
+            this.StatsListView.Size = new System.Drawing.Size(179, 69);
             this.StatsListView.TabIndex = 2;
             this.StatsListView.UseCompatibleStateImageBehavior = false;
             this.StatsListView.View = System.Windows.Forms.View.Details;
@@ -396,7 +405,7 @@
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label13.Location = new System.Drawing.Point(3, 139);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(229, 18);
+            this.label13.Size = new System.Drawing.Size(179, 18);
             this.label13.TabIndex = 8;
             this.label13.Text = "Stats";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -423,7 +432,7 @@
             this.TraitsListView.Margin = new System.Windows.Forms.Padding(0);
             this.TraitsListView.Name = "TraitsListView";
             this.TraitsListView.Scrollable = false;
-            this.TraitsListView.Size = new System.Drawing.Size(229, 100);
+            this.TraitsListView.Size = new System.Drawing.Size(179, 100);
             this.TraitsListView.TabIndex = 1;
             this.TraitsListView.UseCompatibleStateImageBehavior = false;
             this.TraitsListView.View = System.Windows.Forms.View.Details;
@@ -446,7 +455,7 @@
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label12.Location = new System.Drawing.Point(3, 21);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(229, 18);
+            this.label12.Size = new System.Drawing.Size(179, 18);
             this.label12.TabIndex = 7;
             this.label12.Text = "Traits";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -457,25 +466,26 @@
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label7.Location = new System.Drawing.Point(3, 3);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(229, 18);
+            this.label7.Size = new System.Drawing.Size(179, 18);
             this.label7.TabIndex = 0;
             this.label7.Text = "Character Sheet";
             // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Location = new System.Drawing.Point(0, 24);
             this.splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.splitContainer4);
+            this.splitContainer2.Panel1.BackColor = System.Drawing.SystemColors.Window;
+            this.splitContainer2.Panel1.Controls.Add(this.tabControl2);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer2.Size = new System.Drawing.Size(685, 460);
-            this.splitContainer2.SplitterDistance = 343;
+            this.splitContainer2.Size = new System.Drawing.Size(924, 581);
+            this.splitContainer2.SplitterDistance = 462;
             this.splitContainer2.TabIndex = 0;
             // 
             // splitContainer4
@@ -505,8 +515,8 @@
             this.splitContainer4.Panel2.Controls.Add(this.EncumbranceBar);
             this.splitContainer4.Panel2.Controls.Add(this.label5);
             this.splitContainer4.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            this.splitContainer4.Size = new System.Drawing.Size(343, 460);
-            this.splitContainer4.SplitterDistance = 308;
+            this.splitContainer4.Size = new System.Drawing.Size(261, 555);
+            this.splitContainer4.SplitterDistance = 371;
             this.splitContainer4.TabIndex = 0;
             // 
             // ToysListBox
@@ -517,7 +527,7 @@
             this.ToysListBox.Location = new System.Drawing.Point(3, 262);
             this.ToysListBox.MultiColumn = true;
             this.ToysListBox.Name = "ToysListBox";
-            this.ToysListBox.Size = new System.Drawing.Size(337, 43);
+            this.ToysListBox.Size = new System.Drawing.Size(255, 106);
             this.ToysListBox.TabIndex = 3;
             // 
             // label11
@@ -527,7 +537,7 @@
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label11.Location = new System.Drawing.Point(3, 244);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(337, 18);
+            this.label11.Size = new System.Drawing.Size(255, 18);
             this.label11.TabIndex = 6;
             this.label11.Text = "Toys";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -555,7 +565,7 @@
             this.JevelryListView.Name = "JevelryListView";
             this.JevelryListView.Scrollable = false;
             this.JevelryListView.ShowItemToolTips = true;
-            this.JevelryListView.Size = new System.Drawing.Size(337, 136);
+            this.JevelryListView.Size = new System.Drawing.Size(255, 136);
             this.JevelryListView.TabIndex = 2;
             this.JevelryListView.UseCompatibleStateImageBehavior = false;
             this.JevelryListView.View = System.Windows.Forms.View.Details;
@@ -577,7 +587,7 @@
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label10.Location = new System.Drawing.Point(3, 90);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(337, 18);
+            this.label10.Size = new System.Drawing.Size(255, 18);
             this.label10.TabIndex = 5;
             this.label10.Text = "Jevelry";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -600,7 +610,7 @@
             this.ClothesListView.Name = "ClothesListView";
             this.ClothesListView.Scrollable = false;
             this.ClothesListView.ShowItemToolTips = true;
-            this.ClothesListView.Size = new System.Drawing.Size(337, 51);
+            this.ClothesListView.Size = new System.Drawing.Size(255, 51);
             this.ClothesListView.TabIndex = 1;
             this.ClothesListView.UseCompatibleStateImageBehavior = false;
             this.ClothesListView.View = System.Windows.Forms.View.Details;
@@ -622,7 +632,7 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.Location = new System.Drawing.Point(3, 21);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(337, 18);
+            this.label1.Size = new System.Drawing.Size(255, 18);
             this.label1.TabIndex = 4;
             this.label1.Text = "Clothes";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -633,7 +643,7 @@
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label4.Location = new System.Drawing.Point(3, 3);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(337, 18);
+            this.label4.Size = new System.Drawing.Size(255, 18);
             this.label4.TabIndex = 0;
             this.label4.Text = "Equipment";
             // 
@@ -652,7 +662,7 @@
             this.InventoryListView.Location = new System.Drawing.Point(3, 21);
             this.InventoryListView.Name = "InventoryListView";
             this.InventoryListView.ShowItemToolTips = true;
-            this.InventoryListView.Size = new System.Drawing.Size(337, 89);
+            this.InventoryListView.Size = new System.Drawing.Size(255, 121);
             this.InventoryListView.TabIndex = 3;
             this.InventoryListView.UseCompatibleStateImageBehavior = false;
             this.InventoryListView.View = System.Windows.Forms.View.Details;
@@ -677,9 +687,9 @@
             this.label6.BackColor = System.Drawing.Color.GhostWhite;
             this.label6.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(3, 110);
+            this.label6.Location = new System.Drawing.Point(3, 142);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(337, 18);
+            this.label6.Size = new System.Drawing.Size(255, 18);
             this.label6.TabIndex = 2;
             this.label6.Text = "Encumbrance";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -687,11 +697,11 @@
             // EncumbranceBar
             // 
             this.EncumbranceBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.EncumbranceBar.Location = new System.Drawing.Point(3, 128);
+            this.EncumbranceBar.Location = new System.Drawing.Point(3, 160);
             this.EncumbranceBar.MarqueeAnimationSpeed = 0;
             this.EncumbranceBar.Maximum = 25;
             this.EncumbranceBar.Name = "EncumbranceBar";
-            this.EncumbranceBar.Size = new System.Drawing.Size(337, 17);
+            this.EncumbranceBar.Size = new System.Drawing.Size(255, 17);
             this.EncumbranceBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.EncumbranceBar.TabIndex = 1;
             // 
@@ -701,12 +711,13 @@
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label5.Location = new System.Drawing.Point(3, 3);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(337, 18);
+            this.label5.Size = new System.Drawing.Size(255, 18);
             this.label5.TabIndex = 0;
             this.label5.Text = "Inventory";
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -714,7 +725,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(338, 460);
+            this.tabControl1.Size = new System.Drawing.Size(458, 581);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -723,7 +734,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(330, 434);
+            this.tabPage1.Size = new System.Drawing.Size(295, 434);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Quests";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -750,7 +761,7 @@
             this.splitContainer3.Panel2.Controls.Add(this.QuestBar);
             this.splitContainer3.Panel2.Controls.Add(this.label3);
             this.splitContainer3.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            this.splitContainer3.Size = new System.Drawing.Size(330, 434);
+            this.splitContainer3.Size = new System.Drawing.Size(295, 434);
             this.splitContainer3.SplitterDistance = 217;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -762,7 +773,7 @@
             this.PlotListBox.IntegralHeight = false;
             this.PlotListBox.Location = new System.Drawing.Point(3, 21);
             this.PlotListBox.Name = "PlotListBox";
-            this.PlotListBox.Size = new System.Drawing.Size(324, 176);
+            this.PlotListBox.Size = new System.Drawing.Size(289, 176);
             this.PlotListBox.TabIndex = 0;
             // 
             // label2
@@ -771,7 +782,7 @@
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label2.Location = new System.Drawing.Point(3, 3);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(324, 18);
+            this.label2.Size = new System.Drawing.Size(289, 18);
             this.label2.TabIndex = 1;
             this.label2.Text = "Plot Development";
             // 
@@ -781,7 +792,7 @@
             this.PlotBar.Location = new System.Drawing.Point(3, 197);
             this.PlotBar.MarqueeAnimationSpeed = 0;
             this.PlotBar.Name = "PlotBar";
-            this.PlotBar.Size = new System.Drawing.Size(324, 17);
+            this.PlotBar.Size = new System.Drawing.Size(289, 17);
             this.PlotBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.PlotBar.TabIndex = 2;
             this.PlotBar.Click += new System.EventHandler(this.PlotBar_Click);
@@ -794,7 +805,7 @@
             this.QuestsListBox.IntegralHeight = false;
             this.QuestsListBox.Location = new System.Drawing.Point(3, 21);
             this.QuestsListBox.Name = "QuestsListBox";
-            this.QuestsListBox.Size = new System.Drawing.Size(324, 172);
+            this.QuestsListBox.Size = new System.Drawing.Size(289, 172);
             this.QuestsListBox.TabIndex = 3;
             this.QuestsListBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.QuestsListBox_MouseMove);
             // 
@@ -804,7 +815,7 @@
             this.QuestBar.Location = new System.Drawing.Point(3, 193);
             this.QuestBar.MarqueeAnimationSpeed = 0;
             this.QuestBar.Name = "QuestBar";
-            this.QuestBar.Size = new System.Drawing.Size(324, 17);
+            this.QuestBar.Size = new System.Drawing.Size(289, 17);
             this.QuestBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.QuestBar.TabIndex = 2;
             // 
@@ -814,7 +825,7 @@
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label3.Location = new System.Drawing.Point(3, 3);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(324, 18);
+            this.label3.Size = new System.Drawing.Size(289, 18);
             this.label3.TabIndex = 0;
             this.label3.Text = "Quests";
             // 
@@ -824,7 +835,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(330, 434);
+            this.tabPage2.Size = new System.Drawing.Size(295, 434);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Journal";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -838,28 +849,9 @@
             this.JournalTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.JournalTextBox.Name = "JournalTextBox";
             this.JournalTextBox.ReadOnly = true;
-            this.JournalTextBox.Size = new System.Drawing.Size(330, 434);
+            this.JournalTextBox.Size = new System.Drawing.Size(295, 434);
             this.JournalTextBox.TabIndex = 0;
             this.JournalTextBox.Text = "";
-            // 
-            // ActionBar
-            // 
-            this.ActionBar.BackColor = System.Drawing.Color.White;
-            this.tableLayoutPanel1.SetColumnSpan(this.ActionBar, 3);
-            this.ActionBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ActionBar.ForeColor = System.Drawing.Color.Red;
-            this.ActionBar.Location = new System.Drawing.Point(283, 60);
-            this.ActionBar.Margin = new System.Windows.Forms.Padding(20, 0, 20, 0);
-            this.ActionBar.MarqueeAnimationSpeed = 20;
-            this.ActionBar.Maximum = 120;
-            this.ActionBar.Name = "ActionBar";
-            this.ActionBar.RightToLeftLayout = true;
-            this.ActionBar.Size = new System.Drawing.Size(356, 20);
-            this.ActionBar.Step = 1;
-            this.ActionBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.ActionBar.TabIndex = 1;
-            this.ActionBar.Value = 20;
-            this.ActionBar.Click += new System.EventHandler(this.ActionBar_Click);
             // 
             // ActionLabel
             // 
@@ -867,9 +859,9 @@
             this.tableLayoutPanel1.SetColumnSpan(this.ActionLabel, 7);
             this.ActionLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ActionLabel.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ActionLabel.Location = new System.Drawing.Point(3, 40);
+            this.ActionLabel.Location = new System.Drawing.Point(3, 274);
             this.ActionLabel.Name = "ActionLabel";
-            this.ActionLabel.Size = new System.Drawing.Size(917, 20);
+            this.ActionLabel.Size = new System.Drawing.Size(441, 27);
             this.ActionLabel.TabIndex = 2;
             this.ActionLabel.Text = "label1";
             this.ActionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -882,11 +874,11 @@
             // LocationLabel
             // 
             this.LocationLabel.BackColor = System.Drawing.Color.Honeydew;
-            this.LocationLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.LocationLabel.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LocationLabel.Location = new System.Drawing.Point(0, 484);
+            this.LocationLabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.LocationLabel.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.LocationLabel.Location = new System.Drawing.Point(3, 3);
             this.LocationLabel.Name = "LocationLabel";
-            this.LocationLabel.Size = new System.Drawing.Size(924, 21);
+            this.LocationLabel.Size = new System.Drawing.Size(448, 36);
             this.LocationLabel.TabIndex = 3;
             this.LocationLabel.Text = "label1";
             this.LocationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -950,50 +942,93 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28572F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28572F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.ActionBar, 2, 3);
-            this.tableLayoutPanel1.Controls.Add(this.ActionLabel, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.VixenPotency, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.TargetPotency, 4, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 505);
+            this.tableLayoutPanel1.Controls.Add(this.VixenPotency, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.ActionLabel, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.TargetPotency, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.MultiplierLabel, 6, 5);
+            this.tableLayoutPanel1.Controls.Add(this.ActionBar, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.label16, 1, 2);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 39);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 5;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(924, 100);
+            this.tableLayoutPanel1.RowCount = 10;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.210032F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.41805F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.78637F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.54696F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.156538F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.419889F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 17.34317F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.02214F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.210032F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(448, 530);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // VixenPotency
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.VixenPotency, 3);
+            this.tableLayoutPanel1.SetColumnSpan(this.VixenPotency, 7);
             this.VixenPotency.Critical = false;
             this.VixenPotency.Dock = System.Windows.Forms.DockStyle.Fill;
             this.VixenPotency.Inverse = false;
-            this.VixenPotency.Location = new System.Drawing.Point(0, 0);
+            this.VixenPotency.Location = new System.Drawing.Point(0, 489);
             this.VixenPotency.Margin = new System.Windows.Forms.Padding(0);
             this.VixenPotency.Name = "VixenPotency";
-            this.tableLayoutPanel1.SetRowSpan(this.VixenPotency, 2);
-            this.VixenPotency.Size = new System.Drawing.Size(395, 40);
+            this.VixenPotency.Size = new System.Drawing.Size(447, 38);
             this.VixenPotency.TabIndex = 7;
             this.VixenPotency.LoseShowEnds += new System.EventHandler<System.EventArgs>(this.Potency_LoseShowEnds);
             // 
             // TargetPotency
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.TargetPotency, 3);
+            this.tableLayoutPanel1.SetColumnSpan(this.TargetPotency, 7);
             this.TargetPotency.Critical = false;
             this.TargetPotency.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TargetPotency.Inverse = true;
-            this.TargetPotency.Location = new System.Drawing.Point(527, 0);
+            this.TargetPotency.Location = new System.Drawing.Point(0, 0);
             this.TargetPotency.Margin = new System.Windows.Forms.Padding(0);
             this.TargetPotency.Name = "TargetPotency";
-            this.tableLayoutPanel1.SetRowSpan(this.TargetPotency, 2);
-            this.TargetPotency.Size = new System.Drawing.Size(396, 40);
+            this.TargetPotency.Size = new System.Drawing.Size(447, 38);
             this.TargetPotency.TabIndex = 8;
             this.TargetPotency.LoseShowEnds += new System.EventHandler<System.EventArgs>(this.Potency_LoseShowEnds);
+            // 
+            // ActionBar
+            // 
+            this.ActionBar.Bouncing = false;
+            this.ActionBar.Color00 = System.Drawing.SystemColors.Control;
+            this.ActionBar.Color01 = System.Drawing.Color.Crimson;
+            this.ActionBar.Color02 = System.Drawing.Color.Red;
+            this.ActionBar.Color03 = System.Drawing.Color.OrangeRed;
+            this.ActionBar.Color04 = System.Drawing.Color.Orange;
+            this.ActionBar.Color05 = System.Drawing.Color.Gold;
+            this.ActionBar.Color06 = System.Drawing.Color.Yellow;
+            this.ActionBar.Color07 = System.Drawing.Color.GreenYellow;
+            this.ActionBar.Color08 = System.Drawing.Color.Chartreuse;
+            this.ActionBar.Color09 = System.Drawing.Color.LawnGreen;
+            this.ActionBar.Color10 = System.Drawing.Color.Lime;
+            this.tableLayoutPanel1.SetColumnSpan(this.ActionBar, 5);
+            this.ActionBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ActionBar.Location = new System.Drawing.Point(66, 304);
+            this.ActionBar.MaxValue = 120;
+            this.ActionBar.MinValue = 0;
+            this.ActionBar.Name = "ActionBar";
+            this.ActionBar.Size = new System.Drawing.Size(314, 17);
+            this.ActionBar.TabIndex = 9;
+            this.ActionBar.ToolTip = "";
+            this.ActionBar.Value = 80;
+            // 
+            // MultiplierLabel
+            // 
+            this.MultiplierLabel.BorderColor = System.Drawing.Color.Yellow;
+            this.MultiplierLabel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.MultiplierLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.MultiplierLabel.ForeColor = System.Drawing.Color.Red;
+            this.MultiplierLabel.Location = new System.Drawing.Point(386, 301);
+            this.MultiplierLabel.Name = "MultiplierLabel";
+            this.MultiplierLabel.Size = new System.Drawing.Size(58, 23);
+            this.MultiplierLabel.TabIndex = 10;
+            this.MultiplierLabel.Text = "x2";
+            this.MultiplierLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.MultiplierLabel.Visible = false;
             // 
             // saveVixenFileDialog
             // 
@@ -1004,15 +1039,74 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.splitContainer1);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(450, 555);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Character";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Alignment = System.Windows.Forms.TabAlignment.Bottom;
+            this.tabControl2.Controls.Add(this.EncounterPage);
+            this.tabControl2.Controls.Add(this.MarketPage);
+            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl2.ItemSize = new System.Drawing.Size(1, 1);
+            this.tabControl2.Location = new System.Drawing.Point(0, 0);
+            this.tabControl2.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl2.Multiline = true;
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.Padding = new System.Drawing.Point(0, 0);
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(462, 581);
+            this.tabControl2.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.tabControl2.TabIndex = 0;
+            // 
+            // EncounterPage
+            // 
+            this.EncounterPage.Controls.Add(this.tableLayoutPanel1);
+            this.EncounterPage.Controls.Add(this.LocationLabel);
+            this.EncounterPage.Location = new System.Drawing.Point(4, 4);
+            this.EncounterPage.Name = "EncounterPage";
+            this.EncounterPage.Padding = new System.Windows.Forms.Padding(3);
+            this.EncounterPage.Size = new System.Drawing.Size(454, 572);
+            this.EncounterPage.TabIndex = 0;
+            this.EncounterPage.Text = "tabPage4";
+            this.EncounterPage.UseVisualStyleBackColor = true;
+            // 
+            // MarketPage
+            // 
+            this.MarketPage.Location = new System.Drawing.Point(4, 4);
+            this.MarketPage.Name = "MarketPage";
+            this.MarketPage.Padding = new System.Windows.Forms.Padding(3);
+            this.MarketPage.Size = new System.Drawing.Size(299, 451);
+            this.MarketPage.TabIndex = 1;
+            this.MarketPage.Text = "tabPage5";
+            this.MarketPage.UseVisualStyleBackColor = true;
+            // 
+            // label16
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.label16, 5);
+            this.label16.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label16.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label16.Location = new System.Drawing.Point(66, 98);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(314, 62);
+            this.label16.TabIndex = 11;
+            this.label16.Text = "label16";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(924, 605);
-            this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.LocationLabel);
+            this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
             this.Text = "Form1";
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1041,6 +1135,9 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabControl2.ResumeLayout(false);
+            this.EncounterPage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1052,7 +1149,6 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.ProgressBar ActionBar;
         private System.Windows.Forms.Label ActionLabel;
         private System.Windows.Forms.CheckedListBox PlotListBox;
         private System.Windows.Forms.ProgressBar PlotBar;
@@ -1120,6 +1216,13 @@
         private System.Windows.Forms.RichTextBox JournalTextBox;
         private HPBar VixenPotency;
         private HPBar TargetPotency;
+        private MiscControls.HorizontalSkillBar ActionBar;
+        private MiscControls.BorderLabel MultiplierLabel;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage EncounterPage;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TabPage MarketPage;
+        private System.Windows.Forms.TabPage tabPage3;
     }
 }
 

@@ -1,0 +1,23 @@
+HKCR
+{
+	TControls.QFilterPropPageGeneral.1 = s 'QFilterPropPageGeneral Class'
+	{
+		CLSID = s '{A1F7015A-ACFD-A36c-ADCC-A026EB203889}'
+	}
+	TControls.QFilterPropPageGeneral = s 'QFilterPropPageGeneral Class'
+	{
+		CLSID = s '{A1F7015A-ACFD-A36c-ADCC-A026EB203889}'
+		CurVer = s 'TControls.QFilter.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {A1F7015A-ACFD-A36c-ADCC-A026EB203889} = s 'QFilterPropPageGeneral Class'
+		{
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+		}
+	}
+}

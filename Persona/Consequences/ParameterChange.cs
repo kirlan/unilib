@@ -32,7 +32,7 @@ namespace Persona.Consequences
             string sParam = "";
             pXml.GetStringAttribute(pParamNode, "param", ref sParam);
             foreach (Parameter pParam in cParams)
-                if (pParam.m_sName == sParam)
+                if (pParam.FullName == sParam)
                 {
                     m_pParam = pParam;
                     break;
@@ -43,13 +43,13 @@ namespace Persona.Consequences
 
         internal override void WriteXML(UniLibXML pXml, XmlNode pConsequenceNode)
         {
-            pXml.AddAttribute(pConsequenceNode, "param", m_pParam.m_sName);
+            pXml.AddAttribute(pConsequenceNode, "param", m_pParam.FullName);
             pXml.AddAttribute(pConsequenceNode, "delta", m_fDelta);
         }
 
         public override string ToString()
         {
-            return string.Format("{0} {1:+#.##;-#.##}", m_pParam != null ? m_pParam.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР", m_fDelta);
+            return string.Format("{0} {1:+#.##;-#.##}", m_pParam != null ? m_pParam.FullName : "НЕВЕРНЫЙ ПАРАМЕТР", m_fDelta);
         }
 
         public override Consequence Clone()
@@ -70,11 +70,8 @@ namespace Persona.Consequences
             if (pParam == null)
                 return;
 
-            pParam.m_fValue += m_fDelta;
-            if (pParam.m_fValue < pParam.m_fMin)
-                pParam.m_fValue = pParam.m_fMin;
-            if (pParam.m_fValue > pParam.m_fMax)
-                pParam.m_fValue = pParam.m_fMax;
+            pModule.m_sLog.AppendLine("\tDO " + this.ToString());
+            pParam.ChangeValue(m_fDelta);
         }
     }
 }

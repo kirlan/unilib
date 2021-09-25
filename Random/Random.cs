@@ -8,13 +8,59 @@ namespace Random
     {
         static System.Random rnd = new System.Random();
 
+        static int seed = 0;
+
+        public static int GetNewSeed()
+        {
+            seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
+            SetSeed(seed);
+            return seed;
+        }
+
+        public static void SetSeed(int iSeed)
+        {
+            seed = iSeed;
+
+            rnd = new System.Random(seed);
+
+            //int iTest = rnd.Next();
+        }
+
+        static List<double> s_cDebug = new List<double>();
+        static List<double> s_cDebug2 = new List<double>();
+
+        static private bool s_bDebug = false;
+
+        public static void SetDebug(bool bDebug)
+        {
+            s_bDebug = bDebug;
+            if (s_bDebug)
+            {
+                s_cDebug2.Clear();
+                s_cDebug2.AddRange(s_cDebug);
+
+                s_cDebug.Clear();
+            }
+        }
+
         /// <summary>
         /// Toss a dice!
         /// </summary>
         /// <returns>random number in 1..6</returns>
         public static int Toss1d6()
         {
-            return 1 + rnd.Next(6);
+            return GetInRange(1, 6);
+        }
+
+        /// <summary>
+        /// Returns random integer in given range (max value inclusive!)
+        /// </summary>
+        /// <param name="iMin">min. possible value</param>
+        /// <param name="iMax">max. possible value</param>
+        /// <returns>random number in iMin..iMax</returns>
+        public static int GetInRange(int iMin, int iMax)
+        {
+            return iMin + Get(iMax - iMin + 1);
         }
 
         /// <summary>
@@ -27,7 +73,40 @@ namespace Random
             if (val <= 0)
                 return 0;
 
-            return rnd.Next(val);
+            int iNext = rnd.Next(val);
+            if (s_bDebug)
+            {
+                s_cDebug.Add(iNext);
+
+                if (s_cDebug.Count <= s_cDebug2.Count)
+                {
+                    if (iNext != s_cDebug2[s_cDebug.Count - 1])
+                        return iNext;
+                }
+            }
+
+            return iNext;
+        }
+
+        /// <summary>
+        /// A double-precision floating point number greater than or equal to 0.0, and less than 1.0.
+        /// </summary>
+        /// <returns>random double in 0..1</returns>
+        public static double Sample()
+        {
+            double fNext = rnd.NextDouble();
+            if (s_bDebug)
+            {
+                s_cDebug.Add(fNext);
+
+                if (s_cDebug.Count <= s_cDebug2.Count)
+                {
+                    if (fNext != s_cDebug2[s_cDebug.Count - 1])
+                        return fNext;
+                }
+            }
+
+            return fNext;
         }
 
         /// <summary>
@@ -40,7 +119,7 @@ namespace Random
             if (val <= 0.0f)
                 return 0.0f;
 
-            return val * (float)rnd.NextDouble();
+            return val * (float)Sample();
         }
 
         /// <summary>
@@ -53,7 +132,7 @@ namespace Random
             if (val <= 0.0)
                 return 0.0;
 
-            return val * rnd.NextDouble();
+            return val * Sample();
         }
 
         /// <summary>
@@ -128,15 +207,20 @@ namespace Random
             if (val <= 0)
                 return false;
 
-            return rnd.Next(val) == 0;
+            return Get(val) == 0;
         }
 
         public static bool Chances(int iChances, int iTotal)
         {
-            return rnd.Next(iTotal) < iChances;
+            return Get(iTotal) < iChances;
         }
 
-        private static double a = Math.Sqrt(Math.PI);
+        public static bool Chances(float fChances, float fTotal)
+        {
+            return Get(fTotal) < fChances;
+        }
+
+        private static double SqrtPI = Math.Sqrt(Math.PI);
 
         public static bool Gauss(int iValue, int k)
         {
@@ -149,26 +233,27 @@ namespace Random
 
             double fValue = (double)iValue / k;
 
-            double Gau = Math.Pow(Math.E, -a * fValue * fValue);
+            double Gau = Math.Pow(Math.E, -SqrtPI * fValue * fValue);
 
-            return rnd.NextDouble() < Gau;
+            return Sample() < Gau;
         }
 
         public static bool ChooseOne(double iChances1, double iChances2)
         {
             //return rnd.Next((int)(iChances1 * 10000 + iChances2 * 10000)) < (int)(iChances1 * 10000);
-            return rnd.NextDouble()*(iChances1 * 10000 + iChances2 * 10000) < iChances1 * 10000;
+            return Sample() * (iChances1 * 10000 + iChances2 * 10000) < iChances1 * 10000;
         }
 
         /// <summary>
         /// Возвращает true в iChances1 случаях и false в iChances2 случаях
+        /// Эквивалентно вызову Chances(iChances1, iChances1 + iChances2)
         /// </summary>
         /// <param name="iChances1"></param>
         /// <param name="iChances2"></param>
         /// <returns></returns>
         public static bool ChooseOne(int iChances1, int iChances2)
         {
-            return rnd.Next(iChances1 + iChances2) < iChances1;
+            return Chances(iChances1, iChances1 + iChances2);
         }
 
         public static int ChooseOne(ICollection<int> cChances, int iPow)
@@ -194,8 +279,35 @@ namespace Random
             return -1;
         }
 
+        public static int ChooseBest(ICollection<float> cChances)
+        {
+            if (cChances.Count == 0)
+                return -1;
+
+            float fBest = 0;
+            List<int> cBests = new List<int>();
+            int iIndex = 0;
+            foreach (float fChance in cChances)
+            {
+                if (fBest == fChance)
+                    cBests.Add(iIndex);
+                else if (fBest < fChance)
+                {
+                    fBest = fChance;
+                    cBests.Clear();
+                    cBests.Add(iIndex);
+                }
+                iIndex++;
+            }
+
+            return cBests[Get(cBests.Count)];
+        }
+
         public static int ChooseOne(ICollection<float> cChances, int iPow)
         {
+            if (cChances.Count == 0)
+                return -1;
+
             float fTotal = 0;
             foreach (float fChance in cChances)
                 fTotal += (float)Math.Pow(fChance, iPow);
@@ -214,11 +326,23 @@ namespace Random
                 index++;
             }
 
-            return -1;
+            index = 0;
+            foreach (float fChance in cChances)
+            {
+                if (fChance > 0.0f)
+                    return index;
+
+                index++;
+            }
+
+            return Get(cChances.Count);
         }
 
         public static int ChooseOne(ICollection<float> cChances)
         {
+            if (cChances.Count == 0)
+                return -1;
+
             float fTotal = 0;
             foreach (float fChance in cChances)
                 fTotal += fChance;
@@ -244,9 +368,9 @@ namespace Random
                     return index;
 
                 index++;
-            } 
-            
-            return -1;
+            }
+
+            return Get(cChances.Count);
         }
     }
 }

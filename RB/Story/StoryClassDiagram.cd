@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="RB.Story.CStoryBase" Collapsed="true">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAgAAAEAAAAAAQAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Story\CStoryBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RB.Story.CStoryLine" Collapsed="true">
+    <Position X="5.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAgBAAAAAAAAAIAABAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Story\CStoryLine.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Trouble" />
+      <Property Name="Solution" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="RB.Story.Solutions.CPlot" Collapsed="true">
+    <Position X="7.75" Y="2.75" Width="1.5" />
+    <AssociationLine Name="Goal" Type="RB.Story.Adventures.CAdventure">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.411" Y="0.675" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Story\Solutions\CPlot.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Goal" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="RB.Story.Solutions.CHarmLiquidation" Collapsed="true">
+    <Position X="9" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAEAAAAAAAAAAAACgAAAAAAAAAAgAQAAAAAAA=</HashCode>
+      <FileName>Story\Solutions\CHarmLiquidation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RB.Story.Solutions.CThreatPrevention" Collapsed="true">
+    <Position X="7.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAIAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Story\Solutions\CThreatPrevention.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RB.Story.Adventures.CAdventure" Collapsed="true">
+    <Position X="2.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAEAAAABAAAAAAAAAAAAABAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Story\Adventures\CAdventure.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SubAdventure" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="RB.Story.Adventures.CAcquisition" Collapsed="true">
+    <Position X="0.5" Y="5.25" Width="1.5" />
+    <AssociationLine Name="KeysSeeking" Type="RB.Story.Adventures.CSeekingSimple" ManuallyRouted="true">
+      <Path>
+        <Point X="1.25" Y="5.941" />
+        <Point X="1.25" Y="6.316" />
+        <Point X="5.75" Y="6.316" />
+        <Point X="5.75" Y="5.941" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAIAAABAAgAAAAAAAACAAAg=</HashCode>
+      <FileName>Story\Adventures\CAcquisition.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="FinalChallenge" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="KeysSeeking" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="RB.Story.Adventures.CChallenge" Collapsed="true">
+    <Position X="2.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAQAAAAAAABAAAAABAgAAAABAAAQAAAQAAABIBAQA=</HashCode>
+      <FileName>Story\Adventures\CChallenge.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RB.Story.Adventures.CSeekingSimple" Collapsed="true">
+    <Position X="5" Y="5.25" Width="1.5" />
+    <AssociationLine Name="SeekingSteps" Type="RB.Story.Adventures.CAdventure">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.443" Y="-0.398" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAIAAAAAAAAAAABAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Story\Adventures\CSeekingSimple.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="FinalChallenge" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="SeekingSteps" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="RB.Story.Troubles.CTrouble" Collapsed="true">
+    <Position X="9.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAQAAAAEAA=</HashCode>
+      <FileName>Story\Troubles\CTrouble.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RB.Story.Troubles.Harm.CForcedTransportation" Collapsed="true">
+    <Position X="10.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAACAAAAAABASAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Story\Troubles\Harm\CForcedTransportation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RB.Story.Troubles.Harm.CHarm" Collapsed="true">
+    <Position X="10.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABQAAAIAAAAQAAAAAQEAAAQAAAAAAQAAA0AA=</HashCode>
+      <FileName>Story\Troubles\Harm\CHarm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RB.Story.Solutions.Harm.CReturnHome" Collapsed="true">
+    <Position X="7.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Story\Solutions\Harm\CReturnHome.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RB.Story.Solutions.Harm.CDirectLiquidation" Collapsed="true">
+    <Position X="9" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Story\Solutions\Harm\CDirectLiquidation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="RB.Story.IStoryBase" Collapsed="true">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Story\CStoryBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

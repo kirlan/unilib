@@ -33,6 +33,7 @@ namespace VixenQuest.Story
         AssFucking,
         /// <summary>
         /// anal vs. traditional
+        /// у нас - пассивный анальный секс это ТРАХНУТЬ в жопу
         /// </summary>
         AssFucked,
         /// <summary>
@@ -61,8 +62,8 @@ namespace VixenQuest.Story
         Maso,
         Seducing,
         Seduced,
-        Pursue,
-        Evade,
+        //Pursue,
+        //Evade,
         Move,
         SellLoot,
         Bargain,
@@ -308,25 +309,25 @@ namespace VixenQuest.Story
            "Catched while masturbating",
         };
 
-        private static string[] m_aActPursue = 
-        {
-           "Catching",
-           "Capturing",
-           "Pursuing",
-           "Tracking",
-           "Chasing",
-            //"Coming to home of",
-            //"Seeking for",
-            //"Collecting rumors about"
-        };
+        //private static string[] m_aActPursue = 
+        //{
+        //   "Catching",
+        //   "Capturing",
+        //   "Pursuing",
+        //   "Tracking",
+        //   "Chasing",
+        //    //"Coming to home of",
+        //    //"Seeking for",
+        //    //"Collecting rumors about"
+        //};
 
-        private static string[] m_aActEvade = 
-        {
-           "Sneaking away",
-           "Escaping",
-           "Running",
-           "Hiding"
-        };
+        //private static string[] m_aActEvade = 
+        //{
+        //   "Sneaking away",
+        //   "Escaping",
+        //   "Running",
+        //   "Hiding"
+        //};
 
         public Opponent m_pTarget;
 
@@ -345,9 +346,9 @@ namespace VixenQuest.Story
                     sName = sName.Remove(sName.Length - 1);
                 if (Passive)
                 {
-                    if (m_eType == ActionType.Evade)
-                        return sName + " from " + m_pTarget.LongEncounterName + "...";
-                    else
+                    //if (m_eType == ActionType.Evade)
+                    //    return sName + " from " + m_pTarget.LongEncounterName + "...";
+                    //else
                         return sName + " by " + m_pTarget.LongEncounterName + "...";
                 }
                 else
@@ -454,13 +455,15 @@ namespace VixenQuest.Story
                 case ActionType.Maso:
                     part1 = Rnd.Get(m_aActMaso.Length);
                     return m_aActMaso[part1];
-                case ActionType.Pursue:
-                    part1 = Rnd.Get(m_aActPursue.Length);
-                    return m_aActPursue[part1];
-                default:
-                    part1 = Rnd.Get(m_aActEvade.Length);
-                    return m_aActEvade[part1];
+                //case ActionType.Pursue:
+                //    part1 = Rnd.Get(m_aActPursue.Length);
+                //    return m_aActPursue[part1];
+                //default:
+                //    part1 = Rnd.Get(m_aActEvade.Length);
+                //    return m_aActEvade[part1];
             }
+
+            return "Unknown action";
         }
 
         private bool IsActionPossible(ActionType eType, Vixen pVixen, Opponent pTarget)
@@ -838,8 +841,8 @@ namespace VixenQuest.Story
                    m_eType == ActionType.Fisted ||
                    m_eType == ActionType.Maso ||
                    m_eType == ActionType.OralFucked ||
-                   m_eType == ActionType.Seduced ||
-                   m_eType == ActionType.Evade)
+                   m_eType == ActionType.Seduced)// ||
+                   //m_eType == ActionType.Evade)
                     return true;
                 else
                     return false;
@@ -860,18 +863,18 @@ namespace VixenQuest.Story
             {
                 switch (m_eType)
                 {
-                    case ActionType.Evade:
-                        if (Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]); 
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
-                    case ActionType.Pursue:
-                        if (Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
+                    //case ActionType.Evade:
+                    //    if (Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]); 
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
+                    //case ActionType.Pursue:
+                    //    if (Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
                     case ActionType.Seduced:
                         if (Passive)
                             iResult = Math.Max(pVixen.Stats[Stat.Beauty], m_pTarget.Stats[Stat.Beauty]);
@@ -906,18 +909,18 @@ namespace VixenQuest.Story
             {
                 switch (m_eType)
                 {
-                    case ActionType.Evade:
-                        if (!Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
-                    case ActionType.Pursue:
-                        if (!Passive)
-                            iResult = Math.Max(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        else
-                            iResult = Math.Min(pVixen.Stats[Stat.Force], m_pTarget.Stats[Stat.Force]);
-                        break;
+                    //case ActionType.Evade:
+                    //    if (!Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
+                    //case ActionType.Pursue:
+                    //    if (!Passive)
+                    //        iResult = Math.Max(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    else
+                    //        iResult = Math.Min(pVixen.Stats[Stat.Presence], m_pTarget.Stats[Stat.Presence]);
+                    //    break;
                     case ActionType.Seduced:
                         if (!Passive)
                             iResult = Math.Max(pVixen.Stats[Stat.Beauty], m_pTarget.Stats[Stat.Beauty]);
@@ -953,12 +956,12 @@ namespace VixenQuest.Story
         {
             switch (m_eType)
             {
-                case ActionType.Evade:
-                    CalcStatSuccess(pVixen, Stat.Force);
-                    break;
-                case ActionType.Pursue:
-                    CalcStatSuccess(pVixen, Stat.Force);
-                    break;
+                //case ActionType.Evade:
+                //    CalcStatSuccess(pVixen, Stat.Presence);
+                //    break;
+                //case ActionType.Pursue:
+                //    CalcStatSuccess(pVixen, Stat.Presence);
+                //    break;
                 case ActionType.Seduced:
                     CalcStatSuccess(pVixen, Stat.Beauty);
                     break;

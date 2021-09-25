@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RB</RootNamespace>
     <AssemblyName>RB</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -32,6 +32,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,6 +58,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Windows.Presentation" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -68,14 +70,52 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CEstate.cs" />
-    <Compile Include="CLocation.cs" />
+    <Compile Include="CMedian.cs" />
+    <Compile Include="Form2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form2.Designer.cs">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form3.Designer.cs">
+      <DependentUpon>Form3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Socium\CEstate.cs" />
+    <Compile Include="Socium\CSociety.cs" />
+    <Compile Include="Socium\CStratum.cs" />
+    <Compile Include="Story\Adventures\CAcquisition.cs" />
+    <Compile Include="Story\Adventures\CAdventure.cs" />
+    <Compile Include="Story\Adventures\CChallenge.cs" />
+    <Compile Include="Story\Adventures\CSeekingSimple.cs" />
+    <Compile Include="Story\CStoryBase.cs" />
+    <Compile Include="Story\CStoryLine.cs" />
+    <Compile Include="Story\Solutions\CHarmLiquidation.cs" />
+    <Compile Include="Story\Solutions\CPlot.cs" />
+    <Compile Include="Story\Solutions\CThreatPrevention.cs" />
+    <Compile Include="Story\Solutions\Harm\CAlternateLiquidation.cs" />
+    <Compile Include="Story\Solutions\Harm\CDirectLiquidation.cs" />
+    <Compile Include="Story\Solutions\Harm\CImpossibleLiquidation.cs" />
+    <Compile Include="Story\Solutions\Harm\CNewHome.cs" />
+    <Compile Include="Story\Solutions\Harm\CNewStatus.cs" />
+    <Compile Include="Story\Solutions\Harm\CReplaceObject.cs" />
+    <Compile Include="Story\Solutions\Harm\CRestoreObject.cs" />
+    <Compile Include="Story\Solutions\Harm\CRestoreStatus.cs" />
+    <Compile Include="Story\Solutions\Harm\CReturnHome.cs" />
+    <Compile Include="Story\Solutions\Threat\CDefence.cs" />
+    <Compile Include="Story\Solutions\Threat\CDefenceSeeking.cs" />
+    <Compile Include="Story\Solutions\Threat\CVillainPunishment.cs" />
+    <Compile Include="Story\Troubles\CTrouble.cs" />
+    <Compile Include="Geography\CLink.cs" />
+    <Compile Include="Geography\CLocation.cs" />
     <Compile Include="CParty.cs" />
-    <Compile Include="CPerson.cs" />
-    <Compile Include="CSociety.cs" />
-    <Compile Include="CSocietyType.cs" />
+    <Compile Include="Socium\CPerson.cs" />
+    <Compile Include="Socium\CState.cs" />
     <Compile Include="CWorld.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -83,11 +123,73 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="KColor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Socium\CBuilding.cs" />
+    <Compile Include="Socium\CEpoch.cs" />
+    <Compile Include="Socium\CNation.cs" />
+    <Compile Include="Socium\CProfessionInfo.cs" />
+    <Compile Include="Socium\CRace.cs" />
+    <Compile Include="Socium\CSocialOrder.cs" />
+    <Compile Include="Socium\Genetix\Fenotype.cs" />
+    <Compile Include="Socium\Genetix\GenetixBase.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\ArmsGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\BodyGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\BrainGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\EarsGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\EyesGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\FaceGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\HairsGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\HeadGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\HideGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\LegsGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\LifeCycleGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\TailGenetix.cs" />
+    <Compile Include="Socium\Genetix\GenetixParts\WingsGenetix.cs" />
+    <Compile Include="Socium\Languages\African.cs" />
+    <Compile Include="Socium\Languages\Arabian.cs" />
+    <Compile Include="Socium\Languages\Asian.cs" />
+    <Compile Include="Socium\Languages\Aztec.cs" />
+    <Compile Include="Socium\Languages\Drow.cs" />
+    <Compile Include="Socium\Languages\Dwarwen.cs" />
+    <Compile Include="Socium\Languages\Elven.cs" />
+    <Compile Include="Socium\Languages\Eskimoid.cs" />
+    <Compile Include="Socium\Languages\European.cs" />
+    <Compile Include="Socium\Languages\Greek.cs" />
+    <Compile Include="Socium\Languages\Highlander.cs" />
+    <Compile Include="Socium\Languages\Hindu.cs" />
+    <Compile Include="Socium\Languages\Language.cs" />
+    <Compile Include="Socium\Languages\Latin.cs" />
+    <Compile Include="Socium\Languages\Northman.cs" />
+    <Compile Include="Socium\Languages\Orkish.cs" />
+    <Compile Include="Socium\Languages\Slavic.cs" />
+    <Compile Include="Socium\Psichology\Culture.cs" />
+    <Compile Include="Socium\Psichology\CultureTemplate.cs" />
+    <Compile Include="Socium\Psichology\Customs.cs" />
+    <Compile Include="Socium\Psichology\Mathematics\ToolBox.cs" />
+    <Compile Include="Socium\Psichology\Mathematics\Vector.cs" />
+    <Compile Include="Socium\CSettlement.cs" />
+    <Compile Include="Story\Troubles\Harm\CForcedTransportation.cs" />
+    <Compile Include="Story\Troubles\Harm\CHarm.cs" />
+    <Compile Include="Story\Troubles\Harm\CImprisonment.cs" />
+    <Compile Include="Story\Troubles\Harm\CInfamy.cs" />
+    <Compile Include="Story\Troubles\Harm\CInjury.cs" />
+    <Compile Include="Story\Troubles\Harm\CMaterialHarm.cs" />
+    <Compile Include="Story\Troubles\Harm\CMurder.cs" />
+    <Compile Include="Story\Troubles\Harm\CSabotage.cs" />
+    <Compile Include="Story\Troubles\Harm\CStatusHarm.cs" />
+    <Compile Include="Story\Troubles\Harm\CTheft.cs" />
+    <Compile Include="Geography\Territory.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form2.resx">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form3.resx">
+      <DependentUpon>Form3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -99,6 +201,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -108,8 +211,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Story\StoryClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DimensionX\MIConvexHull\MIConvexHull.csproj">
+      <Project>{2337776D-7D0C-40AA-A439-C26C3CE24FAB}</Project>
+      <Name>MIConvexHull</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NameGen\NameGen.csproj">
       <Project>{A21776DA-BEA3-46E1-9C94-26FFBBDF7A66}</Project>
       <Name>NameGen</Name>
@@ -136,6 +244,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

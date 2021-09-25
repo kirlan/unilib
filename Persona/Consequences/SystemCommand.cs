@@ -105,6 +105,7 @@ namespace Persona.Consequences
         /// <param name="pModule">модуль, состояние которого будет меняться</param>
         internal override void Apply(Module pModule)
         {
+            pModule.m_sLog.AppendLine("\tDO " + this.ToString());
             switch (m_eAction)
             {
                 case ActionType.Return:

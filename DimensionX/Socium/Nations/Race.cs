@@ -849,7 +849,7 @@ namespace Socium.Nations
         /// Согласовать параметры расы с параметрами мира.
         /// </summary>
         /// <param name="pWorld">мир</param>
-        public void Accommodate(World pWorld, Epoch pEpoch)
+        public void Accommodate(int iWorldMagicLimit, int iWorldTechLevel, Epoch pEpoch)
         {
             if (m_bInvader)
             {
@@ -891,20 +891,20 @@ namespace Socium.Nations
             {
                 if (!m_bDying)
                 {
-                    if (m_iMagicLimit <= pWorld.m_iMagicLimit)
-                        m_iMagicLimit = pWorld.m_iMagicLimit;
+                    if (m_iMagicLimit <= iWorldMagicLimit)
+                        m_iMagicLimit = iWorldMagicLimit;
                     else
-                        m_iMagicLimit = (m_iMagicLimit + pWorld.m_iMagicLimit + 1) / 2;
+                        m_iMagicLimit = (m_iMagicLimit + iWorldMagicLimit + 1) / 2;
 
-                    if (m_iTechLevel <= pWorld.m_iTechLevel)
+                    if (m_iTechLevel <= iWorldTechLevel)
                     {
-                        m_iTechLevel = pWorld.m_iTechLevel;
+                        m_iTechLevel = iWorldTechLevel;
 
                         if (m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Primitive)
                             m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
                     }
                     else
-                        m_iTechLevel = (m_iTechLevel + pWorld.m_iTechLevel + 1) / 2;
+                        m_iTechLevel = (m_iTechLevel + iWorldTechLevel + 1) / 2;
                 }
 
                 int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);

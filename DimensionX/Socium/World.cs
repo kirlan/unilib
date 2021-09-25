@@ -53,7 +53,7 @@ namespace Socium
             if(m_aLocalNations != null)
                 foreach (Nation pNation in m_aLocalNations)
                 {
-                    pNation.Accommodate(this, pEpoch);
+                    pNation.Accommodate(m_iMagicLimit, m_iTechLevel, pEpoch);
                     cNations.Add(pNation);
 
                     if (pNation.m_bDying)
@@ -84,7 +84,7 @@ namespace Socium
                     //if (iChance < 0)
                     //{
                         Nation pNation = new Nation(pEpoch.m_cNatives[iChance], pEpoch);//new Race(pRaceTemplate, pEpoch);
-                        pNation.Accommodate(this, pEpoch);
+                        pNation.Accommodate(m_iMagicLimit, m_iTechLevel, pEpoch);
 
                         cNations.Add(pNation);
                         //cRaceChances[pRaceTemplate] = 0;
@@ -129,7 +129,7 @@ namespace Socium
                     {
                         Nation pNation = new Nation(pRaceTemplate, pEpoch);
                         pNation.m_bInvader = true;
-                        pNation.Accommodate(this, pEpoch);
+                        pNation.Accommodate(m_iMagicLimit, m_iTechLevel, pEpoch);
 
                         cNations.Add(pNation);
                         cInvadersRaceChances[pRaceTemplate] = 0;

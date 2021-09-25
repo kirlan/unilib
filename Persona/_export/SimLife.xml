@@ -1,0 +1,3100 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Persona>
+  <Module name="Новый модуль" desc="Описание отсутствует">
+    <Parameters>
+      <Numeric name="Причёска" group="Внешность" comment="" hidden="False" value="1" min="0" max="3" format="0">
+        <Range name="спутанные волосы" min="0" max="0" />
+        <Range name="растрёпанные волосы" min="1" max="1" />
+        <Range name="аккуратно уложенные волосы" min="2" max="2" />
+        <Range name="модельная причёска" min="3" max="3" />
+      </Numeric>
+      <Numeric name="Гигиена" group="Внешность" comment="" hidden="False" value="0" min="0" max="4" format="0">
+        <Range name="чист и свеж" min="0" max="0" />
+        <Range name="немного вспотел" min="1" max="1" />
+        <Range name="немного пахнет потом" min="2" max="2" />
+        <Range name="разит потом" min="3" max="3" />
+        <Range name="разит как от бомжа" min="4" max="4" />
+      </Numeric>
+      <Numeric name="Здоровье" group="Самочуствие" comment="" hidden="False" value="4" min="0" max="4" format="0">
+        <Range name="на пороге смерти" min="0" max="0" />
+        <Range name="тяжёлая болезнь" min="1" max="1" />
+        <Range name="нездоровится" min="2" max="2" />
+        <Range name="как-то не очень" min="3" max="3" />
+        <Range name="полный порядок" min="4" max="4" />
+      </Numeric>
+      <Numeric name="Разум" group="Самочуствие" comment="" hidden="False" value="3" min="0" max="4" format="0">
+        <Range name="на грани безумия" min="0" max="0" />
+        <Range name="депрессия" min="1" max="1" />
+        <Range name="заторможен" min="2" max="2" />
+        <Range name="норма" min="3" max="3" />
+        <Range name="кристально чист" min="4" max="4" />
+      </Numeric>
+      <Numeric name="Настроение" group="Самочуствие" comment="" hidden="False" value="3" min="0" max="4" format="0">
+        <Range name="хуже некуда" min="0" max="0" />
+        <Range name="отвратительное" min="1" max="1" />
+        <Range name="скверное" min="2" max="2" />
+        <Range name="нормальное" min="3" max="3" />
+        <Range name="отличное" min="4" max="4" />
+      </Numeric>
+      <Numeric name="Голод" group="Самочуствие" comment="0-20" hidden="False" value="5" min="0" max="20" format="0">
+        <Range name="жуткий голод" min="18" max="20" />
+        <Range name="лёгкий голод" min="10" max="17.99" />
+        <Range name="не голоден" min="1" max="9.99" />
+        <Range name="сыт до отвала" min="0" max="0.99" />
+      </Numeric>
+      <Numeric name="Жажда" group="Самочуствие" comment="0-20" hidden="False" value="15" min="0" max="20" format="0">
+        <Range name="жуткий сушняк" min="18" max="20" />
+        <Range name="лёгкая жажда" min="10" max="17.99" />
+        <Range name="пить не хочется" min="1" max="9.99" />
+        <Range name="пить не хочется" min="0" max="0.99" />
+      </Numeric>
+      <Numeric name="Усталость" group="Самочуствие" comment="Измеряется в количестве часов, которые необходимо проспать чтобы полностью отдохнуть." hidden="False" value="4" min="0" max="15" format="0">
+        <Range name="еле держится на ногах" min="11" max="15" />
+        <Range name="сильно устал" min="8" max="10" />
+        <Range name="почти не устал" min="1" max="7" />
+        <Range name="фонтан энергии" min="0" max="0" />
+      </Numeric>
+      <Numeric name="Опьянение" group="Самочуствие" comment="" hidden="False" value="0" min="0" max="10" format="0">
+        <Range name="трезв" min="0" max="0" />
+        <Range name="немного выпивши" min="1" max="2" />
+        <Range name="пьян" min="3" max="5" />
+        <Range name="пьян в стельку" min="6" max="10" />
+      </Numeric>
+      <Numeric name="Год" group="Время" comment="" hidden="True" value="2015" min="2015" max="2100" format="0" />
+      <Numeric name="Месяц" group="Время" comment="" hidden="True" value="5" min="1" max="13" format="0">
+        <Range name="Январь" min="1" max="1" />
+        <Range name="Февраль" min="2" max="2" />
+        <Range name="Март" min="3" max="3" />
+        <Range name="Апрель" min="4" max="4" />
+        <Range name="Май" min="5" max="5" />
+        <Range name="Июнь" min="6" max="6" />
+        <Range name="Июль" min="7" max="7" />
+        <Range name="Август" min="8" max="8" />
+        <Range name="Сентябрь" min="9" max="9" />
+        <Range name="Октябрь" min="10" max="10" />
+        <Range name="Ноябрь" min="11" max="11" />
+        <Range name="Декабрь" min="12" max="12" />
+        <Range name="Следующий январь" min="13" max="13" />
+        <Range name="Не зима" min="3" max="11" />
+        <Range name="Начало весны" min="3" max="4" />
+        <Range name="Лето" min="6" max="8" />
+        <Range name="Начало осени" min="9" max="10" />
+        <Range name="Конец весны" min="4" max="5" />
+        <Range name="Конец осени" min="10" max="11" />
+      </Numeric>
+      <Numeric name="День" group="Время" comment="" hidden="True" value="1" min="1" max="32" format="0" />
+      <Numeric name="День недели" group="Время" comment="" hidden="False" value="5" min="1" max="8" format="0">
+        <Range name="Понедельник" min="1" max="1" />
+        <Range name="Вторник" min="2" max="2" />
+        <Range name="Среда" min="3" max="3" />
+        <Range name="Черверг" min="4" max="4" />
+        <Range name="Пятница" min="5" max="5" />
+        <Range name="Суббота" min="6" max="6" />
+        <Range name="Воскресенье" min="7" max="7" />
+        <Range name="Следующий понедельник" min="8" max="8" />
+      </Numeric>
+      <Numeric name="Час" group="Время" comment="" hidden="True" value="12" min="0" max="47" format="00">
+        <Range name="Ночь" min="0" max="4" />
+        <Range name="Утро" min="5" max="11" />
+        <Range name="День" min="12" max="17" />
+        <Range name="Вечер" min="18" max="23" />
+        <Range name="Следующая ночь" min="24" max="29" />
+        <Range name="Следующее утро" min="30" max="35" />
+        <Range name="Следующий день" min="36" max="41" />
+        <Range name="Следующий вечер" min="42" max="47" />
+      </Numeric>
+      <Numeric name="Минуты" group="Время" comment="" hidden="True" value="0" min="0" max="3600" format="00" />
+      <Numeric name="Длина месяца" group="Время" comment="" hidden="True" value="30" min="28" max="31" format="0">
+        <Range name="обычный февраль" min="28" max="28" />
+        <Range name="високосный январь" min="29" max="29" />
+        <Range name="чётный месяц" min="30" max="30" />
+        <Range name="нечётный месяц" min="31" max="31" />
+      </Numeric>
+      <Numeric name="Время сигнала" group="Будильник" comment="" hidden="True" value="7" min="0" max="23" format="00" />
+      <Numeric name="Продолжительность сна (часы)" group="Будильник" comment="" hidden="True" value="0" min="0" max="100" format="0" />
+      <Numeric name="Время сигнала завтра" group="Будильник" comment="" hidden="True" value="0" min="0" max="48" format="0" />
+      <Numeric name="Продолжительность суток" group="Системные константы" comment="" hidden="True" value="24" min="24" max="24" format="0" />
+      <Numeric name="Реальная температура на улице" group="Окружение" comment="" hidden="False" value="15" min="-50" max="50" format="0 °">
+        <Range name="Сильный мороз" min="-30" max="-14" />
+        <Range name="Мороз" min="-13.99" max="-6" />
+        <Range name="Холодно" min="-5.99" max="4.99" />
+        <Range name="Прохладно" min="5" max="14.99" />
+        <Range name="Тепло" min="15" max="25.99" />
+        <Range name="Жарко" min="26" max="40" />
+      </Numeric>
+      <Numeric name="Рассчётная ощущаемая температура" group="Окружение" comment="" hidden="True" value="18" min="-30" max="40" format="0 °">
+        <Range name="Жутко холодно" min="-30" max="-14" />
+        <Range name="Очень холодно" min="-13.99" max="-6" />
+        <Range name="Холодно" min="-5.99" max="4.99" />
+        <Range name="Прохладно" min="5" max="14.99" />
+        <Range name="Тепло" min="15" max="25.99" />
+        <Range name="Жарко" min="26" max="34.99" />
+        <Range name="Очень жарко" min="35" max="40" />
+      </Numeric>
+      <Numeric name="Комфортная температура" group="Системные константы" comment="" hidden="True" value="19" min="19" max="19" format="0" />
+      <Numeric name="Продолжительность часа" group="Системные константы" comment="" hidden="True" value="60" min="60" max="60" format="0" />
+      <Numeric name="Остаток часа" group="Время" comment="" hidden="True" value="0" min="0" max="3600" format="00" />
+      <Numeric name="Продолжительность сна (часы) -1" group="Будильник" comment="" hidden="True" value="0" min="0" max="100" format="0" />
+      <Numeric name="1" group="Системные константы" comment="" hidden="True" value="1" min="1" max="1" format="0" />
+      <Numeric name="Ощущаемая температура" group="Окружение" comment="" hidden="False" value="18" min="-30" max="40" format="0 °">
+        <Range name="Жутко холодно" min="-30" max="-14" />
+        <Range name="Очень холодно" min="-13.99" max="-6" />
+        <Range name="Холодно" min="-5.99" max="4.99" />
+        <Range name="Прохладно" min="5" max="14.99" />
+        <Range name="Тепло" min="15" max="25.99" />
+        <Range name="Жарко" min="26" max="34.99" />
+        <Range name="Очень жарко" min="35" max="40" />
+      </Numeric>
+      <Bool name="Будильник включён" group="Будильник" comment="" hidden="True" value="False" />
+      <Bool name="ВСЕГДА" group="Системные констатны" comment="" hidden="True" value="True" />
+      <Bool name="Инициализация выполнена" group="Системные констатны" comment="" hidden="True" value="False" />
+      <String name="Описание" group="Будильник" comment="" hidden="True" value="" />
+      <String name="Часы" group="Время" comment="" hidden="False" value="" />
+      <String name="Будильник" group="Время" comment="" hidden="False" value="" />
+      <String name="Название месяца" group="Время" comment="" hidden="True" value="" />
+      <String name="Дата" group="Время" comment="" hidden="False" value="" />
+      <String name="Погода" group="Окружение" comment="" hidden="False" value="tttt" />
+      <String name="Температура" group="Окружение" comment="" hidden="False" value="" />
+      <String name="Местоположение" group="Окружение" comment="" hidden="False" value="" />
+    </Parameters>
+    <Actions>
+      <Action name="Спать" />
+      <Action name="Включить будильник" />
+      <Action name="Выключить будильник" />
+      <Action name="Установить будильник" />
+      <Action name="Выйти из комнаты" />
+      <Action name="В спальню" />
+      <Action name="На кухню" />
+      <Action name="В ванную" />
+      <Action name="В гостиную" />
+      <Action name="На балкон" />
+      <Action name="Начало" />
+      <Action name="Ждать" />
+    </Actions>
+    <Collections>
+      <Collection name="Прогноз погоды">
+        <Parameters>
+          <Numeric name="Температура" group="Погода" comment="" hidden="True" value="0" min="-30" max="40" format="0">
+            <Range name="Лютый мороз" min="-30" max="-14" />
+            <Range name="Мороз" min="-13" max="-6" />
+            <Range name="Холодно" min="-5" max="4" />
+            <Range name="Прохладно" min="5" max="14" />
+            <Range name="Тепло" min="15" max="25" />
+            <Range name="Жарко" min="26" max="40" />
+          </Numeric>
+          <Numeric name="Осадки" group="Погода" comment="" hidden="True" value="0" min="0" max="6" format="0">
+            <Range name="Чистое небо" min="0" max="0" />
+            <Range name="Облачно" min="1" max="1" />
+            <Range name="Пасмурно" min="2" max="2" />
+            <Range name="Дождь" min="3" max="3" />
+            <Range name="Ливень" min="4" max="4" />
+            <Range name="Снег" min="5" max="5" />
+            <Range name="Метель" min="6" max="6" />
+          </Numeric>
+        </Parameters>
+      </Collection>
+      <Collection name="Локация">
+        <Parameters>
+          <Numeric name="Среда" group="Локация" comment="" hidden="True" value="0" min="0" max="3" format="0">
+            <Range name="Улица" min="0" max="0" />
+            <Range name="Неотапливаемое помещение" min="1" max="1" />
+            <Range name="Отапливаемое помещение без кондиционера" min="2" max="2" />
+            <Range name="Отапливаемое помещение с кондиционером" min="3" max="3" />
+          </Numeric>
+          <Bool name="Можно ждать" group="Локация" comment="" hidden="True" value="True" />
+          <String name="Название" group="Локация" comment="" hidden="True" value="" />
+        </Parameters>
+      </Collection>
+      <Collection name="Занятие">
+        <Parameters>
+          <Numeric name="Усталость" group="Занятие" comment="" hidden="True" value="0.1" min="-100" max="100" format="0.00" />
+          <Numeric name="Голод" group="Занятие" comment="" hidden="True" value="1" min="-100" max="100" format="0.00" />
+          <Numeric name="Жажда" group="Занятие" comment="" hidden="True" value="1" min="-100" max="100" format="0.00" />
+          <Numeric name="Настроение" group="Занятие" comment="" hidden="True" value="0.1" min="-100" max="100" format="0.00" />
+        </Parameters>
+      </Collection>
+    </Collections>
+    <Flows>
+      <Flow name="Время (минуты)" comment="" start="0" major="60" />
+    </Flows>
+    <Objects>
+      <Variant collection="Прогноз погоды" id="1" probability="2" unique="False" name="1">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-30" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="2" probability="2" unique="False" name="2">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-13" />
+        <Value param="Прогноз погоды.Осадки" value="5" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="3" probability="2" unique="False" name="3">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-1" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="4" probability="4" unique="False" name="4">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="5" probability="2" unique="False" name="5">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="6" probability="3" unique="False" name="6">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="26" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="7" probability="3" unique="False" name="7">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="8" probability="1" unique="False" name="8">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="5" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="9" probability="1" unique="False" name="9">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-30" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="10" probability="1" unique="False" name="10">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-30" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="11" probability="1" unique="False" name="11">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-30" />
+        <Value param="Прогноз погоды.Осадки" value="5" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="12" probability="1" unique="False" name="12">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-30" />
+        <Value param="Прогноз погоды.Осадки" value="6" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="13" probability="1" unique="False" name="13">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-13" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="14" probability="2" unique="False" name="14">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-13" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="15" probability="2" unique="False" name="15">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-13" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="16" probability="1" unique="False" name="16">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-13" />
+        <Value param="Прогноз погоды.Осадки" value="6" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="17" probability="3" unique="False" name="17">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-1" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="18" probability="2" unique="False" name="18">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-2" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="19" probability="2" unique="False" name="19">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="0" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="20" probability="1" unique="False" name="20">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-2" />
+        <Value param="Прогноз погоды.Осадки" value="5" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="21" probability="2" unique="False" name="21">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="22" probability="1" unique="False" name="22">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="23" probability="2" unique="False" name="23">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="24" probability="1" unique="False" name="24">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="25" probability="2" unique="False" name="25">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="26" probability="1" unique="False" name="26">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="12" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="27" probability="1" unique="False" name="27">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="12" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="28" probability="1" unique="False" name="28">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="12" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="29" probability="1" unique="False" name="29">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="26" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="30" probability="1" unique="False" name="30">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="31" probability="1" unique="False" name="31">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="32" probability="1" unique="False" name="32">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="33" probability="1" unique="False" name="33">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="26" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="34" probability="1" unique="False" name="34">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="35" probability="1" unique="False" name="35">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="36" probability="1" unique="False" name="36">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="37" probability="1" unique="False" name="37">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="38" probability="3" unique="False" name="38">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="5" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="39" probability="3" unique="False" name="39">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="5" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="40" probability="3" unique="False" name="40">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-1" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="41" probability="1" unique="False" name="41">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="5" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="42" probability="1" unique="False" name="42">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="5" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="43" probability="2" unique="False" name="43">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="5" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="44" probability="2" unique="False" name="44">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-2" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="45" probability="2" unique="False" name="45">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-14" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="46" probability="2" unique="False" name="46">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-6" />
+        <Value param="Прогноз погоды.Осадки" value="5" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="47" probability="2" unique="False" name="47">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="4" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="48" probability="4" unique="False" name="48">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="22" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="49" probability="2" unique="False" name="49">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="25" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="50" probability="3" unique="False" name="50">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="40" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="51" probability="3" unique="False" name="51">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="52" probability="1" unique="False" name="52">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="53" probability="1" unique="False" name="53">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-14" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="54" probability="1" unique="False" name="54">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-14" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="55" probability="1" unique="False" name="55">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-14" />
+        <Value param="Прогноз погоды.Осадки" value="5" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="56" probability="1" unique="False" name="56">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-14" />
+        <Value param="Прогноз погоды.Осадки" value="6" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="57" probability="1" unique="False" name="57">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-6" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="58" probability="2" unique="False" name="58">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-6" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="59" probability="2" unique="False" name="59">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-6" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="60" probability="1" unique="False" name="60">
+        <Conditions>
+          <Range param="Месяц" inverse="True" min="3" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="-6" />
+        <Value param="Прогноз погоды.Осадки" value="6" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="61" probability="3" unique="False" name="61">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="4" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="62" probability="2" unique="False" name="62">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="4" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="63" probability="2" unique="False" name="63">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="3" max="4" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="4" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="65" probability="2" unique="False" name="65">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="20" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="66" probability="1" unique="False" name="66">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="15" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="67" probability="2" unique="False" name="67">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="68" probability="1" unique="False" name="68">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="4" max="5" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="69" probability="2" unique="False" name="69">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="25" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="70" probability="1" unique="False" name="70">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="71" probability="1" unique="False" name="71">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="72" probability="1" unique="False" name="72">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="73" probability="1" unique="False" name="73">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="35" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="74" probability="1" unique="False" name="74">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="25" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="75" probability="1" unique="False" name="75">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="25" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="76" probability="1" unique="False" name="76">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="25" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="77" probability="1" unique="False" name="77">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="6" max="8" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="35" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="78" probability="1" unique="False" name="78">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="24" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="79" probability="1" unique="False" name="79">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="21" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="80" probability="1" unique="False" name="80">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="14" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="81" probability="1" unique="False" name="81">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="9" max="10" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="11" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="82" probability="3" unique="False" name="82">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="8" />
+        <Value param="Прогноз погоды.Осадки" value="4" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="83" probability="3" unique="False" name="83">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="12" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="84" probability="3" unique="False" name="84">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="4" />
+        <Value param="Прогноз погоды.Осадки" value="3" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="85" probability="1" unique="False" name="85">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="10" />
+        <Value param="Прогноз погоды.Осадки" value="0" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="86" probability="1" unique="False" name="86">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="11" />
+        <Value param="Прогноз погоды.Осадки" value="1" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="87" probability="2" unique="False" name="87">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="10" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Прогноз погоды" id="88" probability="2" unique="False" name="88">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="10" max="11" />
+        </Conditions>
+        <Value param="Прогноз погоды.Температура" value="4" />
+        <Value param="Прогноз погоды.Осадки" value="2" />
+      </Variant>
+      <Variant collection="Локация" id="1" probability="1" unique="False" name="Квартира - коридор">
+        <Conditions />
+        <Value param="Локация.Среда" value="2" />
+        <Value param="Локация.Название" value="Коридор" />
+        <Value param="Локация.Можно ждать" value="True" />
+      </Variant>
+      <Variant collection="Локация" id="2" probability="1" unique="False" name="Квартира - ванная">
+        <Conditions />
+        <Value param="Локация.Среда" value="2" />
+        <Value param="Локация.Название" value="Ванная" />
+        <Value param="Локация.Можно ждать" value="True" />
+      </Variant>
+      <Variant collection="Локация" id="3" probability="1" unique="False" name="Квартира - кухня">
+        <Conditions />
+        <Value param="Локация.Среда" value="2" />
+        <Value param="Локация.Название" value="Кухня" />
+        <Value param="Локация.Можно ждать" value="True" />
+      </Variant>
+      <Variant collection="Локация" id="4" probability="1" unique="False" name="Квартира - спальня">
+        <Conditions />
+        <Value param="Локация.Среда" value="2" />
+        <Value param="Локация.Название" value="Спальня" />
+        <Value param="Локация.Можно ждать" value="True" />
+      </Variant>
+      <Variant collection="Локация" id="5" probability="1" unique="False" name="Квартира - гостиная">
+        <Conditions />
+        <Value param="Локация.Среда" value="2" />
+        <Value param="Локация.Название" value="Гостиная" />
+        <Value param="Локация.Можно ждать" value="True" />
+      </Variant>
+      <Variant collection="Локация" id="6" probability="1" unique="False" name="Квартира - балкон">
+        <Conditions />
+        <Value param="Локация.Среда" value="1" />
+        <Value param="Локация.Название" value="Балкон" />
+        <Value param="Локация.Можно ждать" value="True" />
+      </Variant>
+      <Variant collection="Занятие" id="1" probability="1" unique="False" name="Безделье">
+        <Conditions />
+        <Value param="Занятие.Усталость" value="0.04" />
+        <Value param="Занятие.Голод" value="0.07" />
+        <Value param="Занятие.Жажда" value="0.15" />
+        <Value param="Занятие.Настроение" value="0.01" />
+      </Variant>
+      <Variant collection="Занятие" id="2" probability="1" unique="False" name="Сон">
+        <Conditions />
+        <Value param="Занятие.Усталость" value="-0.08" />
+        <Value param="Занятие.Голод" value="0.07" />
+        <Value param="Занятие.Жажда" value="0.15" />
+        <Value param="Занятие.Настроение" value="0" />
+      </Variant>
+    </Objects>
+    <Milestones>
+      <Milestone flow="Время (минуты)" name="Минута" repeat="True" position="1">
+        <Conditions />
+        <Consequences>
+          <ParameterChange param="Минуты" delta="1" />
+        </Consequences>
+      </Milestone>
+      <Milestone flow="Время (минуты)" name="Естественные надобности" repeat="True" position="5">
+        <Conditions />
+        <Consequences>
+          <ParameterChangeVariable param1="Жажда" param2="Занятие.Жажда" operation="ADD" />
+          <ParameterChangeVariable param1="Настроение" param2="Занятие.Настроение" operation="ADD" />
+          <ParameterChangeVariable param1="Голод" param2="Занятие.Голод" operation="ADD" />
+          <ParameterChangeVariable param1="Усталость" param2="Занятие.Усталость" operation="ADD" />
+        </Consequences>
+      </Milestone>
+      <Milestone flow="Время (минуты)" name="Погода" repeat="True" position="60">
+        <Conditions />
+        <Consequences>
+          <CollectionShuffle collection="Прогноз погоды" />
+        </Consequences>
+      </Milestone>
+      <Milestone flow="Время (минуты)" name="Уличная температура" repeat="True" position="10">
+        <Conditions />
+        <Consequences>
+          <ParameterChangeVariable param1="Реальная температура на улице" param2="Прогноз погоды.Температура" operation="AVG" />
+        </Consequences>
+      </Milestone>
+      <Milestone flow="Время (минуты)" name="Теплорегуляция" repeat="True" position="2">
+        <Conditions />
+        <Consequences>
+          <ParameterChangeVariable param1="Ощущаемая температура" param2="Рассчётная ощущаемая температура" operation="SET" />
+        </Consequences>
+      </Milestone>
+    </Milestones>
+    <Events>
+      <Event id="bedroom_sleep" action="Спать" description="Вы ложитесь в кровать. {Описание}" repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="4" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences>
+          <CollectionSelect id="1" collection="Занятие" />
+        </Consequences>
+        <Reactions>
+          <Reaction name="Постараться уснуть" result="Вы просыпаетесь по будильнику. Вы отлично выспались." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="False" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="True" param2="Продолжительность сна (часы)" relation="HI" />
+              <Comparsion param="Усталость" inverse="True" param2="Продолжительность сна (часы)" relation="LOLO" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Вы просыпаетесь по будильнику. Вы отлично выспались." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="True" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="True" param2="Продолжительность сна (часы)" relation="HI" />
+              <Comparsion param="Усталость" inverse="True" param2="Продолжительность сна (часы)" relation="LOLO" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Вы не знаете, как долго вы спали, но чувствуете себе отлично!" visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="True" />
+              <Range param="Усталость" inverse="True" min="0" max="0" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <FlowProgressVariable param="Усталость" major="True" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Вы просыпаетесь по будильнику. Вы практически не отдохнули." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="False" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="False" param2="Продолжительность сна (часы)" relation="HIHI" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Вы просыпаетесь по будильнику. Вставать не хочется, но придётся..." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="False" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="False" param2="Продолжительность сна (часы)" relation="HI" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Вы просыпаетесь по будильнику. Вы практически не отдохнули." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="True" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="False" param2="Продолжительность сна (часы)" relation="HIHI" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Вы просыпаетесь по будильнику. Вставать не хочется, но придётся..." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="True" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="False" param2="Продолжительность сна (часы)" relation="HI" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Встать с кровати" result="Вы передумали ложиться спать." visible="True">
+            <Conditions />
+            <Consequences />
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Наконец-то звенит будильник. Вам не спалось, попытки заснуть были сущей пыткой." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="False" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="False" param2="Продолжительность сна (часы)" relation="LOLO" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Постараться уснуть" result="Наконец-то звенит будильник. Вам не спалось, попытки заснуть были сущей пыткой." visible="False">
+            <Conditions>
+              <Status param="Будильник включён" inverse="False" />
+              <Comparsion param="Время сигнала" inverse="True" param2="Час" relation="HI" />
+              <Comparsion param="Усталость" inverse="False" param2="Продолжительность сна (часы)" relation="LOLO" />
+            </Conditions>
+            <Consequences>
+              <ParameterChange param="Причёска" delta="-1" />
+              <ParameterChange param="Настроение" delta="-1" />
+              <FlowProgressVariable param="Продолжительность сна (часы) -1" major="True" flow="Время (минуты)" />
+              <FlowProgressVariable param="Остаток часа" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="bedroom_alarm_on" action="Включить будильник" description="Вы решаете завести будильник, чтобы не проспать..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Status param="Будильник включён" inverse="True" />
+          <Selected id="4" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Включить будильник" result="Вы включили будильник. Теперь вы не проспите!" visible="True">
+            <Conditions />
+            <Consequences>
+              <ParameterSet param="Будильник включён" value="True" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Передумать" result="Вы решаете не включать будильник и выспаться получше." visible="True">
+            <Conditions />
+            <Consequences />
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="bedroom_alarm_off" action="Выключить будильник" description="Вы решаете выключить будильник, чтобы он не мешал вам спать, сколько захотите..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Status param="Будильник включён" inverse="False" />
+          <Selected id="4" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Выключить будильник" result="Вы выключили будильник. Теперь вы можете спать, сколько захотите!" visible="True">
+            <Conditions />
+            <Consequences>
+              <ParameterSet param="Будильник включён" value="False" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Передумать" result="Вы решаете не включать будильник и выспаться получше." visible="True">
+            <Conditions />
+            <Consequences />
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="bedroom_alarm_set" action="Установить будильник" description="Установите время, в которое будильник должен вас разбудить." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="4" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="24:00" result="Будильник прозвенит ровно в полночь." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="0" max="0" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="0" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="01:00" result="Будильник прозвенит в час ночи." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="1" max="1" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="1" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="02:00" result="Будильник прозвенит в 2 часа ночи." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="2" max="2" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="2" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="03:00" result="Будильник прозвенит в 3 часа ночи." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="3" max="3" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="3" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="04:00" result="Будильник прозвенит в 4 часа ночи." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="4" max="4" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="4" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="05:00" result="Будильник прозвенит в 5 часов утра." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="5" max="5" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="5" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="06:00" result="Будильник прозвенит в 6 часов утра." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="6" max="6" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="6" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="07:00" result="Будильник прозвенит в 7 часов утра." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="7" max="7" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="7" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="08:00" result="Будильник прозвенит в 8 часов утра." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="8" max="8" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="8" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="09:00" result="Будильник прозвенит в 9 часов утра." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="9" max="9" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="9" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="10:00" result="Будильник прозвенит в 10 часов утра." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="10" max="10" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="10" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="11:00" result="Будильник прозвенит в 11 часов утра." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="11" max="11" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="11" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="12:00" result="Будильник прозвенит в полдень." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="12" max="12" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="12" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="13:00" result="Будильник прозвенит в час дня." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="13" max="13" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="13" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="14:00" result="Будильник прозвенит в 2 часа дня." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="14" max="14" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="14" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="15:00" result="Будильник прозвенит в 3 часа дня." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="15" max="15" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="15" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="16:00" result="Будильник прозвенит в 4 часа дня." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="16" max="16" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="16" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="17:00" result="Будильник прозвенит в 5 часов дня." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="17" max="17" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="17" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="18:00" result="Будильник прозвенит в 6 часов вечера." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="18" max="18" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="18" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="19:00" result="Будильник прозвенит в 7 часов вечера." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="19" max="19" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="19" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="20:00" result="Будильник прозвенит в 8 часов вечера." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="20" max="20" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="20" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="21:00" result="Будильник прозвенит в 9 часов вечера." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="21" max="21" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="21" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="22:00" result="Будильник прозвенит в 10 часов вечера." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="22" max="22" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="22" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="23:00" result="Будильник прозвенит в 11 часов вечера." visible="True">
+            <Conditions>
+              <Range param="Время сигнала" inverse="True" min="23" max="23" />
+            </Conditions>
+            <Consequences>
+              <ParameterSet param="Время сигнала" value="23" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_bedroom_to_corridor" action="Выйти из комнаты" description="Вы выходите в коридор." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="4" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Коридор" result="Вы вышли в коридор." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="1" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_corridor_to_bedroom" action="В спальню" description="Описание события" repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="1" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Спальня" result="Вы входите в спальню." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="4" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_corridor_to_kitchen" action="На кухню" description="Описание события" repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="1" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Кухня" result="Вы входите на кухню." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="3" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_kitchen_to_corridor" action="Выйти из комнаты" description="Вы выходите в коридор." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="3" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Коридор" result="Вы вышли в коридор." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="1" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_corridor_to_bathroom" action="В ванную" description="Описание события" repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="1" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Ванная" result="Вы входите в ванную." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="2" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_bathroom_to_corridor" action="Выйти из комнаты" description="Вы выходите в коридор." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="2" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Коридор" result="Вы вышли в коридор." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="1" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_corridor_to_diningroom" action="В гостиную" description="Описание события" repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="1" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Гостиная" result="Вы входите в гостиную." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="5" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_diningroom_to_corridor" action="Выйти из комнаты" description="Вы выходите в коридор." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="5" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Коридор" result="Вы вышли в коридор." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="1" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_diningroom_to_lounge" action="На балкон" description="Вы выходите в коридор." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="5" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Балкон" result="Вы вышли на балкон." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="6" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="move_lounge_to_diningroom" action="В гостиную" description="Описание события" repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Selected id="6" collection="Локация" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Гостиная" result="Вы входите в гостиную." visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="5" collection="Локация" />
+              <FlowProgress progress="1" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="_begin" action="Начало" description="Описание события" repeat="False" priority="100" probability="1">
+        <Conditions>
+          <Status param="Инициализация выполнена" inverse="True" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Start" result="Начало игры" visible="False">
+            <Conditions />
+            <Consequences>
+              <CollectionSelect id="4" collection="Локация" />
+              <ParameterSet param="Инициализация выполнена" value="True" />
+            </Consequences>
+          </Reaction>
+        </Reactions>
+      </Event>
+      <Event id="waiting" action="Ждать" description="Делать нечего..." repeat="True" priority="1" probability="1">
+        <Conditions>
+          <Status param="Локация.Можно ждать" inverse="False" />
+        </Conditions>
+        <Alternatives />
+        <Consequences />
+        <Reactions>
+          <Reaction name="Ждать 5 минут" result="Прошло 5 минут..." visible="False">
+            <Conditions />
+            <Consequences>
+              <FlowProgress progress="5" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Ждать 10  минут" result="Прошло 10 минут..." visible="False">
+            <Conditions />
+            <Consequences>
+              <FlowProgress progress="10" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Ждать 15  минут" result="Прошло 15 минут..." visible="False">
+            <Conditions />
+            <Consequences>
+              <FlowProgress progress="15" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Ждать пол-часа" result="Прошло пол-часа..." visible="False">
+            <Conditions />
+            <Consequences>
+              <FlowProgress progress="30" major="False" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Ждать час" result="Прошёл час..." visible="False">
+            <Conditions />
+            <Consequences>
+              <FlowProgress progress="1" major="True" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Ждать пару часов" result="Прошла пара часов..." visible="False">
+            <Conditions />
+            <Consequences>
+              <FlowProgress progress="2" major="True" flow="Время (минуты)" />
+            </Consequences>
+          </Reaction>
+          <Reaction name="Отказаться от этой идеи" result="Вы решаете, что вам всё же есть чем заняться." visible="False">
+            <Conditions />
+            <Consequences />
+          </Reaction>
+        </Reactions>
+      </Event>
+    </Events>
+    <Triggers>
+      <Trigger id="new_hour" repeat="True">
+        <Conditions>
+          <Range param="Минуты" inverse="False" min="60" max="3600" />
+        </Conditions>
+        <Consequences>
+          <ParameterChange param="Минуты" delta="-60" />
+          <ParameterChange param="Час" delta="1" />
+        </Consequences>
+      </Trigger>
+      <Trigger id="new_day" repeat="True">
+        <Conditions>
+          <Range param="Час" inverse="False" min="24" max="47" />
+        </Conditions>
+        <Consequences>
+          <ParameterChange param="Час" delta="-24" />
+          <ParameterChange param="День" delta="1" />
+          <ParameterChange param="День недели" delta="1" />
+        </Consequences>
+      </Trigger>
+      <Trigger id="new_month" repeat="True">
+        <Conditions>
+          <Comparsion param="День" inverse="False" param2="Длина месяца" relation="HI" />
+        </Conditions>
+        <Consequences>
+          <ParameterSet param="День" value="1" />
+          <ParameterChange param="Месяц" delta="1" />
+        </Consequences>
+      </Trigger>
+      <Trigger id="new_year" repeat="True">
+        <Conditions>
+          <Range param="Месяц" inverse="False" min="13" max="13" />
+        </Conditions>
+        <Consequences>
+          <ParameterSet param="Месяц" value="1" />
+          <ParameterChange param="Год" delta="1" />
+        </Consequences>
+      </Trigger>
+      <Trigger id="new_week" repeat="True">
+        <Conditions>
+          <Range param="День недели" inverse="False" min="8" max="8" />
+        </Conditions>
+        <Consequences>
+          <ParameterSet param="День недели" value="1" />
+        </Consequences>
+      </Trigger>
+      <Trigger id="do_nothing" repeat="True">
+        <Conditions>
+          <Selected id="1" collection="Занятие" inverse="True" />
+        </Conditions>
+        <Consequences>
+          <CollectionSelect id="1" collection="Занятие" />
+        </Consequences>
+      </Trigger>
+    </Triggers>
+    <Functions>
+      <Function param="Длина месяца">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="1" max="1" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="28" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="2" max="2" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="3" max="3" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="30" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="4" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="5" max="5" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="30" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="6" max="6" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="7" max="7" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="8" max="8" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="30" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="9" max="9" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="10" max="10" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="30" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="11" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="12" max="12" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Длина месяца" value="31" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="13" max="13" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Продолжительность сна (часы)">
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Время сигнала завтра" param2="Час" operation="SUB" />
+          </Consequences>
+          <Conditions>
+            <Comparsion param="Время сигнала" inverse="True" param2="Час" relation="HI" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Время сигнала" param2="Час" operation="SUB" />
+          </Consequences>
+          <Conditions>
+            <Comparsion param="Время сигнала" inverse="False" param2="Час" relation="HI" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Время сигнала завтра">
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Время сигнала" param2="Продолжительность суток" operation="ADD" />
+          </Consequences>
+          <Conditions>
+            <Range param="Продолжительность суток" inverse="False" min="24" max="24" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Описание">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Описание" value="Будильник выключен." />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="True" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Описание" value="Будильник прозвенит через {Продолжительность сна (часы)} часов, в {Время сигнала}:00." />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="False" />
+            <Range param="Продолжительность сна (часы)" inverse="True" min="1" max="1" />
+            <Range param="Продолжительность сна (часы)" inverse="True" min="2" max="4" />
+            <Range param="Продолжительность сна (часы)" inverse="True" min="21" max="21" />
+            <Range param="Продолжительность сна (часы)" inverse="True" min="22" max="24" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Описание" value="Будильник прозвенит через {Продолжительность сна (часы)} час, в {Время сигнала}:00." />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="False" />
+            <Range param="Продолжительность сна (часы)" inverse="False" min="1" max="1" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Описание" value="Будильник прозвенит через {Продолжительность сна (часы)} часа, в {Время сигнала}:00." />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="False" />
+            <Range param="Продолжительность сна (часы)" inverse="False" min="2" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Описание" value="Будильник прозвенит через {Продолжительность сна (часы)} час, в {Время сигнала}:00." />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="False" />
+            <Range param="Продолжительность сна (часы)" inverse="False" min="21" max="21" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Описание" value="Будильник прозвенит через {Продолжительность сна (часы)} часа, в {Время сигнала}:00." />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="False" />
+            <Range param="Продолжительность сна (часы)" inverse="False" min="22" max="24" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Часы">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Часы" value="{Час}:{Минуты}" />
+          </Consequences>
+          <Conditions>
+            <Status param="ВСЕГДА" inverse="False" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Будильник">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Будильник" value="{Время сигнала}:00 ВКЛ" />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="False" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Будильник" value="{Время сигнала}:00 ВЫКЛ" />
+          </Consequences>
+          <Conditions>
+            <Status param="Будильник включён" inverse="True" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Название месяца">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Января" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="1" max="1" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Февраля" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="2" max="2" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Марта" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="3" max="3" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Апреля" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="4" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Мая" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="5" max="5" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Июня" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="6" max="6" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Июля" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="7" max="7" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Августа" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="8" max="8" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Сентября" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="9" max="9" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Октября" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="10" max="10" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Ноября" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="11" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Декабря" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="12" max="12" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Название месяца" value="Января" />
+          </Consequences>
+          <Conditions>
+            <Range param="Месяц" inverse="False" min="13" max="13" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Дата">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Дата" value="{День} {Название месяца} {Год} г." />
+          </Consequences>
+          <Conditions>
+            <Status param="ВСЕГДА" inverse="False" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Погода">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Звёздная морозная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясное морозное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Солнечный морозный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясный морозный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачное морозное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачный морозный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурная морозная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурное морозное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный морозный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный морозный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозная ночь с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозное утро с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозный день с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозный вечер с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Метель и лютый мороз. Лучше не улицу не высовываться." />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-30" max="-14" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="6" max="6" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Звёздная морозная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясное морозное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Солнечный морозный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясный морозный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачное морозное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачный морозный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурная морозная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурное морозное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный морозный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный морозный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозная ночь с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозное утро с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозный день с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Морозный вечер с небольшим снегопадом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Метель и мороз." />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-13.99" max="-6" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="6" max="6" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Звёздная холодная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясное холодное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Солнечный холодный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясный холодный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Холодная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачное холодное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачный холодный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурная холодная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурное промозглое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный промозглый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный промозглый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглая ночь с мокрым снегом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглое утро с мокрым снегом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглый день с мокрым снегом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглый вечер с мокрым снегом" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="5" max="5" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Метель и мокрый снег - отвратительно" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="6" max="6" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглая дождливая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглое дождливое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглый дождливый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглый дождливый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Промозглый ливень" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="-5.99" max="4.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="4" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Звёздная прохладная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясное прохладное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Солнечный прохладный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясный прохладный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Прохладная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачное прохладное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачный прохладный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Прохладный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурная прохладная ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурное прохладное утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный прохладный день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный прохладный вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Прохладная дождливая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Прохладное дождливое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Прохладный дождливый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Прохладный дождливый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Прохладно. Ливень" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="5" max="14.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="4" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Звёздная тёплая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясное тёплое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Солнечный тёплый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясный тёплый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тёплая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачное тёплое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачный тёплый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тёплый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурная тёплая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурное тёплое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный тёплый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный тёплый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тёплая дождливая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тёплое дождливое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тёплый дождливый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тёплый дождливый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тёплый ливень" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="15" max="25.99" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="4" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Звёздная жаркая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясное жаркое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Солнечный жаркий день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Ясный жаркий вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="0" max="0" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тропическая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачное очень тёплое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Облачный очень тёплый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Очень тёплый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="1" max="1" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурная очень тёплая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурное очень тёплое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный очень тёплый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Пасмурный очень тёплый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="2" max="2" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Очень тёплая дождливая ночь" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="0" max="4" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Очень тёплое дождливое утро" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="5" max="11" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Очень тёплый дождливый день" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="12" max="17" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Очень тёплый дождливый вечер" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="3" max="3" />
+            <Range param="Час" inverse="False" min="18" max="23" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Погода" value="Тропический ливень" />
+          </Consequences>
+          <Conditions>
+            <Range param="Реальная температура на улице" inverse="False" min="26" max="40" />
+            <Range param="Прогноз погоды.Осадки" inverse="False" min="4" max="4" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Рассчётная ощущаемая температура">
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Реальная температура на улице" param2="Ощущаемая температура" operation="AVG" />
+          </Consequences>
+          <Conditions>
+            <Range param="Локация.Среда" inverse="False" min="0" max="0" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Ощущаемая температура" param2="Реальная температура на улице" operation="AVG" />
+          </Consequences>
+          <Conditions>
+            <Range param="Локация.Среда" inverse="False" min="1" max="1" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Комфортная температура" param2="Ощущаемая температура" operation="AVG" />
+          </Consequences>
+          <Conditions>
+            <Range param="Локация.Среда" inverse="False" min="2" max="2" />
+            <Comparsion param="Реальная температура на улице" inverse="False" param2="Комфортная температура" relation="LO" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Ощущаемая температура" param2="Реальная температура на улице" operation="AVG" />
+          </Consequences>
+          <Conditions>
+            <Range param="Локация.Среда" inverse="False" min="2" max="2" />
+            <Comparsion param="Реальная температура на улице" inverse="True" param2="Комфортная температура" relation="LO" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Комфортная температура" param2="Ощущаемая температура" operation="AVG" />
+          </Consequences>
+          <Conditions>
+            <Range param="Локация.Среда" inverse="False" min="3" max="3" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Температура">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Температура" value="Вы замерзаете..." />
+          </Consequences>
+          <Conditions>
+            <Range param="Ощущаемая температура" inverse="False" min="-30" max="-14" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Температура" value="Вы мерзнете" />
+          </Consequences>
+          <Conditions>
+            <Range param="Ощущаемая температура" inverse="False" min="-13.99" max="-6" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Температура" value="Вам холодно" />
+          </Consequences>
+          <Conditions>
+            <Range param="Ощущаемая температура" inverse="False" min="-5.99" max="4.99" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Температура" value="Вам прохладно" />
+          </Consequences>
+          <Conditions>
+            <Range param="Ощущаемая температура" inverse="False" min="5" max="14.99" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Температура" value="Вам тепло" />
+          </Consequences>
+          <Conditions>
+            <Range param="Ощущаемая температура" inverse="False" min="15" max="25.99" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Температура" value="Вам жарко" />
+          </Consequences>
+          <Conditions>
+            <Range param="Ощущаемая температура" inverse="False" min="26" max="34.99" />
+          </Conditions>
+        </Rule>
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Температура" value="Вам очень жарко" />
+          </Consequences>
+          <Conditions>
+            <Range param="Ощущаемая температура" inverse="False" min="35" max="40" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Местоположение">
+        <Rule>
+          <Consequences>
+            <ParameterSet param="Местоположение" value="{Локация.Название}" />
+          </Consequences>
+          <Conditions>
+            <Status param="ВСЕГДА" inverse="False" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Остаток часа">
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Продолжительность часа" param2="Минуты" operation="SUB" />
+          </Consequences>
+          <Conditions>
+            <Status param="ВСЕГДА" inverse="False" />
+          </Conditions>
+        </Rule>
+      </Function>
+      <Function param="Продолжительность сна (часы) -1">
+        <Rule>
+          <Consequences>
+            <ParameterChangeVariable param1="Продолжительность сна (часы)" param2="1" operation="SUB" />
+          </Consequences>
+          <Conditions>
+            <Status param="ВСЕГДА" inverse="False" />
+          </Conditions>
+        </Rule>
+      </Function>
+    </Functions>
+  </Module>
+</Persona>

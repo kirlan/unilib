@@ -39,13 +39,13 @@ namespace VixenQuest.People
             get { return m_cStatsBonuses; }
         }
 
-        public VixenClass(string sNameM, string sNameF, int iForce, int iBeauty, int iLuck, int iEndurance)
+        public VixenClass(string sNameM, string sNameF, /*int iPresence,*/ int iBeauty, int iLuck, int iEndurance)
         {
             m_sNameM = sNameM;
             m_sNameF = sNameF;
 
             m_cStatsBonuses = new Dictionary<Stat, int>();
-            m_cStatsBonuses[Stat.Force] = iForce*3;
+            //m_cStatsBonuses[Stat.Presence] = iPresence*3;
             m_cStatsBonuses[Stat.Beauty] = iBeauty*3;
             m_cStatsBonuses[Stat.Luck] = iLuck*3;
             m_cStatsBonuses[Stat.Potency] = iEndurance*3;
@@ -68,20 +68,20 @@ namespace VixenQuest.People
     {
         public static VixenClass[] VixenClasses = 
         { 
-            new VixenClass("Dominator", "Dominatrix", 4, 1, 1, 1),  //force++
-            new VixenClass("Stripper", "Stripper", 1, 4, 1, 1),  //beauty++
-            new VixenClass("Priest of Love", "Priestess of Love", 1, 1, 4, 1),  //luck++
-            new VixenClass("Pleasure Slave", "Sex Doll", 1, 1, 1, 4),  //endurance++
-            new VixenClass("Playboy", "Playgirl", 3, 3, 1, 1),  //beauty+ force+
-            new VixenClass("Bitch Hunter", "Bitch Huntress", 3, 1, 3, 1),  //force+ luck+
-            new VixenClass("Battle Raper", "Cat-Fighter", 3, 1, 1, 3),  //force+ endurance+
-            new VixenClass("Gigolo", "Courtesan", 1, 3, 3, 1),  //beauty+ luck+
-            new VixenClass("Tantra Master", "Tantra Mistress", 1, 3, 1, 3),  //beauty+ endurance+
-            new VixenClass("Temple Deflorator", "Temple Wench", 1, 1, 3, 3),  //luck+ endurance+
-            new VixenClass("Sex Tutor", "Sex Tutoress", 1, 2, 2, 2),  //beauty+ luck+ endurance+
-            new VixenClass("Slave Trainer", "Slave Trainer", 2, 1, 2, 2),  //force+ luck+ endurance+
-            new VixenClass("Porno Actor", "Porno Actress", 2, 2, 1, 2),  //force+ beauty+ endurance+
-            new VixenClass("Wandering Prince", "Wandering Princess", 2, 2, 2, 1),  //force+ beauty+ luck+
+            //new VixenClass("Dominator", "Dominatrix", 4, 1, 1, 1),  //presence++
+            new VixenClass("Stripper", "Stripper", 4, 1, 1),  //beauty++
+            new VixenClass("Priest of Love", "Priestess of Love", 1, 4, 1),  //luck++
+            new VixenClass("Pleasure Slave", "Sex Doll", 1, 1, 4),  //endurance++
+            //new VixenClass("Playboy", "Playgirl", 3, 3, 1, 1),  //beauty+ presence+
+            //new VixenClass("Bitch Hunter", "Bitch Huntress", 3, 1, 3, 1),  //presence+ luck+
+            //new VixenClass("Wrestler", "Mud-Fighter", 3, 1, 1, 3),  //presence+ endurance+
+            new VixenClass("Gigolo", "Courtesan", 3, 3, 1),  //beauty+ luck+
+            new VixenClass("Tantra Master", "Tantra Mistress", 3, 1, 3),  //beauty+ endurance+
+            new VixenClass("Temple Deflorator", "Temple Wench", 1, 3, 3),  //luck+ endurance+
+            new VixenClass("Wandering Prince", "Wandering Princess", 2, 2, 2),  //beauty+ luck+ endurance+
+            //new VixenClass("Slave Trainer", "Slave Trainer", 2, 1, 2, 2),  //presence+ luck+ endurance+
+            //new VixenClass("Porno Actor", "Porno Actress", 2, 2, 1, 2),  //presence+ beauty+ endurance+
+            //new VixenClass("Wandering Prince", "Wandering Princess", 2, 2, 2, 1),  //presence+ beauty+ luck+
         };
 
         private string m_sName = "Vixen";
@@ -729,8 +729,8 @@ namespace VixenQuest.People
             if (pAction.m_eType == ActionType.Seducing)
                 diff = (float)pAction.m_pTarget.Stats[Stat.Beauty] / m_cEffectiveStats[Stat.Beauty];
 
-            if (pAction.m_eType == ActionType.Pursue)
-                diff = (float)pAction.m_pTarget.Stats[Stat.Force] / m_cEffectiveStats[Stat.Force];
+            //if (pAction.m_eType == ActionType.Pursue)
+            //    diff = (float)pAction.m_pTarget.Stats[Stat.Presence] / m_cEffectiveStats[Stat.Presence];
 
             if (pAction.m_eType == ActionType.Fucked ||
                 pAction.m_eType == ActionType.AssFucked ||
@@ -743,8 +743,8 @@ namespace VixenQuest.People
             if (pAction.m_eType == ActionType.Seduced)
                 diff = (float)m_cEffectiveStats[Stat.Beauty] / pAction.m_pTarget.Stats[Stat.Beauty];
 
-            if (pAction.m_eType == ActionType.Evade)
-                diff = (float)m_cEffectiveStats[Stat.Force] / pAction.m_pTarget.Stats[Stat.Force];
+            //if (pAction.m_eType == ActionType.Evade)
+            //    diff = (float)m_cEffectiveStats[Stat.Presence] / pAction.m_pTarget.Stats[Stat.Presence];
 
             return Math.Max(20, (int)(30 * Math.Sqrt(diff)));
         }

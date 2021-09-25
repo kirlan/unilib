@@ -64,7 +64,7 @@ namespace Persona.Conditions
                     }
                 }
             }
-            return string.Format("{0} {1}{2}", m_pParam1 != null ? m_pParam1.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР", m_bNot ? "НЕ " : "", sRange);
+            return string.Format("{0} {1}{2}", m_pParam1 != null ? m_pParam1.FullName : "НЕВЕРНЫЙ ПАРАМЕТР", m_bNot ? "НЕ " : "", sRange);
         }
 
         public override Condition Clone()

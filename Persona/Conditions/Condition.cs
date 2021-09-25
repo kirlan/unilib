@@ -33,7 +33,7 @@ namespace Persona.Conditions
             string sParam = "";
             pXml.GetStringAttribute(pParamNode, "param", ref sParam);
             foreach(Parameter pParam in cParams)
-                if (pParam.m_sName == sParam)
+                if (pParam.FullName == sParam)
                 {
                     m_pParam1 = pParam;
                     break;
@@ -44,7 +44,7 @@ namespace Persona.Conditions
 
         internal virtual void WriteXML(UniLibXML pXml, XmlNode pConditionNode)
         {
-            pXml.AddAttribute(pConditionNode, "param", m_pParam1.m_sName);
+            pXml.AddAttribute(pConditionNode, "param", m_pParam1.FullName);
             pXml.AddAttribute(pConditionNode, "inverse", m_bNot);
         }
 

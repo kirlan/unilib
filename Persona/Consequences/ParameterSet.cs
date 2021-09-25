@@ -28,56 +28,49 @@ namespace Persona.Consequences
             string sParam = "";
             pXml.GetStringAttribute(pParamNode, "param", ref sParam);
             foreach (Parameter pParam in cParams)
-                if (pParam.m_sName == sParam)
+                if (pParam.FullName == sParam)
                 {
                     m_pParam = pParam;
                     break;
                 }
+
+            //if (m_pParam == null)
+            //{
+            //    foreach (Parameter pParam in cParams)
+            //        if (pParam.m_sName == sParam)
+            //        {
+            //            m_pParam = pParam;
+            //            break;
+            //        }
+            //}
 
             pXml.GetStringAttribute(pParamNode, "value", ref m_sNewValue);
         }
         
         internal override void WriteXML(UniLibXML pXml, XmlNode pConsequenceNode)
         {
-            pXml.AddAttribute(pConsequenceNode, "param", m_pParam.m_sName);
+            pXml.AddAttribute(pConsequenceNode, "param", m_pParam.FullName);
             pXml.AddAttribute(pConsequenceNode, "value", m_sNewValue);
+        }
+
+        public string DisplayValue
+        {
+            get
+            {
+                if (m_pParam != null)
+                    return m_pParam.GetDisplayValue(m_sNewValue);
+                else
+                    return m_sNewValue;
+            }
         }
 
         public override string ToString()
         {
             string sValue = m_sNewValue;
-            if (m_pParam != null && m_pParam is NumericParameter)
-            {
-                NumericParameter pParam = m_pParam as NumericParameter;
-                float fValue;
-                if (float.TryParse(m_sNewValue, out fValue))
-                {
-                    foreach (var pRange in pParam.m_cRanges)
-                    {
-                        if (pRange.m_fMin <= fValue && pRange.m_fMax >= fValue)
-                        {
-                            if (pRange.m_fMin == pRange.m_fMax)
-                                sValue = "[" + pRange.m_sDescription + "]";
-                            else
-                                sValue = string.Format("{0} [{1}]", m_sNewValue, pRange.m_sDescription);
-                            break;
-                        }
-                    }
-                }
-            }
-            if (m_pParam != null && m_pParam is BoolParameter)
-            {
-                bool bNewValue = true;
-                if (!bool.TryParse(m_sNewValue, out bNewValue))
-                {
-                    float fNewValue = 0;
-                    float.TryParse(m_sNewValue, out fNewValue);
-                    bNewValue = (fNewValue > 0);
-                }
+            if (m_pParam != null)
+                sValue = m_pParam.GetDisplayValue(m_sNewValue);
 
-                sValue = bNewValue ? "ДА" : "НЕТ";
-            }
-            return string.Format("{0} := {1}", m_pParam != null ? m_pParam.m_sName : "НЕВЕРНЫЙ ПАРАМЕТР", sValue);
+            return string.Format("{0} := {1}", m_pParam != null ? m_pParam.FullName : "НЕВЕРНЫЙ ПАРАМЕТР", sValue);
         }
 
         public override Consequence Clone()
@@ -93,39 +86,9 @@ namespace Persona.Consequences
         /// <param name="pModule">не используется, может быть null</param>
         internal override void Apply(Module pModule)
         {
-            if (m_pParam is NumericParameter)
-            {
-                NumericParameter pParam = m_pParam as NumericParameter;
-
-                float fValue;
-                if (float.TryParse(m_sNewValue, out fValue))
-                    pParam.m_fValue = fValue;
-
-                if (pParam.m_fValue < pParam.m_fMin)
-                    pParam.m_fValue = pParam.m_fMin;
-                if (pParam.m_fValue > pParam.m_fMax)
-                    pParam.m_fValue = pParam.m_fMax;
-            }
-            if (m_pParam is BoolParameter)
-            {
-                BoolParameter pParam = m_pParam as BoolParameter;
-
-                bool bNewValue = true;
-                if (!bool.TryParse(m_sNewValue, out bNewValue))
-                {
-                    float fNewValue = 0;
-                    float.TryParse(m_sNewValue, out fNewValue);
-                    bNewValue = (fNewValue > 0);
-                }
-
-                pParam.m_bValue = bNewValue;
-            }
-            if (m_pParam is StringParameter)
-            {
-                StringParameter pParam = m_pParam as StringParameter;
-
-                pParam.m_sValue = m_sNewValue;
-            }
+            pModule.m_sLog.AppendLine("\tDO " + this.ToString());
+            if (m_pParam != null)
+                m_pParam.SetValue(m_sNewValue);
         }
     }
 }

@@ -1,0 +1,34 @@
+HKCR
+{
+	QuickFilter.QFilter.1 = s 'QFilter Class'
+	{
+		CLSID = s '{9DC527A9-6C42-46F7-BD63-B82A60602D3F}'
+	}
+	QuickFilter.QFilter = s 'QFilter Class'
+	{
+		CLSID = s '{9DC527A9-6C42-46F7-BD63-B82A60602D3F}'
+		CurVer = s 'QuickFilter.QFilter.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {9DC527A9-6C42-46F7-BD63-B82A60602D3F} = s 'QFilter Class'
+		{
+			ProgID = s 'QuickFilter.QFilter.1'
+			VersionIndependentProgID = s 'QuickFilter.QFilter'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			ForceRemove 'Control'
+			ForceRemove 'Insertable'
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 101'
+			'MiscStatus' = s '0'
+			{
+			    '1' = s '131473'
+			}
+			'TypeLib' = s '{89E33651-15F6-4145-B9CD-94F518073643}'
+			'Version' = s '1.0'
+		}
+	}
+}

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Layout;
+using Persona.Parameters;
 
 namespace Persona
 {
@@ -23,7 +24,8 @@ namespace Persona
             PlayfieldPanel_Resize(this, new EventArgs());
 
             GrandActionsPanel.Visible = true;
-            EventPanel.Visible = true;
+            EventPanel.Visible = false;
+            ReactionPanel.Visible = false;
 
             m_pModule.Start();
 
@@ -45,9 +47,62 @@ namespace Persona
 
                 ActionsPanel.Controls.Add(pButt);
             }
+
+            ShowAllParams();
         }
 
         private Event m_pCurrentEvent = null;
+
+        void ShowAllParams()
+        {
+            if (ParamsListView.Items.Count == 0)
+            {
+                List<Parameter> cAllParams = new List<Parameter>();
+                cAllParams.AddRange(m_pModule.m_cBoolParameters);
+                cAllParams.AddRange(m_pModule.m_cNumericParameters);
+                cAllParams.AddRange(m_pModule.m_cStringParameters);
+
+                Dictionary<string, List<Parameter>> cGroups = new Dictionary<string, List<Parameter>>();
+                foreach (Parameter pParam in cAllParams)
+                {
+                    if (pParam.m_bHidden)
+                        continue;
+
+                    if (!cGroups.ContainsKey(pParam.m_sGroup))
+                        cGroups[pParam.m_sGroup] = new List<Parameter>();
+                    cGroups[pParam.m_sGroup].Add(pParam);
+                }
+
+                foreach (var pGroup in cGroups)
+                {
+                    ListViewItem pItemGroup = ParamsListView.Items.Add(pGroup.Key);
+                    pItemGroup.Font = new Font(ParamsListView.Font, FontStyle.Bold);
+
+                    foreach (Parameter pParam in pGroup.Value)
+                    {
+                        ListViewItem pItemParameter = ParamsListView.Items.Add(pParam.m_sName);
+                        pItemParameter.SubItems.Add(pParam.DisplayValue);
+                        pItemParameter.Tag = pParam;
+                    }
+                }
+            }
+            else
+            {
+                foreach (ListViewItem pItem in ParamsListView.Items)
+                {
+                    if (pItem.Tag != null)
+                    {
+                        Parameter pParam = (Parameter)pItem.Tag;
+                        pItem.SubItems[1].Text = pParam.DisplayValue;
+                        //pItem.Font = new Font(ParamsListView.Font, pParam.m_bChanged ? FontStyle.Italic : FontStyle.Regular);
+                        pItem.BackColor = pParam.m_bChanged ? Color.Yellow : Color.White;
+                        pParam.m_bChanged = false;
+                    }
+                }
+            }
+
+            textBox1.Text = m_pModule.m_sLog.ToString();
+        }
 
         /// <summary>
         /// Выбирает событие, могущее являться следствием указанного действия и выводит пользователю его описание.
@@ -60,14 +115,16 @@ namespace Persona
             if (pAction == null)
                 return;
 
-            m_pCurrentEvent = m_pModule.DoAction(pAction);
+            m_pCurrentEvent = m_pModule.GetEvent(pAction);
 
             if (m_pCurrentEvent == null)
                 return;
 
+            m_pCurrentEvent.PreReaction(m_pModule);
+
             List<Reaction> cAvailable = m_pCurrentEvent.GetPossibleReactions();
 
-            if (cAvailable.Count == 1)
+            if (cAvailable.Count == 1 && !cAvailable[0].m_bAlwaysVisible)
             {
                 ExecuteReaction(cAvailable[0]);
                 ActionsTextBox.Text = m_pModule.m_sHeader;
@@ -77,7 +134,7 @@ namespace Persona
                 GrandActionsPanel.Visible = false;
                 EventPanel.Visible = true;
 
-                EventTextBox.Text = m_pCurrentEvent.m_pDescription.m_sText;
+                EventTextBox.Text = m_pCurrentEvent.m_pDescription.GetDescription(m_pModule.m_cStringParameters, m_pModule.m_cNumericParameters, m_pModule.m_cCollections);
                 ReactionsPanel.Controls.Clear();
 
                 foreach (Reaction pReaction in cAvailable)
@@ -90,6 +147,20 @@ namespace Persona
                     pButt.Enabled = pReaction.Possible();
 
                     pButt.Click += new EventHandler(Reaction_Click);
+
+                    ReactionsPanel.Controls.Add(pButt);
+                }
+
+                if(cAvailable.Count == 0)
+                {
+                    m_pModule.UpdateWorld();
+
+                    Button pButt = new Button();
+                    pButt.Text = "Дальше";
+                    pButt.AutoSize = true;
+                    pButt.Margin = new Padding(5);
+
+                    pButt.Click += new EventHandler(ReactionEndButton_Click);
 
                     ReactionsPanel.Controls.Add(pButt);
                 }
@@ -106,20 +177,50 @@ namespace Persona
         }
 
         /// <summary>
-        /// Применяет набор последствй, соответствующий указанной реакции.
+        /// Выводит текстовое описание последствйи выбранной реакции и применяет соответствующий набор последствй.
         /// Затем применяет набор последствий, соответствующий случившемуся событию в целом.
-        /// Затем, если стоит флаг случайного действия, то выбирает случайное действие из числа доступных и выполняет его.
-        /// Иначе, обновляет заголовок и предлагает пользователю выбрать действие.
+        /// Если текстовое описание последствий не пустое - предлагает пользователю нажать кнопку Next, когда он прочитает описание,
+        /// иначе автоматически инициирует нажатие этой кнопки.
         /// </summary>
         /// <param name="pReaction"></param>
         private void ExecuteReaction(Reaction pReaction)
         {
-            if (pReaction == null)
+            if (pReaction != null)
+                ReactionTextBox.Text = pReaction.Execute(m_pModule);
+            else
+                ReactionTextBox.Text = "";
+
+            m_pModule.UpdateWorld();
+
+            ReactionPanel.Visible = true;
+            EventPanel.Visible = false;
+
+            if (ReactionTextBox.Text != "")
+                ShowAllParams();
+            else
+                ReactionEndButton_Click(null, null);
+        }
+
+        void Reaction_Click(object sender, EventArgs e)
+        {
+            Button pButton = sender as Button;
+            if (pButton == null)
                 return;
 
-            pReaction.Execute(m_pModule);
+            ExecuteReaction(pButton.Tag as Reaction);
+        }
 
-            m_pCurrentEvent.PostReaction(m_pModule);
+        /// <summary>
+        /// Завершение обработки события. Вызывается после того, как пользователь прочитал текстовое описание последствий сделанного им выбора,
+        /// или - если описания нет, то сразу после выбора реакции на событие.
+        /// Если стоит флаг случайного действия, то выбирает случайное действие из числа доступных и выполняет его.
+        /// Иначе, просто обновляет заголовок и предлагает пользователю выбрать действие.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReactionEndButton_Click(object sender, EventArgs e)
+        {
+            ShowAllParams();
 
             List<Action> cAvailable = m_pModule.GetPossibleActions();
 
@@ -132,7 +233,7 @@ namespace Persona
                 ActionsTextBox.Text = m_pModule.m_sHeader;
 
                 GrandActionsPanel.Visible = true;
-                EventPanel.Visible = false;
+                ReactionPanel.Visible = false;
 
                 ActionsPanel.Controls.Clear();
                 foreach (Action pAction in cAvailable)
@@ -150,15 +251,6 @@ namespace Persona
             }
         }
 
-        void Reaction_Click(object sender, EventArgs e)
-        {
-            Button pButton = sender as Button;
-            if (pButton == null)
-                return;
-
-            ExecuteReaction(pButton.Tag as Reaction);
-        }
-
         private void PlayfieldPanel_Resize(object sender, EventArgs e)
         {
             GrandActionsPanel.Location = new Point(0, 0);
@@ -166,6 +258,9 @@ namespace Persona
 
             EventPanel.Location = new Point(0, 0);
             EventPanel.Size = PlayfieldPanel.ClientSize;
+
+            ReactionPanel.Location = new Point(0, 0);
+            ReactionPanel.Size = PlayfieldPanel.ClientSize;
         }
     
         /// <summary>

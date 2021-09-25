@@ -11,7 +11,7 @@ using SimpleVectors;
 
 namespace LandscapeGeneration
 {
-    /*
+    //*
     public enum GridType
     {
         Square,
@@ -1496,5 +1496,5 @@ namespace LandscapeGeneration
             return m_sDescription + " (" + pInfo.Name + ")";
         }
     }
-     */
+    // */
 }
