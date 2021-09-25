@@ -16,7 +16,13 @@ namespace WorldGeneration
 {
     public partial class GenerationForm : Form
     {
-        private string m_sWorkingDir = "";
+        public class Settings
+        {
+            public string m_sWorkingDir = "";
+            public List<string> m_cLastUsedPresets = new List<string>();
+        }
+
+        public Settings m_pSettings = null;
 
         private LocationsGrid<LocationX> m_cLocationsGrid = null;
         private LocationsGrid<LocationX> m_cLastUsedGrid = null;
@@ -107,7 +113,7 @@ namespace WorldGeneration
 
         private void GridsManagerButton_Click(object sender, EventArgs e)
         {
-            GridsManager pForm = new GridsManager(m_sWorkingDir);
+            GridsManager pForm = new GridsManager(m_pSettings.m_sWorkingDir);
 
             pForm.ShowDialog();
             ScanWorkingDir();
@@ -126,65 +132,35 @@ namespace WorldGeneration
             //}
         }
 
-        private bool GetNewWorkingDir(RegistryKey key)
+        private bool GetNewWorkingDir()
         {
             folderBrowserDialog1.SelectedPath = Application.CommonAppDataPath;
             if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
                 return false;
 
-            m_sWorkingDir = folderBrowserDialog1.SelectedPath;
-            key.SetValue("WorkingPath", m_sWorkingDir);
+            m_pSettings.m_sWorkingDir = folderBrowserDialog1.SelectedPath;
 
             return true;
         }
 
-        public bool Preload()
+        public bool Preload(Settings settings)
         {
-            RegistryKey key;
-            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DimensionX", true);
-            if (key == null)
-                key = Registry.LocalMachine.CreateSubKey("SOFTWARE\\DimensionX");
+            m_pSettings = settings;
 
-            string sPreset = (string)key.GetValue("preset1", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset2", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset3", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset4", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            sPreset = (string)key.GetValue("preset5", "");
-            if (sPreset != "" && !m_cLastUsedPresets.Contains(sPreset))
-                m_cLastUsedPresets.Add(sPreset);
-
-            foreach (string sPrset in m_cLastUsedPresets.ToArray())
+            foreach (string sPrset in settings.m_cLastUsedPresets.ToArray())
                 if (!File.Exists(sPrset))
-                    m_cLastUsedPresets.Remove(sPrset);
+                    settings.m_cLastUsedPresets.Remove(sPrset);
 
-            m_sWorkingDir = (string)key.GetValue("WorkingPath", "");
-
-            if (m_sWorkingDir == "" && !GetNewWorkingDir(key))
+            if (m_pSettings.m_sWorkingDir == "" && !GetNewWorkingDir())
             {
-                key.Close();
                 return false;
             }
 
-            DirectoryInfo dirInfo = new DirectoryInfo(m_sWorkingDir);
-            if(!dirInfo.Exists && !GetNewWorkingDir(key))
+            DirectoryInfo dirInfo = new DirectoryInfo(m_pSettings.m_sWorkingDir);
+            if(!dirInfo.Exists && !GetNewWorkingDir())
             {
-                key.Close();
                 return false;
             }
-
-            key.Close();
 
             ScanWorkingDir();
 
@@ -195,7 +171,7 @@ namespace WorldGeneration
         {
             GridsComboBox.Items.Clear();
 
-            DirectoryInfo dirInfo = new DirectoryInfo(m_sWorkingDir);
+            DirectoryInfo dirInfo = new DirectoryInfo(m_pSettings.m_sWorkingDir);
             FileInfo[] fileNames = dirInfo.GetFiles("*.*");
 
             foreach (FileInfo fi in fileNames)
@@ -215,7 +191,9 @@ namespace WorldGeneration
             }
 
             if (GridsComboBox.Items.Count > 0)
+            {
                 GridsComboBox.SelectedIndex = 0;
+            }
         }
 
         private void GridsComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -371,28 +349,15 @@ namespace WorldGeneration
 
                 pWorldPreset.Save(saveFileDialog1.FileName);
 
-                if (m_cLastUsedPresets.Contains(saveFileDialog1.FileName))
-                    m_cLastUsedPresets.Remove(saveFileDialog1.FileName);
+                if (m_pSettings.m_cLastUsedPresets.Contains(saveFileDialog1.FileName))
+                    m_pSettings.m_cLastUsedPresets.Remove(saveFileDialog1.FileName);
 
-                m_cLastUsedPresets.Insert(0, saveFileDialog1.FileName);
+                m_pSettings.m_cLastUsedPresets.Insert(0, saveFileDialog1.FileName);
 
-                while (m_cLastUsedPresets.Count > 5)
-                    m_cLastUsedPresets.RemoveAt(5);
-
-                RegistryKey key;
-                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DimensionX", true);
-                if (key != null)
-                {
-                    for (int i = 1; i <= m_cLastUsedPresets.Count; i++)
-                    {
-                        key.SetValue("preset" + i.ToString(), m_cLastUsedPresets[i - 1]);
-                    }
-                    key.Close();
-                }
+                while (m_pSettings.m_cLastUsedPresets.Count > 5)
+                    m_pSettings.m_cLastUsedPresets.RemoveAt(5);
             }
         }
-
-        public List<string> m_cLastUsedPresets = new List<string>();
 
         private void LoadWorldPreset_Click(object sender, EventArgs e)
         {
@@ -406,24 +371,13 @@ namespace WorldGeneration
             if (pWorldPreset.m_pLocationsGrid != null)
                 GridsComboBox.SelectedItem = pWorldPreset.m_pLocationsGrid;
 
-            if (m_cLastUsedPresets.Contains(sFileName))
-                m_cLastUsedPresets.Remove(sFileName);
+            if (m_pSettings.m_cLastUsedPresets.Contains(sFileName))
+                m_pSettings.m_cLastUsedPresets.Remove(sFileName);
 
-            m_cLastUsedPresets.Insert(0, sFileName);
+            m_pSettings.m_cLastUsedPresets.Insert(0, sFileName);
 
-            while (m_cLastUsedPresets.Count > 5)
-                m_cLastUsedPresets.RemoveAt(5);
-
-            RegistryKey key;
-            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DimensionX", true);
-            if (key != null)
-            {
-                for (int i = 1; i <= m_cLastUsedPresets.Count; i++)
-                {
-                    key.SetValue("preset" + i.ToString(), m_cLastUsedPresets[i - 1]);
-                }
-                key.Close();
-            }
+            while (m_pSettings.m_cLastUsedPresets.Count > 5)
+                m_pSettings.m_cLastUsedPresets.RemoveAt(5);
 
             checkBox1.Checked = true;
 

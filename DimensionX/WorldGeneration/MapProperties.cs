@@ -45,7 +45,7 @@ namespace WorldGeneration
                 if (m_cLocationsGrid == null)
                     return;
 
-                if (MapPresets.Items.Contains(m_aWorldMaps[0]) != m_cLocationsGrid.m_bCycled)
+                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != m_cLocationsGrid.m_bCycled)
                 {
                     MapPresets.Items.Clear();
 
@@ -92,6 +92,8 @@ namespace WorldGeneration
             AdvancedPanel.Visible = false;
 
             Enabled = false;
+
+            MapPresets.Items.Clear();
         }
 
         private void CalculateLimits(int iLocationsCount)
