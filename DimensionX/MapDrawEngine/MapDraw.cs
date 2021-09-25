@@ -1268,11 +1268,11 @@ namespace MapDrawEngine
         /// <param name="pLoc">локация, содержащая метку</param>
         private void AddLocationSign(LocationX pLoc)
         {
-            float fPointX = m_pWorld.m_pGrid.RX + pLoc.m_pCenter.X;
-            float fPointY = m_pWorld.m_pGrid.RY + pLoc.m_pCenter.Y;
+            float fPointX = m_pWorld.m_pGrid.RX + pLoc.X;
+            float fPointY = m_pWorld.m_pGrid.RY + pLoc.Y;
 
-            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.m_pCenter.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.m_pCenter.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
+            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
 
             if (iQuadX < 0 || iQuadX >= QUADRANTS_COUNT || iQuadY < 0 || iQuadY >= QUADRANTS_COUNT)
                 return;
@@ -1446,7 +1446,7 @@ namespace MapDrawEngine
 
             List<PointF> cRoadLine = new List<PointF>();
             float fLastPointX = pPath.m_aPoints[0].X + fShift;
-            foreach (PointF pPoint in pPath.m_aPoints)
+            foreach (IPointF pPoint in pPath.m_aPoints)
             {
                 //пересекает-ли линия от предыдущей точки к текущей нулевой меридиан?
                 float fDX = fShift;

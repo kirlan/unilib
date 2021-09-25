@@ -61,6 +61,14 @@ namespace LandscapeGeneration
             }
         }
 
+        private float m_fTemperature = 0;
+
+        public float Temperature
+        {
+            get { return m_fTemperature; }
+            set { m_fTemperature = value; }
+        }
+
         public string GetLandsString()
         {
             string sLands = "";

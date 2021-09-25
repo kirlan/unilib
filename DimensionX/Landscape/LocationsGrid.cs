@@ -78,6 +78,16 @@ namespace LandscapeGeneration
                 {
                     ImproveGrid();
                     bOK = CalculateVoronoi();
+                    if (bOK)
+                    {
+                        ImproveGrid();
+                        bOK = CalculateVoronoi();
+                        if (bOK)
+                        {
+                            ImproveGrid();
+                            bOK = CalculateVoronoi();
+                        }
+                    }
                 }
             }
             while (!bOK);
@@ -136,7 +146,7 @@ namespace LandscapeGeneration
         {
             Dictionary<BTVector, LOC> cData = new Dictionary<BTVector, LOC>();
             foreach (LOC pLoc in m_aLocations)
-                cData[new BTVector(pLoc.m_pCenter.X, pLoc.m_pCenter.Y)] = pLoc;
+                cData[new BTVector(pLoc.X, pLoc.Y)] = pLoc;
 
             //Строим диаграмму вороного - определяем границы локаций
             VoronoiGraph graph = Fortune.ComputeVoronoiGraph(cData.Keys);
@@ -242,10 +252,10 @@ namespace LandscapeGeneration
 
             if (pLoc1 != null && pLoc1.m_pOrigin == null)
             {
-                if (!pVertexA.m_cLocations.Contains(pLoc1))
-                    pVertexA.m_cLocations.Add(pLoc1);
-                if (!pVertexB.m_cLocations.Contains(pLoc1))
-                    pVertexB.m_cLocations.Add(pLoc1);
+                if (!pVertexA.m_cLocationsBuild.Contains(pLoc1))
+                    pVertexA.m_cLocationsBuild.Add(pLoc1);
+                if (!pVertexB.m_cLocationsBuild.Contains(pLoc1))
+                    pVertexB.m_cLocationsBuild.Add(pLoc1);
 
                 if (pLoc2 != null)
                 {
@@ -274,10 +284,10 @@ namespace LandscapeGeneration
 
             if (pLoc2 != null && pLoc2.m_pOrigin == null)
             {
-                if (!pVertexA.m_cLocations.Contains(pLoc2))
-                    pVertexA.m_cLocations.Add(pLoc2);
-                if (!pVertexB.m_cLocations.Contains(pLoc2))
-                    pVertexB.m_cLocations.Add(pLoc2);
+                if (!pVertexA.m_cLocationsBuild.Contains(pLoc2))
+                    pVertexA.m_cLocationsBuild.Add(pLoc2);
+                if (!pVertexB.m_cLocationsBuild.Contains(pLoc2))
+                    pVertexB.m_cLocationsBuild.Add(pLoc2);
 
                 if (pLoc1 != null)
                 {
@@ -775,9 +785,11 @@ namespace LandscapeGeneration
                     //Восстанавливаем словарь соседей для вертексов
                     foreach (Vertex pVertex in m_aVertexes)
                     {
+                        pVertex.m_aLocations = new Location[pVertex.m_cLocationsTmp.Count];
+                        int iIndex = 0;
                         foreach (long iID in pVertex.m_cLocationsTmp)
                         {
-                            pVertex.m_cLocations.Add(cTempDic[iID]);
+                            pVertex.m_aLocations[iIndex++] = cTempDic[iID];
                         }
                         pVertex.m_cLocationsTmp.Clear();
                     }

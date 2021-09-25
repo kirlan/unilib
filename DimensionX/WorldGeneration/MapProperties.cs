@@ -91,9 +91,9 @@ namespace WorldGeneration
             AdvancedPanel.Height = ClientRectangle.Height;
             AdvancedPanel.Visible = false;
 
-            Enabled = false;
-
             MapPresets.Items.Clear();
+
+            Enabled = false;
         }
 
         private void CalculateLimits(int iLocationsCount)

@@ -1,11 +1,9 @@
 ﻿using System;
 namespace LandscapeGeneration.PathFind
 {
-    public interface ITransportationNode
+    public interface ITransportationNode : IPointF
     {
         float DistanceTo(ITransportationNode pOtherNode, float fCycleShift);
         float GetMovementCost();
-        float X { get; }
-        float Y { get; }
     }
 }

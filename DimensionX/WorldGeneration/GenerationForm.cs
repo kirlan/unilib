@@ -87,7 +87,7 @@ namespace WorldGeneration
             foreach (ListViewItem pItem in AgesView.Items)
                 cEpoches.Add((pItem.Tag as EpochWrapper).GetEpochInfo());
 
-            WaitForm.StartWait(pOwnerWindow);
+            WaitForm.StartWait(pOwnerWindow, "World generation...");
 
             m_pWorld = new World(m_cLastUsedGrid,
                 mapProperties1.ContinentsCount,

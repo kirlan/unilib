@@ -3,7 +3,7 @@ namespace LandscapeGeneration
 {
     public interface IPointF
     {
-        float X { get; }
-        float Y { get; }
+        float X { get; set; }
+        float Y { get; set; }
     }
 }
