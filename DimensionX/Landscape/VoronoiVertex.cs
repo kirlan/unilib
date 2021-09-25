@@ -99,25 +99,28 @@ namespace LandscapeGeneration
             float p3X = p3.X;
             float p3Y = p3.Y;
 
-            if (p0X + fCycle / 2 < m_fX)
-                p0X += fCycle;
-            if (p0X - fCycle / 2 > m_fX)
-                p0X -= fCycle;
+            if (fCycle != 0.0f)
+            {
+                if (p0X + fCycle / 2 < m_fX)
+                    p0X += fCycle;
+                if (p0X - fCycle / 2 > m_fX)
+                    p0X -= fCycle;
 
-            if (p1X + fCycle / 2 < m_fX)
-                p1X += fCycle;
-            if (p1X - fCycle / 2 > m_fX)
-                p1X -= fCycle;
+                if (p1X + fCycle / 2 < m_fX)
+                    p1X += fCycle;
+                if (p1X - fCycle / 2 > m_fX)
+                    p1X -= fCycle;
 
-            if (p2X + fCycle / 2 < m_fX)
-                p2X += fCycle;
-            if (p2X - fCycle / 2 > m_fX)
-                p2X -= fCycle;
+                if (p2X + fCycle / 2 < m_fX)
+                    p2X += fCycle;
+                if (p2X - fCycle / 2 > m_fX)
+                    p2X -= fCycle;
 
-            if (p3X + fCycle / 2 < m_fX)
-                p3X += fCycle;
-            if (p3X - fCycle / 2 > m_fX)
-                p3X -= fCycle;
+                if (p3X + fCycle / 2 < m_fX)
+                    p3X += fCycle;
+                if (p3X - fCycle / 2 > m_fX)
+                    p3X -= fCycle;
+            }
 
             m_fX = 0.5f * ((2.0f * p1X) + (-p0X + p2X) * t + 
                 (2.0f * p0X - 5.0f * p1X + 4 * p2X - p3X) * t2 + 
@@ -127,10 +130,13 @@ namespace LandscapeGeneration
                 (2.0f * p0Y - 5.0f * p1Y + 4 * p2Y - p3Y) * t2 + 
                 (-p0Y + 3.0f * p1Y - 3.0f * p2Y + p3Y) * t3);
 
-            while (m_fX > fCycle / 2)
-                m_fX -= fCycle;
-            while (m_fX < -fCycle / 2)
-                m_fX += fCycle;
+            if (fCycle != 0.0f)
+            {
+                while (m_fX > fCycle / 2)
+                    m_fX -= fCycle;
+                while (m_fX < -fCycle / 2)
+                    m_fX += fCycle;
+            }
 
             if (m_fX < -100000)
                 throw new Exception();
