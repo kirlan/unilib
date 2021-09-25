@@ -66,6 +66,8 @@ namespace LandscapeGeneration
             return true;
         }
 
+        private List<List<Vertex>> m_pOrdered = new List<List<Vertex>>();
+
         /// <summary>
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
         /// </summary>
@@ -158,6 +160,21 @@ namespace LandscapeGeneration
                 }
             }
             while (pFirstLine != null);
+
+            foreach (Line pFLine in m_cFirstLines)
+            {
+                List<Vertex> cVertexes = new List<Vertex>();
+
+                Line pLine = pFLine;
+                do
+                {
+                    cVertexes.Add(pLine.m_pPoint1);
+                    pLine = pLine.m_pNext;
+                }
+                while (pLine != pFLine);
+
+                m_pOrdered.Add(cVertexes);
+            }
         }
 
         private float m_fAverageX = 0;

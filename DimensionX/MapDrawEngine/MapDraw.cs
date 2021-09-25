@@ -1595,6 +1595,9 @@ namespace MapDrawEngine
         /// <param name="iY">Y-координата левого верхнего угла области просмотра</param>
         public void SetPan(int iX, int iY)
         {
+            if (m_pWorld == null)
+                return;
+
             if (m_pWorld.m_pGrid.m_bCycled)
                 m_pDrawFrame.X = iX;
             else

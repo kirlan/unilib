@@ -31,6 +31,8 @@ namespace WorldGeneration
             m_pWaitForm.Refresh();
         }
 
+        private static long m_iLast = DateTime.Now.Ticks;
+
         public static void BeginStep(string sDescription, int iLength)
         {
             if (m_pWaitForm == null)
@@ -43,6 +45,7 @@ namespace WorldGeneration
             m_pWaitForm.m_iRealProgress = 0;
             //m_pWaitForm.progressBar1.Maximum = iLength;
             //m_pWaitForm.richTextBox1.ResumeLayout();
+            m_iLast = DateTime.Now.Ticks; 
             m_pWaitForm.Refresh();
         }
 
@@ -84,10 +87,14 @@ namespace WorldGeneration
 
             int iScaledProgress = m_iRealProgress * panel1.ClientRectangle.Width / m_iScale;
 
-            if (iScaledProgress != panel2.Width)
+            panel2.Width = iScaledProgress;
+
+            //There are 10,000 ticks in a millisecond.
+            long iNow = DateTime.Now.Ticks;
+            if (iNow - m_iLast > 5000000)
             {
-                panel2.Width = iScaledProgress;
                 Refresh();
+                m_iLast = iNow;
             }
         }
 

@@ -132,13 +132,17 @@ namespace LandscapeGeneration
 
             BuildContinents(BeginStep, ProgressStep);
 
-            //BuildContinents();
-
             BuildAreas(BeginStep, ProgressStep);
 
             BuildTransportGrid(BeginStep, ProgressStep);
         }
 
+
+        /// <summary>
+        /// Формирует "земли" - группы смежных локаций, имеющих одинаковый тип территории
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildLands(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building lands...", m_iLandsCount + m_pGrid.m_aLocations.Length / m_iLandsCount + m_pGrid.m_aLocations.Length + m_iLandsCount); 
@@ -198,6 +202,11 @@ namespace LandscapeGeneration
             }
         }
 
+        /// <summary>
+        /// Формирует тектонические плиты
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildLandMasses(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building landmasses...", m_iLandMassesCount + m_aLands.Length / m_iLandMassesCount + m_aLands.Length + m_iLandMassesCount); 
@@ -256,6 +265,12 @@ namespace LandscapeGeneration
             }
         }
 
+        /// <summary>
+        /// Формирует континенты - несоприкасающиеся между собой группы смежных тектонических плит.
+        /// Тектонические плиты, не принадлежащие ни одному континенту, маркируются как "океан".
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildContinents(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             int iMaxOceanCount = m_iLandsCount * m_iOceansPercentage / 100;
@@ -399,21 +414,11 @@ namespace LandscapeGeneration
                     pLandMass.IsWater = true;
         }
 
-        //private void BuildContinents()
-        //{
-        //    foreach (LandMass<LAND> pLandMass in m_cLandMasses)
-        //    {
-        //        if (!pLandMass.m_bOcean && pLandMass.Owner == null)
-        //        {
-        //            CONT pContinent = new CONT();
-        //            pContinent.Start(pLandMass);
-        //            while (pContinent.Grow() != null) { }
-        //            pContinent.Finish();
-        //            m_cContinents.Add(pContinent);
-        //        }
-        //    }
-        //}
-
+        /// <summary>
+        /// Формирует шельфовое "мелководье" там, где океанические и континентальные тектонические плиты расходятся
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void AddCoastral(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting coastral regions...", m_aLands.Length);
@@ -487,6 +492,11 @@ namespace LandscapeGeneration
             }
         }
 
+        /// <summary>
+        /// Формирует горы там, где тектонические плиты сталкиваются
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void AddMountains(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting mountain regions...", m_aLands.Length);
@@ -600,7 +610,7 @@ namespace LandscapeGeneration
                             fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;// *fTemperatureMod;
                             pLinkedLand.Humidity = (int)(fTemperatureMod - 5 + Rnd.Get(10.0f));
 
-                            if (pLinkedLand.Type != null && pLinkedLand.Type.m_eType == EnvironmentType.Mountains)
+                            if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment == EnvironmentType.Mountains)
                                 pLinkedLand.Humidity /= 2;
 
                             if (!cHumidityFront.Contains(pLink))
@@ -634,7 +644,7 @@ namespace LandscapeGeneration
                             {
                                 pLinkedLand.Humidity = pLand.Humidity - 10 - Rnd.Get(5);
 
-                                if (pLinkedLand.Type != null && pLinkedLand.Type.m_eType == EnvironmentType.Mountains)
+                                if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment == EnvironmentType.Mountains)
                                     pLinkedLand.Humidity /= 2;
 
                                 if (!cNewWave.Contains(pLink))
@@ -650,6 +660,11 @@ namespace LandscapeGeneration
             while (aHumidityFront.Length > 0);
         }
 
+        /// <summary>
+        /// Распределяет типы территорий и объединяет смежные земли с одинаковым типом территории в "зоны"
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
         private void BuildAreas(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             //Make seas

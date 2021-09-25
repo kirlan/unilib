@@ -13,10 +13,26 @@ namespace LandscapeGeneration
         Mountains
     }
 
+    public enum LandType
+    {
+        Coastral,
+        Ocean,
+        Mountains,
+        Tundra,
+        Taiga,
+        Forest,
+        Plains,
+        Desert,
+        Savanna,
+        Swamp,
+        Jungle
+    }
+
     public class LandTypeInfo
     {
         public Color m_pColor;
         public Brush m_pBrush;
+        public LandType m_eType;
 
         public void SetColor(Color pColor)
         {
@@ -26,14 +42,14 @@ namespace LandscapeGeneration
         
         public int m_iMovementCost = 100;
 
-        public EnvironmentType m_eType = EnvironmentType.Ground;
+        public EnvironmentType m_eEnvironment = EnvironmentType.Ground;
 
         public string m_sName;
 
         public void Init(int iMovementCost, EnvironmentType eType, string sName)
         {
             m_iMovementCost = iMovementCost;
-            m_eType = eType;
+            m_eEnvironment = eType;
             m_sName = sName;
         }
     }
@@ -41,21 +57,6 @@ namespace LandscapeGeneration
     public class LandTypes<LTI>
         where LTI: LandTypeInfo, new()
     {
-        public enum LandType
-        {
-            Coastral,
-            Ocean,
-            Mountains,
-            Tundra,
-            Taiga,
-            Forest,
-            Plains,
-            Desert,
-            Savanna,
-            Swamp,
-            Jungle
-        }
-
         public Dictionary<LandType, LTI> m_pLandTypes = new Dictionary<LandType, LTI>();
 
         public static LandTypes<LTI> m_pInstance = new LandTypes<LTI>();
@@ -63,7 +64,10 @@ namespace LandscapeGeneration
         private LandTypes()
         {
             foreach (LandType eType in Enum.GetValues(typeof(LandType)))
+            {
                 m_pLandTypes[eType] = new LTI();
+                m_pLandTypes[eType].m_eType = eType;
+            }
         }
 
         public static LTI Desert
