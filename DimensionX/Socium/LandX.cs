@@ -56,8 +56,10 @@ namespace Socium
                 int iChances = bBorder ? 1 : 50;
 
                 if (pLoc.m_pSettlement != null || 
-                    pLoc.m_pBuilding != null || 
-                    pLoc.m_cRoads.Count > 0 || 
+                    pLoc.m_pBuilding != null ||
+                    pLoc.m_cRoads[RoadQuality.Country].Count > 0 ||
+                    pLoc.m_cRoads[RoadQuality.Normal].Count > 0 ||
+                    pLoc.m_cRoads[RoadQuality.Good].Count > 0 ||
                     pLoc.m_bBorder)
                     iChances = 0;
                 else
