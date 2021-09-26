@@ -106,8 +106,8 @@ namespace LandscapeGeneration
             if (iOcean > 90 || iOcean < 10)
                 throw new ArgumentException("Oceans percent can't be less then 10 or greater then 100!");
 
-            m_iLandsCount = m_pGrid.m_aLocations.Length / (2 + iLandsDiversity / 25);
-            m_iLandMassesCount = m_pGrid.m_aLocations.Length / (6 + iLandMassesDiversity * 2);
+            m_iLandsCount = 600 + iLandsDiversity * m_pGrid.m_aLocations.Length / 200;
+            m_iLandMassesCount = 30 + iLandMassesDiversity * 240 / 100;
             m_iOceansPercentage = iOcean;
             m_iContinentsCount = iContinents;
             m_bGreatOcean = bGreatOcean;

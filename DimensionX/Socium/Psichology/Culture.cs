@@ -216,7 +216,7 @@ namespace Socium.Psichology
 
         /// <summary>
         /// НЕ ИСПОЛЬЗОВАТЬ!
-        /// Обращаться к свойству MoraleStrings.
+        /// Обращаться к свойству MentalityClusters.
         /// </summary>
         private static Dictionary<Mentality, MentalityCluster[]> s_cMentalityClusters = null;
 
