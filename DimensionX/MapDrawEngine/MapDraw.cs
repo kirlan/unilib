@@ -1074,13 +1074,13 @@ namespace MapDrawEngine
         /// <param name="bMirror">Строить ли отражения для зацикленного мира. Нужно при отрисовке, но нельзя при определении описывающего прямоугольника.</param>
         /// <param name="aQuadrants">список квадрантов, в которые входит этот контур</param>
         /// <returns></returns>
-        private PointF[][] BuildPath(List<Line> cFirstLines, bool bMirror, out MapQuadrant[] aQuadrants)
+        private PointF[][] BuildPath(List<Location.Edge> cFirstLines, bool bMirror, out MapQuadrant[] aQuadrants)
         {
             bool[,] aQuadsAll = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
             List<PointF[]> cPath = new List<PointF[]>();
 
             //пробежимся по всем затравкам
-            foreach (Line pFirstLine in cFirstLines)
+            foreach (Location.Edge pFirstLine in cFirstLines)
             {
                 bool bCross;
                 bool[,] aQuads;
@@ -1130,7 +1130,7 @@ namespace MapDrawEngine
         /// <param name="bMirror">Строить ли отражения для зацикленного мира. Нужно при отрисовке, но нельзя при определении описывающего прямоугольника.</param>
         /// <param name="aQuadrants">список квадрантов, в которые входит этот контур</param>
         /// <returns></returns>
-        private PointF[][] BuildPath(Line pFirstLine, bool bMirror, out MapQuadrant[] aQuadrants)
+        private PointF[][] BuildPath(Location.Edge pFirstLine, bool bMirror, out MapQuadrant[] aQuadrants)
         {
             bool[,] aQuadsAll = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
             List<PointF[]> cPath = new List<PointF[]>();
@@ -1183,14 +1183,14 @@ namespace MapDrawEngine
         /// <param name="bCross">признак того, что контур пересекает нулевой меридиан</param>
         /// <param name="aQuadrants">массив, в котором указано, в каких квадрантах лежит контур</param>
         /// <returns></returns>
-        private PointF[] BuildBorder(Line pFirstLine, float fShift, out bool bCross, out bool[,] aQuadrants)
+        private PointF[] BuildBorder(Location.Edge pFirstLine, float fShift, out bool bCross, out bool[,] aQuadrants)
         {
             bCross = false;
 
             aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
 
             List<PointF> cBorder = new List<PointF>();
-            Line pLine = pFirstLine;
+            Location.Edge pLine = pFirstLine;
             cBorder.Add(ShiftPoint(pLine.m_pPoint1, fShift));
             float fLastPointX = pLine.m_pPoint1.X + fShift;
             //последовательно перебирает все связанные линии, пока круг не замкнётся.

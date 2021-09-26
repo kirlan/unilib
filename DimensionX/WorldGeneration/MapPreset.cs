@@ -20,7 +20,7 @@ namespace WorldGeneration
 
         public bool m_bBordered;
 
-        public int m_iLandMassesCount;
+        public int m_iLandMassesPercent;
 
         public int m_iContinentsCount;
 
@@ -32,14 +32,14 @@ namespace WorldGeneration
 
         public int m_iLandsCountPercent;
 
-        public MapPreset(string sName, string sDescription, bool bLooped, bool bBordered, int iLandsCountPercent, int iLandMassesCount, int iContinentsCount, int iWaterCoverage, int iEquatorPosition, int iPoleDistance)
+        public MapPreset(string sName, string sDescription, bool bLooped, bool bBordered, int iLandsCountPercent, int iLandMassesPercent, int iContinentsCount, int iWaterCoverage, int iEquatorPosition, int iPoleDistance)
         {
             m_sName = sName;
             m_sDescription = sDescription;
             m_bLooped = bLooped;
             m_bBordered = bBordered;
             m_iLandsCountPercent = iLandsCountPercent;
-            m_iLandMassesCount = iLandMassesCount;
+            m_iLandMassesPercent = iLandMassesPercent;
             m_iContinentsCount = iContinentsCount;
             m_iWaterCoverage = iWaterCoverage;
             m_iEquatorPosition = iEquatorPosition;

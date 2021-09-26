@@ -131,12 +131,12 @@ namespace MapDrawEngine
         /// </summary>
         /// <param name="cFirstLines">Затравки контуров</param>
         /// <returns></returns>
-        private PointF[][] BuildPath(List<Line> cFirstLines)
+        private PointF[][] BuildPath(List<Location.Edge> cFirstLines)
         {
             List<PointF[]> cPath = new List<PointF[]>();
 
             //пробежимся по всем затравкам
-            foreach (Line pFirstLine in cFirstLines)
+            foreach (Location.Edge pFirstLine in cFirstLines)
             {
                 bool bCross;
 
@@ -165,12 +165,12 @@ namespace MapDrawEngine
         /// <param name="fShift">сдвиг по горизонтали для закольцованной карты</param>
         /// <param name="bCross">признак того, что контур пересекает нулевой меридиан</param>
         /// <returns></returns>
-        private PointF[] BuildBorder(Line pFirstLine, float fShift, out bool bCross)
+        private PointF[] BuildBorder(Location.Edge pFirstLine, float fShift, out bool bCross)
         {
             bCross = false;
 
             List<PointF> cBorder = new List<PointF>();
-            Line pLine = pFirstLine;
+            Location.Edge pLine = pFirstLine;
             cBorder.Add(ShiftPoint(pLine.m_pPoint1, fShift));
             float fLastPointX = pLine.m_pPoint1.X + fShift;
             //последовательно перебирает все связанные линии, пока круг не замкнётся.

@@ -64,8 +64,8 @@ namespace LandscapeGeneration
                     bool bHavePotential = false;
 
                     float fWholeLength = 1;
-                    Line[] aBorderLine = m_cBorder[pLand].ToArray();
-                    foreach (Line pLine in aBorderLine)
+                    Location.Edge[] aBorderLine = m_cBorder[pLand].ToArray();
+                    foreach (Location.Edge pLine in aBorderLine)
                         fWholeLength += pLine.m_fLength;
 
                     foreach (var pLinkTerr in pLand.BorderWith)
@@ -123,10 +123,10 @@ namespace LandscapeGeneration
                     continue;
 
                 if (!m_cBorder.ContainsKey(pBorderLand.Key))
-                    m_cBorder[pBorderLand.Key] = new List<Line>();
-                Line[] cLines = pBorderLand.Value.ToArray();
-                foreach (Line pLine in cLines)
-                    m_cBorder[pBorderLand.Key].Add(new Line(pLine));
+                    m_cBorder[pBorderLand.Key] = new List<Location.Edge>();
+                Location.Edge[] cLines = pBorderLand.Value.ToArray();
+                foreach (Location.Edge pLine in cLines)
+                    m_cBorder[pBorderLand.Key].Add(new Location.Edge(pLine));
             }
 
             //ChainBorder();

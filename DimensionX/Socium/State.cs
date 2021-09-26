@@ -286,7 +286,7 @@ namespace Socium
         /// <summary>
         /// границы с другими государствами
         /// </summary>
-        private Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
+        private Dictionary<object, List<Location.Edge>> m_cBorderWith = new Dictionary<object, List<Location.Edge>>();
 
         private object m_pOwner = null;
 
@@ -299,7 +299,7 @@ namespace Socium
         /// <summary>
         /// границы с другими государствами
         /// </summary>
-        public Dictionary<object, List<Line>> BorderWith
+        public Dictionary<object, List<Location.Edge>> BorderWith
         {
             get { return m_cBorderWith; }
         }
@@ -322,7 +322,7 @@ namespace Socium
 
             m_fPerimeter = 0;
             foreach (var pBorder in m_cBorderWith)
-                foreach (Line pLine in pBorder.Value)
+                foreach (Location.Edge pLine in pBorder.Value)
                     m_fPerimeter += pLine.m_fLength;
         }
 
@@ -416,7 +416,7 @@ namespace Socium
                     //    iHostility = m_pMethropoly.CalcHostility(pProvince);
 
                     float fSharedPerimeter = 0;
-                    foreach (Line pLine in m_cBorder[pProvince])
+                    foreach (Location.Edge pLine in m_cBorder[pProvince])
                         fSharedPerimeter += pLine.m_fLength;
 
                     fSharedPerimeter /= pProvince.PerimeterLength;
@@ -490,11 +490,11 @@ namespace Socium
                 }
 
                 if (!m_cBorder.ContainsKey(pL))
-                    m_cBorder[pL] = new List<Line>();
-                Line[] cLines = pLand.Value.ToArray();
-                foreach (Line pLine in cLines)
+                    m_cBorder[pL] = new List<Location.Edge>();
+                Location.Edge[] cLines = pLand.Value.ToArray();
+                foreach (Location.Edge pLine in cLines)
                 {
-                    m_cBorder[pL].Add(new Line(pLine));
+                    m_cBorder[pL].Add(new Location.Edge(pLine));
                     //cNewBorder.Add(new Line(pLine));
                 }
             }
@@ -509,18 +509,18 @@ namespace Socium
             //}
         }
 
-        private Line[] SortLines(List<Line> cListLine)
+        private Location.Edge[] SortLines(List<Location.Edge> cListLine)
         {
-            Line[] aListLine = new Line[cListLine.Count];
+            Location.Edge[] aListLine = new Location.Edge[cListLine.Count];
             int iIndex = -1;
             do
             {
-                foreach (Line pLine in cListLine)
+                foreach (Location.Edge pLine in cListLine)
                 {
                     if (iIndex < 0)
                     {
                         bool bPrevious = false;
-                        foreach (Line pLine2 in cListLine)
+                        foreach (Location.Edge pLine2 in cListLine)
                             if (pLine2.m_pPoint2.Y == pLine.m_pPoint1.Y)
                                 bPrevious = true;
 
@@ -558,7 +558,7 @@ namespace Socium
                     pState = (pProvince as Province).Owner as State;
 
                 if (!m_cBorderWith.ContainsKey(pState))
-                    m_cBorderWith[pState] = new List<Line>();
+                    m_cBorderWith[pState] = new List<Location.Edge>();
                 m_cBorderWith[pState].AddRange(m_cBorder[pProvince]);
             }
 
@@ -571,7 +571,7 @@ namespace Socium
                     { 
                         State pState = (pOtherLoc.Owner as LandX).m_pProvince.Owner as State;
                         if(pState != this && !m_cBorderWith.ContainsKey(pState))
-                            m_cBorderWith[pState] = new List<Line>();
+                            m_cBorderWith[pState] = new List<Location.Edge>();
                     }
             }
 
@@ -771,7 +771,7 @@ namespace Socium
                     {
                         State pState = (pOtherLoc.Owner as LandX).m_pProvince.Owner as State;
                         if (pState != this && !m_cBorderWith.ContainsKey(pState))
-                            m_cBorderWith[pState] = new List<Line>();
+                            m_cBorderWith[pState] = new List<Location.Edge>();
                     } 
                 
                 //m_iFood += (int)(pProvince.m_fGrain + pProvince.m_fFish + pProvince.m_fGame);
@@ -1327,8 +1327,8 @@ namespace Socium
                             }
                         }
 
-                        Line[] cLines = pLinkedTerr.Value.ToArray();
-                        foreach (Line pLine in cLines)
+                        Location.Edge[] cLines = pLinkedTerr.Value.ToArray();
+                        foreach (Location.Edge pLine in cLines)
                         {
                             fBorder += pLine.m_fLength / pLinkedLand.MovementCost;
                             if (pLinkedLand.m_pProvince == null)
@@ -1715,7 +1715,7 @@ namespace Socium
                         continue;
 
                     bool bCoast = false;
-                    foreach (Location pLink in pLoc.m_aBorderWith)
+                    foreach (LocationX pLink in pLoc.m_aBorderWith)
                     {
                         if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
                             bCoast = true;

@@ -8,69 +8,6 @@ using LandscapeGeneration.PathFind;
 
 namespace LandscapeGeneration
 {
-    public class Line
-    {
-        public Vertex m_pPoint1;
-        public Vertex m_pPoint2;
-
-        public Line(Vertex pPoint1, Vertex pPoint2)
-        {
-            m_pPoint1 = pPoint1;
-            m_pPoint2 = pPoint2;
-
-            m_fLength = (float)Math.Sqrt((pPoint1.m_fX - pPoint2.m_fX)*(pPoint1.m_fX - pPoint2.m_fX) + (pPoint1.m_fY - pPoint2.m_fY)*(pPoint1.m_fY - pPoint2.m_fY));
-        }
-
-        private void CalcLength(float fCycle)
-        {
-            float fPoint1X = m_pPoint1.m_fX;
-            float fPoint1Y = m_pPoint1.m_fY;
-
-            float fPoint2X = m_pPoint2.m_fX;
-            float fPoint2Y = m_pPoint2.m_fY;
-
-            if (fPoint2X + fCycle / 2 < fPoint1X)
-                fPoint2X += fCycle;
-            if (fPoint2X - fCycle / 2 > fPoint1X)
-                fPoint2X -= fCycle;
-
-            m_fLength = (float)Math.Sqrt((fPoint1X - fPoint2X) * (fPoint1X - fPoint2X) + (fPoint1Y - fPoint2Y) * (fPoint1Y - fPoint2Y));
-        }
-
-        public Line(Line pOriginal)
-        {
-            m_pPoint1 = pOriginal.m_pPoint1;
-            m_pPoint2 = pOriginal.m_pPoint2;
-
-            m_fLength = pOriginal.m_fLength;
-        }
-
-        public Line(BinaryReader binReader, Dictionary<long, Vertex> cVertexes)
-        {
-            m_pPoint1 = cVertexes[binReader.ReadInt64()];
-            m_pPoint2 = cVertexes[binReader.ReadInt64()];
-
-            m_fLength = (float)Math.Sqrt((m_pPoint1.m_fX - m_pPoint2.m_fX) * (m_pPoint1.m_fX - m_pPoint2.m_fX) + (m_pPoint1.m_fY - m_pPoint2.m_fY) * (m_pPoint1.m_fY - m_pPoint2.m_fY));
-        }
-
-        public void Save(BinaryWriter binWriter)
-        {
-            binWriter.Write(m_pPoint1.m_iID);
-            binWriter.Write(m_pPoint2.m_iID);
-        }
-
-        public Line m_pPrevious = null;
-        public Line m_pNext = null;
-
-        public float m_fLength;
-
-        public override string ToString()
-        {
-            return string.Format("({0}) - ({1}), Length {2}", m_pPoint1, m_pPoint2, m_fLength);
-        }
-
-    }
-
     public enum RegionType
     {
         Empty,
@@ -80,16 +17,79 @@ namespace LandscapeGeneration
 
     public class Location : TransportationNode, ITerritory
     {
-        public Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
+        public class Edge
+        {
+            public VoronoiVertex m_pPoint1;
+            public VoronoiVertex m_pPoint2;
 
-         public RegionType m_eType = RegionType.Empty;
+            public Edge(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
+            {
+                m_pPoint1 = pPoint1;
+                m_pPoint2 = pPoint2;
+
+                m_fLength = (float)Math.Sqrt((pPoint1.m_fX - pPoint2.m_fX) * (pPoint1.m_fX - pPoint2.m_fX) + (pPoint1.m_fY - pPoint2.m_fY) * (pPoint1.m_fY - pPoint2.m_fY));
+            }
+
+            private void CalcLength(float fCycle)
+            {
+                float fPoint1X = m_pPoint1.m_fX;
+                float fPoint1Y = m_pPoint1.m_fY;
+
+                float fPoint2X = m_pPoint2.m_fX;
+                float fPoint2Y = m_pPoint2.m_fY;
+
+                if (fPoint2X + fCycle / 2 < fPoint1X)
+                    fPoint2X += fCycle;
+                if (fPoint2X - fCycle / 2 > fPoint1X)
+                    fPoint2X -= fCycle;
+
+                m_fLength = (float)Math.Sqrt((fPoint1X - fPoint2X) * (fPoint1X - fPoint2X) + (fPoint1Y - fPoint2Y) * (fPoint1Y - fPoint2Y));
+            }
+
+            public Edge(Edge pOriginal)
+            {
+                m_pPoint1 = pOriginal.m_pPoint1;
+                m_pPoint2 = pOriginal.m_pPoint2;
+
+                m_fLength = pOriginal.m_fLength;
+            }
+
+            public Edge(BinaryReader binReader, Dictionary<long, VoronoiVertex> cVertexes)
+            {
+                m_pPoint1 = cVertexes[binReader.ReadInt64()];
+                m_pPoint2 = cVertexes[binReader.ReadInt64()];
+
+                m_fLength = (float)Math.Sqrt((m_pPoint1.m_fX - m_pPoint2.m_fX) * (m_pPoint1.m_fX - m_pPoint2.m_fX) + (m_pPoint1.m_fY - m_pPoint2.m_fY) * (m_pPoint1.m_fY - m_pPoint2.m_fY));
+            }
+
+            public void Save(BinaryWriter binWriter)
+            {
+                binWriter.Write(m_pPoint1.m_iID);
+                binWriter.Write(m_pPoint2.m_iID);
+            }
+
+            public Edge m_pPrevious = null;
+            public Edge m_pNext = null;
+
+            public float m_fLength;
+
+            public override string ToString()
+            {
+                return string.Format("({0}) - ({1}), Length {2}", m_pPoint1, m_pPoint2, m_fLength);
+            }
+
+        }
+
+        public Dictionary<object, List<Location.Edge>> m_cBorderWith = new Dictionary<object, List<Location.Edge>>();
+
+        public RegionType m_eType = RegionType.Empty;
 
         #region ITerritory Members
 
         /// <summary>
         /// Границы с другими такими же объектами
         /// </summary>
-        public Dictionary<object, List<Line>> BorderWith
+        public Dictionary<object, List<Location.Edge>> BorderWith
         {
             get { return m_cBorderWith; }
         }
@@ -168,7 +168,7 @@ namespace LandscapeGeneration
             m_pOrigin = pOrigin;
         }
 
-        public Line m_pFirstLine = null;
+        public Edge m_pFirstLine = null;
 
         private float m_fPerimeter = 0;
 
@@ -187,24 +187,24 @@ namespace LandscapeGeneration
 
             m_pFirstLine = m_cBorderWith[m_aBorderWith[0]][0];
 
-            Line pCurrentLine = m_pFirstLine;
-            List<Line> cTotalBorder = new List<Line>();
+            Edge pCurrentLine = m_pFirstLine;
+            List<Location.Edge> cTotalBorder = new List<Location.Edge>();
 
             m_fPerimeter = 0;
             foreach (var cLines in m_cBorderWith)
             {
                 cTotalBorder.AddRange(cLines.Value);
-                foreach (Line pLine in cLines.Value)
+                foreach (Edge pLine in cLines.Value)
                     m_fPerimeter += pLine.m_fLength;
             }
 
-            Line[] aTotalBorder = cTotalBorder.ToArray();
+            Edge[] aTotalBorder = cTotalBorder.ToArray();
 
             int iLength = 0;
             do
             {
                 bool bFound = false;
-                foreach (Line pLine in aTotalBorder)
+                foreach (Edge pLine in aTotalBorder)
                 {
                     if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
                         (pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY &&
@@ -245,7 +245,7 @@ namespace LandscapeGeneration
 
             float fX = 0, fY = 0, fLength = 0;
 
-            Line pLine = m_pFirstLine;
+            Edge pLine = m_pFirstLine;
             do
             {
                 fX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
@@ -296,7 +296,7 @@ namespace LandscapeGeneration
             {
                 binWriter.Write((pLoc.Key as Location).m_iID);
                 binWriter.Write(pLoc.Value.Count);
-                foreach (Line pLine in pLoc.Value)
+                foreach (Edge pLine in pLoc.Value)
                 {
                     pLine.Save(binWriter);
                 }
@@ -307,7 +307,7 @@ namespace LandscapeGeneration
         /// Временный список соседей с границами. Используется ТОЛЬКО при считывании списка локаций из файла.
         /// После синхронизации с m_cBorderWith может быть очищен.
         /// </summary>
-        public Dictionary<long, List<Line>> m_cBorderWithID = new Dictionary<long, List<Line>>();
+        public Dictionary<long, List<Location.Edge>> m_cBorderWithID = new Dictionary<long, List<Location.Edge>>();
 
         /// <summary>
         /// Считывает локацию из файла.
@@ -316,7 +316,7 @@ namespace LandscapeGeneration
         /// После считывания всех локаций необходимо перевести информацию из m_cBorderWithID в m_cBorderWith.
         /// </summary>
         /// <param name="binReader"></param>
-        public void Load(BinaryReader binReader, Dictionary<long, Vertex> cVertexes)
+        public void Load(BinaryReader binReader, Dictionary<long, VoronoiVertex> cVertexes)
         {
             m_cLinks.Clear();
             m_cBorderWith.Clear();
@@ -335,11 +335,11 @@ namespace LandscapeGeneration
             for (int i = 0; i < iBorderCount; i++)
             {
                 long iID = binReader.ReadInt64();
-                m_cBorderWithID[iID] = new List<Line>();
+                m_cBorderWithID[iID] = new List<Location.Edge>();
                 int iLinesCount = binReader.ReadInt32();
                 for (int j = 0; j < iLinesCount; j++)
                 {
-                    Line pLine = new Line(binReader, cVertexes);
+                    Edge pLine = new Edge(binReader, cVertexes);
                     m_cBorderWithID[iID].Add(pLine);
                 }
             }

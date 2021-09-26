@@ -200,14 +200,13 @@
             // LandsCountBar
             // 
             this.LandsCountBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LandsCountBar.LargeChange = 100;
-            this.LandsCountBar.Location = new System.Drawing.Point(69, 0);
-            this.LandsCountBar.Maximum = 4000;
-            this.LandsCountBar.Minimum = 1000;
+            this.LandsCountBar.LargeChange = 20;
+            this.LandsCountBar.Location = new System.Drawing.Point(103, 0);
+            this.LandsCountBar.Minimum = 1;
             this.LandsCountBar.Name = "LandsCountBar";
-            this.LandsCountBar.Size = new System.Drawing.Size(170, 19);
+            this.LandsCountBar.Size = new System.Drawing.Size(136, 19);
             this.LandsCountBar.TabIndex = 27;
-            this.LandsCountBar.Value = 3000;
+            this.LandsCountBar.Value = 40;
             this.LandsCountBar.ValueChanged += new System.EventHandler(this.ScrollBar_ValueChanged);
             // 
             // label3
@@ -215,9 +214,9 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Left;
             this.label3.Location = new System.Drawing.Point(0, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 19);
+            this.label3.Size = new System.Drawing.Size(103, 19);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Lands count:";
+            this.label3.Text = "Lands complexity:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label14
@@ -333,13 +332,12 @@
             // LandMassesCountBar
             // 
             this.LandMassesCountBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LandMassesCountBar.Location = new System.Drawing.Point(100, 0);
-            this.LandMassesCountBar.Maximum = 300;
-            this.LandMassesCountBar.Minimum = 30;
+            this.LandMassesCountBar.Location = new System.Drawing.Point(109, 0);
+            this.LandMassesCountBar.Minimum = 1;
             this.LandMassesCountBar.Name = "LandMassesCountBar";
-            this.LandMassesCountBar.Size = new System.Drawing.Size(139, 19);
+            this.LandMassesCountBar.Size = new System.Drawing.Size(130, 19);
             this.LandMassesCountBar.TabIndex = 28;
-            this.LandMassesCountBar.Value = 150;
+            this.LandMassesCountBar.Value = 50;
             this.LandMassesCountBar.ValueChanged += new System.EventHandler(this.ScrollBar_ValueChanged);
             // 
             // label5
@@ -347,9 +345,9 @@
             this.label5.Dock = System.Windows.Forms.DockStyle.Left;
             this.label5.Location = new System.Drawing.Point(0, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 19);
+            this.label5.Size = new System.Drawing.Size(109, 19);
             this.label5.TabIndex = 3;
-            this.label5.Text = "LandMasses count:";
+            this.label5.Text = "Coastline complexity:";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // groupBox4

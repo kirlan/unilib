@@ -33,7 +33,7 @@ namespace Socium
 
         public List<LandX> m_cContents = new List<LandX>();
 
-        private Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
+        private Dictionary<object, List<Location.Edge>> m_cBorderWith = new Dictionary<object, List<Location.Edge>>();
 
         private object m_pOwner = null;
 
@@ -43,7 +43,7 @@ namespace Socium
             set { m_pOwner = value; }
         }
 
-        public Dictionary<object, List<Line>> BorderWith
+        public Dictionary<object, List<Location.Edge>> BorderWith
         {
             get { return m_cBorderWith; }
         }
@@ -64,7 +64,7 @@ namespace Socium
 
             m_fPerimeter = 0;
             foreach (var pBorder in m_cBorderWith)
-                foreach (Line pLine in pBorder.Value)
+                foreach (Location.Edge pLine in pBorder.Value)
                     m_fPerimeter += pLine.m_fLength;
         }
 
@@ -268,8 +268,8 @@ namespace Socium
                     {
                         //общая граница провинции и новой земли
                         float fSharedPerimeter = 1;
-                        Line[] aBorderLine = m_cBorder[pLinkedLand].ToArray();
-                        foreach (Line pLine in aBorderLine)
+                        Location.Edge[] aBorderLine = m_cBorder[pLinkedLand].ToArray();
+                        foreach (Location.Edge pLine in aBorderLine)
                             fSharedPerimeter += pLine.m_fLength;
 
                         //fCommonLength /= fTotalLength;
@@ -354,10 +354,10 @@ namespace Socium
                             continue;
 
                         if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
-                            m_cBorder[pAddonLinkedLand.Key] = new List<Line>();
-                        Line[] cLines = pAddonLinkedLand.Value.ToArray();
-                        foreach (Line pLine in cLines)
-                            m_cBorder[pAddonLinkedLand.Key].Add(new Line(pLine));
+                            m_cBorder[pAddonLinkedLand.Key] = new List<Location.Edge>();
+                        Location.Edge[] cLines = pAddonLinkedLand.Value.ToArray();
+                        foreach (Location.Edge pLine in cLines)
+                            m_cBorder[pAddonLinkedLand.Key].Add(new Location.Edge(pLine));
                     }
 
                     m_bFullyGrown = false;
@@ -400,10 +400,10 @@ namespace Socium
                         continue;
 
                     if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
-                        m_cBorder[pAddonLinkedLand.Key] = new List<Line>();
-                    Line[] cLines = pAddonLinkedLand.Value.ToArray();
-                    foreach (Line pLine in cLines)
-                        m_cBorder[pAddonLinkedLand.Key].Add(new Line(pLine));
+                        m_cBorder[pAddonLinkedLand.Key] = new List<Location.Edge>();
+                    Location.Edge[] cLines = pAddonLinkedLand.Value.ToArray();
+                    foreach (Location.Edge pLine in cLines)
+                        m_cBorder[pAddonLinkedLand.Key].Add(new Location.Edge(pLine));
                 }
             }
 
@@ -432,7 +432,7 @@ namespace Socium
                     pProvince = (pLand as LandX).m_pProvince;
 
                 if (!m_cBorderWith.ContainsKey(pProvince))
-                    m_cBorderWith[pProvince] = new List<Line>();
+                    m_cBorderWith[pProvince] = new List<Location.Edge>();
                 m_cBorderWith[pProvince].AddRange(m_cBorder[pLand]);
             }
             FillBorderWithKeys();

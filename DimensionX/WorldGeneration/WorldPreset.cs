@@ -15,9 +15,9 @@ namespace WorldGeneration
         public LocationsGrid<LocationX> m_pLocationsGrid;
         public int m_iContinents;
         public bool m_bGreatOcean;
-        public int m_iLands;
+        public int m_iLandsDiversity;
         public int m_iStates;
-        public int m_iLandMasses;
+        public int m_iLandMassesDiversity;
         public int m_iOcean;
         public int m_iEquator;
         public int m_iPole;
@@ -26,9 +26,9 @@ namespace WorldGeneration
         public WorldPreset(LocationsGrid<LocationX> pLocationsGrid,
                      int iContinents,
                      bool bGreatOcean,
-                     int iLands,
+                     int iLandsDivesity,
                      int iStates,
-                     int iLandMasses,
+                     int iLandMassesDiversity,
                      int iOcean,
                      int iEquator,
                      int iPole,
@@ -37,9 +37,9 @@ namespace WorldGeneration
             m_pLocationsGrid = pLocationsGrid;
             m_iContinents = iContinents;
             m_bGreatOcean = bGreatOcean;
-            m_iLands = iLands;
+            m_iLandsDiversity = iLandsDivesity;
             m_iStates = iStates;
-            m_iLandMasses = iLandMasses;
+            m_iLandMassesDiversity = iLandMassesDiversity;
             m_iOcean = iOcean;
             m_iEquator = iEquator;
             m_iPole = iPole;
@@ -54,6 +54,9 @@ namespace WorldGeneration
                 throw new ArgumentException("Can't load world preset from file '" + sFileName + "'");
 
             m_pLocationsGrid = null;
+            bool bOK1 = false;
+            bool bOK2 = false;
+
             foreach (XmlNode pCatNode in pXml.Root.ChildNodes)
             {
                 if (pCatNode.Name == "World")
@@ -69,14 +72,16 @@ namespace WorldGeneration
 
                     pXml.GetIntAttribute(pCatNode, "continents", ref m_iContinents);
                     pXml.GetBoolAttribute(pCatNode, "borderless", ref m_bGreatOcean);
-                    pXml.GetIntAttribute(pCatNode, "lands", ref m_iLands);
+                    pXml.GetIntAttribute(pCatNode, "lands", ref m_iLandsDiversity);
                     pXml.GetIntAttribute(pCatNode, "states", ref m_iStates);
-                    pXml.GetIntAttribute(pCatNode, "landmasses", ref m_iLandMasses);
+                    pXml.GetIntAttribute(pCatNode, "landmasses", ref m_iLandMassesDiversity);
                     pXml.GetIntAttribute(pCatNode, "ocean", ref m_iOcean);
                     pXml.GetIntAttribute(pCatNode, "equator", ref m_iEquator);
                     pXml.GetIntAttribute(pCatNode, "pole", ref m_iPole);
+
+                    bOK1 = true;
                 }
-                if (pCatNode.Name == "Epoches")
+                if (pCatNode.Name == "History")
                 {
                     List<Epoch> cEpoches = new List<Epoch>();
                     foreach (XmlNode pEpochNode in pCatNode.ChildNodes)
@@ -88,8 +93,13 @@ namespace WorldGeneration
                         }
                     }
                     m_aEpoches = cEpoches.ToArray();
+
+                    bOK2 = true;
                 }
             }
+
+            if (!bOK1 || !bOK2)
+                throw new ArgumentException("Wrong file format '" + sFileName + "'");
         }
 
         public bool Save(string sFileName)
@@ -103,14 +113,14 @@ namespace WorldGeneration
             pXml.AddAttribute(pWorldPropertiesNode, "grid", aFileName[aFileName.Length - 1]);
             pXml.AddAttribute(pWorldPropertiesNode, "continents", m_iContinents);
             pXml.AddAttribute(pWorldPropertiesNode, "borderless", m_bGreatOcean);
-            pXml.AddAttribute(pWorldPropertiesNode, "lands", m_iLands);
+            pXml.AddAttribute(pWorldPropertiesNode, "lands", m_iLandsDiversity);
             pXml.AddAttribute(pWorldPropertiesNode, "states", m_iStates);
-            pXml.AddAttribute(pWorldPropertiesNode, "landmasses", m_iLandMasses);
+            pXml.AddAttribute(pWorldPropertiesNode, "landmasses", m_iLandMassesDiversity);
             pXml.AddAttribute(pWorldPropertiesNode, "ocean", m_iOcean);
             pXml.AddAttribute(pWorldPropertiesNode, "equator", m_iEquator);
             pXml.AddAttribute(pWorldPropertiesNode, "pole", m_iPole);
 
-            XmlNode pEpochesNode = pXml.CreateNode(pXml.Root, "Epoches");
+            XmlNode pEpochesNode = pXml.CreateNode(pXml.Root, "History");
 
             foreach (Epoch pEpoch in m_aEpoches)
             {

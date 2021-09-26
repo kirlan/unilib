@@ -124,7 +124,7 @@ namespace Socium
                 bool bCoast = false;
                 bool bBorder = false;
                 //определим, является ли эта локация пограничной с другой землёй или побережьем.
-                foreach (Location pLink in pLoc.m_aBorderWith)
+                foreach (LocationX pLink in pLoc.m_aBorderWith)
                 {
                     if (pLink.Owner != pLoc.Owner)
                     {
@@ -175,7 +175,7 @@ namespace Socium
                         bool bCoast = false;
                         bool bBorder = false;
                         //определим, является ли эта локация пограничной с другой землёй или побережьем.
-                        foreach (Location pLink in pLoc.m_aBorderWith)
+                        foreach (LocationX pLink in pLoc.m_aBorderWith)
                         {
                             if (pLink.Owner != pLoc.Owner)
                             {
@@ -275,7 +275,7 @@ namespace Socium
             {
                 bool bCoast = false;
                 bool bBorder = false;
-                foreach (Location pLink in pLoc.m_aBorderWith)
+                foreach (LocationX pLink in pLoc.m_aBorderWith)
                 {
                     if (pLink.Owner != null)
                     {

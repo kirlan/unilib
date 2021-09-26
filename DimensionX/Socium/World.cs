@@ -449,10 +449,10 @@ namespace Socium
         /// <param name="cLocations">Сетка локаций, на которой будет строиться мир.</param>
         /// <param name="iContinents">Общее количество континентов - обособленных, разделённых водой участков суши.</param>
         /// <param name="bGreatOcean">Если true, то карта со всех сторон окружена водой.</param>
-        /// <param name="iLands">Общее количество `земель` - групп соседних локаций с одинаковым типом территории</param>
+        /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории</param>
         /// <param name="iProvinces">Общее количество провинций. Каждая провинция объединяет несколько сопредельных земель.</param>
         /// <param name="iStates">Общее количество государств. Каждое государство объединяет несколько сопредельных провинций.</param>
-        /// <param name="iLandMasses">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
+        /// <param name="iLandMassesDiversity">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
         /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
         /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
@@ -460,17 +460,17 @@ namespace Socium
         public World(LocationsGrid<LocationX> cLocations, 
                      int iContinents, 
                      bool bGreatOcean, 
-                     int iLands, 
+                     int iLandsDiversity, 
                      int iProvinces, 
                      int iStates, 
-                     int iLandMasses, 
+                     int iLandMassesDiversity, 
                      int iOcean, 
                      int iEquator, 
                      int iPole, 
                      Epoch[] aEpoches,
                      LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                      LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
-            : base(cLocations, iContinents, bGreatOcean, iLands, iLandMasses, iOcean, iEquator, iPole, BeginStep, ProgressStep)
+            : base(cLocations, iContinents, bGreatOcean, iLandsDiversity, iLandMassesDiversity, iOcean, iEquator, iPole, BeginStep, ProgressStep)
         {
             Create(iProvinces, iStates, aEpoches, BeginStep, ProgressStep);
         }
@@ -516,31 +516,34 @@ namespace Socium
                             LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
                             LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
         {
+            BeginStep("Growing states...", 6);
+
             SetWorldLevels(pEpoch);
 
             AddRaces(pEpoch);
             if (bFinalize)
                 AddInvadersRaces(pEpoch);
+            ProgressStep();
 
             //BeginStep("Distributing races...", 1);
             DistributeRacesToLandMasses();
-            //ProgressStep();
+            ProgressStep();
             
             //BeginStep("Populating lands...", 1);
             PopulateAreas();
-            //ProgressStep();
+            ProgressStep();
 
             //BeginStep("Building provinces...", 1);
             BuildProvinces();
-            //ProgressStep();
+            ProgressStep();
 
-//            BeginStep("Building cities...", 1);
-//            ProgressStep();
+            //BeginStep("Building cities...", 1);
             BuildCities(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
+            ProgressStep();
 
-//            BeginStep("Building states...", 1);
-            //ProgressStep();
+            //BeginStep("Building states...", 1);
             BuildStates(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
+            ProgressStep();
 
             //if (bFinalize)
             //    BuildSeaRoutes(m_pGrid.CycleShift);

@@ -9,7 +9,7 @@ using LandscapeGeneration.PathFind;
 
 namespace LandscapeGeneration
 {
-    public class Vertex : IPointF
+    public class VoronoiVertex : IPointF
     {
         public float m_fX;
         public float m_fY;
@@ -30,7 +30,7 @@ namespace LandscapeGeneration
 
         public long m_iID = s_iCounter++;
 
-        public List<Vertex> m_cVertexes = new List<Vertex>();
+        public List<VoronoiVertex> m_cVertexes = new List<VoronoiVertex>();
 
         public List<long> m_cLinksTmp = new List<long>();
 
@@ -40,25 +40,25 @@ namespace LandscapeGeneration
 
         public List<long> m_cLocationsTmp = new List<long>();
 
-        public Vertex()
+        public VoronoiVertex()
         {
             m_fX = 0f;
             m_fY = 0f;
         }
 
-        public Vertex(float fX, float fY)
+        public VoronoiVertex(float fX, float fY)
         {
             m_fX = fX;
             m_fY = fY;
         }
 
-        public Vertex(BTVector pVector)
+        public VoronoiVertex(BTVector pVector)
         {
             m_fX = (float)pVector.data[0];
             m_fY = (float)pVector.data[1];
         }
 
-        public Vertex(BinaryReader binReader)
+        public VoronoiVertex(BinaryReader binReader)
         {
             m_iID = binReader.ReadInt64();
 
@@ -83,7 +83,7 @@ namespace LandscapeGeneration
             binWriter.Write((double)m_fY);
 
             binWriter.Write(m_cVertexes.Count);
-            foreach (Vertex pVertex in m_cVertexes)
+            foreach (VoronoiVertex pVertex in m_cVertexes)
                 binWriter.Write(pVertex.m_iID);
 
             binWriter.Write(m_cLocationsBuild.Count);
@@ -101,7 +101,7 @@ namespace LandscapeGeneration
         //    return 100;
         //}
 
-        internal void PointOnCurve(Vertex p0, Vertex p1, Vertex p2, Vertex p3, float t, float fCycle, float smoothRate)
+        internal void PointOnCurve(VoronoiVertex p0, VoronoiVertex p1, VoronoiVertex p2, VoronoiVertex p3, float t, float fCycle, float smoothRate)
         {
             for (int i = 0; i < m_aLocations.Length; i++)
                 if (m_aLocations[i].Forbidden || m_aLocations[i].Owner == null)

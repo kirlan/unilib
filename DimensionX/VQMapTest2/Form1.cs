@@ -22,16 +22,23 @@ namespace VQMapTest2
     {
         public Form1()
         {
-            InitializeComponent();
+            //try
+            {
+                InitializeComponent();
 
-            MapScaleChanged(this, null);
-            MapModeChanged(this, null);
-            MapLayersChanged(this, null);
+                MapScaleChanged(this, null);
+                MapModeChanged(this, null);
+                MapLayersChanged(this, null);
 
-            showLandmarksToolStripMenuItem.Checked = true;
-            showRoadsToolStripMenuItem.Checked = true;
+                showLandmarksToolStripMenuItem.Checked = true;
+                showRoadsToolStripMenuItem.Checked = true;
 
-            mapDraw1.BindMiniMap(miniMapDraw1);
+                mapDraw1.BindMiniMap(miniMapDraw1);
+            }
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message + "/r/n----/r/n" + ex.InnerException.Message);
+            //}
         }
 
         private World m_pWorld;

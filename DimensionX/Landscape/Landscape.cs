@@ -28,28 +28,28 @@ namespace LandscapeGeneration
         /// <summary>
         /// Общее количество `земель` - групп соседних локаций с одинаковым типом территории
         /// </summary>
-        private int m_iLandsCount = 500;//1000;
+        private readonly int m_iLandsCount = 500;//1000;
         /// <summary>
         /// Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.
         /// Каждая тектоническая плита полностью содержит в себе одно или несколько государств.
         /// </summary>
-        private int m_iLandMassesCount = 50;
+        private readonly int m_iLandMassesCount = 50;
         /// <summary>
         /// Процент тектонических плит, лежащих на дне океана.
         /// </summary>
         protected int m_iOceansPercentage = 60;
 
-        private int m_iContinentsCount = 5;
+        private readonly int m_iContinentsCount = 5;
 
-        private bool m_bGreatOcean = true;
+        private readonly bool m_bGreatOcean = true;
         /// <summary>
         /// Y-координата экватора
         /// </summary>
-        private int m_iEquator = 0;
+        private readonly int m_iEquator = 0;
         /// <summary>
         /// Расстояние от экватора до полюсов
         /// </summary>
-        private int m_iPole = 0;
+        private readonly int m_iPole = 0;
 
         public virtual void PresetLandTypesInfo()
         {
@@ -91,27 +91,23 @@ namespace LandscapeGeneration
         /// Генерация мира
         /// </summary>
         /// <param name="iLocations">Общее количество `локаций` - минимальных "кирпичиков" мира.</param>
-        /// <param name="iLands">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.
+        /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.
         /// Сопредельные земли с одинаковым типом объединяются в 'зоны'</param>
-        /// <param name="iLandMasses">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
+        /// <param name="iLandMassesDiversity">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
         /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
         /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
-        public Landscape(LocationsGrid<LOC> cLocations, int iContinents, bool bGreatOcean, int iLands, int iLandMasses, int iOcean, int iEquator, int iPole, LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        public Landscape(LocationsGrid<LOC> cLocations, int iContinents, bool bGreatOcean, int iLandsDiversity, int iLandMassesDiversity, int iOcean, int iEquator, int iPole, LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             m_pGrid = cLocations;
 
             m_pGrid.Load(BeginStep, ProgressStep);
 
-            if (iLands > m_pGrid.m_iLocationsCount)
-                throw new ArgumentException("Lands count can't be greater then locations count!");
-            if (iLandMasses > iLands)
-                throw new ArgumentException("Land masses count can't be greater then lands count!");
             if (iOcean > 90 || iOcean < 10)
                 throw new ArgumentException("Oceans percent can't be less then 10 or greater then 100!");
 
-            m_iLandsCount = iLands;
-            m_iLandMassesCount = iLandMasses;
+            m_iLandsCount = m_pGrid.m_aLocations.Length / (2 + iLandsDiversity / 25);
+            m_iLandMassesCount = m_pGrid.m_aLocations.Length / (6 + iLandMassesDiversity * 2);
             m_iOceansPercentage = iOcean;
             m_iContinentsCount = iContinents;
             m_bGreatOcean = bGreatOcean;
@@ -145,41 +141,41 @@ namespace LandscapeGeneration
             {
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Plains)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Savanna)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Tundra)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Swamp)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Desert)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Forest)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Jungle)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Taiga)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
 
-                SmoothBorder(pCont.m_cFirstLines);
+                SmoothBorder(pCont.m_cOrdered);
 
                 foreach (AREA pArea in pCont.m_cAreas)
                     if (pArea.m_pType.m_eType == LandType.Mountains)
-                        SmoothBorder(pArea.m_cFirstLines);
+                        SmoothBorder(pArea.m_cOrdered);
             }
 
             foreach (LOC pLoc in m_pGrid.m_aLocations)
@@ -191,21 +187,10 @@ namespace LandscapeGeneration
             }
         }
 
-        private void SmoothBorder(List<Line> cFirstLines)
+        private void SmoothBorder(List<List<VoronoiVertex>> cFirstLines)
         {
-            foreach (Line pFistLine in cFirstLines)
+            foreach (var ordered in cFirstLines)
             {
-                List<Vertex> ordered = new List<Vertex>();
-
-                Line pLine = pFistLine;
-
-                do
-                {
-                    ordered.Add(pLine.m_pPoint2);
-                    pLine = pLine.m_pNext;
-                }
-                while (pLine != pFistLine);
-
                 if (ordered.Count < 5)
                     continue;
 
@@ -681,6 +666,23 @@ namespace LandscapeGeneration
             }
         }
 
+
+        private float GetTemperature(VoronoiVertex pVertex)
+        {
+            //float fNorthX = m_pPlanet.R / (float)Math.Sqrt(3);
+            //float fNorthY = m_pPlanet.R / (float)Math.Sqrt(3);
+            //float fNorthZ = m_pPlanet.R / (float)Math.Sqrt(3);
+
+            //float fDistNorth = (float)Math.Sqrt((pVertex.m_fX - fNorthX) * (pVertex.m_fX - fNorthX) + (pVertex.m_fY - fNorthY) * (pVertex.m_fY - fNorthY) + (pVertex.m_fZ - fNorthZ) * (pVertex.m_fZ - fNorthZ));
+            //float fDistSouth = (float)Math.Sqrt((pVertex.m_fX + fNorthX) * (pVertex.m_fX + fNorthX) + (pVertex.m_fY + fNorthY) * (pVertex.m_fY + fNorthY) + (pVertex.m_fZ + fNorthZ) * (pVertex.m_fZ + fNorthZ));
+
+            //if (fDistNorth < fDistSouth)
+            //    return fDistNorth / (m_pPlanet.R * (float)Math.Sqrt(2));
+            //else
+            //    return fDistSouth / (m_pPlanet.R * (float)Math.Sqrt(2));
+            return 1 - Math.Abs((m_iEquator - pVertex.Y) / m_iPole);
+        }
+
         private void CalculateHumidity(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
         {
             BeginStep("Calculating humidity...", m_aLands.Length);
@@ -697,7 +699,7 @@ namespace LandscapeGeneration
                             LAND pLinkedLand = pLink as LAND;
 
                             //удалённость точки от экватора 0..1
-                            float fTemperatureMod = Math.Abs((m_iEquator - pLinkedLand.Y) / m_iPole);
+                            float fTemperatureMod = 1 - GetTemperature(pLinkedLand); 
 
                             fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;// *fTemperatureMod;
                             pLinkedLand.Humidity = (int)(fTemperatureMod - 5 + Rnd.Get(10.0f));
@@ -782,7 +784,7 @@ namespace LandscapeGeneration
             {
                 if (pLand.Type == null)
                 {
-                    float fTemperature = (1 - Math.Abs((m_iEquator - (pLand as ILand).Y) / m_iPole))*8.0f;
+                    float fTemperature = GetTemperature(pLand) * 8.0f;
 
                     fTemperature = (float)(0.1875 * Math.Pow(2, fTemperature));
 

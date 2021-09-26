@@ -273,8 +273,8 @@
             this.mapProperties1.ContinentsCount = 5;
             this.mapProperties1.Enabled = false;
             this.mapProperties1.EquatorPosition = 50;
-            this.mapProperties1.LandMassesCount = 150;
-            this.mapProperties1.LandsCount = 3000;
+            this.mapProperties1.LandMassesDiversity = 15;
+            this.mapProperties1.LandsDiversity = 30;
             this.mapProperties1.Location = new System.Drawing.Point(9, 55);
             this.mapProperties1.LocationsGrid = null;
             this.mapProperties1.Name = "mapProperties1";

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LandscapeGeneration.PathFind
 {
-    public abstract class TransportationNode : Vertex, ITransportationNode
+    public abstract class TransportationNode : VoronoiVertex, ITransportationNode
     {
         public int m_iPassword = 0;
 

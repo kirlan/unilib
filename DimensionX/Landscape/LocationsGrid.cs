@@ -54,7 +54,7 @@ namespace LandscapeGeneration
 
         public LOC[] m_aLocations = null;
 
-        public Vertex[] m_aVertexes = null;
+        public VoronoiVertex[] m_aVertexes = null;
 
         public bool m_bCycled = false;
 
@@ -159,7 +159,7 @@ namespace LandscapeGeneration
 
             //Строим диаграмму вороного - определяем границы локаций
             VoronoiGraph graph = Fortune.ComputeVoronoiGraph(cData.Keys);
-            Dictionary<BTVector, Vertex> cVertexes = new Dictionary<BTVector, Vertex>();
+            Dictionary<BTVector, VoronoiVertex> cVertexes = new Dictionary<BTVector, VoronoiVertex>();
 
             //Переводим данные из диаграммы Вороного в наш формат
             try
@@ -174,7 +174,7 @@ namespace LandscapeGeneration
                 return false;
             }
 
-            m_aVertexes = new List<Vertex>(cVertexes.Values).ToArray();
+            m_aVertexes = new List<VoronoiVertex>(cVertexes.Values).ToArray();
 
             foreach (LOC pLoc in m_aLocations)
                 pLoc.FillBorderWithKeys();
@@ -182,7 +182,7 @@ namespace LandscapeGeneration
             return true;
         }
 
-        private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, Vertex> cVertexes, VoronoiEdge pEdge)
+        private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, VoronoiVertex> cVertexes, VoronoiEdge pEdge)
         {
             LOC pLoc1 = null;
             LOC pLoc2 = null;
@@ -228,14 +228,14 @@ namespace LandscapeGeneration
 
             //при необходимости, создадим новые вертексы для вершин добавляемой грани
             if (!cVertexes.ContainsKey(pEdge.VVertexA))
-                cVertexes[pEdge.VVertexA] = new Vertex(pEdge.VVertexA);
+                cVertexes[pEdge.VVertexA] = new VoronoiVertex(pEdge.VVertexA);
 
-            Vertex pVertexA = cVertexes[pEdge.VVertexA];
+            VoronoiVertex pVertexA = cVertexes[pEdge.VVertexA];
 
             if (!cVertexes.ContainsKey(pEdge.VVertexB))
-                cVertexes[pEdge.VVertexB] = new Vertex(pEdge.VVertexB);
+                cVertexes[pEdge.VVertexB] = new VoronoiVertex(pEdge.VVertexB);
 
-            Vertex pVertexB = cVertexes[pEdge.VVertexB];
+            VoronoiVertex pVertexB = cVertexes[pEdge.VVertexB];
 
             if (pVertexA == pVertexB)
             if (pVertexA == pVertexB)
@@ -259,7 +259,7 @@ namespace LandscapeGeneration
 
             if (bSwap)
             {
-                Vertex pVertexC = pVertexA;
+                VoronoiVertex pVertexC = pVertexA;
                 pVertexA = pVertexB;
                 pVertexB = pVertexC;
             }
@@ -279,21 +279,21 @@ namespace LandscapeGeneration
 
                 if (pLoc2 != null)
                 {
-                    Line pLine = new Line(pVertexA, pVertexB);
+                    Location.Edge pLine = new Location.Edge(pVertexA, pVertexB);
                     if (pLine.m_fLength > 0)
                     {
-                        foreach (List<Line> cLines in pLoc1.BorderWith.Values)
+                        foreach (List<Location.Edge> cLines in pLoc1.BorderWith.Values)
                             if (cLines[0].m_pPoint1 == pVertexA)
                                 throw new Exception("Wrong edge!");
                         //if(!bTwin)
                         if (pLoc2.m_pOrigin == null)
                         {
-                            pLoc1.BorderWith[pLoc2] = new List<Line>();
+                            pLoc1.BorderWith[pLoc2] = new List<Location.Edge>();
                             pLoc1.BorderWith[pLoc2].Add(pLine);
                         }
                         else
                         {
-                            pLoc1.BorderWith[(LOC)pLoc2.m_pOrigin] = new List<Line>();
+                            pLoc1.BorderWith[(LOC)pLoc2.m_pOrigin] = new List<Location.Edge>();
                             pLoc1.BorderWith[(LOC)pLoc2.m_pOrigin].Add(pLine);
                         }
                     }
@@ -309,21 +309,21 @@ namespace LandscapeGeneration
 
                 if (pLoc1 != null)
                 {
-                    Line pLine = new Line(pVertexB, pVertexA);
+                    Location.Edge pLine = new Location.Edge(pVertexB, pVertexA);
                     if (pLine.m_fLength > 0)
                     {
-                        foreach (List<Line> cLines in pLoc2.m_cBorderWith.Values)
+                        foreach (List<Location.Edge> cLines in pLoc2.m_cBorderWith.Values)
                             if (cLines[0].m_pPoint1 == pVertexB)
                                 throw new Exception("Wrong edge!");
                         //if (!bTwin)
                         if (pLoc1.m_pOrigin == null)
                         {
-                            pLoc2.BorderWith[pLoc1] = new List<Line>();
+                            pLoc2.BorderWith[pLoc1] = new List<Location.Edge>();
                             pLoc2.BorderWith[pLoc1].Add(pLine);
                         }
                         else
                         {
-                            pLoc2.BorderWith[(LOC)pLoc1.m_pOrigin] = new List<Line>();
+                            pLoc2.BorderWith[(LOC)pLoc1.m_pOrigin] = new List<Location.Edge>();
                             pLoc2.BorderWith[(LOC)pLoc1.m_pOrigin].Add(pLine);
                         }
                     }
@@ -414,7 +414,7 @@ namespace LandscapeGeneration
 
                     foreach (var cLines in pLoc.m_cBorderWith)
                     {
-                        foreach (Line pLine in cLines.Value)
+                        foreach (Location.Edge pLine in cLines.Value)
                         {
                             fX += pLine.m_pPoint2.X;
                             fY += pLine.m_pPoint2.Y;
@@ -618,7 +618,7 @@ namespace LandscapeGeneration
                     new BinaryWriter(fs.GetStream(FileMode.OpenOrCreate, FileAccess.Write)))
                 {
                     binWriter.Write(m_aVertexes.Length);
-                    foreach (Vertex pVertex in m_aVertexes)
+                    foreach (VoronoiVertex pVertex in m_aVertexes)
                     {
                         pVertex.Save(binWriter);
                     }
@@ -822,13 +822,13 @@ namespace LandscapeGeneration
                         // Reset the position in the stream to zero.
                         binReader.BaseStream.Seek(0, SeekOrigin.Begin);
 
-                        Dictionary<long, Vertex> cTempDicVertex = new Dictionary<long, Vertex>();
+                        Dictionary<long, VoronoiVertex> cTempDicVertex = new Dictionary<long, VoronoiVertex>();
                         int iVertexesCount = binReader.ReadInt32();
                         if (BeginStep != null)
                             BeginStep("Loading vertexes...", iVertexesCount * 2);
                         for (int i = 0; i < iVertexesCount; i++)
                         {
-                            Vertex pVertexLoc = new Vertex(binReader);
+                            VoronoiVertex pVertexLoc = new VoronoiVertex(binReader);
 
                             cTempDicVertex[pVertexLoc.m_iID] = pVertexLoc;
 
@@ -836,10 +836,10 @@ namespace LandscapeGeneration
                                 ProgressStep();
                         }
 
-                        m_aVertexes = new List<Vertex>(cTempDicVertex.Values).ToArray();
+                        m_aVertexes = new List<VoronoiVertex>(cTempDicVertex.Values).ToArray();
 
                         //Восстанавливаем словарь соседей
-                        foreach (Vertex pVertex in m_aVertexes)
+                        foreach (VoronoiVertex pVertex in m_aVertexes)
                         {
                             foreach (long iID in pVertex.m_cLinksTmp)
                             {
@@ -883,7 +883,7 @@ namespace LandscapeGeneration
                         }
 
                         //Восстанавливаем словарь соседей для вертексов
-                        foreach (Vertex pVertex in m_aVertexes)
+                        foreach (VoronoiVertex pVertex in m_aVertexes)
                         {
                             pVertex.m_aLocations = new Location[pVertex.m_cLocationsTmp.Count];
                             int iIndex = 0;

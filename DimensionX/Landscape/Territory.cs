@@ -23,7 +23,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Границы с другими такими же объектами
         /// </summary>
-        private Dictionary<object, List<Line>> m_cBorderWith = new Dictionary<object, List<Line>>();
+        private Dictionary<object, List<Location.Edge>> m_cBorderWith = new Dictionary<object, List<Location.Edge>>();
 
         private object m_pOwner = null;
 
@@ -44,7 +44,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Границы с другими такими же объектами
         /// </summary>
-        public Dictionary<object, List<Line>> BorderWith
+        public Dictionary<object, List<Location.Edge>> BorderWith
         {
             get { return m_cBorderWith; }
         }
@@ -67,7 +67,7 @@ namespace LandscapeGeneration
 
             m_fPerimeter = 0;
             foreach (var pBorder in m_cBorderWith)
-                foreach (Line pLine in pBorder.Value)
+                foreach (Location.Edge pLine in pBorder.Value)
                     m_fPerimeter += pLine.m_fLength;
         }
 
@@ -97,8 +97,8 @@ namespace LandscapeGeneration
                 if (pInnerTerritory.Owner == null && !pInnerTerritory.Forbidden)
                 {
                     float fWholeLength = 1;
-                    Line[] aBorderLine = pInner.Value.ToArray();
-                    foreach (Line pLine in aBorderLine)
+                    Location.Edge[] aBorderLine = pInner.Value.ToArray();
+                    foreach (Location.Edge pLine in aBorderLine)
                         fWholeLength += pLine.m_fLength;
 
                     fWholeLength /= pInnerTerritory.PerimeterLength;
@@ -145,10 +145,10 @@ namespace LandscapeGeneration
                     continue;
 
                 if (!m_cBorder.ContainsKey(pInner.Key))
-                    m_cBorder[pInner.Key] = new List<Line>();
-                Line[] aBorderLine = pInner.Value.ToArray();
-                foreach (Line pLine in aBorderLine)
-                    m_cBorder[pInner.Key].Add(new Line(pLine)); 
+                    m_cBorder[pInner.Key] = new List<Location.Edge>();
+                Location.Edge[] aBorderLine = pInner.Value.ToArray();
+                foreach (Location.Edge pLine in aBorderLine)
+                    m_cBorder[pInner.Key].Add(new Location.Edge(pLine)); 
             }
 
             //ChainBorder();
@@ -172,7 +172,7 @@ namespace LandscapeGeneration
                     pBorder = Territory<INNER>.m_pForbidden;
 
                 if (!m_cBorderWith.ContainsKey(pBorder))
-                    m_cBorderWith[pBorder] = new List<Line>();
+                    m_cBorderWith[pBorder] = new List<Location.Edge>();
                 m_cBorderWith[pBorder].AddRange(m_cBorder[pInner]);
             }
             FillBorderWithKeys();

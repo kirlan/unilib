@@ -98,10 +98,10 @@ namespace WorldGeneration
             m_pWorld = new World(m_cLastUsedGrid,
                 mapProperties1.ContinentsCount,
                 !mapProperties1.PartialMap,
-                mapProperties1.LandsCount,
+                mapProperties1.LandsDiversity,
                 Math.Max(10, Math.Min((int)mapProperties1.StatesCount * 7, 300)),
                 mapProperties1.StatesCount,
-                mapProperties1.LandMassesCount,
+                mapProperties1.LandMassesDiversity,
                 mapProperties1.WaterPercent,
                 mapProperties1.EquatorPosition,
                 mapProperties1.PoleDistance,
@@ -345,9 +345,9 @@ namespace WorldGeneration
                 WorldPreset pWorldPreset = new WorldPreset(m_cLastUsedGrid,
                     mapProperties1.ContinentsCount,
                     !mapProperties1.PartialMap,
-                    mapProperties1.LandsCount,
+                    mapProperties1.LandsDiversity,
                     mapProperties1.StatesCount,
-                    mapProperties1.LandMassesCount,
+                    mapProperties1.LandMassesDiversity,
                     mapProperties1.WaterPercent,
                     mapProperties1.EquatorPosition,
                     mapProperties1.PoleDistance,
@@ -387,8 +387,8 @@ namespace WorldGeneration
 
             checkBox1.Checked = true;
 
-            mapProperties1.LandsCount = pWorldPreset.m_iLands;
-            mapProperties1.LandMassesCount = pWorldPreset.m_iLandMasses;
+            mapProperties1.LandsDiversity = pWorldPreset.m_iLandsDiversity;
+            mapProperties1.LandMassesDiversity = pWorldPreset.m_iLandMassesDiversity;
             mapProperties1.ContinentsCount = pWorldPreset.m_iContinents;
             mapProperties1.WaterPercent = pWorldPreset.m_iOcean;
 

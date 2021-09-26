@@ -287,7 +287,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLoc1;
             m_aPoints[2] = pLoc2;
 
-            IPointF point2 = new Vertex(pLoc2.X, pLoc2.Y);
+            IPointF point2 = new VoronoiVertex(pLoc2.X, pLoc2.Y);
             if (Math.Abs(pLoc1.X - pLoc2.X) > fCycleShift / 2)
             {
                 if (pLoc1.X < 0)
@@ -296,9 +296,9 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Line pLine = pLoc1.BorderWith[pLoc2][0];
+            Location.Edge pLine = pLoc1.BorderWith[pLoc2][0];
 
-            m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+            m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
 
             float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2 = GetDist(point2, m_aPoints[1]);
@@ -343,7 +343,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLand1;
             m_aPoints[2] = pLand2;
 
-            IPointF point2 = new Vertex(pLand2.X, pLand2.Y);
+            IPointF point2 = new VoronoiVertex(pLand2.X, pLand2.Y);
             if (Math.Abs(pLand1.X - pLand2.X) > fCycleShift / 2)
             {
                 if (pLand1.X < 0)
@@ -352,12 +352,12 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Line pBestLine = null;
+            Location.Edge pBestLine = null;
             float fShortest = float.MaxValue;
-            Line[] cLines = pLand1.BorderWith[pLand2].ToArray();
-            foreach (Line pLine in cLines)
+            Location.Edge[] cLines = pLand1.BorderWith[pLand2].ToArray();
+            foreach (Location.Edge pLine in cLines)
             {
-                m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+                m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
 
                 float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
                 float fDist2 = GetDist(point2, m_aPoints[1]);
@@ -368,7 +368,7 @@ namespace LandscapeGeneration.PathFind
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new Vertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
+            m_aPoints[1] = new VoronoiVertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
 
             float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2final = GetDist(point2, m_aPoints[1]); 
@@ -382,7 +382,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLandMass1;
             m_aPoints[2] = pLandMass2;
 
-            IPointF point2 = new Vertex(pLandMass2.X, pLandMass2.Y);
+            IPointF point2 = new VoronoiVertex(pLandMass2.X, pLandMass2.Y);
             if (Math.Abs(pLandMass1.X - pLandMass2.X) > fCycleShift / 2)
             {
                 if (pLandMass1.X < 0)
@@ -391,12 +391,12 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Line pBestLine = null;
+            Location.Edge pBestLine = null;
             float fShortest = float.MaxValue;
-            Line[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
-            foreach (Line pLine in cLines)
+            Location.Edge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
+            foreach (Location.Edge pLine in cLines)
             {
-                m_aPoints[1] = new Vertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+                m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
 
                 float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
                 float fDist2 = GetDist(point2, m_aPoints[1]); 
@@ -407,7 +407,7 @@ namespace LandscapeGeneration.PathFind
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new Vertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
+            m_aPoints[1] = new VoronoiVertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
 
             float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
             float fDist2final = GetDist(point2, m_aPoints[1]);

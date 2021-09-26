@@ -98,42 +98,42 @@ namespace WorldGeneration
 
         private void CalculateLimits(int iLocationsCount)
         {
-            if (LandsCountBar.Minimum > Math.Min(600, iLocationsCount / 4))
-                LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
+            //if (LandsCountBar.Minimum > Math.Min(600, iLocationsCount / 4))
+            //    LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
 
-            if (LandsCountBar.Maximum < iLocationsCount / 2)
-                LandsCountBar.Maximum = iLocationsCount / 2;
+            //if (LandsCountBar.Maximum < iLocationsCount / 2)
+            //    LandsCountBar.Maximum = iLocationsCount / 2;
 
-            if (LandsCountBar.Value > iLocationsCount / 2)
-                LandsCountBar.Value = iLocationsCount / 2;
+            //if (LandsCountBar.Value > iLocationsCount / 2)
+            //    LandsCountBar.Value = iLocationsCount / 2;
 
-            if (LandsCountBar.Value < Math.Min(600, iLocationsCount / 4))
-                LandsCountBar.Value = Math.Min(600, iLocationsCount / 4);
+            //if (LandsCountBar.Value < Math.Min(600, iLocationsCount / 4))
+            //    LandsCountBar.Value = Math.Min(600, iLocationsCount / 4);
 
-            LandsCountBar.Maximum = iLocationsCount / 2 + LandsCountBar.LargeChange - 1;
-            LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
+            //LandsCountBar.Maximum = iLocationsCount / 2 + LandsCountBar.LargeChange - 1;
+            //LandsCountBar.Minimum = Math.Min(600, iLocationsCount / 4);
 
-            if (LandMassesCountBar.Minimum > Math.Min(30, iLocationsCount / 20))
-                LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
+            //if (LandMassesCountBar.Minimum > Math.Min(30, iLocationsCount / 20))
+            //    LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
 
-            if (LandMassesCountBar.Maximum < Math.Min(300, iLocationsCount / 4))
-                LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4);
+            //if (LandMassesCountBar.Maximum < Math.Min(300, iLocationsCount / 4))
+            //    LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4);
 
-            if (LandMassesCountBar.Value > Math.Min(300, iLocationsCount / 4))
-                LandMassesCountBar.Value = Math.Min(300, iLocationsCount / 4);
+            //if (LandMassesCountBar.Value > Math.Min(300, iLocationsCount / 4))
+            //    LandMassesCountBar.Value = Math.Min(300, iLocationsCount / 4);
 
-            if (LandMassesCountBar.Value < Math.Min(30, iLocationsCount / 20))
-                LandMassesCountBar.Value = Math.Min(30, iLocationsCount / 20);
+            //if (LandMassesCountBar.Value < Math.Min(30, iLocationsCount / 20))
+            //    LandMassesCountBar.Value = Math.Min(30, iLocationsCount / 20);
 
-            LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4) + LandMassesCountBar.LargeChange - 1;
-            LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
+            //LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4) + LandMassesCountBar.LargeChange - 1;
+            //LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
 
             int iNotOcean = iLocationsCount * (100 - (int)WaterPercentBar.Value) / 100;
 
-            if (StatesCountBar.Minimum > Math.Min(1, iNotOcean / 40))
+            //if (StatesCountBar.Minimum > Math.Min(1, iNotOcean / 40))
                 StatesCountBar.Minimum = Math.Min(1, iNotOcean / 40);
 
-            if (StatesCountBar.Maximum < Math.Min(100, iNotOcean / 20))
+            //if (StatesCountBar.Maximum < Math.Min(100, iNotOcean / 20))
                 StatesCountBar.Maximum = Math.Min(100, iNotOcean / 20);
 
             if (StatesCountBar.Value > Math.Min(100, iNotOcean / 20))
@@ -179,34 +179,9 @@ namespace WorldGeneration
         private void ApplyPreset(MapPreset pPreset)
         {
             PartialMapBox.Checked = !pPreset.m_bBordered;
-            if (pPreset.m_iLandsCountPercent > 0)
-                LandsCountBar.Value = LandsCountBar.Minimum + (LandsCountBar.Maximum - LandsCountBar.Minimum) * pPreset.m_iLandsCountPercent / 100;
-            else
-            {
-                if (LandsCountBar.Maximum < 6000)
-                    LandsCountBar.Value = LandsCountBar.Maximum;
-                else
-                    if (LandsCountBar.Minimum > 6000)
-                        LandsCountBar.Value = LandsCountBar.Minimum;
-                    else
-                        LandsCountBar.Value = 6000;
-            }
-
-            if (LandMassesCountBar.Maximum < pPreset.m_iLandMassesCount)
-                LandMassesCountBar.Value = LandMassesCountBar.Maximum;
-            else
-                if (LandMassesCountBar.Minimum > pPreset.m_iLandMassesCount)
-                    LandMassesCountBar.Value = LandMassesCountBar.Minimum;
-                else
-                    LandMassesCountBar.Value = pPreset.m_iLandMassesCount;
-
-            if (ContinentsCountEdit.Maximum < pPreset.m_iContinentsCount)
-                ContinentsCountEdit.Value = ContinentsCountEdit.Maximum;
-            else
-                if (ContinentsCountEdit.Minimum > pPreset.m_iContinentsCount)
-                    ContinentsCountEdit.Value = ContinentsCountEdit.Minimum;
-                else
-                    ContinentsCountEdit.Value = pPreset.m_iContinentsCount;
+            LandsCountBar.Value = pPreset.m_iLandsCountPercent;
+            LandMassesCountBar.Value = pPreset.m_iLandMassesPercent;
+            ContinentsCountEdit.Value = pPreset.m_iContinentsCount;
 
             WaterPercentBar.Value = pPreset.m_iWaterCoverage;
             EquatorBar.Value = pPreset.m_iEquatorPosition;
@@ -216,13 +191,13 @@ namespace WorldGeneration
             StatesCountBar.Value = Math.Min(StatesCountBar.Maximum, Math.Max(StatesCountBar.Minimum, 150000 / (PoleBar.Value * PoleBar.Value)));
         }
 
-        public int LandsCount
+        public int LandsDiversity
         {
             get { return LandsCountBar.Value; }
             set { LandsCountBar.Value = value; }
         }
 
-        public int LandMassesCount
+        public int LandMassesDiversity
         {
             get { return LandMassesCountBar.Value; }
             set { LandMassesCountBar.Value = value; }
