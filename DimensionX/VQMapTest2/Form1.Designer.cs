@@ -42,6 +42,7 @@
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.richTextBox1 = new RichTextBoxLinks.RichTextBoxEx();
             this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -58,6 +59,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.worldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.repeatCreationFromPresetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,8 +92,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.miniMapDraw1 = new MapDrawEngine.MiniMapDraw();
             this.mapDraw1 = new MapDrawEngine.MapDraw();
-            this.repeatCreationFromPresetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -195,8 +195,8 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox1.FormattingEnabled = true;
@@ -210,8 +210,8 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.button1);
             this.groupBox4.Controls.Add(this.tabControl2);
             this.groupBox4.Controls.Add(this.comboBox1);
@@ -234,9 +234,9 @@
             // 
             // tabControl2
             // 
-            this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl2.Controls.Add(this.tabPage7);
             this.tabControl2.Controls.Add(this.tabPage8);
             this.tabControl2.Location = new System.Drawing.Point(9, 46);
@@ -282,11 +282,22 @@
             this.tabPage8.Text = "Settlements";
             this.tabPage8.UseVisualStyleBackColor = true;
             // 
+            // richTextBox2
+            // 
+            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox2.Location = new System.Drawing.Point(3, 188);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.Size = new System.Drawing.Size(225, 240);
+            this.richTextBox2.TabIndex = 13;
+            this.richTextBox2.Text = "";
+            // 
             // listBox1
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(3, 9);
             this.listBox1.Name = "listBox1";
@@ -296,8 +307,8 @@
             // tabControl1
             // 
             this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Left;
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.tabControl1.Appearance = System.Windows.Forms.TabAppearance.Buttons;
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
@@ -402,9 +413,9 @@
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
@@ -458,6 +469,12 @@
             this.newToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_New_Click);
+            // 
+            // repeatCreationFromPresetToolStripMenuItem
+            // 
+            this.repeatCreationFromPresetToolStripMenuItem.Name = "repeatCreationFromPresetToolStripMenuItem";
+            this.repeatCreationFromPresetToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.repeatCreationFromPresetToolStripMenuItem.Text = "Repeat creation from preset";
             // 
             // saveToolStripMenuItem
             // 
@@ -600,7 +617,7 @@
             this.toolStripMenuItem11,
             this.closeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(204, 148);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(204, 170);
             // 
             // toolStripMenuItem3
             // 
@@ -653,7 +670,7 @@
             // 
             this.toolStripMenuItem8.CheckOnClick = true;
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(170, 22);
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(184, 22);
             this.toolStripMenuItem8.Text = "Show Locations";
             this.toolStripMenuItem8.CheckedChanged += new System.EventHandler(this.MapLayersChanged2);
             // 
@@ -661,7 +678,7 @@
             // 
             this.toolStripMenuItem9.CheckOnClick = true;
             this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-            this.toolStripMenuItem9.Size = new System.Drawing.Size(170, 22);
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(184, 22);
             this.toolStripMenuItem9.Text = "Show Lands";
             this.toolStripMenuItem9.CheckedChanged += new System.EventHandler(this.MapLayersChanged2);
             // 
@@ -669,8 +686,8 @@
             // 
             this.toolStripMenuItem10.CheckOnClick = true;
             this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-            this.toolStripMenuItem10.Size = new System.Drawing.Size(170, 22);
-            this.toolStripMenuItem10.Text = "Show LandMasses";
+            this.toolStripMenuItem10.Size = new System.Drawing.Size(184, 22);
+            this.toolStripMenuItem10.Text = "Show Tectonic Plates";
             this.toolStripMenuItem10.CheckedChanged += new System.EventHandler(this.MapLayersChanged2);
             // 
             // toolStripMenuItem11
@@ -707,9 +724,9 @@
             // 
             // mapDraw1
             // 
-            this.mapDraw1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.mapDraw1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.mapDraw1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mapDraw1.ContextMenuStrip = this.contextMenuStrip1;
             this.mapDraw1.Location = new System.Drawing.Point(24, 29);
@@ -727,23 +744,6 @@
             this.mapDraw1.Size = new System.Drawing.Size(726, 703);
             this.mapDraw1.TabIndex = 20;
             this.mapDraw1.SelectedStateChanged += new System.EventHandler<MapDrawEngine.MapDraw.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
-            // 
-            // repeatCreationFromPresetToolStripMenuItem
-            // 
-            this.repeatCreationFromPresetToolStripMenuItem.Name = "repeatCreationFromPresetToolStripMenuItem";
-            this.repeatCreationFromPresetToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.repeatCreationFromPresetToolStripMenuItem.Text = "Repeat creation from preset";
-            // 
-            // richTextBox2
-            // 
-            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox2.Location = new System.Drawing.Point(3, 188);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(225, 240);
-            this.richTextBox2.TabIndex = 13;
-            this.richTextBox2.Text = "";
             // 
             // Form1
             // 
