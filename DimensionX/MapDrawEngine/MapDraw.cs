@@ -21,6 +21,9 @@ using Socium.Psichology;
 
 namespace MapDrawEngine
 {
+    /// <summary>
+    /// движок для рисования 2D карт средствами GUI.
+    /// </summary>
     public partial class MapDraw : UserControl
     {
         #region Предопределённые перья для рисования
@@ -885,10 +888,18 @@ namespace MapDrawEngine
                         foreach (var aPts in aPoints)
                         {
                             pPath.AddPolygon(aPts);
+
+                            //определим, каким цветом эта земля должна закрашиваться на карте высот
+                            Brush pBrush = GetElevationColor(pLoc.H, m_pWorld.m_fMaxDepth, m_pWorld.m_fMaxHeight);
+
                             foreach (MapQuadrant pQuad in aQuads)
                             {
                                 pQuad.m_cLayers[MapLayer.Locations].StartFigure();
                                 pQuad.m_cLayers[MapLayer.Locations].AddLines(aPts);
+
+                                if (!pQuad.m_cModes[MapMode.Elevation].ContainsKey(pBrush))
+                                    pQuad.m_cModes[MapMode.Elevation][pBrush] = new GraphicsPath();
+                                pQuad.m_cModes[MapMode.Elevation][pBrush].AddPolygon(aPts);
                             }
                         }
                         m_cLocationBorders[pLoc] = pPath;
@@ -1060,6 +1071,38 @@ namespace MapDrawEngine
 
             if (m_pMiniMap != null)
                 m_pMiniMap.WorldAssigned();
+        }
+
+
+        private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight)
+        {
+            if (float.IsNaN(fHeight))
+                return new SolidBrush(Color.Black);
+
+            if (fMinHeight == 0)
+                fMinHeight = fHeight;
+            if (fMaxHeight == 0)
+                fMaxHeight = fHeight;
+
+            KColor color = new KColor();
+            color.RGB = Color.Cyan;
+
+            if (fHeight < 0)
+            {
+                //color.RGB = Color.Navy;
+                //color.Lightness = 0.8 - (double)fHeight / (fMinHeight * 2);
+                color.RGB = Color.Green;
+                color.Hue = 200 + 40 * fHeight / fMinHeight;
+            }
+            if (fHeight > 0)
+            {
+                //color.RGB = Color.Brown;
+                //color.Lightness = 0.2 + (double)fHeight / (fMaxHeight * 2);
+                color.RGB = Color.Goldenrod;
+                color.Hue = 100 * (fMaxHeight - fHeight) * (fMaxHeight - fHeight) / (fMaxHeight * fMaxHeight);
+            }
+
+            return new SolidBrush(color.RGB);
         }
 
         #region Вспомогательные функции, используемые в Assign

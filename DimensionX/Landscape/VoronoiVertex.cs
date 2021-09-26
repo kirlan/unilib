@@ -14,6 +14,8 @@ namespace LandscapeGeneration
         public float m_fX;
         public float m_fY;
 
+        public float m_fHeight = float.NaN;
+
         public float X
         {
             get { return m_fX; }
@@ -24,6 +26,12 @@ namespace LandscapeGeneration
         {
             get { return m_fY; }
             set { m_fY = value; }
+        }
+
+        public float H
+        {
+            get { return m_fHeight; }
+            set { m_fHeight = value; }
         }
 
         private static long s_iCounter = 0;
@@ -93,7 +101,7 @@ namespace LandscapeGeneration
 
         public override string ToString()
         {
-            return string.Format("X: {0}, Y: {1}", X, Y);
+            return string.Format("X: {0}, Y: {1}, H: {2}", X, Y, H);
         }
 
         //public override float GetMovementCost()

@@ -53,37 +53,37 @@ namespace LandscapeGeneration
 
         public virtual void PresetLandTypesInfo()
         {
-            LandTypes<LTI>.Coastral.Init(10, EnvironmentType.Water, "sea");
+            LandTypes<LTI>.Coastral.Init(10, 1, EnvironmentType.Water, "sea");
             LandTypes<LTI>.Coastral.SetColor(Color.FromArgb(0x27, 0x67, 0x71));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
             
-            LandTypes<LTI>.Ocean.Init(10, EnvironmentType.Water, "ocean");
+            LandTypes<LTI>.Ocean.Init(10, 5, EnvironmentType.Water, "ocean");
             LandTypes<LTI>.Ocean.SetColor(Color.FromArgb(0x1e, 0x5e, 0x69));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
             
-            LandTypes<LTI>.Plains.Init(1, EnvironmentType.Ground, "plains");
+            LandTypes<LTI>.Plains.Init(1, 1, EnvironmentType.Ground, "plains");
             LandTypes<LTI>.Plains.SetColor(Color.FromArgb(0xd3, 0xfa, 0x5f));//(0xdc, 0xfa, 0x83);//LightGreen;
             
-            LandTypes<LTI>.Savanna.Init(1, EnvironmentType.Ground, "savanna");
+            LandTypes<LTI>.Savanna.Init(1, 1, EnvironmentType.Ground, "savanna");
             LandTypes<LTI>.Savanna.SetColor(Color.FromArgb(0xf0, 0xff, 0x8a));//(0xbd, 0xb0, 0x6b);//PaleGreen;
             
-            LandTypes<LTI>.Tundra.Init(2, EnvironmentType.Ground, "tundra");
+            LandTypes<LTI>.Tundra.Init(2, 0.5f, EnvironmentType.Ground, "tundra");
             LandTypes<LTI>.Tundra.SetColor(Color.FromArgb(0xc9, 0xff, 0xff));//(0xc9, 0xe0, 0xff);//PaleGreen;
             
-            LandTypes<LTI>.Desert.Init(2, EnvironmentType.Ground, "desert");
+            LandTypes<LTI>.Desert.Init(2, 0.1f, EnvironmentType.Ground, "desert");
             LandTypes<LTI>.Desert.SetColor(Color.FromArgb(0xfa, 0xdc, 0x36));//(0xf9, 0xfa, 0x8a);//LightYellow;
             
-            LandTypes<LTI>.Forest.Init(3, EnvironmentType.Ground, "forest");
+            LandTypes<LTI>.Forest.Init(3, 2, EnvironmentType.Ground, "forest");
             LandTypes<LTI>.Forest.SetColor(Color.FromArgb(0x56, 0x78, 0x34));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
             
-            LandTypes<LTI>.Taiga.Init(3, EnvironmentType.Ground, "taiga");
+            LandTypes<LTI>.Taiga.Init(3, 2, EnvironmentType.Ground, "taiga");
             LandTypes<LTI>.Taiga.SetColor(Color.FromArgb(0x63, 0x78, 0x4e));//LightGreen;//ForestGreen;
             
-            LandTypes<LTI>.Swamp.Init(4, EnvironmentType.Ground, "swamp");
+            LandTypes<LTI>.Swamp.Init(4, 0.1f, EnvironmentType.Ground, "swamp");
             LandTypes<LTI>.Swamp.SetColor(Color.FromArgb(0xa7, 0xbd, 0x6b));// DarkKhaki;
             
-            LandTypes<LTI>.Mountains.Init(5, EnvironmentType.Mountains, "mountains");
+            LandTypes<LTI>.Mountains.Init(5, 10, EnvironmentType.Mountains, "mountains");
             LandTypes<LTI>.Mountains.SetColor(Color.FromArgb(0xbd, 0x6d, 0x46));//Tan;
             
-            LandTypes<LTI>.Jungle.Init(6, EnvironmentType.Ground, "jungle");
+            LandTypes<LTI>.Jungle.Init(6, 2, EnvironmentType.Ground, "jungle");
             LandTypes<LTI>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
         }
 
@@ -132,7 +132,43 @@ namespace LandscapeGeneration
 
             SmoothAreas();
 
+            CalculateElevations(BeginStep, ProgressStep);
+
+            AddPeaks();
+
             BuildTransportGrid(BeginStep, ProgressStep);
+        }
+
+        private void AddPeaks()
+        {
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    continue;
+
+                if ((pLoc.Owner as LAND).Type == LandTypes<LTI>.Mountains)
+                {
+                    bool bPeak = true;
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden || pLink.Owner == null)
+                            continue;
+
+                        if ((pLink.Owner as LAND).Type != LandTypes<LTI>.Mountains ||
+                            pLink.H >= pLoc.H)
+                        {
+                            bPeak = false;
+                        }
+                    }
+                    if (bPeak)
+                    {
+                        if (Rnd.OneChanceFrom(5))
+                            pLoc.m_eType = RegionType.Volcano;
+                        else
+                            pLoc.m_eType = RegionType.Peak;
+                    }
+                }
+            }
         }
 
         private void SmoothAreas()
@@ -622,14 +658,14 @@ namespace LandscapeGeneration
                     {
                         pLand.Type = LandTypes<LTI>.Mountains;
 
-                        if (!Rnd.OneChanceFrom(3))
-                        {
-                            int iPeak = Rnd.Get(pLand.m_cContents.Count);
-                            if (Rnd.OneChanceFrom(3))
-                                pLand.m_cContents[iPeak].m_eType = RegionType.Volcano;
-                            else
-                                pLand.m_cContents[iPeak].m_eType = RegionType.Peak;
-                        }
+                        //if (!Rnd.OneChanceFrom(3))
+                        //{
+                        //    int iPeak = Rnd.Get(pLand.m_cContents.Count);
+                        //    if (Rnd.OneChanceFrom(3))
+                        //        pLand.m_cContents[iPeak].m_eType = RegionType.Volcano;
+                        //    else
+                        //        pLand.m_cContents[iPeak].m_eType = RegionType.Peak;
+                        //}
                     }
                 }
 
@@ -840,6 +876,382 @@ namespace LandscapeGeneration
                 pContinent.BuildAreas(m_pGrid.CycleShift, m_iLandsCount / 100);
                 ProgressStep();
             }
+        }
+        public float m_fMaxDepth = 0;
+        public float m_fMaxHeight = 0;
+
+        protected void CalculateElevations(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        {
+            BeginStep("Calculating elevation...", m_pGrid.m_aLocations.Length);
+
+            List<LOC> cOcean = new List<LOC>();
+            List<LOC> cLand = new List<LOC>();
+
+            //Плясать будем от шельфа - у него фиксированная глубина -1
+            //весь остальной океан - глубже, вся суша - выше
+            foreach (LAND pLand in m_aLands)
+            {
+                if (pLand.Forbidden)
+                {
+                    foreach (LOC pLoc in pLand.m_cContents)
+                        ProgressStep();
+                    continue;
+                }
+
+
+                if (pLand.Type == LandTypes<LTI>.Coastral)
+                {
+                    foreach (LOC pLoc in pLand.m_cContents)
+                    {
+                        pLoc.H = -1;
+
+                        ProgressStep();
+
+                        foreach (LOC pLink in pLoc.m_aBorderWith)
+                        {
+                            if (pLink.Forbidden || pLink.Owner == null || pLink.Owner == pLand)
+                                continue;
+
+                            if ((pLink.Owner as LAND).Type == LandTypes<LTI>.Ocean)
+                            {
+                                if (!cOcean.Contains(pLink))
+                                    cOcean.Add(pLink);
+                            }
+                            else
+                            {
+                                if ((pLink.Owner as LAND).Type != LandTypes<LTI>.Coastral && !cLand.Contains(pLink))
+                                    cLand.Add(pLink);
+                            }
+                        }
+                    }
+                }
+
+                //Бывают прибрежные участки океана, где нет шельфа...
+                //Их тоже надо учесть!
+                if (pLand.Type == LandTypes<LTI>.Ocean)
+                {
+                    foreach (LOC pLoc in pLand.m_cContents)
+                    {
+                        foreach (LOC pLink in pLoc.m_aBorderWith)
+                        {
+                            if (pLink.Forbidden || pLink.Owner == null || pLink.Owner == pLand)
+                                continue;
+
+                            if ((pLink.Owner as LAND).Type != LandTypes<LTI>.Ocean &&
+                                (pLink.Owner as LAND).Type != LandTypes<LTI>.Coastral)
+                            {
+                                if (!cOcean.Contains(pLoc))
+                                    cOcean.Add(pLoc);
+                                if (!cLand.Contains(pLink))
+                                    cLand.Add(pLink);
+                            }
+                        }
+                    }
+                }
+            }
+
+            List<LOC> cWaveFront = new List<LOC>();
+
+            //с океаном всё просто - чем дальше от берега, тем глубже
+            m_fMaxDepth = -2;
+            while (cOcean.Count > 0)
+            {
+                cWaveFront.Clear();
+                foreach (LOC pLoc in cOcean)
+                {
+                    pLoc.H = m_fMaxDepth;
+                    ProgressStep();
+
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden || pLink.Owner == null || !float.IsNaN(pLink.H))
+                            continue;
+
+                        //if (cWaveFront.Contains(pLink))
+                        //    continue;
+
+                        if ((pLink.Owner as LAND).Type == LandTypes<LTI>.Ocean)
+                        {
+                            cWaveFront.Add(pLink);
+                            pLink.H = -1;
+                        }
+                    }
+                }
+
+                cOcean.Clear();
+                cOcean.AddRange(cWaveFront);
+
+                m_fMaxDepth--;
+            }
+
+            //с сушей сложнее...
+            m_fMaxHeight = 0;
+            Dictionary<float, LOC> cUnfinished = new Dictionary<float, LOC>();
+            SortedSet<float> cHeights = new SortedSet<float>();
+
+            while (cLand.Count > 0 || cUnfinished.Count > 0)
+            {
+                foreach (LOC pLoc in cLand)
+                {
+                    float fNewHeight;
+                    do
+                    {
+                        float fLinkElevation = GetElevationRnd((pLoc.Owner as LAND).Type);
+                        fNewHeight = m_fMaxHeight + fLinkElevation;
+                    }
+                    while (cUnfinished.ContainsKey(fNewHeight));
+
+                    pLoc.H = fNewHeight;
+                    cHeights.Add(fNewHeight);
+                    cUnfinished.Add(fNewHeight, pLoc);
+                    ProgressStep();
+                }
+                cLand.Clear();
+
+                if (cUnfinished.Count > 0)
+                {
+                    float fMin = cHeights.Min;
+                    LOC pLoc = cUnfinished[fMin];
+
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden || pLink.Owner == null || !float.IsNaN(pLink.H))
+                            continue;
+
+                        cLand.Add(pLink);
+                        pLink.H = 1;
+                    }
+                    cHeights.Remove(pLoc.H);
+                    cUnfinished.Remove(pLoc.H);
+                }
+
+                if (cHeights.Count > 0)
+                {
+                    float fMinHeight = cHeights.Min;
+                    float fMinElevation = fMinHeight - m_fMaxHeight;
+                    m_fMaxHeight += fMinElevation;
+                }
+            }
+
+            NoiseMap();
+
+            SmoothMap(100);
+            SmoothMap(2);
+            SmoothMap(1);
+            SmoothMap(0.5f);
+            SmoothMap(0.1f);
+            //PlainMap();
+
+            //CalculateVertexes();
+            //SmoothVertexes();
+            //SmoothVertexes();
+
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    continue;
+
+                if (pLoc.H < 0)
+                {
+                    var pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        if (pLine.m_pPoint1.m_fHeight > 0)
+                            pLine.m_pPoint1.m_fHeight = 0;
+
+                        if (pLine.m_pPoint2.m_fHeight > 0)
+                            pLine.m_pPoint2.m_fHeight = 0;
+
+                        //if (pLine.m_pMidPoint.m_fHeight > 0)
+                        //    pLine.m_pMidPoint.m_fHeight = 0;
+
+                        //if (pLine.m_pInnerPoint.m_fHeight > 0)
+                        //    pLine.m_pInnerPoint.m_fHeight = 0;
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
+
+                if (pLoc.H > 0)
+                {
+                    var pLine = pLoc.m_pFirstLine;
+                    do
+                    {
+                        if (pLine.m_pPoint1.m_fHeight < 0)
+                            pLine.m_pPoint1.m_fHeight = 0;
+
+                        if (pLine.m_pPoint2.m_fHeight < 0)
+                            pLine.m_pPoint2.m_fHeight = 0;
+
+                        //if (pLine.m_pMidPoint.m_fHeight < 0)
+                        //    pLine.m_pMidPoint.m_fHeight = 0;
+
+                        //if (pLine.m_pInnerPoint.m_fHeight < 0)
+                        //    pLine.m_pInnerPoint.m_fHeight = 0;
+
+                        pLine = pLine.m_pNext;
+                    }
+                    while (pLine != pLoc.m_pFirstLine);
+                }
+            }
+        }
+        //private void CalculateVertexes()
+        //{
+        //    foreach (VoronoiVertex pVertex in m_pGrid.m_aVertexes)
+        //    {
+        //        float fTotalWeight = 0;
+        //        bool bOcean = false;
+        //        bool bLand = false;
+        //        foreach (LOC pLoc in pVertex.m_aLocations)
+        //        {
+        //            if (pLoc.Forbidden || pLoc.Owner == null)
+        //                continue;
+
+        //            float fLinkElevation = (pLoc.Owner as LAND).Type.m_fElevation;
+        //            pVertex.m_fZ += pLoc.m_fHeight / fLinkElevation;
+        //            fTotalWeight += 1 / fLinkElevation;
+
+        //            if (pLoc.m_fHeight > 0)
+        //                bLand = true;
+        //            if (pLoc.m_fHeight < 0)
+        //                bOcean = true;
+        //        }
+
+        //        if (fTotalWeight > 0)
+        //            pVertex.m_fZ /= fTotalWeight;
+
+        //        if (bOcean && bLand)
+        //            pVertex.m_fZ = 0;
+        //    }
+        //}
+
+        //private void SmoothVertexes()
+        //{
+        //    foreach (VoronoiVertex pVertex in m_pGrid.m_aVertexes)
+        //    {
+        //        if (float.IsNaN(pVertex.m_fZ))
+        //            continue;
+        //        foreach (VoronoiVertex pLink in pVertex.m_cVertexes)
+        //        {
+        //            if (float.IsNaN(pLink.m_fZ))
+        //                continue;
+
+        //            float fDist = (float)Math.Sqrt((pVertex.m_fX - pLink.m_fX) * (pVertex.m_fX - pLink.m_fX) +
+        //                                          (pVertex.m_fY - pLink.m_fY) * (pVertex.m_fY - pLink.m_fY));
+
+        //            if (fDist < 50)
+        //            {
+        //                pVertex.m_fZ = (pVertex.m_fZ + pLink.m_fZ) / 2;
+        //                pLink.m_fZ = pVertex.m_fZ;
+        //            }
+        //        }
+        //    }
+        //}
+
+        /// <summary>
+        /// Сглаживает карту.
+        /// Локации с типом, предполагающим более высокий перепад уровней, чем заданный, не затрагиваются
+        /// </summary>
+        /// <param name="fMaxElevation"></param>
+        private void SmoothMap(float fMaxElevation)
+        {
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.Owner == null)
+                    continue;
+
+                float fLokElevation = (pLoc.Owner as LAND).Type.m_fElevation;
+                if (fLokElevation <= fMaxElevation)
+                {
+                    float fTotal = pLoc.H;
+                    float fTotalWeight = 1;
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden || pLink.Owner == null)
+                            continue;
+
+                        float fLinkElevation = (pLink.Owner as LAND).Type.m_fElevation;
+                        float fWeight = 1;
+                        if (fLinkElevation > fMaxElevation)
+                            fWeight = 0.5f;
+                        ////if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
+                        //{
+                        //    float fAverage = (pLoc.m_fHeight + pLink.m_fHeight)/2;
+                        //    if (pLoc.m_fHeight > 0)
+                        //        pLoc.m_fHeight = Math.Max(0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
+                        //    else
+                        //        pLoc.m_fHeight = Math.Min(-0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
+
+                        //    if (pLink.m_fHeight > 0)
+                        //        pLink.m_fHeight = Math.Max(0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
+                        //    else
+                        //        pLink.m_fHeight = Math.Min(-0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
+                        //}
+
+                        fTotal += pLink.H * fWeight;
+                        fTotalWeight += fWeight;
+                    }
+
+                    if (pLoc.H > 0)
+                        pLoc.H = Math.Max(0.1f, fTotal / fTotalWeight);
+                    else
+                        pLoc.H = Math.Min(-0.5f, fTotal / fTotalWeight);
+                }
+            }
+        }
+
+        private void NoiseMap()
+        {
+            PerlinNoise perlinNoise = new PerlinNoise(99);
+            double widthDivisor = 0.5 / (double)m_pGrid.RX;
+            double heightDivisor = 0.5 / (double)m_pGrid.RY;
+
+            float vMin = 0;
+            float vMax = 0;
+            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            {
+                if (pLoc.Forbidden || pLoc.H < 0)
+                    continue;
+
+                // Note that the result from the noise function is in the range -1 to 1, but I want it in the range of 0 to 1
+                // that's the reason of the strange code
+                float v = (float)(
+                    // First octave
+                    (perlinNoise.Noise(16 * pLoc.X * widthDivisor, 16 * pLoc.Y * heightDivisor, -0.5) + 1) / 2 * 0.5 +
+                    // Second octave
+                    (perlinNoise.Noise(32 * pLoc.X * widthDivisor, 32 * pLoc.Y * heightDivisor, 0) + 1) / 2 * 0.3 +
+                    // Third octave
+                    (perlinNoise.Noise(64 * pLoc.X * widthDivisor, 64 * pLoc.Y * heightDivisor, +0.5) + 1) / 2 * 0.2);
+
+                v = v - 0.5f;
+
+                if (v < vMin)
+                    vMin = v;
+                if (v > vMax)
+                    vMax = v;
+
+                v = Math.Min(1, Math.Max(-1, v * 5));
+
+                //float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                if (pLoc.H > 0)
+                {
+                    float fLinkElevation = Math.Min(pLoc.H - 0.5f, 10);
+                    pLoc.H += v * fLinkElevation;
+                    //pLoc.m_fHeight = 10 + v * 10;
+                }
+                else
+                {
+                    float fLinkElevation = Math.Max(pLoc.H + 0.5f, -10);
+                    pLoc.H -= v * fLinkElevation;
+                    //pLoc.m_fHeight = 10 + v * 10;
+                }
+            }
+        }
+
+        private float GetElevationRnd(LTI pLTI)
+        {
+            return pLTI.m_fElevation / 2 + Rnd.Get(pLTI.m_fElevation);
         }
 
         public List<TransportationLinkBase> m_cTransportGrid = new List<TransportationLinkBase>();

@@ -46,9 +46,12 @@ namespace LandscapeGeneration
 
         public string m_sName;
 
-        public void Init(int iMovementCost, EnvironmentType eType, string sName)
+        public float m_fElevation = 0;
+
+        public void Init(int iMovementCost, float fElevation, EnvironmentType eType, string sName)
         {
             m_iMovementCost = iMovementCost;
+            m_fElevation = fElevation;
             m_eEnvironment = eType;
             m_sName = sName;
         }
