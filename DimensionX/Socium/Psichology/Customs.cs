@@ -36,7 +36,7 @@ namespace Socium.Psichology
             Homosexual
         }
 
-        public enum FamilySize
+        public enum MarriageType
         {
             Monogamy,
             Polygamy,
@@ -79,7 +79,7 @@ namespace Socium.Psichology
 
         public SexualOrientation m_eSexRelations = SexualOrientation.Heterosexual;
 
-        public FamilySize m_eFamilySize = FamilySize.Monogamy;
+        public MarriageType m_eMarriage = MarriageType.Monogamy;
 
         public BodyModifications m_eBodyModifications = BodyModifications.Body_Modifications_Allowed;
 
@@ -102,7 +102,7 @@ namespace Socium.Psichology
             if(m_eSexRelations != SexualOrientation.Heterosexual && m_eGenderPriority != GenderPriority.Matriarchy)
                 m_eSexRelations = Rnd.OneChanceFrom(9) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(5) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual;
 
-            m_eFamilySize = Rnd.OneChanceFrom(3) ? FamilySize.Polygamy : Rnd.OneChanceFrom(9) ? FamilySize.Polyamory : FamilySize.Monogamy;
+            m_eMarriage = Rnd.OneChanceFrom(3) ? MarriageType.Polygamy : Rnd.OneChanceFrom(9) ? MarriageType.Polyamory : MarriageType.Monogamy;
 
             m_eBodyModifications = Rnd.OneChanceFrom(3) ? BodyModifications.Body_Modifications_Allowed : Rnd.OneChanceFrom(3) ? BodyModifications.Body_Modifications_Mandatory : BodyModifications.Body_Modifications_Blamed;
 
@@ -119,7 +119,7 @@ namespace Socium.Psichology
             m_eMindSet = m_pAncestorCustoms.m_eMindSet;
             m_eSexuality = m_pAncestorCustoms.m_eSexuality;
             m_eSexRelations = m_pAncestorCustoms.m_eSexRelations;
-            m_eFamilySize = m_pAncestorCustoms.m_eFamilySize;
+            m_eMarriage = m_pAncestorCustoms.m_eMarriage;
             m_eBodyModifications = m_pAncestorCustoms.m_eBodyModifications;
             m_eChildhood = m_pAncestorCustoms.m_eChildhood;
             m_eProgress = m_pAncestorCustoms.m_eProgress;
@@ -157,10 +157,10 @@ namespace Socium.Psichology
 
                     break;
                 case 4:
-                    if (m_eFamilySize == FamilySize.Polygamy)
-                        m_eFamilySize = Rnd.OneChanceFrom(5) ? FamilySize.Polyamory : FamilySize.Monogamy;
+                    if (m_eMarriage == MarriageType.Polygamy)
+                        m_eMarriage = Rnd.OneChanceFrom(5) ? MarriageType.Polyamory : MarriageType.Monogamy;
                     else
-                        m_eFamilySize = FamilySize.Polygamy;
+                        m_eMarriage = MarriageType.Polygamy;
                     break;
                 case 5:
                     if (m_eBodyModifications == BodyModifications.Body_Modifications_Allowed)
@@ -291,12 +291,12 @@ namespace Socium.Psichology
                 sResult += "same sex relations";
             }
 
-            if (m_eFamilySize == FamilySize.Monogamy)
+            if (m_eMarriage == MarriageType.Monogamy)
             {
                 sResult += "\n   ";
                 sResult += "monogamy";
             }
-            if (m_eFamilySize == FamilySize.Polyamory)
+            if (m_eMarriage == MarriageType.Polyamory)
             {
                 sResult += "\n   ";
                 sResult += "wedlock denial";
@@ -506,7 +506,7 @@ namespace Socium.Psichology
                 sResult += "makes sex a lot";
             }
 
-            if (m_eFamilySize == FamilySize.Monogamy)
+            if (m_eMarriage == MarriageType.Monogamy)
             {
                 if (bFirst)
                 {
@@ -547,7 +547,7 @@ namespace Socium.Psichology
                         sResult += " spouse (of any gender)";
                 }
             }
-            if (m_eFamilySize == FamilySize.Polyamory)
+            if (m_eMarriage == MarriageType.Polyamory)
             {
                 if (bFirst)
                 {
@@ -576,7 +576,7 @@ namespace Socium.Psichology
                     sResult += " of both genders";
                 }
             }
-            if (m_eFamilySize == FamilySize.Polygamy)
+            if (m_eMarriage == MarriageType.Polygamy)
             {
                 if (bFirst)
                 {
@@ -730,22 +730,22 @@ namespace Socium.Psichology
                     sNegativeReasons += " (-1) " + pOpponent.m_eSexRelations.ToString().Replace('_', ' ') + "\n";
                 }
 
-            if (m_eFamilySize == pOpponent.m_eFamilySize)
+            if (m_eMarriage == pOpponent.m_eMarriage)
             {
                 iHostility--;
-                sPositiveReasons += " (+1) " + pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + "\n";
+                sPositiveReasons += " (+1) " + pOpponent.m_eMarriage.ToString().Replace('_', ' ') + "\n";
             }
             else
-                if (m_eFamilySize != FamilySize.Polygamy &&
-                    pOpponent.m_eFamilySize != FamilySize.Polygamy)
+                if (m_eMarriage != MarriageType.Polygamy &&
+                    pOpponent.m_eMarriage != MarriageType.Polygamy)
                 {
                     iHostility += 2;
-                    sNegativeReasons += " (-2) " + pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons += " (-2) " + pOpponent.m_eMarriage.ToString().Replace('_', ' ') + "\n";
                 }
                 else
                 {
                     iHostility++;
-                    sNegativeReasons += " (-1) " + pOpponent.m_eFamilySize.ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons += " (-1) " + pOpponent.m_eMarriage.ToString().Replace('_', ' ') + "\n";
                 }
 
             if (m_eBodyModifications == pOpponent.m_eBodyModifications)

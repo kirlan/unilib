@@ -42,7 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaX.cs" />
+    <Compile Include="Estate.cs" />
     <Compile Include="Languages\Latin.cs" />
+    <Compile Include="Nations\Nation.cs" />
+    <Compile Include="Person.cs" />
     <Compile Include="Psichology\CultureTemplate.cs" />
     <Compile Include="Settlements\Building.cs" />
     <Compile Include="Settlements\BuildingStandAlone.cs" />
@@ -76,6 +79,8 @@
     <Compile Include="Settlements\Profession.cs" />
     <Compile Include="Settlements\Settlement.cs" />
     <Compile Include="SocialOrder.cs" />
+    <Compile Include="Population\Society.cs" />
+    <Compile Include="Population\StateSociety.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Strata.cs" />
     <Compile Include="World.cs" />

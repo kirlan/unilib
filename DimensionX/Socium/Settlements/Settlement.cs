@@ -50,19 +50,17 @@ namespace Socium.Settlements
         public string m_sName;
         public int m_iMinPop;
         public int m_iDeltaPop;
-        public int m_iMaxProfessionRank;
         public int m_iMinBuildingsCount;
         public int m_iDeltaBuildingsCount;
         public BuildingInfo m_pMainBuilding;
         public SettlementSize m_eSize;
 
-        public SettlementInfo(SettlementSize eSize, string sName, int iMinPop, int iDeltaPop, int iMaxProfessionRank, BuildingInfo pMainBuilding)
+        public SettlementInfo(SettlementSize eSize, string sName, int iMinPop, int iDeltaPop, int maxSkill, BuildingInfo pMainBuilding)
         {
             m_eSize = eSize;
             m_sName = sName;
             m_iMinPop = iMinPop;
             m_iDeltaPop = iDeltaPop;
-            m_iMaxProfessionRank = iMaxProfessionRank;
 
             switch (m_eSize)
             {
@@ -97,24 +95,24 @@ namespace Socium.Settlements
 
     public class Settlement
     {
-        private static Dictionary<SettlementSize, SettlementInfo> m_cInfo = new Dictionary<SettlementSize, SettlementInfo>();
+        //private static Dictionary<SettlementSize, SettlementInfo> m_cInfo = new Dictionary<SettlementSize, SettlementInfo>();
 
-        internal static Dictionary<SettlementSize, SettlementInfo> Info
-        {
-            get
-            {
-                if (m_cInfo.Count == 0)
-                {
-                    m_cInfo[SettlementSize.Hamlet] = new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, null);
-                    m_cInfo[SettlementSize.Village] = new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Village hall", ProfessionInfo.Elder, ProfessionInfo.Elder, BuildingSize.Unique));
-                    m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Town hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
-                    m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("City hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
-                    m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, new BuildingInfo("City hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
-                    m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, 7, new BuildingInfo("Headquarters", ProfessionInfo.General, ProfessionInfo.General, BuildingSize.Unique));
-                }
-                return Settlement.m_cInfo;
-            }
-        }
+        //internal static Dictionary<SettlementSize, SettlementInfo> Info
+        //{
+        //    get
+        //    {
+        //        if (m_cInfo.Count == 0)
+        //        {
+        //            m_cInfo[SettlementSize.Hamlet] = new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, null);
+        //            m_cInfo[SettlementSize.Village] = new SettlementInfo(SettlementSize.Village, "Village", 10, 20, new BuildingInfo("Village hall", ProfessionInfo.Elder, ProfessionInfo.Elder, BuildingSize.Unique));
+        //            m_cInfo[SettlementSize.Town] = new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Town hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
+        //            m_cInfo[SettlementSize.City] = new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("City hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
+        //            m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("City hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
+        //            m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, new BuildingInfo("Headquarters", ProfessionInfo.General, ProfessionInfo.General, BuildingSize.Unique));
+        //        }
+        //        return Settlement.m_cInfo;
+        //    }
+        //}
 
         public SettlementInfo m_pInfo;
         public SettlementSpeciality m_eSpeciality = SettlementSpeciality.None;

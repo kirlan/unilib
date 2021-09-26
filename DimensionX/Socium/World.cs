@@ -15,13 +15,6 @@ using Socium.Psichology;
 
 namespace Socium
 {
-    public enum MagicAbilityDistribution
-    {
-        mostly_weak,
-        mostly_average,
-        mostly_powerful
-    }
-
     public class World : Landscape<LocationX, LandX, AreaX, ContinentX, LandTypeInfoX>
     {
         public int m_iTechLevel;
@@ -2025,10 +2018,7 @@ namespace Socium
             if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
                 return;
 
-            var h1 = pTown1.H;
-            var h2 = pTown2.H;
-            var length = pRoad.Locations.Length;
-            var completed = 0;
+            int passed = 0;
 
             LocationX pLastNode = null;
             foreach (LocationX pNode in pRoad.Locations)
@@ -2040,7 +2030,7 @@ namespace Socium
 
                 pNode.m_cRoads[eRoadLevel].Add(pRoad);
 
-                var approxH = h1 + (h2 - h1) * (float)completed / (float)length;
+                var approxH = pTown1.H + (pTown2.H - pTown1.H) * (float)passed / (float)pRoad.Locations.Length;
                 float fRoadWight = 0;
                 switch (eRoadLevel)
                 {
@@ -2081,7 +2071,7 @@ namespace Socium
 
                 pLastNode = pNode;
 
-                completed++;
+                passed++;
             }
         }
 
