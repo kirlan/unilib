@@ -2025,6 +2025,11 @@ namespace Socium
             if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
                 return;
 
+            var h1 = pTown1.H;
+            var h2 = pTown2.H;
+            var length = pRoad.Locations.Length;
+            var completed = 0;
+
             LocationX pLastNode = null;
             foreach (LocationX pNode in pRoad.Locations)
             {
@@ -2034,6 +2039,22 @@ namespace Socium
                     pNode.m_cHaveRoadTo[pTown2] = pRoad;
 
                 pNode.m_cRoads[eRoadLevel].Add(pRoad);
+
+                var approxH = h1 + (h2 - h1) * (float)completed / (float)length;
+                float fRoadWight = 0;
+                switch (eRoadLevel)
+                {
+                    case RoadQuality.Country:
+                        fRoadWight = 0.5f;
+                        break;
+                    case RoadQuality.Normal:
+                        fRoadWight = 1f;
+                        break;
+                    case RoadQuality.Good:
+                        fRoadWight = 2f;
+                        break;
+                }
+                pNode.H = (pNode.H + approxH * fRoadWight) / (1f + fRoadWight);
 
                 if (pLastNode != null)
                 {
@@ -2059,6 +2080,8 @@ namespace Socium
                 }
 
                 pLastNode = pNode;
+
+                completed++;
             }
         }
 
