@@ -89,7 +89,7 @@ namespace GeneLab.Genetix
             if (m_eHairsM == HairsAmount.None &&
                  m_eHairsF == HairsAmount.None &&
                  m_eBeardM == HairsAmount.None &&
-                 m_eBeardF == HairsAmount.None) 
+                 m_eBeardF == HairsAmount.None)
                 return "";
 
             string sColors = "";
@@ -433,6 +433,184 @@ namespace GeneLab.Genetix
             }
         }
 
+        /// <summary>
+        /// He is bald, but has dense blue beard and moustache.
+        /// </summary>
+        /// <returns></returns>
+        public string GetDescription(CPerson._Gender eGender)
+        {
+            if (m_eHairsM == HairsAmount.None &&
+                 m_eHairsF == HairsAmount.None &&
+                 m_eBeardM == HairsAmount.None &&
+                 m_eBeardF == HairsAmount.None)
+                return eGender == CPerson._Gender.Male ? "He is completely bald." : "She is completely bald.";
+
+            string sColor = "";
+            switch (m_cHairColors[0])
+            {
+                case HairsColor.Albino:
+                    sColor += "snow-white";
+                    break;
+                case HairsColor.Blonde:
+                    sColor += "white";
+                    break;
+                case HairsColor.Brunette:
+                    sColor += "dark";
+                    break;
+                case HairsColor.Black:
+                    sColor += "black";
+                    break;
+                case HairsColor.DarkBlond:
+                    sColor += "gold";
+                    break;
+                case HairsColor.Red:
+                    sColor += "red";
+                    break;
+                case HairsColor.Blue:
+                    sColor += "blue";
+                    break;
+                case HairsColor.Green:
+                    sColor += "green";
+                    break;
+            }
+
+            string sResult = eGender == CPerson._Gender.Male ? "He has " : "She has ";
+
+            string sHair = "?";
+            string sBeard = "?";
+
+            HairsAmount eHeadAmount = eGender == CPerson._Gender.Male ? m_eHairsM : m_eHairsF;
+            HairsAmount eBeardAmount = eGender == CPerson._Gender.Male ? m_eBeardM : m_eBeardF;
+            switch (m_eHairsType)
+            {
+                case HairsType.Whiskers:
+                    {
+                        switch (eHeadAmount)
+                        {
+                            case HairsAmount.None:
+                                sHair = "";
+                                break;
+                            case HairsAmount.Sparse:
+                                sHair = "sparse " + sColor + " mane";
+                                break;
+                            case HairsAmount.Thick:
+                                sHair = "dense " + sColor + " mane";
+                                break;
+                        }
+                        switch (eBeardAmount)
+                        {
+                            case HairsAmount.None:
+                                sBeard = "";
+                                break;
+                            case HairsAmount.Sparse:
+                                sBeard = "sparse " + (sHair == "" ? sColor + " ":"") + "whiskers";
+                                break;
+                            case HairsAmount.Thick:
+                                sBeard = "dense " + (sHair == "" ? sColor + " " : "") + "whiskers";
+                                break;
+                        }
+
+
+                        if (sHair == "")
+                            sResult += sBeard;
+                        else
+                            if (sBeard == "")
+                                sResult += sHair;
+                            else
+                                sResult += sHair + " and " + sBeard;
+
+                        if (sHair == "" && sBeard == "")
+                            sResult = "";
+                    }
+                    break;
+                case HairsType.Hair:
+                    {
+                        switch (eHeadAmount)
+                        {
+                            case HairsAmount.None:
+                                sHair = "";
+                                break;
+                            case HairsAmount.Sparse:
+                                sHair = "short " + sColor + " hairs";
+                                break;
+                            case HairsAmount.Thick:
+                                sHair = "long " + sColor + " hairs";
+                                break;
+                        }
+                        switch (eBeardAmount)
+                        {
+                            case HairsAmount.None:
+                                sBeard = "no beard or moustache";
+                                break;
+                            case HairsAmount.Sparse:
+                                sBeard = "sparse " + (sHair == "" ? sColor + " " : "") + "beard and moustache";
+                                break;
+                            case HairsAmount.Thick:
+                                sBeard = "dense " + (sHair == "" ? sColor + " " : "") + "beard and moustache";
+                                break;
+                        }
+
+                        if (sHair == "")
+                        {
+                            if (eBeardAmount == HairsAmount.None)
+                                sResult = (eGender == CPerson._Gender.Male ? "He" : "She") + " is bald, and has " + sBeard;
+                            else
+                                sResult = (eGender == CPerson._Gender.Male ? "He" : "She") + " is bald, but has " + sColor + " " + sBeard;
+                        }
+                        else
+                        {
+                            sResult += sHair + " and " + sBeard;
+                        }
+                    }
+                    break;
+                case HairsType.Tentackles:
+                    {
+                        switch (eHeadAmount)
+                        {
+                            case HairsAmount.None:
+                                sHair = "";
+                                break;
+                            case HairsAmount.Sparse:
+                                sHair = "several " + sColor + " tentacles on head instead of hairs";
+                                break;
+                            case HairsAmount.Thick:
+                                sHair = "a lot of " + sColor + " tentacles on head instead of hairs";
+                                break;
+                        }
+
+                        switch (eBeardAmount)
+                        {
+                            case HairsAmount.None:
+                                sBeard = "";
+                                break;
+                            case HairsAmount.Sparse:
+                                sBeard = "several " + (sHair == "" ? sColor + " " : "") + "tentacles around mouth";
+                                break;
+                            case HairsAmount.Thick:
+                                sBeard = "a lot of " + (sHair == "" ? sColor + " " : "") + "tentacles around mouth";
+                                break;
+                        }
+
+                        if (sHair == "")
+                            sResult += sBeard;
+                        else
+                            if (sBeard == "")
+                                sResult += sHair;
+                            else
+                                sResult += sHair + " and " + sBeard;
+
+                        if (sHair == "" && sBeard == "")
+                            sResult = "";
+                    }
+                    break;
+            }
+
+            if (sResult != "")
+                sResult += ".";
+
+            return sResult;
+        }
+
         public static HairsGenetix HumanWhite
         {
             get { return new HairsGenetix(HairsAmount.Sparse, HairsAmount.Thick, HairsAmount.Sparse, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.Brunette, HairsColor.DarkBlond, HairsColor.Red, HairsColor.Black }); }
@@ -511,6 +689,27 @@ namespace GeneLab.Genetix
         public HairsGenetix()
         { }
 
+        public bool CheckHairColors()
+        {
+            if (m_cHairColors.Count == 0 &&
+                (m_eHairsM != HairsAmount.None ||
+                 m_eHairsF != HairsAmount.None ||
+                 m_eBeardM != HairsAmount.None ||
+                 m_eBeardF != HairsAmount.None))
+                return true;
+
+            List<HairsColor> cTest = new List<HairsColor>();
+            foreach (HairsColor eColor in m_cHairColors)
+            {
+                if (cTest.Contains(eColor))
+                    return true;
+
+                cTest.Add(eColor);
+            }
+
+            return false;
+        }
+
         public HairsGenetix(HairsGenetix pPredcessor)
         {
             m_eHairsM = pPredcessor.m_eHairsM;
@@ -519,7 +718,10 @@ namespace GeneLab.Genetix
             m_eBeardF = pPredcessor.m_eBeardF;
             m_eHairsType = pPredcessor.m_eHairsType;
 
-            m_cHairColors = pPredcessor.m_cHairColors;
+            m_cHairColors.Clear();
+            m_cHairColors.AddRange(pPredcessor.m_cHairColors);
+
+            CheckHairColors();
         }
 
         public HairsGenetix(HairsAmount eHairsM, HairsAmount eHairsF, HairsAmount eBeardM, HairsAmount eBeardF, HairsType eHairsType, HairsColor[] aHairColors)
@@ -531,10 +733,14 @@ namespace GeneLab.Genetix
             m_eHairsType = eHairsType;
 
             m_cHairColors = new List<HairsColor>(aHairColors);
+
+            CheckHairColors();
         }
         
         public GenetixBase MutateRace()
         {
+            CheckHairColors();
+
             if (Rnd.OneChanceFrom(2))
             {
                 HairsGenetix pMutant = new HairsGenetix(this);
@@ -626,9 +832,15 @@ namespace GeneLab.Genetix
                     }
                 }
 
+                if (pMutant.CheckHairColors())
+                    return this;
+
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
+
+            if (CheckHairColors())
+                return this;
 
             return this;
         }
@@ -650,6 +862,8 @@ namespace GeneLab.Genetix
 
         public GenetixBase MutateNation()
         {
+            CheckHairColors();
+
             if (Rnd.OneChanceFrom(10))
             {
                 HairsGenetix pMutant = new HairsGenetix(this);
@@ -729,15 +943,23 @@ namespace GeneLab.Genetix
                     }
                 }
 
+                if (pMutant.CheckHairColors())
+                    return this;
+
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
+
+            if (CheckHairColors())
+                return this;
 
             return this;
         }
 
         public GenetixBase MutateFamily()
         {
+            CheckHairColors();
+
             if (Rnd.OneChanceFrom(3))
             {
                 HairsGenetix pMutant = new HairsGenetix(this);
@@ -761,6 +983,8 @@ namespace GeneLab.Genetix
                 if (pMutant.m_cHairColors.Count == 0)
                     pMutant.m_cHairColors.Add(m_cHairColors[Rnd.Get(m_cHairColors.Count)]);
 
+                pMutant.CheckHairColors();
+
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
@@ -770,9 +994,13 @@ namespace GeneLab.Genetix
 
         public GenetixBase MutateIndividual()
         {
+            CheckHairColors();
+
             HairsGenetix pMutant = new HairsGenetix(this);
 
             pMutant.m_cHairColors.Clear();
+            if (m_cHairColors.Count == 0)
+                CheckHairColors();
             pMutant.m_cHairColors.Add(m_cHairColors[Rnd.Get(m_cHairColors.Count)]);
 
             if (!pMutant.IsIdentical(this))

@@ -59,28 +59,39 @@ namespace GeneLab.Genetix
         /// <returns></returns>
         public string GetDescription()
         {
+            return GetDescription(true);
+        }
+        /// <summary>
+        /// very clever creatures with quite common mystic powers
+        /// </summary>
+        /// <returns></returns>
+        public string GetDescription(bool bPlural)
+        {
             string sIntellect = "?";
             switch (m_eIntelligence)
             {
                 case Intelligence.None:
-                    sIntellect = "brainless creatures";
+                    sIntellect = "brainless creature";
                     break;
                 case Intelligence.Basic:
-                    sIntellect = "not so clever creatures";
+                    sIntellect = "not so clever creature";
                     break;
                 case Intelligence.Capable:
-                    sIntellect = "very clever creatures";
+                    sIntellect = "very clever creature";
                     break;
                 case Intelligence.Primitive:
-                    sIntellect = "primitive sentient beings";
+                    sIntellect = "primitive sentient being";
                     break;
                 case Intelligence.Sapient:
-                    sIntellect = "sentient beings";
+                    sIntellect = "sentient being";
                     break;
                 case Intelligence.Ingenious:
-                    sIntellect = "highly intelligent beings";
+                    sIntellect = "highly intelligent being";
                     break;
             }
+
+            if (bPlural)
+                sIntellect += "s";
 
             //string sMagic = "?";
             //switch (m_eMagicAbilityPrevalence)

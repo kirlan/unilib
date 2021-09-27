@@ -49,7 +49,7 @@ namespace GeneLab.Genetix
     public class EarsGenetix : GenetixBase
     {
         /// <summary>
-        /// long pointy ears at the sides of head
+        /// long pointy ears at the sides
         /// </summary>
         /// <returns></returns>
         public string GetDescription()

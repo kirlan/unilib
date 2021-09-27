@@ -6,9 +6,9 @@ using Random;
 using Socium.Psichology;
 using Socium.Settlements;
 
-namespace Socium
+namespace Socium.Population
 {
-    public class CEstate
+    public class Estate
     {
         public enum Position
         {
@@ -67,7 +67,7 @@ namespace Socium
         /// </summary>
         /// <param name="pEstate"></param>
         /// <param name="ePosition"></param>
-        public CEstate(CEstate pEstate, Position ePosition)
+        public Estate(Estate pEstate, Position ePosition)
         {
             m_ePosition = ePosition;
 
@@ -102,7 +102,7 @@ namespace Socium
         /// Создаёт основное сословие для указанного государства. Культура и обычаи основного сословия всегда совпадают с культурой и обычаями самого государства.
         /// </summary>
         /// <param name="pSociety"></param>
-        public CEstate(Society pSociety, Position ePosition)
+        public Estate(Society pSociety, Position ePosition)
         {
             m_ePosition = ePosition;
 

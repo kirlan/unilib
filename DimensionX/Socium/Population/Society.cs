@@ -310,7 +310,7 @@ namespace Socium.Population
             return iPreference;
         }
 
-        public Dictionary<CEstate.Position, CEstate> m_cEstates = new Dictionary<CEstate.Position, CEstate>();
+        public Dictionary<Estate.Position, Estate> m_cEstates = new Dictionary<Estate.Position, Estate>();
 
         public Dictionary<Strata, int> m_cPeople = new Dictionary<Strata, int>();
 
@@ -341,26 +341,26 @@ namespace Socium.Population
         /// </summary>
         public void SetEstates()
         {
-            CEstate pBase = new CEstate(this, CEstate.Position.Middle);
-            m_cEstates[CEstate.Position.Elite] = new CEstate(pBase, CEstate.Position.Elite);
-            m_cEstates[CEstate.Position.Middle] = pBase;
+            Estate pBase = new Estate(this, Estate.Position.Middle);
+            m_cEstates[Estate.Position.Elite] = new Estate(pBase, Estate.Position.Elite);
+            m_cEstates[Estate.Position.Middle] = pBase;
             do
             {
-                m_cEstates[CEstate.Position.Low] = new CEstate(pBase, CEstate.Position.Low);
+                m_cEstates[Estate.Position.Low] = new Estate(pBase, Estate.Position.Low);
             }
-            while (m_cEstates[CEstate.Position.Elite].m_pCustoms.Equals(m_cEstates[CEstate.Position.Low].m_pCustoms));
+            while (m_cEstates[Estate.Position.Elite].m_pCustoms.Equals(m_cEstates[Estate.Position.Low].m_pCustoms));
             do
             {
                 if (!Rnd.OneChanceFrom(3) && m_iSocialEquality != 0)
                 {
-                    m_cEstates[CEstate.Position.Outlaw] = new CEstate(m_cEstates[CEstate.Position.Low], CEstate.Position.Outlaw);
+                    m_cEstates[Estate.Position.Outlaw] = new Estate(m_cEstates[Estate.Position.Low], Estate.Position.Outlaw);
                 }
                 else
-                    m_cEstates[CEstate.Position.Outlaw] = new CEstate(pBase, CEstate.Position.Outlaw);
+                    m_cEstates[Estate.Position.Outlaw] = new Estate(pBase, Estate.Position.Outlaw);
             }
-            while (m_cEstates[CEstate.Position.Elite].m_pCustoms.Equals(m_cEstates[CEstate.Position.Outlaw].m_pCustoms) ||
-                m_cEstates[CEstate.Position.Low].m_pCustoms.Equals(m_cEstates[CEstate.Position.Outlaw].m_pCustoms) ||
-                pBase.m_pCustoms.Equals(m_cEstates[CEstate.Position.Outlaw].m_pCustoms));
+            while (m_cEstates[Estate.Position.Elite].m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms) ||
+                m_cEstates[Estate.Position.Low].m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms) ||
+                pBase.m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms));
 
             foreach (LocationX pLocation in m_cLands)
             {
@@ -428,24 +428,24 @@ namespace Socium.Population
                     switch (pStrata.Key.m_pProfession.m_eCasteRestriction)
                     {
                         case ProfessionInfo.Caste.Elite:
-                            m_cEstates[CEstate.Position.Elite].m_cStratas.Add(pStrata.Key);
+                            m_cEstates[Estate.Position.Elite].m_cStratas.Add(pStrata.Key);
                             iEliteEstateCount -= pStrata.Value;
                             RemoveStrataPreference(ref cStrataPreference, pStrata.Key);
                             break;
                         case ProfessionInfo.Caste.Low:
-                            m_cEstates[CEstate.Position.Low].m_cStratas.Add(pStrata.Key);
+                            m_cEstates[Estate.Position.Low].m_cStratas.Add(pStrata.Key);
                             iLowEstateCount -= pStrata.Value;
                             RemoveStrataPreference(ref cStrataPreference, pStrata.Key);
                             break;
                         case ProfessionInfo.Caste.Outlaw:
-                            m_cEstates[CEstate.Position.Outlaw].m_cStratas.Add(pStrata.Key);
+                            m_cEstates[Estate.Position.Outlaw].m_cStratas.Add(pStrata.Key);
                             RemoveStrataPreference(ref cStrataPreference, pStrata.Key);
                             break;
                     }
                 }
             }
 
-            if (m_iSocialEquality != 0 || m_cEstates[CEstate.Position.Low].m_cStratas.Count == 0)
+            if (m_iSocialEquality != 0 || m_cEstates[Estate.Position.Low].m_cStratas.Count == 0)
             {
                 while (iLowEstateCount > 0)
                 {
@@ -480,7 +480,7 @@ namespace Socium.Population
                     }
                     if (pBestFit != null)
                     {
-                        m_cEstates[CEstate.Position.Low].m_cStratas.Add(pBestFit);
+                        m_cEstates[Estate.Position.Low].m_cStratas.Add(pBestFit);
                         iLowEstateCount -= iBestFit;
                         RemoveStrataPreference(ref cStrataPreference, pBestFit);
                     }
@@ -510,7 +510,7 @@ namespace Socium.Population
                 }
                 if (pBestFit != null)
                 {
-                    m_cEstates[CEstate.Position.Elite].m_cStratas.Add(pBestFit);
+                    m_cEstates[Estate.Position.Elite].m_cStratas.Add(pBestFit);
                     iEliteEstateCount -= iBestFit;
                     RemoveStrataPreference(ref cStrataPreference, pBestFit);
                 }
@@ -524,7 +524,7 @@ namespace Socium.Population
             {
                 foreach (Strata pStrata in pPreference.Value)
                 {
-                    m_cEstates[CEstate.Position.Middle].m_cStratas.Add(pStrata);
+                    m_cEstates[Estate.Position.Middle].m_cStratas.Add(pStrata);
                 }
             }
 
@@ -554,7 +554,7 @@ namespace Socium.Population
                 cStrataPreference.Remove(iPreference);
         }
 
-        public abstract string GetEstateName(CEstate.Position ePosition);
+        public abstract string GetEstateName(Estate.Position ePosition);
 
         protected abstract BuildingInfo ChooseNewBuilding(Settlement pSettlement);
 

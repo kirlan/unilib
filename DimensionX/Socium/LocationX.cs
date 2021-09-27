@@ -6,6 +6,7 @@ using System.Drawing;
 using LandscapeGeneration;
 using Socium.Settlements;
 using LandscapeGeneration.PathFind;
+using Socium.Population;
 
 namespace Socium
 {
@@ -54,6 +55,43 @@ namespace Socium
             }
 
             return iRes;
+        }
+        public bool HaveEstate(Estate.Position eEstate)
+        {
+            LandX pLand = Owner as LandX;
+            State pState = pLand.m_pProvince.Owner as State;
+
+            if (m_pSettlement != null && pState.m_pSociety.m_cEstates.ContainsKey(eEstate))
+            {
+                foreach (Building pBuilding in m_pSettlement.m_cBuildings)
+                {
+                    Strata pOwner = pState.m_pSociety.GetStrata(pBuilding.m_pInfo.m_pOwner);
+                    if (pState.m_pSociety.m_cEstates[eEstate].m_cStratas.Contains(pOwner))
+                    {
+                        List<Person> cOwners = new List<Person>();
+                        foreach (Person pDweller in pBuilding.m_cPersons)
+                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pOwner)
+                                cOwners.Add(pDweller);
+
+                        if (cOwners.Count < pBuilding.m_pInfo.OwnersCount)
+                            return true;
+                    }
+                    Strata pWorkers = pState.m_pSociety.GetStrata(pBuilding.m_pInfo.m_pWorkers);
+                    if (pState.m_pSociety.m_cEstates[eEstate].m_cStratas.Contains(pWorkers))
+                    {
+                        List<Person> cWorkers = new List<Person>();
+                        foreach (Person pDweller in pBuilding.m_cPersons)
+                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pWorkers)
+                                cWorkers.Add(pDweller);
+
+                        if (cWorkers.Count < pBuilding.m_pInfo.WorkersCount)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+
         }
 
         public override string ToString()

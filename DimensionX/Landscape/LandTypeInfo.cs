@@ -6,13 +6,6 @@ using System.Drawing;
 
 namespace LandscapeGeneration
 {
-    public enum EnvironmentType
-    { 
-        Water,
-        Ground,
-        Mountains
-    }
-
     public enum LandType
     {
         Coastral,
@@ -28,11 +21,54 @@ namespace LandscapeGeneration
         Jungle
     }
 
+    [Flags]
+    public enum Environment
+    {
+        None = 0,
+        /// <summary>
+        /// Плоский ландшафт, без мешающих передвижению элементов, будь то скалы или деревья
+        /// </summary>
+        Flat = 1,
+        /// <summary>
+        /// Не твёрдая поверхность - песок или грязь...
+        /// </summary>
+        Soft = 2,
+        /// <summary>
+        /// Жидкость
+        /// </summary>
+        Liquid = 4,
+        /// <summary>
+        /// Ландшафт с сильными перепадами высот
+        /// </summary>
+        Barrier = 8,
+        /// <summary>
+        /// Местность с хорошим обзором, т.е. без крупной растительности
+        /// </summary>
+        Open = 16,
+        /// <summary>
+        /// Высокая влажность
+        /// </summary>
+        Wet = 32,
+        /// <summary>
+        /// Температура выше среднего
+        /// </summary>
+        Hot = 64,
+        /// <summary>
+        /// Температура ниже среднего
+        /// </summary>
+        Cold = 128,
+        /// <summary>
+        /// Вообще обитаемые земли
+        /// </summary>
+        Habitable = 256
+    }
+
     public class LandTypeInfo
     {
         public Color m_pColor;
         public Brush m_pBrush;
         public LandType m_eType;
+        public Environment m_eEnvironment = Environment.None;
 
         public void SetColor(Color pColor)
         {
@@ -42,17 +78,15 @@ namespace LandscapeGeneration
         
         public int m_iMovementCost = 100;
 
-        public EnvironmentType m_eEnvironment = EnvironmentType.Ground;
-
         public string m_sName;
 
         public float m_fElevation = 0;
 
-        public void Init(int iMovementCost, float fElevation, EnvironmentType eType, string sName)
+        public void Init(int iMovementCost, float fElevation, Environment eEnvironment, string sName)
         {
             m_iMovementCost = iMovementCost;
             m_fElevation = fElevation;
-            m_eEnvironment = eType;
+            m_eEnvironment = eEnvironment;
             m_sName = sName;
         }
     }

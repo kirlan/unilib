@@ -329,69 +329,17 @@ namespace Socium.Settlements
 
         public BuildingInfo m_pInfo;
 
+        public List<Person> m_cPersons = new List<Person>();
+
         /// <summary>
         /// Центральное здание
         /// </summary>
         /// <param name="pSettlement">поселение</param>
         /// <param name="pInfo">шаблон здания</param>
-        /// <param name="bCapital">в этом здании живёт местный правитель (false) или глава всего государства (true)</param>
-        public Building(Settlement pSettlement, BuildingInfo pInfo, bool bCapital = false)
+        public Building(Settlement pSettlement, BuildingInfo pInfo)
         {
             m_pSettlement = pSettlement;
             m_pInfo = pInfo;
-
-            /*
-            AddPopulation(1 + Rnd.Get(5), Settlement.Info[pSettlement.m_eSize].m_iMaxProfessionRank, pSettlement.m_pLand.m_pState.m_iTier * pSettlement.m_pState.m_iTier);
-
-            GenerateName();
-
-            if (bCapital)
-            {
-                foreach (Opponent pRuler in m_pState.m_cRulers)
-                {
-                    m_cDwellers.Add(pRuler);
-                    pRuler.m_pHome = this;
-                }
-                foreach (Opponent pHeir in m_pState.m_cHeirs)
-                {
-                    m_cDwellers.Add(pHeir);
-                    pHeir.m_pHome = this;
-                }
-            }
-            else
-            get
-            {
-                ValuedString[] profM = { new ValuedString(pInfo.m_sOwnerM, pInfo.m_iRank) };
-                ValuedString[] profF = { new ValuedString(pInfo.m_sOwnerF, pInfo.m_iRank) };
-                Opponent pFounder = new Opponent(this, m_pState.GetRandomRace(State.DwellersCathegory.MajorRaces),
-                    profM, profF, true, null);
-                m_cDwellers.Add(pFounder);
-
-                int iPop = Rnd.Get(5);
-                for (int i = 0; i < iPop; i++)
-                int iOwnersCount = 1;
-                switch (m_eSize)
-                {
-                    Opponent pPretendent = new Opponent(this, m_pState.GetRandomRace(State.DwellersCathegory.MajorRaces),
-                        profM, profF, true, pFounder);
-                    m_cDwellers.Add(pPretendent);
-                    case BuildingSize.Small:
-                        iOwnersCount = 1;
-                        break;
-                    case BuildingSize.Medium:
-                        iOwnersCount = 3;
-                        break;
-                    case BuildingSize.Large:
-                        iOwnersCount = 5;
-                        break;
-                    case BuildingSize.Huge:
-                        iOwnersCount = 10;
-                        break;
-                }
-
-                return iOwnersCount;
-            }
-             */
         }
 
         public override string ToString()

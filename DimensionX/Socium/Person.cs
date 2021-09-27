@@ -5,6 +5,7 @@ using System.Text;
 using GeneLab;
 using Random;
 using Socium.Nations;
+using Socium.Population;
 using Socium.Psichology;
 using Socium.Settlements;
 
@@ -441,7 +442,7 @@ namespace Socium
 
         public Building m_pBuilding = null;
 
-        public CEstate m_pEstate;
+        public Estate m_pEstate;
         public ProfessionInfo m_pProfession;
 
         public bool m_bFinished = false;
@@ -449,8 +450,8 @@ namespace Socium
         public Culture m_pCulture;
         public int m_iCultureLevel;
         public Customs m_pCustoms;
-        public Fenotype m_pFamilyFenotype;
-        public Fenotype m_pFenotype;
+        public GenetixBase m_pFamilyFenotype;
+        public GenetixBase m_pFenotype;
         public Dictionary<Skill, ProfessionInfo.SkillLevel> m_cSkills = new Dictionary<Skill, ProfessionInfo.SkillLevel>();
         public Appearance m_eAppearance = Appearance.Average;
         public List<Injury> m_cInjury = new List<Injury>();
@@ -485,8 +486,8 @@ namespace Socium
 
             m_pCustoms = new Customs(pRelative == null || pRelative.m_eGender != m_eGender ? m_pEstate.GetCustoms(m_eGender) : pRelative.m_pCustoms, Customs.Mutation.Possible);
 
-            m_pFamilyFenotype = pRelative == null ? (Fenotype)m_pNation.m_pFenotype.MutateFamily() : (Fenotype)pRelative.m_pFamilyFenotype;
-            m_pFenotype = (Fenotype)m_pFamilyFenotype.MutateIndividual();
+            m_pFamilyFenotype = pRelative == null ? m_pNation.m_pFenotype.MutateFamily() : pRelative.m_pFamilyFenotype;
+            m_pFenotype = m_pFamilyFenotype.MutateIndividual();
             m_pCustoms.FixBodyModifications(m_pFenotype);
 
             foreach (var pSkill in m_pProfession.m_cSkills)
@@ -511,21 +512,21 @@ namespace Socium
                 m_cSkills[pSkill.Key] = eLevel;
             }
 
-            if (m_pEstate.m_ePosition == CEstate.Position.Outlaw)
+            if (m_pEstate.m_ePosition == Estate.Position.Outlaw)
             {
                 if (Rnd.OneChanceFrom(2))
                     m_eAppearance = Appearance.Unattractive;
                 else if (Rnd.OneChanceFrom(5))
                     m_eAppearance = Appearance.Handsome;
             }
-            else if (m_pEstate.m_ePosition == CEstate.Position.Low)
+            else if (m_pEstate.m_ePosition == Estate.Position.Low)
             {
                 if (Rnd.OneChanceFrom(3))
                     m_eAppearance = Appearance.Unattractive;
                 else if (Rnd.OneChanceFrom(10))
                     m_eAppearance = Appearance.Handsome;
             }
-            else if (m_pEstate.m_ePosition == CEstate.Position.Elite)
+            else if (m_pEstate.m_ePosition == Estate.Position.Elite)
             {
                 if (Rnd.OneChanceFrom(3))
                     m_eAppearance = Appearance.Handsome;
@@ -560,7 +561,7 @@ namespace Socium
                 }
             }
 
-            if (m_pEstate.m_ePosition == CEstate.Position.Outlaw)
+            if (m_pEstate.m_ePosition == Estate.Position.Outlaw)
             {
                 if (Rnd.OneChanceFrom(3))
                 {
@@ -835,10 +836,10 @@ namespace Socium
 
             m_eGender = Rnd.OneChanceFrom(2) ? _Gender.Male : _Gender.Female;
 
-            CEstate.Position eEstate;
+            Estate.Position eEstate;
             do
             {
-                eEstate = (CEstate.Position)Rnd.Get(typeof(CEstate.Position));
+                eEstate = (Estate.Position)Rnd.Get(typeof(Estate.Position));
             }
             while (pPreferredHome != null && !pPreferredHome.HaveEstate(eEstate));
 
@@ -914,11 +915,11 @@ namespace Socium
                         eEstate = pRelative.m_pEstate.m_ePosition + 1;
                 }
 
-                if (eEstate < CEstate.Position.Outlaw)
-                    eEstate = CEstate.Position.Outlaw;
+                if (eEstate < Estate.Position.Outlaw)
+                    eEstate = Estate.Position.Outlaw;
 
-                if (eEstate > CEstate.Position.Elite)
-                    eEstate = CEstate.Position.Elite;
+                if (eEstate > Estate.Position.Elite)
+                    eEstate = Estate.Position.Elite;
                 #endregion
 
                 #region Choosing home location
@@ -936,16 +937,16 @@ namespace Socium
                         List<CLocation> cPossibleHomes = new List<CLocation>();
                         switch (eEstate)
                         {
-                            case CEstate.Position.Outlaw:
+                            case Estate.Position.Outlaw:
                                 cPossibleHomes.AddRange(pRelative.m_pHomeLocation.Owner.Settlements);
                                 break;
-                            case CEstate.Position.Low:
+                            case Estate.Position.Low:
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation.Owner.Settlements[0]);
                                 break;
-                            case CEstate.Position.Middle:
+                            case Estate.Position.Middle:
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 foreach (CState pState in pWorld.States)
                                 {
@@ -953,7 +954,7 @@ namespace Socium
                                     cPossibleHomes.Add(pState.Settlements[0]);
                                 }
                                 break;
-                            case CEstate.Position.Elite:
+                            case Estate.Position.Elite:
                                 cPossibleHomes.AddRange(pRelative.m_pHomeLocation.Owner.Settlements);
                                 foreach (CState pState in pWorld.States)
                                     cPossibleHomes.AddRange(pState.Settlements);
@@ -2330,7 +2331,7 @@ namespace Socium
 
             switch (m_pEstate.m_ePosition)
             {
-                case CEstate.Position.Low:
+                case Estate.Position.Low:
                     //Формула рассчёта коэффициента значимости для низшего сословия: (0.75x3 - 0.8x2 + 3.4x + 1.2) / 5
                     //Она даёт значения 0.2 1 2 5 10
                     fPersonalInfluence *= (float)(0.75 * Math.Pow(m_pHomeLocation.Owner.m_iSocialEquality, 3) - 0.8 * Math.Pow(m_pHomeLocation.Owner.m_iSocialEquality, 2) + 3.4 * m_pHomeLocation.Owner.m_iSocialEquality + 1.2) / 5;
@@ -2341,13 +2342,13 @@ namespace Socium
                     //    fPersonalInfluence /= 2;
                     //}
                     break;
-                case CEstate.Position.Middle:
+                case Estate.Position.Middle:
                     //Для среднего сословия: (-0.58x3 + 3.4x2 + 0.4x + 1.16) / 2
                     //Она даёт значения 0.5 2 5 9 10
                     fPersonalInfluence *= (float)(-0.58 * Math.Pow(m_pHomeLocation.Owner.m_iSocialEquality, 3) + 3.4 * Math.Pow(m_pHomeLocation.Owner.m_iSocialEquality, 2) + 0.4 * m_pHomeLocation.Owner.m_iSocialEquality + 1.6) / 2;
                     //fPersonalInfluence *= 2;
                     break;
-                case CEstate.Position.Elite:
+                case Estate.Position.Elite:
                     //для элиты коэффициент всегда 10, независимо от величины социального неравенства.
                     //регинальные правители и главы государств имеют бонус
                     if(IsInGovernment())
@@ -2357,7 +2358,7 @@ namespace Socium
                     else
                         fPersonalInfluence *= 10;//20;
                     break;
-                case CEstate.Position.Outlaw:
+                case Estate.Position.Outlaw:
                     fPersonalInfluence *= 50f / (m_pHomeLocation.Owner.m_iControl + 1);
                     break;
             }
@@ -4142,12 +4143,12 @@ namespace Socium
 
         public bool IsSlave()
         {
-            return m_pEstate.m_ePosition == CEstate.Position.Low && m_pHomeLocation.Owner.m_iSocialEquality == 0;
+            return m_pEstate.m_ePosition == Estate.Position.Low && m_pHomeLocation.Owner.m_iSocialEquality == 0;
         }
 
         public bool IsSerf()
         {
-            return m_pEstate.m_ePosition == CEstate.Position.Low && m_pHomeLocation.Owner.m_iSocialEquality == 1;
+            return m_pEstate.m_ePosition == Estate.Position.Low && m_pHomeLocation.Owner.m_iSocialEquality == 1;
         }
 
         /// <summary>
@@ -4280,8 +4281,8 @@ namespace Socium
             if (pPerson1.m_pHomeLocation.Owner == pPerson2.m_pHomeLocation.Owner)
             {
                 //если они живут в одном государстве, то для низших слоёв общества это имеет меньшее значение, чем для всех остальных
-                if (pPerson1.m_pEstate.m_ePosition == CEstate.Position.Low ||
-                    pPerson2.m_pEstate.m_ePosition == CEstate.Position.Low)
+                if (pPerson1.m_pEstate.m_ePosition == Estate.Position.Low ||
+                    pPerson2.m_pEstate.m_ePosition == Estate.Position.Low)
                 {
                     if (!pPerson1.IsSlave() && !pPerson2.IsSlave())
                     {
@@ -4296,8 +4297,8 @@ namespace Socium
                 }
             }
             //если они живут в разных государствах, то для низших слоёв общества всё остальное уже не имеет никакого значения.
-            else if (pPerson1.m_pEstate.m_ePosition != CEstate.Position.Low &&
-                    pPerson2.m_pEstate.m_ePosition != CEstate.Position.Low)
+            else if (pPerson1.m_pEstate.m_ePosition != Estate.Position.Low &&
+                    pPerson2.m_pEstate.m_ePosition != Estate.Position.Low)
             {
                 int iAdd = 0;
 
@@ -4324,8 +4325,8 @@ namespace Socium
                 }
 
                 //...так же и средний класс
-                if (pPerson1.m_pEstate.m_ePosition == CEstate.Position.Middle ||
-                    pPerson2.m_pEstate.m_ePosition == CEstate.Position.Middle)
+                if (pPerson1.m_pEstate.m_ePosition == Estate.Position.Middle ||
+                    pPerson2.m_pEstate.m_ePosition == Estate.Position.Middle)
                 {
                     //но - только если один из них живёт в столице, да и то связи эти слабые - как другие города для люмпенов
                     if (pPerson1.m_pHomeLocation == pPerson1.m_pHomeLocation.Owner.Settlements[0] ||

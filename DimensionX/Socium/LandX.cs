@@ -363,5 +363,38 @@ namespace Socium
             else
                 return null;
         }
+
+        /// <summary>
+        /// Считает стоимость заселения локации указанной расой с учётом ландшафта локации и её соседей.
+        /// Возвращает значение в диапазоне 1-100.
+        /// 1 - любая территория, идеально подходящая указанной расе, окружённая так же идеально подходящими.
+        /// 5 - идеально подходящая, окружённая простыми для заселения, но совсем не подходящими. Или наоборот.
+        /// 10 - простая, но не подходящая, окружённая другими простыми, но не подходящими.
+        /// 50 - подходящая, окружённая сложными и не подходящими, или наоборот.
+        /// 55 - простая и не подходящая, окружённая сложными и не подходящими, или наоборот.
+        /// 100 - сложная и не подходящая, окружённая сложными и не подходящими.
+        /// </summary>
+        /// <param name="pNation"></param>
+        /// <returns></returns>
+        public int GetClaimingCost(Nation pNation)
+        {
+            double fCost = Type.GetClaimingCost(pNation);
+
+            foreach (var pLink in m_cBorder)
+            {
+                LandX pOtherLand = pLink.Key as LandX;
+                if (pOtherLand.Owner == null && pOtherLand.Type.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                    fCost += (double)pOtherLand.Type.GetClaimingCost(pNation) / m_cBorder.Count;
+            }
+
+            if (fCost < 2)
+                fCost = 2;
+            return (int)(fCost / 2);
+        }
+
+        internal float GetResource(LandTypeInfoX.Resource resource)
+        {
+            return Type.m_cResources[resource] * m_cContents.Count;
+        }
     }
 }

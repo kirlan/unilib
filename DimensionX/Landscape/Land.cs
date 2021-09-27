@@ -29,7 +29,7 @@ namespace LandscapeGeneration
 
         public bool IsWater
         {
-            get { return m_pType != null && m_pType.m_eEnvironment == EnvironmentType.Water; }
+            get { return m_pType != null && m_pType.m_eEnvironment.HasFlag(Environment.Liquid); }
         }
 
         public float MovementCost

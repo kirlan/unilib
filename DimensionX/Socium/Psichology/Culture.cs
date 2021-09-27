@@ -197,7 +197,8 @@ namespace Socium.Psichology
                 culture1.Set((int)prop, m_cMentalityValues[prop][iOwnLevel] - 1.0f);
                 culture2.Set((int)prop, different.m_cMentalityValues[prop][iOpponentLevel] - 1.0f);
             }
-            return -(float)(culture1 * culture2) / Mentalities.Length;
+            return (float)Math.Sqrt(BTVector.Dist(culture1, culture2)) - 1f;
+            //return -(float)(culture1 * culture2) / Mentalities.Length;
         }
 
         private class MentalityCluster
@@ -205,12 +206,20 @@ namespace Socium.Psichology
             public float m_fMinValue;
             public float m_fMaxValue;
             public string m_sString;
+            private Mentality m_eMentality;
 
-            public MentalityCluster(float fMin, float fMax, string sName)
+            public MentalityCluster(Mentality eMentality, float fMin, float fMax, string sName)
             {
+                m_eMentality = eMentality;
                 m_fMinValue = fMin;
                 m_fMaxValue = fMax;
                 m_sString = sName;
+            }
+
+            public bool Check(Culture pCulture, int iLevel)
+            {
+                return pCulture.m_cMentalityValues[m_eMentality][iLevel] >= m_fMinValue &&
+                    pCulture.m_cMentalityValues[m_eMentality][iLevel] <= m_fMaxValue;
             }
         }
 
@@ -228,53 +237,53 @@ namespace Socium.Psichology
                 {
                     s_cMentalityClusters = new Dictionary<Mentality, MentalityCluster[]>();
                     s_cMentalityClusters[Mentality.Agression] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) completely pacifistic"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) quite amiable"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) peaceful"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) hot-tempered"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) agressive"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) extremely agressive"),
+                        {   new MentalityCluster(Mentality.Agression, 0.0f, 0.33f, "(+3) completely pacifistic"),
+                            new MentalityCluster(Mentality.Agression, 0.33f, 0.66f, "(+2) quite amiable"),
+                            new MentalityCluster(Mentality.Agression, 0.66f, 1.0f, "(+1) peaceful"),
+                            new MentalityCluster(Mentality.Agression, 1.0f, 1.33f, "(-1) hot-tempered"),
+                            new MentalityCluster(Mentality.Agression, 1.33f, 1.66f, "(-2) agressive"),
+                            new MentalityCluster(Mentality.Agression, 1.66f, 2.0f, "(-3) extremely agressive"),
 
                         };
                     s_cMentalityClusters[Mentality.Selfishness] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) completely selfless"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) quite selfless"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) not so egoistic"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) quite egoistic"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) very selfish"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) completely selfish"),
+                        {   new MentalityCluster(Mentality.Selfishness, 0.0f, 0.33f, "(+3) completely selfless"),
+                            new MentalityCluster(Mentality.Selfishness, 0.33f, 0.66f, "(+2) quite selfless"),
+                            new MentalityCluster(Mentality.Selfishness, 0.66f, 1.0f, "(+1) not so egoistic"),
+                            new MentalityCluster(Mentality.Selfishness, 1.0f, 1.33f, "(-1) quite egoistic"),
+                            new MentalityCluster(Mentality.Selfishness, 1.33f, 1.66f, "(-2) very selfish"),
+                            new MentalityCluster(Mentality.Selfishness, 1.66f, 2.0f, "(-3) completely selfish"),
                         };
                     s_cMentalityClusters[Mentality.Rudeness] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) creativity as a supreme value"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) true art"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) pop art"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) applied art"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) primitive pleasures"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) only natural needs satisfaction"),
+                        {   new MentalityCluster(Mentality.Rudeness, 0.0f, 0.33f, "(+3) creativity as a supreme value"),
+                            new MentalityCluster(Mentality.Rudeness, 0.33f, 0.66f, "(+2) true art"),
+                            new MentalityCluster(Mentality.Rudeness, 0.66f, 1.0f, "(+1) pop art"),
+                            new MentalityCluster(Mentality.Rudeness, 1.0f, 1.33f, "(-1) applied art"),
+                            new MentalityCluster(Mentality.Rudeness, 1.33f, 1.66f, "(-2) primitive pleasures"),
+                            new MentalityCluster(Mentality.Rudeness, 1.66f, 2.0f, "(-3) only natural needs satisfaction"),
                         };
                     s_cMentalityClusters[Mentality.Fanaticism] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) fully tolerant"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) liberal"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) open-minded"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) narrow-minded"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) fanatical"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) irreconcilable"),
+                        {   new MentalityCluster(Mentality.Fanaticism, 0.0f, 0.33f, "(+3) fully tolerant"),
+                            new MentalityCluster(Mentality.Fanaticism, 0.33f, 0.66f, "(+2) liberal"),
+                            new MentalityCluster(Mentality.Fanaticism, 0.66f, 1.0f, "(+1) open-minded"),
+                            new MentalityCluster(Mentality.Fanaticism, 1.0f, 1.33f, "(-1) narrow-minded"),
+                            new MentalityCluster(Mentality.Fanaticism, 1.33f, 1.66f, "(-2) fanatical"),
+                            new MentalityCluster(Mentality.Fanaticism, 1.66f, 2.0f, "(-3) irreconcilable"),
                         };
                     s_cMentalityClusters[Mentality.Piety] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) no supernatural forces"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) 1 unpersonified force"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) 2 opposing unpersonified forces"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) 2 opposing deities"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) 2 big opposing groups of deities"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) lot of elemental deities"),
+                        {   new MentalityCluster(Mentality.Piety, 0.0f, 0.33f, "(+3) no supernatural forces"),
+                            new MentalityCluster(Mentality.Piety, 0.33f, 0.66f, "(+2) 1 unpersonified force"),
+                            new MentalityCluster(Mentality.Piety, 0.66f, 1.0f, "(+1) 2 opposing unpersonified forces"),
+                            new MentalityCluster(Mentality.Piety, 1.0f, 1.33f, "(-1) 2 opposing deities"),
+                            new MentalityCluster(Mentality.Piety, 1.33f, 1.66f, "(-2) 2 big opposing groups of deities"),
+                            new MentalityCluster(Mentality.Piety, 1.66f, 2.0f, "(-3) lot of elemental deities"),
                         };
                     s_cMentalityClusters[Mentality.Treachery] = new MentalityCluster[] 
-                        {   new MentalityCluster(0.0f, 0.33f, "(+3) absolutely honest"),
-                            new MentalityCluster(0.33f, 0.66f, "(+2) honest"),
-                            new MentalityCluster(0.66f, 1.0f, "(+1) lawful"),
-                            new MentalityCluster(1.0f, 1.33f, "(-1) dishonest"),
-                            new MentalityCluster(1.33f, 1.66f, "(-2) criminal"),
-                            new MentalityCluster(1.66f, 2.0f, "(-3) completely corrupt"),
+                        {   new MentalityCluster(Mentality.Treachery, 0.0f, 0.33f, "(+3) absolutely honest"),
+                            new MentalityCluster(Mentality.Treachery, 0.33f, 0.66f, "(+2) honest"),
+                            new MentalityCluster(Mentality.Treachery, 0.66f, 1.0f, "(+1) lawful"),
+                            new MentalityCluster(Mentality.Treachery, 1.0f, 1.33f, "(-1) dishonest"),
+                            new MentalityCluster(Mentality.Treachery, 1.33f, 1.66f, "(-2) criminal"),
+                            new MentalityCluster(Mentality.Treachery, 1.66f, 2.0f, "(-3) completely corrupt"),
                         };
                 }
                 return s_cMentalityClusters;
@@ -285,11 +294,62 @@ namespace Socium.Psichology
         {
             foreach (MentalityCluster pString in MentalityClusters[eMentality])
             {
-                if (m_cMentalityValues[eMentality][iLevel] >= pString.m_fMinValue && 
-                    m_cMentalityValues[eMentality][iLevel] <= pString.m_fMaxValue)
+                if (pString.Check(this, iLevel))
                     return pString.m_sString;
             }
             return "error (" + m_cMentalityValues[eMentality][iLevel].ToString() + ")";
+        }
+
+        public string GetMentalityDiffString(int iLevel, Culture pOther, int iOtherlevel)
+        {
+            string sResult = "";
+            bool bFirst = true;
+            foreach (Mentality eMentality in Mentalities)
+            {
+                string sMentality1 = GetMentalityString(eMentality, iLevel);
+                string sMentality2 = pOther.GetMentalityString(eMentality, iOtherlevel);
+
+                if (sMentality1 != sMentality2)
+                {
+                    if (!bFirst)
+                        sResult += ", ";
+
+                    if (m_cMentalityValues[eMentality][iLevel] > pOther.m_cMentalityValues[eMentality][iOtherlevel] + 0.33)
+                        sResult += "much more ";
+                    else if (m_cMentalityValues[eMentality][iLevel] > pOther.m_cMentalityValues[eMentality][iOtherlevel])
+                        sResult += "more ";
+                    else if (m_cMentalityValues[eMentality][iLevel] < pOther.m_cMentalityValues[eMentality][iOtherlevel] - 0.33)
+                        sResult += "much less ";
+                    else
+                        sResult += "less ";
+
+                    switch (eMentality)
+                    {
+                        case Mentality.Agression:
+                            sResult += "agressive";
+                            break;
+                        case Mentality.Fanaticism:
+                            sResult += "fanatical";
+                            break;
+                        case Mentality.Piety:
+                            sResult += "religious";
+                            break;
+                        case Mentality.Rudeness:
+                            sResult += "rude";
+                            break;
+                        case Mentality.Selfishness:
+                            sResult += "selfish";
+                            break;
+                        case Mentality.Treachery:
+                            sResult += "treacherous";
+                            break;
+                    }
+
+                    bFirst = false;
+                }
+            }
+
+            return sResult;
         }
     }
 }

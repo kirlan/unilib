@@ -14,8 +14,8 @@ namespace Socium.Population
 {
     public class StateSociety: Society
     {
-        #region States Info Array
-        public class StateStructure
+        #region State Models Array
+        public class StateModel
         {
             public string m_sName;
             public int m_iRank;
@@ -49,7 +49,7 @@ namespace Socium.Population
             /// <param name="iMinGovernmentLevel">Минимальный возможный уровень государственности</param>
             /// <param name="iMaxGovernmentLevel">Максимальный возможный уровень государственности</param>
             /// <param name="cLanguages">Языки, носители которых могут иметь государство такого типа</param>
-            public StateStructure(string sName, int iRank, SettlementInfo pStateCapital, SettlementInfo pProvinceCapital, bool bDinasty, int iMinGovernmentLevel, int iMaxGovernmentLevel, bool bBig, SocialOrder pSocial, Language[] cLanguages)
+            public StateModel(string sName, int iRank, SettlementInfo pStateCapital, SettlementInfo pProvinceCapital, bool bDinasty, int iMinGovernmentLevel, int iMaxGovernmentLevel, bool bBig, SocialOrder pSocial, Language[] cLanguages)
             {
                 m_sName = sName;
                 m_iRank = iRank;
@@ -71,117 +71,117 @@ namespace Socium.Population
             }
         }
 
-        internal static StateStructure[] s_aInfo =
+        internal static StateModel[] s_aModels =
         {
-            new StateStructure("Land", 1,
+            new StateModel("Land", 1,
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, new BuildingInfo("Elder's hut", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, new BuildingInfo("Elder's hut", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
                 true, 0, 0, false, SocialOrder.Primitive, null),
-            new StateStructure("Lands", 1,
+            new StateModel("Lands", 1,
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, new BuildingInfo("Elder's hut", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, 2, new BuildingInfo("Elder's hut", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
                 true, 0, 0, true, SocialOrder.Primitive, null),
-            new StateStructure("Tribes", 1,
+            new StateModel("Tribes", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Clans hall", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Village hall", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
                 true, 1, 1, false, SocialOrder.Primitive, null),
-            new StateStructure("Clans", 1,
+            new StateModel("Clans", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Clans hall", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 3, new BuildingInfo("Village hall", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
                 true, 1, 1, true, SocialOrder.Primitive, null),
-            new StateStructure("Kingdom", 1,
+            new StateModel("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro, ProfessionInfo.GovernorEuro, BuildingSize.Unique)),
                 true, 2, 6, false, SocialOrder.MedievalEurope, new Language[] {Language.Dwarwen, Language.European, Language.Highlander}),
-            new StateStructure("Kingdom", 1,
+            new StateModel("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro2, ProfessionInfo.GovernorEuro2, BuildingSize.Unique)),
                 true, 2, 6, false, SocialOrder.MedievalEurope2, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Highlander}),
-            new StateStructure("Empire", 2,
+            new StateModel("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro3, ProfessionInfo.GovernorEuro3, BuildingSize.Unique)),
                 true, 2, 6, true, SocialOrder.MedievalEurope2, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Dwarwen}),
-            new StateStructure("Kingdom", 1,
+            new StateModel("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro4, ProfessionInfo.GovernorEuro4, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalEurope3, new Language[] {Language.Dwarwen, Language.European, Language.Highlander}),
-            new StateStructure("Reich", 1,
+            new StateModel("Reich", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingNorth, ProfessionInfo.KingHeirNorth, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorNorth, ProfessionInfo.GovernorNorth, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalNorth, new Language[] {Language.Dwarwen, Language.Northman}),
-            new StateStructure("Kaiserreich", 1,
+            new StateModel("Kaiserreich", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorNorth, ProfessionInfo.EmperorHeirNorth, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorNorth2, ProfessionInfo.GovernorNorth2, BuildingSize.Unique)),
                 true, 2, 6, true, SocialOrder.MedievalNorth, new Language[] {Language.Dwarwen, Language.Northman}),
-            new StateStructure("Regnum", 1,
+            new StateModel("Regnum", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingLatin, ProfessionInfo.KingHeirLatin, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorLatin, ProfessionInfo.GovernorLatin, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalLatin, new Language[] {Language.Latin}),
-            new StateStructure("Imperium", 2,
+            new StateModel("Imperium", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorLatin, ProfessionInfo.KingHeirLatin, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.KingLatin, ProfessionInfo.KingHeirLatin, BuildingSize.Small)),
                 true, 2, 6, true, SocialOrder.MedievalLatin, new Language[] {Language.Latin}),
-            new StateStructure("Shogunate", 1,
+            new StateModel("Shogunate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingAsian, ProfessionInfo.KingHeirAsian, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorAsian, ProfessionInfo.GovernorAsian, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalAsian, new Language[] {Language.Asian}),
-            new StateStructure("Empire", 2,
+            new StateModel("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorAsian, ProfessionInfo.EmperorHeirAsian, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorAsian2, ProfessionInfo.GovernorAsian2, BuildingSize.Unique)),
                 true, 2, 6, true, SocialOrder.MedievalAsian, new Language[] {Language.Asian}),
-            new StateStructure("Shahdom", 1,
+            new StateModel("Shahdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingArabian, ProfessionInfo.KingHeirArabian, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorArabian, ProfessionInfo.GovernorArabian, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalArabian, new Language[] {Language.Arabian}),
-            new StateStructure("Sultanate", 1,
+            new StateModel("Sultanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingArabian2, ProfessionInfo.KingHeirArabian2, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorArabian, ProfessionInfo.GovernorArabian, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalArabian, new Language[] {Language.Arabian, Language.African}),
-            new StateStructure("Caliphate", 2,
+            new StateModel("Caliphate", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorArabian, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorArabian, ProfessionInfo.GovernorArabian, BuildingSize.Unique)),
                 true, 2, 6, true, SocialOrder.MedievalArabian, new Language[] {Language.Arabian, Language.African}),
-            new StateStructure("Khanate", 1,
+            new StateModel("Khanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingMongol, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorMongol, ProfessionInfo.GovernorMongol, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalMongol, new Language[] {Language.Orkish, Language.Eskimoid}),
-            new StateStructure("Khaganate", 2,
+            new StateModel("Khaganate", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorMongol, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.KingMongol, ProfessionInfo.KingHeirEuro, BuildingSize.Small)),
                 true, 2, 6, true, SocialOrder.MedievalMongol, new Language[] {Language.Orkish, Language.Eskimoid}),
-            new StateStructure("Knyazdom", 1,
+            new StateModel("Knyazdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingSlavic, ProfessionInfo.KingHeirSlavic, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorSlavic, ProfessionInfo.GovernorSlavic, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalSlavic, new Language[] {Language.Slavic}),
-            new StateStructure("Tsardom", 2,
+            new StateModel("Tsardom", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorSlavic, ProfessionInfo.EmperorHeirSlavic, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.KingSlavic, ProfessionInfo.KingHeirSlavic, BuildingSize.Small)),
                 true, 2, 6, true, SocialOrder.MedievalSlavic, new Language[] {Language.Slavic}),
-            new StateStructure("Basileia", 1,
+            new StateModel("Basileia", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingGreek, ProfessionInfo.KingHeirGreek, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorGreek, ProfessionInfo.GovernorGreek, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalGreek, new Language[] {Language.Greek}),
-            new StateStructure("Autokratoria", 2,
+            new StateModel("Autokratoria", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorGreek, ProfessionInfo.KingHeirGreek, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorGreek2, ProfessionInfo.GovernorGreek2, BuildingSize.Unique)),
                 true, 2, 6, true, SocialOrder.MedievalGreek, new Language[] {Language.Greek}),
-            new StateStructure("Raj", 1,
+            new StateModel("Raj", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingHindu, ProfessionInfo.KingHeirHindu, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorHindu, ProfessionInfo.GovernorHindu, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalHindu, new Language[] {Language.Hindu}),
-            new StateStructure("Empire", 2,
+            new StateModel("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorHindu, ProfessionInfo.EmperorHeirHindu, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.KingHindu, ProfessionInfo.KingHeirHindu, BuildingSize.Small)),
                 true, 2, 6, true, SocialOrder.MedievalHindu, new Language[] {Language.Hindu}),
-            new StateStructure("Altepetl", 1,
+            new StateModel("Altepetl", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.KingAztec, ProfessionInfo.KingHeirAztec, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorAztec, ProfessionInfo.GovernorAztec, BuildingSize.Unique)),
                 true, 1, 6, false, SocialOrder.MedievalAztec, new Language[] {Language.Aztec}),
-            new StateStructure("Empire", 2,
+            new StateModel("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Castle", ProfessionInfo.EmperorEuro, ProfessionInfo.KingHeirAztec, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 7, new BuildingInfo("Castle", ProfessionInfo.GovernorAztec, ProfessionInfo.GovernorAztec, BuildingSize.Unique)),
                 true, 2, 6, true, SocialOrder.MedievalAztec, new Language[] {Language.Aztec}),
-            new StateStructure("Republic", 2,
+            new StateModel("Republic", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern, ProfessionInfo.AdvisorModern, BuildingSize.Small)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern, ProfessionInfo.GovernorModern, BuildingSize.Unique)),
                 false, 3, 7, false, SocialOrder.Modern, null),
@@ -193,27 +193,27 @@ namespace Socium.Population
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "General", "General", 16)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Colonel", "Colonel", 14)), 
             //    "Officer", "Officer", false, 2, 6, 3, 4),
-            new StateStructure("Federation", 2,
+            new StateModel("Federation", 2,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern2, ProfessionInfo.AdvisorModern2, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
                 false, 4, 7, false, SocialOrder.Modern, null),
-            new StateStructure("League", 3,
+            new StateModel("League", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, new BuildingInfo("Palace", ProfessionInfo.RulerModern3, ProfessionInfo.AdvisorModern3, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, new BuildingInfo("Palace", ProfessionInfo.GovernorModern, ProfessionInfo.GovernorModern, BuildingSize.Unique)),
                 false, 4, 7, true, SocialOrder.Modern, null),
-            new StateStructure("Union", 3,
+            new StateModel("Union", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern2, ProfessionInfo.AdvisorModern2, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
                 false, 5, 7, true, SocialOrder.Modern, null),
-            new StateStructure("Alliance", 3,
+            new StateModel("Alliance", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, new BuildingInfo("Palace", ProfessionInfo.RulerModern4, ProfessionInfo.AdvisorModern, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
                 false, 5, 7, true, SocialOrder.Modern, null),
-            new StateStructure("Coalition", 3,
+            new StateModel("Coalition", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern3, ProfessionInfo.AdvisorModern, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
                 false, 5, 7, true, SocialOrder.Modern, null),
-            new StateStructure("Association", 3,
+            new StateModel("Association", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern2, ProfessionInfo.AdvisorModern4, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern, ProfessionInfo.GovernorModern, BuildingSize.Unique)),
                 false, 5, 7, true, SocialOrder.Modern, null),
@@ -221,15 +221,15 @@ namespace Socium.Population
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Citadel", "God-King", "Goddess-Queen", 17)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Father", "Mother", 15)), 
             //    "Brother", "Sister", false, 5, 8, null),
-            new StateStructure("Commonwealth", 1,
+            new StateModel("Commonwealth", 1,
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 16, new BuildingInfo("Town hall", ProfessionInfo.RulerModern3, ProfessionInfo.AdvisorModern5, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, 15, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern3, ProfessionInfo.GovernorModern3, BuildingSize.Unique)),
                 false, 7, 8, false, SocialOrder.Future, null),
-            new StateStructure("Society", 1,
+            new StateModel("Society", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 16, null),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 15, null),
                 false, 7, 8, false, SocialOrder.Future, null),
-            new StateStructure("Collective", 2,
+            new StateModel("Collective", 2,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 16, null),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, 15, null),
                 false, 7, 8, true, SocialOrder.Future, null),
@@ -244,7 +244,7 @@ namespace Socium.Population
 
         public Nation m_pTitularNation = null;
 
-        public StateStructure m_pStateStructure = null;
+        public StateModel m_pStateModel = null;
 
         private State m_pState = null;
 
@@ -257,6 +257,11 @@ namespace Socium.Population
             m_pCulture = new Culture(pState.m_pMethropoly.m_pCulture);
             m_pCustoms = new Customs(pState.m_pMethropoly.m_pCustoms);
 
+            m_pTitularNation = pState.m_pMethropoly.m_pNation;
+        }
+
+        public void CalculateTitularNation()
+        { 
             Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
 
             int iMaxPop = 0;
@@ -306,19 +311,59 @@ namespace Socium.Population
         }
 
 
-        public override string GetEstateName(CEstate.Position ePosition)
+        public override string GetEstateName(Estate.Position ePosition)
         {
-            throw new NotImplementedException();
+            return m_pStateModel.m_pSocial.m_cEstates[ePosition][Rnd.Get(m_pStateModel.m_pSocial.m_cEstates[ePosition].Length)];
         }
 
         public override int GetImportedTech()
         {
-            throw new NotImplementedException();
+            if (m_pTitularNation.m_bDying)
+                return -1;
+
+            int iMaxTech = GetEffectiveTech();
+            foreach (State pState in m_pState.m_aBorderWith)
+            {
+                if (pState.Forbidden)
+                    continue;
+
+                if (pState.m_pSociety.GetEffectiveTech() > iMaxTech)
+                    iMaxTech = pState.m_pSociety.GetEffectiveTech();
+            }
+
+            if (iMaxTech <= GetEffectiveTech())
+                iMaxTech = -1;
+
+            return iMaxTech;
         }
 
         public override string GetImportedTechString()
         {
-            throw new NotImplementedException();
+            if (m_pTitularNation.m_bDying)
+                return "";
+
+            int iMaxTech = GetEffectiveTech();
+            State pExporter = null;
+            foreach (State pState in m_pState.m_aBorderWith)
+            {
+                if (pState.Forbidden)
+                    continue;
+
+                if (pState.m_pSociety.GetEffectiveTech() > iMaxTech)
+                {
+                    iMaxTech = pState.m_pSociety.GetEffectiveTech();
+                    pExporter = pState;
+                }
+            }
+
+            if (pExporter == null)
+                return "";
+
+            return GetTechString(pExporter.m_pSociety.m_iTechLevel, pExporter.m_pSociety.m_pCustoms.m_eProgress);
+        }
+        public override string ToString()
+        {
+            return string.Format("{1} (C{0}T{2}M{4}) - {3}", m_iCultureLevel, m_pTitularNation, m_iTechLevel, m_pStateModel.m_sName, m_iMagicLimit);
         }
 
         protected override BuildingInfo ChooseNewBuilding(Settlement pSettlement)
@@ -439,7 +484,7 @@ namespace Socium.Population
 
                             cChances[BuildingInfo.MarketSmall] = (float)cChances.Count / 2;// / 2 + 1;
 
-                            if (m_pStateStructure.m_bDinasty)
+                            if (m_pStateModel.m_bDinasty)
                             {
                                 cChances[m_iSocialEquality == 0 ? BuildingInfo.EstateSlvSmall : BuildingInfo.EstateSmall] = (float)cChances.Count / 4;
                                 cChances[m_iSocialEquality == 0 ? BuildingInfo.CastleSlvSmall : BuildingInfo.CastleSmall] = (float)cChances.Count / 12;
@@ -614,7 +659,7 @@ namespace Socium.Population
                                 cChances[BuildingInfo.OfficeMedium] = (float)cChances.Count / 4;// / 2 + 1;
                             }
 
-                            if (m_pStateStructure.m_bDinasty)
+                            if (m_pStateModel.m_bDinasty)
                                 cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                         }
 
@@ -806,7 +851,7 @@ namespace Socium.Population
                                 cChances[BuildingInfo.OfficeLarge] = (float)cChances.Count / 4;// / 2 + 1;
                             }
 
-                            if (m_pStateStructure.m_bDinasty)
+                            if (m_pStateModel.m_bDinasty)
                             {
                                 cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                                 cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
@@ -1013,7 +1058,7 @@ namespace Socium.Population
                                 cChances[BuildingInfo.OfficeLarge] = (float)cChances.Count / 4;// / 2 + 1;
                             }
 
-                            if (m_pStateStructure.m_bDinasty)
+                            if (m_pStateModel.m_bDinasty)
                             {
                                 cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                                 cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
@@ -1156,7 +1201,27 @@ namespace Socium.Population
             return cChances.ElementAt(iChance).Key;
         }
 
-        internal void CheckResources()
+        internal void CalculateSocietyFeatures(int iEmpireTreshold)
+        {
+            // Adjustiong TL due to lack or abundance of resouces
+            CheckResources();
+
+            // Set available infrastructure level according TL and food availability
+            CheckFood();
+
+            // Choose state system
+            SelectGovernmentSystem(iEmpireTreshold);
+
+            // Set social equality level
+            SetSocialEquality();
+
+            // Set state control level
+            SetStateControl();
+
+            Person.GetSkillPreferences(m_pCulture, m_iCultureLevel, m_pCustoms, ref m_eMostRespectedSkill, ref m_eLeastRespectedSkill);
+        }
+
+        private void CheckResources()
         {
             if (m_pState.m_iWood * 2 < Rnd.Get(m_pState.m_iPopulation) && m_pState.m_iOre * 2 < Rnd.Get(m_pState.m_iPopulation))// && Rnd.OneChanceFrom(2))
                 m_iTechLevel -= 2;
@@ -1181,7 +1246,7 @@ namespace Socium.Population
             }
         }
 
-        internal void CheckFood()
+        private void CheckFood()
         {
             //m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety, m_iTechLevel, m_iTechLevel) * 4);
             m_iInfrastructureLevel = m_iTechLevel;// -(int)(m_iTechLevel * Math.Pow(Rnd.Get(1f), 3));
@@ -1226,11 +1291,11 @@ namespace Socium.Population
             }
         }
 
-        internal void SelectGovernmentSystem(int iEmpireTreshold)
+        private void SelectGovernmentSystem(int iEmpireTreshold)
         {
-            List<StateStructure> cInfos = new List<StateStructure>();
+            List<StateModel> cInfos = new List<StateModel>();
 
-            foreach (StateStructure pInfo in s_aInfo)
+            foreach (StateModel pInfo in s_aModels)
             {
                 if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
                     m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
@@ -1245,7 +1310,7 @@ namespace Socium.Population
 
             if (cInfos.Count == 0)
             {
-                foreach (StateStructure pInfo in s_aInfo)
+                foreach (StateModel pInfo in s_aModels)
                 {
                     if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
                         m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
@@ -1272,12 +1337,12 @@ namespace Socium.Population
             //        m_pCustoms.Degrade();
             //    }
 
-            m_pStateStructure = cInfos[Rnd.Get(cInfos.Count)];
+            m_pStateModel = cInfos[Rnd.Get(cInfos.Count)];
 
-            m_iCultureLevel = (m_iInfrastructureLevel + m_pStateStructure.m_iMinGovernmentLevel) / 2;
+            m_iCultureLevel = (m_iInfrastructureLevel + m_pStateModel.m_iMinGovernmentLevel) / 2;
         }
 
-        internal void SetSocialEquality()
+        private void SetSocialEquality()
         {
             m_iSocialEquality = 2;
 
@@ -1309,7 +1374,7 @@ namespace Socium.Population
             //if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 1)
             //    m_iSocialEquality--;
 
-            if (m_pStateStructure.m_bDinasty)
+            if (m_pStateModel.m_bDinasty)
                 m_iSocialEquality--;
 
             if (m_iSocialEquality < 0)
@@ -1334,7 +1399,7 @@ namespace Socium.Population
                 m_iSocialEquality = Math.Max(3, m_iSocialEquality);
             //в обществе абсолютного самоотречения (эгоизм < 1/3) не может быть капитализма (2) - только или социализм, или феодализм
             if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] < 0.33)
-                if (m_pStateStructure.m_bDinasty)
+                if (m_pStateModel.m_bDinasty)
                     m_iSocialEquality = Math.Min(1, m_iSocialEquality);
                 else
                     m_iSocialEquality = Math.Max(3, m_iSocialEquality);
@@ -1350,21 +1415,21 @@ namespace Socium.Population
                 m_iSocialEquality = Math.Min(3, m_iSocialEquality);
 
             //при всём уважении - какой нафиг социализм/коммунизм при наследственной власти???
-            if (m_pStateStructure.m_bDinasty)
+            if (m_pStateModel.m_bDinasty)
                 m_iSocialEquality = Math.Min(2, m_iSocialEquality);
 
             if (m_iSocialEquality > 4)
                 m_iSocialEquality = 4;
         }
 
-        internal void SetStateControl()
+        private void SetStateControl()
         {
             m_iControl = 2;
 
             //if (m_pCulture.Moral[Culture.Morale.Agression] > 1)
             //    m_iControl++;
 
-            if (m_pStateStructure.m_bDinasty)
+            if (m_pStateModel.m_bDinasty)
                 m_iControl++;
             if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] > 1.33)
                 m_iControl++;
@@ -1386,6 +1451,7 @@ namespace Socium.Population
             if (m_iControl > 4)
                 m_iControl = 4;
         }
+        
         public void CalculateMagic()
         {
             m_iMagicLimit = 0;
@@ -1630,6 +1696,27 @@ namespace Socium.Population
 
             sReasons += string.Format("----\nTotal \t({0:+#;-#;0})\n", -iHostility);
             return iHostility;
+        }
+        
+        internal override Customs.GenderPriority FixGenderPriority(Customs.GenderPriority ePriority)
+        {
+            switch (ePriority)
+            {
+                case Customs.GenderPriority.Matriarchy:
+                    if (m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.OnlyFemales ||
+                        m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.MostlyFemales)
+                        return Customs.GenderPriority.Genders_equality;
+                    else
+                        return Customs.GenderPriority.Patriarchy;
+                case Customs.GenderPriority.Patriarchy:
+                    if (m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.OnlyMales ||
+                        m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.MostlyMales)
+                        return Customs.GenderPriority.Genders_equality;
+                    else
+                        return Customs.GenderPriority.Matriarchy;
+            }
+
+            return base.FixGenderPriority(ePriority);
         }
     }
 }
