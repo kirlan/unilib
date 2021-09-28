@@ -447,8 +447,8 @@ namespace Socium
         public Culture m_pCulture;
         public int m_iCultureLevel;
         public Customs m_pCustoms;
-        public GenetixBase m_pFamilyFenotype;
-        public GenetixBase m_pFenotype;
+        public Fenotype m_pFamilyFenotype;
+        public Fenotype m_pFenotype;
         public Dictionary<Skill, ProfessionInfo.SkillLevel> m_cSkills = new Dictionary<Skill, ProfessionInfo.SkillLevel>();
         public Appearance m_eAppearance = Appearance.Average;
         public List<Injury> m_cInjury = new List<Injury>();
@@ -2960,7 +2960,7 @@ namespace Socium
         /// <returns></returns>
         public string GetFenotypeDescription()
         {
-            string sResult = GetFenotypeComparsion(Fenotype.s_HumanEtalon);
+            string sResult = GetFenotypeComparsion(m_pFenotype.GetHumanEtalon());
             if (sResult.Length == 0)
                 sResult = "is just a common " + m_eAge.ToString().ToLower() + " " + (m_eGender == Gender.Male ? "man" : "woman") + ".";
 

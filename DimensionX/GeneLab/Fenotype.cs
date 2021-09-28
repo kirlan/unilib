@@ -8,7 +8,65 @@ using nsUniLibControls;
 
 namespace GeneLab
 {
-    public class Fenotype<LTI> : GenetixBase
+    public abstract class Fenotype : GenetixBase
+    {
+        public LegsGenetix m_pLegs;
+        public ArmsGenetix m_pArms;
+        public WingsGenetix m_pWings;
+        public TailGenetix m_pTail;
+        public HideGenetix m_pHide;
+        public BodyGenetix m_pBody;
+        public BrainGenetix m_pBrain;
+        public LifeCycleGenetix m_pLifeCycle;
+        public HeadGenetix m_pHead;
+        public HairsGenetix m_pHairs;
+        public EarsGenetix m_pEars;
+        public EyesGenetix m_pEyes;
+        public FaceGenetix m_pFace;
+
+        protected Fenotype()
+        { }
+
+        public Fenotype(BodyGenetix pBody,
+                        HeadGenetix pHead,
+                        LegsGenetix pLegs,
+                        ArmsGenetix pArms,
+                        WingsGenetix pWings,
+                        TailGenetix pTail,
+                        HideGenetix pHide,
+                        BrainGenetix pBrain,
+                        LifeCycleGenetix pLifeCycle,
+                        FaceGenetix pFace,
+                        EarsGenetix pEars,
+                        EyesGenetix pEyes,
+                        HairsGenetix pHairs)
+        {
+            m_pBody = pBody;
+            m_pHead = pHead;
+            m_pLegs = pLegs;
+            m_pArms = pArms;
+            m_pWings = pWings;
+            m_pTail = pTail;
+            m_pHide = pHide;
+            m_pBrain = pBrain;
+            m_pLifeCycle = pLifeCycle;
+            m_pFace = pFace;
+            m_pEars = pEars;
+            m_pEyes = pEyes;
+            m_pHairs = pHairs;
+            m_pHairs.CheckHairColors();
+        }
+
+        public abstract Fenotype GetHumanEtalon();
+        public abstract string GetDescription();
+        public abstract bool IsIdentical(GenetixBase pOther);
+        public abstract GenetixBase MutateFamily();
+        public abstract GenetixBase MutateIndividual();
+        public abstract GenetixBase MutateNation();
+        public abstract GenetixBase MutateRace();
+    }
+
+    public class Fenotype<LTI> : Fenotype
         where LTI: LandTypeInfo, new()
     {
         private readonly static Fenotype<LTI> s_HumanEtalon = new Fenotype<LTI>(BodyGenetix.Human,
@@ -25,13 +83,18 @@ namespace GeneLab
                                                 EyesGenetix.Human,
                                                 HairsGenetix.HumanWhite);
 
+        public override Fenotype GetHumanEtalon()
+        {
+            return s_HumanEtalon;
+        }
+
         #region String representation
 
         /// <summary>
         /// are very clever cratures ... could have only a few children during whole lifetime, which are mostly females.
         /// </summary>
         /// <returns></returns>
-        public string GetDescription()
+        public override string GetDescription() 
         {
             string sResult = GetComparsion(s_HumanEtalon);
             if (sResult.Length == 0)
@@ -245,6 +308,25 @@ namespace GeneLab
         }
 
         #endregion
+        
+        private Fenotype()
+        { }
+
+        public Fenotype(BodyGenetix pBody,
+                        HeadGenetix pHead,
+                        LegsGenetix pLegs,
+                        ArmsGenetix pArms,
+                        WingsGenetix pWings,
+                        TailGenetix pTail,
+                        HideGenetix pHide,
+                        BrainGenetix pBrain,
+                        LifeCycleGenetix pLifeCycle,
+                        FaceGenetix pFace,
+                        EarsGenetix pEars,
+                        EyesGenetix pEyes,
+                        HairsGenetix pHairs): base(pBody, pHead, pLegs, pArms, pWings, pTail, pHide, pBrain, pLifeCycle, pFace, pEars, pEyes, pHairs)
+        {
+        }
 
         #region Territory preferences
 
@@ -545,57 +627,9 @@ namespace GeneLab
         }
 
         #endregion
-
-        public LegsGenetix m_pLegs;
-        public ArmsGenetix m_pArms;
-        public WingsGenetix m_pWings;
-        public TailGenetix m_pTail;
-        public HideGenetix m_pHide;
-        public BodyGenetix m_pBody;
-        public BrainGenetix m_pBrain;
-        public LifeCycleGenetix m_pLifeCycle;
-        public HeadGenetix m_pHead;
-        public HairsGenetix m_pHairs;
-        public EarsGenetix m_pEars;
-        public EyesGenetix m_pEyes;
-        public FaceGenetix m_pFace;
-
-        private Fenotype()
-        { }
-
-        public Fenotype(BodyGenetix pBody,
-                        HeadGenetix pHead,
-                        LegsGenetix pLegs,
-                        ArmsGenetix pArms,
-                        WingsGenetix pWings,
-                        TailGenetix pTail,
-                        HideGenetix pHide,
-                        BrainGenetix pBrain,
-                        LifeCycleGenetix pLifeCycle,
-                        FaceGenetix pFace,
-                        EarsGenetix pEars,
-                        EyesGenetix pEyes,
-                        HairsGenetix pHairs)
-        {
-            m_pBody = pBody;
-            m_pHead = pHead;
-            m_pLegs = pLegs;
-            m_pArms = pArms;
-            m_pWings = pWings;
-            m_pTail = pTail;
-            m_pHide = pHide;
-            m_pBrain = pBrain;
-            m_pLifeCycle = pLifeCycle;
-            m_pFace = pFace;
-            m_pEars = pEars;
-            m_pEyes = pEyes;
-            m_pHairs = pHairs;
-            m_pHairs.CheckHairColors();
-        }
-
         #region Mutations
 
-        public GenetixBase MutateRace()
+        public override GenetixBase MutateRace()
         {
             Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
@@ -620,7 +654,7 @@ namespace GeneLab
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public override GenetixBase MutateNation()
         {
             Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
@@ -645,7 +679,7 @@ namespace GeneLab
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public override GenetixBase MutateFamily()
         {
             Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
@@ -670,7 +704,7 @@ namespace GeneLab
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public override GenetixBase MutateIndividual()
         {
             Fenotype<LTI> pMutant = new Fenotype<LTI>();
 
@@ -700,7 +734,7 @@ namespace GeneLab
         #region GenetixBase Members
 
 
-        public bool IsIdentical(GenetixBase pOther)
+        public override bool IsIdentical(GenetixBase pOther)
         {
             Fenotype<LTI> pAnother = pOther as Fenotype<LTI>;
 
