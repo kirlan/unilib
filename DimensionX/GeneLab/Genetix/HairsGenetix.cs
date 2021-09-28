@@ -437,13 +437,13 @@ namespace GeneLab.Genetix
         /// He is bald, but has dense blue beard and moustache.
         /// </summary>
         /// <returns></returns>
-        public string GetDescription(CPerson._Gender eGender)
+        public string GetDescription(Gender eGender)
         {
             if (m_eHairsM == HairsAmount.None &&
                  m_eHairsF == HairsAmount.None &&
                  m_eBeardM == HairsAmount.None &&
                  m_eBeardF == HairsAmount.None)
-                return eGender == CPerson._Gender.Male ? "He is completely bald." : "She is completely bald.";
+                return eGender == Gender.Male ? "He is completely bald." : "She is completely bald.";
 
             string sColor = "";
             switch (m_cHairColors[0])
@@ -474,13 +474,13 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            string sResult = eGender == CPerson._Gender.Male ? "He has " : "She has ";
+            string sResult = eGender == Gender.Male ? "He has " : "She has ";
 
             string sHair = "?";
             string sBeard = "?";
 
-            HairsAmount eHeadAmount = eGender == CPerson._Gender.Male ? m_eHairsM : m_eHairsF;
-            HairsAmount eBeardAmount = eGender == CPerson._Gender.Male ? m_eBeardM : m_eBeardF;
+            HairsAmount eHeadAmount = eGender == Gender.Male ? m_eHairsM : m_eHairsF;
+            HairsAmount eBeardAmount = eGender == Gender.Male ? m_eBeardM : m_eBeardF;
             switch (m_eHairsType)
             {
                 case HairsType.Whiskers:
@@ -553,9 +553,9 @@ namespace GeneLab.Genetix
                         if (sHair == "")
                         {
                             if (eBeardAmount == HairsAmount.None)
-                                sResult = (eGender == CPerson._Gender.Male ? "He" : "She") + " is bald, and has " + sBeard;
+                                sResult = (eGender == Gender.Male ? "He" : "She") + " is bald, and has " + sBeard;
                             else
-                                sResult = (eGender == CPerson._Gender.Male ? "He" : "She") + " is bald, but has " + sColor + " " + sBeard;
+                                sResult = (eGender == Gender.Male ? "He" : "She") + " is bald, but has " + sColor + " " + sBeard;
                         }
                         else
                         {

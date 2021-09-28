@@ -17,9 +17,6 @@ namespace Socium
 {
     public class World : Landscape<LocationX, LandX, AreaX, ContinentX, LandTypeInfoX>
     {
-        public int m_iTechLevel;
-        public int m_iMagicLimit;
-
         public Province[] m_aProvinces = null;
 
         private int m_iProvincesCount = 300;
@@ -30,12 +27,6 @@ namespace Socium
 
         public Nation[] m_aLocalNations = null;
 
-        private void SetWorldLevels(Epoch pEpoch)
-        {
-            m_iTechLevel = Math.Min(pEpoch.m_iNativesMaxTechLevel, pEpoch.m_iNativesMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-            m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
-        }
-
         private void AddRaces(Epoch pEpoch)
         {
             List<Nation> cNations = new List<Nation>();
@@ -45,7 +36,7 @@ namespace Socium
             if(m_aLocalNations != null)
                 foreach (Nation pNation in m_aLocalNations)
                 {
-                    pNation.Accommodate(m_iMagicLimit, m_iTechLevel, pEpoch);
+                    pNation.Accommodate(pEpoch);
                     cNations.Add(pNation);
 
                     if (pNation.m_bDying)
@@ -76,7 +67,7 @@ namespace Socium
                     //if (iChance < 0)
                     //{
                         Nation pNation = new Nation(pEpoch.m_cNatives[iChance], pEpoch);//new Race(pRaceTemplate, pEpoch);
-                        pNation.Accommodate(m_iMagicLimit, m_iTechLevel, pEpoch);
+                        pNation.Accommodate(pEpoch);
 
                         cNations.Add(pNation);
                         //cRaceChances[pRaceTemplate] = 0;
@@ -121,7 +112,7 @@ namespace Socium
                     {
                         Nation pNation = new Nation(pRaceTemplate, pEpoch);
                         pNation.m_bInvader = true;
-                        pNation.Accommodate(m_iMagicLimit, m_iTechLevel, pEpoch);
+                        pNation.Accommodate(pEpoch);
 
                         cNations.Add(pNation);
                         cInvadersRaceChances[pRaceTemplate] = 0;
@@ -511,8 +502,6 @@ namespace Socium
         {
             BeginStep("Growing states...", 6);
 
-            SetWorldLevels(pEpoch);
-
             AddRaces(pEpoch);
             if (bFinalize)
                 AddInvadersRaces(pEpoch);
@@ -607,7 +596,7 @@ namespace Socium
                     if (pState.m_cContents.Count == 1)
                         pState.m_sName = pState.m_cContents[0].m_sName;
 
-                    pState.CalculateMagic();
+                    pState.m_pSociety.CalculateMagic();
                     
                     ProgressStep();
                 }
@@ -854,7 +843,7 @@ namespace Socium
                 foreach (State pState in m_aStates)
                 {
                     pState.Start(pState.m_pMethropoly);
-                    if(!m_aLocalNations.Contains(pState.m_pNation))
+                    if(!m_aLocalNations.Contains(pState.m_pSociety.m_pTitularNation))
                         throw new Exception();
             
                     ContinentX pConti = pState.Owner as ContinentX;
@@ -882,7 +871,7 @@ namespace Socium
                         pState.Start(pSeed);
                         cStates.Add(pState);
 
-                        if (!m_aLocalNations.Contains(pState.m_pNation))
+                        if (!m_aLocalNations.Contains(pState.m_pSociety.m_pTitularNation))
                             throw new Exception();
                         cUsed.Add(pSeed.m_pCenter.Continent);
                     }
@@ -924,7 +913,7 @@ namespace Socium
                 pState.Start(pSeed);
                 cStates.Add(pState);
 
-                if (!m_aLocalNations.Contains(pState.m_pNation))
+                if (!m_aLocalNations.Contains(pState.m_pSociety.m_pTitularNation))
                     throw new Exception();
                 cUsed.Add(pConti);
             }
@@ -963,7 +952,7 @@ namespace Socium
                 State pState = new State();
                 pState.Start(pSeed);
                 cStates.Add(pState);
-                if (!m_aLocalNations.Contains(pState.m_pNation))
+                if (!m_aLocalNations.Contains(pState.m_pSociety.m_pTitularNation))
                     throw new Exception();
             }
 
@@ -1060,12 +1049,12 @@ namespace Socium
                     if (pLinkedState.Forbidden)
                         continue;
 
-                    iSum += Math.Max(pLinkedState.m_iSocialEquality, pState.m_iSocialEquality);
+                    iSum += Math.Max(pLinkedState.m_pSociety.m_iSocialEquality, pState.m_pSociety.m_iSocialEquality);
 
                     iCounter++;
                 }
 
-                pState.m_iSocialEquality = (pState.m_iSocialEquality + iSum) / (iCounter + 1);
+                pState.m_pSociety.m_iSocialEquality = (pState.m_pSociety.m_iSocialEquality + iSum) / (iCounter + 1);
             }
 
             ProgressStep();
@@ -1380,12 +1369,12 @@ namespace Socium
                     if (pOtherHarbor.Key == pHarbor || pHarbor.m_cHaveSeaRouteTo.Contains(pOtherHarbor.Key))
                         continue;
 
-                    State pState = (pHarbor.Owner as LandX).m_pProvince.Owner as State;
-                    State pOtherState = (pOtherHarbor.Key.Owner as LandX).m_pProvince.Owner as State;
+                    State pState = pHarbor.OwnerState;
+                    State pOtherState = pOtherHarbor.Key.OwnerState;
                     RoadQuality ePathLevel = RoadQuality.Country;
 
 //                    int iMaxHostility = (int)Math.Sqrt(Math.Max(pState.CalcHostility(pOtherState), pOtherState.CalcHostility(pState)));
-                    int iMaxHostility = (int)Math.Max(pState.CalcHostility(pOtherState), pOtherState.CalcHostility(pState));
+                    int iMaxHostility = (int)Math.Max(pState.m_pSociety.CalcHostility(pOtherState), pOtherState.m_pSociety.CalcHostility(pState));
 
                     if (pHarbor.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village &&
                         pOtherHarbor.Key.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
@@ -1415,7 +1404,7 @@ namespace Socium
                             ePathLevel = RoadQuality.Good;
                     }
 
-                    eMaxNavalPath = State.InfrastructureLevels[pOtherState.m_iInfrastructureLevel].m_eMaxNavalPath;
+                    eMaxNavalPath = State.InfrastructureLevels[pOtherState.m_pSociety.m_iInfrastructureLevel].m_eMaxNavalPath;
                     iMaxLength = m_pGrid.RX * 10;
                     if (eMaxNavalPath == RoadQuality.Country)
                         iMaxLength /= 10;
@@ -1900,7 +1889,7 @@ namespace Socium
                 }//все провинции в каждом государстве
 
                 //некоторые государства вообще исчезают с лица земли
-                if (!m_aLocalNations.Contains(pState.m_pNation) || Rnd.OneChanceFrom(2))
+                if (!m_aLocalNations.Contains(pState.m_pSociety.m_pTitularNation) || Rnd.OneChanceFrom(2))
                     cEraseState.Add(pState);
 
             }//все государства

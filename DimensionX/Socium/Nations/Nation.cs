@@ -86,6 +86,7 @@ namespace Socium.Nations
 
         /// <summary>
         /// Согласовать параметры расы с параметрами мира.
+        /// Параметры мира могут немного отличаться от параметров эпохи - это нормально
         /// </summary>
         /// <param name="pWorld">мир</param>
         public void Accommodate(Epoch pEpoch)
@@ -130,6 +131,8 @@ namespace Socium.Nations
             {
                 if (!m_bDying)
                 {
+                    //m_iTechLevel = Math.Min(pEpoch.m_iNativesMaxTechLevel, pEpoch.m_iNativesMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
+                    //m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
                     int iNewTechLevel = pEpoch.m_iNativesMinTechLevel + Rnd.Get(pEpoch.m_iNativesMaxTechLevel - pEpoch.m_iNativesMinTechLevel + 1);
                     int iNewMagicLimit = pEpoch.m_iNativesMinMagicLevel + Rnd.Get(pEpoch.m_iNativesMaxMagicLevel - pEpoch.m_iNativesMinMagicLevel + 1);
 

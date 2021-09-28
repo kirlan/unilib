@@ -56,6 +56,24 @@ namespace Socium
 
             return iRes;
         }
+
+        public Province OwnerProvince
+        {
+            get
+            {
+                LandX pLand = Owner as LandX;
+                return pLand.m_pProvince;
+            }
+        }
+
+        public State OwnerState
+        {
+            get
+            {
+                return OwnerProvince.Owner as State;
+            }
+        }
+
         public bool HaveEstate(Estate.Position eEstate)
         {
             LandX pLand = Owner as LandX;

@@ -98,6 +98,12 @@ namespace GeneLab.Genetix
         /// </summary>
         Mineral
     }
+    public enum Gender
+    {
+        Male,
+        Female
+    }
+
 
     public class BodyGenetix: GenetixBase
     {
@@ -189,7 +195,7 @@ namespace GeneLab.Genetix
         /// tall agile woman
         /// </summary>
         /// <returns></returns>
-        public string GetDescription(CPerson._Gender eGender)
+        public string GetDescription(Gender eGender)
         {
             string sSize = "";
             switch (m_eBodySize)
@@ -244,22 +250,22 @@ namespace GeneLab.Genetix
                 //    sMeals = "eats both meat and vegetables";
                 //    break;
                 case NutritionType.ParasitismBlood:
-                    sMeals = "drinks blood of " + (eGender == CPerson._Gender.Male ? "his":"her") + " victims";
+                    sMeals = "drinks blood of " + (eGender == Gender.Male ? "his":"her") + " victims";
                     break;
                 case NutritionType.ParasitismEmote:
-                    sMeals = "feeds on emotes of " + (eGender == CPerson._Gender.Male ? "his" : "her") + " victims";
+                    sMeals = "feeds on emotes of " + (eGender == Gender.Male ? "his" : "her") + " victims";
                     break;
                 case NutritionType.ParasitismEnergy:
-                    sMeals = "drains life energy of " + (eGender == CPerson._Gender.Male ? "his" : "her") + " victims";
+                    sMeals = "drains life energy of " + (eGender == Gender.Male ? "his" : "her") + " victims";
                     break;
                 case NutritionType.ParasitismMeat:
-                    sMeals = "eats meat of " + (eGender == CPerson._Gender.Male ? "his" : "her") + " victims";
+                    sMeals = "eats meat of " + (eGender == Gender.Male ? "his" : "her") + " victims";
                     break;
                 case NutritionType.Photosynthesis:
-                    sMeals = "needs only a sunlight to gain " + (eGender == CPerson._Gender.Male ? "his" : "her") + " life energy";
+                    sMeals = "needs only a sunlight to gain " + (eGender == Gender.Male ? "his" : "her") + " life energy";
                     break;
                 case NutritionType.Thermosynthesis:
-                    sMeals = "needs only access to heat source to gain " + (eGender == CPerson._Gender.Male ? "his" : "her") + " life energy";
+                    sMeals = "needs only access to heat source to gain " + (eGender == Gender.Male ? "his" : "her") + " life energy";
                     break;
                 case NutritionType.Vegetarian:
                     sMeals = "eats only vegetables";
@@ -269,7 +275,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return sSize + sComplexion + (eGender == CPerson._Gender.Male ? " man" : " woman");// +", who " + sMeals + ".";
+            return sSize + sComplexion + (eGender == Gender.Male ? " man" : " woman");// +", who " + sMeals + ".";
         }
 
         /// <summary>
@@ -277,7 +283,7 @@ namespace GeneLab.Genetix
         /// </summary>
         /// <param name="eGender"></param>
         /// <returns></returns>
-        public string GetDescription2(CPerson._Gender eGender)
+        public string GetDescription2(Gender eGender)
         {
             string sMeals = "";
             switch (m_eNutritionType)
@@ -295,19 +301,19 @@ namespace GeneLab.Genetix
                     sMeals = "is a vampire";
                     break;
                 case NutritionType.ParasitismEmote:
-                    sMeals = "feeds on emotes of " + (eGender == CPerson._Gender.Male ? "his" : "her") + " victims";
+                    sMeals = "feeds on emotes of " + (eGender == Gender.Male ? "his" : "her") + " victims";
                     break;
                 case NutritionType.ParasitismEnergy:
-                    sMeals = "drains life energy of " + (eGender == CPerson._Gender.Male ? "his" : "her") + " victims";
+                    sMeals = "drains life energy of " + (eGender == Gender.Male ? "his" : "her") + " victims";
                     break;
                 case NutritionType.ParasitismMeat:
-                    sMeals = "eats meat of " + (eGender == CPerson._Gender.Male ? "his" : "her") + " victims";
+                    sMeals = "eats meat of " + (eGender == Gender.Male ? "his" : "her") + " victims";
                     break;
                 case NutritionType.Photosynthesis:
-                    sMeals = "needs only a sunlight to gain " + (eGender == CPerson._Gender.Male ? "his" : "her") + " life energy";
+                    sMeals = "needs only a sunlight to gain " + (eGender == Gender.Male ? "his" : "her") + " life energy";
                     break;
                 case NutritionType.Thermosynthesis:
-                    sMeals = "needs only access to heat source to gain " + (eGender == CPerson._Gender.Male ? "his" : "her") + " life energy";
+                    sMeals = "needs only access to heat source to gain " + (eGender == Gender.Male ? "his" : "her") + " life energy";
                     break;
                 case NutritionType.Vegetarian:
                     sMeals = "is a herbivore";
@@ -320,7 +326,7 @@ namespace GeneLab.Genetix
             if (sMeals == "")
                 return "";
 
-            return (eGender == CPerson._Gender.Male ? "He " : "She ") + sMeals + ".";
+            return (eGender == Gender.Male ? "He " : "She ") + sMeals + ".";
         }
 
         public static BodyGenetix Human

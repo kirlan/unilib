@@ -336,7 +336,7 @@ namespace Socium
                 foreach (LocationX pLoc in pProvince.m_cSettlements)
                     foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
                     { 
-                        State pState = (pOtherLoc.Owner as LandX).m_pProvince.Owner as State;
+                        State pState = pOtherLoc.OwnerState;
                         if(pState != this && !BorderWith.ContainsKey(pState))
                             BorderWith[pState] = new List<Location.Edge>();
                     }
@@ -386,7 +386,7 @@ namespace Socium
                 foreach (LocationX pLoc in pProvince.m_cSettlements)
                     foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
                     {
-                        State pState = (pOtherLoc.Owner as LandX).m_pProvince.Owner as State;
+                        State pState = pOtherLoc.OwnerState;
                         if (pState != this && !BorderWith.ContainsKey(pState))
                             BorderWith[pState] = new List<Location.Edge>();
                     } 
@@ -438,7 +438,7 @@ namespace Socium
                 case NutritionType.Vegetarian:
                     m_iFood = iGrain;
                     break;
-                case NutritionType.Сarnivorous:
+                case NutritionType.Carnivorous:
                     m_iFood = iGame + iFish;
                     break;
                 default:
@@ -548,7 +548,7 @@ namespace Socium
                         int iHostility = 0;
                         if (pLinkedLand.m_pProvince != null)
                         {
-                            State pLinkedState = pLinkedLand.m_pProvince.Owner as State;
+                            State pLinkedState = pLinkedLand.m_pProvince.OwnerState;
 
                             Dictionary<State, int> cLinkedStateHostility;
                             if (!cHostility.TryGetValue(pLinkedState, out cLinkedStateHostility))

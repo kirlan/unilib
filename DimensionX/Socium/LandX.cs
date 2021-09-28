@@ -344,7 +344,7 @@ namespace Socium
 
             if (m_cContents[iFort].m_pSettlement == null && m_cContents[iFort].m_pBuilding == null)
             {
-                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, (m_pProvince.Owner as State).m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, false, bFast);
+                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, m_pProvince.OwnerState.m_pSociety.m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, false, bFast);
 
                 foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
                     if (pLoc.m_pBuilding == null)

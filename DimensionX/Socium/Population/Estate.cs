@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GeneLab.Genetix;
 using Random;
 using Socium.Psichology;
 using Socium.Settlements;
@@ -47,11 +48,11 @@ namespace Socium.Population
 
         public Customs m_pMinorsCustoms = null;
 
-        public Customs GetCustoms(Person._Gender eGender)
+        public Customs GetCustoms(Gender eGender)
         {
             if (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Genders_equality ||
-                (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && eGender == Person._Gender.Male) ||
-                (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && eGender == Person._Gender.Female))
+                (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && eGender == Gender.Male) ||
+                (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && eGender == Gender.Female))
                 return m_pCustoms;
             else
                 return m_pMinorsCustoms;

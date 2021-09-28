@@ -740,7 +740,7 @@ namespace LandscapeGeneration
                             fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;// *fTemperatureMod;
                             pLinkedLand.Humidity = (int)(fTemperatureMod - 5 + Rnd.Get(10.0f));
 
-                            if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment == EnvironmentType.Mountains)
+                            if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment.HasFlag(Environment.Barrier))
                                 pLinkedLand.Humidity /= 2;
 
                             if (!cHumidityFront.Contains(pLink))
@@ -774,7 +774,7 @@ namespace LandscapeGeneration
                             {
                                 pLinkedLand.Humidity = pLand.Humidity - 10 - Rnd.Get(5);
 
-                                if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment == EnvironmentType.Mountains)
+                                if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment.HasFlag(Environment.Barrier))
                                     pLinkedLand.Humidity /= 2;
 
                                 if (!cNewWave.Contains(pLink))

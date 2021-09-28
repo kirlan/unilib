@@ -43,6 +43,14 @@ namespace Socium
             set { m_pOwner = value; }
         }
 
+        public State OwnerState
+        {
+            get
+            {
+                return m_pOwner as State;
+            }
+        }
+
         public Dictionary<object, List<Location.Edge>> BorderWith
         {
             get { return m_cBorderWith; }
