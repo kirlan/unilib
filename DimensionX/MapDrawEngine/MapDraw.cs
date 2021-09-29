@@ -931,9 +931,9 @@ namespace MapDrawEngine
                         pPath.AddPolygon(aPts);
 
                         //определим, каким цветом эта земля должна закрашиваться на карте технологий
-                        int iImported = pState.GetImportedTech();
-                        Brush pTechBrush = m_aTechLevel[pState.GetEffectiveTech(), iImported == -1 ? pState.GetEffectiveTech() : iImported];
-                        Brush pCivBrush = m_aCivLevel[pState.m_iCultureLevel, pState.m_iControl];
+                        int iImported = pState.m_pSociety.GetImportedTech();
+                        Brush pTechBrush = m_aTechLevel[pState.m_pSociety.GetEffectiveTech(), iImported == -1 ? pState.m_pSociety.GetEffectiveTech() : iImported];
+                        Brush pCivBrush = m_aCivLevel[pState.m_pSociety.m_iCultureLevel, pState.m_pSociety.m_iControl];
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
@@ -2108,7 +2108,7 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip += "\n   - ";
 
-                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pInfo.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pNation);
+                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pSociety.m_pStateModel.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pSociety.m_pTitularNation);
             }
 
             if (bContinent && m_pFocusedProvince != null)

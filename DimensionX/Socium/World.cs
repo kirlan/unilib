@@ -12,6 +12,8 @@ using System.Diagnostics;
 using Socium.Nations;
 using Socium.Settlements;
 using Socium.Psichology;
+using Socium.Population;
+using GeneLab.Genetix;
 
 namespace Socium
 {
@@ -26,6 +28,8 @@ namespace Socium
         private int m_iStatesCount = 30;
 
         public Nation[] m_aLocalNations = null;
+
+        public List<Person> m_cPersons = new List<Person>();
 
         private void AddRaces(Epoch pEpoch)
         {
@@ -459,7 +463,7 @@ namespace Socium
             Create(iProvinces, iStates, aEpoches, BeginStep, ProgressStep);
         }
 
-        Epoch[] m_aEpoches;
+        public Epoch[] m_aEpoches;
 
         private void Create(int iProvinces, 
                             int iStates,
@@ -1073,6 +1077,54 @@ namespace Socium
             }
         }
 
+        private void BuildCities(float fCycleShift, bool bFast,
+                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
+                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+        {
+            BeginStep("Building cities...", m_aProvinces.Length * 2 + 1);
+
+            foreach (Province pProvince in m_aProvinces)
+            {
+                if (!pProvince.Forbidden)
+                {
+                    pProvince.BuildCapital(bFast);
+
+                    pProvince.BuildSettlements(SettlementSize.City, bFast);
+                    if (!bFast)
+                        pProvince.BuildRoads(RoadQuality.Good, fCycleShift);
+
+                    pProvince.BuildSettlements(SettlementSize.Town, bFast);
+
+                    if (!bFast)
+                        pProvince.BuildRoads(RoadQuality.Normal, fCycleShift);
+                }
+
+                ProgressStep();
+            }
+
+            if (!bFast)
+                BuildInterstateRoads(fCycleShift);
+
+            ProgressStep();
+
+            foreach (Province pProvince in m_aProvinces)
+            {
+                if (!pProvince.Forbidden)
+                {
+                    pProvince.BuildSettlements(SettlementSize.Village, bFast);
+
+                    if (!bFast)
+                        pProvince.BuildRoads(RoadQuality.Country, fCycleShift);
+
+                    pProvince.BuildSettlements(SettlementSize.Hamlet, bFast);
+
+                    pProvince.BuildLairs(m_aLands.Length / 125);
+                }
+
+                ProgressStep();
+            }
+        }
+
         public override void PresetLandTypesInfo()
         {
             base.PresetLandTypesInfo();
@@ -1131,6 +1183,7 @@ namespace Socium
 //            LandTypes<LandTypeInfoX>.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
         }
 
+        #region Roads stuff
         private void BuildInterstateRoads(float fCycleShift)
         {
             foreach (Province pProvince in m_aProvinces)
@@ -1614,54 +1667,217 @@ namespace Socium
             }
         }
 
-        private void BuildCities(float fCycleShift, bool bFast,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+        private static void DestroyRoad(Road pOldRoad)
         {
-            BeginStep("Building cities...", m_aProvinces.Length * 2 + 1);
+            LocationX pTown1 = pOldRoad.Locations[0];
+            LocationX pTown2 = pOldRoad.Locations[pOldRoad.Locations.Length - 1];
 
-            foreach (Province pProvince in m_aProvinces)
+            //удаляем старую дорогу
+            foreach (LocationX pLoc in pOldRoad.Locations)
             {
-                if (!pProvince.Forbidden)
-                {
-                    pProvince.BuildCapital(bFast);
+                if (pLoc != pTown2)
+                    pLoc.m_cHaveRoadTo.Remove(pTown2);
+                if (pLoc != pTown1)
+                    pLoc.m_cHaveRoadTo.Remove(pTown1);
 
-                    pProvince.BuildSettlements(SettlementSize.City, bFast);
-                    if (!bFast)
-                        pProvince.BuildRoads(RoadQuality.Good, fCycleShift);
-
-                    pProvince.BuildSettlements(SettlementSize.Town, bFast);
-
-                    if (!bFast)
-                        pProvince.BuildRoads(RoadQuality.Normal, fCycleShift);
-                }
-
-                ProgressStep();
-            }
-
-            if (!bFast)
-                BuildInterstateRoads(fCycleShift);
-
-            ProgressStep();
-
-            foreach (Province pProvince in m_aProvinces)
-            {
-                if (!pProvince.Forbidden)
-                {
-                    pProvince.BuildSettlements(SettlementSize.Village, bFast);
-
-                    if (!bFast)
-                        pProvince.BuildRoads(RoadQuality.Country, fCycleShift);
-
-                    pProvince.BuildSettlements(SettlementSize.Hamlet, bFast);
-
-                    pProvince.BuildLairs(m_aLands.Length / 125);
-                }
-
-                ProgressStep();
+                pLoc.m_cRoads[pOldRoad.m_eLevel].Remove(pOldRoad);
             }
         }
 
+        /// <summary>
+        /// Подготовка к строительству новой дороги:
+        /// проверяем, нет ли уже между городами старой дороги, и если есть, то не лучше ли она чем та, которую хотим построоить.
+        /// если хуже, то удаляем старую дорогу.
+        /// Возвращаемое значение: true - можно строить новую дорогу, false - нельзя (уже есть такого же уровня или лучше)
+        /// </summary>
+        /// <param name="pTown1">первый город</param>
+        /// <param name="pTown2">второй город</param>
+        /// <param name="eRoadLevel">уровень новой дороги</param>
+        /// <returns>true - можно строить новую дорогу, false - нельзя</returns>
+        private static bool CheckOldRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel)
+        {
+            //проверим, а нет ли уже между этими городами дороги
+            while (pTown1.m_cHaveRoadTo.ContainsKey(pTown2) && pTown2.m_cHaveRoadTo.ContainsKey(pTown1))
+            {
+                Road pOldRoad = pTown1.m_cHaveRoadTo[pTown2];
+
+                //если существующая дорога лучше или такая же, как та, которую мы собираемся строить, то нафиг строить?
+                if (pOldRoad.m_eLevel >= eRoadLevel)
+                    return false;
+
+                //удаляем старую дорогу
+                DestroyRoad(pOldRoad);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Отстраивает заданный участок дороги.
+        /// Предполагается, что на этом участке дорога не проходит ни через какие населённые пункты.
+        /// </summary>
+        /// <param name="pRoad">участок дороги</param>
+        /// <param name="eRoadLevel">уровень дороги</param>
+        private static void BuildRoad(Road pRoad, RoadQuality eRoadLevel)
+        {
+            LocationX pTown1 = pRoad.Locations[0];
+            LocationX pTown2 = pRoad.Locations[pRoad.Locations.Length - 1];
+
+            //если между этими двумя городами уже есть дорога не хуже - новую не строим
+            if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
+                return;
+
+            int passed = 0;
+
+            LocationX pLastNode = null;
+            foreach (LocationX pNode in pRoad.Locations)
+            {
+                if (pNode != pTown1 && !pNode.m_cHaveRoadTo.ContainsKey(pTown1))
+                    pNode.m_cHaveRoadTo[pTown1] = pRoad;
+                if (pNode != pTown2 && !pNode.m_cHaveRoadTo.ContainsKey(pTown2))
+                    pNode.m_cHaveRoadTo[pTown2] = pRoad;
+
+                pNode.m_cRoads[eRoadLevel].Add(pRoad);
+
+                var approxH = pTown1.H + (pTown2.H - pTown1.H) * (float)passed / (float)pRoad.Locations.Length;
+                float fRoadWight = 0;
+                switch (eRoadLevel)
+                {
+                    case RoadQuality.Country:
+                        fRoadWight = 0.5f;
+                        break;
+                    case RoadQuality.Normal:
+                        fRoadWight = 1f;
+                        break;
+                    case RoadQuality.Good:
+                        fRoadWight = 2f;
+                        break;
+                }
+                pNode.H = (pNode.H + approxH * fRoadWight) / (1f + fRoadWight);
+
+                if (pLastNode != null)
+                {
+                    pLastNode.m_cLinks[pNode].BuildRoad(eRoadLevel);
+                    //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
+
+                    if (pLastNode.Owner != pNode.Owner)
+                    {
+                        try
+                        {
+                            (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(eRoadLevel);
+
+                            if ((pLastNode.Owner as LandX).Owner != (pNode.Owner as LandX).Owner)
+                            {
+                                ((pLastNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(eRoadLevel);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.WriteLine(ex.Message);
+                        }
+                    }
+                }
+
+                pLastNode = pNode;
+
+                passed++;
+            }
+        }
+
+        /// <summary>
+        /// "обновляем" дорогу.
+        /// если она проходит через какие-то населённые пункты, то разбиваем её на отдельный сегменты 
+        /// от одного поселения до другого.
+        /// </summary>
+        /// <param name="pRoad">дорога</param>
+        public static void RenewRoad(Road pOldRoad)
+        {
+            LocationX pTown1 = pOldRoad.Locations[0];
+            LocationX pTown2 = pOldRoad.Locations[pOldRoad.Locations.Length - 1];
+
+            //разобьем найденный путь на участки от одного населённого пункта до другого
+            List<Road> cRoadsChain = new List<Road>();
+            Road pNewRoad = null;
+            foreach (LocationX pNode in pOldRoad.Locations)
+            {
+                if (pNewRoad == null)
+                    pNewRoad = new Road(pNode, pOldRoad.m_eLevel);
+                else
+                {
+                    pNewRoad.BuidTo(pNode);
+
+                    if (pNode.m_pSettlement != null &&
+                        pNode.m_pSettlement.m_iRuinsAge == 0 &&
+                        (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
+                         pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
+                         pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
+                    {
+                        cRoadsChain.Add(pNewRoad);
+                        pNewRoad = new Road(pNode, pOldRoad.m_eLevel);
+                    }
+                }
+            }
+            if (cRoadsChain.Count == 1)
+                return;
+
+            DestroyRoad(pOldRoad);
+        
+            Road[] aRoadsChain = cRoadsChain.ToArray();
+
+            foreach (Road pRoad in aRoadsChain)
+                BuildRoad(pRoad, pOldRoad.m_eLevel);
+        }
+
+        /// <summary>
+        /// Строит дорогу из одного города в другой. Если дорога проходит через другие населённые пункты, она разбивается на 
+        /// отдельные участки от одного поселения до другого.
+        /// </summary>
+        /// <param name="pTown1">первый город</param>
+        /// <param name="pTown2">второй город</param>
+        /// <param name="eRoadLevel">уровень строящейся дороги</param>
+        /// <param name="fCycleShift">циклический сдвиг координат по горизонтали для закольцованных карт</param>
+        public static void BuildRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel, float fCycleShift)
+        {
+            if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
+                return;
+
+            //PathFinder pBestPath = new PathFinder(pTown1, pTown2, fCycleShift, -1);
+            ShortestPath pBestPath = FindReallyBestPath(pTown1, pTown2, fCycleShift, false);
+
+            if (pBestPath.m_aNodes != null && pBestPath.m_aNodes.Length > 1)
+            {
+                //разобьем найденный путь на участки от одного населённого пункта до другого
+                List<Road> cRoadsChain = new List<Road>();
+                Road pNewRoad = null;
+                foreach (LocationX pNode in pBestPath.m_aNodes)
+                {
+                    if (pNewRoad == null)
+                        pNewRoad = new Road(pNode, eRoadLevel);
+                    else
+                    {
+                        pNewRoad.BuidTo(pNode);
+
+                        if (pNode.m_pSettlement != null && 
+                            pNode.m_pSettlement.m_iRuinsAge == 0 &&
+                            (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
+                            pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
+                            pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
+                        {
+                            cRoadsChain.Add(pNewRoad);
+                            pNewRoad = new Road(pNode, eRoadLevel);
+                        }
+                    }
+                }
+
+                Road[] aRoadsChain = cRoadsChain.ToArray();
+
+                foreach (Road pRoad in aRoadsChain)
+                    BuildRoad(pRoad, eRoadLevel);
+            }
+        }
+
+        #endregion Roads stuff
+        
         public void Reset(Epoch pNewEpoch)
         {
             if (m_aLocalNations == null || m_aLocalNations.Length == 0)
@@ -1947,213 +2163,246 @@ namespace Socium
             }
         }
 
-        private static void DestroyRoad(Road pOldRoad)
-        {
-            LocationX pTown1 = pOldRoad.Locations[0];
-            LocationX pTown2 = pOldRoad.Locations[pOldRoad.Locations.Length - 1];
-
-            //удаляем старую дорогу
-            foreach (LocationX pLoc in pOldRoad.Locations)
-            {
-                if (pLoc != pTown2)
-                    pLoc.m_cHaveRoadTo.Remove(pTown2);
-                if (pLoc != pTown1)
-                    pLoc.m_cHaveRoadTo.Remove(pTown1);
-
-                pLoc.m_cRoads[pOldRoad.m_eLevel].Remove(pOldRoad);
-            }
-        }
-
         /// <summary>
-        /// Подготовка к строительству новой дороги:
-        /// проверяем, нет ли уже между городами старой дороги, и если есть, то не лучше ли она чем та, которую хотим построоить.
-        /// если хуже, то удаляем старую дорогу.
-        /// Возвращаемое значение: true - можно строить новую дорогу, false - нельзя (уже есть такого же уровня или лучше)
+        /// Возвращает локацию с поселением, близкую к заданной, в которой есть жители относящиеся к заданному сословию.
+        /// Если такие жители есть прямо в заданной локации - возвращает её же.
+        /// Если в ней нет - ищет по другим поселениям в том же государстве.
+        /// Если и там не находит - ищет по всему миру.
+        /// Если и там не находит - возвращает null.
         /// </summary>
-        /// <param name="pTown1">первый город</param>
-        /// <param name="pTown2">второй город</param>
-        /// <param name="eRoadLevel">уровень новой дороги</param>
-        /// <returns>true - можно строить новую дорогу, false - нельзя</returns>
-        private static bool CheckOldRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel)
+        /// <param name="pPreferredLoc"></param>
+        /// <param name="eEstate"></param>
+        /// <returns></returns>
+        public LocationX GetRandomSettlement(LocationX pPreferredLoc, Estate.Position eEstate)
         {
-            //проверим, а нет ли уже между этими городами дороги
-            while (pTown1.m_cHaveRoadTo.ContainsKey(pTown2) && pTown2.m_cHaveRoadTo.ContainsKey(pTown1))
+            if (pPreferredLoc != null && pPreferredLoc.HaveEstate(eEstate))
+                return pPreferredLoc;
+
+            List<LocationX> pPossibleSettlements = new List<LocationX>();
+
+            State pState = m_aStates[Rnd.Get(m_aStates.Length)];
+            if (pPreferredLoc != null)
+                pState = pPreferredLoc.OwnerState;
+
+            foreach (Province pProvince in pState.m_cContents)
             {
-                Road pOldRoad = pTown1.m_cHaveRoadTo[pTown2];
-
-                //если существующая дорога лучше или такая же, как та, которую мы собираемся строить, то нафиг строить?
-                if (pOldRoad.m_eLevel >= eRoadLevel)
-                    return false;
-
-                //удаляем старую дорогу
-                DestroyRoad(pOldRoad);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Отстраивает заданный участок дороги.
-        /// Предполагается, что на этом участке дорога не проходит ни через какие населённые пункты.
-        /// </summary>
-        /// <param name="pRoad">участок дороги</param>
-        /// <param name="eRoadLevel">уровень дороги</param>
-        private static void BuildRoad(Road pRoad, RoadQuality eRoadLevel)
-        {
-            LocationX pTown1 = pRoad.Locations[0];
-            LocationX pTown2 = pRoad.Locations[pRoad.Locations.Length - 1];
-
-            //если между этими двумя городами уже есть дорога не хуже - новую не строим
-            if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
-                return;
-
-            int passed = 0;
-
-            LocationX pLastNode = null;
-            foreach (LocationX pNode in pRoad.Locations)
-            {
-                if (pNode != pTown1 && !pNode.m_cHaveRoadTo.ContainsKey(pTown1))
-                    pNode.m_cHaveRoadTo[pTown1] = pRoad;
-                if (pNode != pTown2 && !pNode.m_cHaveRoadTo.ContainsKey(pTown2))
-                    pNode.m_cHaveRoadTo[pTown2] = pRoad;
-
-                pNode.m_cRoads[eRoadLevel].Add(pRoad);
-
-                var approxH = pTown1.H + (pTown2.H - pTown1.H) * (float)passed / (float)pRoad.Locations.Length;
-                float fRoadWight = 0;
-                switch (eRoadLevel)
+                foreach (LocationX pLocation in pProvince.m_cSettlements)
                 {
-                    case RoadQuality.Country:
-                        fRoadWight = 0.5f;
-                        break;
-                    case RoadQuality.Normal:
-                        fRoadWight = 1f;
-                        break;
-                    case RoadQuality.Good:
-                        fRoadWight = 2f;
-                        break;
+                    if (pLocation.HaveEstate(eEstate))
+                        pPossibleSettlements.Add(pLocation);
                 }
-                pNode.H = (pNode.H + approxH * fRoadWight) / (1f + fRoadWight);
+            }
 
-                if (pLastNode != null)
+            if (pPossibleSettlements.Count == 0)
+            {
+                pState = m_aStates[Rnd.Get(m_aStates.Length)];
+
+                foreach (Province pProvince in pState.m_cContents)
                 {
-                    pLastNode.m_cLinks[pNode].BuildRoad(eRoadLevel);
-                    //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
-
-                    if (pLastNode.Owner != pNode.Owner)
+                    foreach (LocationX pLocation in pProvince.m_cSettlements)
                     {
-                        try
-                        {
-                            (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(eRoadLevel);
-
-                            if ((pLastNode.Owner as LandX).Owner != (pNode.Owner as LandX).Owner)
-                            {
-                                ((pLastNode.Owner as LandX).Owner as LandMass<LandX>).m_cLinks[(pNode.Owner as LandX).Owner as LandMass<LandX>].BuildRoad(eRoadLevel);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.WriteLine(ex.Message);
-                        }
+                        if (pLocation.HaveEstate(eEstate))
+                            pPossibleSettlements.Add(pLocation);
                     }
                 }
 
-                pLastNode = pNode;
-
-                passed++;
-            }
-        }
-
-        /// <summary>
-        /// "обновляем" дорогу.
-        /// если она проходит через какие-то населённые пункты, то разбиваем её на отдельный сегменты 
-        /// от одного поселения до другого.
-        /// </summary>
-        /// <param name="pRoad">дорога</param>
-        public static void RenewRoad(Road pOldRoad)
-        {
-            LocationX pTown1 = pOldRoad.Locations[0];
-            LocationX pTown2 = pOldRoad.Locations[pOldRoad.Locations.Length - 1];
-
-            //разобьем найденный путь на участки от одного населённого пункта до другого
-            List<Road> cRoadsChain = new List<Road>();
-            Road pNewRoad = null;
-            foreach (LocationX pNode in pOldRoad.Locations)
-            {
-                if (pNewRoad == null)
-                    pNewRoad = new Road(pNode, pOldRoad.m_eLevel);
-                else
+                if (pPossibleSettlements.Count == 0)
                 {
-                    pNewRoad.BuidTo(pNode);
-
-                    if (pNode.m_pSettlement != null &&
-                        pNode.m_pSettlement.m_iRuinsAge == 0 &&
-                        (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
-                         pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
-                         pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
+                    foreach (Province pProvince in m_aProvinces)
                     {
-                        cRoadsChain.Add(pNewRoad);
-                        pNewRoad = new Road(pNode, pOldRoad.m_eLevel);
-                    }
-                }
-            }
-            if (cRoadsChain.Count == 1)
-                return;
-
-            DestroyRoad(pOldRoad);
-        
-            Road[] aRoadsChain = cRoadsChain.ToArray();
-
-            foreach (Road pRoad in aRoadsChain)
-                BuildRoad(pRoad, pOldRoad.m_eLevel);
-        }
-
-        /// <summary>
-        /// Строит дорогу из одного города в другой. Если дорога проходит через другие населённые пункты, она разбивается на 
-        /// отдельные участки от одного поселения до другого.
-        /// </summary>
-        /// <param name="pTown1">первый город</param>
-        /// <param name="pTown2">второй город</param>
-        /// <param name="eRoadLevel">уровень строящейся дороги</param>
-        /// <param name="fCycleShift">циклический сдвиг координат по горизонтали для закольцованных карт</param>
-        public static void BuildRoad(LocationX pTown1, LocationX pTown2, RoadQuality eRoadLevel, float fCycleShift)
-        {
-            if (!CheckOldRoad(pTown1, pTown2, eRoadLevel))
-                return;
-
-            //PathFinder pBestPath = new PathFinder(pTown1, pTown2, fCycleShift, -1);
-            ShortestPath pBestPath = FindReallyBestPath(pTown1, pTown2, fCycleShift, false);
-
-            if (pBestPath.m_aNodes != null && pBestPath.m_aNodes.Length > 1)
-            {
-                //разобьем найденный путь на участки от одного населённого пункта до другого
-                List<Road> cRoadsChain = new List<Road>();
-                Road pNewRoad = null;
-                foreach (LocationX pNode in pBestPath.m_aNodes)
-                {
-                    if (pNewRoad == null)
-                        pNewRoad = new Road(pNode, eRoadLevel);
-                    else
-                    {
-                        pNewRoad.BuidTo(pNode);
-
-                        if (pNode.m_pSettlement != null && 
-                            pNode.m_pSettlement.m_iRuinsAge == 0 &&
-                            (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
-                            pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
-                            pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
+                        foreach (LocationX pLocation in pProvince.m_cSettlements)
                         {
-                            cRoadsChain.Add(pNewRoad);
-                            pNewRoad = new Road(pNode, eRoadLevel);
+                            if (pLocation.HaveEstate(eEstate))
+                                pPossibleSettlements.Add(pLocation);
                         }
                     }
+
+                    if (pPossibleSettlements.Count == 0)
+                        return null;
+                }
+            }
+
+            return pPossibleSettlements[Rnd.Get(pPossibleSettlements.Count)];
+        }
+
+        /// <summary>
+        /// Возвращает случайного персонажа в заданной локации.
+        /// Если локация не задана (null) - выбирает случайную локацию из числа наименее густо заселённых поселений.
+        /// </summary>
+        /// <param name="pPreferredHome"></param>
+        /// <returns></returns>
+        public Person GetPossibleRelative(LocationX pPreferredHome)
+        {
+            return GetPossibleRelative(pPreferredHome, null);
+        }
+
+        /// <summary>
+        /// Возвращает случайного персонажа в заданной локации или государстве.
+        /// Если локация не задана (null) - выбирает случайную локацию из числа наименее густо заселённых поселений в указанном государстве.
+        /// Если государство тоже не задано (null) - выбирает случайную локацию из числа наименее густо заселённых во всём мире.
+        /// </summary>
+        /// <param name="pPreferredHome"></param>
+        /// <param name="pPreferredState"></param>
+        /// <returns></returns>
+        private Person GetPossibleRelative(LocationX pPreferredHome, State pPreferredState)
+        {
+            if (m_cPersons.Count == 0)
+                return null;
+
+            Dictionary<Person, float> cRelatives = new Dictionary<Person, float>();
+
+            foreach (Person pPerson in m_cPersons)
+            {
+                if (pPreferredHome != null && pPerson.m_pHomeLocation != pPreferredHome)
+                    continue;
+
+                if (pPreferredState != null && pPerson.m_pHomeLocation.Owner != pPreferredState)
+                    continue;
+
+                //if (!pPerson.CouldInviteNewDwellers())
+                //    continue;
+
+                float fRelativesCount = pPerson.GetFamilySize();// m_cRelations.Count();
+
+                if (fRelativesCount == 0)
+                    fRelativesCount = 1;
+
+                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Moderate)
+                    fRelativesCount *= 2;
+
+                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Low)
+                    fRelativesCount *= 5;
+
+                if (fRelativesCount > 10)
+                    continue;
+
+                int iNeighbours = 1;
+                foreach (Building pBuilding in pPerson.m_pHomeLocation.m_pSettlement.m_cBuildings)
+                    iNeighbours += pBuilding.m_cPersons.Count();
+
+                switch (pPerson.m_pHomeLocation.m_pSettlement.m_pInfo.m_eSize)
+                {
+                    case SettlementSize.Hamlet:
+                        fRelativesCount *= (float)iNeighbours / 2;
+                        break;
+                    case SettlementSize.Fort:
+                        fRelativesCount *= (float)iNeighbours / 3;
+                        break;
+                    case SettlementSize.Village:
+                        fRelativesCount *= (float)iNeighbours / 3;
+                        break;
+                    case SettlementSize.Town:
+                        fRelativesCount *= (float)iNeighbours / 4;
+                        break;
+                    case SettlementSize.City:
+                        fRelativesCount *= (float)iNeighbours / 5;
+                        break;
+                    case SettlementSize.Capital:
+                        fRelativesCount *= (float)iNeighbours / 6;
+                        break;
                 }
 
-                Road[] aRoadsChain = cRoadsChain.ToArray();
-
-                foreach (Road pRoad in aRoadsChain)
-                    BuildRoad(pRoad, eRoadLevel);
+                cRelatives[pPerson] = 1.0f / fRelativesCount;
             }
+
+            if (cRelatives.Count == 0)
+                return null;// GetPossibleRelative(null, pPreferredHome != null ? pPreferredHome.Owner : null);
+
+            int iChances = Rnd.ChooseOne(cRelatives.Values);
+
+            return cRelatives.Keys.ElementAt(iChances);
+        }
+
+        /// <summary>
+        /// Возвращает случайного персонажа заданной нации или расы.
+        /// Если нация не задана (null) - выбирает случайного персонажа той же расы, к которой принадлежит указанная нация.
+        /// Но - из государства с цивилизованностью не выше заданной, чтобы дикари не вписывались в родню с цивилизованным людям.
+        /// </summary>
+        /// <param name="pPreferredNation"></param>
+        /// <returns></returns>
+        public Person GetPossibleRelative(Nation pPreferredNation, int iMaxCivilizationLevel)
+        {
+            return GetPossibleRelative(pPreferredNation, null, iMaxCivilizationLevel);
+        }
+
+        /// <summary>
+        /// Возвращает случайного персонажа заданной нации или расы.
+        /// Если нация не задана (null) - выбирает случайного персонажа указанной расы.
+        /// Если раса тоже не задана (null) - возвращает null.
+        /// </summary>
+        /// <param name="pPreferredHome"></param>
+        /// <param name="pPreferredState"></param>
+        /// <returns></returns>
+        private Person GetPossibleRelative(Nation pPreferredNation, Race pPreferredRace, int iMaxCivilizationLevel)
+        {
+            if (m_cPersons.Count == 0)
+                return null;
+
+            Dictionary<Person, float> cRelatives = new Dictionary<Person, float>();
+
+            foreach (Person pPerson in m_cPersons)
+            {
+                if (pPreferredRace != null && pPerson.m_pNation.m_pRace != pPreferredRace)
+                    continue;
+
+                if (pPreferredNation != null && pPerson.m_pNation != pPreferredNation)
+                    continue;
+
+                if (pPerson.m_pHomeSociety.m_iInfrastructureLevel > iMaxCivilizationLevel)
+                    continue;
+
+                //if (!pPerson.CouldInviteNewDwellers())
+                //    continue;
+
+                float fRelativesCount = pPerson.GetFamilySize();// m_cRelations.Count();
+
+                if (fRelativesCount == 0)
+                    fRelativesCount = 1;
+
+                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Moderate)
+                    fRelativesCount *= 2;
+
+                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Low)
+                    fRelativesCount *= 5;
+
+                if (fRelativesCount > 10)
+                    continue;
+
+                int iNeighbours = 1;
+                foreach (Building pBuilding in pPerson.m_pHomeLocation.m_pSettlement.m_cBuildings)
+                    iNeighbours += pBuilding.m_cPersons.Count();
+
+                switch (pPerson.m_pHomeLocation.m_pSettlement.m_pInfo.m_eSize)
+                {
+                    case SettlementSize.Hamlet:
+                        fRelativesCount *= (float)iNeighbours / 2;
+                        break;
+                    case SettlementSize.Fort:
+                        fRelativesCount *= (float)iNeighbours / 3;
+                        break;
+                    case SettlementSize.Village:
+                        fRelativesCount *= (float)iNeighbours / 3;
+                        break;
+                    case SettlementSize.Town:
+                        fRelativesCount *= (float)iNeighbours / 4;
+                        break;
+                    case SettlementSize.City:
+                        fRelativesCount *= (float)iNeighbours / 5;
+                        break;
+                    case SettlementSize.Capital:
+                        fRelativesCount *= (float)iNeighbours / 6;
+                        break;
+                }
+
+                cRelatives[pPerson] = 1.0f / fRelativesCount;
+            }
+
+            if (cRelatives.Count == 0)
+                return pPreferredNation != null ? GetPossibleRelative(null, pPreferredNation.m_pRace, iMaxCivilizationLevel) : null;
+
+            int iChances = Rnd.ChooseOne(cRelatives.Values);
+
+            return cRelatives.Keys.ElementAt(iChances);
         }
     }
 }
