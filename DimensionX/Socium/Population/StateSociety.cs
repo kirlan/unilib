@@ -255,7 +255,7 @@ namespace Socium.Population
             m_iTechLevel = 0;
             m_iInfrastructureLevel = 0;
             m_pCulture = new Culture(pState.m_pMethropoly.m_pCulture);
-            m_pCustoms = new Customs(pState.m_pMethropoly.m_pCustoms);
+            m_pCustoms = new Customs(pState.m_pMethropoly.m_pCustoms, Customs.Mutation.Possible);
 
             m_pTitularNation = pState.m_pMethropoly.m_pNation;
         }
@@ -449,13 +449,13 @@ namespace Socium.Population
                             {
                                 if (iInfrastructureLevel < 4)
                                 {
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
+                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
                                 }
                                 else
                                 {
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvSmall : BuildingInfo.HotelSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
+                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvSmall : BuildingInfo.HotelSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
                                 }
                             }
 
@@ -555,29 +555,29 @@ namespace Socium.Population
                             switch (m_pCustoms.m_eSexuality)
                             {
                                 case Psichology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                                 case Psichology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                             }
 
                             if (iInfrastructureLevel < 4)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
                             }
                             else
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
                             }
 
-                            cChances[BuildingInfo.TheatreMedium] = 1f - m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                            cChances[BuildingInfo.TheatreMedium] = 1f - m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
 
                             cChances[BuildingInfo.RoguesDenMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
                             cChances[BuildingInfo.GamblingSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
@@ -739,32 +739,32 @@ namespace Socium.Population
                             switch (m_pCustoms.m_eSexuality)
                             {
                                 case Psichology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                                 case Psichology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                             }
 
                             if (iInfrastructureLevel < 4)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
-                                cChances[BuildingInfo.CircusMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] *
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
+                                cChances[BuildingInfo.CircusMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] *
                                                                       m_pCulture.MentalityValues[Psichology.Mentality.Agression][iInfrastructureLevel] / 2;
                             }
                             else
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
                             }
 
-                            cChances[BuildingInfo.TheatreMedium] = 1f - m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                            cChances[BuildingInfo.TheatreMedium] = 1f - m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
 
                             cChances[BuildingInfo.RoguesDenMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
                             cChances[BuildingInfo.GamblingSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
@@ -874,7 +874,7 @@ namespace Socium.Population
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.CultureMeduim : BuildingInfo.CultureLarge;
                                 break;
                             case SettlementSpeciality.ArtsAcademy:
-                                pProfile = iInfrastructureLevel < 4 ? (m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
+                                pProfile = iInfrastructureLevel < 4 ? (m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
                                 break;
                             case SettlementSpeciality.Religious:
                                 pProfile = BuildingInfo.ChurchLarge;
@@ -946,32 +946,32 @@ namespace Socium.Population
                             switch (m_pCustoms.m_eSexuality)
                             {
                                 case Psichology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                                 case Psichology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                             }
 
                             if (iInfrastructureLevel < 4)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
-                                cChances[BuildingInfo.CircusMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] *
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
+                                cChances[BuildingInfo.CircusMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] *
                                                                       m_pCulture.MentalityValues[Psichology.Mentality.Agression][iInfrastructureLevel] / 2;
                             }
                             else
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel];
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel];
                             }
 
-                            cChances[BuildingInfo.TheatreMedium] = 1f - m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                            cChances[BuildingInfo.TheatreMedium] = 1f - m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
 
                             cChances[BuildingInfo.RoguesDenMedium] = m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
                             cChances[BuildingInfo.GamblingSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Treachery][iInfrastructureLevel] / 2;
@@ -1081,7 +1081,7 @@ namespace Socium.Population
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.CultureMeduim : BuildingInfo.CultureLarge;
                                 break;
                             case SettlementSpeciality.ArtsAcademy:
-                                pProfile = iInfrastructureLevel < 4 ? (m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
+                                pProfile = iInfrastructureLevel < 4 ? (m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
                                 break;
                             case SettlementSpeciality.Religious:
                                 pProfile = BuildingInfo.ChurchLarge;
@@ -1128,21 +1128,21 @@ namespace Socium.Population
                             switch (m_pCustoms.m_eSexuality)
                             {
                                 case Psichology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 4;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 4;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                                 case Psichology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                    cChances[pBrothelProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                        cChances[pStripClubProfile] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                                     break;
                             }
 
                             if (iInfrastructureLevel < 4)
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
                             else
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Rudeness][iInfrastructureLevel] / 2;
+                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = m_pCulture.MentalityValues[Psichology.Mentality.Simplicity][iInfrastructureLevel] / 2;
 
                             //if (pState.m_iSocialEquality == 0)
                             //{
@@ -1609,9 +1609,9 @@ namespace Socium.Population
             {
                 iHostility += iControlDifference - 1;
                 if (iControlDifference > 1)
-                    sNegativeReasons += string.Format(" (-{1}) {0}\n", State.GetControlString(pOpponent.m_pSociety.m_iControl), iControlDifference - 1);
+                    sNegativeReasons += string.Format(" (-{1}) {0}\n", GetControlString(pOpponent.m_pSociety.m_iControl), iControlDifference - 1);
                 else
-                    sPositiveReasons += string.Format(" (+{1}) {0}\n", State.GetControlString(pOpponent.m_pSociety.m_iControl), 1);
+                    sPositiveReasons += string.Format(" (+{1}) {0}\n", GetControlString(pOpponent.m_pSociety.m_iControl), 1);
             }
 
             if (pOpponent.m_pSociety.m_iInfrastructureLevel > m_iInfrastructureLevel + 1)
@@ -1633,9 +1633,9 @@ namespace Socium.Population
             {
                 iHostility += iEqualityDifference - 1;
                 if (iEqualityDifference > 1)
-                    sNegativeReasons += string.Format(" (-{1}) {0}\n", State.GetEqualityString(pOpponent.m_pSociety.m_iSocialEquality), iEqualityDifference - 1);
+                    sNegativeReasons += string.Format(" (-{1}) {0}\n", GetEqualityString(pOpponent.m_pSociety.m_iSocialEquality), iEqualityDifference - 1);
                 else
-                    sPositiveReasons += string.Format(" (+{1}) {0}\n", State.GetEqualityString(pOpponent.m_pSociety.m_iSocialEquality), 1);
+                    sPositiveReasons += string.Format(" (+{1}) {0}\n", GetEqualityString(pOpponent.m_pSociety.m_iSocialEquality), 1);
             }
 
             float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pSociety.m_pCulture, m_iCultureLevel, pOpponent.m_pSociety.m_iCultureLevel);

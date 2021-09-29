@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GeneLab;
+using GeneLab.Genetix;
 using Random;
 
 namespace Socium.Psichology
@@ -342,7 +343,7 @@ namespace Socium.Psichology
                     throw new Exception("Customs not changed!");
         }
 
-        public void FixBodyModifications(GenetixBase pFenotype)
+        public void FixBodyModifications(Fenotype pFenotype)
         {
             if (pFenotype.m_pEars.m_eEarsType == EarsType.None)
             {

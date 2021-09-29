@@ -107,8 +107,9 @@ namespace Socium.Settlements
         public static readonly ProfessionInfo Alchemist = new ProfessionInfo("alchemist", false, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
         public static readonly ProfessionInfo Mage = new ProfessionInfo("mage", false, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
 
-        //public static readonly ProfessionInfo Elder = new ProfessionInfo("elder", true, false);
-        //public static readonly ProfessionInfo Mayor = new ProfessionInfo("mayor", true, false);
+        public static readonly ProfessionInfo Elder = new ProfessionInfo("elder", true, SkillLevel.None, SkillLevel.Bad, SkillLevel.Bad);
+        public static readonly ProfessionInfo Mayor = new ProfessionInfo("mayor", true, SkillLevel.None, SkillLevel.Good, SkillLevel.Good);
+        
         public static readonly ProfessionInfo Scribe = new ProfessionInfo("scribe", false, SkillLevel.None, SkillLevel.Bad, SkillLevel.None);
         public static readonly ProfessionInfo Administrator = new ProfessionInfo("administrator", true, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
         public static readonly ProfessionInfo Clerk = new ProfessionInfo("clerk", false, SkillLevel.None, SkillLevel.Bad, SkillLevel.None);

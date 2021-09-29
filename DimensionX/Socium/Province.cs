@@ -692,7 +692,7 @@ namespace Socium
             //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
             //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
             m_pCulture = new Culture(m_pNation.m_pCulture);
-            m_pCustoms = new Customs(m_pNation.m_pCustoms);
+            m_pCustoms = new Customs(m_pNation.m_pCustoms, Customs.Mutation.Possible);
 
             //if (Rnd.OneChanceFrom(3))
             //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
@@ -724,10 +724,10 @@ namespace Socium
                 }
 
                 m_fFish += iCoast*3/pLand.MovementCost;
-                m_fGrain += pLand.m_cContents.Count * pLand.Type.m_fGrain;
-                m_fGame += pLand.m_cContents.Count * pLand.Type.m_fGame;
-                m_fWood += pLand.m_cContents.Count * pLand.Type.m_fWood;
-                m_fOre += pLand.m_cContents.Count * pLand.Type.m_fOre;
+                m_fGrain += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Grain];
+                m_fGame += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Game];
+                m_fWood += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Wood];
+                m_fOre += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Ore];
 
                 m_iPopulation += pLand.m_cContents.Count;
                 iAverageMagicLimit += m_pNation.m_iMagicLimit * pLand.m_cContents.Count;

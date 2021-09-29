@@ -50,7 +50,7 @@ namespace Socium.Psichology
             this[Mentality.Piety] = eValue;
             this[Mentality.Treachery] = eValue;
             this[Mentality.Selfishness] = eValue;
-            this[Mentality.Rudeness] = eValue;
+            this[Mentality.Simplicity] = eValue;
         }
 
         public CultureTemplate(AdvancementRate eAgression, AdvancementRate eFanaticism, AdvancementRate ePiety, AdvancementRate eTreachery, AdvancementRate eSelfishness, AdvancementRate eRudeness)
@@ -60,7 +60,7 @@ namespace Socium.Psichology
             this[Mentality.Piety] = ePiety;
             this[Mentality.Treachery] = eTreachery;
             this[Mentality.Selfishness] = eSelfishness;
-            this[Mentality.Rudeness] = eRudeness;
+            this[Mentality.Simplicity] = eRudeness;
         }
     }
 }

@@ -35,9 +35,9 @@ namespace Socium.Psichology
         // </summary>
         //Segregation, //Arrogance,
         /// <summary>
-        /// Грубость - склонность к простым удовольствиям, непонимание высокого искусства.
+        /// Простота - склонность к простым удовольствиям, непонимание высокого искусства.
         /// </summary>
-        Rudeness//Exploitation
+        Simplicity//Exploitation
     };
     
     public class Culture
@@ -253,37 +253,37 @@ namespace Socium.Psichology
                             new MentalityCluster(Mentality.Selfishness, 1.33f, 1.66f, "(-2) very selfish"),
                             new MentalityCluster(Mentality.Selfishness, 1.66f, 2.0f, "(-3) completely selfish"),
                         };
-                    s_cMentalityClusters[Mentality.Rudeness] = new MentalityCluster[] 
-                        {   new MentalityCluster(Mentality.Rudeness, 0.0f, 0.33f, "(+3) creativity as a supreme value"),
-                            new MentalityCluster(Mentality.Rudeness, 0.33f, 0.66f, "(+2) true art"),
-                            new MentalityCluster(Mentality.Rudeness, 0.66f, 1.0f, "(+1) pop art"),
-                            new MentalityCluster(Mentality.Rudeness, 1.0f, 1.33f, "(-1) applied art"),
-                            new MentalityCluster(Mentality.Rudeness, 1.33f, 1.66f, "(-2) primitive pleasures"),
-                            new MentalityCluster(Mentality.Rudeness, 1.66f, 2.0f, "(-3) only natural needs satisfaction"),
+                    s_cMentalityClusters[Mentality.Simplicity] = new MentalityCluster[] 
+                        {   new MentalityCluster(Mentality.Simplicity, 0.0f, 0.33f, "(+3) creativity as a supreme value"),
+                            new MentalityCluster(Mentality.Simplicity, 0.33f, 0.66f, "(+2) true art"),
+                            new MentalityCluster(Mentality.Simplicity, 0.66f, 1.0f, "(+1) pop art"),
+                            new MentalityCluster(Mentality.Simplicity, 1.0f, 1.33f, "(-1) applied art"),
+                            new MentalityCluster(Mentality.Simplicity, 1.33f, 1.66f, "(-2) primitive pleasures"),
+                            new MentalityCluster(Mentality.Simplicity, 1.66f, 2.0f, "(-3) only natural needs satisfaction"),
                         };
                     s_cMentalityClusters[Mentality.Fanaticism] = new MentalityCluster[] 
                         {   new MentalityCluster(Mentality.Fanaticism, 0.0f, 0.33f, "(+3) fully tolerant"),
                             new MentalityCluster(Mentality.Fanaticism, 0.33f, 0.66f, "(+2) liberal"),
                             new MentalityCluster(Mentality.Fanaticism, 0.66f, 1.0f, "(+1) open-minded"),
                             new MentalityCluster(Mentality.Fanaticism, 1.0f, 1.33f, "(-1) narrow-minded"),
-                            new MentalityCluster(Mentality.Fanaticism, 1.33f, 1.66f, "(-2) fanatical"),
-                            new MentalityCluster(Mentality.Fanaticism, 1.66f, 2.0f, "(-3) irreconcilable"),
+                            new MentalityCluster(Mentality.Fanaticism, 1.33f, 1.66f, "(-2) intolerant"),
+                            new MentalityCluster(Mentality.Fanaticism, 1.66f, 2.0f, "(-3) fanatical"),
                         };
                     s_cMentalityClusters[Mentality.Piety] = new MentalityCluster[] 
-                        {   new MentalityCluster(Mentality.Piety, 0.0f, 0.33f, "(+3) no supernatural forces"),
-                            new MentalityCluster(Mentality.Piety, 0.33f, 0.66f, "(+2) 1 unpersonified force"),
-                            new MentalityCluster(Mentality.Piety, 0.66f, 1.0f, "(+1) 2 opposing unpersonified forces"),
-                            new MentalityCluster(Mentality.Piety, 1.0f, 1.33f, "(-1) 2 opposing deities"),
-                            new MentalityCluster(Mentality.Piety, 1.33f, 1.66f, "(-2) 2 big opposing groups of deities"),
-                            new MentalityCluster(Mentality.Piety, 1.66f, 2.0f, "(-3) lot of elemental deities"),
+                        {   new MentalityCluster(Mentality.Piety, 0.0f, 0.33f, "(+3) atheism"),
+                            new MentalityCluster(Mentality.Piety, 0.33f, 0.66f, "(+2) syntheism"),
+                            new MentalityCluster(Mentality.Piety, 0.66f, 1.0f, "(+1) pantheism"),
+                            new MentalityCluster(Mentality.Piety, 1.0f, 1.33f, "(-1) monotheism"),
+                            new MentalityCluster(Mentality.Piety, 1.33f, 1.66f, "(-2) polytheism"),
+                            new MentalityCluster(Mentality.Piety, 1.66f, 2.0f, "(-3) animism"),
                         };
                     s_cMentalityClusters[Mentality.Treachery] = new MentalityCluster[] 
-                        {   new MentalityCluster(Mentality.Treachery, 0.0f, 0.33f, "(+3) absolutely honest"),
+                        {   new MentalityCluster(Mentality.Treachery, 0.0f, 0.33f, "(+3) righteous"),
                             new MentalityCluster(Mentality.Treachery, 0.33f, 0.66f, "(+2) honest"),
                             new MentalityCluster(Mentality.Treachery, 0.66f, 1.0f, "(+1) lawful"),
                             new MentalityCluster(Mentality.Treachery, 1.0f, 1.33f, "(-1) dishonest"),
                             new MentalityCluster(Mentality.Treachery, 1.33f, 1.66f, "(-2) criminal"),
-                            new MentalityCluster(Mentality.Treachery, 1.66f, 2.0f, "(-3) completely corrupt"),
+                            new MentalityCluster(Mentality.Treachery, 1.66f, 2.0f, "(-3) anarchist"),
                         };
                 }
                 return s_cMentalityClusters;
@@ -334,7 +334,7 @@ namespace Socium.Psichology
                         case Mentality.Piety:
                             sResult += "religious";
                             break;
-                        case Mentality.Rudeness:
+                        case Mentality.Simplicity:
                             sResult += "rude";
                             break;
                         case Mentality.Selfishness:

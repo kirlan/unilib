@@ -481,8 +481,8 @@ namespace Socium
 
             m_pCustoms = new Customs(pRelative == null || pRelative.m_eGender != m_eGender ? m_pEstate.GetCustoms(m_eGender) : pRelative.m_pCustoms, Customs.Mutation.Possible);
 
-            m_pFamilyFenotype = pRelative == null ? m_pNation.m_pFenotype.MutateFamily() : pRelative.m_pFamilyFenotype;
-            m_pFenotype = m_pFamilyFenotype.MutateIndividual();
+            m_pFamilyFenotype = pRelative == null ? (Fenotype)m_pNation.m_pFenotype.MutateFamily() : pRelative.m_pFamilyFenotype;
+            m_pFenotype = (Fenotype)m_pFamilyFenotype.MutateIndividual();
             m_pCustoms.FixBodyModifications(m_pFenotype);
 
             foreach (var pSkill in m_pProfession.m_cSkills)

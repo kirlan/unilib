@@ -932,14 +932,14 @@ namespace Socium
                                 pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
                             else
                             {
-                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Mentality.Rudeness][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
                                     {
                                         List<float> cResources = new List<float>();
-                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Mentality.Rudeness][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel]);
                                         cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Piety][m_pSociety.m_iInfrastructureLevel]);
                                         cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Agression][m_pSociety.m_iInfrastructureLevel]);
                                         cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Treachery][m_pSociety.m_iInfrastructureLevel]);
@@ -1022,14 +1022,14 @@ namespace Socium
                                 pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
                             else
                             {
-                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Mentality.Rudeness][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
                                     {
                                         List<float> cResources = new List<float>();
-                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Mentality.Rudeness][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel]);
                                         cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Piety][m_pSociety.m_iInfrastructureLevel]);
                                         cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Agression][m_pSociety.m_iInfrastructureLevel]);
                                         cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Treachery][m_pSociety.m_iInfrastructureLevel]);
