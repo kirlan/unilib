@@ -156,49 +156,50 @@ namespace Socium.Psichology
             m_eMagic = Rnd.OneChanceFrom(2) ? Magic.Magic_Allowed : Rnd.OneChanceFrom(2) ? Magic.Magic_Praised : Magic.Magic_Feared;
         }
 
-        public static Customs Merge(Customs pBase, Customs pAncestor, Customs pAncestorMinors)
+        // Находит все отличия между pBaseSample и pDifferencesSample и затем накладывает их на pBase
+        public static Customs ApplyDifferences(Customs pBase, Customs pBaseSample, Customs pDifferencesSample)
         {
             Customs pNew = new Customs(pBase, Mutation.None);
 
-            if (pAncestorMinors.m_eGenderPriority != pAncestor.m_eGenderPriority)
-                pNew.m_eGenderPriority = pAncestorMinors.m_eGenderPriority;
+            if (pDifferencesSample.m_eGenderPriority != pBaseSample.m_eGenderPriority)
+                pNew.m_eGenderPriority = pDifferencesSample.m_eGenderPriority;
 
-            if (pAncestorMinors.m_eMindSet != pAncestor.m_eMindSet)
-                pNew.m_eMindSet = pAncestorMinors.m_eMindSet;
+            if (pDifferencesSample.m_eMindSet != pBaseSample.m_eMindSet)
+                pNew.m_eMindSet = pDifferencesSample.m_eMindSet;
 
-            if (pAncestorMinors.m_eSexuality != pAncestor.m_eSexuality)
-                pNew.m_eSexuality = pAncestorMinors.m_eSexuality;
+            if (pDifferencesSample.m_eSexuality != pBaseSample.m_eSexuality)
+                pNew.m_eSexuality = pDifferencesSample.m_eSexuality;
 
-            if (pAncestorMinors.m_eSexRelations != pAncestor.m_eSexRelations)
-                pNew.m_eSexRelations = pAncestorMinors.m_eSexRelations;
+            if (pDifferencesSample.m_eSexRelations != pBaseSample.m_eSexRelations)
+                pNew.m_eSexRelations = pDifferencesSample.m_eSexRelations;
 
-            if (pAncestorMinors.m_eMarriage != pAncestor.m_eMarriage)
-                pNew.m_eMarriage = pAncestorMinors.m_eMarriage;
+            if (pDifferencesSample.m_eMarriage != pBaseSample.m_eMarriage)
+                pNew.m_eMarriage = pDifferencesSample.m_eMarriage;
 
-            if (pAncestorMinors.m_eBodyModifications != pAncestor.m_eBodyModifications)
-                pNew.m_eBodyModifications = pAncestorMinors.m_eBodyModifications;
+            if (pDifferencesSample.m_eBodyModifications != pBaseSample.m_eBodyModifications)
+                pNew.m_eBodyModifications = pDifferencesSample.m_eBodyModifications;
 
-            if (pAncestorMinors.m_eClothes != pAncestor.m_eClothes)
-                pNew.m_eClothes = pAncestorMinors.m_eClothes;
+            if (pDifferencesSample.m_eClothes != pBaseSample.m_eClothes)
+                pNew.m_eClothes = pDifferencesSample.m_eClothes;
 
-            if (pAncestorMinors.m_eAdornments != pAncestor.m_eAdornments)
-                pNew.m_eAdornments = pAncestorMinors.m_eAdornments;
+            if (pDifferencesSample.m_eAdornments != pBaseSample.m_eAdornments)
+                pNew.m_eAdornments = pDifferencesSample.m_eAdornments;
 
-            if (pAncestorMinors.m_eFamilyValues != pAncestor.m_eFamilyValues)
-                pNew.m_eFamilyValues = pAncestorMinors.m_eFamilyValues;
+            if (pDifferencesSample.m_eFamilyValues != pBaseSample.m_eFamilyValues)
+                pNew.m_eFamilyValues = pDifferencesSample.m_eFamilyValues;
 
-            if (pAncestorMinors.m_eProgress != pAncestor.m_eProgress)
-                pNew.m_eProgress = pAncestorMinors.m_eProgress;
+            if (pDifferencesSample.m_eProgress != pBaseSample.m_eProgress)
+                pNew.m_eProgress = pDifferencesSample.m_eProgress;
 
-            if (pAncestorMinors.m_eMagic != pAncestor.m_eMagic)
-                pNew.m_eMagic = pAncestorMinors.m_eMagic;
+            if (pDifferencesSample.m_eMagic != pBaseSample.m_eMagic)
+                pNew.m_eMagic = pDifferencesSample.m_eMagic;
 
-            foreach (BodyModificationsTypes eMod in pAncestorMinors.m_cMandatoryModifications)
-                if (!pAncestor.m_cMandatoryModifications.Contains(eMod) && !pNew.m_cMandatoryModifications.Contains(eMod))
+            foreach (BodyModificationsTypes eMod in pDifferencesSample.m_cMandatoryModifications)
+                if (!pBaseSample.m_cMandatoryModifications.Contains(eMod) && !pNew.m_cMandatoryModifications.Contains(eMod))
                     pNew.m_cMandatoryModifications.Add(eMod);
 
-            foreach (BodyModificationsTypes eMod in pAncestor.m_cMandatoryModifications)
-                if (!pAncestorMinors.m_cMandatoryModifications.Contains(eMod) && pNew.m_cMandatoryModifications.Contains(eMod))
+            foreach (BodyModificationsTypes eMod in pBaseSample.m_cMandatoryModifications)
+                if (!pDifferencesSample.m_cMandatoryModifications.Contains(eMod) && pNew.m_cMandatoryModifications.Contains(eMod))
                     pNew.m_cMandatoryModifications.Remove(eMod);
 
             return pNew;

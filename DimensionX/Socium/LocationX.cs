@@ -76,30 +76,30 @@ namespace Socium
 
         public bool HaveEstate(Estate.Position eEstate)
         {
-            LandX pLand = Owner as LandX;
-            State pState = pLand.m_pProvince.Owner as State;
+            Society pOwnerSociety = OwnerState.m_pSociety;
 
-            if (m_pSettlement != null && pState.m_pSociety.m_cEstates.ContainsKey(eEstate))
+            if (m_pSettlement != null && pOwnerSociety.m_cEstates.ContainsKey(eEstate))
             {
+                Estate pEstate = pOwnerSociety.m_cEstates[eEstate];
+
                 foreach (Building pBuilding in m_pSettlement.m_cBuildings)
                 {
-                    Strata pOwner = pState.m_pSociety.GetStrata(pBuilding.m_pInfo.m_pOwner);
-                    if (pState.m_pSociety.m_cEstates[eEstate].m_cStratas.Contains(pOwner))
+                    if (pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pOwnerProfession))
                     {
                         List<Person> cOwners = new List<Person>();
                         foreach (Person pDweller in pBuilding.m_cPersons)
-                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pOwner)
+                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pOwnerProfession)
                                 cOwners.Add(pDweller);
 
                         if (cOwners.Count < pBuilding.m_pInfo.OwnersCount)
                             return true;
                     }
-                    Strata pWorkers = pState.m_pSociety.GetStrata(pBuilding.m_pInfo.m_pWorkers);
-                    if (pState.m_pSociety.m_cEstates[eEstate].m_cStratas.Contains(pWorkers))
+
+                    if (pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pWorkersProfession))
                     {
                         List<Person> cWorkers = new List<Person>();
                         foreach (Person pDweller in pBuilding.m_cPersons)
-                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pWorkers)
+                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pWorkersProfession)
                                 cWorkers.Add(pDweller);
 
                         if (cWorkers.Count < pBuilding.m_pInfo.WorkersCount)

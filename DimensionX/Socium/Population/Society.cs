@@ -10,6 +10,10 @@ using Socium.Nations;
 
 namespace Socium.Population
 {
+    /// <summary>
+    /// Сообщество - группа людей, разделяющих близкие культурные ценности и обычаи, имеющих доступ к определённому уровню технических благ,
+    /// объединённых единой властной иерархией и подчинённых единому закону. Может владеть отдельными зданиями в поселениях, но не требует территориальной целостности.
+    /// </summary>
     public abstract class Society
     {
         /// <summary>
@@ -52,10 +56,8 @@ namespace Socium.Population
         /// 4 - коммунизм
         /// </summary>
         public int m_iSocialEquality = 0;
-        public int m_iCultureLevel = 0;
 
-        public Culture m_pCulture = null;
-        public Customs m_pCustoms = null;
+        public Creed m_pCreed = null;
 
         /// <summary>
         /// Процент реально крутых магов среди всех носителей магических способностей
@@ -219,10 +221,10 @@ namespace Socium.Population
         public int GetEffectiveTech()
         {
             int iMaxTech = m_iTechLevel;
-            if (m_pCustoms.m_eProgress == Customs.Progressiveness.Technofetishism)
+            if (m_pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Technofetishism)
                 iMaxTech++;
 
-            if (m_pCustoms.m_eProgress == Customs.Progressiveness.Traditionalism)
+            if (m_pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Traditionalism)
                 iMaxTech--;
 
             if (iMaxTech > 8)
@@ -250,7 +252,7 @@ namespace Socium.Population
 
         public override string ToString()
         {
-            return string.Format("(C{1}T{2}M{3}) - {0}", m_sName, m_iCultureLevel, m_iTechLevel, m_iMagicLimit);
+            return string.Format("(C{1}T{2}M{3}) - {0}", m_sName, m_pCreed.m_iCultureLevel, m_iTechLevel, m_iMagicLimit);
         }
 
         protected Person.Skill m_eMostRespectedSkill;
@@ -278,7 +280,7 @@ namespace Socium.Population
         /// </summary>
         /// <param name="pProfession"></param>
         /// <returns></returns>
-        public int GetProfessionPreference(ProfessionInfo pProfession)
+        public int GetProfessionSkillPreference(ProfessionInfo pProfession)
         {
             int iPreference = 0;
 
@@ -312,23 +314,7 @@ namespace Socium.Population
 
         public Dictionary<Estate.Position, Estate> m_cEstates = new Dictionary<Estate.Position, Estate>();
 
-        public Dictionary<Strata, int> m_cPeople = new Dictionary<Strata, int>();
-
-        /// <summary>
-        /// Возвращает существующую страту для указанной профессии в данном государстве - или создаёт новую, если такой ещё нет
-        /// </summary>
-        /// <param name="pProfession"></param>
-        /// <returns></returns>
-        public Strata GetStrata(ProfessionInfo pProfession)
-        {
-            foreach (var pStratum in m_cPeople)
-            {
-                if (pStratum.Key.m_pProfession == pProfession)
-                    return pStratum.Key;
-            }
-
-            return new Strata(this, pProfession);
-        }
+        public Dictionary<ProfessionInfo, int> m_cPeople = new Dictionary<ProfessionInfo, int>();
 
         internal virtual Customs.GenderPriority FixGenderPriority(Customs.GenderPriority ePriority)
         {
@@ -341,14 +327,19 @@ namespace Socium.Population
         /// </summary>
         public void SetEstates()
         {
+            // Базовые настройки культуры и обычаев для сообщества
             Estate pBase = new Estate(this, Estate.Position.Middle);
+            // Элита может немного отличаться от среднего класса
             m_cEstates[Estate.Position.Elite] = new Estate(pBase, Estate.Position.Elite);
+            // средний класс - это и есть основа всего сообщества
             m_cEstates[Estate.Position.Middle] = pBase;
+            // низший класс - его обычаи должны отличаться не только от среднего класса, но и от элиты
             do
             {
                 m_cEstates[Estate.Position.Low] = new Estate(pBase, Estate.Position.Low);
             }
             while (m_cEstates[Estate.Position.Elite].m_pCustoms.Equals(m_cEstates[Estate.Position.Low].m_pCustoms));
+            // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех 3 других сословий
             do
             {
                 if (!Rnd.OneChanceFrom(3) && m_iSocialEquality != 0)
@@ -362,6 +353,7 @@ namespace Socium.Population
                 m_cEstates[Estate.Position.Low].m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms) ||
                 pBase.m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms));
 
+            // перебираем все поселения, где присутсвует сообщество
             foreach (LocationX pLocation in m_cLands)
             {
                 if (pLocation.m_pSettlement == null)
@@ -369,49 +361,54 @@ namespace Socium.Population
 
                 if (pLocation.m_pSettlement.m_cBuildings.Count > 0)
                 {
+                    // перебираем все строения в поселениях
                     foreach (Building pBuilding in pLocation.m_pSettlement.m_cBuildings)
                     {
                         int iCount = 0;
                         int iOwnersCount = pBuilding.m_pInfo.OwnersCount;
                         int iWorkersCount = pBuilding.m_pInfo.WorkersCount;
 
-                        Strata pOwner = GetStrata(pBuilding.m_pInfo.m_pOwner);
+                        var pOwner = pBuilding.m_pInfo.m_pOwnerProfession;
                         m_cPeople.TryGetValue(pOwner, out iCount);
                         m_cPeople[pOwner] = iCount + iOwnersCount;
 
-                        Strata pWorkers = GetStrata(pBuilding.m_pInfo.m_pWorkers);
+                        var pWorkers = pBuilding.m_pInfo.m_pWorkersProfession;
                         m_cPeople.TryGetValue(pWorkers, out iCount);
                         m_cPeople[pWorkers] = iCount + iWorkersCount;
                     }
                 }
             }
 
-            SortedDictionary<int, List<Strata>> cStrataPreference = new SortedDictionary<int, List<Strata>>();
+            // таблица предпочтений в профессиях - в соответствии с необходимыми для профессии скиллами и полом
+            SortedDictionary<int, List<ProfessionInfo>> cProfessionPreference = new SortedDictionary<int, List<ProfessionInfo>>();
 
             int iTotalPopulation = 0;
 
-            foreach (var pStratum in m_cPeople)
+            // заполняем таблицу предпочтительных профессий - с точки зрения общих культурных норм сообщества
+            foreach (var pProfession in m_cPeople)
             {
-                iTotalPopulation += pStratum.Value;
+                iTotalPopulation += pProfession.Value;
 
-                int iPreference = GetProfessionPreference(pStratum.Key.m_pProfession);
+                int iPreference = GetProfessionSkillPreference(pProfession.Key);
 
-                if (pStratum.Key.m_pProfession.m_bMaster)
+                if (pProfession.Key.m_bMaster)
                     iPreference += 4;
 
-                int iDiscrimination = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] + 0.5);
+                int iDiscrimination = (int)(m_pCreed.GetMentalityValue(Mentality.Fanaticism) + 0.5);
 
-                if (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy &&
-                    pStratum.Key.m_eGenderPriority == Customs.GenderPriority.Matriarchy)
+                var eProfessionGenderPriority = GetProfessionGenderPriority(pProfession.Key, m_pCreed.m_pCustoms);
+
+                if (m_pCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy &&
+                    eProfessionGenderPriority == Customs.GenderPriority.Matriarchy)
                     iPreference -= iDiscrimination;
-                if (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy &&
-                    pStratum.Key.m_eGenderPriority == Customs.GenderPriority.Patriarchy)
+                if (m_pCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy &&
+                    eProfessionGenderPriority == Customs.GenderPriority.Patriarchy)
                     iPreference -= iDiscrimination;
 
-                if (!cStrataPreference.ContainsKey(iPreference))
-                    cStrataPreference[iPreference] = new List<Strata>();
+                if (!cProfessionPreference.ContainsKey(iPreference))
+                    cProfessionPreference[iPreference] = new List<ProfessionInfo>();
 
-                cStrataPreference[iPreference].Add(pStratum.Key);
+                cProfessionPreference[iPreference].Add(pProfession.Key);
             }
 
             //Численность сословий - в зависимости от m_iSocialEquality.
@@ -421,68 +418,68 @@ namespace Socium.Population
             int iLowEstateCount = iTotalPopulation * (92 - m_iSocialEquality * 23) / 100;
             int iEliteEstateCount = iTotalPopulation * (10 + m_iSocialEquality * 5) / 100;
 
-            foreach (var pStrata in m_cPeople)
+            foreach (var pProfession in m_cPeople)
             {
-                if (pStrata.Key.m_pProfession.m_eCasteRestriction.HasValue)
+                if (pProfession.Key.m_eCasteRestriction.HasValue)
                 {
-                    switch (pStrata.Key.m_pProfession.m_eCasteRestriction)
+                    var pEstate = m_cEstates[Estate.Position.Elite];
+                    switch (pProfession.Key.m_eCasteRestriction)
                     {
                         case ProfessionInfo.Caste.Elite:
-                            m_cEstates[Estate.Position.Elite].m_cStratas.Add(pStrata.Key);
-                            iEliteEstateCount -= pStrata.Value;
-                            RemoveStrataPreference(ref cStrataPreference, pStrata.Key);
+                            pEstate = m_cEstates[Estate.Position.Elite];
+                            iEliteEstateCount -= pProfession.Value;
                             break;
                         case ProfessionInfo.Caste.Low:
-                            m_cEstates[Estate.Position.Low].m_cStratas.Add(pStrata.Key);
-                            iLowEstateCount -= pStrata.Value;
-                            RemoveStrataPreference(ref cStrataPreference, pStrata.Key);
+                            pEstate = m_cEstates[Estate.Position.Low];
+                            iLowEstateCount -= pProfession.Value;
                             break;
                         case ProfessionInfo.Caste.Outlaw:
-                            m_cEstates[Estate.Position.Outlaw].m_cStratas.Add(pStrata.Key);
-                            RemoveStrataPreference(ref cStrataPreference, pStrata.Key);
+                            pEstate = m_cEstates[Estate.Position.Outlaw];
                             break;
                     }
+                    pEstate.m_cGenderProfessionPreferences[pProfession.Key] = GetProfessionGenderPriority(pProfession.Key, pEstate.m_pCustoms);
+                    RemoveStrataPreference(ref cProfessionPreference, pProfession.Key);
                 }
             }
 
-            if (m_iSocialEquality != 0 || m_cEstates[Estate.Position.Low].m_cStratas.Count == 0)
+            if (m_iSocialEquality != 0 || m_cEstates[Estate.Position.Low].m_cGenderProfessionPreferences.Count == 0)
             {
                 while (iLowEstateCount > 0)
                 {
-                    if (cStrataPreference.Count == 0)
+                    if (cProfessionPreference.Count == 0)
                         break;
 
-                    Strata pBestFit = null;
-                    int iLowestPreference = cStrataPreference.Keys.First();
+                    ProfessionInfo pBestFit = null;
+                    int iLowestPreference = cProfessionPreference.Keys.First();
 
                     int iBestFit = int.MinValue;
-                    foreach (Strata pStrata in cStrataPreference[iLowestPreference])
+                    foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                     {
-                        if (pStrata.m_pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
-                            m_cPeople[pStrata] < iLowEstateCount && m_cPeople[pStrata] > iBestFit)
+                        if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
+                            m_cPeople[pProfession] < iLowEstateCount && m_cPeople[pProfession] > iBestFit)
                         {
-                            pBestFit = pStrata;
-                            iBestFit = m_cPeople[pStrata];
+                            pBestFit = pProfession;
+                            iBestFit = m_cPeople[pProfession];
                         }
                     }
                     if (pBestFit == null)
                     {
                         iBestFit = int.MaxValue;
-                        foreach (Strata pStrata in cStrataPreference[iLowestPreference])
+                        foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                         {
-                            if (pStrata.m_pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
-                                m_cPeople[pStrata] < iBestFit)
+                            if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
+                                m_cPeople[pProfession] < iBestFit)
                             {
-                                pBestFit = pStrata;
-                                iBestFit = m_cPeople[pStrata];
+                                pBestFit = pProfession;
+                                iBestFit = m_cPeople[pProfession];
                             }
                         }
                     }
                     if (pBestFit != null)
                     {
-                        m_cEstates[Estate.Position.Low].m_cStratas.Add(pBestFit);
+                        m_cEstates[Estate.Position.Low].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit, m_cEstates[Estate.Position.Low].m_pCustoms);
                         iLowEstateCount -= iBestFit;
-                        RemoveStrataPreference(ref cStrataPreference, pBestFit);
+                        RemoveStrataPreference(ref cProfessionPreference, pBestFit);
                     }
                     else
                     {
@@ -493,14 +490,14 @@ namespace Socium.Population
 
             while (iEliteEstateCount > 0)
             {
-                if (cStrataPreference.Count == 0)
+                if (cProfessionPreference.Count == 0)
                     break;
 
-                Strata pBestFit = null;
-                int iHighestPreference = cStrataPreference.Keys.Last();
+                ProfessionInfo pBestFit = null;
+                int iHighestPreference = cProfessionPreference.Keys.Last();
 
                 int iBestFit = iEliteEstateCount;
-                foreach (Strata pStrata in cStrataPreference[iHighestPreference])
+                foreach (ProfessionInfo pStrata in cProfessionPreference[iHighestPreference])
                 {
                     if (m_cPeople[pStrata] < iBestFit)
                     {
@@ -510,9 +507,9 @@ namespace Socium.Population
                 }
                 if (pBestFit != null)
                 {
-                    m_cEstates[Estate.Position.Elite].m_cStratas.Add(pBestFit);
+                    m_cEstates[Estate.Position.Elite].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit, m_cEstates[Estate.Position.Elite].m_pCustoms);
                     iEliteEstateCount -= iBestFit;
-                    RemoveStrataPreference(ref cStrataPreference, pBestFit);
+                    RemoveStrataPreference(ref cProfessionPreference, pBestFit);
                 }
                 else
                 {
@@ -520,38 +517,83 @@ namespace Socium.Population
                 }
             }
 
-            foreach (var pPreference in cStrataPreference)
+            foreach (var pPreference in cProfessionPreference)
             {
-                foreach (Strata pStrata in pPreference.Value)
+                foreach (ProfessionInfo pProfession in pPreference.Value)
                 {
-                    m_cEstates[Estate.Position.Middle].m_cStratas.Add(pStrata);
+                    m_cEstates[Estate.Position.Middle].m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession, m_cEstates[Estate.Position.Elite].m_pCustoms);
                 }
             }
 
             foreach (var pEstate in m_cEstates)
-                pEstate.Value.FixStratums();
+                pEstate.Value.FixGenderProfessionPreferences();
         }
 
         /// <summary>
-        /// Удаляет страту из списка преференций
+        /// Привести гендерные преференции страты в соответствии с обычаями сословия
         /// </summary>
-        /// <param name="cStrataPreference"></param>
-        /// <param name="pStrata"></param>
-        private void RemoveStrataPreference(ref SortedDictionary<int, List<Strata>> cStrataPreference, Strata pStrata)
+        /// <param name="pEstate"></param>
+        public Customs.GenderPriority GetProfessionGenderPriority(ProfessionInfo pProfession, Customs pCustoms)
+        {
+            // По умолчанию - гендерные предпочтения страты совпадают представлениями сословия о "сильном" поле.
+            var eGenderPriority = pCustoms.m_eGenderPriority;
+
+            // но, если это подчинённая должность...
+            if (!pProfession.m_bMaster)
+            {
+                // ...связанная с тем, чтобы нравиться клиенту...
+                if (pProfession.m_cSkills[Person.Skill.Charm] != ProfessionInfo.SkillLevel.None)
+                {
+                    // ...то в гетеросексуальном обществе она считается более подходящей "слабому" полу
+                    if (pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                    {
+                        if (eGenderPriority == Customs.GenderPriority.Patriarchy)
+                            eGenderPriority = Customs.GenderPriority.Matriarchy;
+                        else if (eGenderPriority == Customs.GenderPriority.Matriarchy)
+                            eGenderPriority = Customs.GenderPriority.Patriarchy;
+                    }
+                    // ...а в бисексуальном обществе - такая профессия так же бисексуальна
+                    else if (pCustoms.m_eSexRelations == Customs.SexualOrientation.Bisexual)
+                        eGenderPriority = Customs.GenderPriority.Genders_equality;
+                }
+                else
+                {
+                    // ...если профессия НЕ связанна с тем, чтобы нравиться клиенту -
+                    // смотрим, насколько она считается престижной в данном сословии.
+                    // более престижные профессии - считаются подходящими "сильному" полу
+                    int iPreference = GetProfessionSkillPreference(pProfession);
+
+                    if (iPreference == 0)
+                        eGenderPriority = Customs.GenderPriority.Genders_equality;
+                    // менее престижные профессии - считаются подходящими "слабому" полу
+                    if (iPreference < 0)
+                        eGenderPriority = FixGenderPriority(eGenderPriority);
+                }
+            }
+
+            return eGenderPriority;
+        }
+
+        /// <summary>
+        /// Удаляет профессию из списка преференций
+        /// </summary>
+        /// <param name="cProfessionPreference"></param>
+        /// <param name="pProfession"></param>
+        private void RemoveStrataPreference(ref SortedDictionary<int, List<ProfessionInfo>> cProfessionPreference, ProfessionInfo pProfession)
         {
             List<int> cCemetary = new List<int>();
-            foreach (var pPreference in cStrataPreference)
+            foreach (var pPreference in cProfessionPreference)
             {
-                if (pPreference.Value.Contains(pStrata))
+                if (pPreference.Value.Contains(pProfession))
                 {
-                    pPreference.Value.Remove(pStrata);
+                    pPreference.Value.Remove(pProfession);
                     if (pPreference.Value.Count == 0)
                         cCemetary.Add(pPreference.Key);
                 }
             }
 
             foreach (int iPreference in cCemetary)
-                cStrataPreference.Remove(iPreference);
+                cProfessionPreference.Remove(iPreference);
         }
 
         public abstract string GetEstateName(Estate.Position ePosition);

@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaX.cs" />
+    <Compile Include="Misc\Median.cs" />
     <Compile Include="Population\Estate.cs" />
     <Compile Include="Languages\Latin.cs" />
     <Compile Include="Nations\Nation.cs" />
@@ -82,7 +83,7 @@
     <Compile Include="Population\Society.cs" />
     <Compile Include="Population\StateSociety.cs" />
     <Compile Include="State.cs" />
-    <Compile Include="Population\Strata.cs" />
+    <Compile Include="Population\Creed.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

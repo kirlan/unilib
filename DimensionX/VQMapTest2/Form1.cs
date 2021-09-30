@@ -375,12 +375,12 @@ namespace VQMapTest2
                             continue;
 
                         int iPop = 0;
-                        cPop.TryGetValue(pBuilding.m_pInfo.m_pOwner.m_sNameM, out iPop);
-                        cPop[pBuilding.m_pInfo.m_pOwner.m_sNameM] = iPop + pBuilding.m_pInfo.OwnersCount;
+                        cPop.TryGetValue(pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM, out iPop);
+                        cPop[pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM] = iPop + pBuilding.m_pInfo.OwnersCount;
 
                         iPop = 0;
-                        cPop.TryGetValue(pBuilding.m_pInfo.m_pWorkers.m_sNameM, out iPop);
-                        cPop[pBuilding.m_pInfo.m_pWorkers.m_sNameM] = iPop + pBuilding.m_pInfo.WorkersCount;
+                        cPop.TryGetValue(pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM, out iPop);
+                        cPop[pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM] = iPop + pBuilding.m_pInfo.WorkersCount;
                     }
                 }
 

@@ -48,6 +48,9 @@ namespace Socium.Settlements
         Full
     }
     
+    /// <summary>
+    /// Информация о строении - размер, количество владельцев и работников, их профессии, тип владения (семейный/коммерческий)
+    /// </summary>
     public class BuildingInfo
     {
         #region statics
@@ -245,23 +248,38 @@ namespace Socium.Settlements
 
         #endregion
 
+        /// <summary>
+        /// Название строение
+        /// </summary>
         public string m_sName;
-        public ProfessionInfo m_pOwner;
-        public ProfessionInfo m_pWorkers;
+        /// <summary>
+        /// Профессия владельца
+        /// </summary>
+        public ProfessionInfo m_pOwnerProfession;
+        /// <summary>
+        /// Профессия работников/прислуги
+        /// </summary>
+        public ProfessionInfo m_pWorkersProfession;
 
+        /// <summary>
+        /// Размер строения - определяет численность владельцев и работников
+        /// </summary>
         public BuildingSize m_eSize;
 
+        /// <summary>
+        /// Требования к семейным связям обитателей здания
+        /// </summary>
         public FamilyOwnership m_eOwnership;
 
         public BuildingInfo(string sName, ProfessionInfo pOwner, ProfessionInfo pWorkers, BuildingSize eSize)
             :this(sName, pOwner, pWorkers, eSize, FamilyOwnership.None)
         { }
 
-        public BuildingInfo(string sName, ProfessionInfo pOwner, ProfessionInfo pWorkers, BuildingSize eSize, FamilyOwnership eOwnership)
+        public BuildingInfo(string sName, ProfessionInfo pOwnerProfession, ProfessionInfo pWorkersProfession, BuildingSize eSize, FamilyOwnership eOwnership)
         {
             m_sName = sName;
-            m_pOwner = pOwner;
-            m_pWorkers = pWorkers;
+            m_pOwnerProfession = pOwnerProfession;
+            m_pWorkersProfession = pWorkersProfession;
 
             m_eSize = eSize;
 
@@ -325,17 +343,21 @@ namespace Socium.Settlements
     }
     public class Building
     {
+        /// <summary>
+        /// Селение, к которому принадлежит строение
+        /// </summary>
         public Settlement m_pSettlement;
 
+        /// <summary>
+        /// Информация о строении - размер, количество владельцев и работников, их профессии, тип владения (семейный/коммерческий)
+        /// </summary>
         public BuildingInfo m_pInfo;
 
+        /// <summary>
+        /// Обитатели - жители, владельцы, работники...
+        /// </summary>
         public List<Person> m_cPersons = new List<Person>();
 
-        /// <summary>
-        /// Центральное здание
-        /// </summary>
-        /// <param name="pSettlement">поселение</param>
-        /// <param name="pInfo">шаблон здания</param>
         public Building(Settlement pSettlement, BuildingInfo pInfo)
         {
             m_pSettlement = pSettlement;
