@@ -338,7 +338,7 @@ namespace Socium.Population
             {
                 m_cEstates[Estate.Position.Low] = new Estate(pBase, Estate.Position.Low);
             }
-            while (m_cEstates[Estate.Position.Elite].m_pCustoms.Equals(m_cEstates[Estate.Position.Low].m_pCustoms));
+            while (m_cEstates[Estate.Position.Elite].m_pMajorsCreed.Equals(m_cEstates[Estate.Position.Low].m_pMajorsCreed));
             // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех 3 других сословий
             do
             {
@@ -349,9 +349,9 @@ namespace Socium.Population
                 else
                     m_cEstates[Estate.Position.Outlaw] = new Estate(pBase, Estate.Position.Outlaw);
             }
-            while (m_cEstates[Estate.Position.Elite].m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms) ||
-                m_cEstates[Estate.Position.Low].m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms) ||
-                pBase.m_pCustoms.Equals(m_cEstates[Estate.Position.Outlaw].m_pCustoms));
+            while (m_cEstates[Estate.Position.Elite].m_pMajorsCreed.Equals(m_cEstates[Estate.Position.Outlaw].m_pMajorsCreed) ||
+                m_cEstates[Estate.Position.Low].m_pMajorsCreed.Equals(m_cEstates[Estate.Position.Outlaw].m_pMajorsCreed) ||
+                pBase.m_pMajorsCreed.Equals(m_cEstates[Estate.Position.Outlaw].m_pMajorsCreed));
 
             // перебираем все поселения, где присутсвует сообщество
             foreach (LocationX pLocation in m_cLands)
@@ -437,7 +437,7 @@ namespace Socium.Population
                             pEstate = m_cEstates[Estate.Position.Outlaw];
                             break;
                     }
-                    pEstate.m_cGenderProfessionPreferences[pProfession.Key] = GetProfessionGenderPriority(pProfession.Key, pEstate.m_pCustoms);
+                    pEstate.m_cGenderProfessionPreferences[pProfession.Key] = GetProfessionGenderPriority(pProfession.Key, pEstate.m_pMajorsCreed.m_pCustoms);
                     RemoveStrataPreference(ref cProfessionPreference, pProfession.Key);
                 }
             }
@@ -477,7 +477,7 @@ namespace Socium.Population
                     }
                     if (pBestFit != null)
                     {
-                        m_cEstates[Estate.Position.Low].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit, m_cEstates[Estate.Position.Low].m_pCustoms);
+                        m_cEstates[Estate.Position.Low].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit, m_cEstates[Estate.Position.Low].m_pMajorsCreed.m_pCustoms);
                         iLowEstateCount -= iBestFit;
                         RemoveStrataPreference(ref cProfessionPreference, pBestFit);
                     }
@@ -507,7 +507,7 @@ namespace Socium.Population
                 }
                 if (pBestFit != null)
                 {
-                    m_cEstates[Estate.Position.Elite].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit, m_cEstates[Estate.Position.Elite].m_pCustoms);
+                    m_cEstates[Estate.Position.Elite].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit, m_cEstates[Estate.Position.Elite].m_pMajorsCreed.m_pCustoms);
                     iEliteEstateCount -= iBestFit;
                     RemoveStrataPreference(ref cProfessionPreference, pBestFit);
                 }
@@ -521,7 +521,7 @@ namespace Socium.Population
             {
                 foreach (ProfessionInfo pProfession in pPreference.Value)
                 {
-                    m_cEstates[Estate.Position.Middle].m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession, m_cEstates[Estate.Position.Elite].m_pCustoms);
+                    m_cEstates[Estate.Position.Middle].m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession, m_cEstates[Estate.Position.Elite].m_pMajorsCreed.m_pCustoms);
                 }
             }
 

@@ -265,7 +265,7 @@ namespace Socium
         /// <summary>
         /// Вычисляет наиболее и наименее престижные навыки на основании культурных ценностей и обычаев
         /// </summary>
-        public static void GetSkillPreferences(Culture pCulture, int iCultureLevel, Customs pCustoms, ref Skill eMostRespectedSkill, ref Skill eLeastRespectedSkill)
+        public static void GetSkillPreferences(Creed pCreed, ref Skill eMostRespectedSkill, ref Skill eLeastRespectedSkill)
         {
             Dictionary<Skill, int> cSkillPreferences = new Dictionary<Skill, int>();
 
@@ -273,9 +273,9 @@ namespace Socium
             cSkillPreferences[Skill.Mind] = 0; 
             cSkillPreferences[Skill.Charm] = 0;
 
-            if (pCulture.MentalityValues[Mentality.Agression][iCultureLevel] > 1)
+            if (pCreed.GetMentalityValue(Mentality.Agression) > 1)
                 cSkillPreferences[Person.Skill.Body]++;
-            if (pCulture.MentalityValues[Mentality.Agression][iCultureLevel] > 1.5)
+            if (pCreed.GetMentalityValue(Mentality.Agression) > 1.5)
                 cSkillPreferences[Person.Skill.Body]++;
 
             //if (m_pCulture.MentalityValues[Mentality.Rudeness][m_iCultureLevel] < 1)
@@ -288,25 +288,25 @@ namespace Socium
             //if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 1.5)
             //    cSkillPreferences[CPerson.Skill.Mind]++;
 
-            if (pCustoms.m_eMindSet == Customs.MindSet.Emotions)
+            if (pCreed.m_pCustoms.m_eMindSet == Customs.MindSet.Emotions)
                 cSkillPreferences[Person.Skill.Mind]--;
-            if (pCustoms.m_eMindSet == Customs.MindSet.Logic)
+            if (pCreed.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+            if (pCreed.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCustoms.m_eProgress == Customs.Progressiveness.Traditionalism)
+            if (pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Traditionalism)
                 cSkillPreferences[Person.Skill.Mind]--;
-            if (pCustoms.m_eProgress == Customs.Progressiveness.Technofetishism)
+            if (pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Technofetishism)
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCustoms.m_eSexuality == Customs.Sexuality.Puritan)
+            if (pCreed.m_pCustoms.m_eSexuality == Customs.Sexuality.Puritan)
                 cSkillPreferences[Person.Skill.Charm]--;
-            if (pCustoms.m_eSexuality == Customs.Sexuality.Lecherous)
+            if (pCreed.m_pCustoms.m_eSexuality == Customs.Sexuality.Lecherous)
                 cSkillPreferences[Person.Skill.Charm]++;
 
-            if (pCustoms.m_eMarriage == Customs.MarriageType.Polyamory)
+            if (pCreed.m_pCustoms.m_eMarriage == Customs.MarriageType.Polyamory)
                 cSkillPreferences[Person.Skill.Charm]++;
 
             eMostRespectedSkill = Person.Skill.Body;
@@ -467,11 +467,11 @@ namespace Socium
                     iCultureLevel--;
             }
 
-            if (iCultureLevel < m_pHomeSociety.m_iCultureLevel - 1)
-                iCultureLevel = m_pHomeSociety.m_iCultureLevel - 1;
+            if (iCultureLevel < m_pHomeSociety.m_pCreed.m_iCultureLevel - 1)
+                iCultureLevel = m_pHomeSociety.m_pCreed.m_iCultureLevel - 1;
 
-            if (iCultureLevel > m_pHomeSociety.m_iCultureLevel + 1)
-                iCultureLevel = m_pHomeSociety.m_iCultureLevel + 1;
+            if (iCultureLevel > m_pHomeSociety.m_pCreed.m_iCultureLevel + 1)
+                iCultureLevel = m_pHomeSociety.m_pCreed.m_iCultureLevel + 1;
 
             if (iCultureLevel < 0)
                 iCultureLevel = 0;
@@ -1185,13 +1185,21 @@ namespace Socium
         {
             if (pRelative != null)
             {
-                if (m_cRelations[pRelative] == Relation.Spouse ||
-                    m_cRelations[pRelative] == Relation.Lover)
+                if (m_cRelations[pRelative] == Relation.Lover)
                 {
-                    if (m_eGender == pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                    if (m_eGender == pRelative.m_eGender && pRelative.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
                         return false;
 
-                    if (m_eGender != pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
+                    if (m_eGender != pRelative.m_eGender && pRelative.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
+                        return false;
+                }
+                
+                if (m_cRelations[pRelative] == Relation.Spouse)
+                {
+                    if (m_eGender == pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                        return false;
+
+                    if (m_eGender != pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
                         return false;
                 }
             }
@@ -1352,10 +1360,10 @@ namespace Socium
                                                 else
                                                     cNewKins[pFarRelative.Key] = Relation.Lover;
 
-                                                if (m_pHomeSociety.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual &&
+                                                if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual &&
                                                     m_eGender == pFarRelative.Key.m_eGender)
                                                     cNewKins[pFarRelative.Key] = Relation.Friend;
-                                                if (m_pHomeSociety.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual &&
+                                                if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual &&
                                                     m_eGender != pFarRelative.Key.m_eGender)
                                                     cNewKins[pFarRelative.Key] = Relation.Friend;
                                             }
@@ -2362,10 +2370,10 @@ namespace Socium
                     break;
             }
 
-            if (m_pHomeSociety.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && m_eGender == Gender.Male)
+            if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && m_eGender == Gender.Male)
                 fPersonalInfluence /= 2;
 
-            if (m_pHomeSociety.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && m_eGender == Gender.Female)
+            if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && m_eGender == Gender.Female)
                 fPersonalInfluence /= 2;
 
             if (m_eAge == _Age.Young)
@@ -2656,7 +2664,7 @@ namespace Socium
             //pMine - это поведение, которое мы считаем "правильным". Если в нашем обществе есть различия между нормами поведения для мужчин и женщин,
             //в оппонент другого пола - эти различия тоже нужно учитывать.
             if (m_pEstate.IsSegregated() && m_eGender != pOpponent.m_eGender)
-                pMine = Customs.Merge(m_pCreed.m_pCustoms, m_pEstate.m_pCustoms, m_pEstate.GetCreed(pOpponent.m_eGender).m_pCustoms);
+                pMine = Customs.ApplyDifferences(m_pCreed.m_pCustoms, m_pEstate.m_pMajorsCreed.m_pCustoms, m_pEstate.GetCreed(pOpponent.m_eGender).m_pCustoms);
             Customs pOpponents = pOpponent.m_pCreed.m_pCustoms;
 
             if (pMine.m_eGenderPriority != pOpponents.m_eGenderPriority &&

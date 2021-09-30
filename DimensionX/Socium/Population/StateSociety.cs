@@ -254,10 +254,10 @@ namespace Socium.Population
 
             m_iTechLevel = 0;
             m_iInfrastructureLevel = 0;
-            m_pCulture = new Culture(pState.m_pMethropoly.m_pCulture);
-            m_pCustoms = new Customs(pState.m_pMethropoly.m_pCustoms, Customs.Mutation.Possible);
+            m_pCreed = new Creed(pState.m_pMethropoly.m_pSociety.m_pCreed);
+            m_pCreed.m_pCustoms = new Customs(pState.m_pMethropoly.m_pSociety.m_pCreed.m_pCustoms, Customs.Mutation.Possible);
 
-            m_pTitularNation = pState.m_pMethropoly.m_pNation;
+            m_pTitularNation = pState.m_pMethropoly.m_pSociety.m_pTitularNation;
         }
 
         public void CalculateTitularNation()

@@ -63,6 +63,19 @@ namespace Socium.Population
             return m_pMajorsCreed.m_pCustoms.m_eGenderPriority != Customs.GenderPriority.Genders_equality;
         }
 
+        void UpdateCreed(Creed pCreed, Position ePosition)
+        {
+            if (ePosition == Position.Outlaw)
+                pCreed.m_iCultureLevel--;
+            if (ePosition == Position.Elite)
+                pCreed.m_iCultureLevel++;
+
+            if (pCreed.m_iCultureLevel < 0)
+                pCreed.m_iCultureLevel = 0;
+            if (pCreed.m_iCultureLevel > 8)
+                pCreed.m_iCultureLevel = 8;
+        }
+
         /// <summary>
         /// Создаёт новое сословие, основываясь на заданном. Новое сословие в целом разделяет все культурные ценности и обычаи заданного, но возможны отклонения.
         /// </summary>
@@ -70,30 +83,22 @@ namespace Socium.Population
         /// <param name="ePosition"></param>
         public Estate(Estate pEstate, Position ePosition)
         {
-            m_pMajorsCreed = new Creed(pEstate.m_pMajorsCreed.m_pCulture, pEstate.m_pSociety.m_pCreed.m_iCultureLevel, new Customs(pEstate.m_pMajorsCreed.m_pCustoms, Customs.Mutation.Mandatory));
+            m_pMajorsCreed = new Creed(pEstate.m_pMajorsCreed);
 
             m_ePosition = ePosition;
 
             m_pSociety = pEstate.m_pSociety;
 
-            if (ePosition == Position.Outlaw)
-                m_iCultureLevel--;
-            if (ePosition == Position.Elite)
-                m_iCultureLevel++;
+            UpdateCreed(m_pMajorsCreed, ePosition);
 
-            if (m_iCultureLevel < 0)
-                m_iCultureLevel = 0;
-            if (m_iCultureLevel > 8)
-                m_iCultureLevel = 8;
+            m_pMinorsCreed = new Creed(pEstate.m_pMinorsCreed);
 
-            var pMinorsCustoms = Customs.ApplyDifferences(m_pMajorsCreed.m_pCustoms, pEstate.m_pMajorsCreed.m_pCustoms, pEstate.m_pMinorsCreed.m_pCustoms);
-            pMinorsCustoms = new Customs(pMinorsCustoms, Customs.Mutation.Mandatory);
-            pMinorsCustoms.m_eMarriage = m_pMajorsCreed.m_pCustoms.m_eMarriage;
-            pMinorsCustoms.m_eGenderPriority = m_pMajorsCreed.m_pCustoms.m_eGenderPriority;
-            
-            m_pMinorsCreed = new Creed(new Culture(m_pCulture), m_iCultureLevel, pMinorsCustoms);
+            UpdateCreed(m_pMinorsCreed, ePosition);
 
-            Person.GetSkillPreferences(m_pCulture, m_iCultureLevel, m_pCustoms, ref m_eMostRespectedSkill, ref m_eLeastRespectedSkill);
+            m_pMinorsCreed.m_pCustoms.m_eMarriage = m_pMajorsCreed.m_pCustoms.m_eMarriage;
+            m_pMinorsCreed.m_pCustoms.m_eGenderPriority = m_pMajorsCreed.m_pCustoms.m_eGenderPriority;
+
+            Person.GetSkillPreferences(m_pMajorsCreed, ref m_eMostRespectedSkill, ref m_eLeastRespectedSkill);
 
             m_sName = m_pSociety.GetEstateName(m_ePosition);
         }
@@ -103,32 +108,20 @@ namespace Socium.Population
         /// </summary>
         /// <param name="pSociety"></param>
         public Estate(Society pSociety, Position ePosition)
-            : base(pSociety.m_pCulture, pSociety.m_iCultureLevel, pSociety.m_pCustoms)
         {
+            m_pMajorsCreed = new Creed(pSociety.m_pCreed);
+            
             m_ePosition = ePosition;
 
             m_pSociety = pSociety;
 
-            m_pCulture = m_pSociety.m_pCulture;
-            m_iCultureLevel = m_pSociety.m_iCultureLevel;
-
-            if (ePosition == Position.Outlaw)
-                m_iCultureLevel--;
-            if (ePosition == Position.Elite)
-                m_iCultureLevel++;
-
-            if (m_iCultureLevel < 0)
-                m_iCultureLevel = 0;
-            if (m_iCultureLevel > 8)
-                m_iCultureLevel = 8;
-
-            m_pCustoms = m_pSociety.m_pCustoms;
+            UpdateCreed(m_pMajorsCreed, ePosition);
             
-            m_pMinorsCreed = new Creed(new Culture(m_pCulture), m_iCultureLevel, new Customs(m_pCustoms, Customs.Mutation.Mandatory));
-            m_pMinorsCreed.m_pCustoms.m_eMarriage = m_pCustoms.m_eMarriage;
-            m_pMinorsCreed.m_pCustoms.m_eGenderPriority = m_pCustoms.m_eGenderPriority;
+            m_pMinorsCreed = new Creed(m_pMajorsCreed);
+            m_pMinorsCreed.m_pCustoms.m_eMarriage = m_pMajorsCreed.m_pCustoms.m_eMarriage;
+            m_pMinorsCreed.m_pCustoms.m_eGenderPriority = m_pMajorsCreed.m_pCustoms.m_eGenderPriority;
 
-            Person.GetSkillPreferences(m_pCulture, m_iCultureLevel, m_pCustoms, ref m_eMostRespectedSkill, ref m_eLeastRespectedSkill);
+            Person.GetSkillPreferences(m_pMajorsCreed, ref m_eMostRespectedSkill, ref m_eLeastRespectedSkill);
 
             m_sName = m_pSociety.GetEstateName(m_ePosition);
         }
@@ -139,7 +132,7 @@ namespace Socium.Population
             foreach (var pProfession in cProfessions)
             {
                 // По умолчанию - гендерные предпочтения страты совпадают представлениями сословия о "сильном" поле.
-                var eGenderPriority = m_pCustoms.m_eGenderPriority;
+                var eGenderPriority = m_pMajorsCreed.m_pCustoms.m_eGenderPriority;
 
                 // но, если это подчинённая должность...
                 if (!pProfession.m_bMaster)
@@ -148,7 +141,7 @@ namespace Socium.Population
                     if (pProfession.m_cSkills[Person.Skill.Charm] != ProfessionInfo.SkillLevel.None)
                     {
                         // ...то в гетеросексуальном обществе она считается более подходящей "слабому" полу
-                        if (m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                        if (m_pMajorsCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
                         {
                             if (eGenderPriority == Customs.GenderPriority.Patriarchy)
                                 eGenderPriority = Customs.GenderPriority.Matriarchy;
@@ -156,7 +149,7 @@ namespace Socium.Population
                                 eGenderPriority = Customs.GenderPriority.Patriarchy;
                         }
                         // ...а в бисексуальном обществе - такая профессия так же бисексуальна
-                        else if (m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Bisexual)
+                        else if (m_pMajorsCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Bisexual)
                             eGenderPriority = Customs.GenderPriority.Genders_equality;
                     }
                     else

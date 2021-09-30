@@ -1,6 +1,7 @@
 ﻿using GeneLab;
 using GeneLab.Genetix;
 using Random;
+using Socium.Population;
 using Socium.Psichology;
 using System;
 using System.Collections.Generic;
@@ -18,15 +19,9 @@ namespace Socium.Nations
 
     public class Nation 
     {
-        public int m_iTechLevel = 0;
-        public int m_iMagicLimit = 0;
-
         public Fenotype<LandTypeInfoX> m_pFenotype;
 
-        public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
-
-        public Culture m_pCulture = null;
-        public Customs m_pCustoms = null;
+        public Society m_pSociety = null;
 
         public Race m_pRace = null;
 
@@ -38,8 +33,6 @@ namespace Socium.Nations
         public bool m_bInvader = false;
 
         public Epoch m_pEpoch = null;
-
-        public string m_sName = "";
 
         public Nation(Race pRace, Epoch pEpoch)
         {

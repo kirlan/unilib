@@ -47,6 +47,7 @@
     <Compile Include="Languages\Latin.cs" />
     <Compile Include="Nations\Nation.cs" />
     <Compile Include="Person.cs" />
+    <Compile Include="Population\ProvinceSociety.cs" />
     <Compile Include="Psichology\CultureTemplate.cs" />
     <Compile Include="Settlements\Building.cs" />
     <Compile Include="Settlements\BuildingStandAlone.cs" />

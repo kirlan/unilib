@@ -351,5 +351,20 @@ namespace Socium.Psichology
 
             return sResult;
         }
+
+        public override bool Equals(object obj)
+        {
+            var pOther = obj as Culture;
+            if (pOther == null)
+                return false;
+
+            foreach (Mentality eMentality in Mentalities)
+            {
+                if (m_cMentalityValues[eMentality] != pOther.m_cMentalityValues[eMentality])
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

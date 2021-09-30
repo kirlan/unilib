@@ -10,6 +10,7 @@ using Socium.Settlements;
 using Socium.Nations;
 using Socium.Psichology;
 using GeneLab.Genetix;
+using Socium.Population;
 
 namespace Socium
 {
@@ -19,8 +20,6 @@ namespace Socium
         /// ТОЛКО ДЛЯ ОТЛАДКИ!!!!
         /// </summary>
         public Dictionary<Province, string> m_cConnectionString = new Dictionary<Province,string>();
-
-        public string m_sName;
 
         private bool m_bForbidden = false;
 
@@ -76,51 +75,11 @@ namespace Socium
                     m_fPerimeter += pLine.m_fLength;
         }
 
-        public Nation m_pNation = null;
-
         public LandX m_pCenter;
 
         public LocationX m_pAdministrativeCenter = null;
 
-        /// <summary>
-        /// 1 - Бронзовый век. В ходу бронзовые кирасы и кожаные доспехи, бронзовое холодное оружие, из стрелкового оружия – луки и дротики.
-        /// 2 - Железный век. Стальное холодное оружие, кольчуги, рыцарские доспехи. Из стрелкового оружия - луки и арбалеты.
-        /// 3 - Эпоха пороха. Примитивное однозарядное огнестрельное оружие, лёгкие сабли и шпаги, облегчённая броня (кирасы, кожаные куртки).
-        /// 4 - Индустриальная эра. Нарезное огнестрельное оружие, примитивная бронетехника и авиация, химическое оружие массового поражения.
-        /// 5 - Атомная эра. Автоматическое огнестрельное оружие, бронежилеты, развитая бронетехника и авиация, ядерные ракеты и бомбы.
-        /// 6 - Энергетическая эра. Силовые поля, лучевое оружие.
-        /// 7 - Квантовая эра. Ограниченная телепортация, материализация, дезинтеграция.
-        /// 8 - Переход. Полная и неограниченная власть человека над пространственно-временным континуумом.
-        /// </summary>
-        public int m_iTechLevel = 0;
-        /// <summary>
-        /// 1 - Мистика. Ритуальная магия, требующая длительной предварительной подготовки. Используя психотропные вещества, гипноз и йогические практики, мистики могут общаться с миром духов, получая из него информацию или заключая сделки с его обитателями.
-        /// 2 - Псионика. Познание окружающего мира силой собственной мысли. Эмпатия, телепатия, ясновиденье, дальновиденье.
-        /// 3 - Сверхспособности. Управление материальными объектами без физического контакта: телекинез, пирокинез, левитация и т.д.... Как правило, один отдельно взятый персонаж может развить у себя только одну-две сверхспособности.
-        /// 4 - Традиционная фэнтезийная магия. То же самое, что и на предыдущем уровне, но гораздо доступнее. Один маг может владеть десятками заклинаний на разные случаи жизни.
-        /// 5 - Джинны. Способность произвольно менять облик, массу и физические свойства собственного тела. Использование магии без заклинаний - просто усилием мысли.
-        /// 6 - Титаны. Уровень личного могущества, обычно приписываемый языческим богам. Телепортация, материализация, управление течением времени.
-        /// 7 - Трансцендентность. Отсутствие привязки к физическом телу. Разум способен существовать  в нематериальной форме, при этом сохраняя все свои возможности воспринимать окружающую среду и воздействать на неё.
-        /// 8 - Единое. Границы между индивидуальностями стираются, фактически всё сообщество является единым разумным существом, неизмеримо более могущественным, чем составляющие его отдельные личности сами по себе.
-        /// </summary>
-        public int m_iMagicLimit = 0;
-        /// <summary>
-        /// Доступный жителям уровень жизни.
-        /// Зависит от технического и магического развития, определяет доступные формы государственного правления
-        /// </summary>
-        public int m_iInfrastructureLevel = 0;
-
-        public Culture m_pCulture = null;
-        public Customs m_pCustoms = null;
-
-        /// <summary>
-        /// Как часто встрачаются носители магических способностей
-        /// </summary>
-        //public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-        /// <summary>
-        /// Процент реально крутых магов среди всех носителей магических способностей
-        /// </summary>
-        public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
+        public ProvinceSociety m_pSociety = null;
 
         public float m_fFish = 0;
         public float m_fGrain = 0;
@@ -150,9 +109,8 @@ namespace Socium
             base.Start(pSeed);
 
             m_pCenter = pSeed;
-            m_pNation = pSeed.m_pNation;
 
-            m_sName = m_pNation.m_pRace.m_pLanguage.RandomCountryName();
+            m_pSociety = new ProvinceSociety(pSeed);
 
             m_cContents.Add(pSeed);
             pSeed.m_pProvince = this;
@@ -203,23 +161,23 @@ namespace Socium
 
 
 
-            foreach (LandTypeInfoX pType in m_pNation.m_aPreferredLands)
+            foreach (LandTypeInfoX pType in m_pSociety.m_pTitularNation.m_aPreferredLands)
                 if (pType == pLand.Type)
                     fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            foreach (LandTypeInfoX pType in m_pNation.m_aHatedLands)
+            foreach (LandTypeInfoX pType in m_pSociety.m_pTitularNation.m_aHatedLands)
                 if (pType == pLand.Type)
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            if (pLand.m_pNation != m_pNation)
+            if (pLand.m_pNation != m_pSociety.m_pTitularNation)
             {
-                if (m_pNation.m_bDying)
+                if (m_pSociety.m_pTitularNation.m_bDying)
                     fCost *= 9999999;
                 else
                     fCost *= 99999;
             }
 
-            if (m_pNation.m_bHegemon)
+            if (m_pSociety.m_pTitularNation.m_bHegemon)
                 fCost /= 2;
 
             if (fCost < 1)
@@ -335,7 +293,7 @@ namespace Socium
 
             m_bFullyGrown = true;
 
-            if (m_pNation.m_bDying)
+            if (m_pSociety.m_pTitularNation.m_bDying)
                 return !m_bFullyGrown;
 
             foreach (ITerritory pTerr in aBorder)
@@ -345,7 +303,7 @@ namespace Socium
 
                 LandX pLand = pTerr as LandX;
 
-                if (pLand.m_pNation != m_pNation)
+                if (pLand.m_pNation != m_pSociety.m_pTitularNation)
                     continue;
 
                 if (pLand.m_pProvince == null && !pLand.IsWater)
@@ -469,11 +427,11 @@ namespace Socium
                 }
             }
 
-            if (pMaxNation != null && !m_pNation.m_bDying)
-                m_pNation = pMaxNation;
+            if (pMaxNation != null && !m_pSociety.m_pTitularNation.m_bDying)
+                m_pSociety.m_pTitularNation = pMaxNation;
 
             foreach (LandX pLand in m_cContents)
-                pLand.m_pNation = m_pNation;
+                pLand.m_pNation = m_pSociety.m_pTitularNation;
         }
 
         public void BuildLairs(int iScale)
@@ -485,7 +443,7 @@ namespace Socium
         public void BuildSettlements(SettlementSize eSize, bool bFast)
         {
             //проверим для начала, а позволяет ли вообще текущий уровень инфраструктуры поселения такого размера?
-            if (!State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(eSize))
+            if (!State.InfrastructureLevels[m_pSociety.m_pCreed.m_iCultureLevel].m_cAvailableSettlements.Contains(eSize))
                 return;
 
             //определим, сколько поселений должно быть.
@@ -585,8 +543,8 @@ namespace Socium
         /// <param name="eRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
         public void BuildRoads(RoadQuality eRoadLevel, float fCycleShift)
         {
-            if (eRoadLevel > State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad)
-                eRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad;
+            if (eRoadLevel > State.InfrastructureLevels[m_pSociety.m_pCreed.m_iCultureLevel].m_eMaxGroundRoad)
+                eRoadLevel = State.InfrastructureLevels[m_pSociety.m_pCreed.m_iCultureLevel].m_eMaxGroundRoad;
 
             if (eRoadLevel == RoadQuality.None)
                 return;
@@ -686,13 +644,13 @@ namespace Socium
         /// <returns>локация со столицей</returns>
         public LocationX BuildCapital(bool bFast)
         {
-            m_iTechLevel = m_pNation.m_iTechLevel;
+            m_pSociety.m_iTechLevel = m_pSociety.m_pTitularNation.m_pSociety.m_iTechLevel;
             //m_iMagicLimit = m_pRace.m_iMagicLimit;
 
             //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
             //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
-            m_pCulture = new Culture(m_pNation.m_pCulture);
-            m_pCustoms = new Customs(m_pNation.m_pCustoms, Customs.Mutation.Possible);
+            m_pSociety.m_pCreed = new Creed(m_pSociety.m_pTitularNation.m_pSociety.m_pCreed);
+            m_pSociety.m_pCreed.m_pCustoms = new Customs(m_pSociety.m_pTitularNation.m_pSociety.m_pCreed.m_pCustoms, Customs.Mutation.Possible);
 
             //if (Rnd.OneChanceFrom(3))
             //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
