@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeneLab.Genetix;
 using Random;
-using Socium.Psichology;
+using Socium.Psychology;
 using Socium.Settlements;
 
 namespace Socium.Population
@@ -45,10 +45,10 @@ namespace Socium.Population
 
         private Society m_pSociety;
 
-        public Creed m_pMajorsCreed = null;
-        public Creed m_pMinorsCreed = null;
+        public Culture m_pMajorsCreed = null;
+        public Culture m_pMinorsCreed = null;
 
-        public Creed GetCreed(Gender eGender)
+        public Culture GetCreed(Gender eGender)
         {
             if (m_pMajorsCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Genders_equality ||
                 (m_pMajorsCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && eGender == Gender.Male) ||
@@ -63,17 +63,17 @@ namespace Socium.Population
             return m_pMajorsCreed.m_pCustoms.m_eGenderPriority != Customs.GenderPriority.Genders_equality;
         }
 
-        void UpdateCreed(Creed pCreed, Position ePosition)
+        void UpdateCreed(Culture pCreed, Position ePosition)
         {
             if (ePosition == Position.Outlaw)
-                pCreed.m_iCultureLevel--;
+                pCreed.m_iProgressLevel--;
             if (ePosition == Position.Elite)
-                pCreed.m_iCultureLevel++;
+                pCreed.m_iProgressLevel++;
 
-            if (pCreed.m_iCultureLevel < 0)
-                pCreed.m_iCultureLevel = 0;
-            if (pCreed.m_iCultureLevel > 8)
-                pCreed.m_iCultureLevel = 8;
+            if (pCreed.m_iProgressLevel < 0)
+                pCreed.m_iProgressLevel = 0;
+            if (pCreed.m_iProgressLevel > 8)
+                pCreed.m_iProgressLevel = 8;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Socium.Population
         /// <param name="ePosition"></param>
         public Estate(Estate pEstate, Position ePosition)
         {
-            m_pMajorsCreed = new Creed(pEstate.m_pMajorsCreed);
+            m_pMajorsCreed = new Culture(pEstate.m_pMajorsCreed);
 
             m_ePosition = ePosition;
 
@@ -91,7 +91,7 @@ namespace Socium.Population
 
             UpdateCreed(m_pMajorsCreed, ePosition);
 
-            m_pMinorsCreed = new Creed(pEstate.m_pMinorsCreed);
+            m_pMinorsCreed = new Culture(pEstate.m_pMinorsCreed);
 
             UpdateCreed(m_pMinorsCreed, ePosition);
 
@@ -109,7 +109,7 @@ namespace Socium.Population
         /// <param name="pSociety"></param>
         public Estate(Society pSociety, Position ePosition)
         {
-            m_pMajorsCreed = new Creed(pSociety.m_pCreed);
+            m_pMajorsCreed = new Culture(pSociety.m_pCulture);
             
             m_ePosition = ePosition;
 
@@ -117,7 +117,7 @@ namespace Socium.Population
 
             UpdateCreed(m_pMajorsCreed, ePosition);
             
-            m_pMinorsCreed = new Creed(m_pMajorsCreed);
+            m_pMinorsCreed = new Culture(m_pMajorsCreed);
             m_pMinorsCreed.m_pCustoms.m_eMarriage = m_pMajorsCreed.m_pCustoms.m_eMarriage;
             m_pMinorsCreed.m_pCustoms.m_eGenderPriority = m_pMajorsCreed.m_pCustoms.m_eGenderPriority;
 
@@ -163,7 +163,7 @@ namespace Socium.Population
                             eGenderPriority = Customs.GenderPriority.Genders_equality;
                         // менее престижные профессии - считаются подходящими "слабому" полу
                         if (iPreference < 0)
-                            eGenderPriority = m_pSociety.FixGenderPriority(eGenderPriority);
+                            eGenderPriority = m_pSociety.GetMinorGender(eGenderPriority);
                     }
                 }
 

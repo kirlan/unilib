@@ -17,7 +17,7 @@ using Socium.Languages;
 using Socium.Nations;
 using Socium.Settlements;
 using GeneLab.Genetix;
-using Socium.Psichology;
+using Socium.Psychology;
 
 namespace MapDrawEngine
 {

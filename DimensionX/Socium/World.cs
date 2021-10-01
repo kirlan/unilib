@@ -11,7 +11,7 @@ using Socium.Languages;
 using System.Diagnostics;
 using Socium.Nations;
 using Socium.Settlements;
-using Socium.Psichology;
+using Socium.Psychology;
 using Socium.Population;
 using GeneLab.Genetix;
 

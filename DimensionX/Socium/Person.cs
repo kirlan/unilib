@@ -8,7 +8,7 @@ using LandscapeGeneration;
 using Random;
 using Socium.Nations;
 using Socium.Population;
-using Socium.Psichology;
+using Socium.Psychology;
 using Socium.Settlements;
 
 namespace Socium
@@ -265,7 +265,7 @@ namespace Socium
         /// <summary>
         /// Вычисляет наиболее и наименее престижные навыки на основании культурных ценностей и обычаев
         /// </summary>
-        public static void GetSkillPreferences(Creed pCreed, ref Skill eMostRespectedSkill, ref Skill eLeastRespectedSkill)
+        public static void GetSkillPreferences(Culture pCreed, ref Skill eMostRespectedSkill, ref Skill eLeastRespectedSkill)
         {
             Dictionary<Skill, int> cSkillPreferences = new Dictionary<Skill, int>();
 
@@ -273,9 +273,9 @@ namespace Socium
             cSkillPreferences[Skill.Mind] = 0; 
             cSkillPreferences[Skill.Charm] = 0;
 
-            if (pCreed.GetMentalityValue(Mentality.Agression) > 1)
+            if (pCreed.GetTrait(Trait.Agression) > 1)
                 cSkillPreferences[Person.Skill.Body]++;
-            if (pCreed.GetMentalityValue(Mentality.Agression) > 1.5)
+            if (pCreed.GetTrait(Trait.Agression) > 1.5)
                 cSkillPreferences[Person.Skill.Body]++;
 
             //if (m_pCulture.MentalityValues[Mentality.Rudeness][m_iCultureLevel] < 1)
@@ -296,9 +296,9 @@ namespace Socium
             if (pCreed.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Traditionalism)
+            if (pCreed.m_pCustoms.m_eScience == Customs.Science.Traditionalism)
                 cSkillPreferences[Person.Skill.Mind]--;
-            if (pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Technofetishism)
+            if (pCreed.m_pCustoms.m_eScience == Customs.Science.Technofetishism)
                 cSkillPreferences[Person.Skill.Mind]++;
 
             if (pCreed.m_pCustoms.m_eSexuality == Customs.Sexuality.Puritan)
@@ -444,7 +444,7 @@ namespace Socium
         public bool m_bFinished = false;
 
         public StateSociety m_pHomeSociety;
-        public Creed m_pCreed;
+        public Culture m_pCreed;
         public Fenotype m_pFamilyFenotype;
         public Fenotype m_pFenotype;
         public Dictionary<Skill, ProfessionInfo.SkillLevel> m_cSkills = new Dictionary<Skill, ProfessionInfo.SkillLevel>();
@@ -456,8 +456,8 @@ namespace Socium
         {
             var pOriginCreed = pRelative != null && pRelative.m_eGender == m_eGender ? pRelative.m_pCreed : m_pEstate.GetCreed(m_eGender);
 
-            var pCulture = new Culture(pOriginCreed.m_pCulture);
-            var iCultureLevel = pOriginCreed.m_iCultureLevel;
+            var pCulture = new Mentality(pOriginCreed.m_pMentality);
+            var iCultureLevel = pOriginCreed.m_iProgressLevel;
             
             if (Rnd.OneChanceFrom(10))
             {
@@ -467,11 +467,11 @@ namespace Socium
                     iCultureLevel--;
             }
 
-            if (iCultureLevel < m_pHomeSociety.m_pCreed.m_iCultureLevel - 1)
-                iCultureLevel = m_pHomeSociety.m_pCreed.m_iCultureLevel - 1;
+            if (iCultureLevel < m_pHomeSociety.m_pCulture.m_iProgressLevel - 1)
+                iCultureLevel = m_pHomeSociety.m_pCulture.m_iProgressLevel - 1;
 
-            if (iCultureLevel > m_pHomeSociety.m_pCreed.m_iCultureLevel + 1)
-                iCultureLevel = m_pHomeSociety.m_pCreed.m_iCultureLevel + 1;
+            if (iCultureLevel > m_pHomeSociety.m_pCulture.m_iProgressLevel + 1)
+                iCultureLevel = m_pHomeSociety.m_pCulture.m_iProgressLevel + 1;
 
             if (iCultureLevel < 0)
                 iCultureLevel = 0;
@@ -481,7 +481,7 @@ namespace Socium
 
             var pCustoms = new Customs(pOriginCreed.m_pCustoms, Customs.Mutation.Possible);
 
-            m_pCreed = new Creed(pCulture, iCultureLevel, pCustoms);
+            m_pCreed = new Culture(pCulture, iCultureLevel, pCustoms);
 
             m_pFamilyFenotype = pRelative == null ? (Fenotype)m_pNation.m_pFenotype.MutateFamily() : pRelative.m_pFamilyFenotype;
             m_pFenotype = (Fenotype)m_pFamilyFenotype.MutateIndividual();
@@ -1196,10 +1196,10 @@ namespace Socium
                 
                 if (m_cRelations[pRelative] == Relation.Spouse)
                 {
-                    if (m_eGender == pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                    if (m_eGender == pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
                         return false;
 
-                    if (m_eGender != pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
+                    if (m_eGender != pRelative.m_eGender && pRelative.m_pHomeSociety.m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
                         return false;
                 }
             }
@@ -1360,10 +1360,10 @@ namespace Socium
                                                 else
                                                     cNewKins[pFarRelative.Key] = Relation.Lover;
 
-                                                if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual &&
+                                                if (m_pHomeSociety.m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual &&
                                                     m_eGender == pFarRelative.Key.m_eGender)
                                                     cNewKins[pFarRelative.Key] = Relation.Friend;
-                                                if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual &&
+                                                if (m_pHomeSociety.m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual &&
                                                     m_eGender != pFarRelative.Key.m_eGender)
                                                     cNewKins[pFarRelative.Key] = Relation.Friend;
                                             }
@@ -2066,10 +2066,10 @@ namespace Socium
                         {
                             switch (pRelative.Key.m_pCreed.m_pCustoms.m_eSexuality)
                             {
-                                case Psichology.Customs.Sexuality.Moderate_sexuality:
+                                case Psychology.Customs.Sexuality.Moderate_sexuality:
                                     cLovers[pRelative.Key] = fTension / fMaxAttraction;
                                     break;
-                                case Psichology.Customs.Sexuality.Lecherous:
+                                case Psychology.Customs.Sexuality.Lecherous:
                                     cLovers[pRelative.Key] = 2f * fTension / fMaxAttraction;
                                     break;
                             }
@@ -2370,10 +2370,10 @@ namespace Socium
                     break;
             }
 
-            if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && m_eGender == Gender.Male)
+            if (m_pHomeSociety.m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && m_eGender == Gender.Male)
                 fPersonalInfluence /= 2;
 
-            if (m_pHomeSociety.m_pCreed.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && m_eGender == Gender.Female)
+            if (m_pHomeSociety.m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && m_eGender == Gender.Female)
                 fPersonalInfluence /= 2;
 
             if (m_eAge == _Age.Young)
@@ -3222,12 +3222,12 @@ namespace Socium
             //if (m_pCustoms.m_eMagic == Customs.Magic.Magic_Allowed)
             //    sResult += pOther.m_eMagic == Magic.Magic_Feared ? "has no fear for magic" : "doesn't like magic too much";
 
-            if (sResult != "" && m_pCreed.m_pCustoms.m_eProgress != Customs.Progressiveness.Moderate_Science)
+            if (sResult != "" && m_pCreed.m_pCustoms.m_eScience != Customs.Science.Moderate_Science)
                 sResult += ", ";
 
-            if (m_pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Traditionalism)
+            if (m_pCreed.m_pCustoms.m_eScience == Customs.Science.Traditionalism)
                 sResult += "rejects any technological novelties";
-            if (m_pCreed.m_pCustoms.m_eProgress == Customs.Progressiveness.Technofetishism)
+            if (m_pCreed.m_pCustoms.m_eScience == Customs.Science.Technofetishism)
                 sResult += "likes any technological novelties";
             //if (m_pCustoms.m_eProgress == Customs.Progressiveness.Moderate_Science)
             //    sResult += pOther.m_eProgress == Progressiveness.Traditionalism ? "accepts some regulated progress" : "doesn't like novelties so much";
@@ -3707,9 +3707,9 @@ namespace Socium
                 fInfluenceDiff = (float)iOpponentInfluence / iMyInfluence;
 
             if (fHostility > 0)
-                fHostility = (float)(m_pCreed.GetMentalityValue(Mentality.Fanaticism) * fHostility * fInfluenceDiff * fProximity);
+                fHostility = (float)(m_pCreed.GetTrait(Trait.Fanaticism) * fHostility * fInfluenceDiff * fProximity);
             else if (fHostility < 0)
-                fHostility = (float)((2.0f - m_pCreed.GetMentalityValue(Mentality.Fanaticism)) * fHostility * fInfluenceDiff * fProximity);
+                fHostility = (float)((2.0f - m_pCreed.GetTrait(Trait.Fanaticism)) * fHostility * fInfluenceDiff * fProximity);
 
             return fHostility;
         }
@@ -3905,7 +3905,7 @@ namespace Socium
                     }
                 }
 
-                float iCultureDifference = m_pCreed.m_pCulture.GetDifference(pOpponent.m_pCreed.m_pCulture, m_pCreed.m_iCultureLevel, pOpponent.m_pCreed.m_iCultureLevel);
+                float iCultureDifference = m_pCreed.m_pMentality.GetDifference(pOpponent.m_pCreed.m_pMentality, m_pCreed.m_iProgressLevel, pOpponent.m_pCreed.m_iProgressLevel);
                 if (iCultureDifference == -1 || pOpponent == this)
                 {
                     //iHostility -= 3;
@@ -3984,7 +3984,7 @@ namespace Socium
             {
                 //iHostility = (int)(100.0 * m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] * iHostility * fInfluenceDiff * fProximity + 0.25);
                 //iHostility = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel] * iHostility * Math.Min(pOpponent.GetInfluence(false), GetInfluence(false) * 2) / GetInfluence(false) + 0.25);
-                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCreed.GetMentalityValue(Mentality.Fanaticism) * 100));
+                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(m_pCreed.GetTrait(Trait.Fanaticism) * 100));
 
                 sReasons += string.Format("Social distance \t(x{0}%)\n", (int)(fInfluenceDiff * 100));
                 //iHostility = (int)(m_pHome.Owner.m_pCulture.MentalityValues[Mentality.Agression][m_pHome.Owner.m_iCultureLevel] * iHostility + 0.25);
@@ -4004,7 +4004,7 @@ namespace Socium
             {
                 //iHostility = (int)(100.0 * (2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel]) * iHostility * fInfluenceDiff * fProximity - 0.25);
                 //iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][m_iCultureLevel]) * iHostility * Math.Min(pOpponent.GetInfluence(false), GetInfluence(false) * 2) / GetInfluence(false) - 0.25);
-                sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCreed.GetMentalityValue(Mentality.Fanaticism)) * 100));
+                sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - m_pCreed.GetTrait(Trait.Fanaticism)) * 100));
 
                 sReasons += string.Format("Social distance \t(x{0}%)\n", (int)(fInfluenceDiff * 100));
                 //iHostility = (int)((2.0f - m_pHome.Owner.m_pCulture.MentalityValues[Mentality.Agression][m_pHome.Owner.m_iCultureLevel]) * iHostility - 0.25);

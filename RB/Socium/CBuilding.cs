@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Random;
-using Socium.Psichology;
+using Socium.Psychology;
 using RB.Socium.Psichology;
 using RB.Genetix.GenetixParts;
 

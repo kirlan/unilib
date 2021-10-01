@@ -12,7 +12,7 @@ using LandscapeGeneration;
 using Socium;
 using MapDrawEngine;
 using WorldGeneration;
-using Socium.Psichology;
+using Socium.Psychology;
 using Socium.Settlements;
 using Socium.Nations;
 using Socium.Population;
@@ -104,7 +104,7 @@ namespace VQMapTest2
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
-            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", Society.GetTechString(m_pWorld.m_aEpoches.Last().m_iNativesMaxTechLevel, Socium.Psichology.Customs.Progressiveness.Moderate_Science), m_pWorld.m_aEpoches.Last().m_iNativesMaxTechLevel);
+            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", Society.GetTechString(m_pWorld.m_aEpoches.Last().m_iNativesMaxTechLevel, Socium.Psychology.Customs.Science.Moderate_Science), m_pWorld.m_aEpoches.Last().m_iNativesMaxTechLevel);
             if (m_pWorld.m_aEpoches.Last().m_iNativesMaxMagicLevel > 0)
             {
                 label8.Text = string.Format("Magic users: up to {0} [M{1}]", Society.GetMagicString(m_pWorld.m_aEpoches.Last().m_iNativesMaxMagicLevel), m_pWorld.m_aEpoches.Last().m_iNativesMaxMagicLevel);
@@ -254,7 +254,7 @@ namespace VQMapTest2
             richTextBox1.AppendText(string.Format("Economic system : {0}\n\n", Society.GetEqualityString(pSociety.m_iSocialEquality))); 
             
             richTextBox1.AppendText(string.Format("Culture:\n"));
-            foreach (Mentality eMentality in Culture.Mentalities)
+            foreach (Trait eMentality in Mentality.AllTraits)
             {
                 richTextBox1.AppendText("   ");
                 //richTextBox1.AppendText(string.Format("   {0}: \t", eMorale));

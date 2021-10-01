@@ -48,12 +48,12 @@
     <Compile Include="Nations\Nation.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Population\ProvinceSociety.cs" />
-    <Compile Include="Psichology\CultureTemplate.cs" />
+    <Compile Include="Psychology\MentalityTemplate.cs" />
     <Compile Include="Settlements\Building.cs" />
     <Compile Include="Settlements\BuildingStandAlone.cs" />
     <Compile Include="ContinentX.cs" />
-    <Compile Include="Psichology\Culture.cs" />
-    <Compile Include="Psichology\Customs.cs" />
+    <Compile Include="Psychology\Mentality.cs" />
+    <Compile Include="Psychology\Customs.cs" />
     <Compile Include="Epoch.cs" />
     <Compile Include="LandTypeInfoX.cs" />
     <Compile Include="LandX.cs" />
@@ -84,7 +84,7 @@
     <Compile Include="Population\Society.cs" />
     <Compile Include="Population\StateSociety.cs" />
     <Compile Include="State.cs" />
-    <Compile Include="Population\Creed.cs" />
+    <Compile Include="Psychology\Culture.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 using GeneLab.Genetix;
 using Random;
 using Socium.Population;
-using Socium.Psichology;
+using Socium.Psychology;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +57,7 @@ namespace Socium.Nations
 
             m_pFenotype.GetTerritoryPreferences(out m_aPreferredLands, out m_aHatedLands);
 
-            m_pCulture = new Culture(pRace.m_pCulture);
+            m_pCulture = new Mentality(pRace.m_pCulture);
             m_pCustoms = new Customs();
 
             m_iTechLevel = pEpoch.m_iNativesMaxTechLevel;

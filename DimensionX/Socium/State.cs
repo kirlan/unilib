@@ -9,7 +9,7 @@ using LandscapeGeneration.PathFind;
 using Socium.Languages;
 using Socium.Settlements;
 using Socium.Nations;
-using Socium.Psichology;
+using Socium.Psychology;
 using GeneLab.Genetix;
 using Socium.Population;
 
@@ -896,7 +896,7 @@ namespace Socium
                                 List<float> cResources = new List<float>();
                                 //в толерантном обществе специализация городов выбирается исходя из общего состояния ресурсов в государстве,
                                 //а в эгоистичном обществе - в каждой провинции свои приоритеты
-                                if (m_pSociety.m_pCulture.MentalityValues[Mentality.Fanaticism][m_pSociety.m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                if (m_pSociety.m_pCulture.MentalityValues[Trait.Fanaticism][m_pSociety.m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
                                 {
                                     cResources.Add(m_iFood);
                                     cResources.Add(m_iOre);
@@ -932,17 +932,17 @@ namespace Socium
                                 pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
                             else
                             {
-                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Trait.Simplicity][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
                                     {
                                         List<float> cResources = new List<float>();
-                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel]);
-                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Piety][m_pSociety.m_iInfrastructureLevel]);
-                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Agression][m_pSociety.m_iInfrastructureLevel]);
-                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Treachery][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Trait.Simplicity][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Trait.Piety][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Trait.Agression][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Trait.Treachery][m_pSociety.m_iInfrastructureLevel]);
 
                                         float fScience = 0.05f;
                                         if (m_pSociety.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
@@ -984,7 +984,7 @@ namespace Socium
                                         List<float> cResources = new List<float>();
                                         //в толерантном обществе специализация городов выбирается исходя из общего состояния ресурсов в государстве,
                                         //а в эгоистичном обществе - в каждой провинции свои приоритеты
-                                        if (m_pSociety.m_pCulture.MentalityValues[Mentality.Fanaticism][m_pSociety.m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                        if (m_pSociety.m_pCulture.MentalityValues[Trait.Fanaticism][m_pSociety.m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
                                         {
                                             cResources.Add(m_iFood);
                                             cResources.Add(m_iOre);
@@ -1022,17 +1022,17 @@ namespace Socium
                                 pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
                             else
                             {
-                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
+                                if (bCoast && m_pSociety.m_iInfrastructureLevel > 2 && m_pSociety.m_pCulture.MentalityValues[Trait.Simplicity][m_pSociety.m_iInfrastructureLevel] > 1 + Rnd.Get(1f))
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
                                     {
                                         List<float> cResources = new List<float>();
-                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Mentality.Simplicity][m_pSociety.m_iInfrastructureLevel]);
-                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Piety][m_pSociety.m_iInfrastructureLevel]);
-                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Agression][m_pSociety.m_iInfrastructureLevel]);
-                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Mentality.Treachery][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(2 - m_pSociety.m_pCulture.MentalityValues[Trait.Simplicity][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Trait.Piety][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Trait.Agression][m_pSociety.m_iInfrastructureLevel]);
+                                        cResources.Add(m_pSociety.m_pCulture.MentalityValues[Trait.Treachery][m_pSociety.m_iInfrastructureLevel]);
 
                                         float fScience = 0.05f;
                                         if (m_pSociety.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
@@ -1074,7 +1074,7 @@ namespace Socium
                                         List<float> cResources = new List<float>();
                                         //в толерантном обществе специализация городов выбирается исходя из общего состояния ресурсов в государстве,
                                         //а в эгоистичном обществе - в каждой провинции свои приоритеты
-                                        if (m_pSociety.m_pCulture.MentalityValues[Mentality.Fanaticism][m_pSociety.m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
+                                        if (m_pSociety.m_pCulture.MentalityValues[Trait.Fanaticism][m_pSociety.m_iInfrastructureLevel] < 1 + Rnd.Get(1f))
                                         {
                                             cResources.Add(m_iFood);
                                             cResources.Add(m_iOre);
@@ -1110,16 +1110,16 @@ namespace Socium
                         case SettlementSize.Fort:
                             if (bCoast)
                             {
-                                if (m_pSociety.m_pCulture.MentalityValues[Mentality.Agression][m_pSociety.m_iInfrastructureLevel] > 1.5 &&
-                                    m_pSociety.m_pCulture.MentalityValues[Mentality.Treachery][m_pSociety.m_iInfrastructureLevel] > 1.5)
+                                if (m_pSociety.m_pCulture.MentalityValues[Trait.Agression][m_pSociety.m_iInfrastructureLevel] > 1.5 &&
+                                    m_pSociety.m_pCulture.MentalityValues[Trait.Treachery][m_pSociety.m_iInfrastructureLevel] > 1.5)
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Pirates;
                                 else
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Naval;
                             }
                             else
                             {
-                                if (m_pSociety.m_pCulture.MentalityValues[Mentality.Agression][m_pSociety.m_iInfrastructureLevel] > 1.5 &&
-                                    m_pSociety.m_pCulture.MentalityValues[Mentality.Treachery][m_pSociety.m_iInfrastructureLevel] > 1.5)
+                                if (m_pSociety.m_pCulture.MentalityValues[Trait.Agression][m_pSociety.m_iInfrastructureLevel] > 1.5 &&
+                                    m_pSociety.m_pCulture.MentalityValues[Trait.Treachery][m_pSociety.m_iInfrastructureLevel] > 1.5)
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Raiders;
                                 else
                                     pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Military;

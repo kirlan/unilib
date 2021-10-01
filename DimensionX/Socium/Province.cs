@@ -8,7 +8,7 @@ using NameGen;
 using LandscapeGeneration.PathFind;
 using Socium.Settlements;
 using Socium.Nations;
-using Socium.Psichology;
+using Socium.Psychology;
 using GeneLab.Genetix;
 using Socium.Population;
 
@@ -443,7 +443,7 @@ namespace Socium
         public void BuildSettlements(SettlementSize eSize, bool bFast)
         {
             //проверим для начала, а позволяет ли вообще текущий уровень инфраструктуры поселения такого размера?
-            if (!State.InfrastructureLevels[m_pSociety.m_pCreed.m_iCultureLevel].m_cAvailableSettlements.Contains(eSize))
+            if (!State.InfrastructureLevels[m_pSociety.m_pCulture.m_iProgressLevel].m_cAvailableSettlements.Contains(eSize))
                 return;
 
             //определим, сколько поселений должно быть.
@@ -543,8 +543,8 @@ namespace Socium
         /// <param name="eRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
         public void BuildRoads(RoadQuality eRoadLevel, float fCycleShift)
         {
-            if (eRoadLevel > State.InfrastructureLevels[m_pSociety.m_pCreed.m_iCultureLevel].m_eMaxGroundRoad)
-                eRoadLevel = State.InfrastructureLevels[m_pSociety.m_pCreed.m_iCultureLevel].m_eMaxGroundRoad;
+            if (eRoadLevel > State.InfrastructureLevels[m_pSociety.m_pCulture.m_iProgressLevel].m_eMaxGroundRoad)
+                eRoadLevel = State.InfrastructureLevels[m_pSociety.m_pCulture.m_iProgressLevel].m_eMaxGroundRoad;
 
             if (eRoadLevel == RoadQuality.None)
                 return;
@@ -649,8 +649,8 @@ namespace Socium
 
             //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
             //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
-            m_pSociety.m_pCreed = new Creed(m_pSociety.m_pTitularNation.m_pSociety.m_pCreed);
-            m_pSociety.m_pCreed.m_pCustoms = new Customs(m_pSociety.m_pTitularNation.m_pSociety.m_pCreed.m_pCustoms, Customs.Mutation.Possible);
+            m_pSociety.m_pCulture = new Culture(m_pSociety.m_pTitularNation.m_pSociety.m_pCulture);
+            m_pSociety.m_pCulture.m_pCustoms = new Customs(m_pSociety.m_pTitularNation.m_pSociety.m_pCulture.m_pCustoms, Customs.Mutation.Possible);
 
             //if (Rnd.OneChanceFrom(3))
             //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
@@ -925,8 +925,8 @@ namespace Socium
 
             if (iHostility > 0)
             {
-                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] * iHostility + 0.25);
-                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] * iHostility + 0.25);
+                iHostility = (int)(m_pCulture.MentalityValues[Trait.Fanaticism][m_iInfrastructureLevel] * iHostility + 0.25);
+                iHostility = (int)(m_pCulture.MentalityValues[Trait.Agression][m_iInfrastructureLevel] * iHostility + 0.25);
                 if (iHostility == 0)
                     iHostility = 1;
             }
@@ -934,8 +934,8 @@ namespace Socium
             {
                 if (iHostility < 0)
                 {
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel]) * iHostility - 0.25);
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel]) * iHostility - 0.25);
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Trait.Fanaticism][m_iInfrastructureLevel]) * iHostility - 0.25);
+                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Trait.Agression][m_iInfrastructureLevel]) * iHostility - 0.25);
                     if (iHostility == 0)
                         iHostility = -1;
                 }
