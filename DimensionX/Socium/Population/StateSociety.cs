@@ -12,7 +12,7 @@ using Socium.Languages;
 
 namespace Socium.Population
 {
-    public class StateSociety: Society
+    public class StateSociety: NationalSociety
     {
         #region State Models Array
         public class StateModel
@@ -237,6 +237,14 @@ namespace Socium.Population
         #endregion
 
         /// <summary>
+        /// 0 - Анархия. Есть номинальная власть, но она не занимается охраной правопорядка.
+        /// 1 - Власти занимаются только самыми вопиющими преступлениями.
+        /// 2 - Есть законы, их надо соблюдать, кто не соблюдает - тот преступник, а вор должен сидеть в тюрьме.
+        /// 3 - Законы крайне строги, широко используется смертная казнь.
+        /// 4 - Тоталитарная диктатура. Все граждане, кроме правящей верхушки, попадают под презумпцию виновности.
+        /// </summary>
+        public int m_iControl = 0;
+        /// <summary>
         /// Уровень социального (не)равенства.
         /// 0 - рабство
         /// 1 - крепостное право
@@ -246,14 +254,6 @@ namespace Socium.Population
         /// </summary>
         public int m_iSocialEquality = 0;
 
-        /// <summary>
-        /// Доступный жителям уровень жизни.
-        /// Зависит от технического и магического развития, определяет доступные формы государственного правления
-        /// </summary>
-        public int m_iInfrastructureLevel = 0;
-
-        public Nation m_pTitularNation = null;
-
         public StateModel m_pStateModel = null;
 
         private State m_pState = null;
@@ -261,15 +261,17 @@ namespace Socium.Population
         public Dictionary<Estate.Position, Estate> m_cEstates = new Dictionary<Estate.Position, Estate>();
 
         public StateSociety(State pState)
+            : base(pState.m_pMethropoly.m_pLocalSociety.m_pTitularNation)
         {
             m_pState = pState;
 
             m_iTechLevel = 0;
             m_iInfrastructureLevel = 0;
-            m_pCulture = new Culture(pState.m_pMethropoly.m_pSociety.m_pCulture);
-            m_pCulture.m_pCustoms = new Customs(pState.m_pMethropoly.m_pSociety.m_pCulture.m_pCustoms, Customs.Mutation.Possible);
 
-            m_pTitularNation = pState.m_pMethropoly.m_pSociety.m_pTitularNation;
+            m_cCulture[Gender.Male] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
+            m_cCulture[Gender.Female] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
+
+            FixSexCustoms();
         }
 
         public void CalculateTitularNation()
@@ -283,20 +285,20 @@ namespace Socium.Population
             {
                 int iCount = 0;
 
-                if (!cNationsCount.TryGetValue(pProvince.m_pNation, out iCount))
-                    cNationsCount[pProvince.m_pNation] = 0;
-                cNationsCount[pProvince.m_pNation] = iCount + pProvince.m_iPopulation;
-                if (cNationsCount[pProvince.m_pNation] > iMaxPop)
+                if (!cNationsCount.TryGetValue(pProvince.m_pLocalSociety.m_pTitularNation, out iCount))
+                    cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] = 0;
+                cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] = iCount + pProvince.m_iPopulation;
+                if (cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] > iMaxPop)
                 {
-                    iMaxPop = cNationsCount[pProvince.m_pNation];
-                    pMostCommonNation = pProvince.m_pNation;
+                    iMaxPop = cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation];
+                    pMostCommonNation = pProvince.m_pLocalSociety.m_pTitularNation;
                 }
 
-                if (pProvince.m_iTechLevel > m_iTechLevel)
-                    m_iTechLevel = pProvince.m_iTechLevel;
+                if (pProvince.m_pLocalSociety.m_iTechLevel > m_iTechLevel)
+                    m_iTechLevel = pProvince.m_pLocalSociety.m_iTechLevel;
 
-                if (pProvince.m_iInfrastructureLevel > m_iInfrastructureLevel)
-                    m_iInfrastructureLevel = pProvince.m_iInfrastructureLevel;
+                if (pProvince.m_pLocalSociety.m_iInfrastructureLevel > m_iInfrastructureLevel)
+                    m_iInfrastructureLevel = pProvince.m_pLocalSociety.m_iInfrastructureLevel;
                 //m_iInfrastructureLevel += pProvince.m_iInfrastructureLevel;
                 //fInfrastructureLevel += 1.0f/(pProvince.m_iInfrastructureLevel+1);
             }
@@ -327,6 +329,8 @@ namespace Socium.Population
         {
             return m_pStateModel.m_pSocial.m_cEstates[ePosition][Rnd.Get(m_pStateModel.m_pSocial.m_cEstates[ePosition].Length)];
         }
+
+        public Dictionary<ProfessionInfo, int> m_cPeople = new Dictionary<ProfessionInfo, int>();
 
         /// <summary>
         /// Распределяет население государства по сословиям. 
@@ -388,6 +392,7 @@ namespace Socium.Population
 
             // таблица предпочтений в профессиях - в соответствии с необходимыми для профессии скиллами и полом
             SortedDictionary<int, List<ProfessionInfo>> cProfessionPreference = new SortedDictionary<int, List<ProfessionInfo>>();
+
             /// <summary>
             /// Удаляет профессию из списка преференций
             /// </summary>
@@ -422,14 +427,14 @@ namespace Socium.Population
                 if (pProfession.Key.m_bMaster)
                     iPreference += 4;
 
-                int iDiscrimination = (int)(m_pCulture.GetTrait(Trait.Fanaticism) + 0.5);
+                int iDiscrimination = (int)(DominantCulture.GetTrait(Trait.Fanaticism) + 0.5);
 
-                var eProfessionGenderPriority = GetProfessionGenderPriority(pProfession.Key, m_pCulture.m_pCustoms);
+                var eProfessionGenderPriority = GetProfessionGenderPriority(pProfession.Key);
 
-                if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy &&
+                if (DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy &&
                     eProfessionGenderPriority == Customs.GenderPriority.Matriarchy)
                     iPreference -= iDiscrimination;
-                if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy &&
+                if (DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy &&
                     eProfessionGenderPriority == Customs.GenderPriority.Patriarchy)
                     iPreference -= iDiscrimination;
 
@@ -465,7 +470,7 @@ namespace Socium.Population
                             pEstate = m_cEstates[Estate.Position.Outlaw];
                             break;
                     }
-                    pEstate.m_cGenderProfessionPreferences[pProfession.Key] = GetProfessionGenderPriority(pProfession.Key, pEstate.m_pMajorsCreed.m_pCustoms);
+                    pEstate.m_cGenderProfessionPreferences[pProfession.Key] = GetProfessionGenderPriority(pProfession.Key);
                     removeProfessionPreference(pProfession.Key);
                 }
             }
@@ -554,7 +559,7 @@ namespace Socium.Population
             }
 
             foreach (var pEstate in m_cEstates)
-                pEstate.Value.FixGenderProfessionPreferences();
+                pEstate.Value.CalculateGenderProfessionPreferences();
         }
 
         /// <summary>
@@ -1471,10 +1476,7 @@ namespace Socium.Population
         internal void CalculateSocietyFeatures(int iEmpireTreshold)
         {
             // Adjustiong TL due to lack or abundance of resouces
-            CheckResources();
-
-            // Set available infrastructure level according TL and food availability
-            CheckFood();
+            CheckResources(m_pState.m_iWood, m_pState.m_iOre, m_pState.m_iFood, m_pState.m_iPopulation, m_pState.m_cContents.Count);
 
             // Choose state system
             SelectGovernmentSystem(iEmpireTreshold);
@@ -1486,76 +1488,6 @@ namespace Socium.Population
             SetStateControl();
 
             Person.GetSkillPreferences(m_pCulture, m_iCultureLevel, m_pCustoms, ref m_eMostRespectedSkill, ref m_eLeastRespectedSkill);
-        }
-
-        private void CheckResources()
-        {
-            if (m_pState.m_iWood * 2 < Rnd.Get(m_pState.m_iPopulation) && m_pState.m_iOre * 2 < Rnd.Get(m_pState.m_iPopulation))// && Rnd.OneChanceFrom(2))
-                m_iTechLevel -= 2;
-            else if (m_pState.m_iWood + m_pState.m_iOre < Rnd.Get(m_pState.m_iPopulation))// && Rnd.OneChanceFrom(2))
-                m_iTechLevel--;
-            else if ((m_pState.m_iWood > Rnd.Get(m_pState.m_iPopulation) * 2 && m_pState.m_iOre > Rnd.Get(m_pState.m_iPopulation) * 2))// || Rnd.OneChanceFrom(4))
-                m_iTechLevel++;
-
-            if (m_pTitularNation.m_bInvader)
-            {
-                if (m_iTechLevel < m_pTitularNation.m_pEpoch.m_iInvadersMinTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMinTechLevel;
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel;
-            }
-            else
-            {
-                if (m_iTechLevel < m_pTitularNation.m_pEpoch.m_iNativesMinTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iNativesMinTechLevel;
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel;
-            }
-        }
-
-        private void CheckFood()
-        {
-            //m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety, m_iTechLevel, m_iTechLevel) * 4);
-            m_iInfrastructureLevel = m_iTechLevel;// -(int)(m_iTechLevel * Math.Pow(Rnd.Get(1f), 3));
-
-            if (m_pState.m_cContents.Count == 1 && m_iInfrastructureLevel > 4)
-                m_iInfrastructureLevel /= 2;
-
-            if (m_pState.m_pSociety.m_iTechLevel == 0 && m_pTitularNation.m_iMagicLimit == 0)
-                m_iInfrastructureLevel = 0;
-
-
-            if (m_pState.m_iFood * 2 < m_pState.m_iPopulation)
-                m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);            
-            if (m_pState.m_iFood < m_pState.m_iPopulation || Rnd.OneChanceFrom(10))
-                m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);
-            if (m_pState.m_iFood > m_pState.m_iPopulation * 2 && Rnd.OneChanceFrom(10))
-                m_iInfrastructureLevel++;
-
-            if (m_iInfrastructureLevel < 0)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)
-                m_iInfrastructureLevel = 0;//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2;
-            if (m_iInfrastructureLevel > m_iTechLevel + 1)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1))
-                m_iInfrastructureLevel = m_iTechLevel + 1;// Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1);
-            if (m_iInfrastructureLevel > 8)
-                m_iInfrastructureLevel = 8;
-
-            // Adjusting TL due to infrastructure level
-            while (GetEffectiveTech() > m_iInfrastructureLevel * 2)
-                m_iTechLevel--;
-
-            if (m_iTechLevel < 0)
-                m_iTechLevel = 0;
-
-            if (m_pTitularNation.m_bInvader)
-            {
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel;
-            }
-            else
-            {
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel;
-            }
         }
 
         private void SelectGovernmentSystem(int iEmpireTreshold)

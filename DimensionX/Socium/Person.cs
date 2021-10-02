@@ -296,9 +296,9 @@ namespace Socium
             if (pCreed.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCreed.m_pCustoms.m_eScience == Customs.Science.Traditionalism)
+            if (pCreed.m_pCustoms.m_eScience == Customs.Science.Technophobia)
                 cSkillPreferences[Person.Skill.Mind]--;
-            if (pCreed.m_pCustoms.m_eScience == Customs.Science.Technofetishism)
+            if (pCreed.m_pCustoms.m_eScience == Customs.Science.Ingenuity)
                 cSkillPreferences[Person.Skill.Mind]++;
 
             if (pCreed.m_pCustoms.m_eSexuality == Customs.Sexuality.Puritan)

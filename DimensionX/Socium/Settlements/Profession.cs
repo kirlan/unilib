@@ -23,6 +23,8 @@ namespace Socium.Settlements
             Outlaw
         };
 
+        public static readonly List<ProfessionInfo> s_cAllProfessions = new List<ProfessionInfo>();
+
         #region Commoners
         public static readonly ProfessionInfo Nobody = new ProfessionInfo("nobody", false, SkillLevel.None, SkillLevel.None, SkillLevel.None);
 
@@ -464,6 +466,8 @@ namespace Socium.Settlements
             m_sNameF = sNameF;
             m_eCasteRestriction = eRestriction;
             m_bMaster = bMaster;
+
+            s_cAllProfessions.Add(this);
         }
     }
 }

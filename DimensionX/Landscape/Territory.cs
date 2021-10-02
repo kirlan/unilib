@@ -18,6 +18,9 @@ namespace LandscapeGeneration
             get { return m_bForbidden; /*this == Territory<INNER>.m_pForbidden;*/ }
         }
 
+        /// <summary>
+        /// Локации, составляющие территорию
+        /// </summary>
         public List<INNER> m_cContents = new List<INNER>();
 
         /// <summary>

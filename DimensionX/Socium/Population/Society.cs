@@ -41,14 +41,6 @@ namespace Socium.Population
         /// 8 - Единое. Границы между индивидуальностями стираются, фактически всё сообщество является единым разумным существом, неизмеримо более могущественным, чем составляющие его отдельные личности сами по себе.
         /// </summary>
         public int m_iMagicLimit = 0;
-        /// <summary>
-        /// 0 - Анархия. Есть номинальная власть, но она не занимается охраной правопорядка.
-        /// 1 - Власти занимаются только самыми вопиющими преступлениями.
-        /// 2 - Есть законы, их надо соблюдать, кто не соблюдает - тот преступник, а вор должен сидеть в тюрьме.
-        /// 3 - Законы крайне строги, широко используется смертная казнь.
-        /// 4 - Тоталитарная диктатура. Все граждане, кроме правящей верхушки, попадают под презумпцию виновности.
-        /// </summary>
-        public int m_iControl = 0;
 
         /// <summary>
         /// В обществе могут быть определены различные культурные нормы и обычаи для мужчини женщин.
@@ -58,18 +50,50 @@ namespace Socium.Population
         public readonly Dictionary<Gender, Culture> m_cCulture = new Dictionary<Gender, Culture>();
 
         /// <summary>
+        /// Культура "сильного" пола
+        /// </summary>
+        public Culture DominantCulture
+        {
+            get
+            {
+                if (m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy)
+                    return m_cCulture[Gender.Female];
+
+                return m_cCulture[Gender.Male];
+            }
+        }
+
+        /// <summary>
+        /// Культура "слабого" пола
+        /// </summary>
+        public Culture InferiorCulture
+        {
+            get
+            {
+                if (m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy)
+                    return m_cCulture[Gender.Male];
+
+                return m_cCulture[Gender.Female];
+            }
+        }
+
+        protected void FixSexCustoms()
+        {
+            InferiorCulture.m_pCustoms.m_eMarriage = DominantCulture.m_pCustoms.m_eMarriage;
+            InferiorCulture.m_pCustoms.m_eGenderPriority = DominantCulture.m_pCustoms.m_eGenderPriority;
+            InferiorCulture.m_pCustoms.m_eSexRelations = DominantCulture.m_pCustoms.m_eSexRelations;
+        }
+
+        /// <summary>
         /// Процент реально крутых магов среди всех носителей магических способностей
         /// </summary>
-        public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
+        public readonly Dictionary<Gender, MagicAbilityDistribution> m_eMagicAbilityDistribution = new Dictionary<Gender, MagicAbilityDistribution>() 
+        {
+            { Gender.Male, MagicAbilityDistribution.mostly_weak },
+            { Gender.Female, MagicAbilityDistribution.mostly_weak } 
+        };
 
         public string m_sName = "Nameless";
-
-        protected List<LocationX> m_cLands = new List<LocationX>();
-
-        internal List<LocationX> Lands
-        {
-            get { return m_cLands; }
-        }
 
         protected List<LocationX> m_cSettlements = new List<LocationX>();
 
@@ -234,21 +258,6 @@ namespace Socium.Population
             return iMaxTech;
         }
 
-        /// <summary>
-        /// Low TL states could have access to higher TL weapons from other countries.
-        /// Returns higher TL if possible or -1 is there is no available higher TL.
-        /// Currently not using, so always -1.
-        /// </summary>
-        /// <returns></returns>
-        public abstract int GetImportedTech();
-
-        /// <summary>
-        /// Return most common imported weapon (see GetImportedTech() for details)
-        /// Currently not using, so always empty string.
-        /// </summary>
-        /// <returns></returns>
-        public abstract string GetImportedTechString();
-
         public override string ToString()
         {
             return string.Format("(C{1}/{2}T{3}M{4}) - {0}", m_sName, m_cCulture[Gender.Male].m_iProgressLevel, m_cCulture[Gender.Female].m_iProgressLevel, m_iTechLevel, m_iMagicLimit);
@@ -272,6 +281,16 @@ namespace Socium.Population
         public Person.Skill LeastRespectedSkill
         {
             get { return m_eLeastRespectedSkill; }
+        }
+
+        public Dictionary<ProfessionInfo, Customs.GenderPriority> m_cGenderProfessionPreferences = new Dictionary<ProfessionInfo, Customs.GenderPriority>();
+
+        public void CalculateGenderProfessionPreferences()
+        {
+            foreach (var pProfession in ProfessionInfo.s_cAllProfessions)
+            {
+                m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
+            }
         }
 
         /// <summary>
@@ -314,7 +333,7 @@ namespace Socium.Population
         public Customs.GenderPriority GetProfessionGenderPriority(ProfessionInfo pProfession)
         {
             // По умолчанию - гендерные предпочтения профессии совпадают представлениями сообщества о "сильном" поле.
-            var eGenderPriority = m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority;
+            var eGenderPriority = DominantCulture.m_pCustoms.m_eGenderPriority;
 
             // но, если это подчинённая должность...
             if (!pProfession.m_bMaster)
@@ -351,8 +370,6 @@ namespace Socium.Population
 
             return eGenderPriority;
         }
-
-        public Dictionary<ProfessionInfo, int> m_cPeople = new Dictionary<ProfessionInfo, int>();
 
         /// <summary>
         /// В зависимости от того, какой пол считается "сильным" - возвращаем противоположный

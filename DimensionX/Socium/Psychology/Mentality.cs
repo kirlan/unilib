@@ -136,31 +136,40 @@ namespace Socium.Psychology
             get { return s_pIdeal; }
         }
 
-        public Mentality(Mentality pAncestorMentality)
+        public Mentality(Mentality pAncestorMentality, bool bMutate)
         {
             foreach (Trait eTrait in AllTraits)
             {
-                m_cTraits[eTrait] = new float[9];
-                float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
-                float fSum = 2;
-                for (int i = 0; i < 9; i++)
+                if (bMutate)
                 {
-                    aDerivative[i] = fSum - pAncestorMentality.m_cTraits[eTrait][i];
-                    fSum -= aDerivative[i];
-                }
-                //aDerivative[9] = fSum;
-                fSum = 0;
-                for (int i = 0; i < 9; i++)
-                {
-                    aDerivative[i] = (9*aDerivative[i] + 0.05f + Rnd.Get(0.4f))/10;
-                    fSum += aDerivative[i];
-                }
+                    m_cTraits[eTrait] = new float[9];
+                    float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
+                    float fSum = 2;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        aDerivative[i] = fSum - pAncestorMentality.m_cTraits[eTrait][i];
+                        fSum -= aDerivative[i];
+                    }
+                    //aDerivative[9] = fSum;
+                    fSum = 0;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        aDerivative[i] = (9 * aDerivative[i] + 0.05f + Rnd.Get(0.4f)) / 10;
+                        fSum += aDerivative[i];
+                    }
 
-                float fCurrent = 2;
-                for (int i = 0; i < 9; i++)
+                    float fCurrent = 2;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        fCurrent -= aDerivative[i] * 2 / fSum;
+                        m_cTraits[eTrait][i] = Math.Max(0, fCurrent);
+                    }
+                }
+                else
                 {
-                    fCurrent -= aDerivative[i]*2 / fSum;
-                    m_cTraits[eTrait][i] = Math.Max(0, fCurrent);
+                    m_cTraits[eTrait] = new float[9];
+                    for (int i = 0; i < 9; i++)
+                        m_cTraits[eTrait][i] = pAncestorMentality.m_cTraits[eTrait][i];
                 }
             }
         }
