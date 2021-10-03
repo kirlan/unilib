@@ -1,4 +1,5 @@
 ﻿using BenTools.Mathematics;
+using Socium.Nations;
 using Socium.Psychology;
 using Socium.Settlements;
 using System;
@@ -16,6 +17,11 @@ namespace Socium.Psychology
         public int m_iProgressLevel = 0;
         public Mentality m_pMentality = null;
         public Customs m_pCustoms = null;
+
+        /// <summary>
+        /// Процент реально крутых магов среди всех носителей магических способностей
+        /// </summary>
+        public MagicAbilityDistribution m_eMagicAbilityDistribution;
 
         public Culture(Mentality pMentality, int iProgressLevel, Customs pCustoms)
         {

@@ -1,4 +1,5 @@
-﻿using Socium.Population;
+﻿using Random;
+using Socium.Population;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,11 @@ namespace Socium
 
             if (m_cEstates[Estate.Position.Outlaw] == null || m_cEstates[Estate.Position.Outlaw].Length == 0)
                 m_cEstates[Estate.Position.Outlaw] = new string[] { "Outlaw" };
+        }
+
+        public string GetEstateName(Estate.Position ePosition)
+        {
+            return m_cEstates[ePosition][Rnd.Get(m_cEstates[ePosition].Length)];
         }
     }
 }

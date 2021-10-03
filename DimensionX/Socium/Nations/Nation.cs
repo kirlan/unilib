@@ -21,7 +21,7 @@ namespace Socium.Nations
     {
         public Fenotype<LandTypeInfoX> m_pFenotype;
 
-        public Society m_pSociety = null;
+        public Society m_pProtoSociety = null;
 
         public Race m_pRace = null;
 

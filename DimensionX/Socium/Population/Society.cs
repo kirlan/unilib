@@ -84,15 +84,6 @@ namespace Socium.Population
             InferiorCulture.m_pCustoms.m_eSexRelations = DominantCulture.m_pCustoms.m_eSexRelations;
         }
 
-        /// <summary>
-        /// Процент реально крутых магов среди всех носителей магических способностей
-        /// </summary>
-        public readonly Dictionary<Gender, MagicAbilityDistribution> m_eMagicAbilityDistribution = new Dictionary<Gender, MagicAbilityDistribution>() 
-        {
-            { Gender.Male, MagicAbilityDistribution.mostly_weak },
-            { Gender.Female, MagicAbilityDistribution.mostly_weak } 
-        };
-
         public string m_sName = "Nameless";
 
         protected List<LocationX> m_cSettlements = new List<LocationX>();
