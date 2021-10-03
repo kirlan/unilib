@@ -1053,11 +1053,11 @@ namespace Socium.Psychology
                     sResult += ", ";
 
                 if (m_eFamilyValues == FamilyValues.Praised_Family_Values)
-                    sResult += "have very tight family bonds";
+                    sResult += "are very bound to family";
                 if (m_eFamilyValues == FamilyValues.No_Family_Values)
-                    sResult += "have no family ties";
+                    sResult += "not bound to family at all";
                 if (m_eFamilyValues == FamilyValues.Moderate_Family_Values)
-                    sResult += "have not so tight family bonds";
+                    sResult += "not so bound to family";
             }
 
             if (m_eSexuality != pOther.m_eSexuality)

@@ -326,6 +326,55 @@ namespace VQMapTest2
 
             richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_iWood, e.m_pState.m_iOre, e.m_pState.m_iPopulation));
 
+            richTextBox1.AppendText("Estates: \n");
+            foreach (var pEstate in pSociety.m_cEstates)
+            {
+                richTextBox1.AppendText("  - " + pEstate.Value.m_sName + " (" + pEstate.Key.ToString() + "): ");
+
+                string sCulture = pEstate.Value.DominantCulture.m_pMentality.GetDiffString(pEstate.Value.DominantCulture.m_iProgressLevel, pSociety.DominantCulture.m_pMentality, pSociety.DominantCulture.m_iProgressLevel);
+                string sCustoms = pEstate.Value.DominantCulture.m_pCustoms.GetCustomsDiffString2(pSociety.DominantCulture.m_pCustoms);
+
+                string sMinorsCulture = pEstate.Value.InferiorCulture.m_pMentality.GetDiffString(pEstate.Value.InferiorCulture.m_iProgressLevel, pEstate.Value.DominantCulture.m_pMentality, pEstate.Value.DominantCulture.m_iProgressLevel);
+                string sMinorsCustoms = pEstate.Value.InferiorCulture.m_pCustoms.GetCustomsDiffString2(pEstate.Value.DominantCulture.m_pCustoms);
+                
+                if (sCustoms != "")
+                    richTextBox1.AppendText("Members of this estate " + sCustoms + ".");
+                if (sCulture != "")
+                {
+                    if (sCustoms == "")
+                        richTextBox1.AppendText("Members of this estate are usually " + sCulture + " then common citizens.");
+                    else
+                        richTextBox1.AppendText(" They are usually " + sCulture + " then common citizens.");
+                }
+
+                if (pEstate.Value.IsSegregated() && (sMinorsCustoms != "" || sMinorsCulture != ""))
+                {
+                    string sMajors = pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "males" : "females";
+                    string sMinors = pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "females" : "males";
+                    if (sCustoms == "" && sCulture == "")
+                    {
+                        richTextBox1.AppendText("Members of this estate are just a common citizens.");
+                    }
+                    if (sMinorsCustoms != "")
+                        richTextBox1.AppendText(" Also, their " + sMinors + " commonly " + sMinorsCustoms + ".");
+                    if (sMinorsCulture != "")
+                    {
+                        if (sMinorsCustoms == "")
+                            richTextBox1.AppendText(" Also, their " + sMinors + " usually " + sMinorsCulture + " then " + sMajors + ".");
+                        else
+                            richTextBox1.AppendText(" They are usually " + sMinorsCulture + " then " + sMajors + ".");
+                    }
+                }
+
+                if (sCulture == "" && sCustoms == "" && sMinorsCulture == "" && sMinorsCustoms == "")
+                    richTextBox1.AppendText("Members of this estate are just a common citizens.");
+
+                //richTextBox1.AppendText("\n    Prevalent professions:");
+                //foreach (var pGenderPreference in pEstate.Value.m_cGenderProfessionPreferences)
+                //    richTextBox1.AppendText("\n         - " + (pGenderPreference.Value == Customs.GenderPriority.Matriarchy ? pGenderPreference.Key.m_sNameF : pGenderPreference.Key.m_sNameM));
+                richTextBox1.AppendText("\n\n");
+            }
+
             State[] cEnemies = e.m_pState.GetEnemiesList();
             if(cEnemies.Length > 0)
             {
