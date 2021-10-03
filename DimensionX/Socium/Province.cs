@@ -480,6 +480,7 @@ namespace Socium
                         if (pSettlement != null)
                         {
                             m_pLocalSociety.Settlements.Add(pSettlement);
+                            OwnerState.m_pSociety.Settlements.Add(pSettlement);
                             //bHaveOne = true;
                         }
                         cLandsChances[pLand] = cLandsChances[pLand] / 2;//0;
@@ -525,6 +526,7 @@ namespace Socium
                     if (pSettlement != null)
                     {
                         m_pLocalSociety.Settlements.Add(pSettlement);
+                        OwnerState.m_pSociety.Settlements.Add(pSettlement);
                         //bHaveOne = true;
                     }
                 }
@@ -694,7 +696,10 @@ namespace Socium
 
             BuildAdministrativeCenter(pSettlementInfo, bFast);
             if (m_pAdministrativeCenter != null)
+            {
                 m_pLocalSociety.Settlements.Add(m_pAdministrativeCenter);
+                OwnerState.m_pSociety.Settlements.Add(pSettlement);
+            }
             else
                 throw new Exception("Can't build capital!");
 

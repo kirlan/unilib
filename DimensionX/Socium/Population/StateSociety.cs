@@ -1680,10 +1680,27 @@ namespace Socium.Population
                         break;
                 }
 
-                float fProvinceMagesCount = 0;
+                Dictionary<Gender, float> cProvinceMagesCount = new Dictionary<Gender, float>();
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
-                    fProvinceMagesCount += pLand.m_cContents.Count * fPrevalence;
+                    cProvinceMagesCount[Gender.Male] += pLand.m_cContents.Count * fPrevalence;
+                    cProvinceMagesCount[Gender.Female] += pLand.m_cContents.Count * fPrevalence;
+                }
+
+                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution)
+                {
+                    case GendersDistribution.OnlyMales:
+                        cProvinceMagesCount[Gender.Female] *= 0.1f;
+                        break;
+                    case GendersDistribution.OnlyFemales:
+                        cProvinceMagesCount[Gender.Male] *= 0.1f;
+                        break;
+                    case GendersDistribution.MostlyMales:
+                        cProvinceMagesCount[Gender.Female] *= 0.25f;
+                        break;
+                    case GendersDistribution.MostlyFemales:
+                        cProvinceMagesCount[Gender.Male] *= 0.25f;
+                        break;
                 }
 
                 foreach (var distribution in aDistribution)
@@ -1691,14 +1708,14 @@ namespace Socium.Population
                     switch (pProvince.m_pLocalSociety.m_cCulture[distribution.Key].m_eMagicAbilityDistribution)
                     {
                         case MagicAbilityDistribution.mostly_weak:
-                            distribution.Value[(1 + pProvince.m_pLocalSociety.m_iMagicLimit) / 2] += fProvinceMagesCount;
+                            distribution.Value[(1 + pProvince.m_pLocalSociety.m_iMagicLimit) / 2] += cProvinceMagesCount[distribution.Key];
                             break;
                         case MagicAbilityDistribution.mostly_average:
-                            distribution.Value[(1 + pProvince.m_pLocalSociety.m_iMagicLimit) / 2] += fProvinceMagesCount / 2;
-                            distribution.Value[1 + pProvince.m_pLocalSociety.m_iMagicLimit] += fProvinceMagesCount / 2;
+                            distribution.Value[(1 + pProvince.m_pLocalSociety.m_iMagicLimit) / 2] += cProvinceMagesCount[distribution.Key] / 2;
+                            distribution.Value[1 + pProvince.m_pLocalSociety.m_iMagicLimit] += cProvinceMagesCount[distribution.Key] / 2;
                             break;
                         case MagicAbilityDistribution.mostly_powerful:
-                            distribution.Value[1 + pProvince.m_pLocalSociety.m_iMagicLimit] += fProvinceMagesCount;
+                            distribution.Value[1 + pProvince.m_pLocalSociety.m_iMagicLimit] += cProvinceMagesCount[distribution.Key];
                             break;
                     }
                 }

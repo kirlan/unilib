@@ -592,13 +592,13 @@ namespace Socium
                         
                         if(pBiggestArea != null && iBiggestSize > iTotalSize/2)
                         {
-                            pProvince.m_sName = pBiggestArea.m_sName;
+                            pProvince.m_pLocalSociety.m_sName = pBiggestArea.m_sName;
                         }
                     }
 
                     //если государство состоит из единственной провинции, то переименовываем государство по имени провинции
                     if (pState.m_cContents.Count == 1)
-                        pState.m_sName = pState.m_cContents[0].m_sName;
+                        pState.m_pSociety.m_sName = pState.m_cContents[0].m_pLocalSociety.m_sName;
 
                     pState.m_pSociety.CalculateMagic();
                     
@@ -611,9 +611,9 @@ namespace Socium
                     //если на континенте одно государство и одна территория, то государство должно называться по имени этой территории,
                     //независимо от того, из скольки провинций оно состоит
                     if (pConti.m_cAreas.Count == 1)
-                        pConti.m_cStates[0].m_sName = pConti.m_cAreas[0].m_sName;
+                        pConti.m_cStates[0].m_pSociety.m_sName = pConti.m_cAreas[0].m_sName;
 
-                    pConti.m_sName = pConti.m_cStates[0].m_sName;
+                    pConti.m_sName = pConti.m_cStates[0].m_pSociety.m_sName;
                 }
                 else
                     //если государств несколько, но территория одна - переименовываем континент по имени этой территории
@@ -639,7 +639,7 @@ namespace Socium
                         cUsed.Add(pProvince.m_pCenter.Continent);
 
                     pProvince.Start(pProvince.m_pCenter);
-                    if (!m_aLocalNations.Contains(pProvince.m_pNation))
+                    if (!m_aLocalNations.Contains(pProvince.m_pLocalSociety.m_pTitularNation))
                         throw new Exception();
 
                     cProvinces.Add(pProvince);
@@ -706,7 +706,7 @@ namespace Socium
                 pProvince.Start(pSeed);
                 cProvinces.Add(pProvince);
 
-                if (!m_aLocalNations.Contains(pProvince.m_pNation))
+                if (!m_aLocalNations.Contains(pProvince.m_pLocalSociety.m_pTitularNation))
                     throw new Exception();
 
                 cUsed.Add(pConti);
@@ -757,7 +757,7 @@ namespace Socium
                 pProvince.Start(pSeed);
                 cProvinces.Add(pProvince);
 
-                if (!m_aLocalNations.Contains(pProvince.m_pNation))
+                if (!m_aLocalNations.Contains(pProvince.m_pLocalSociety.m_pTitularNation))
                     throw new Exception();
             }
 
@@ -865,7 +865,7 @@ namespace Socium
                 {
                     List<Province> cSeeds = new List<Province>();
                     foreach (Province pProvince in m_aProvinces)
-                        if (pProvince.m_pNation == pInvader && pProvince.Owner == null)
+                        if (pProvince.m_pLocalSociety.m_pTitularNation == pInvader && pProvince.Owner == null)
                             cSeeds.Add(pProvince);
 
                     if(cSeeds.Count > 0)
@@ -1210,9 +1210,9 @@ namespace Socium
                             float fMinLength = float.MaxValue;
                             LocationX pBestTown1 = null;
                             LocationX pBestTown2 = null;
-                            foreach (LocationX pTown in pProvince.m_cSettlements)
+                            foreach (LocationX pTown in pProvince.m_pLocalSociety.Settlements)
                             {
-                                foreach (LocationX pOtherTown in pLinkedProvince.m_cSettlements)
+                                foreach (LocationX pOtherTown in pLinkedProvince.m_pLocalSociety.Settlements)
                                 {
                                     if (pTown != pOtherTown && !pTown.m_cHaveRoadTo.ContainsKey(pOtherTown))
                                     {
@@ -1228,7 +1228,9 @@ namespace Socium
                                     }
                                 }
                             }
-                            if (pBestTown1 != null && (State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0 || State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_eMaxGroundRoad > 0))
+                            if (pBestTown1 != null && 
+                                (State.InfrastructureLevels[pProvince.m_pLocalSociety.m_iInfrastructureLevel].m_eMaxGroundRoad > 0 || 
+                                 State.InfrastructureLevels[pLinkedProvince.m_pLocalSociety.m_iInfrastructureLevel].m_eMaxGroundRoad > 0))
                             {
                                 RoadQuality eMaxRoadLevel = RoadQuality.Country;
                                 foreach (var pRoad in pBestTown1.m_cRoads)
@@ -1243,8 +1245,8 @@ namespace Socium
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad > 2 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad > 2)
                                 //    iRoadLevel = 3;
 
-                                if (State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxGroundRoad == 0 || 
-                                    State.InfrastructureLevels[pLinkedProvince.m_iInfrastructureLevel].m_eMaxGroundRoad == 0)
+                                if (State.InfrastructureLevels[pProvince.m_pLocalSociety.m_iInfrastructureLevel].m_eMaxGroundRoad == 0 || 
+                                    State.InfrastructureLevels[pLinkedProvince.m_pLocalSociety.m_iInfrastructureLevel].m_eMaxGroundRoad == 0)
                                     eMaxRoadLevel = RoadQuality.Country;
 
                                 BuildRoad(pBestTown1, pBestTown2, eMaxRoadLevel, fCycleShift);
@@ -1353,9 +1355,9 @@ namespace Socium
             List<LocationX> cHarbors = new List<LocationX>();
             foreach (Province pProvince in m_aProvinces)
             {
-                if (!pProvince.Forbidden && !pProvince.m_pNation.m_bDying)
+                if (!pProvince.Forbidden && !pProvince.m_pLocalSociety.m_pTitularNation.m_bDying)
                 {
-                    foreach (LocationX pTown in pProvince.m_cSettlements)
+                    foreach (LocationX pTown in pProvince.m_pLocalSociety.Settlements)
                     {
                         pTown.m_bHarbor = false;
 
@@ -1399,7 +1401,7 @@ namespace Socium
                 //continue;
 
                 Province pProvince = (pHarbor.Owner as LandX).m_pProvince;
-                RoadQuality eMaxNavalPath = State.InfrastructureLevels[pProvince.m_iInfrastructureLevel].m_eMaxNavalPath;
+                RoadQuality eMaxNavalPath = State.InfrastructureLevels[pProvince.m_pLocalSociety.m_iInfrastructureLevel].m_eMaxNavalPath;
                 if (eMaxNavalPath == 0)
                     continue;
 
@@ -1889,10 +1891,10 @@ namespace Socium
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
                     //если коренное население не является доминирующим, есть вероятность, что доминирующая раса вытеснит коренную.
-                    if (pLand.m_pNation != pProvince.m_pNation)
+                    if (pLand.m_pNation != pProvince.m_pLocalSociety.m_pTitularNation)
                     {
                         bool bHated = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_aHatedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pLocalSociety.m_pTitularNation.m_aHatedLands)
                             if (pLand.Type == pLTI)
                                 bHated = true;
 
@@ -1900,24 +1902,24 @@ namespace Socium
                             continue;
 
                         bool bPreferred = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_aPreferredLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pLocalSociety.m_pTitularNation.m_aPreferredLands)
                             if (pLand.Type == pLTI)
                                 bPreferred = true;
 
-                        if (pProvince.m_pNation.m_bHegemon || bPreferred || Rnd.OneChanceFrom(2))
+                        if (pProvince.m_pLocalSociety.m_pTitularNation.m_bHegemon || bPreferred || Rnd.OneChanceFrom(2))
                         {
-                            pLand.m_pNation = pProvince.m_pNation;
-                            (pLand.Area as AreaX).m_pNation = pProvince.m_pNation;
+                            pLand.m_pNation = pProvince.m_pLocalSociety.m_pTitularNation;
+                            (pLand.Area as AreaX).m_pNation = pProvince.m_pLocalSociety.m_pTitularNation;
                         }
                     }
                     //иначе, если коренная раса и доминирующая совпадают, но земля не самая подходящая - есть вероятность того, что её покинут.
                     else
                     {
-                        if (pProvince.m_pNation.m_bHegemon)
+                        if (pProvince.m_pLocalSociety.m_pTitularNation.m_bHegemon)
                             continue;
 
                         bool bHated = false;
-                        foreach (LandTypeInfoX pLTI in pProvince.m_pNation.m_aHatedLands)
+                        foreach (LandTypeInfoX pLTI in pProvince.m_pLocalSociety.m_pTitularNation.m_aHatedLands)
                             if (pLand.Type == pLTI)
                                 bHated = true;
 
@@ -2101,7 +2103,7 @@ namespace Socium
                     }//все земли в каждой провинции
                         
                     //очищаем список поселений в провинции
-                    pProvince.m_cSettlements.Clear();
+                    pProvince.m_pLocalSociety.Settlements.Clear();
                 }//все провинции в каждом государстве
 
                 //некоторые государства вообще исчезают с лица земли
@@ -2184,33 +2186,27 @@ namespace Socium
             if (pPreferredLoc != null)
                 pState = pPreferredLoc.OwnerState;
 
-            foreach (Province pProvince in pState.m_cContents)
+            foreach (LocationX pLocation in pState.m_pSociety.Settlements)
             {
-                foreach (LocationX pLocation in pProvince.m_cSettlements)
-                {
-                    if (pLocation.HaveEstate(eEstate))
-                        pPossibleSettlements.Add(pLocation);
-                }
+                if (pLocation.HaveEstate(eEstate))
+                    pPossibleSettlements.Add(pLocation);
             }
 
             if (pPossibleSettlements.Count == 0)
             {
                 pState = m_aStates[Rnd.Get(m_aStates.Length)];
 
-                foreach (Province pProvince in pState.m_cContents)
+                foreach (LocationX pLocation in pState.m_pSociety.Settlements)
                 {
-                    foreach (LocationX pLocation in pProvince.m_cSettlements)
-                    {
-                        if (pLocation.HaveEstate(eEstate))
+                    if (pLocation.HaveEstate(eEstate))
                             pPossibleSettlements.Add(pLocation);
-                    }
                 }
 
                 if (pPossibleSettlements.Count == 0)
                 {
                     foreach (Province pProvince in m_aProvinces)
                     {
-                        foreach (LocationX pLocation in pProvince.m_cSettlements)
+                        foreach (LocationX pLocation in pProvince.m_pLocalSociety.Settlements)
                         {
                             if (pLocation.HaveEstate(eEstate))
                                 pPossibleSettlements.Add(pLocation);
@@ -2348,7 +2344,7 @@ namespace Socium
                 if (pPreferredNation != null && pPerson.m_pNation != pPreferredNation)
                     continue;
 
-                if (pPerson.m_pHomeSociety.m_iInfrastructureLevel > iMaxCivilizationLevel)
+                if (pPerson.m_pState.m_iInfrastructureLevel > iMaxCivilizationLevel)
                     continue;
 
                 //if (!pPerson.CouldInviteNewDwellers())

@@ -386,12 +386,14 @@ namespace Socium
             foreach (Province pProvince in m_cContents)
             {
                 foreach (LocationX pLoc in pProvince.m_pLocalSociety.Settlements)
+                {
                     foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
                     {
                         State pState = pOtherLoc.OwnerState;
                         if (pState != this && !BorderWith.ContainsKey(pState))
                             BorderWith[pState] = new List<Location.Edge>();
-                    } 
+                    }
+                }
                 
                 //m_iFood += (int)(pProvince.m_fGrain + pProvince.m_fFish + pProvince.m_fGame);
                 iGrain += (int)pProvince.m_fGrain;
