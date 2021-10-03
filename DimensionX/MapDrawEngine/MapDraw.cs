@@ -17,7 +17,7 @@ using Socium.Languages;
 using Socium.Nations;
 using Socium.Settlements;
 using GeneLab.Genetix;
-using Socium.Psichology;
+using Socium.Psychology;
 
 namespace MapDrawEngine
 {
@@ -931,9 +931,9 @@ namespace MapDrawEngine
                         pPath.AddPolygon(aPts);
 
                         //определим, каким цветом эта земля должна закрашиваться на карте технологий
-                        int iImported = pState.GetImportedTech();
-                        Brush pTechBrush = m_aTechLevel[pState.GetEffectiveTech(), iImported == -1 ? pState.GetEffectiveTech() : iImported];
-                        Brush pCivBrush = m_aCivLevel[pState.m_iCultureLevel, pState.m_iControl];
+                        int iImported = pState.m_pSociety.GetImportedTech();
+                        Brush pTechBrush = m_aTechLevel[pState.m_pSociety.GetEffectiveTech(), iImported == -1 ? pState.m_pSociety.GetEffectiveTech() : iImported];
+                        Brush pCivBrush = m_aCivLevel[pState.m_pSociety.DominantCulture.m_iProgressLevel, pState.m_pSociety.m_iControl];
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
@@ -998,13 +998,13 @@ namespace MapDrawEngine
                     pPath.AddPolygon(aPts);
 
                     //сохраним информацию о контуре провинции для этнографической карты
-                    Brush pBrush = m_cNationColorsID[pProvince.m_pNation];
-                    if (pProvince.m_pNation.m_bDying)
-                        pBrush = m_cAncientNationColorsID[pProvince.m_pNation];
-                    if (pProvince.m_pNation.m_bHegemon)
-                        pBrush = m_cHegemonNationColorsID[pProvince.m_pNation];
+                    Brush pBrush = m_cNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
+                    if (pProvince.m_pLocalSociety.m_pTitularNation.m_bDying)
+                        pBrush = m_cAncientNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
+                    if (pProvince.m_pLocalSociety.m_pTitularNation.m_bHegemon)
+                        pBrush = m_cHegemonNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pNation.m_iMagicLimit][pProvince.m_pCustoms.m_eMagic];
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.m_iMagicLimit][pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.m_eMagic];
                     
                     foreach (MapQuadrant pQuad in aQuads)
                     {
@@ -2108,7 +2108,7 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip += "\n   - ";
 
-                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pInfo.m_sName, m_pFocusedState.m_sName, m_pFocusedState.m_pNation);
+                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pSociety.m_pStateModel.m_sName, m_pFocusedState.m_pSociety.m_sName, m_pFocusedState.m_pSociety.m_pTitularNation);
             }
 
             if (bContinent && m_pFocusedProvince != null)
@@ -2116,7 +2116,7 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip += "\n     - ";
 
-                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pNation);
+                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_pLocalSociety.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pLocalSociety.m_pTitularNation);
 
                 //sToolTip += "\n          [";
 

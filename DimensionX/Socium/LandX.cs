@@ -217,7 +217,7 @@ namespace Socium
 
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, m_pProvince.m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, bCapital, bFast);
+            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, m_pProvince.m_pLocalSociety.m_iTechLevel, m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
@@ -344,7 +344,7 @@ namespace Socium
 
             if (m_cContents[iFort].m_pSettlement == null && m_cContents[iFort].m_pBuilding == null)
             {
-                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, (m_pProvince.Owner as State).m_iTechLevel, m_pProvince.m_pNation.m_iMagicLimit, false, bFast);
+                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, m_pProvince.OwnerState.m_pSociety.m_iTechLevel, m_pProvince.m_pLocalSociety.m_iMagicLimit, false, bFast);
 
                 foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
                     if (pLoc.m_pBuilding == null)
@@ -362,6 +362,39 @@ namespace Socium
             }
             else
                 return null;
+        }
+
+        /// <summary>
+        /// Считает стоимость заселения локации указанной расой с учётом ландшафта локации и её соседей.
+        /// Возвращает значение в диапазоне 1-100.
+        /// 1 - любая территория, идеально подходящая указанной расе, окружённая так же идеально подходящими.
+        /// 5 - идеально подходящая, окружённая простыми для заселения, но совсем не подходящими. Или наоборот.
+        /// 10 - простая, но не подходящая, окружённая другими простыми, но не подходящими.
+        /// 50 - подходящая, окружённая сложными и не подходящими, или наоборот.
+        /// 55 - простая и не подходящая, окружённая сложными и не подходящими, или наоборот.
+        /// 100 - сложная и не подходящая, окружённая сложными и не подходящими.
+        /// </summary>
+        /// <param name="pNation"></param>
+        /// <returns></returns>
+        public int GetClaimingCost(Nation pNation)
+        {
+            double fCost = Type.GetClaimingCost(pNation);
+
+            foreach (var pLink in m_cBorder)
+            {
+                LandX pOtherLand = pLink.Key as LandX;
+                if (pOtherLand.Owner == null && pOtherLand.Type.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                    fCost += (double)pOtherLand.Type.GetClaimingCost(pNation) / m_cBorder.Count;
+            }
+
+            if (fCost < 2)
+                fCost = 2;
+            return (int)(fCost / 2);
+        }
+
+        internal float GetResource(LandTypeInfoX.Resource resource)
+        {
+            return Type.m_cResources[resource] * m_cContents.Count;
         }
     }
 }

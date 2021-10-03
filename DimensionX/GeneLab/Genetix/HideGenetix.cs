@@ -43,7 +43,7 @@ namespace GeneLab.Genetix
     public class HideGenetix: GenetixBase
     {
         /// <summary>
-        /// covered with jet-black and azure fur
+        /// jet-black fur with azure spots
         /// </summary>
         /// <returns></returns>
         public string GetDescription()
@@ -74,7 +74,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return "covered with " + m_sHideColor + (m_bSpots ? (" and " + m_sSpotsColor) : "") + " " + sHide;
+            return m_sHideColor + " " + sHide + (m_bSpots ? (" with " + m_sSpotsColor + " spots") : "");
         }
         
         public static HideGenetix HumanWhite

@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Drawing;
 
-namespace Socium.Psichology.Mathematics
+namespace Socium.Psychology.Mathematics
 {
 	public abstract class MathTools
 	{

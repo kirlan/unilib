@@ -5,22 +5,28 @@ using System.Text;
 using LandscapeGeneration;
 using System.Drawing;
 using Socium.Settlements;
+using Socium.Nations;
 
 namespace Socium
 {
     public class LandTypeInfoX : LandTypeInfo
     {
-        public float m_fGrain;
-        public float m_fGame;
-        public float m_fWood;
-        public float m_fOre;
+        public enum Resource
+        { 
+            Grain,
+            Game,
+            Wood,
+            Ore
+        }
+
+        public readonly Dictionary<Resource, float> m_cResources = new Dictionary<Resource, float>();
 
         public void SetResources(float fGrain, float fGame, float fWood, float fOre)
         {
-            m_fGrain = fGrain;
-            m_fGame = fGame;
-            m_fWood = fWood;
-            m_fOre = fOre;
+            m_cResources[Resource.Grain] = fGrain;
+            m_cResources[Resource.Game] = fGame;
+            m_cResources[Resource.Wood] = fWood;
+            m_cResources[Resource.Ore] = fOre;
         }
 
         public Dictionary<SettlementSize, float> m_cSettlementsDensity = new Dictionary<SettlementSize, float>();
@@ -50,6 +56,40 @@ namespace Socium
             m_cStandAloneBuildingsProbability[BuildingType.Lair] = iLair;
             m_cStandAloneBuildingsProbability[BuildingType.Hideout] = iHideout;
             m_cStandAloneBuildingsProbability[BuildingType.None] = iNone;
+        }
+
+        /// <summary>
+        /// Вычисляет условную стоимость заселения территории указанной расой, в соответсвии с ландшафтом и фенотипом расы.
+        /// Возвращает значение в диапазоне 1-100. 
+        /// 1 - любая территория, идеально подходящая указанной расе (горы для гномов). Так же - простая для заселения территория, просто подходящая указанной расе.
+        /// 10 - простая для заселения территория (равнины), но совсем не подходящая указанной расе (горы для эльфов). Так же - максимально сложная для заселения территория, просто подходящая указанной расе (горы для людей).
+        /// 100 - максимально сложная для заселения территория (непроходимые горы), совсем не подходящая указанной расе.
+        /// </summary>
+        /// <param name="pNation"></param>
+        /// <returns></returns>
+        public int GetClaimingCost(Nation pNation)
+        {
+            if (!m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                return -1;
+
+            float fCost = m_iMovementCost; // 1 - 10
+
+            if (pNation.m_aPreferredLands.Contains(this))
+                fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            if (pNation.m_aHatedLands.Contains(this))
+                fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            if (pNation.m_bHegemon)
+                fCost /= 2;
+
+            if (fCost < 1)
+                fCost = 1;
+
+            if (fCost > int.MaxValue)
+                fCost = int.MaxValue - 1;
+
+            return (int)fCost;
         }
     }
 }

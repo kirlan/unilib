@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 
-namespace Socium.Psichology.Mathematics
+namespace Socium.Psychology.Mathematics
 {
 	/// <summary>
 	/// A vector class, implementing all interesting features of vectors

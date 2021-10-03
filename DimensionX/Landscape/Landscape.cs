@@ -53,37 +53,37 @@ namespace LandscapeGeneration
 
         public virtual void PresetLandTypesInfo()
         {
-            LandTypes<LTI>.Coastral.Init(10, 1, EnvironmentType.Water, "sea");
+            LandTypes<LTI>.Coastral.Init(10, 1, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "sea");
             LandTypes<LTI>.Coastral.SetColor(Color.FromArgb(0x27, 0x67, 0x71));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
             
-            LandTypes<LTI>.Ocean.Init(10, 5, EnvironmentType.Water, "ocean");
+            LandTypes<LTI>.Ocean.Init(10, 5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "ocean");
             LandTypes<LTI>.Ocean.SetColor(Color.FromArgb(0x1e, 0x5e, 0x69));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
             
-            LandTypes<LTI>.Plains.Init(1, 1, EnvironmentType.Ground, "plains");
+            LandTypes<LTI>.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, "plains");
             LandTypes<LTI>.Plains.SetColor(Color.FromArgb(0xd3, 0xfa, 0x5f));//(0xdc, 0xfa, 0x83);//LightGreen;
             
-            LandTypes<LTI>.Savanna.Init(1, 1, EnvironmentType.Ground, "savanna");
+            LandTypes<LTI>.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, "savanna");
             LandTypes<LTI>.Savanna.SetColor(Color.FromArgb(0xf0, 0xff, 0x8a));//(0xbd, 0xb0, 0x6b);//PaleGreen;
             
-            LandTypes<LTI>.Tundra.Init(2, 0.5f, EnvironmentType.Ground, "tundra");
+            LandTypes<LTI>.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, "tundra");
             LandTypes<LTI>.Tundra.SetColor(Color.FromArgb(0xc9, 0xff, 0xff));//(0xc9, 0xe0, 0xff);//PaleGreen;
             
-            LandTypes<LTI>.Desert.Init(2, 0.1f, EnvironmentType.Ground, "desert");
+            LandTypes<LTI>.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, "desert");
             LandTypes<LTI>.Desert.SetColor(Color.FromArgb(0xfa, 0xdc, 0x36));//(0xf9, 0xfa, 0x8a);//LightYellow;
             
-            LandTypes<LTI>.Forest.Init(3, 2, EnvironmentType.Ground, "forest");
+            LandTypes<LTI>.Forest.Init(3, 2, Environment.Habitable, "forest");
             LandTypes<LTI>.Forest.SetColor(Color.FromArgb(0x56, 0x78, 0x34));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
             
-            LandTypes<LTI>.Taiga.Init(3, 2, EnvironmentType.Ground, "taiga");
+            LandTypes<LTI>.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, "taiga");
             LandTypes<LTI>.Taiga.SetColor(Color.FromArgb(0x63, 0x78, 0x4e));//LightGreen;//ForestGreen;
             
-            LandTypes<LTI>.Swamp.Init(4, 0.1f, EnvironmentType.Ground, "swamp");
+            LandTypes<LTI>.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, "swamp");
             LandTypes<LTI>.Swamp.SetColor(Color.FromArgb(0xa7, 0xbd, 0x6b));// DarkKhaki;
             
-            LandTypes<LTI>.Mountains.Init(5, 10, EnvironmentType.Mountains, "mountains");
+            LandTypes<LTI>.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, "mountains");
             LandTypes<LTI>.Mountains.SetColor(Color.FromArgb(0xbd, 0x6d, 0x46));//Tan;
             
-            LandTypes<LTI>.Jungle.Init(6, 2, EnvironmentType.Ground, "jungle");
+            LandTypes<LTI>.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, "jungle");
             LandTypes<LTI>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
         }
 
@@ -740,7 +740,7 @@ namespace LandscapeGeneration
                             fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;// *fTemperatureMod;
                             pLinkedLand.Humidity = (int)(fTemperatureMod - 5 + Rnd.Get(10.0f));
 
-                            if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment == EnvironmentType.Mountains)
+                            if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment.HasFlag(Environment.Barrier))
                                 pLinkedLand.Humidity /= 2;
 
                             if (!cHumidityFront.Contains(pLink))
@@ -774,7 +774,7 @@ namespace LandscapeGeneration
                             {
                                 pLinkedLand.Humidity = pLand.Humidity - 10 - Rnd.Get(5);
 
-                                if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment == EnvironmentType.Mountains)
+                                if (pLinkedLand.Type != null && pLinkedLand.Type.m_eEnvironment.HasFlag(Environment.Barrier))
                                     pLinkedLand.Humidity /= 2;
 
                                 if (!cNewWave.Contains(pLink))

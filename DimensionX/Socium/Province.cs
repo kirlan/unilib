@@ -8,8 +8,9 @@ using NameGen;
 using LandscapeGeneration.PathFind;
 using Socium.Settlements;
 using Socium.Nations;
-using Socium.Psichology;
+using Socium.Psychology;
 using GeneLab.Genetix;
+using Socium.Population;
 
 namespace Socium
 {
@@ -19,100 +20,49 @@ namespace Socium
         /// ТОЛКО ДЛЯ ОТЛАДКИ!!!!
         /// </summary>
         public Dictionary<Province, string> m_cConnectionString = new Dictionary<Province,string>();
-
-        public string m_sName;
-
-        private bool m_bForbidden = false;
-
+        
         private static Province m_pForbidden = new Province(true);
 
-        public bool Forbidden
+        /// <summary>
+        /// Земли, составляющие провинцию
+        /// </summary>
+        public readonly List<LandX> m_cContents = new List<LandX>();
+
+        #region ITerritory members
+        public Dictionary<object, List<Location.Edge>> BorderWith { get; } = new Dictionary<object, List<Location.Edge>>();
+
+        public bool Forbidden { get; } = false;
+
+        public object Owner { get; set; } = null;
+
+        public float PerimeterLength { get; private set; } = 0;
+        #endregion ITerritory members
+
+        public State OwnerState
         {
-            get { return m_bForbidden; /* this == Province.m_pForbidden; */ }
+            get
+            {
+                return Owner as State;
+            }
         }
-
-        public List<LandX> m_cContents = new List<LandX>();
-
-        private Dictionary<object, List<Location.Edge>> m_cBorderWith = new Dictionary<object, List<Location.Edge>>();
-
-        private object m_pOwner = null;
-
-        public object Owner
-        {
-            get { return m_pOwner; }
-            set { m_pOwner = value; }
-        }
-
-        public Dictionary<object, List<Location.Edge>> BorderWith
-        {
-            get { return m_cBorderWith; }
-        }
-
 
         public object[] m_aBorderWith = null;
 
-        private float m_fPerimeter = 0;
-
-        public float PerimeterLength
-        {
-            get { return m_fPerimeter; }
-        }
-
         internal void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<object>(m_cBorderWith.Keys).ToArray();
+            m_aBorderWith = new List<object>(BorderWith.Keys).ToArray();
 
-            m_fPerimeter = 0;
-            foreach (var pBorder in m_cBorderWith)
+            PerimeterLength = 0;
+            foreach (var pBorder in BorderWith)
                 foreach (Location.Edge pLine in pBorder.Value)
-                    m_fPerimeter += pLine.m_fLength;
+                    PerimeterLength += pLine.m_fLength;
         }
-
-        public Nation m_pNation = null;
 
         public LandX m_pCenter;
 
         public LocationX m_pAdministrativeCenter = null;
 
-        /// <summary>
-        /// 1 - Бронзовый век. В ходу бронзовые кирасы и кожаные доспехи, бронзовое холодное оружие, из стрелкового оружия – луки и дротики.
-        /// 2 - Железный век. Стальное холодное оружие, кольчуги, рыцарские доспехи. Из стрелкового оружия - луки и арбалеты.
-        /// 3 - Эпоха пороха. Примитивное однозарядное огнестрельное оружие, лёгкие сабли и шпаги, облегчённая броня (кирасы, кожаные куртки).
-        /// 4 - Индустриальная эра. Нарезное огнестрельное оружие, примитивная бронетехника и авиация, химическое оружие массового поражения.
-        /// 5 - Атомная эра. Автоматическое огнестрельное оружие, бронежилеты, развитая бронетехника и авиация, ядерные ракеты и бомбы.
-        /// 6 - Энергетическая эра. Силовые поля, лучевое оружие.
-        /// 7 - Квантовая эра. Ограниченная телепортация, материализация, дезинтеграция.
-        /// 8 - Переход. Полная и неограниченная власть человека над пространственно-временным континуумом.
-        /// </summary>
-        public int m_iTechLevel = 0;
-        /// <summary>
-        /// 1 - Мистика. Ритуальная магия, требующая длительной предварительной подготовки. Используя психотропные вещества, гипноз и йогические практики, мистики могут общаться с миром духов, получая из него информацию или заключая сделки с его обитателями.
-        /// 2 - Псионика. Познание окружающего мира силой собственной мысли. Эмпатия, телепатия, ясновиденье, дальновиденье.
-        /// 3 - Сверхспособности. Управление материальными объектами без физического контакта: телекинез, пирокинез, левитация и т.д.... Как правило, один отдельно взятый персонаж может развить у себя только одну-две сверхспособности.
-        /// 4 - Традиционная фэнтезийная магия. То же самое, что и на предыдущем уровне, но гораздо доступнее. Один маг может владеть десятками заклинаний на разные случаи жизни.
-        /// 5 - Джинны. Способность произвольно менять облик, массу и физические свойства собственного тела. Использование магии без заклинаний - просто усилием мысли.
-        /// 6 - Титаны. Уровень личного могущества, обычно приписываемый языческим богам. Телепортация, материализация, управление течением времени.
-        /// 7 - Трансцендентность. Отсутствие привязки к физическом телу. Разум способен существовать  в нематериальной форме, при этом сохраняя все свои возможности воспринимать окружающую среду и воздействать на неё.
-        /// 8 - Единое. Границы между индивидуальностями стираются, фактически всё сообщество является единым разумным существом, неизмеримо более могущественным, чем составляющие его отдельные личности сами по себе.
-        /// </summary>
-        public int m_iMagicLimit = 0;
-        /// <summary>
-        /// Доступный жителям уровень жизни.
-        /// Зависит от технического и магического развития, определяет доступные формы государственного правления
-        /// </summary>
-        public int m_iInfrastructureLevel = 0;
-
-        public Culture m_pCulture = null;
-        public Customs m_pCustoms = null;
-
-        /// <summary>
-        /// Как часто встрачаются носители магических способностей
-        /// </summary>
-        //public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
-        /// <summary>
-        /// Процент реально крутых магов среди всех носителей магических способностей
-        /// </summary>
-        public MagicAbilityDistribution m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
+        public NationalSociety m_pLocalSociety = null;
 
         public float m_fFish = 0;
         public float m_fGrain = 0;
@@ -121,30 +71,31 @@ namespace Socium
         public float m_fWood = 0;
         public int m_iPopulation = 0;
 
-        public List<LocationX> m_cSettlements = new List<LocationX>();
-
         public Province(bool bForbidden)
         {
-            m_bForbidden = bForbidden;
+            Forbidden = bForbidden;
         }
 
         public Province()
         {}
 
+        /// <summary>
+        /// Зарождение провинции в указанной земле
+        /// </summary>
+        /// <param name="pSeed"></param>
         public override void Start(LandX pSeed)
         {
             if (pSeed.m_pProvince != null)
                 throw new Exception("That land already belongs to province!!!");
 
-            m_cBorderWith.Clear();
+            BorderWith.Clear();
             m_cContents.Clear();
 
             base.Start(pSeed);
 
             m_pCenter = pSeed;
-            m_pNation = pSeed.m_pNation;
 
-            m_sName = m_pNation.m_pRace.m_pLanguage.RandomCountryName();
+            m_pLocalSociety = new NationalSociety(pSeed.m_pNation);
 
             m_cContents.Add(pSeed);
             pSeed.m_pProvince = this;
@@ -155,6 +106,11 @@ namespace Socium
             m_bFullyGrown = false;
         }
 
+        /// <summary>
+        /// Стоимость присоединения указанной земли к провинции
+        /// </summary>
+        /// <param name="pLand"></param>
+        /// <returns></returns>
         private int GetGrowCost(LandX pLand)
         {
             if (pLand.IsWater)
@@ -195,23 +151,23 @@ namespace Socium
 
 
 
-            foreach (LandTypeInfoX pType in m_pNation.m_aPreferredLands)
+            foreach (LandTypeInfoX pType in m_pLocalSociety.m_pTitularNation.m_aPreferredLands)
                 if (pType == pLand.Type)
                     fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            foreach (LandTypeInfoX pType in m_pNation.m_aHatedLands)
+            foreach (LandTypeInfoX pType in m_pLocalSociety.m_pTitularNation.m_aHatedLands)
                 if (pType == pLand.Type)
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            if (pLand.m_pNation != m_pNation)
+            if (pLand.m_pNation != m_pLocalSociety.m_pTitularNation)
             {
-                if (m_pNation.m_bDying)
+                if (m_pLocalSociety.m_pTitularNation.m_bDying)
                     fCost *= 9999999;
                 else
                     fCost *= 99999;
             }
 
-            if (m_pNation.m_bHegemon)
+            if (m_pLocalSociety.m_pTitularNation.m_bHegemon)
                 fCost /= 2;
 
             if (fCost < 1)
@@ -225,6 +181,12 @@ namespace Socium
 
         private Dictionary<LandX, int> m_cGrowCosts = new Dictionary<LandX, int>();
 
+        /// <summary>
+        /// Усилить претензии провинции на сопредельную ничейную землю
+        /// </summary>
+        /// <param name="pLand"></param>
+        /// <param name="iValue"></param>
+        /// <returns></returns>
         private LandX GrowPresence(LandX pLand, int iValue)
         {
             pLand.m_iProvincePresence += iValue;
@@ -321,13 +283,17 @@ namespace Socium
                 return null;
         }
 
+        /// <summary>
+        /// Присоеденять ничейные земли вокруг, не учитывая уровень претензий конкурентов, до тех пор, пока рядом будут ничейные земли.
+        /// </summary>
+        /// <returns></returns>
         public bool ForcedGrow()
         {
             object[] aBorder = new List<object>(m_cBorder.Keys).ToArray();
 
             m_bFullyGrown = true;
 
-            if (m_pNation.m_bDying)
+            if (m_pLocalSociety.m_pTitularNation.m_bDying)
                 return !m_bFullyGrown;
 
             foreach (ITerritory pTerr in aBorder)
@@ -337,7 +303,7 @@ namespace Socium
 
                 LandX pLand = pTerr as LandX;
 
-                if (pLand.m_pNation != m_pNation)
+                if (pLand.m_pNation != m_pLocalSociety.m_pTitularNation)
                     continue;
 
                 if (pLand.m_pProvince == null && !pLand.IsWater)
@@ -410,12 +376,6 @@ namespace Socium
             return true;
         }
 
-        public Dictionary<Nation, int> m_cNationsCount = new Dictionary<Nation, int>();
-
-        //public bool CheckNations()
-        //{ 
-        //}
-
         /// <summary>
         /// Заполняет словарь границ с другими провинциями.
         /// </summary>
@@ -431,16 +391,16 @@ namespace Socium
                 else
                     pProvince = (pLand as LandX).m_pProvince;
 
-                if (!m_cBorderWith.ContainsKey(pProvince))
-                    m_cBorderWith[pProvince] = new List<Location.Edge>();
-                m_cBorderWith[pProvince].AddRange(m_cBorder[pLand]);
+                if (!BorderWith.ContainsKey(pProvince))
+                    BorderWith[pProvince] = new List<Location.Edge>();
+                BorderWith[pProvince].AddRange(m_cBorder[pLand]);
             }
             FillBorderWithKeys();
 
             int iMaxPop = 0;
             Nation pMaxNation = null;
-            m_cNationsCount.Clear();
-
+            Dictionary<Nation, int> cClaims = new Dictionary<Nation, int>();
+            
             foreach (LandX pLand in m_cContents)
             {
                 bool bRestricted = true;
@@ -452,20 +412,20 @@ namespace Socium
                     continue;
 
                 int iCount = 0;
-                m_cNationsCount.TryGetValue((pLand.Area as AreaX).m_pNation, out iCount);
-                m_cNationsCount[(pLand.Area as AreaX).m_pNation] = iCount + pLand.m_cContents.Count;
-                if (m_cNationsCount[(pLand.Area as AreaX).m_pNation] > iMaxPop)
+                cClaims.TryGetValue((pLand.Area as AreaX).m_pNation, out iCount);
+                cClaims[(pLand.Area as AreaX).m_pNation] = iCount + pLand.m_cContents.Count;
+                if (cClaims[(pLand.Area as AreaX).m_pNation] > iMaxPop)
                 {
-                    iMaxPop = m_cNationsCount[(pLand.Area as AreaX).m_pNation];
+                    iMaxPop = cClaims[(pLand.Area as AreaX).m_pNation];
                     pMaxNation = (pLand.Area as AreaX).m_pNation;
                 }
             }
 
-            if (pMaxNation != null && !m_pNation.m_bDying)
-                m_pNation = pMaxNation;
+            if (pMaxNation != null && !m_pLocalSociety.m_pTitularNation.m_bDying)
+                m_pLocalSociety.m_pTitularNation = pMaxNation;
 
             foreach (LandX pLand in m_cContents)
-                pLand.m_pNation = m_pNation;
+                pLand.m_pNation = m_pLocalSociety.m_pTitularNation;
         }
 
         public void BuildLairs(int iScale)
@@ -477,7 +437,7 @@ namespace Socium
         public void BuildSettlements(SettlementSize eSize, bool bFast)
         {
             //проверим для начала, а позволяет ли вообще текущий уровень инфраструктуры поселения такого размера?
-            if (!State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(eSize))
+            if (!State.InfrastructureLevels[m_pLocalSociety.m_iInfrastructureLevel].m_cAvailableSettlements.Contains(eSize))
                 return;
 
             //определим, сколько поселений должно быть.
@@ -519,7 +479,7 @@ namespace Socium
                         LocationX pSettlement = pLand.BuildSettlement(Settlement.Info[eSize], false, bFast);
                         if (pSettlement != null)
                         {
-                            m_cSettlements.Add(pSettlement);
+                            m_pLocalSociety.Settlements.Add(pSettlement);
                             //bHaveOne = true;
                         }
                         cLandsChances[pLand] = cLandsChances[pLand] / 2;//0;
@@ -564,7 +524,7 @@ namespace Socium
                     LocationX pSettlement = pLand.BuildSettlement(Settlement.Info[eSize], false, bFast);
                     if (pSettlement != null)
                     {
-                        m_cSettlements.Add(pSettlement);
+                        m_pLocalSociety.Settlements.Add(pSettlement);
                         //bHaveOne = true;
                     }
                 }
@@ -577,8 +537,8 @@ namespace Socium
         /// <param name="eRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
         public void BuildRoads(RoadQuality eRoadLevel, float fCycleShift)
         {
-            if (eRoadLevel > State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad)
-                eRoadLevel = State.InfrastructureLevels[m_iInfrastructureLevel].m_eMaxGroundRoad;
+            if (eRoadLevel > State.InfrastructureLevels[m_pLocalSociety.m_iInfrastructureLevel].m_eMaxGroundRoad)
+                eRoadLevel = State.InfrastructureLevels[m_pLocalSociety.m_iInfrastructureLevel].m_eMaxGroundRoad;
 
             if (eRoadLevel == RoadQuality.None)
                 return;
@@ -600,7 +560,7 @@ namespace Socium
             List<LocationX> cConnected = new List<LocationX>();
             cConnected.Add(m_pAdministrativeCenter);
 
-            LocationX[] aSettlements = m_cSettlements.ToArray();
+            LocationX[] aSettlements = m_pLocalSociety.Settlements.ToArray();
 
             foreach (LocationX pTown in aSettlements)
             {
@@ -678,19 +638,6 @@ namespace Socium
         /// <returns>локация со столицей</returns>
         public LocationX BuildCapital(bool bFast)
         {
-            m_iTechLevel = m_pNation.m_iTechLevel;
-            //m_iMagicLimit = m_pRace.m_iMagicLimit;
-
-            //m_eMagicAbilityPrevalence = m_pRace.m_eMagicAbilityPrevalence;
-            //m_eMagicAbilityDistribution = m_pRace.m_eMagicAbilityDistribution;
-            m_pCulture = new Culture(m_pNation.m_pCulture);
-            m_pCustoms = new Customs(m_pNation.m_pCustoms);
-
-            //if (Rnd.OneChanceFrom(3))
-            //    m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
-            //if (Rnd.OneChanceFrom(3))
-            //    m_eMagicAbilityDistribution = (MagicAbilityDistribution)Rnd.Get(typeof(MagicAbilityDistribution));
-
             int iAverageMagicLimit = 0;
 
             m_fFish = 0;
@@ -716,118 +663,49 @@ namespace Socium
                 }
 
                 m_fFish += iCoast*3/pLand.MovementCost;
-                m_fGrain += pLand.m_cContents.Count * pLand.Type.m_fGrain;
-                m_fGame += pLand.m_cContents.Count * pLand.Type.m_fGame;
-                m_fWood += pLand.m_cContents.Count * pLand.Type.m_fWood;
-                m_fOre += pLand.m_cContents.Count * pLand.Type.m_fOre;
+                m_fGrain += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Grain];
+                m_fGame += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Game];
+                m_fWood += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Wood];
+                m_fOre += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Ore];
 
                 m_iPopulation += pLand.m_cContents.Count;
-                iAverageMagicLimit += m_pNation.m_iMagicLimit * pLand.m_cContents.Count;
+                iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pPrimalSociety.m_iMagicLimit * pLand.m_cContents.Count;
             }
 
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
 
-            if (m_fWood*2 < m_iPopulation && m_fOre*2 < m_iPopulation)
-                m_iTechLevel -= 2;
-            else if (m_fWood + m_fOre < m_iPopulation)// || m_iOre < m_iPopulation)
-                m_iTechLevel--;
-            else if ((m_fWood > m_iPopulation*2 && m_fOre > m_iPopulation*2) || Rnd.OneChanceFrom(8))
-                m_iTechLevel++;
+            float fFood = m_pLocalSociety.GetAvailableFood(m_fWood, m_fOre, m_fGrain, m_fGame, m_fFish, m_iPopulation);
 
-            if (m_pNation.m_bInvader)
-            {
-                if (m_iTechLevel < m_pNation.m_pEpoch.m_iInvadersMinTechLevel)
-                    m_iTechLevel = m_pNation.m_pEpoch.m_iInvadersMinTechLevel;
-                if (m_iTechLevel > m_pNation.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pNation.m_pEpoch.m_iInvadersMaxTechLevel;
-            }
-            else
-            {
-                if (m_iTechLevel < m_pNation.m_pEpoch.m_iNativesMinTechLevel)
-                    m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMinTechLevel;
-                if (m_iTechLevel > m_pNation.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMaxTechLevel;
-            }
-
-            //m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety, m_iTechLevel, m_iTechLevel) * 4);
-            m_iInfrastructureLevel = m_iTechLevel;// -(int)(m_iTechLevel * Math.Pow(Rnd.Get(1f), 3));
-            
-            if (m_cContents.Count == 1)
-                m_iInfrastructureLevel /= 2;
-
-            if (m_iTechLevel == 0 && iAverageMagicLimit == 0)
-                m_iInfrastructureLevel = 0;
-
-            if ((m_fGrain + m_fFish + m_fGame)*2 < m_iPopulation)
-                m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);            
-            if (m_fGrain + m_fFish + m_fGame < m_iPopulation || Rnd.OneChanceFrom(10))
-                m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);
-            if (m_fGrain + m_fFish + m_fGame > m_iPopulation * 2 && Rnd.OneChanceFrom(10))
-                m_iInfrastructureLevel++;
-
-            if (m_iInfrastructureLevel < 0)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)
-                m_iInfrastructureLevel = 0;//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2;
-            if (m_iInfrastructureLevel > m_iTechLevel + 1)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1))
-                m_iInfrastructureLevel = m_iTechLevel + 1;// Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1);
-            if (m_iInfrastructureLevel > 8)
-                m_iInfrastructureLevel = 8;
-
-            //int iOldLevel = m_pNation.m_iTechLevel;// Math.Max(m_pRace.m_iTechLevel, m_pRace.m_iMagicLimit / 2);
-            //int iNewLevel = m_iInfrastructureLevel;// Math.Max(m_iTechLevel, iAverageMagicLimit / 2);
-            //if (iNewLevel > iOldLevel)
-            //    for (int i = 0; i < iNewLevel*iNewLevel - iOldLevel*iOldLevel; i++)
-            //    {
-            //        m_pCulture.Evolve();
-            //        m_pCustoms.Evolve();
-            //    }
-            //else
-            //    for (int i = 0; i < iOldLevel - iNewLevel; i++)
-            //    {
-            //        m_pCulture.Degrade();
-            //        m_pCustoms.Degrade();
-            //    }
-
-            if (m_iTechLevel > m_iInfrastructureLevel * 2)
-                m_iTechLevel = m_iInfrastructureLevel * 2;
-            if (m_pNation.m_bInvader)
-            {
-                if (m_iTechLevel > m_pNation.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pNation.m_pEpoch.m_iInvadersMaxTechLevel;
-            }
-            else
-            {
-                if (m_iTechLevel > m_pNation.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pNation.m_pEpoch.m_iNativesMaxTechLevel;
-            }
+            m_pLocalSociety.CheckResources(m_fWood, m_fOre, fFood, m_iPopulation, m_cContents.Count);
 
             SettlementInfo pSettlementInfo = Settlement.Info[SettlementSize.Hamlet];
 
-            if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Capital))
+            if (State.InfrastructureLevels[m_pLocalSociety.m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Capital))
                 pSettlementInfo = Settlement.Info[SettlementSize.Capital];
             else
-                if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.City))
+                if (State.InfrastructureLevels[m_pLocalSociety.m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.City))
                     pSettlementInfo = Settlement.Info[SettlementSize.City];
                 else
-                    if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Town))
+                    if (State.InfrastructureLevels[m_pLocalSociety.m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Town))
                         pSettlementInfo = Settlement.Info[SettlementSize.Town];
                     else
-                        if (State.InfrastructureLevels[m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Village))
+                        if (State.InfrastructureLevels[m_pLocalSociety.m_iInfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Village))
                             pSettlementInfo = Settlement.Info[SettlementSize.Village];
 
             BuildAdministrativeCenter(pSettlementInfo, bFast);
             if (m_pAdministrativeCenter != null)
-                m_cSettlements.Add(m_pAdministrativeCenter);
+            {
+                m_pLocalSociety.Settlements.Add(m_pAdministrativeCenter);
+            }
             else
                 throw new Exception("Can't build capital!");
-
-            if (m_pCenter.Area != null)
-                m_sName = m_pNation.m_pRace.m_pLanguage.RandomCountryName();
 
             return m_pAdministrativeCenter;
         }
 
         /// <summary>
-        /// Находит подходящую локацию и строит там поселение указанного типа
+        /// Находит подходящую локацию и строит там поселение указанного типа.
+        /// Вспомогательная приватная функция, вызывается из BuildCapital.
         /// </summary>
         /// <param name="pCenter">тип поселения</param>
         /// <param name="bFast">флаг быстрой (упрощённой) генерации</param>
@@ -900,7 +778,7 @@ namespace Socium
         public override string ToString()
         {
             //if (m_pAdministrativeCenter != null)
-                return string.Format("province {0} ({2}, {1})", m_sName, m_pAdministrativeCenter == null ? "-" : m_pAdministrativeCenter.ToString(), m_pNation);
+                return string.Format("province {0} ({2}, {1})", m_pLocalSociety.m_sName, m_pAdministrativeCenter == null ? "-" : m_pAdministrativeCenter.ToString(), m_pLocalSociety.m_pTitularNation);
             //else
             //    return "province " + m_sName + " [" + m_pRace.ToString() + "]";
         }
@@ -919,17 +797,17 @@ namespace Socium
         {
             int iHostility = 0;
 
-            if (m_pNation != pOpponent.m_pNation)
+            if (m_pLocalSociety.m_pTitularNation != pOpponent.m_pLocalSociety.m_pTitularNation)
             {
                 iHostility++;
 
-                if (m_pNation.m_pRace.m_pLanguage != pOpponent.m_pNation.m_pRace.m_pLanguage)
+                if (m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage != pOpponent.m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage)
                     iHostility++;
             }
             else
                 iHostility--;
 
-            iHostility += m_pCustoms.GetDifference(pOpponent.m_pCustoms);
+            iHostility += m_pLocalSociety.DominantCulture.m_pCustoms.GetDifference(pOpponent.m_pLocalSociety.DominantCulture.m_pCustoms);
 
             //if (m_iFood < m_iPopulation && pOpponent.m_iFood > pOpponent.m_iPopulation * 2)
             //    iHostility++;
@@ -938,29 +816,29 @@ namespace Socium
             //if (m_iOre < m_iPopulation && pOpponent.m_iOre > pOpponent.m_iPopulation * 2)
             //    iHostility++;
 
-            if (pOpponent.m_iInfrastructureLevel > m_iInfrastructureLevel)
+            if (pOpponent.m_pLocalSociety.m_iInfrastructureLevel > m_pLocalSociety.m_iInfrastructureLevel)
                 iHostility++;//= pOpponent.m_iLifeLevel - m_iLifeLevel;
             else
-                if (pOpponent.m_iInfrastructureLevel < m_iInfrastructureLevel)
+                if (pOpponent.m_pLocalSociety.m_iInfrastructureLevel < m_pLocalSociety.m_iInfrastructureLevel)
                     iHostility++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
 
-            float iCultureDifference = m_pCulture.GetDifference(pOpponent.m_pCulture, m_iInfrastructureLevel, pOpponent.m_iInfrastructureLevel);
-            if (iCultureDifference < -0.75)
+            float iMentalityDifference = m_pLocalSociety.DominantCulture.GetMentalityDifference(pOpponent.m_pLocalSociety.DominantCulture);
+            if (iMentalityDifference < -0.75)
                 iHostility -= 2;
             else
-                if (iCultureDifference < -0.5)
+                if (iMentalityDifference < -0.5)
                     iHostility--;
                 else
-                    if (iCultureDifference > 0.5)
+                    if (iMentalityDifference > 0.5)
                         iHostility += 2;
                     else
-                        if (iCultureDifference > 0)
+                        if (iMentalityDifference > 0)
                             iHostility++;
 
             if (iHostility > 0)
             {
-                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel] * iHostility + 0.25);
-                iHostility = (int)(m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel] * iHostility + 0.25);
+                iHostility = (int)(m_pLocalSociety.DominantCulture.GetTrait(Trait.Fanaticism) * iHostility + 0.25);
+                iHostility = (int)(m_pLocalSociety.DominantCulture.GetTrait(Trait.Agression) * iHostility + 0.25);
                 if (iHostility == 0)
                     iHostility = 1;
             }
@@ -968,20 +846,14 @@ namespace Socium
             {
                 if (iHostility < 0)
                 {
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Fanaticism][m_iInfrastructureLevel]) * iHostility - 0.25);
-                    iHostility = (int)((2.0f - m_pCulture.MentalityValues[Mentality.Agression][m_iInfrastructureLevel]) * iHostility - 0.25);
+                    iHostility = (int)((2.0f - m_pLocalSociety.DominantCulture.GetTrait(Trait.Fanaticism)) * iHostility - 0.25);
+                    iHostility = (int)((2.0f - m_pLocalSociety.DominantCulture.GetTrait(Trait.Agression)) * iHostility - 0.25);
                     if (iHostility == 0)
                         iHostility = -1;
                 }
             }
 
             return iHostility;
-        }
-
-        internal void AddBuildings()
-        {
-            foreach (LocationX pLoc in m_cSettlements)
-                pLoc.m_pSettlement.AddBuildings(this);
         }
     }
 }
