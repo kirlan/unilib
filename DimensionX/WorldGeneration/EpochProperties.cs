@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using Socium;
 using Random;
 using Socium.Nations;
+using Socium.Population;
+using Socium.Psychology;
 
 namespace WorldGeneration
 {
@@ -70,11 +72,11 @@ namespace WorldGeneration
 
             for (int i = 0; i < 9; i++)
             {
-                BaseTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i, Socium.Psychology.Customs.Science.Moderate_Science), i));
-                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i, Socium.Psychology.Customs.Science.Moderate_Science), i));
+                BaseTechBox.Items.Add(string.Format("{0} [T{1}]", Society.GetTechString(i, Customs.Science.Moderate_Science), i));
+                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", Society.GetTechString(i, Customs.Science.Moderate_Science), i));
 
-                BaseMagicBox.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
-                MaxMagicBox.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+                BaseMagicBox.Items.Add(string.Format("{0} [M{1}]", Society.GetMagicString(i), i));
+                MaxMagicBox.Items.Add(string.Format("{0} [M{1}]", Society.GetMagicString(i), i));
             }
 
             BaseTechBox.SelectedIndex = 0;
@@ -234,7 +236,7 @@ namespace WorldGeneration
 
             MaxTechBox.Items.Clear();
             for (int i = BaseTechBox.SelectedIndex; i < 9; i++)
-                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", State.GetTechString(i, Socium.Psychology.Customs.Science.Moderate_Science), i));
+                MaxTechBox.Items.Add(string.Format("{0} [T{1}]", Society.GetTechString(i, Customs.Science.Moderate_Science), i));
 
             if (tabControl1.SelectedIndex == 0)
                 MaxTechBox.SelectedIndex = Math.Max(0, m_pEpoch.NativesMaxTechLevel - BaseTechBox.SelectedIndex);
@@ -270,7 +272,7 @@ namespace WorldGeneration
 
             MaxMagicBox.Items.Clear();
             for (int i = BaseMagicBox.SelectedIndex; i < 9; i++)
-                MaxMagicBox.Items.Add(string.Format("{0} [M{1}]", State.GetMagicString(i), i));
+                MaxMagicBox.Items.Add(string.Format("{0} [M{1}]", Society.GetMagicString(i), i));
 
             if (tabControl1.SelectedIndex == 0)
                 MaxMagicBox.SelectedIndex = Math.Max(0, m_pEpoch.NativesMaxMagicLevel - BaseMagicBox.SelectedIndex);

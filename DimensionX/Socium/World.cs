@@ -543,10 +543,15 @@ namespace Socium
             }
 
             BeginStep("Adding buildings...", m_aProvinces.Length);
-            foreach (Province pProvince in m_aProvinces)
+            foreach (State pState in m_aStates)
             {
-                if (!pProvince.Forbidden)
-                    pProvince.AddBuildings();
+                if (!pState.Forbidden)
+                {
+                    foreach (LocationX pLoc in pState.m_pSociety.Settlements)
+                    {
+                        pState.m_pSociety.AddBuildings(pLoc.m_pSettlement);
+                    }
+                }
                 ProgressStep();
             }
 

@@ -76,7 +76,7 @@ namespace Socium
 
         public bool HaveEstate(Estate.Position eEstate)
         {
-            Society pOwnerSociety = OwnerState.m_pSociety;
+            StateSociety pOwnerSociety = OwnerState.m_pSociety;
 
             if (m_pSettlement != null && pOwnerSociety.m_cEstates.ContainsKey(eEstate))
             {

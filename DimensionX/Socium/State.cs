@@ -465,6 +465,8 @@ namespace Socium
 
             foreach (Province pProvince in m_cContents)
             {
+                m_pSociety.Settlements.AddRange(pProvince.m_pLocalSociety.Settlements);
+
                 if (pProvince == m_pMethropoly)
                     continue;
 

@@ -480,7 +480,6 @@ namespace Socium
                         if (pSettlement != null)
                         {
                             m_pLocalSociety.Settlements.Add(pSettlement);
-                            OwnerState.m_pSociety.Settlements.Add(pSettlement);
                             //bHaveOne = true;
                         }
                         cLandsChances[pLand] = cLandsChances[pLand] / 2;//0;
@@ -526,7 +525,6 @@ namespace Socium
                     if (pSettlement != null)
                     {
                         m_pLocalSociety.Settlements.Add(pSettlement);
-                        OwnerState.m_pSociety.Settlements.Add(pSettlement);
                         //bHaveOne = true;
                     }
                 }
@@ -671,7 +669,7 @@ namespace Socium
                 m_fOre += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Ore];
 
                 m_iPopulation += pLand.m_cContents.Count;
-                iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pProtoSociety.m_iMagicLimit * pLand.m_cContents.Count;
+                iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pPrimalSociety.m_iMagicLimit * pLand.m_cContents.Count;
             }
 
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
@@ -698,7 +696,6 @@ namespace Socium
             if (m_pAdministrativeCenter != null)
             {
                 m_pLocalSociety.Settlements.Add(m_pAdministrativeCenter);
-                OwnerState.m_pSociety.Settlements.Add(pSettlement);
             }
             else
                 throw new Exception("Can't build capital!");
@@ -857,12 +854,6 @@ namespace Socium
             }
 
             return iHostility;
-        }
-
-        internal void AddBuildings()
-        {
-            foreach (LocationX pLoc in m_pLocalSociety.Settlements)
-                pLoc.m_pSettlement.AddBuildings(this);
         }
     }
 }

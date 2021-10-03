@@ -1680,7 +1680,11 @@ namespace Socium.Population
                         break;
                 }
 
-                Dictionary<Gender, float> cProvinceMagesCount = new Dictionary<Gender, float>();
+                Dictionary<Gender, float> cProvinceMagesCount = new Dictionary<Gender, float>()
+                {
+                    { Gender.Male, 0 },
+                    { Gender.Female, 0 }
+                };
                 foreach (LandX pLand in pProvince.m_cContents)
                 {
                     cProvinceMagesCount[Gender.Male] += pLand.m_cContents.Count * fPrevalence;

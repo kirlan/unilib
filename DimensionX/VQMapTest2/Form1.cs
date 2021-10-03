@@ -245,13 +245,13 @@ namespace VQMapTest2
 
             richTextBox1.Clear();
 
-            richTextBox1.AppendText(string.Format("{0} {1}\n\n", e.m_pState.m_sName, pSociety.m_pStateModel.m_sName));
+            richTextBox1.AppendText(string.Format("{0} {1}\n\n", e.m_pState.m_pSociety.m_sName, pSociety.m_pStateModel.m_sName));
 
-            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", pSociety.m_pTitularNation.m_iTechLevel, pSociety.m_pTitularNation.m_iMagicLimit, pSociety.m_pTitularNation));
+            richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", pSociety.m_iTechLevel, pSociety.m_iMagicLimit, pSociety.m_pTitularNation));
 
-            richTextBox1.AppendText(string.Format("Social order : {0} [C{1}]\n\n", Society.GetControlString(pSociety.m_iControl), pSociety.m_iCultureLevel));
+            richTextBox1.AppendText(string.Format("Social order : {0} [C{1}]\n\n", Society.GetControlString(pSociety.m_iControl), pSociety.DominantCulture.m_iProgressLevel));
 
-            richTextBox1.AppendText(string.Format("Economic system : {0}\n\n", Society.GetEqualityString(pSociety.m_iSocialEquality))); 
+            richTextBox1.AppendText(string.Format("Economic system : {0}\n\n", StateSociety.GetEqualityString(pSociety.m_iSocialEquality))); 
             
             richTextBox1.AppendText(string.Format("Culture:\n"));
             foreach (Trait eMentality in Mentality.AllTraits)
@@ -260,7 +260,7 @@ namespace VQMapTest2
                 //richTextBox1.AppendText(string.Format("   {0}: \t", eMorale));
                 //if (eMorale.ToString().Length < 6)
                 //    richTextBox1.AppendText("\t");
-                richTextBox1.AppendText(pSociety.m_pCulture.GetMentalityString(eMentality, pSociety.m_iCultureLevel));
+                richTextBox1.AppendText(pSociety.DominantCulture.m_pMentality.GetTraitString(eMentality, pSociety.DominantCulture.m_iProgressLevel));
                 //richTextBox1.AppendText(string.Format("{0:0.00}\n", e.State.m_pCulture.Moral[eMorale]));
                 richTextBox1.AppendText("\n");
             }
@@ -282,7 +282,7 @@ namespace VQMapTest2
 
                     bFirst = false;
 
-                    richTextBox1.AppendText(pState.m_pSociety.m_pTitularNation.m_sName);
+                    richTextBox1.AppendText(pState.m_pSociety.m_pTitularNation.m_pPrimalSociety.m_sName);
 
                     cKnownNations.Add(pState.m_pSociety.m_pTitularNation);
                 }
@@ -292,34 +292,34 @@ namespace VQMapTest2
             string sFenotypeNation = pSociety.m_pTitularNation.m_pFenotype.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pFenotype);
             if (!sFenotypeNation.StartsWith("are"))
                 sFenotypeNation = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNation.Substring(0, 1).ToLower() + sFenotypeNation.Substring(1);
-            richTextBox1.AppendText(pSociety.m_pTitularNation.m_sName + "s " + sFenotypeNation);
+            richTextBox1.AppendText(pSociety.m_pTitularNation.m_pPrimalSociety.m_sName + "s " + sFenotypeNation);
             richTextBox1.AppendText("\n\n");
 
-            richTextBox1.AppendText(pSociety.m_pCustoms.GetCustomsString2());
+            richTextBox1.AppendText(pSociety.DominantCulture.m_pCustoms.GetCustomsString2());
             richTextBox1.AppendText("\n");
 
             if (pSociety.GetImportedTech() == -1)
-                richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.m_pCustoms.m_eProgress), pSociety.GetEffectiveTech()));
+                richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.DominantCulture.m_pCustoms.m_eScience), pSociety.GetEffectiveTech()));
             else
                 richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", pSociety.GetImportedTechString(), pSociety.GetImportedTech()));
-            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.m_pCustoms.m_eProgress), pSociety.GetEffectiveTech()));
+            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.DominantCulture.m_pCustoms.m_eScience), pSociety.GetEffectiveTech()));
 
             if (pSociety.m_iMagicLimit > 0)
             {
                 string sMagicAttitude = "regulated";
-                if (pSociety.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
+                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
                     sMagicAttitude = "outlawed";
-                if (pSociety.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
                     sMagicAttitude = "unlimited";
                 richTextBox1.AppendText(string.Format("Magic users: {0}, ", sMagicAttitude));
-                richTextBox1.AppendText(string.Format("{2}, up to {0} [M{1}]\n\n", Society.GetMagicString(pSociety.m_iMagicLimit), pSociety.m_iMagicLimit, pSociety.m_eMagicAbilityDistribution.ToString().Replace('_', ' ')));
+                richTextBox1.AppendText(string.Format("{2}, up to {0} [M{1}]\n\n", Society.GetMagicString(pSociety.m_iMagicLimit), pSociety.m_iMagicLimit, pSociety.DominantCulture.m_eMagicAbilityDistribution.ToString().Replace('_', ' ')));
             }
             else
             {
                 string sMagicAttitude = "but allowed";
-                if (pSociety.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
+                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
                     sMagicAttitude = "and outlawed";
-                if (pSociety.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
                     sMagicAttitude = "but praised";
                 richTextBox1.AppendText(string.Format("Magic users: none, {0} [M0]\n\n", sMagicAttitude));
             }
@@ -335,7 +335,7 @@ namespace VQMapTest2
                 {
                     if(!bFirst)
                         richTextBox1.AppendText(", ");
-                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.m_sName, pState.m_pSociety.m_pStateModel.m_sName), comboBox1.Items.IndexOf(pState).ToString());
+                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.m_pSociety.m_sName, pState.m_pSociety.m_pStateModel.m_sName), comboBox1.Items.IndexOf(pState).ToString());
                     bFirst = false;
                 }
                 richTextBox1.AppendText("\n\n");
@@ -352,7 +352,7 @@ namespace VQMapTest2
                 {
                     if (!bFirst)
                         richTextBox1.AppendText(", ");
-                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.m_sName, pState.m_pSociety.m_pStateModel.m_sName), comboBox1.Items.IndexOf(pState).ToString());
+                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.m_pSociety.m_sName, pState.m_pSociety.m_pStateModel.m_sName), comboBox1.Items.IndexOf(pState).ToString());
                     bFirst = false;
                 }
                 richTextBox1.AppendText("\n\n");
@@ -364,25 +364,24 @@ namespace VQMapTest2
 
             Dictionary<string, int> cPop = new Dictionary<string, int>();
 
-            foreach(Province pProvince in e.m_pState.m_cContents)
-                foreach (LocationX pLoc in pProvince.m_cSettlements)
+            foreach(LocationX pLoc in e.m_pState.m_pSociety.Settlements)
+            {
+                listBox1.Items.Add(pLoc);
+
+                foreach (Building pBuilding in pLoc.m_pSettlement.m_cBuildings)
                 {
-                    listBox1.Items.Add(pLoc);
+                    if (pBuilding.m_pInfo.m_eSize == BuildingSize.Unique)
+                        continue;
 
-                    foreach (Building pBuilding in pLoc.m_pSettlement.m_cBuildings)
-                    {
-                        if (pBuilding.m_pInfo.m_eSize == BuildingSize.Unique)
-                            continue;
+                    int iPop = 0;
+                    cPop.TryGetValue(pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM, out iPop);
+                    cPop[pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM] = iPop + pBuilding.m_pInfo.OwnersCount;
 
-                        int iPop = 0;
-                        cPop.TryGetValue(pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM, out iPop);
-                        cPop[pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM] = iPop + pBuilding.m_pInfo.OwnersCount;
-
-                        iPop = 0;
-                        cPop.TryGetValue(pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM, out iPop);
-                        cPop[pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM] = iPop + pBuilding.m_pInfo.WorkersCount;
-                    }
+                    iPop = 0;
+                    cPop.TryGetValue(pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM, out iPop);
+                    cPop[pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM] = iPop + pBuilding.m_pInfo.WorkersCount;
                 }
+            }
 
             richTextBox2.Clear();
 
@@ -556,14 +555,14 @@ namespace VQMapTest2
 
                         State pLinkState = comboBox1.Items[iIndex] as State;
 
-                        string sTip = string.Format("{0} {1} to {2} {3}:\n", mapDraw1.SelectedState.m_sName, mapDraw1.SelectedState.m_pSociety.m_pStateModel.m_sName, pLinkState.m_sName, pLinkState.m_pSociety.m_pStateModel.m_sName);
+                        string sTip = string.Format("{0} {1} to {2} {3}:\n", mapDraw1.SelectedState.m_pSociety.m_sName, mapDraw1.SelectedState.m_pSociety.m_pStateModel.m_sName, pLinkState.m_pSociety.m_sName, pLinkState.m_pSociety.m_pStateModel.m_sName);
                         string sRelation;
                         mapDraw1.SelectedState.m_pSociety.CalcHostility(pLinkState, out sRelation);
 
                         sTip += sRelation;
                         sTip += "\n";
 
-                        sTip += string.Format("{2} {3} to {0} {1}:\n", mapDraw1.SelectedState.m_sName, mapDraw1.SelectedState.m_pSociety.m_pStateModel.m_sName, pLinkState.m_sName, pLinkState.m_pSociety.m_pStateModel.m_sName);
+                        sTip += string.Format("{2} {3} to {0} {1}:\n", mapDraw1.SelectedState.m_pSociety.m_sName, mapDraw1.SelectedState.m_pSociety.m_pStateModel.m_sName, pLinkState.m_pSociety.m_sName, pLinkState.m_pSociety.m_pStateModel.m_sName);
                         pLinkState.m_pSociety.CalcHostility(mapDraw1.SelectedState, out sRelation);
                         sTip += sRelation;
 

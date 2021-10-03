@@ -88,7 +88,7 @@ namespace Socium.Population
 
         protected List<LocationX> m_cSettlements = new List<LocationX>();
 
-        internal List<LocationX> Settlements
+        public List<LocationX> Settlements
         {
             get { return m_cSettlements; }
         }

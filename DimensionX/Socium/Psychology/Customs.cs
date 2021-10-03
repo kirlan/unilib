@@ -151,7 +151,7 @@ namespace Socium.Psychology
 
             m_eFamilyValues = Rnd.OneChanceFrom(2) ? FamilyValues.Moderate_Family_Values : Rnd.OneChanceFrom(2) ? FamilyValues.Praised_Family_Values : FamilyValues.No_Family_Values;
 
-            m_eScience = Rnd.OneChanceFrom(2) ? Science.Moderate_Science : Rnd.OneChanceFrom(2) ? Science.Technofetishism : Science.Traditionalism;
+            m_eScience = Rnd.OneChanceFrom(2) ? Science.Moderate_Science : Rnd.OneChanceFrom(2) ? Science.Ingenuity : Science.Technophobia;
 
             m_eMagic = Rnd.OneChanceFrom(2) ? Magic.Magic_Allowed : Rnd.OneChanceFrom(2) ? Magic.Magic_Praised : Magic.Magic_Feared;
         }
@@ -316,7 +316,7 @@ namespace Socium.Psychology
                     break;
                 case 7:
                     if (m_eScience == Science.Moderate_Science)
-                        m_eScience = Rnd.OneChanceFrom(3) ? Science.Technofetishism : Science.Traditionalism;
+                        m_eScience = Rnd.OneChanceFrom(3) ? Science.Ingenuity : Science.Technophobia;
                     else
                         m_eScience = Science.Moderate_Science;
                     break;
@@ -527,12 +527,12 @@ namespace Socium.Psychology
                 sResult += "no family ties";
             }
 
-            if (m_eScience == Science.Traditionalism)
+            if (m_eScience == Science.Technophobia)
             {
                 sResult += "\n   ";
                 sResult += "traditions";
             }
-            if (m_eScience == Science.Technofetishism)
+            if (m_eScience == Science.Ingenuity)
             {
                 sResult += "\n   ";
                 sResult += "technical progress";
@@ -696,7 +696,7 @@ namespace Socium.Psychology
                 sResult += "uses a lot of jewelry";
             }
 
-            if (m_eScience == Science.Traditionalism)
+            if (m_eScience == Science.Technophobia)
             {
                 if (bFirst)
                 {
@@ -707,7 +707,7 @@ namespace Socium.Psychology
                     sResult += ", ";
                 sResult += "doesn't like novelties";
             }
-            if (m_eScience == Science.Technofetishism)
+            if (m_eScience == Science.Ingenuity)
             {
                 if (bFirst)
                 {
@@ -1039,12 +1039,12 @@ namespace Socium.Psychology
                 if (sResult != "")
                     sResult += ", ";
 
-                if (m_eScience == Science.Traditionalism)
+                if (m_eScience == Science.Technophobia)
                     sResult += "rejects any novelties";
-                if (m_eScience == Science.Technofetishism)
+                if (m_eScience == Science.Ingenuity)
                     sResult += "likes any novelties";
                 if (m_eScience == Science.Moderate_Science)
-                    sResult += pOther.m_eScience == Science.Traditionalism ? "accepts some regulated progress" : "doesn't like novelties so much";
+                    sResult += pOther.m_eScience == Science.Technophobia ? "accepts some regulated progress" : "doesn't like novelties so much";
             }
 
             if (m_eFamilyValues != pOther.m_eFamilyValues)

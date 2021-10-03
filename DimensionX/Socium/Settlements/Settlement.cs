@@ -154,24 +154,6 @@ namespace Socium.Settlements
             m_bCapital = bCapital;
         }
 
-        public void AddBuildings(Province pProvince)
-        {
-            m_cBuildings.Clear();
-
-            int iBuildingsCount = m_pInfo.m_iMinBuildingsCount + Rnd.Get(m_pInfo.m_iDeltaBuildingsCount + 1);
-            for (int i = 0; i < iBuildingsCount; i++)
-            {
-                Building pNewBuilding = new Building(this, pProvince);
-                m_cBuildings.Add(pNewBuilding);
-            }
-
-            if (m_pInfo.m_pMainBuilding != null && (m_bCapital || !Rnd.OneChanceFrom(3)))
-            {
-                Building pNewBuilding = new Building(this, m_pInfo.m_pMainBuilding, m_bCapital);
-                m_cBuildings.Add(pNewBuilding);
-            }
-        }
-
         public override string ToString()
         {
             switch(m_iRuinsAge)
@@ -179,11 +161,11 @@ namespace Socium.Settlements
                 case 0:
                     return string.Format("{2} {0} {1}", m_pInfo.m_sName, m_sName, m_eSpeciality);
                 case 1:
-                    return string.Format("ruins of {2} {0} {1}", m_pNation.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    return string.Format("ruins of {2} {0} {1}", m_pNation.m_pPrimalSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
                 case 2:
-                    return string.Format("ancient ruins of {2} {0} {1}", m_pNation.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    return string.Format("ancient ruins of {2} {0} {1}", m_pNation.m_pPrimalSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
                 default:
-                    return string.Format("forgotten ruins of {2} {0} {1}", m_pNation.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    return string.Format("forgotten ruins of {2} {0} {1}", m_pNation.m_pPrimalSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
             }
         }
     }

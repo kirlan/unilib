@@ -755,7 +755,7 @@ namespace Socium.Nations
 
         public List<Nation> m_cNations = new List<Nation>();
 
-        public MentalityTemplate m_pCulture;
+        public MentalityTemplate m_pMentalityTemplate;
 
         public Race(string sName, int iRank, Language pLanguage, Fenotype<LandTypeInfoX> pFenotype, MentalityTemplate pCulture)
         { 
@@ -772,7 +772,7 @@ namespace Socium.Nations
                  m_pFenotype.m_pHairs.m_eBeardF != HairsAmount.None))
                 throw new Exception();
 
-            m_pCulture = pCulture;
+            m_pMentalityTemplate = pCulture;
         }
 
         public override string ToString()

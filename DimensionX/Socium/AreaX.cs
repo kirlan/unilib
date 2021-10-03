@@ -63,7 +63,7 @@ namespace Socium
             if (m_pNation == null)
                 return "unpopulated";
             else
-                return m_pNation.m_sName;
+                return m_pNation.m_pPrimalSociety.m_sName;
         }
 
         public override string ToString()
