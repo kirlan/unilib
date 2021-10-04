@@ -30,21 +30,21 @@ namespace Socium
         public SocialOrder(string[] aElite, string[] aMiddle, string[] aLow, string[] aOutlaw)
         {
             m_cEstates[Estate.Position.Elite] = aElite;
-            m_cEstates[Estate.Position.Middle] = aMiddle;
-            m_cEstates[Estate.Position.Low] = aLow;
-            m_cEstates[Estate.Position.Outlaw] = aOutlaw;
+            m_cEstates[Estate.Position.Commoners] = aMiddle;
+            m_cEstates[Estate.Position.Lowlifes] = aLow;
+            m_cEstates[Estate.Position.Outlaws] = aOutlaw;
 
             if (m_cEstates[Estate.Position.Elite] == null || m_cEstates[Estate.Position.Elite].Length == 0)
                 m_cEstates[Estate.Position.Elite] = new string[] { "Elite" };
 
-            if (m_cEstates[Estate.Position.Middle] == null || m_cEstates[Estate.Position.Middle].Length == 0)
-                m_cEstates[Estate.Position.Middle] = new string[] { "Commoner" };
+            if (m_cEstates[Estate.Position.Commoners] == null || m_cEstates[Estate.Position.Commoners].Length == 0)
+                m_cEstates[Estate.Position.Commoners] = new string[] { "Commoner" };
 
-            if (m_cEstates[Estate.Position.Low] == null || m_cEstates[Estate.Position.Low].Length == 0)
-                m_cEstates[Estate.Position.Low] = new string[] { "Servant" };
+            if (m_cEstates[Estate.Position.Lowlifes] == null || m_cEstates[Estate.Position.Lowlifes].Length == 0)
+                m_cEstates[Estate.Position.Lowlifes] = new string[] { "Servant" };
 
-            if (m_cEstates[Estate.Position.Outlaw] == null || m_cEstates[Estate.Position.Outlaw].Length == 0)
-                m_cEstates[Estate.Position.Outlaw] = new string[] { "Outlaw" };
+            if (m_cEstates[Estate.Position.Outlaws] == null || m_cEstates[Estate.Position.Outlaws].Length == 0)
+                m_cEstates[Estate.Position.Outlaws] = new string[] { "Outlaw" };
         }
 
         public string GetEstateName(Estate.Position ePosition)

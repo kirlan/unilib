@@ -69,6 +69,10 @@ namespace Socium.Nations
             //    if(m_bHegemon)
             //        return string.Format("great {1} ({0})", m_sName, m_pRace).ToLower();
             //    else
+
+            if (m_pProtoSociety.m_sName == m_pRace.ToString())
+                return m_pProtoSociety.m_sName;
+
             return string.Format("{1} ({0})", m_pProtoSociety.m_sName, m_pRace).ToLower();
         }
 

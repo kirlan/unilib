@@ -519,6 +519,7 @@ namespace LandscapeGeneration
             foreach (CONT pCont in m_aContinents)
             {
                 pCont.Finish(m_pGrid.CycleShift);
+                pCont.Owner = this;
                 ProgressStep();
             }
 

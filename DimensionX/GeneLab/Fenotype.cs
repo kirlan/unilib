@@ -64,6 +64,98 @@ namespace GeneLab
         public abstract GenetixBase MutateIndividual();
         public abstract GenetixBase MutateNation();
         public abstract GenetixBase MutateRace();
+
+        /// <summary>
+        /// Max 11
+        /// </summary>
+        /// <param name="pOpponents"></param>
+        /// <returns></returns>
+        public int GetFenotypeDifference(Fenotype pOpponents)
+        {
+            string sPositiveReasons = "";
+            string sNegativeReasons = "";
+
+            return GetFenotypeDifference(pOpponents, ref sPositiveReasons, ref sNegativeReasons);
+        }
+
+        /// <summary>
+        /// Max 11
+        /// </summary>
+        /// <param name="pOpponents"></param>
+        /// <param name="sPositiveReasons"></param>
+        /// <param name="sNegativeReasons"></param>
+        /// <returns></returns>
+        public int GetFenotypeDifference(Fenotype pOpponents, ref string sPositiveReasons, ref string sNegativeReasons)
+        {
+            int iHostility = 0;
+
+            if (!m_pHead.IsIdentical(pOpponents.m_pHead))
+            {
+                iHostility++;
+                sNegativeReasons += " (-1) [APP] ugly head\n";
+            }
+
+            int iBodyDiff = 0;
+            if (!m_pArms.IsIdentical(pOpponents.m_pArms))
+                iBodyDiff++;
+            //if (!pNation.m_pLegs.IsIdentical(pOpponents.m_pLegs))
+            //    iBodyDiff++;
+            //if (!pNation.m_pTail.IsIdentical(pOpponents.m_pTail))
+            //    iBodyDiff++;
+            if (m_pHide.m_eHideType != pOpponents.m_pHide.m_eHideType)
+                iBodyDiff++;
+
+            if (iBodyDiff > 0)
+            {
+                iHostility += iBodyDiff;
+                sNegativeReasons += string.Format(" (-{0}) [APP] ugly body\n", iBodyDiff);
+            }
+
+            if (Math.Abs(m_pBody.m_eBodyBuild - pOpponents.m_pBody.m_eBodyBuild) > 1)
+            {
+                iHostility++;
+                sNegativeReasons += string.Format(" (-1) [APP] too {0}\n", pOpponents.m_pBody.m_eBodyBuild.ToString().ToLower());
+            }
+
+            //if (pNation.m_pHide.m_eHideType == pOpponents.m_pHide.m_eHideType)
+            //{
+            //    if (!pNation.m_pHide.IsIdentical(pOpponents.m_pHide))
+            //    {
+            //        iHostility++;
+            //        sNegativeReasons += string.Format(" (-1) strange {0} body color\n", pOpponents.m_pHide.m_sHideColor + (pOpponents.m_pHide.m_bSpots ? (" with " + pOpponents.m_pHide.m_sSpotsColor) : ""));
+            //    }
+            //}
+
+            int iFaceDiff = 0;
+            if (!m_pEyes.IsIdentical(pOpponents.m_pEyes))
+                iFaceDiff++;
+            //if (!pNation.m_pEars.IsIdentical(pOpponents.m_pEars))
+            //    iFaceDiff++;
+            if (!m_pFace.IsIdentical(pOpponents.m_pFace))
+                iFaceDiff++;
+            if (iFaceDiff > 0)
+            {
+                iHostility += iFaceDiff;
+                sNegativeReasons += string.Format(" (-{0}) [APP] ugly face\n", iBodyDiff);
+            }
+
+            //а вот тут - берём личные показатели
+            if (m_pBody.m_eNutritionType != pOpponents.m_pBody.m_eNutritionType)
+            {
+                if (m_pBody.IsParasite())
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) [PSI] prey\n";
+                }
+                if (pOpponents.m_pBody.IsParasite())
+                {
+                    iHostility += 4;
+                    sNegativeReasons += " (-4) [PSI] predator\n";
+                }
+            }
+
+            return iHostility;
+        }
     }
 
     public class Fenotype<LTI> : Fenotype

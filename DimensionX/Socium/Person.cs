@@ -512,14 +512,14 @@ namespace Socium
                 m_cSkills[pSkill.Key] = eLevel;
             }
 
-            if (m_pEstate.m_ePosition == Estate.Position.Outlaw)
+            if (m_pEstate.m_ePosition == Estate.Position.Outlaws)
             {
                 if (Rnd.OneChanceFrom(2))
                     m_eAppearance = Appearance.Unattractive;
                 else if (Rnd.OneChanceFrom(5))
                     m_eAppearance = Appearance.Handsome;
             }
-            else if (m_pEstate.m_ePosition == Estate.Position.Low)
+            else if (m_pEstate.m_ePosition == Estate.Position.Lowlifes)
             {
                 if (Rnd.OneChanceFrom(3))
                     m_eAppearance = Appearance.Unattractive;
@@ -561,7 +561,7 @@ namespace Socium
                 }
             }
 
-            if (m_pEstate.m_ePosition == Estate.Position.Outlaw)
+            if (m_pEstate.m_ePosition == Estate.Position.Outlaws)
             {
                 if (Rnd.OneChanceFrom(3))
                 {
@@ -911,8 +911,8 @@ namespace Socium
                         eEstate = pRelative.m_pEstate.m_ePosition + 1;
                 }
 
-                if (eEstate < Estate.Position.Outlaw)
-                    eEstate = Estate.Position.Outlaw;
+                if (eEstate < Estate.Position.Outlaws)
+                    eEstate = Estate.Position.Outlaws;
 
                 if (eEstate > Estate.Position.Elite)
                     eEstate = Estate.Position.Elite;
@@ -933,17 +933,17 @@ namespace Socium
                         List<LocationX> cPossibleHomes = new List<LocationX>();
                         switch (eEstate)
                         {
-                            case Estate.Position.Outlaw:
+                            case Estate.Position.Outlaws:
                                 foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
                                     cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
                                 break;
-                            case Estate.Position.Low:
+                            case Estate.Position.Lowlifes:
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation.OwnerState.m_pMethropoly.m_pAdministrativeCenter);
                                 break;
-                            case Estate.Position.Middle:
+                            case Estate.Position.Commoners:
                                 cPossibleHomes.Add(pRelative.m_pHomeLocation);
                                 foreach (State pState in pWorld.m_aStates)
                                 {
@@ -2365,7 +2365,7 @@ namespace Socium
 
             switch (m_pEstate.m_ePosition)
             {
-                case Estate.Position.Low:
+                case Estate.Position.Lowlifes:
                     //Формула рассчёта коэффициента значимости для низшего сословия: (0.75x3 - 0.8x2 + 3.4x + 1.2) / 5
                     //Она даёт значения 0.2 1 2 5 10
                     fPersonalInfluence *= (float)(0.75 * Math.Pow(m_pState.m_iSocialEquality, 3) - 0.8 * Math.Pow(m_pState.m_iSocialEquality, 2) + 3.4 * m_pState.m_iSocialEquality + 1.2) / 5;
@@ -2376,7 +2376,7 @@ namespace Socium
                     //    fPersonalInfluence /= 2;
                     //}
                     break;
-                case Estate.Position.Middle:
+                case Estate.Position.Commoners:
                     //Для среднего сословия: (-0.58x3 + 3.4x2 + 0.4x + 1.16) / 2
                     //Она даёт значения 0.5 2 5 9 10
                     fPersonalInfluence *= (float)(-0.58 * Math.Pow(m_pState.m_iSocialEquality, 3) + 3.4 * Math.Pow(m_pState.m_iSocialEquality, 2) + 0.4 * m_pState.m_iSocialEquality + 1.6) / 2;
@@ -2392,7 +2392,7 @@ namespace Socium
                     else
                         fPersonalInfluence *= 10;//20;
                     break;
-                case Estate.Position.Outlaw:
+                case Estate.Position.Outlaws:
                     fPersonalInfluence *= 50f / (m_pState.m_iControl + 1);
                     break;
             }
@@ -2602,78 +2602,11 @@ namespace Socium
 
         public int GetFenotypeDifference(Person pOpponent, ref string sPositiveReasons, ref string sNegativeReasons)
         {
-            int iHostility = 0;
-
             //Будем сравнивать эталонную внешность для нашей нации с реальной внешностью оппонента
             Fenotype pNation = m_pNation.m_pFenotype;
             Fenotype pOpponents = pOpponent.m_pFenotype;
 
-            if (!pNation.m_pHead.IsIdentical(pOpponents.m_pHead))
-            {
-                iHostility++;
-                sNegativeReasons += " (-1) [APP] ugly head\n";
-            }
-
-            int iBodyDiff = 0;
-            if (!pNation.m_pArms.IsIdentical(pOpponents.m_pArms))
-                iBodyDiff++;
-            //if (!pNation.m_pLegs.IsIdentical(pOpponents.m_pLegs))
-            //    iBodyDiff++;
-            //if (!pNation.m_pTail.IsIdentical(pOpponents.m_pTail))
-            //    iBodyDiff++;
-            if (pNation.m_pHide.m_eHideType != pOpponents.m_pHide.m_eHideType)
-                iBodyDiff++;
-
-            if(iBodyDiff > 0)
-            {
-                iHostility += iBodyDiff;
-                sNegativeReasons += string.Format(" (-{0}) [APP] ugly body\n", iBodyDiff);
-            }
-
-            if (Math.Abs(pNation.m_pBody.m_eBodyBuild - pOpponents.m_pBody.m_eBodyBuild) > 1)
-            {
-                iHostility++;
-                sNegativeReasons += string.Format(" (-1) [APP] too {0}\n", pOpponents.m_pBody.m_eBodyBuild.ToString().ToLower());
-            }
-
-            //if (pNation.m_pHide.m_eHideType == pOpponents.m_pHide.m_eHideType)
-            //{
-            //    if (!pNation.m_pHide.IsIdentical(pOpponents.m_pHide))
-            //    {
-            //        iHostility++;
-            //        sNegativeReasons += string.Format(" (-1) strange {0} body color\n", pOpponents.m_pHide.m_sHideColor + (pOpponents.m_pHide.m_bSpots ? (" with " + pOpponents.m_pHide.m_sSpotsColor) : ""));
-            //    }
-            //}
-
-            int iFaceDiff = 0;
-            if (!pNation.m_pEyes.IsIdentical(pOpponents.m_pEyes))
-                iFaceDiff++;
-            //if (!pNation.m_pEars.IsIdentical(pOpponents.m_pEars))
-            //    iFaceDiff++;
-            if (!pNation.m_pFace.IsIdentical(pOpponents.m_pFace))
-                iFaceDiff++;
-            if(iFaceDiff > 0)
-            {
-                iHostility += iFaceDiff;
-                sNegativeReasons += string.Format(" (-{0}) [APP] ugly face\n", iBodyDiff);
-            }
-                
-            //а вот тут - берём личные показатели
-            if (m_pFenotype.m_pBody.m_eNutritionType != pOpponents.m_pBody.m_eNutritionType)
-            {
-                if (m_pFenotype.m_pBody.IsParasite())
-                {
-                    iHostility++;
-                    sNegativeReasons += " (-1) [PSI] prey\n";
-                }
-                if (pOpponents.m_pBody.IsParasite())
-                {
-                    iHostility += 4;
-                    sNegativeReasons += " (-4) [PSI] predator\n";
-                }
-            }
-
-            return iHostility;
+            return pNation.GetFenotypeDifference(pOpponents, ref sPositiveReasons, ref sNegativeReasons);
         }
 
         /// <summary>
@@ -4177,12 +4110,12 @@ namespace Socium
 
         public bool IsSlave()
         {
-            return m_pEstate.m_ePosition == Estate.Position.Low && m_pState.m_iSocialEquality == 0;
+            return m_pEstate.m_ePosition == Estate.Position.Lowlifes && m_pState.m_iSocialEquality == 0;
         }
 
         public bool IsSerf()
         {
-            return m_pEstate.m_ePosition == Estate.Position.Low && m_pState.m_iSocialEquality == 1;
+            return m_pEstate.m_ePosition == Estate.Position.Lowlifes && m_pState.m_iSocialEquality == 1;
         }
 
         /// <summary>
@@ -4315,8 +4248,8 @@ namespace Socium
             if (pPerson1.m_pHomeLocation.Owner == pPerson2.m_pHomeLocation.Owner)
             {
                 //если они живут в одном государстве, то для низших слоёв общества это имеет меньшее значение, чем для всех остальных
-                if (pPerson1.m_pEstate.m_ePosition == Estate.Position.Low ||
-                    pPerson2.m_pEstate.m_ePosition == Estate.Position.Low)
+                if (pPerson1.m_pEstate.m_ePosition == Estate.Position.Lowlifes ||
+                    pPerson2.m_pEstate.m_ePosition == Estate.Position.Lowlifes)
                 {
                     if (!pPerson1.IsSlave() && !pPerson2.IsSlave())
                     {
@@ -4331,8 +4264,8 @@ namespace Socium
                 }
             }
             //если они живут в разных государствах, то для низших слоёв общества всё остальное уже не имеет никакого значения.
-            else if (pPerson1.m_pEstate.m_ePosition != Estate.Position.Low &&
-                    pPerson2.m_pEstate.m_ePosition != Estate.Position.Low)
+            else if (pPerson1.m_pEstate.m_ePosition != Estate.Position.Lowlifes &&
+                    pPerson2.m_pEstate.m_ePosition != Estate.Position.Lowlifes)
             {
                 int iAdd = 0;
 
@@ -4359,8 +4292,8 @@ namespace Socium
                 }
 
                 //...так же и средний класс
-                if (pPerson1.m_pEstate.m_ePosition == Estate.Position.Middle ||
-                    pPerson2.m_pEstate.m_ePosition == Estate.Position.Middle)
+                if (pPerson1.m_pEstate.m_ePosition == Estate.Position.Commoners ||
+                    pPerson2.m_pEstate.m_ePosition == Estate.Position.Commoners)
                 {
                     //но - только если один из них живёт в столице, да и то связи эти слабые - как другие города для люмпенов
                     if (pPerson1.m_pHomeLocation == pPerson1.m_pHomeLocation.OwnerState.m_pMethropoly.m_pAdministrativeCenter ||

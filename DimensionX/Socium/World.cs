@@ -259,10 +259,10 @@ namespace Socium
             {
                 //если континент уже обитаем, пропускаем его
                 int iPop = 0;
-                foreach (var pRaces in pConti.m_cLocalNations)
+                foreach (var pNations in pConti.m_cLocalNations)
                 {
-                    foreach (var pRce in pRaces.Value)
-                        if (!pRce.m_bDying)
+                    foreach (var pNation in pNations.Value)
+                        if (!pNation.m_bDying && !pNation.m_pFenotype.m_pBody.IsParasite())
                             iPop++;
                 }
 
@@ -288,7 +288,7 @@ namespace Socium
                 Dictionary<Nation, float> cNationChances = new Dictionary<Nation, float>();
                 foreach (Nation pNation in m_aLocalNations)
                 {
-                    if (pNation.m_bDying)
+                    if (pNation.m_bDying || pNation.m_pFenotype.m_pBody.IsParasite())
                         continue;
 
                     cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
@@ -648,7 +648,8 @@ namespace Socium
                 {
                     if (pRace.Value.Count == 1)
                     {
-                        pRace.Key.m_sName = pRace.Value.First().m_pProtoSociety.m_sName;
+                        pRace.Key.m_sName = pRace.Value.First().m_pProtoSociety.m_sName.ToLower();
+                        pRace.Key.m_pFenotype = pRace.Value.First().m_pFenotype;
                     }
                 }
             }
@@ -1050,9 +1051,6 @@ namespace Socium
             //строим столицы, налаживаем дипломатические связи и распределяем по континентам
             foreach (State pState in m_aStates)
             {
-                pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast);
-                pState.Finish(m_pGrid.CycleShift);
-
                 ContinentX pConti = null;
                 foreach (Province pProvince in pState.m_cContents)
                 {
@@ -1067,6 +1065,11 @@ namespace Socium
 
                 pState.Owner = pConti;
                 pConti.m_cStates.Add(pState);
+            }
+            foreach (State pState in m_aStates)
+            {
+                pState.BuildCapital(m_aProvinces.Length / (2 * m_iStatesCount), m_aProvinces.Length / m_iStatesCount, bFast);
+                pState.Finish(m_pGrid.CycleShift);
             }
 
             ProgressStep();

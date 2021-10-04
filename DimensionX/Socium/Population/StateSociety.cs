@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using static Socium.State;
 using Socium.Languages;
+using LandscapeGeneration.PathFind;
 
 namespace Socium.Population
 {
@@ -265,6 +266,10 @@ namespace Socium.Population
 
         public Dictionary<Estate.Position, Estate> m_cEstates = new Dictionary<Estate.Position, Estate>();
 
+        public Nation m_pHostNation = null;
+        
+        public Nation m_pSlavesNation = null;
+
         public StateSociety(State pState)
             : base(pState.m_pMethropoly.m_pLocalSociety.m_pTitularNation)
         {
@@ -283,21 +288,12 @@ namespace Socium.Population
         { 
             Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
 
-            int iMaxPop = 0;
-            Nation pMostCommonNation = null;
-
             foreach (Province pProvince in m_pState.m_cContents)
             {
                 int iCount = 0;
-
                 if (!cNationsCount.TryGetValue(pProvince.m_pLocalSociety.m_pTitularNation, out iCount))
                     cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] = 0;
                 cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] = iCount + pProvince.m_iPopulation;
-                if (cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] > iMaxPop)
-                {
-                    iMaxPop = cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation];
-                    pMostCommonNation = pProvince.m_pLocalSociety.m_pTitularNation;
-                }
 
                 if (pProvince.m_pLocalSociety.m_iTechLevel > m_iTechLevel)
                     m_iTechLevel = pProvince.m_pLocalSociety.m_iTechLevel;
@@ -308,7 +304,113 @@ namespace Socium.Population
                 //fInfrastructureLevel += 1.0f/(pProvince.m_iInfrastructureLevel+1);
             }
 
-            m_pTitularNation = pMostCommonNation;
+            Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
+            if (m_pTitularNation.m_pFenotype.m_pBody.IsParasite() || m_pTitularNation.m_bInvader)
+            {
+                cNationsCount.Remove(m_pTitularNation);
+                if (cNationsCount.Count > 0)
+                    pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
+            }
+            else
+            {
+                m_pTitularNation = pMostCommonNation;
+                cNationsCount.Remove(m_pTitularNation);
+            }
+            m_pHostNation = pMostCommonNation;
+            if (cNationsCount.ContainsKey(pMostCommonNation))
+                cNationsCount.Remove(pMostCommonNation);
+            if (cNationsCount.Count > 0)
+                pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseOne(cNationsCount.Values, 1)];
+
+            m_pSlavesNation = pMostCommonNation;
+
+            Nation getAccessableNation(bool bCanBeDying, bool bCanBeParasite, bool bOnlyLocals, Nation pDefault)
+            {
+                List<Nation> cAccessableNations = new List<Nation>();
+                ContinentX pContinent = m_pState.Owner as ContinentX;
+                foreach (var pNations in pContinent.m_cLocalNations)
+                {
+                    cAccessableNations.AddRange(pNations.Value);
+                }
+                if (!bOnlyLocals)
+                {
+                    if (InfrastructureLevels[m_iInfrastructureLevel].m_eMaxNavalPath == RoadQuality.Good ||
+                        InfrastructureLevels[m_iInfrastructureLevel].m_iAerialAvailability > 1)
+                    {
+                        var pWorld = pContinent.Owner as World;
+                        foreach (var pOtherContinent in pWorld.m_aContinents)
+                        {
+                            if (pOtherContinent == pContinent)
+                                continue;
+
+                            foreach (var pNations in pOtherContinent.m_cLocalNations)
+                            {
+                                cAccessableNations.AddRange(pNations.Value);
+                            }
+                        }
+                    }
+                }
+
+                Dictionary<Nation, int> cChances = new Dictionary<Nation, int>();
+                foreach (var pNation in cAccessableNations)
+                {
+                    if (pNation.m_bDying && !bCanBeDying)
+                        continue;
+
+                    if (pNation.m_pFenotype.m_pBody.IsParasite() && !bCanBeParasite)
+                        continue;
+
+                    if (!cChances.ContainsKey(pNation))
+                        cChances[pNation] = 0;
+                    cChances[pNation]++;
+
+                    if (pNation.m_pRace.m_pLanguage == m_pTitularNation.m_pRace.m_pLanguage)
+                        cChances[pNation]++;
+
+                    foreach (var pNeighbour in m_pState.BorderWith)
+                    {
+                        var pOtherState = pNeighbour.Key as State;
+                        if (pOtherState.Forbidden)
+                            continue;
+
+                        if (pOtherState.m_pSociety.m_pTitularNation == pNation)
+                            cChances[pNation]++;
+                    }
+
+                    int iHostility = m_pTitularNation.m_pFenotype.GetFenotypeDifference(pNation.m_pFenotype);
+                    if (iHostility > 0)
+                        cChances[pNation]++;
+                    if (iHostility > 3)
+                        cChances[pNation]++;
+
+                    if (pNation == pDefault)
+                        cChances[pNation] = 1;
+                }
+
+                int iChoice = Rnd.ChooseOne(cChances.Values, 2);
+                if (iChoice == -1)
+                    throw new Exception("Can't find host nation for a parasite!");
+
+                foreach (var pNation in cChances)
+                {
+                    iChoice--;
+                    if (iChoice < 0)
+                    {
+                        return pNation.Key;
+                    }
+                }
+
+                return pDefault;
+            }
+
+            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.m_pFenotype.m_pBody.IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
+            {
+                m_pHostNation = getAccessableNation(false, false, true, m_pHostNation);
+            }
+            if (m_pTitularNation == m_pSlavesNation && Rnd.OneChanceFrom(3))
+            {
+                m_pSlavesNation = getAccessableNation(true, false, false, m_pSlavesNation);
+            }
         }
 
         public override void AddBuildings(Settlement pSettlement)
@@ -340,36 +442,44 @@ namespace Socium.Population
         public void SetEstates()
         {
             // Базовые настройки культуры и обычаев для сообщества
-            Estate pBase = new Estate(this, Estate.Position.Middle, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Middle), true);
+            Estate pBase = new Estate(this, Estate.Position.Commoners, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Commoners), true);
+
             // Элита может немного отличаться от среднего класса
             m_cEstates[Estate.Position.Elite] = new Estate(pBase, Estate.Position.Elite, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Elite), false);
+
             // средний класс - это и есть основа всего сообщества
-            m_cEstates[Estate.Position.Middle] = pBase;
+            m_cEstates[Estate.Position.Commoners] = pBase;
+            m_cEstates[Estate.Position.Commoners].m_pTitularNation = m_pHostNation;
+
             // низший класс - его обычаи должны отличаться не только от среднего класса, но и от элиты
             do
             {
-                m_cEstates[Estate.Position.Low] = new Estate(pBase, Estate.Position.Low, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Low), false);
+                m_cEstates[Estate.Position.Lowlifes] = new Estate(pBase, Estate.Position.Lowlifes, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Lowlifes), false);
             }
-            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Low].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Low].m_cCulture[Gender.Female]));
+            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]));
+            m_cEstates[Estate.Position.Lowlifes].m_pTitularNation = m_pSlavesNation;
+
+
             // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех 3 других сословий
             do
             {
                 if (!Rnd.OneChanceFrom(3) && m_iSocialEquality != 0)
                 {
-                    m_cEstates[Estate.Position.Outlaw] = new Estate(m_cEstates[Estate.Position.Low], Estate.Position.Outlaw, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Outlaw), false);
+                    m_cEstates[Estate.Position.Outlaws] = new Estate(m_cEstates[Estate.Position.Lowlifes], Estate.Position.Outlaws, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Outlaws), false);
                 }
                 else
                 {
-                    m_cEstates[Estate.Position.Outlaw] = new Estate(pBase, Estate.Position.Outlaw, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Outlaw), false);
+                    m_cEstates[Estate.Position.Outlaws] = new Estate(pBase, Estate.Position.Outlaws, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Outlaws), false);
                 }
             }
-            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaw].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaw].m_cCulture[Gender.Female]) ||
-                   m_cEstates[Estate.Position.Low].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaw].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Low].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaw].m_cCulture[Gender.Female]) ||
-                   pBase.m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaw].m_cCulture[Gender.Male]) ||
-                   pBase.m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaw].m_cCulture[Gender.Female]));
+            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
+                   m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
+                   pBase.m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
+                   pBase.m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]));
+            m_cEstates[Estate.Position.Outlaws].m_pTitularNation = Rnd.OneChanceFrom(3) ? m_pTitularNation : Rnd.OneChanceFrom(2) ? m_pHostNation : m_pSlavesNation;
 
             // перебираем все поселения, где присутсвует сообщество
             foreach (LocationX pLocation in Settlements)
@@ -472,11 +582,11 @@ namespace Socium.Population
                             iEliteEstateCount -= iCount;
                             break;
                         case ProfessionInfo.Caste.Low:
-                            pEstate = m_cEstates[Estate.Position.Low];
+                            pEstate = m_cEstates[Estate.Position.Lowlifes];
                             iLowEstateCount -= iCount;
                             break;
                         case ProfessionInfo.Caste.Outlaw:
-                            pEstate = m_cEstates[Estate.Position.Outlaw];
+                            pEstate = m_cEstates[Estate.Position.Outlaws];
                             break;
                     }
                     pEstate.m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
@@ -493,11 +603,12 @@ namespace Socium.Population
                 addCasteRestrictedProfessionToEstate(pProfession.Key);
             }
 
-            if (m_iSocialEquality != 0 || m_cEstates[Estate.Position.Low].m_cGenderProfessionPreferences.Count == 0)
+            int iMinCommonersProfessionsCount = cProfessionPreference.Count - 2 * cProfessionPreference.Count / 3;
+            if (m_iSocialEquality != 0 || m_cEstates[Estate.Position.Lowlifes].m_cGenderProfessionPreferences.Count == 0)
             {
                 while (iLowEstateCount > 0)
                 {
-                    if (cProfessionPreference.Count == 0)
+                    if (cProfessionPreference.Count <= iMinCommonersProfessionsCount)
                         break;
 
                     ProfessionInfo pBestFit = null;
@@ -528,7 +639,7 @@ namespace Socium.Population
                     }
                     if (pBestFit != null)
                     {
-                        m_cEstates[Estate.Position.Low].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit);
+                        m_cEstates[Estate.Position.Lowlifes].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit);
                         iLowEstateCount -= iBestFit;
                         removeProfessionPreference(pBestFit);
                     }
@@ -539,9 +650,10 @@ namespace Socium.Population
                 }
             }
 
+            iMinCommonersProfessionsCount = cProfessionPreference.Count - cProfessionPreference.Count / 2;
             while (iEliteEstateCount > 0)
             {
-                if (cProfessionPreference.Count == 0)
+                if (cProfessionPreference.Count <= iMinCommonersProfessionsCount)
                     break;
 
                 ProfessionInfo pBestFit = null;
@@ -572,7 +684,7 @@ namespace Socium.Population
             {
                 foreach (ProfessionInfo pProfession in pPreference.Value)
                 {
-                    m_cEstates[Estate.Position.Middle].m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
+                    m_cEstates[Estate.Position.Commoners].m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
                 }
             }
 
@@ -661,7 +773,7 @@ namespace Socium.Population
         }
         public override string ToString()
         {
-            return string.Format("{1} (C{0}T{2}M{4}) - {3}", DominantCulture.m_iProgressLevel, m_pTitularNation, m_iTechLevel, m_pStateModel.m_sName, m_iMagicLimit);
+            return string.Format("{2} (C{1}T{3}M{5}) - {0} {4}", m_sName, DominantCulture.m_iProgressLevel, m_pTitularNation, m_iTechLevel, m_pStateModel.m_sName, m_iMagicLimit);
         }
 
         protected override BuildingInfo ChooseNewBuilding(Settlement pSettlement)

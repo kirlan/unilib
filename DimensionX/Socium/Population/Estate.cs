@@ -17,16 +17,16 @@ namespace Socium.Population
         public enum Position
         {
             Elite = 2,
-            Middle = 1,
-            Low = 0,
-            Outlaw = -1
+            Commoners = 1,
+            Lowlifes = 0,
+            Outlaws = -1
         }
 
         public Position m_ePosition;
 
         public bool IsOutlaw()
         {
-            return m_ePosition == Position.Outlaw;
+            return m_ePosition == Position.Outlaws;
         }
 
         public bool IsElite()
@@ -36,7 +36,7 @@ namespace Socium.Population
 
         public bool IsMiddleUp()
         {
-            return m_ePosition == Position.Middle || m_ePosition == Position.Elite;
+            return m_ePosition == Position.Commoners || m_ePosition == Position.Elite;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Socium.Population
 
         void UpdateCultureProgress(Culture pCulture)
         {
-            if (m_ePosition == Position.Outlaw)
+            if (m_ePosition == Position.Outlaws)
                 pCulture.m_iProgressLevel--;
             if (m_ePosition == Position.Elite)
                 pCulture.m_iProgressLevel++;

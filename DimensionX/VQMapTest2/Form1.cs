@@ -16,6 +16,7 @@ using Socium.Psychology;
 using Socium.Settlements;
 using Socium.Nations;
 using Socium.Population;
+using static Socium.Psychology.Customs;
 
 namespace VQMapTest2
 {
@@ -269,30 +270,35 @@ namespace VQMapTest2
             string sRaceName = pSociety.m_pTitularNation.m_pRace.m_sName;
             sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
             richTextBox1.AppendText(sRaceName + "s " + pSociety.m_pTitularNation.m_pRace.m_pFenotype.GetDescription());
-            richTextBox1.AppendText("\n");
-            richTextBox1.AppendText("Known " + pSociety.m_pTitularNation.m_pRace.m_sName + " nations are: ");
-            bool bFirst = true;
             List<Nation> cKnownNations = new List<Nation>();
             foreach (State pState in m_pWorld.m_aStates)
             {
-                if(pState.m_pSociety.m_pTitularNation.m_pRace == pSociety.m_pTitularNation.m_pRace && !cKnownNations.Contains(pState.m_pSociety.m_pTitularNation))
+                if (pState.m_pSociety.m_pTitularNation.m_pRace == pSociety.m_pTitularNation.m_pRace && !cKnownNations.Contains(pState.m_pSociety.m_pTitularNation))
+                {
+                    cKnownNations.Add(pState.m_pSociety.m_pTitularNation);
+                }
+            }
+            if (cKnownNations.Count > 1)
+            {
+                richTextBox1.AppendText("\n");
+                richTextBox1.AppendText("Known " + pSociety.m_pTitularNation.m_pRace.m_sName + " nations are: ");
+                bool bFirst = true;
+                foreach (Nation pNation in cKnownNations)
                 {
                     if (!bFirst)
                         richTextBox1.AppendText(", ");
 
                     bFirst = false;
 
-                    richTextBox1.AppendText(pState.m_pSociety.m_pTitularNation.m_pProtoSociety.m_sName);
-
-                    cKnownNations.Add(pState.m_pSociety.m_pTitularNation);
+                    richTextBox1.AppendText(pNation.m_pProtoSociety.m_sName);
                 }
-            }
-            richTextBox1.AppendText(".\n\n");
+                richTextBox1.AppendText(".\n\n");
 
-            string sFenotypeNation = pSociety.m_pTitularNation.m_pFenotype.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pFenotype);
-            if (!sFenotypeNation.StartsWith("are"))
-                sFenotypeNation = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNation.Substring(0, 1).ToLower() + sFenotypeNation.Substring(1);
-            richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + "s " + sFenotypeNation);
+                string sFenotypeNation = pSociety.m_pTitularNation.m_pFenotype.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pFenotype);
+                if (!sFenotypeNation.StartsWith("are"))
+                    sFenotypeNation = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNation.Substring(0, 1).ToLower() + sFenotypeNation.Substring(1);
+                richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + "s " + sFenotypeNation);
+            }
             richTextBox1.AppendText("\n\n");
 
             if (pSociety.GetImportedTech() == -1)
@@ -332,9 +338,12 @@ namespace VQMapTest2
             }
 
             {
-                Estate pEstate = pSociety.m_cEstates[Estate.Position.Middle];
+                Estate pEstate = pSociety.m_cEstates[Estate.Position.Commoners];
 
-                richTextBox1.AppendText("  - [" + string.Format("{0:D}", (int)(pSociety.m_cEstatesCounts[Estate.Position.Middle] * 100.0f / iTotalPop)) + "%] " + pEstate.m_sName + " (" + Estate.Position.Middle.ToString() + "): ");
+                richTextBox1.AppendText("  - " + Estate.Position.Commoners.ToString() + " aka " + pEstate.m_sName + " [" + string.Format("{0:D}", (int)(pSociety.m_cEstatesCounts[Estate.Position.Commoners] * 100.0f / iTotalPop)) + "%]: ");
+                if (pEstate.m_pTitularNation != pSociety.m_pTitularNation)
+                    richTextBox1.AppendText("Estate consists of enslaved " + pEstate.m_pTitularNation + ".\n");
+
                 richTextBox1.AppendText(pEstate.DominantCulture.m_pCustoms.GetCustomsDescription());
 
                 string sMinorsCulture = pEstate.InferiorCulture.m_pMentality.GetDiffString(pEstate.InferiorCulture.m_iProgressLevel, pEstate.DominantCulture.m_pMentality, pEstate.DominantCulture.m_iProgressLevel);
@@ -345,11 +354,11 @@ namespace VQMapTest2
                     string sMajors = pEstate.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "males" : "females";
                     string sMinors = pEstate.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "females" : "males";
                     if (sMinorsCustoms != "")
-                        richTextBox1.AppendText(" Also, their " + sMinors + " commonly " + sMinorsCustoms + ".");
+                        richTextBox1.AppendText(" Their " + sMinors + " commonly " + sMinorsCustoms + ".");
                     if (sMinorsCulture != "")
                     {
                         if (sMinorsCustoms == "")
-                            richTextBox1.AppendText(" Also, their " + sMinors + " usually " + sMinorsCulture + " then " + sMajors + ".");
+                            richTextBox1.AppendText(" Their " + sMinors + " usually " + sMinorsCulture + " then " + sMajors + ".");
                         else
                             richTextBox1.AppendText(" They are usually " + sMinorsCulture + " then " + sMajors + ".");
                     }
@@ -363,23 +372,40 @@ namespace VQMapTest2
 
             foreach (var pEstate in pSociety.m_cEstates)
             {
-                if (pEstate.Key == Estate.Position.Middle)
+                if (pEstate.Key == Estate.Position.Commoners)
                     continue;
 
-                richTextBox1.AppendText("  - [" + string.Format("{0:D}", (int)(pSociety.m_cEstatesCounts[pEstate.Key] * 100.0f / iTotalPop)) + "%] " + pEstate.Value.m_sName + " (" + pEstate.Key.ToString() + "): ");
+                richTextBox1.AppendText("  - " + pEstate.Key.ToString() + " aka " + pEstate.Value.m_sName + " [" + string.Format("{0:D}", (int)(pSociety.m_cEstatesCounts[pEstate.Key] * 100.0f / iTotalPop)) + "%]: ");
+                if (pEstate.Value.m_pTitularNation != pSociety.m_pTitularNation)
+                    richTextBox1.AppendText("Estate consists of " + (pEstate.Key == Estate.Position.Lowlifes ? "enslaved " : "rebel ") + pEstate.Value.m_pTitularNation + ".\n");
 
                 string sCulture = pEstate.Value.DominantCulture.m_pMentality.GetDiffString(pEstate.Value.DominantCulture.m_iProgressLevel, pSociety.DominantCulture.m_pMentality, pSociety.DominantCulture.m_iProgressLevel);
                 string sCustoms = pEstate.Value.DominantCulture.m_pCustoms.GetCustomsDiffString2(pSociety.DominantCulture.m_pCustoms);
 
                 string sMinorsCulture = pEstate.Value.InferiorCulture.m_pMentality.GetDiffString(pEstate.Value.InferiorCulture.m_iProgressLevel, pEstate.Value.DominantCulture.m_pMentality, pEstate.Value.DominantCulture.m_iProgressLevel);
                 string sMinorsCustoms = pEstate.Value.InferiorCulture.m_pCustoms.GetCustomsDiffString2(pEstate.Value.DominantCulture.m_pCustoms);
-                
+
+                string sGenderPriority = "";
+
+                if (pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == GenderPriority.Patriarchy)
+                {
+                    sGenderPriority = "patriarchal";
+                }
+                else if (pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == GenderPriority.Matriarchy)
+                {
+                    sGenderPriority = "matriarchal";
+                }
+                else if (pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == GenderPriority.Genders_equality)
+                {
+                    sGenderPriority = "gender equality";
+                }
+
                 if (sCustoms != "")
-                    richTextBox1.AppendText("Members of this estate " + sCustoms + ".");
+                    richTextBox1.AppendText("This is a " + sGenderPriority + " society, which members " + sCustoms + ".");
                 if (sCulture != "")
                 {
                     if (sCustoms == "")
-                        richTextBox1.AppendText("Members of this estate are usually " + sCulture + " then common citizens.");
+                        richTextBox1.AppendText("This is a " + sGenderPriority + " society, which members " + sCulture + " then common citizens.");
                     else
                         richTextBox1.AppendText(" They are usually " + sCulture + " then common citizens.");
                 }
@@ -390,14 +416,14 @@ namespace VQMapTest2
                     string sMinors = pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "females" : "males";
                     if (sCustoms == "" && sCulture == "")
                     {
-                        richTextBox1.AppendText("Members of this estate are just a common citizens.");
+                        richTextBox1.AppendText("This is a " + sGenderPriority + " society, which members are just a common citizens.");
                     }
                     if (sMinorsCustoms != "")
-                        richTextBox1.AppendText(" Also, their " + sMinors + " commonly " + sMinorsCustoms + ".");
+                        richTextBox1.AppendText(" Their " + sMinors + " commonly " + sMinorsCustoms + ".");
                     if (sMinorsCulture != "")
                     {
                         if (sMinorsCustoms == "")
-                            richTextBox1.AppendText(" Also, their " + sMinors + " usually " + sMinorsCulture + " then " + sMajors + ".");
+                            richTextBox1.AppendText(" Their " + sMinors + " usually " + sMinorsCulture + " then " + sMajors + ".");
                         else
                             richTextBox1.AppendText(" They are usually " + sMinorsCulture + " then " + sMajors + ".");
                     }
@@ -416,7 +442,7 @@ namespace VQMapTest2
             if(cEnemies.Length > 0)
             {
                 richTextBox1.AppendText("Enemies: ");
-                bFirst = true;
+                bool bFirst = true;
                 foreach (State pState in cEnemies)
                 {
                     if(!bFirst)
@@ -433,7 +459,7 @@ namespace VQMapTest2
             if (cAllies.Length > 0)
             {
                 richTextBox1.AppendText("Allies: ");
-                bFirst = true;
+                bool bFirst = true;
                 foreach (State pState in cAllies)
                 {
                     if (!bFirst)

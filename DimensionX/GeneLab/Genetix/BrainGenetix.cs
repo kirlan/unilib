@@ -114,13 +114,13 @@ namespace GeneLab.Genetix
                     sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? " and mostly fictional magic abilities" : ", but */" zero magic potencial";
                     break;
                 case 1:
-                    sMagicForce = " extra-sensoric powers potencial";
+                    sMagicForce = " mediums potencial";
                     break;
                 case 2:
-                    sMagicForce = " mystic powers potencial";
+                    sMagicForce = " psionic potencial";
                     break;
                 case 3:
-                    sMagicForce = " super powers potencial";
+                    sMagicForce = " supers potencial";
                     break;
                 case 4:
                     sMagicForce = " average magic potencial";

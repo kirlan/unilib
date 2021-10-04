@@ -320,6 +320,17 @@ namespace Socium.Psychology
         {
             string sResult = "";
             bool bFirst = true;
+            Trait eLastDefferentTrait = Trait.Agression;
+            foreach (Trait eTrait in AllTraits)
+            {
+                string sTrait1 = GetTraitString(eTrait, iLevel);
+                string sTrait2 = pOther.GetTraitString(eTrait, iOtherlevel);
+
+                if (sTrait1 != sTrait2)
+                {
+                    eLastDefferentTrait = eTrait;
+                }
+            }
             foreach (Trait eTrait in AllTraits)
             {
                 string sTrait1 = GetTraitString(eTrait, iLevel);
@@ -328,36 +339,43 @@ namespace Socium.Psychology
                 if (sTrait1 != sTrait2)
                 {
                     if (!bFirst)
-                        sResult += ", ";
+                        sResult += eTrait == eLastDefferentTrait ? " and " : ", ";
 
+                    bool bReverse = false;
                     if (m_cTraits[eTrait][iLevel] > pOther.m_cTraits[eTrait][iOtherlevel] + 0.33)
                         sResult += "much more ";
                     else if (m_cTraits[eTrait][iLevel] > pOther.m_cTraits[eTrait][iOtherlevel])
                         sResult += "more ";
                     else if (m_cTraits[eTrait][iLevel] < pOther.m_cTraits[eTrait][iOtherlevel] - 0.33)
-                        sResult += "much less ";
+                    {
+                        sResult += "much more ";
+                        bReverse = true;
+                    }
                     else
-                        sResult += "less ";
+                    {
+                        sResult += "more ";
+                        bReverse = true;
+                    }
 
                     switch (eTrait)
                     {
                         case Trait.Agression:
-                            sResult += "agressive";
+                            sResult += bReverse ? "peaceful" : "agressive";
                             break;
                         case Trait.Fanaticism:
-                            sResult += "fanatical";
+                            sResult += bReverse ? "tolerant" : "fanatical";
                             break;
                         case Trait.Piety:
-                            sResult += "religious";
+                            sResult += bReverse ? "rational" : "religious";
                             break;
                         case Trait.Simplicity:
-                            sResult += "rude";
+                            sResult += bReverse ? "refined" : "simple";
                             break;
                         case Trait.Selfishness:
-                            sResult += "selfish";
+                            sResult += bReverse ? "generous" : "selfish";
                             break;
                         case Trait.Treachery:
-                            sResult += "treacherous";
+                            sResult += bReverse ? "honorable" : "treacherous";
                             break;
                     }
 

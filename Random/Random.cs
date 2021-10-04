@@ -303,6 +303,30 @@ namespace Random
             return cBests[Get(cBests.Count)];
         }
 
+        public static int ChooseBest(ICollection<int> cChances)
+        {
+            if (cChances.Count == 0)
+                return -1;
+
+            int iBest = 0;
+            List<int> cBests = new List<int>();
+            int iIndex = 0;
+            foreach (int iChance in cChances)
+            {
+                if (iBest == iChance)
+                    cBests.Add(iIndex);
+                else if (iBest < iChance)
+                {
+                    iBest = iChance;
+                    cBests.Clear();
+                    cBests.Add(iIndex);
+                }
+                iIndex++;
+            }
+
+            return cBests[Get(cBests.Count)];
+        }
+
         public static int ChooseOne(ICollection<float> cChances, int iPow)
         {
             if (cChances.Count == 0)

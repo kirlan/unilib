@@ -371,6 +371,18 @@ namespace Socium
             foreach (LandX pLand in m_pMethropoly.m_cContents)
                 pLand.m_pNation = m_pSociety.m_pTitularNation;
 
+            // если у нас нация паразитов или пришельцев, то они сами живут только в метрополии, а во всей остальной империи коренное население - местное
+            if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.IsParasite() || m_pSociety.m_pTitularNation.m_bInvader)
+            {
+                foreach (Province pProvince in m_cContents)
+                {
+                    foreach (LandX pLand in pProvince.m_cContents)
+                    {
+                        if (pLand.m_pNation == m_pSociety.m_pTitularNation)
+                            pLand.m_pNation = m_pSociety.m_pHostNation;
+                    }
+                }
+            }
             //int iAverageMagicLimit = 0;
 
             m_iFood = 0;
@@ -382,6 +394,8 @@ namespace Socium
             int iGrain = 0;
             int iGame = 0;
             int iFish = 0;
+            int iMethropolyPopulation = 0;
+            int iProvincialPopulation = 0;
 
             foreach (Province pProvince in m_cContents)
             {
@@ -402,7 +416,10 @@ namespace Socium
                 m_iWood += (int)pProvince.m_fWood;
                 m_iOre += (int)pProvince.m_fOre;
 
-                m_iPopulation += pProvince.m_iPopulation;
+                if (pProvince == m_pMethropoly)
+                    iMethropolyPopulation += pProvince.m_iPopulation;
+                else
+                    iProvincialPopulation += pProvince.m_iPopulation;
 
                 //foreach (LandX pLand in pProvince.m_cContents)
                 //{
@@ -410,44 +427,54 @@ namespace Socium
                 //}
             }
 
-            switch (m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType)
+            m_iPopulation = iMethropolyPopulation + iProvincialPopulation;
+
+            int getFood(NutritionType eNutritionType)
             {
-                case NutritionType.Eternal:
-                    m_iFood = m_iPopulation * 10;
-                    break;
-                case NutritionType.Mineral:
-                    m_iFood = m_iOre;
-                    break;
-                case NutritionType.Organic:
-                    m_iFood = iGrain + iGame + iFish;
-                    break;
-                case NutritionType.ParasitismBlood:
-                    m_iFood = m_iPopulation;
-                    break;
-                case NutritionType.ParasitismEmote:
-                    m_iFood = m_iPopulation;
-                    break;
-                case NutritionType.ParasitismEnergy:
-                    m_iFood = m_iPopulation;
-                    break;
-                case NutritionType.ParasitismMeat:
-                    m_iFood = m_iPopulation;
-                    break;
-                case NutritionType.Photosynthesis:
-                    m_iFood = m_iPopulation * 10;
-                    break;
-                case NutritionType.Thermosynthesis:
-                    m_iFood = m_iPopulation * 10;
-                    break;
-                case NutritionType.Vegetarian:
-                    m_iFood = iGrain;
-                    break;
-                case NutritionType.Carnivorous:
-                    m_iFood = iGame + iFish;
-                    break;
-                default:
-                    throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType));
-                    break;
+                switch (eNutritionType)
+                {
+                    case NutritionType.Eternal:
+                        return m_iPopulation * 10;
+                    case NutritionType.Mineral:
+                        return m_iOre;
+                    case NutritionType.Organic:
+                        return iGrain + iGame + iFish;
+                    case NutritionType.ParasitismBlood:
+                        return iProvincialPopulation;
+                    case NutritionType.ParasitismEmote:
+                        return iProvincialPopulation;
+                    case NutritionType.ParasitismEnergy:
+                        return iProvincialPopulation;
+                    case NutritionType.ParasitismMeat:
+                        return iProvincialPopulation;
+                    case NutritionType.Photosynthesis:
+                        return m_iPopulation * 10;
+                    case NutritionType.Thermosynthesis:
+                        return m_iPopulation * 10;
+                    case NutritionType.Vegetarian:
+                        return iGrain;
+                    case NutritionType.Carnivorous:
+                        return iGame + iFish;
+                    default:
+                        throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType));
+                }
+            }
+
+            float fMethropolySatiety = (float)getFood(m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType) / iMethropolyPopulation;
+            float fProvincialSatiety = (float)getFood(m_pSociety.m_pHostNation.m_pFenotype.m_pBody.m_eNutritionType) / iProvincialPopulation;
+
+            if (fMethropolySatiety > 2)
+                fMethropolySatiety = 2;
+
+            if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.IsParasite())
+            {
+                // для паразитов качество их питания зависит от качества питания их жертв
+                m_iFood = (int)(fMethropolySatiety * fProvincialSatiety * m_iPopulation);
+            }
+            else
+            {
+                // для обычных людей - качество питания в метрополии и в провинции просто дополняют друг-друга
+                m_iFood = (int)((fMethropolySatiety + fProvincialSatiety) * 0.5 * m_iPopulation);
             }
 
             //iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
@@ -616,7 +643,7 @@ namespace Socium
 
         public override string ToString()
         {
-            return string.Format("{0} {1}", m_pSociety.m_pStateModel, m_pSociety.m_sName);
+            return m_pSociety.ToString();
         }
 
         public override float GetMovementCost()

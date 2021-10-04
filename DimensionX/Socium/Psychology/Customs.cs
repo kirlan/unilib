@@ -603,7 +603,7 @@ namespace Socium.Psychology
             {
                 if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
-                sResult += "should have no tatoo or pierceing";
+                sResult += "condemns any tatoo or pierceing";
             }
             if (m_eBodyModifications == BodyModifications.Body_Modifications_Mandatory)
             {
@@ -799,7 +799,7 @@ namespace Socium.Psychology
                 }
             }
 
-            return "This is a " + sGenderPriority + " society, which members " + sResult + ".\n";
+            return "This is a " + sGenderPriority + " society, which members " + sResult + ".";
         }
 
         public static bool ListsEqual(IList pList1, IList pList2)
@@ -857,7 +857,7 @@ namespace Socium.Psychology
                     sResult += ", ";
                 
                 if (m_eMagic == Magic.Magic_Feared)
-                    sResult += "rejects any form of magic";
+                    sResult += "fears all magic";
                 if (m_eMagic == Magic.Magic_Praised)
                     sResult += "praises any form of magic";
                 if (m_eMagic == Magic.Magic_Allowed)
@@ -870,7 +870,7 @@ namespace Socium.Psychology
                     sResult += ", ";
 
                 if (m_eBodyModifications == BodyModifications.Body_Modifications_Blamed)
-                    sResult += "condemns any form of body modification";
+                    sResult += "condemns any tatoo or pierceing";
                 if (m_eBodyModifications == BodyModifications.Body_Modifications_Mandatory)
                 {
                     List<BodyModificationsTypes> cOthers = new List<BodyModificationsTypes>();
@@ -899,20 +899,20 @@ namespace Socium.Psychology
                         if (bFirst3)
                         {
                             if (bFirst2)
-                                sResult += ", but should not have ";
-                            else
                                 sResult += "should not have ";
+                            else
+                                sResult += ", but should not have ";
                         }
                         else
                         { 
                         }
 
                         sResult += eMod.ToString().Replace('_', ' ').ToLower();
-                        bFirst2 = false;
+                        bFirst3 = false;
                     }
                 }
                 if (m_eBodyModifications == BodyModifications.Body_Modifications_Allowed)
-                    sResult += pOther.m_eBodyModifications == BodyModifications.Body_Modifications_Blamed ? "could have some tatoo or pierceing" : "could have tatoo or pierceing on their choice";
+                    sResult += pOther.m_eBodyModifications == BodyModifications.Body_Modifications_Blamed ? "allowed to have some tatoo or pierceing" : "could have tatoo or pierceing on their choice";
             }
 
             if (m_eClothes != pOther.m_eClothes)
@@ -923,9 +923,9 @@ namespace Socium.Psychology
                 if (m_eClothes == Clothes.Covering_Clothes)
                     sResult += "hides their entire bodies by clothes";
                 if (m_eClothes == Clothes.Minimal_Clothes)
-                    sResult += "wears only minimum necessary clothes";
+                    sResult += "wears only minimal clothes";
                 if (m_eClothes == Clothes.Revealing_Clothes)
-                    sResult += "wears anything they want";
+                    sResult += "have no specific dressing restrictions";
             }
 
             if (m_eAdornments != pOther.m_eAdornments)
@@ -934,11 +934,11 @@ namespace Socium.Psychology
                     sResult += ", ";
 
                 if (m_eAdornments == Adornments.No_Adornments)
-                    sResult += "wears no adornments";
+                    sResult += "uses no jevelry";
                 if (m_eAdornments == Adornments.Lavish_Adornments)
-                    sResult += "wears a lot of adornments";
+                    sResult += "uses a lot of jevelry";
                 if (m_eAdornments == Adornments.Some_Adornments)
-                    sResult += pOther.m_eAdornments == Adornments.No_Adornments ? "could wear some adornments" : "wears not so much adorments";
+                    sResult += pOther.m_eAdornments == Adornments.No_Adornments ? "could use some jevelry" : "uses not so much jevelry";
             }
 
             if (m_eScience != pOther.m_eScience)
@@ -951,7 +951,7 @@ namespace Socium.Psychology
                 if (m_eScience == Science.Ingenuity)
                     sResult += "likes any novelties";
                 if (m_eScience == Science.Moderate_Science)
-                    sResult += pOther.m_eScience == Science.Technophobia ? "accepts some regulated progress" : "doesn't like novelties so much";
+                    sResult += pOther.m_eScience == Science.Technophobia ? "have no fear of novelties" : "doesn't like novelties so much";
             }
 
             if (m_eFamilyValues != pOther.m_eFamilyValues)
@@ -977,7 +977,7 @@ namespace Socium.Psychology
                 if (m_eSexuality == Sexuality.Lecherous)
                     sResult += "has insatiable libido";
                 if (m_eSexuality == Sexuality.Moderate_sexuality)
-                    sResult += pOther.m_eSexuality == Sexuality.Puritan ? "may have sex for fun and pleasure" : "doesn't make sex so much";
+                    sResult += pOther.m_eSexuality == Sexuality.Puritan ? "likes to have sex for fun and pleasure" : "less interested in sex";
             }
 
             if (m_eSexRelations != pOther.m_eSexRelations)

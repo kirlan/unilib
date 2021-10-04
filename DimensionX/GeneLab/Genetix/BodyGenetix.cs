@@ -143,7 +143,7 @@ namespace GeneLab.Genetix
                     sComplexion = "proportional";
                     break;
                 case BodyBuild.Muscular:
-                    sComplexion = "strong";
+                    sComplexion = "muscular";
                     break;
                 case BodyBuild.Fat:
                     sComplexion = "stout";
