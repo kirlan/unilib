@@ -69,6 +69,11 @@ namespace Socium.Population
                 if (cLanguages != null)
                     m_cLanguages.AddRange(cLanguages);
             }
+
+            public override string ToString()
+            {
+                return m_sName;
+            }
         }
 
         internal static StateModel[] s_aModels =
@@ -325,7 +330,8 @@ namespace Socium.Population
         }
 
 
-        public Dictionary<ProfessionInfo, int> m_cPeople = new Dictionary<ProfessionInfo, int>();
+        public Dictionary<ProfessionInfo, int> m_cProfessions = new Dictionary<ProfessionInfo, int>();
+        public Dictionary<Estate.Position, int> m_cEstatesCounts = new Dictionary<Estate.Position, int>();
 
         /// <summary>
         /// Распределяет население государства по сословиям. 
@@ -381,12 +387,12 @@ namespace Socium.Population
                         int iWorkersCount = pBuilding.m_pInfo.WorkersCount;
 
                         var pOwner = pBuilding.m_pInfo.m_pOwnerProfession;
-                        m_cPeople.TryGetValue(pOwner, out iCount);
-                        m_cPeople[pOwner] = iCount + iOwnersCount;
+                        m_cProfessions.TryGetValue(pOwner, out iCount);
+                        m_cProfessions[pOwner] = iCount + iOwnersCount;
 
                         var pWorkers = pBuilding.m_pInfo.m_pWorkersProfession;
-                        m_cPeople.TryGetValue(pWorkers, out iCount);
-                        m_cPeople[pWorkers] = iCount + iWorkersCount;
+                        m_cProfessions.TryGetValue(pWorkers, out iCount);
+                        m_cProfessions[pWorkers] = iCount + iWorkersCount;
                     }
                 }
             }
@@ -419,7 +425,7 @@ namespace Socium.Population
             int iTotalPopulation = 0;
 
             // заполняем таблицу предпочтительных профессий - с точки зрения общих культурных норм сообщества
-            foreach (var pProfession in m_cPeople)
+            foreach (var pProfession in m_cProfessions)
             {
                 iTotalPopulation += pProfession.Value;
 
@@ -452,28 +458,39 @@ namespace Socium.Population
             int iLowEstateCount = iTotalPopulation * (92 - m_iSocialEquality * 23) / 100;
             int iEliteEstateCount = iTotalPopulation * (10 + m_iSocialEquality * 5) / 100;
 
-            foreach (var pProfession in m_cPeople)
+            void addCasteRestrictedProfessionToEstate(ProfessionInfo pProfession)
             {
-                if (pProfession.Key.m_eCasteRestriction.HasValue)
+                if (pProfession.m_eCasteRestriction.HasValue)
                 {
                     var pEstate = m_cEstates[Estate.Position.Elite];
-                    switch (pProfession.Key.m_eCasteRestriction)
+                    var iCount = 0;
+                    m_cProfessions.TryGetValue(pProfession, out iCount);
+                    switch (pProfession.m_eCasteRestriction)
                     {
                         case ProfessionInfo.Caste.Elite:
                             pEstate = m_cEstates[Estate.Position.Elite];
-                            iEliteEstateCount -= pProfession.Value;
+                            iEliteEstateCount -= iCount;
                             break;
                         case ProfessionInfo.Caste.Low:
                             pEstate = m_cEstates[Estate.Position.Low];
-                            iLowEstateCount -= pProfession.Value;
+                            iLowEstateCount -= iCount;
                             break;
                         case ProfessionInfo.Caste.Outlaw:
                             pEstate = m_cEstates[Estate.Position.Outlaw];
                             break;
                     }
-                    pEstate.m_cGenderProfessionPreferences[pProfession.Key] = GetProfessionGenderPriority(pProfession.Key);
-                    removeProfessionPreference(pProfession.Key);
+                    pEstate.m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
+                    removeProfessionPreference(pProfession);
                 }
+            }
+
+            addCasteRestrictedProfessionToEstate(m_pStateModel.m_pStateCapital.m_pMainBuilding.m_pOwnerProfession);
+            addCasteRestrictedProfessionToEstate(m_pStateModel.m_pStateCapital.m_pMainBuilding.m_pWorkersProfession);
+            addCasteRestrictedProfessionToEstate(m_pStateModel.m_pProvinceCapital.m_pMainBuilding.m_pOwnerProfession);
+
+            foreach (var pProfession in m_cProfessions)
+            {
+                addCasteRestrictedProfessionToEstate(pProfession.Key);
             }
 
             if (m_iSocialEquality != 0 || m_cEstates[Estate.Position.Low].m_cGenderProfessionPreferences.Count == 0)
@@ -490,10 +507,10 @@ namespace Socium.Population
                     foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                     {
                         if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
-                            m_cPeople[pProfession] < iLowEstateCount && m_cPeople[pProfession] > iBestFit)
+                            m_cProfessions[pProfession] < iLowEstateCount && m_cProfessions[pProfession] > iBestFit)
                         {
                             pBestFit = pProfession;
-                            iBestFit = m_cPeople[pProfession];
+                            iBestFit = m_cProfessions[pProfession];
                         }
                     }
                     if (pBestFit == null)
@@ -502,10 +519,10 @@ namespace Socium.Population
                         foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                         {
                             if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
-                                m_cPeople[pProfession] < iBestFit)
+                                m_cProfessions[pProfession] < iBestFit)
                             {
                                 pBestFit = pProfession;
-                                iBestFit = m_cPeople[pProfession];
+                                iBestFit = m_cProfessions[pProfession];
                             }
                         }
                     }
@@ -533,10 +550,10 @@ namespace Socium.Population
                 int iBestFit = iEliteEstateCount;
                 foreach (ProfessionInfo pStrata in cProfessionPreference[iHighestPreference])
                 {
-                    if (m_cPeople[pStrata] < iBestFit)
+                    if (m_cProfessions[pStrata] < iBestFit)
                     {
                         pBestFit = pStrata;
-                        iBestFit = m_cPeople[pStrata];
+                        iBestFit = m_cProfessions[pStrata];
                     }
                 }
                 if (pBestFit != null)
@@ -560,7 +577,15 @@ namespace Socium.Population
             }
 
             foreach (var pEstate in m_cEstates)
-                pEstate.Value.CalculateGenderProfessionPreferences();
+            {
+                m_cEstatesCounts[pEstate.Key] = 0;
+                foreach (var pProfession in pEstate.Value.m_cGenderProfessionPreferences)
+                {
+                    int iCount = 0;
+                    if (m_cProfessions.TryGetValue(pProfession.Key, out iCount))
+                        m_cEstatesCounts[pEstate.Key] += iCount;
+                }
+            }
         }
 
         /// <summary>

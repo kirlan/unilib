@@ -161,11 +161,11 @@ namespace Socium.Settlements
                 case 0:
                     return string.Format("{2} {0} {1}", m_pInfo.m_sName, m_sName, m_eSpeciality);
                 case 1:
-                    return string.Format("ruins of {2} {0} {1}", m_pNation.m_pPrimalSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    return string.Format("ruins of {2} {0} {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
                 case 2:
-                    return string.Format("ancient ruins of {2} {0} {1}", m_pNation.m_pPrimalSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    return string.Format("ancient ruins of {2} {0} {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
                 default:
-                    return string.Format("forgotten ruins of {2} {0} {1}", m_pNation.m_pPrimalSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    return string.Format("forgotten ruins of {2} {0} {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
             }
         }
     }

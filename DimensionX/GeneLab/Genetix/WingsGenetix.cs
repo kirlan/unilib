@@ -92,7 +92,7 @@ namespace GeneLab.Genetix
                     sWings += " leather wings";
                     break;
                 case WingsType.Insectoid:
-                    sWings += " insectoid wings";
+                    sWings += " insect wings";
                     break;
                 case WingsType.Tentacles:
                     sWings = "long tentacles on their back";

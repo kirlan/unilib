@@ -414,7 +414,7 @@ namespace Socium.Psychology
         //    }
         //}
 
-        public string GetCustomsString()
+        public string GetCustomsList()
         {
             string sResult = "";
 
@@ -552,92 +552,64 @@ namespace Socium.Psychology
             return "Praises: " + sResult + "\n";
         }
 
-        public string GetCustomsString2()
+        public string GetCustomsDescription()
         {
+            string sGenderPriority = "";
             string sResult = "";
 
             if (m_eGenderPriority == GenderPriority.Patriarchy)
             {
-                sResult += "males";
+                sGenderPriority = "patriarchal";
+                //sResult += "males";
             }
             if (m_eGenderPriority == GenderPriority.Matriarchy)
             {
-                sResult += "females";
+                sGenderPriority = "matriarchal";
+                //sResult += "females";
             }
             if (m_eGenderPriority == GenderPriority.Genders_equality)
             {
-                sResult += "males and females";
+                sGenderPriority = "gender equality";
+                //sResult += "males and females";
             }
-
-            bool bFirst = true;
 
             if (m_eMindSet == MindSet.Emotions)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "are guided mostly by emotions";
             }
             if (m_eMindSet == MindSet.Logic)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "are guided mostly by pure logic";
             }
 
             if (m_eMagic == Magic.Magic_Feared)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "denies any form of magic";
             }
             if (m_eMagic == Magic.Magic_Praised)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "accepts any form of magic";
             }
 
             if (m_eBodyModifications == BodyModifications.Body_Modifications_Blamed)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
-                sResult += "has no tatoo or pierceing";
+                sResult += "should have no tatoo or pierceing";
             }
             if (m_eBodyModifications == BodyModifications.Body_Modifications_Mandatory)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
-                sResult += "has ";
+                sResult += "should have ";
                 bool bFirst2 = true;
                 foreach (BodyModificationsTypes eMod in m_cMandatoryModifications)
                 {
@@ -652,127 +624,72 @@ namespace Socium.Psychology
 
             if (m_eClothes == Clothes.Minimal_Clothes)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
-                sResult += "prefers to wear minimal clothes";
+                sResult += "wears minimal clothes";
             }
             if (m_eClothes == Clothes.Covering_Clothes)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "wears clothes hiding entire body";
             }
 
             if (m_eAdornments == Adornments.No_Adornments)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "uses no jewelry";
             }
             if (m_eAdornments == Adornments.Lavish_Adornments)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "uses a lot of jewelry";
             }
 
             if (m_eScience == Science.Technophobia)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
-                sResult += "doesn't like novelties";
+                sResult += "are afraid of new technologies";
             }
             if (m_eScience == Science.Ingenuity)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
-                sResult += "likes any novelties";
+                sResult += "are pretty creative";
             }
 
             if (m_eFamilyValues == FamilyValues.Praised_Family_Values)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "highly appreciates family values";
             }
             if (m_eFamilyValues == FamilyValues.No_Family_Values)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "not paying much attention to family ties";
             }
 
             if (m_eSexuality == Sexuality.Puritan)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "uses sex only for reproduction";
             }
             if (m_eSexuality == Sexuality.Lecherous)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += ", ";
                 sResult += "makes sex a lot";
             }
 
             if (m_eMarriage == MarriageType.Monogamy)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " and ";
                 sResult += "have one";
 
@@ -808,12 +725,7 @@ namespace Socium.Psychology
             }
             if (m_eMarriage == MarriageType.Polyamory)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " and ";
                 sResult += "denies wedlock";
 
@@ -837,12 +749,7 @@ namespace Socium.Psychology
             }
             if (m_eMarriage == MarriageType.Polygamy)
             {
-                if (bFirst)
-                {
-                    sResult += ", who ";
-                    bFirst = false;
-                }
-                else
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " and ";
 
                 if (m_eSexRelations == SexualOrientation.Heterosexual)
@@ -892,7 +799,7 @@ namespace Socium.Psychology
                 }
             }
 
-            return "The most respected members of society are " + sResult + ".\n";
+            return "This is a " + sGenderPriority + " society, which members " + sResult + ".\n";
         }
 
         public static bool ListsEqual(IList pList1, IList pList2)

@@ -30,8 +30,8 @@ namespace Socium.Settlements
 
         public static readonly ProfessionInfo Loafer = new ProfessionInfo("loafer", false, SkillLevel.None, SkillLevel.None, SkillLevel.None);
 
-        public static readonly ProfessionInfo WorkingSlave = new ProfessionInfo("slave", false, Caste.Low, SkillLevel.Bad, SkillLevel.None, SkillLevel.None);
-        public static readonly ProfessionInfo PleasureSlave = new ProfessionInfo("slave", false, Caste.Low, SkillLevel.None, SkillLevel.None, SkillLevel.Bad);
+        public static readonly ProfessionInfo WorkingSlave = new ProfessionInfo("working slave", false, Caste.Low, SkillLevel.Bad, SkillLevel.None, SkillLevel.None);
+        public static readonly ProfessionInfo PleasureSlave = new ProfessionInfo("pleasure slave", false, Caste.Low, SkillLevel.None, SkillLevel.None, SkillLevel.Bad);
         public static readonly ProfessionInfo Slaver = new ProfessionInfo("slaver", true, Caste.MiddleOrUp, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
 
         public static readonly ProfessionInfo Warrior = new ProfessionInfo("warrior", false, SkillLevel.Good, SkillLevel.None, SkillLevel.None);
@@ -468,6 +468,11 @@ namespace Socium.Settlements
             m_bMaster = bMaster;
 
             s_cAllProfessions.Add(this);
+        }
+
+        public override string ToString()
+        {
+            return m_sNameM;
         }
     }
 }

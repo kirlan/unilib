@@ -123,7 +123,7 @@ namespace GeneLab.Genetix
                         sLegs += "sharp-clawed foots";
                         break;
                     case LegsType.Spidery:
-                        sLegs += "insectoid legs";
+                        sLegs += "arthropod legs";
                         break;
                     case LegsType.Tentacles:
                         sLegs += "muscular tentacles instead of legs";

@@ -669,7 +669,7 @@ namespace Socium
                 m_fOre += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Ore];
 
                 m_iPopulation += pLand.m_cContents.Count;
-                iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pPrimalSociety.m_iMagicLimit * pLand.m_cContents.Count;
+                iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pProtoSociety.m_iMagicLimit * pLand.m_cContents.Count;
             }
 
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;

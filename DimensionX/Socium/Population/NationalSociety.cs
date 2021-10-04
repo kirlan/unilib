@@ -30,11 +30,11 @@ namespace Socium.Population
             m_pTitularNation = pNation;
             m_sName = m_pTitularNation.m_pRace.m_pLanguage.RandomCountryName();
 
-            m_iTechLevel = m_pTitularNation.m_pPrimalSociety.m_iTechLevel;
-            m_iMagicLimit = m_pTitularNation.m_pPrimalSociety.m_iMagicLimit;
+            m_iTechLevel = m_pTitularNation.m_pProtoSociety.m_iTechLevel;
+            m_iMagicLimit = m_pTitularNation.m_pProtoSociety.m_iMagicLimit;
 
-            m_cCulture[Gender.Male] = new Culture(m_pTitularNation.m_pPrimalSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
-            m_cCulture[Gender.Female] = new Culture(m_pTitularNation.m_pPrimalSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
+            m_cCulture[Gender.Male] = new Culture(m_pTitularNation.m_pProtoSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
+            m_cCulture[Gender.Female] = new Culture(m_pTitularNation.m_pProtoSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
 
             FixSexCustoms();
         }
@@ -95,7 +95,7 @@ namespace Socium.Population
             if (iSize == 1 && m_iInfrastructureLevel > 4)
                 m_iInfrastructureLevel /= 2;
 
-            if (m_iTechLevel == 0 && m_pTitularNation.m_pPrimalSociety.m_iMagicLimit == 0)
+            if (m_iTechLevel == 0 && m_pTitularNation.m_pProtoSociety.m_iMagicLimit == 0)
                 m_iInfrastructureLevel = 0;
 
             if (fFood * 2 < iPopulation)

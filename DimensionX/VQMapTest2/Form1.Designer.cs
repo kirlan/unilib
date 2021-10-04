@@ -47,6 +47,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage10 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -92,7 +93,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.miniMapDraw1 = new MapDrawEngine.MiniMapDraw();
             this.mapDraw1 = new MapDrawEngine.MapDraw();
-            this.tabPage10 = new System.Windows.Forms.TabPage();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -203,7 +203,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(9, 19);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(197, 21);
+            this.comboBox1.Size = new System.Drawing.Size(322, 21);
             this.comboBox1.Sorted = true;
             this.comboBox1.TabIndex = 11;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
@@ -216,16 +216,16 @@
             this.groupBox4.Controls.Add(this.button1);
             this.groupBox4.Controls.Add(this.tabControl2);
             this.groupBox4.Controls.Add(this.comboBox1);
-            this.groupBox4.Location = new System.Drawing.Point(756, 226);
+            this.groupBox4.Location = new System.Drawing.Point(631, 226);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(257, 509);
+            this.groupBox4.Size = new System.Drawing.Size(382, 509);
             this.groupBox4.TabIndex = 12;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "States:";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(209, 19);
+            this.button1.Location = new System.Drawing.Point(334, 19);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(42, 21);
             this.button1.TabIndex = 21;
@@ -243,7 +243,7 @@
             this.tabControl2.Location = new System.Drawing.Point(9, 46);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(239, 457);
+            this.tabControl2.Size = new System.Drawing.Size(364, 457);
             this.tabControl2.TabIndex = 22;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
             // 
@@ -254,7 +254,7 @@
             this.tabPage7.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(231, 431);
+            this.tabPage7.Size = new System.Drawing.Size(356, 431);
             this.tabPage7.TabIndex = 0;
             this.tabPage7.Text = "General Info";
             this.tabPage7.UseVisualStyleBackColor = true;
@@ -263,9 +263,10 @@
             // 
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.richTextBox1.Location = new System.Drawing.Point(3, 3);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(225, 425);
+            this.richTextBox1.Size = new System.Drawing.Size(350, 425);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             this.richTextBox1.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.richTextBox1_LinkClicked);
@@ -278,7 +279,7 @@
             this.tabPage8.Location = new System.Drawing.Point(4, 22);
             this.tabPage8.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage8.Name = "tabPage8";
-            this.tabPage8.Size = new System.Drawing.Size(231, 431);
+            this.tabPage8.Size = new System.Drawing.Size(356, 431);
             this.tabPage8.TabIndex = 1;
             this.tabPage8.Text = "Settlements";
             this.tabPage8.UseVisualStyleBackColor = true;
@@ -288,9 +289,10 @@
             this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.richTextBox2.Location = new System.Drawing.Point(3, 188);
             this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(225, 240);
+            this.richTextBox2.Size = new System.Drawing.Size(350, 240);
             this.richTextBox2.TabIndex = 13;
             this.richTextBox2.Text = "";
             // 
@@ -299,10 +301,12 @@
             this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 16;
             this.listBox1.Location = new System.Drawing.Point(3, 9);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(225, 173);
+            this.listBox1.Size = new System.Drawing.Size(350, 164);
             this.listBox1.TabIndex = 12;
             // 
             // tabControl1
@@ -340,44 +344,53 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(145, 4);
+            this.tabPage2.Location = new System.Drawing.Point(538, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(301, 699);
+            this.tabPage2.Size = new System.Drawing.Size(0, 699);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Humidity";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // tabPage10
+            // 
+            this.tabPage10.Location = new System.Drawing.Point(538, 4);
+            this.tabPage10.Name = "tabPage10";
+            this.tabPage10.Size = new System.Drawing.Size(0, 699);
+            this.tabPage10.TabIndex = 7;
+            this.tabPage10.Text = "Elevation";
+            this.tabPage10.UseVisualStyleBackColor = true;
+            // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(273, 4);
+            this.tabPage3.Location = new System.Drawing.Point(538, 4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(173, 699);
+            this.tabPage3.Size = new System.Drawing.Size(0, 699);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Natives";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(332, 4);
+            this.tabPage4.Location = new System.Drawing.Point(538, 4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(114, 699);
+            this.tabPage4.Size = new System.Drawing.Size(0, 699);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Nations";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(406, 4);
+            this.tabPage5.Location = new System.Drawing.Point(538, 4);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(40, 699);
+            this.tabPage5.Size = new System.Drawing.Size(0, 699);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Tech level";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(460, 4);
+            this.tabPage6.Location = new System.Drawing.Point(538, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 699);
             this.tabPage6.TabIndex = 5;
@@ -397,7 +410,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(766, 172);
+            this.label7.Location = new System.Drawing.Point(634, 172);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(35, 13);
             this.label7.TabIndex = 14;
@@ -407,7 +420,7 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(766, 191);
+            this.label8.Location = new System.Drawing.Point(634, 191);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(35, 13);
             this.label8.TabIndex = 15;
@@ -423,7 +436,7 @@
             this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.label1.Location = new System.Drawing.Point(27, 32);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(720, 700);
+            this.label1.Size = new System.Drawing.Size(598, 700);
             this.label1.TabIndex = 17;
             this.label1.Text = "World is\'n built yet...";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -432,7 +445,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(766, 204);
+            this.label2.Location = new System.Drawing.Point(634, 204);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 18;
@@ -719,9 +732,9 @@
             // 
             this.miniMapDraw1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.miniMapDraw1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.miniMapDraw1.Location = new System.Drawing.Point(756, 28);
+            this.miniMapDraw1.Location = new System.Drawing.Point(631, 28);
             this.miniMapDraw1.Name = "miniMapDraw1";
-            this.miniMapDraw1.Size = new System.Drawing.Size(203, 139);
+            this.miniMapDraw1.Size = new System.Drawing.Size(328, 139);
             this.miniMapDraw1.TabIndex = 21;
             // 
             // mapDraw1
@@ -743,18 +756,9 @@
             this.mapDraw1.ShowProvincies = true;
             this.mapDraw1.ShowRoads = true;
             this.mapDraw1.ShowStates = true;
-            this.mapDraw1.Size = new System.Drawing.Size(726, 703);
+            this.mapDraw1.Size = new System.Drawing.Size(601, 703);
             this.mapDraw1.TabIndex = 20;
             this.mapDraw1.SelectedStateChanged += new System.EventHandler<MapDrawEngine.MapDraw.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
-            // 
-            // tabPage10
-            // 
-            this.tabPage10.Location = new System.Drawing.Point(214, 4);
-            this.tabPage10.Name = "tabPage10";
-            this.tabPage10.Size = new System.Drawing.Size(232, 699);
-            this.tabPage10.TabIndex = 7;
-            this.tabPage10.Text = "Elevation";
-            this.tabPage10.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

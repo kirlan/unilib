@@ -482,8 +482,6 @@ namespace Socium
             if (m_pMethropoly.m_pCenter.Area != null)
                 m_pSociety.m_sName = m_pSociety.m_pTitularNation.m_pRace.m_pLanguage.RandomCountryName();
 
-            m_pSociety.SetEstates();
-
             return m_pMethropoly.m_pAdministrativeCenter;
         }
 
