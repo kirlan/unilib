@@ -215,7 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DimensionX\MIConvexHull\MIConvexHull.csproj">
-      <Project>{2337776D-7D0C-40AA-A439-C26C3CE24FAB}</Project>
+      <Project>{2337776d-7d0c-40aa-a439-c26c3ce24fab}</Project>
       <Name>MIConvexHull</Name>
     </ProjectReference>
     <ProjectReference Include="..\NameGen\NameGen.csproj">
