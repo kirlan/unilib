@@ -355,7 +355,7 @@ namespace LandscapeGeneration.PathFind
             Location.Edge pBestLine = null;
             float fShortest = float.MaxValue;
             Location.Edge[] cLines = pLand1.BorderWith[pLand2].ToArray();
-            foreach (Location.Edge pLine in cLines)
+            foreach (var pLine in cLines)
             {
                 m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
 
@@ -394,7 +394,7 @@ namespace LandscapeGeneration.PathFind
             Location.Edge pBestLine = null;
             float fShortest = float.MaxValue;
             Location.Edge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
-            foreach (Location.Edge pLine in cLines)
+            foreach (var pLine in cLines)
             {
                 m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
 

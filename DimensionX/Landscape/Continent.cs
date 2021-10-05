@@ -56,7 +56,7 @@ namespace LandscapeGeneration
                     if (bFree)
                     {
                         cBorderLength[pLM] = 0;
-                        foreach (Location.Edge pLine in pLandMass.Value)
+                        foreach (var pLine in pLandMass.Value)
                             cBorderLength[pLM] += pLine.m_fLength;
                     }
                 }
@@ -95,7 +95,7 @@ namespace LandscapeGeneration
 
                 if (!m_cBorder.ContainsKey(pLandMass.Key))
                     m_cBorder[pLandMass.Key] = new List<Location.Edge>();
-                foreach (Location.Edge pLine in pLandMass.Value)
+                foreach (var pLine in pLandMass.Value)
                     m_cBorder[pLandMass.Key].Add(new Location.Edge(pLine));
             }
 

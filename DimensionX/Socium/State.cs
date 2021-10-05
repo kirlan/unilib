@@ -189,7 +189,7 @@ namespace Socium
                     //    iHostility = m_pMethropoly.CalcHostility(pProvince);
 
                     float fSharedPerimeter = 0;
-                    foreach (Location.Edge pLine in m_cBorder[pProvince])
+                    foreach (var pLine in m_cBorder[pProvince])
                         fSharedPerimeter += pLine.m_fLength;
 
                     fSharedPerimeter /= pProvince.PerimeterLength;
@@ -265,7 +265,7 @@ namespace Socium
                 if (!m_cBorder.ContainsKey(pL))
                     m_cBorder[pL] = new List<Location.Edge>();
                 Location.Edge[] cLines = pLand.Value.ToArray();
-                foreach (Location.Edge pLine in cLines)
+                foreach (var pLine in cLines)
                 {
                     m_cBorder[pL].Add(new Location.Edge(pLine));
                     //cNewBorder.Add(new Line(pLine));
@@ -615,7 +615,7 @@ namespace Socium
                         }
 
                         Location.Edge[] cLines = pLinkedTerr.Value.ToArray();
-                        foreach (Location.Edge pLine in cLines)
+                        foreach (var pLine in cLines)
                         {
                             fBorder += pLine.m_fLength / pLinkedLand.MovementCost;
                             if (pLinkedLand.m_pProvince == null)

@@ -11,9 +11,9 @@ namespace LandscapeGeneration
 {
     public class VoronoiVertex : IPointF
     {
-        public float m_fX;
-        public float m_fY;
-
+        public float m_fX = 0;
+        public float m_fY = 0;
+        
         public float m_fHeight = float.NaN;
 
         public float X

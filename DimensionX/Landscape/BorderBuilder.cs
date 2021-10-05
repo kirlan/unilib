@@ -83,30 +83,33 @@ namespace LandscapeGeneration
 
             X = 0;
             Y = 0;
+            H = 0;
             float fPerimeter = 0;
             foreach (Location.Edge pLine in aTotalBorder)
             {
                 pLine.m_pNext = null;
                 pLine.m_pPrevious = null;
 
-                float fRelativeX1 = pLine.m_pPoint1.m_fX;
-                if (fRelativeX1 > aTotalBorder[0].m_pPoint1.m_fX + fCycleShift / 2)
+                float fRelativeX1 = pLine.m_pPoint1.X;
+                if (fRelativeX1 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
                     fRelativeX1 -= fCycleShift;
-                if (fRelativeX1 < aTotalBorder[0].m_pPoint1.m_fX - fCycleShift / 2)
+                if (fRelativeX1 < aTotalBorder[0].m_pPoint1.X - fCycleShift / 2)
                     fRelativeX1 += fCycleShift;
 
                 float fRelativeX2 = pLine.m_pPoint2.X;
-                if (fRelativeX2 > aTotalBorder[0].m_pPoint1.m_fX + fCycleShift / 2)
+                if (fRelativeX2 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
                     fRelativeX2 -= fCycleShift;
-                if (fRelativeX2 < aTotalBorder[0].m_pPoint1.m_fX - fCycleShift / 2)
+                if (fRelativeX2 < aTotalBorder[0].m_pPoint1.X - fCycleShift / 2)
                     fRelativeX2 += fCycleShift;
 
                 X += pLine.m_fLength * (fRelativeX1 + fRelativeX2) / 2;
-                Y += pLine.m_fLength * (pLine.m_pPoint1.m_fY + pLine.m_pPoint2.m_fY) / 2;
+                Y += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                H += pLine.m_fLength * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
                 fPerimeter += pLine.m_fLength;
             }
             X /= fPerimeter;
             Y /= fPerimeter;
+            H /= fPerimeter;
 
             m_cFirstLines.Clear();
             m_cOrdered.Clear();
@@ -141,9 +144,9 @@ namespace LandscapeGeneration
                         {
                             Location.Edge pLine = aTotalBorder[i];
                             if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
-                                (pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY &&
-                                 (pLine.m_pPoint1.m_fX == pCurrentLine.m_pPoint2.m_fX ||
-                                  Math.Abs(pLine.m_pPoint1.m_fX - pCurrentLine.m_pPoint2.m_fX) == fCycleShift)))
+                                (pLine.m_pPoint1.Y == pCurrentLine.m_pPoint2.Y &&
+                                 (pLine.m_pPoint1.X == pCurrentLine.m_pPoint2.X ||
+                                  Math.Abs(pLine.m_pPoint1.X - pCurrentLine.m_pPoint2.X) == fCycleShift)))
                             {
                                 pCurrentLine.m_pNext = pLine;
                                 pLine.m_pPrevious = pCurrentLine;

@@ -65,7 +65,7 @@ namespace LandscapeGeneration
 
                     float fWholeLength = 1;
                     Location.Edge[] aBorderLine = m_cBorder[pLand].ToArray();
-                    foreach (Location.Edge pLine in aBorderLine)
+                    foreach (var pLine in aBorderLine)
                         fWholeLength += pLine.m_fLength;
 
                     foreach (var pLinkTerr in pLand.BorderWith)
@@ -125,7 +125,7 @@ namespace LandscapeGeneration
                 if (!m_cBorder.ContainsKey(pBorderLand.Key))
                     m_cBorder[pBorderLand.Key] = new List<Location.Edge>();
                 Location.Edge[] cLines = pBorderLand.Value.ToArray();
-                foreach (Location.Edge pLine in cLines)
+                foreach (var pLine in cLines)
                     m_cBorder[pBorderLand.Key].Add(new Location.Edge(pLine));
             }
 

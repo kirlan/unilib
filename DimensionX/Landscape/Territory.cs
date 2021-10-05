@@ -70,7 +70,7 @@ namespace LandscapeGeneration
 
             m_fPerimeter = 0;
             foreach (var pBorder in m_cBorderWith)
-                foreach (Location.Edge pLine in pBorder.Value)
+                foreach (var pLine in pBorder.Value)
                     m_fPerimeter += pLine.m_fLength;
         }
 
@@ -101,7 +101,7 @@ namespace LandscapeGeneration
                 {
                     float fWholeLength = 1;
                     Location.Edge[] aBorderLine = pInner.Value.ToArray();
-                    foreach (Location.Edge pLine in aBorderLine)
+                    foreach (var pLine in aBorderLine)
                         fWholeLength += pLine.m_fLength;
 
                     fWholeLength /= pInnerTerritory.PerimeterLength;
@@ -150,7 +150,7 @@ namespace LandscapeGeneration
                 if (!m_cBorder.ContainsKey(pInner.Key))
                     m_cBorder[pInner.Key] = new List<Location.Edge>();
                 Location.Edge[] aBorderLine = pInner.Value.ToArray();
-                foreach (Location.Edge pLine in aBorderLine)
+                foreach (var pLine in aBorderLine)
                     m_cBorder[pInner.Key].Add(new Location.Edge(pLine)); 
             }
 

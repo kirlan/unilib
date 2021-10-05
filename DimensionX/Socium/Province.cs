@@ -54,7 +54,7 @@ namespace Socium
 
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
-                foreach (Location.Edge pLine in pBorder.Value)
+                foreach (var pLine in pBorder.Value)
                     PerimeterLength += pLine.m_fLength;
         }
 
@@ -231,7 +231,7 @@ namespace Socium
                         //общая граница провинции и новой земли
                         float fSharedPerimeter = 1;
                         Location.Edge[] aBorderLine = m_cBorder[pLinkedLand].ToArray();
-                        foreach (Location.Edge pLine in aBorderLine)
+                        foreach (var pLine in aBorderLine)
                             fSharedPerimeter += pLine.m_fLength;
 
                         //fCommonLength /= fTotalLength;
@@ -322,7 +322,7 @@ namespace Socium
                         if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
                             m_cBorder[pAddonLinkedLand.Key] = new List<Location.Edge>();
                         Location.Edge[] cLines = pAddonLinkedLand.Value.ToArray();
-                        foreach (Location.Edge pLine in cLines)
+                        foreach (var pLine in cLines)
                             m_cBorder[pAddonLinkedLand.Key].Add(new Location.Edge(pLine));
                     }
 
@@ -368,7 +368,7 @@ namespace Socium
                     if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
                         m_cBorder[pAddonLinkedLand.Key] = new List<Location.Edge>();
                     Location.Edge[] cLines = pAddonLinkedLand.Value.ToArray();
-                    foreach (Location.Edge pLine in cLines)
+                    foreach (var pLine in cLines)
                         m_cBorder[pAddonLinkedLand.Key].Add(new Location.Edge(pLine));
                 }
             }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.PresetsPanel = new System.Windows.Forms.Panel();
             this.MapPresetDescription = new System.Windows.Forms.Label();
             this.MapPresets = new System.Windows.Forms.ListBox();
@@ -62,7 +63,7 @@
             this.panel7 = new System.Windows.Forms.Panel();
             this.StatesCountBar = new System.Windows.Forms.HScrollBar();
             this.label15 = new System.Windows.Forms.Label();
-            this.toolTip1 = new System.Windows.Forms.ToolTip();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.PresetsPanel.SuspendLayout();
             this.AdvancedPanel.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();

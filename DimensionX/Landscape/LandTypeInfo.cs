@@ -68,7 +68,6 @@ namespace LandscapeGeneration
         public Color m_pColor;
         public Brush m_pBrush;
         public LandType m_eType;
-        public Environment m_eEnvironment = Environment.None;
 
         public void SetColor(Color pColor)
         {
@@ -77,6 +76,8 @@ namespace LandscapeGeneration
         }
         
         public int m_iMovementCost = 100;
+
+        public Environment m_eEnvironment = Environment.None;
 
         public string m_sName;
 

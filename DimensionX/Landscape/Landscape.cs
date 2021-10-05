@@ -131,7 +131,7 @@ namespace LandscapeGeneration
             BuildAreas(BeginStep, ProgressStep);
 
             SmoothAreas();
-
+            
             CalculateElevations(BeginStep, ProgressStep);
 
             AddPeaks();

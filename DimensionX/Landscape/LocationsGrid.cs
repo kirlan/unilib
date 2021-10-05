@@ -188,7 +188,6 @@ namespace LandscapeGeneration
             LOC pLoc2 = null;
 
             if (pEdge.VVertexA == pEdge.VVertexB)
-            if (pEdge.VVertexA == pEdge.VVertexB)
                 return false;
 
             if (pEdge.VVertexA.data[0] == pEdge.VVertexB.data[0] && pEdge.VVertexA.data[1] == pEdge.VVertexB.data[1])
@@ -237,7 +236,6 @@ namespace LandscapeGeneration
 
             VoronoiVertex pVertexB = cVertexes[pEdge.VVertexB];
 
-            if (pVertexA == pVertexB)
             if (pVertexA == pVertexB)
                 throw new Exception("Vertexes too close!");
 
@@ -602,7 +600,7 @@ namespace LandscapeGeneration
             m_aLocations = cLocations.ToArray();
         }
 
-        private static int s_iVersion = 21;
+        private static int s_iVersion = 30;
         private static string s_sHeader = "DimensionX World Generator Grid File.";
 
         public void Save(string sFilename)
