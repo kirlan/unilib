@@ -28,13 +28,14 @@ namespace PoissonTest
             float W = 50000;// panel1.Width;
             float H = 50000;// panel1.Height;
 
-            var count = 500;// 1000;
+            var count = 10000;// 1000;
             var Sbig = W * H;
             var S1 = Sbig / count;
             var h = Math.Sqrt(S1/(4*Math.Sqrt(3)));
             var R = Math.Sqrt(S1/(3*Math.Sqrt(3)));
 
             R = (R + h) / 2;
+            R *= 0.96;
 
             int i = 0;
             List<SimpleVector3d> cPoints = new List<SimpleVector3d>();
@@ -50,7 +51,7 @@ namespace PoissonTest
             while (cPoints.Count < count);
 
             label1.Text = cPoints.Count.ToString();
-            //DrawMap(cPoints);
+            DrawMap(cPoints);
 
             button1.Enabled = true;
         }
@@ -62,10 +63,11 @@ namespace PoissonTest
             Brush fill = Brushes.Black;
             gr.FillRectangle(fill, 0, 0, ClientRectangle.Width, ClientRectangle.Height);
 
+            var fScale = (float)Math.Min(ClientRectangle.Width, ClientRectangle.Height) / 50000;
             foreach (var pPoint in cPoints)
             {
                 long r = 2;
-                gr.FillEllipse(Brushes.Red, (int)(pPoint.X - r), (int)(pPoint.Y - r), 2 * r, 2 * r);
+                gr.FillEllipse(Brushes.Red, (int)(pPoint.X * fScale - r), (int)(pPoint.Y * fScale - r), 2 * r, 2 * r);
             }
 
             panel1.Refresh();
