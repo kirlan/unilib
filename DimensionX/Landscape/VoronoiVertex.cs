@@ -48,6 +48,12 @@ namespace LandscapeGeneration
 
         public List<long> m_cLocationsTmp = new List<long>();
 
+        /// <summary>
+        /// Чанк, в который входит данная вершина. 
+        /// Используется в Chunk::RebuildVertexArray() при просмотре соседей как маркер того, что эта вершина уже была обработана.
+        /// </summary>
+        public object m_pChunkMarker = null;
+
         public VoronoiVertex()
         {
             m_fX = 0f;
@@ -64,6 +70,12 @@ namespace LandscapeGeneration
         {
             m_fX = (float)pVector.data[0];
             m_fY = (float)pVector.data[1];
+        }
+
+        public VoronoiVertex(VoronoiVertex pVector)
+        {
+            m_fX = pVector.X;
+            m_fY = pVector.Y;
         }
 
         public VoronoiVertex(BinaryReader binReader)

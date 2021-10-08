@@ -16,6 +16,26 @@ namespace LandscapeGeneration
         Hex
     }
 
+    public enum WorldShape
+    {
+        /// <summary>
+        /// обычная плоская прямоугольная карта с непереходимым краем
+        /// </summary>
+        Plain,
+        /// <summary>
+        /// Мир-кольцо - внутренняя поверхность цилиндра, боковые грани непереходимые
+        /// </summary>
+        Ringworld,
+        /// <summary>
+        /// Панцирь черепахи - круглый плоский мир с горами в центре, со всех сторон окружённый бесконечным океаном
+        /// </summary>
+        Shell,
+        /// <summary>
+        /// Чаша - круглый плоский мир с центральным морем, со всех сторон окружённый непроходимыми горами
+        /// </summary>
+        Chalice
+    }
+
     public class LocationsGrid<LOC>
         where LOC : Location, new()
     {
@@ -41,7 +61,7 @@ namespace LandscapeGeneration
 
         public float CycleShift
         {
-            get { return m_bCycled ? m_iRX * 2 : 0; }
+            get { return m_eShape == WorldShape.Ringworld ? m_iRX * 2 : 0; }
         }
 
         public string m_sDescription = ""; 
@@ -57,7 +77,8 @@ namespace LandscapeGeneration
 
         public VoronoiVertex[] m_aVertexes = null;
 
-        public bool m_bCycled = false;
+        public WorldShape m_eShape = WorldShape.Plain;
+        
 
         /// <summary>
         /// Создание сетки из случайных точек
@@ -65,11 +86,11 @@ namespace LandscapeGeneration
         /// <param name="iLocations">количество точек</param>
         /// <param name="iWidth">пропорции карты - ширина</param>
         /// <param name="iHeight">пропорции карты - высота)</param>
-        public LocationsGrid(int iLocations, int iWidth, int iHeight, string sDescription, bool bCycled)
+        public LocationsGrid(int iLocations, int iWidth, int iHeight, string sDescription, WorldShape eShape)
         {
             m_iRX = m_iRY*iWidth/iHeight;
             m_iLocationsCount = iLocations;
-            m_bCycled = bCycled;
+            m_eShape = eShape;
 
             bool bOK = true;
             do
@@ -98,9 +119,9 @@ namespace LandscapeGeneration
         /// <param name="iWidth">ширина</param>
         /// <param name="iHeight">высота</param>
         /// <param name="eGridType">тип сетки</param>
-        public LocationsGrid(int iWidth, int iHeight, GridType eGridType, string sDescription, bool bCycled)
+        public LocationsGrid(int iWidth, int iHeight, GridType eGridType, string sDescription, WorldShape eShape)
         {
-            m_bCycled = bCycled;
+            m_eShape = eShape;
 
             if (eGridType == GridType.Hex)
             {
@@ -328,7 +349,7 @@ namespace LandscapeGeneration
 
             //List<long> cUsedIDs = new List<long>();
 
-            int iWidthReserv = m_bCycled ? 0:2;
+            int iWidthReserv = m_eShape == WorldShape.Ringworld ? 0:2;
             int iHeightReserv = 2;
 
             for (int yy = -iHeightReserv; yy < iHeight / 2 + iHeightReserv; yy++)
@@ -356,7 +377,7 @@ namespace LandscapeGeneration
 
                     cLocations.Add(pLocation);
 
-                    if (m_bCycled)
+                    if (m_eShape == WorldShape.Ringworld)
                     {
                         LOC pGhostLocation = new LOC();
 
@@ -397,7 +418,7 @@ namespace LandscapeGeneration
 
                     foreach (var cLines in pLoc.m_cBorderWith)
                     {
-                        foreach (Location.Edge pLine in cLines.Value)
+                        foreach (var pLine in cLines.Value)
                         {
                             fX += pLine.m_pPoint2.X;
                             fY += pLine.m_pPoint2.Y;
@@ -414,7 +435,7 @@ namespace LandscapeGeneration
                         pImprovedLoc.m_bBorder = false;
                         cLocations.Add(pImprovedLoc);
 
-                        if (m_bCycled)
+                        if (m_eShape == WorldShape.Ringworld)
                         {
                             LOC pGhostLocation = new LOC();
 
@@ -474,7 +495,7 @@ namespace LandscapeGeneration
                 pLocation22.m_bFixed = true;
                 cLocations.Add(pLocation22);
 
-                if (m_bCycled)
+                if (m_eShape == WorldShape.Ringworld)
                 {
                     LOC pLocation11Ghost = new LOC();
                     if (pLocation11.X > 0)
@@ -514,7 +535,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            if (!m_bCycled)
+            if (m_eShape != WorldShape.Ringworld)
             {
                 for (int jj = 0; jj <= ky; jj++)
                 {
@@ -588,8 +609,8 @@ namespace LandscapeGeneration
 //                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
                 pLocation.Create(cLocations.Count, cPoints[i].X, cPoints[i].Y);
                 cLocations.Add(pLocation);
-            
-                if (m_bCycled)
+
+                if (m_eShape == WorldShape.Ringworld)
                 {
                     LOC pGhostLocation = new LOC();
 
@@ -646,7 +667,7 @@ namespace LandscapeGeneration
                     binWriter.Write(m_sDescription);
                     binWriter.Write(m_iLocationsCount);
                     binWriter.Write(m_iRX);
-                 	binWriter.Write(m_bCycled ? 1 : 0);
+                    binWriter.Write((int)m_eShape);
                 }
             }
             fil.Dispose();
@@ -654,10 +675,10 @@ namespace LandscapeGeneration
             m_sFilename = sFilename;
         }
 
-        public static bool CheckFile(string sFilename, out string sDescription, out int iLocationsCount, out bool bCycled)
+        public static bool CheckFile(string sFilename, out string sDescription, out int iLocationsCount, out WorldShape eShape)
         {
             sDescription = "";
-            bCycled = false;
+            eShape = WorldShape.Plain;
             iLocationsCount = 0;
 
             if (!File.Exists(sFilename))
@@ -702,7 +723,7 @@ namespace LandscapeGeneration
                             sDescription = binReader.ReadString();
                             iLocationsCount = binReader.ReadInt32();
                             int iRX = binReader.ReadInt32();
-                   			bCycled = binReader.ReadInt32() == 1;
+                            eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
                         }
                     }
                     catch (EndOfStreamException e)
@@ -726,7 +747,7 @@ namespace LandscapeGeneration
 
         public LocationsGrid(string sFilename)
         {
-            if (!CheckFile(sFilename, out m_sDescription, out m_iLocationsCount, out m_bCycled))
+            if (!CheckFile(sFilename, out m_sDescription, out m_iLocationsCount, out m_eShape))
                 throw new ArgumentException("File not exists or have a wrong format!");
 
             m_sFilename = sFilename;
@@ -789,10 +810,10 @@ namespace LandscapeGeneration
                         if (iVersion != s_iVersion)
                             throw new Exception("Version mismatch!");
 
-                    	m_sDescription = binReader.ReadString();
-                    	m_iLocationsCount = binReader.ReadInt32();
-                    	m_iRX = binReader.ReadInt32();
-                    	m_bCycled = binReader.ReadInt32() == 1;
+                        m_sDescription = binReader.ReadString();
+                        m_iLocationsCount = binReader.ReadInt32();
+                        m_iRX = binReader.ReadInt32();
+                        m_eShape = (WorldShape)Enum.GetValues(typeof(WorldShape)).GetValue(binReader.ReadInt32());
 
                         if (ProgressStep != null)
                             ProgressStep();

@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using LandscapeGeneration.PathFind;
+using LandscapeGeneration.PlanetBuilder;
 
 namespace LandscapeGeneration
 {
@@ -127,7 +128,21 @@ namespace LandscapeGeneration
         /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
         /// </summary>
         public bool m_bBorder = false;
-        public bool m_bGhost = false;
+        
+        /// <summary>
+        /// Для "призрачной" локации - направление, в котором следует искать "настоящую" локацию.
+        /// Если локация не "призрачная", то CenterNone
+        /// </summary>
+        public VertexCH.Direction m_eGhost;
+
+        /// <summary>
+        /// Является ли локация "призрачной", т.е. отражением какой-то локации, принадлежащей на самом деле соседнему квадрату
+        /// </summary>
+        public bool Ghost
+        {
+            get { return m_eGhost != VertexCH.Direction.CenterNone; }
+        }
+        
         /// <summary>
         /// Координаты центра локации нельзя смещать при вычислении сетки, т.к. она используется для формирования ровного края плоской карты
         /// </summary>
