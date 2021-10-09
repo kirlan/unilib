@@ -5,7 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using LandscapeGeneration.PathFind;
-using LandscapeGeneration.PlanetBuilder;
+using LandscapeGeneration.FastGrid;
 
 namespace LandscapeGeneration
 {
@@ -22,6 +22,10 @@ namespace LandscapeGeneration
         {
             public VoronoiVertex m_pPoint1;
             public VoronoiVertex m_pPoint2;
+
+            public float m_fLength;
+
+            public Edge m_pNext = null;
 
             public Edge(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
             {
@@ -69,11 +73,6 @@ namespace LandscapeGeneration
                 binWriter.Write(m_pPoint2.m_iID);
             }
 
-            public Edge m_pPrevious = null;
-            public Edge m_pNext = null;
-
-            public float m_fLength;
-
             public override string ToString()
             {
                 return string.Format("({0}) - ({1}), Length {2}", m_pPoint1, m_pPoint2, m_fLength);
@@ -81,20 +80,16 @@ namespace LandscapeGeneration
 
         }
 
-        public Dictionary<object, List<Location.Edge>> m_cBorderWith = new Dictionary<object, List<Location.Edge>>();
-
-        public RegionType m_eType = RegionType.Empty;
-
         #region ITerritory Members
 
         /// <summary>
         /// Границы с другими такими же объектами
         /// </summary>
-        public Dictionary<object, List<Location.Edge>> BorderWith
+        public Dictionary<object, List<Edge>> BorderWith
         {
             get { return m_cBorderWith; }
         }
-        
+
         public object[] m_aBorderWith = null;
 
         internal void FillBorderWithKeys()
@@ -117,18 +112,31 @@ namespace LandscapeGeneration
             set { m_pOwner = value; }
         }
 
+        private float m_fPerimeter = 0;
+
+        public float PerimeterLength
+        {
+            get { return m_fPerimeter; }
+        }
+
         #endregion
+
+        public RegionType m_eType = RegionType.Empty;
+
+        public override float GetMovementCost()
+        {
+            if (m_pOwner == null || Forbidden || m_bBorder)
+                return 100;
+
+            ILand pLand = m_pOwner as ILand;
+            return pLand.MovementCost * (m_eType == RegionType.Empty ? 1 : 10);
+        }
 
         /// <summary>
         /// Для "призрачных" локаций - ссылка на оригинал.
         /// </summary>
         internal Location m_pOrigin = null;
 
-        /// <summary>
-        /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
-        /// </summary>
-        public bool m_bBorder = false;
-        
         /// <summary>
         /// Для "призрачной" локации - направление, в котором следует искать "настоящую" локацию.
         /// Если локация не "призрачная", то CenterNone
@@ -142,22 +150,44 @@ namespace LandscapeGeneration
         {
             get { return m_eGhost != VertexCH.Direction.CenterNone; }
         }
-        
+
         /// <summary>
         /// Координаты центра локации нельзя смещать при вычислении сетки, т.к. она используется для формирования ровного края плоской карты
         /// </summary>
         public bool m_bFixed = false;
 
+        /// <summary>
+        /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
+        /// </summary>
+        public bool m_bBorder = false;
+
+        /// <summary>
+        /// Уникальный номер локации. Пока нужен только для отладки, в будущем возможно ещё понадобится для чего-нибудь...
+        /// </summary>
         public new long m_iID = 0;
 
         public int m_iGridX = -1;
         public int m_iGridY = -1;
+
+        /// <summary>
+        /// Конструктор без параметров, чтобы класс можно было передавать параметром в шаблоны.
+        /// После создания ОБЯЗАТЕЛЬНО вызвать Create()!
+        /// </summary>
+        public Location()
+        {
+        }
 
         public void Create(long iID, double x, double y)
         {
             Create(iID, (float)x, (float)y);
         }
 
+        /// <summary>
+        /// Заполняем внутренние поля локации после создания - для использования со случайно сгенерированной сеткой (диаграмма Вороного)
+        /// </summary>
+        /// <param name="iID">ID локации</param>
+        /// <param name="x">кооринаты центра локации на плоскости</param>
+        /// <param name="y">кооринаты центра локации на плоскости</param>
         public void Create(long iID, float x, float y)
         {
             X = x;
@@ -165,6 +195,14 @@ namespace LandscapeGeneration
             m_iID = iID;
         }
 
+        /// <summary>
+        /// Заполняем внутренние поля локации после создания - для использования с регулярной сеткой (например, гексагональной)
+        /// </summary>
+        /// <param name="iID">ID локации</param>
+        /// <param name="x">кооринаты центра локации на плоскости</param>
+        /// <param name="y">кооринаты центра локации на плоскости</param>
+        /// <param name="iGridX">координаты локации на регулярной сетке</param>
+        /// <param name="iGridY">координаты локации на регулярной сетке</param>
         public void Create(long iID, float x, float y, int iGridX, int iGridY)
         {
             X = x;
@@ -174,6 +212,13 @@ namespace LandscapeGeneration
             m_iGridY = iGridY;
         }
 
+        /// <summary>
+        /// Заполняем внутренние поля локации после создания - для "призрачных" локаций
+        /// </summary>
+        /// <param name="iID">ID локации</param>
+        /// <param name="x">кооринаты центра локации на плоскости</param>
+        /// <param name="y">кооринаты центра локации на плоскости</param>
+        /// <param name="pOrigin">оригинальная локация, "призрака" которой создаём</param>
         public void Create(long iID, float x, float y, Location pOrigin)
         {
             X = x;
@@ -183,13 +228,40 @@ namespace LandscapeGeneration
             m_pOrigin = pOrigin;
         }
 
+        public Dictionary<object, List<Edge>> m_cBorderWith = new Dictionary<object, List<Edge>>();
+
         public Edge m_pFirstLine = null;
 
-        private float m_fPerimeter = 0;
-
-        public float PerimeterLength
+        /// <summary>
+        /// Во всех границах локации заменяет ссылку на "плохую" вершину ссылкой на "хорошую".
+        /// Убирает связь с этой локацией у "плохой" вершины.
+        /// Добавляет связь с этой локацией "хорошей" вершине
+        /// </summary>
+        /// <param name="pBad"></param>
+        /// <param name="pGood"></param>
+        public void ReplaceVertex(VoronoiVertex pBad, VoronoiVertex pGood)
         {
-            get { return m_fPerimeter; }
+            foreach (var pEdge in m_cBorderWith)
+            {
+                bool bGotIt = false;
+                if (pEdge.Value[0].m_pPoint1 == pBad)
+                {
+                    pEdge.Value[0].m_pPoint1 = pGood;
+                    bGotIt = true;
+                }
+                if (pEdge.Value[0].m_pPoint2 == pBad)
+                {
+                    pEdge.Value[0].m_pPoint2 = pGood;
+                    bGotIt = true;
+                }
+
+                if (bGotIt)
+                {
+                    if (!pGood.m_cLocations.Contains(this))
+                        pGood.m_cLocations.Add(this);
+                    pBad.m_cLocations.Remove(this);
+                }
+            }
         }
 
         /// <summary>
@@ -197,54 +269,60 @@ namespace LandscapeGeneration
         /// </summary>
         public void BuildBorder(float fCycleShift)
         {
-            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0)
+            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0 || Ghost)
                 return;
 
             m_pFirstLine = m_cBorderWith[m_aBorderWith[0]][0];
 
-            Edge pCurrentLine = m_pFirstLine;
-            List<Location.Edge> cTotalBorder = new List<Location.Edge>();
+            List<Edge> cTotalBorder = new List<Edge>();
 
             m_fPerimeter = 0;
-            foreach (var cLines in m_cBorderWith)
+            foreach (var cEdges in m_cBorderWith)
             {
-                cTotalBorder.AddRange(cLines.Value);
-                foreach (Edge pLine in cLines.Value)
-                    m_fPerimeter += pLine.m_fLength;
-            }
+                cTotalBorder.AddRange(cEdges.Value);
+                foreach (Edge pEdge in cEdges.Value)
+                    m_fPerimeter += pEdge.m_fLength;
+            } 
+            
+            List<Edge> cSequence = new List<Edge>();
 
-            Edge[] aTotalBorder = cTotalBorder.ToArray();
-
-            int iLength = 0;
-            do
+            Edge pLast = m_cBorderWith.Values.First()[0];
+            cSequence.Add(pLast);
+            for (int j = 0; j < m_cBorderWith.Count; j++)
             {
-                bool bFound = false;
-                foreach (Edge pLine in aTotalBorder)
+                foreach (var pEdge in m_cBorderWith)
                 {
-                    if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
-                        (pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY &&
-                         (pLine.m_pPoint1.m_fX == pCurrentLine.m_pPoint2.m_fX ||
-                          Math.Abs(pLine.m_pPoint1.m_fX - pCurrentLine.m_pPoint2.m_fX) == fCycleShift)))
+                    if (((Location)pEdge.Key).Ghost)
+                        continue;
+
+                    if (!cSequence.Contains(pEdge.Value[0]) &&
+                        (pEdge.Value[0].m_pPoint1 == pLast.m_pPoint2 ||
+                         (pEdge.Value[0].m_pPoint1.m_fY == pLast.m_pPoint2.m_fY &&
+                          (pEdge.Value[0].m_pPoint1.m_fX == pLast.m_pPoint2.m_fX ||
+                           Math.Abs(pEdge.Value[0].m_pPoint1.m_fX - pLast.m_pPoint2.m_fX) == fCycleShift))))
                     {
-                        pCurrentLine.m_pNext = pLine;
-                        pLine.m_pPrevious = pCurrentLine;
-
-                        pCurrentLine = pLine;
-
-                        iLength++;
-
-                        bFound = true;
+                        pLast = pEdge.Value[0];
+                        cSequence.Add(pLast);
 
                         break;
                     }
                 }
-                if (!bFound)
-                {
-                    m_bUnclosed = true;
-                    return;
-                }
             }
-            while (pCurrentLine != m_pFirstLine && iLength < m_cBorderWith.Count);
+
+            if (cSequence.Count != m_cBorderWith.Count)
+            {
+                throw new Exception();
+            }
+
+            pLast = cSequence.Last();
+            foreach (var pEdge in cSequence)
+            {
+                pLast.m_pNext = pEdge;
+                pLast = pEdge;
+
+                //if (pEdge.Value.m_pMidPoint != pEdge.Key.m_cEdges[pLoc].m_pMidPoint)
+                //    throw new Exception();
+            }
         }
 
         /// <summary>
@@ -273,24 +351,6 @@ namespace LandscapeGeneration
 
             X = fX / fLength;
             Y = fY / fLength;
-        }
-
-        public string GetStringID()
-        {
-            string sID = m_iID.ToString();
-            if(m_iGridX != -1 || m_iGridY != -1)
-                sID = string.Format("{0}, {1}", m_iGridX, m_iGridY);
-
-            return string.Format("{1}[{0}]", sID, m_bBorder || m_bUnclosed ? "x" : " ");
-        }
-
-        public override float GetMovementCost()
-        {
-            if (m_pOwner == null || Forbidden || m_bBorder)
-                return 100;
-
-            ILand pLand = m_pOwner as ILand;
-            return pLand.MovementCost * (m_eType == RegionType.Empty ? 1 : 10);
         }
 
         public void Save(BinaryWriter binWriter)
@@ -366,5 +426,20 @@ namespace LandscapeGeneration
             m_eType = RegionType.Empty;
             m_pOwner = null;
         }
+        
+        public override string ToString()
+        {
+            return string.Format("{0}{3} ({1}, {2})", Ghost ? "x" : "", m_fX, m_fY, m_iID);
+        }
+
+        public string GetStringID()
+        {
+            string sID = m_iID.ToString();
+            if (m_iGridX != -1 || m_iGridY != -1)
+                sID = string.Format("{0}, {1}", m_iGridX, m_iGridY);
+
+            return string.Format("{1}[{0}]", sID, m_bBorder || m_bUnclosed ? "x" : " ");
+        }
+
     }
 }

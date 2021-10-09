@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows;
 using MIConvexHull;
 
-namespace LandscapeGeneration.PlanetBuilder
+namespace LandscapeGeneration.FastGrid
 {
     public class VertexCH : IVertex
     {

@@ -6,15 +6,12 @@ using SimpleVectors;
 using System.Windows;
 using MIConvexHull;
 
-namespace LandscapeGeneration.PlanetBuilder
+namespace LandscapeGeneration.FastGrid
 {
-     public class Cube<LOC>
+     public class ChunksGrid<LOC> : IGrid<LOC>
         where LOC : Location, new()
     {
-        public delegate void BeginStepDelegate(string sDescription, int iLength);
-        public delegate void ProgressStepDelegate();
-
-        public CubeFace<LOC> m_pFace = null;
+        public Chunk<LOC>[,] m_cChunk;
 
         static int IsLeft(Point a, Point b, Point c)
         {
@@ -388,28 +385,55 @@ namespace LandscapeGeneration.PlanetBuilder
             }
         }
 
-        public int R = 150;
+        public readonly int m_iChunkSize = 1000;
+        public readonly int m_iFaceSize;
 
-        public LOC[] m_aLocations;
+        public int RX
+        {
+            get
+            {
+                return m_iChunkSize * m_iFaceSize;
+            }
+        }
+
+        public int RY
+        {
+            get
+            {
+                return m_iChunkSize * m_iFaceSize;
+            }
+        }
+
+        public WorldShape m_eShape = WorldShape.Plain;
+
+        public float CycleShift
+        {
+            get { return m_eShape == WorldShape.Ringworld ? RX * 2 : 0; }
+        }
+
+        private LOC[] m_aLocations;
         public VoronoiVertex[] m_aVertexes;
 
-        public Cube(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        public LOC[] Locations { get => m_aLocations; set => m_aLocations = value; }
+
+        public ChunksGrid(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            var size = 1000;
-            var kHR = 1.2 * size / Math.Sqrt(locationsCount);
+            m_iFaceSize = iFaceSize;
+
+            var kHR = 1.2 * m_iChunkSize / Math.Sqrt(locationsCount);
 
             if (BeginStep != null)
                 BeginStep("Building grid...", 5);
 
             int iInnerCount;
-            List<VertexCH> border = BuildBorder(out iInnerCount, kHR, size);
+            List<VertexCH> border = BuildBorder(out iInnerCount, kHR, m_iChunkSize);
             List<VertexCH> locationsHR = new List<VertexCH>(border);
 
             if (ProgressStep != null)
                 ProgressStep();
 
             //Территорию внутри построенной границы заполним случайными точками с распределением по Поиссону (чтобы случайно, но в общем равномерно).
-            List<SimpleVector3d> cPointsHR = BuildPoisson(size, locationsCount - iInnerCount, kHR);
+            List<SimpleVector3d> cPointsHR = BuildPoisson(m_iChunkSize, locationsCount - iInnerCount, kHR);
             
             //перенесём построенное облако Поиссона в основной рабочий массив
             for (var i = 0; i < cPointsHR.Count; i++)
@@ -450,19 +474,23 @@ namespace LandscapeGeneration.PlanetBuilder
                 ProgressStep();
 
             if (BeginStep != null)
-                BeginStep("Forming planet...", 15);
+                BeginStep("Forming grid...", 15);
 
-            m_pFace = new CubeFace<LOC>(iFaceSize, pBoundingRectHR, ref locsHR, ref vertsHR, size);
+            m_cChunk = new Chunk<LOC>[iFaceSize, iFaceSize];
+
+            for (int x = 0; x < iFaceSize; x++)
+                for (int y = 0; y < iFaceSize; y++)
+                    m_cChunk[x, y] = new Chunk<LOC>(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX);
             if (ProgressStep != null)
                 ProgressStep();
 
-            foreach (var pChunk in m_pFace.m_cChunk)
+            foreach (var pChunk in m_cChunk)
                 pChunk.Ghostbusters();
 
             if (ProgressStep != null)
                 ProgressStep();
 
-            foreach (var pChunk in m_pFace.m_cChunk)
+            foreach (var pChunk in m_cChunk)
             {
                 pChunk.Final();
             }
@@ -471,13 +499,13 @@ namespace LandscapeGeneration.PlanetBuilder
                 ProgressStep();
 
             List<LOC> cLocations = new List<LOC>();
-            foreach (var pChunk in m_pFace.m_cChunk)
+            foreach (var pChunk in m_cChunk)
                 cLocations.AddRange(pChunk.m_aLocations);
 
             m_aLocations = cLocations.ToArray();
 
             List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
-            foreach (var pChunk in m_pFace.m_cChunk)
+            foreach (var pChunk in m_cChunk)
                 cVertexes.AddRange(pChunk.m_aVertexes);
 
             m_aVertexes = cVertexes.ToArray();

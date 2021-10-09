@@ -36,7 +36,7 @@ namespace LandscapeGeneration
         Chalice
     }
 
-    public class LocationsGrid<LOC>
+    public class LocationsGrid<LOC> : IGrid<LOC> 
         where LOC : Location, new()
     {
         /// <summary>
@@ -64,7 +64,9 @@ namespace LandscapeGeneration
             get { return m_eShape == WorldShape.Ringworld ? m_iRX * 2 : 0; }
         }
 
-        public string m_sDescription = ""; 
+        public LOC[] Locations { get => m_aLocations; set => m_aLocations = value; }
+
+        public string m_sDescription = "";
 
         /// <summary>
         /// Общее количество `локаций` - минимальных "кирпичиков" мира.
@@ -73,12 +75,12 @@ namespace LandscapeGeneration
         /// </summary>
         public int m_iLocationsCount = 5000;//25000;
 
-        public LOC[] m_aLocations = null;
+        private LOC[] m_aLocations = null;
 
         public VoronoiVertex[] m_aVertexes = null;
 
         public WorldShape m_eShape = WorldShape.Plain;
-        
+
 
         /// <summary>
         /// Создание сетки из случайных точек
@@ -88,7 +90,7 @@ namespace LandscapeGeneration
         /// <param name="iHeight">пропорции карты - высота)</param>
         public LocationsGrid(int iLocations, int iWidth, int iHeight, string sDescription, WorldShape eShape)
         {
-            m_iRX = m_iRY*iWidth/iHeight;
+            m_iRX = m_iRY * iWidth / iHeight;
             m_iLocationsCount = iLocations;
             m_eShape = eShape;
 
@@ -125,7 +127,7 @@ namespace LandscapeGeneration
 
             if (eGridType == GridType.Hex)
             {
-                float fProportion = 2.0f * iWidth * (float)Math.Sqrt(0.75) / (iHeight+1);
+                float fProportion = 2.0f * iWidth * (float)Math.Sqrt(0.75) / (iHeight + 1);
                 m_iRX = (int)(m_iRY * fProportion);
 
                 m_iLocationsCount = iWidth * iHeight / 2;
@@ -141,7 +143,7 @@ namespace LandscapeGeneration
                 //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
                 foreach (LOC pLoc in m_aLocations)
                 {
-                    pLoc.BuildBorder(m_iRX*2);
+                    pLoc.BuildBorder(m_iRX * 2);
                     pLoc.CorrectCenter();
                 }
 
@@ -199,7 +201,7 @@ namespace LandscapeGeneration
             if (pEdge.VVertexA.data[0] == pEdge.VVertexB.data[0] && pEdge.VVertexA.data[1] == pEdge.VVertexB.data[1])
                 return false;
 
-			//получаем ссылки на реальные локации, с которыми связаны BT-вектора
+            //получаем ссылки на реальные локации, с которыми связаны BT-вектора
             if (cData.ContainsKey(pEdge.LeftData))
                 pLoc1 = cData[pEdge.LeftData];
             if (cData.ContainsKey(pEdge.RightData))
@@ -217,14 +219,14 @@ namespace LandscapeGeneration
                 return false;
             }
             //если одна из вершин грани оказывается хоть и не в бесконечности, но всё-равно достаточно далеко за краем карты - тоже игнорируем
-            if (pEdge.VVertexA.data[0] < -RX*2 ||
-                pEdge.VVertexA.data[0] > RX*2 ||
-                pEdge.VVertexA.data[1] < -RY*2 ||
-                pEdge.VVertexA.data[1] > RY*2 ||
-                pEdge.VVertexB.data[0] < -RX*2 ||
-                pEdge.VVertexB.data[0] > RX*2 ||
-                pEdge.VVertexB.data[1] < -RY*2 ||
-                pEdge.VVertexB.data[1] > RY*2)
+            if (pEdge.VVertexA.data[0] < -RX * 2 ||
+                pEdge.VVertexA.data[0] > RX * 2 ||
+                pEdge.VVertexA.data[1] < -RY * 2 ||
+                pEdge.VVertexA.data[1] > RY * 2 ||
+                pEdge.VVertexB.data[0] < -RX * 2 ||
+                pEdge.VVertexB.data[0] > RX * 2 ||
+                pEdge.VVertexB.data[1] < -RY * 2 ||
+                pEdge.VVertexB.data[1] > RY * 2)
             {
                 pLoc1.m_bUnclosed = true;
                 pLoc2.m_bUnclosed = true;
@@ -343,13 +345,13 @@ namespace LandscapeGeneration
 
             //float stepX = 2.0f * RX / (iWidth);
             //float stepY = stepX / (float)Math.Sqrt(0.75);
-            
-            float stepY = 4.0f * RY / (iHeight+1);
+
+            float stepY = 4.0f * RY / (iHeight + 1);
             float stepX = stepY * (float)Math.Sqrt(0.75);
 
             //List<long> cUsedIDs = new List<long>();
 
-            int iWidthReserv = m_eShape == WorldShape.Ringworld ? 0:2;
+            int iWidthReserv = m_eShape == WorldShape.Ringworld ? 0 : 2;
             int iHeightReserv = 2;
 
             for (int yy = -iHeightReserv; yy < iHeight / 2 + iHeightReserv; yy++)
@@ -363,7 +365,7 @@ namespace LandscapeGeneration
                     if ((xx + 2) % 2 == 1)
                         fy += stepY / 2;
 
-                    bool bBorder = yy < 0 || yy >= iHeight/2 || xx < 0 || xx >= iWidth;
+                    bool bBorder = yy < 0 || yy >= iHeight / 2 || xx < 0 || xx >= iWidth;
 
                     long iID = xx + yy * iWidth;
                     if (bBorder)
@@ -372,7 +374,7 @@ namespace LandscapeGeneration
                     //if(cUsedIDs.Contains(iID))
                     //    iID += iWidth * iHeight * 2;
 
-                    pLocation.Create(iID, -RX + stepX/2 + fx, -RY + stepY/2 + fy, xx, yy);
+                    pLocation.Create(iID, -RX + stepX / 2 + fx, -RY + stepY / 2 + fy, xx, yy);
                     pLocation.m_bBorder = bBorder;
 
                     cLocations.Add(pLocation);
@@ -381,11 +383,11 @@ namespace LandscapeGeneration
                     {
                         LOC pGhostLocation = new LOC();
 
-                        if (stepX/2 + fx > RX)
-                            pGhostLocation.Create(iID + iWidth * iHeight * 4, -RX * 3 + stepX/2 + fx, -RY + stepY / 2 + fy, pLocation);
+                        if (stepX / 2 + fx > RX)
+                            pGhostLocation.Create(iID + iWidth * iHeight * 4, -RX * 3 + stepX / 2 + fx, -RY + stepY / 2 + fy, pLocation);
                         else
-                            pGhostLocation.Create(iID + iWidth * iHeight * 4, RX + stepX/2 + fx, -RY + stepY / 2 + fy, pLocation);
-                        
+                            pGhostLocation.Create(iID + iWidth * iHeight * 4, RX + stepX / 2 + fx, -RY + stepY / 2 + fy, pLocation);
+
                         pGhostLocation.m_bBorder = true;
 
                         cLocations.Add(pGhostLocation);
@@ -408,7 +410,7 @@ namespace LandscapeGeneration
             float dkx = RX / (kx * 2);
             float dky = RY / (ky * 2);
 
-            foreach (LOC pLoc in m_aLocations)
+            foreach (LOC pLoc in Locations)
             {
                 if (!pLoc.m_bBorder && !pLoc.m_bGhost && !pLoc.m_bFixed)
                 {
@@ -453,7 +455,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            m_aLocations = cLocations.ToArray();
+            Locations = cLocations.ToArray();
         }
 
         private List<LOC> BuildRandomGridFrame()
@@ -606,7 +608,7 @@ namespace LandscapeGeneration
             for (int i = 0; i < m_iLocationsCount; i++)
             {
                 LOC pLocation = new LOC();
-//                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
+                //                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
                 pLocation.Create(cLocations.Count, cPoints[i].X, cPoints[i].Y);
                 cLocations.Add(pLocation);
 
@@ -626,7 +628,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            m_aLocations = cLocations.ToArray();
+            Locations = cLocations.ToArray();
         }
 
         private static int s_iVersion = 30;
@@ -650,8 +652,8 @@ namespace LandscapeGeneration
                         pVertex.Save(binWriter);
                     }
 
-                    binWriter.Write(m_aLocations.Length);
-                    foreach (LOC pLoc in m_aLocations)
+                    binWriter.Write(Locations.Length);
+                    foreach (LOC pLoc in Locations)
                     {
                         pLoc.Save(binWriter);
                     }
@@ -757,15 +759,12 @@ namespace LandscapeGeneration
         {
             Reset();
 
-            m_aLocations = null;
+            Locations = null;
             m_aVertexes = null;
 
             m_bLoaded = false;
         }
 
-        public delegate void BeginStepDelegate(string sDescription, int iLength);
-        public delegate void ProgressStepDelegate();
-        
         public void Load(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             if (m_bLoaded)
@@ -825,14 +824,14 @@ namespace LandscapeGeneration
                 }
                 finally
                 {
-                    if(binReader != null)
+                    if (binReader != null)
                         binReader.Close();
                 }
-                
+
                 try
                 {
                     ZipArchive.ZipFileInfo? pInfo = arc.GetFile("grid");
-                    if(!pInfo.HasValue)
+                    if (!pInfo.HasValue)
                         throw new Exception("No data!");
 
                     binReader = new BinaryReader(pInfo.Value.GetStream());
@@ -893,10 +892,10 @@ namespace LandscapeGeneration
                                 ProgressStep();
                         }
 
-                        m_aLocations = new List<LOC>(cTempDic.Values).ToArray();
+                        Locations = new List<LOC>(cTempDic.Values).ToArray();
 
                         //Восстанавливаем словарь соседей
-                        foreach (LOC pLoc in m_aLocations)
+                        foreach (LOC pLoc in Locations)
                         {
                             foreach (var ID in pLoc.m_cBorderWithID)
                             {
@@ -912,11 +911,12 @@ namespace LandscapeGeneration
                         //Восстанавливаем словарь соседей для вертексов
                         foreach (VoronoiVertex pVertex in m_aVertexes)
                         {
-                            pVertex.m_aLocations = new Location[pVertex.m_cLocationsTmp.Count];
-                            int iIndex = 0;
+                            pVertex.m_cLocations.Clear();// = new Location[pVertex.m_cLocationsTmp.Count];
+                            //int iIndex = 0;
                             foreach (long iID in pVertex.m_cLocationsTmp)
                             {
-                                pVertex.m_aLocations[iIndex++] = cTempDic[iID];
+                                //pVertex.m_cLocations[iIndex++] = cTempDic[iID];
+                                pVertex.m_cLocations.Add(cTempDic[iID]);
                             }
                             pVertex.m_cLocationsTmp.Clear();
                         }
@@ -925,17 +925,17 @@ namespace LandscapeGeneration
                         cTempDic.Clear();
 
                         if (BeginStep != null)
-                            BeginStep("Recalculating grid edges...", m_aLocations.Length);
+                            BeginStep("Recalculating grid edges...", Locations.Length);
                         //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                        foreach (LOC pLoc in m_aLocations)
+                        foreach (LOC pLoc in Locations)
                         {
                             if (pLoc.Forbidden)
                                 continue;
 
-                        	pLoc.BuildBorder(CycleShift);
-                        	if (ProgressStep != null)
-	                            ProgressStep();
-    	                }
+                            pLoc.BuildBorder(CycleShift);
+                            if (ProgressStep != null)
+                                ProgressStep();
+                        }
 
                         m_bLoaded = true;
                     }
@@ -958,7 +958,7 @@ namespace LandscapeGeneration
             if (!m_bLoaded)
                 return;
 
-            foreach (LOC pLoc in m_aLocations)
+            foreach (LOC pLoc in Locations)
                 pLoc.Reset();
         }
 

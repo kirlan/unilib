@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace LandscapeGeneration.PlanetBuilder
+namespace LandscapeGeneration.FastGrid
 {
     public class Chunk<LOC>
         where LOC : Location, new()
@@ -85,15 +85,15 @@ namespace LandscapeGeneration.PlanetBuilder
         public VoronoiVertex m_pBoundBottomRight;
         public VoronoiVertex m_pBoundBottomLeft;
 
-        public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fWholeChunkSize)
+        public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fWholeGridSize)
         {
             m_fDX = fDX;
             m_fDY = fDY;
 
-            m_pBoundTopLeft = new VoronoiVertex((float)(pBounds2D.X + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize / 2));
-            m_pBoundTopRight = new VoronoiVertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeChunkSize / 2));
-            m_pBoundBottomRight = new VoronoiVertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + fDY - fWholeChunkSize / 2));
-            m_pBoundBottomLeft = new VoronoiVertex((float)(pBounds2D.X + fDX - fWholeChunkSize / 2), (float)(pBounds2D.Y + fDY - fWholeChunkSize / 2));
+            m_pBoundTopLeft = new VoronoiVertex((float)(pBounds2D.X + fDX - fWholeGridSize / 2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeGridSize / 2));
+            m_pBoundTopRight = new VoronoiVertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeGridSize / 2), (float)(pBounds2D.Y + pBounds2D.Height + fDY - fWholeGridSize / 2));
+            m_pBoundBottomRight = new VoronoiVertex((float)(pBounds2D.X + pBounds2D.Width + fDX - fWholeGridSize / 2), (float)(pBounds2D.Y + fDY - fWholeGridSize / 2));
+            m_pBoundBottomLeft = new VoronoiVertex((float)(pBounds2D.X + fDX - fWholeGridSize / 2), (float)(pBounds2D.Y + fDY - fWholeGridSize / 2));
 
             List<LOC> cBorders = new List<LOC>();
 
@@ -102,7 +102,7 @@ namespace LandscapeGeneration.PlanetBuilder
             {
                 var loc = locations[i];
                 LOC myLocation = new LOC();
-                myLocation.Create(loc.m_iID, (float)loc.Position[0] + fDX - fWholeChunkSize / 2, (float)loc.Position[1] + fDY - fWholeChunkSize / 2, loc.m_eGhost);
+                myLocation.Create(loc.m_iID, (float)loc.Position[0] + fDX - fWholeGridSize / 2, (float)loc.Position[1] + fDY - fWholeGridSize / 2, loc.m_eGhost);
                 m_aLocations[i] = myLocation;
                 loc.m_pTag = myLocation;
                 m_cLocations[loc.m_iID] = myLocation;
@@ -118,7 +118,7 @@ namespace LandscapeGeneration.PlanetBuilder
             for (int i = 0; i < vertices.Length; i++)
             {
                 var vertex = vertices[i];
-                VoronoiVertex myVertex = new VoronoiVertex((float)vertex.Circumcenter.X + fDX - fWholeChunkSize / 2, (float)vertex.Circumcenter.Y + fDY - fWholeChunkSize / 2);
+                VoronoiVertex myVertex = new VoronoiVertex((float)vertex.Circumcenter.X + fDX - fWholeGridSize / 2, (float)vertex.Circumcenter.Y + fDY - fWholeGridSize / 2);
 
                 vertex.m_pTag = myVertex;
                 m_aVertexes[i] = myVertex;

@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Area.cs" />
+    <Compile Include="IGrid.cs" />
     <Compile Include="ILandMass.cs" />
     <Compile Include="Interfaces\ILand.cs" />
     <Compile Include="Interfaces\IPointF.cs" />
@@ -55,11 +56,10 @@
     <Compile Include="PathFinder\TransportationLink.cs" />
     <Compile Include="PathFinder\TransportationNode.cs" />
     <Compile Include="Perlin.cs" />
-    <Compile Include="PlanetBuilder\CellCH.cs" />
-    <Compile Include="PlanetBuilder\Chunk.cs" />
-    <Compile Include="PlanetBuilder\Cube.cs" />
-    <Compile Include="PlanetBuilder\CubeFace.cs" />
-    <Compile Include="PlanetBuilder\VertexCH.cs" />
+    <Compile Include="FastGrid\CellCH.cs" />
+    <Compile Include="FastGrid\Chunk.cs" />
+    <Compile Include="FastGrid\ChunksGrid.cs" />
+    <Compile Include="FastGrid\VertexCH.cs" />
     <Compile Include="Poisson.cs" />
     <Compile Include="Territory.cs" />
     <Compile Include="Continent.cs" />
