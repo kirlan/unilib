@@ -22,7 +22,7 @@ namespace LandscapeGeneration.FastGrid
         /// Обновляет список вершин, чтобы в него гарантированно входили все вершины, связанные с не-"призрачными" локациями.
         /// Смещает центр локации в её центр тяжести.
         /// </summary>
-        public void Final()
+        public void Final(float fCycleShit)
         {
             List<LOC> cNewLocations = new List<LOC>();
 
@@ -50,7 +50,7 @@ namespace LandscapeGeneration.FastGrid
                 }
 
                 pLoc.FillBorderWithKeys();
-                pLoc.BuildBorder();
+                pLoc.BuildBorder(fCycleShit);
                 pLoc.CorrectCenter();
             }
 
@@ -174,7 +174,7 @@ namespace LandscapeGeneration.FastGrid
                     {
                         //находим реальное отражение призрачной локации
                         var pNeighbourChunk = m_cNeighbours[eDir];
-                        LOC pShadow = pNeighbourChunk.m_cLocations[pOuterLoc.m_pShadow];
+                        LOC pShadow = pNeighbourChunk.m_cLocations[pOuterLoc.m_iShadow];
 
                         //найдём среди соседей отражения призрачную локацию, соответствующую граничной
                         foreach (var pShadowEdge in pShadow.m_cBorderWith)
@@ -187,7 +187,7 @@ namespace LandscapeGeneration.FastGrid
                                 if (pNeighbourChunk.m_cNeighbours.ContainsKey(eShadowDir))
                                 {
                                     var pShadowNeighbourChunk = pNeighbourChunk.m_cNeighbours[eShadowDir];
-                                    LOC pShadowShadow = pShadowNeighbourChunk.m_cLocations[((Location)pShadowEdge.Key).m_pShadow];
+                                    LOC pShadowShadow = pShadowNeighbourChunk.m_cLocations[((Location)pShadowEdge.Key).m_iShadow];
 
                                     if (pShadowShadow == pInnerLoc)
                                     {

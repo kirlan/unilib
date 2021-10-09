@@ -400,64 +400,6 @@ namespace LandscapeGeneration
             m_aLocations = cLocations.ToArray();
         }
 
-        private void ImproveGrid()
-        {
-            List<LOC> cLocations = BuildRandomGridFrame();
-
-            float kx = (int)(Math.Sqrt((float)RX * m_iLocationsCount / RY));
-            float ky = m_iLocationsCount / kx;
-
-            float dkx = RX / (kx * 2);
-            float dky = RY / (ky * 2);
-
-            foreach (LOC pLoc in Locations)
-            {
-                if (!pLoc.m_bBorder && !pLoc.m_bGhost && !pLoc.m_bFixed)
-                {
-                    float fX = 0;
-                    float fY = 0;
-                    int iCount = 0;
-
-                    foreach (var cLines in pLoc.m_cBorderWith)
-                    {
-                        foreach (var pLine in cLines.Value)
-                        {
-                            fX += pLine.m_pPoint2.X;
-                            fY += pLine.m_pPoint2.Y;
-                            iCount++;
-                        }
-                    }
-
-                    if (iCount != 0)
-                    {
-                        LOC pImprovedLoc = new LOC();
-                        fX /= iCount;
-                        fY /= iCount;
-                        pImprovedLoc.Create(cLocations.Count, fX, fY);
-                        pImprovedLoc.m_bBorder = false;
-                        cLocations.Add(pImprovedLoc);
-
-                        if (m_eShape == WorldShape.Ringworld)
-                        {
-                            LOC pGhostLocation = new LOC();
-
-                            if (pImprovedLoc.X > 0)
-                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X - RX * 2, pImprovedLoc.Y, pImprovedLoc);
-                            else
-                                pGhostLocation.Create(cLocations.Count, pImprovedLoc.X + RX * 2, pImprovedLoc.Y, pImprovedLoc);
-
-                            pGhostLocation.m_bBorder = true;
-                            pGhostLocation.m_bGhost = true;
-
-                            cLocations.Add(pGhostLocation);
-                        }
-                    }
-                }
-            }
-
-            Locations = cLocations.ToArray();
-        }
-
         private List<LOC> BuildRandomGridFrame()
         {
             List<LOC> cLocations = new List<LOC>();

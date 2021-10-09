@@ -1139,7 +1139,7 @@ namespace MapDrawEngine
 
                 //если карта зациклена по горизонтали, нужно строить отражения и 
                 //контур пересекает нулевой меридиан, то строим отражение!
-                if (m_pWorld.m_pGrid.m_bCycled && bMirror && bCross)
+                if (m_pWorld.m_pGrid.CycleShift != 0 && bMirror && bCross)
                 {
                     //определяем, на западе или на востоке будем строить отражение
                     if (pFirstLine.m_pPoint1.X > 0)
@@ -1192,7 +1192,7 @@ namespace MapDrawEngine
 
             //если карта зациклена по горизонтали, нужно строить отражения и 
             //контур пересекает нулевой меридиан, то строим отражение!
-            if (m_pWorld.m_pGrid.m_bCycled && bMirror && bCross)
+            if (m_pWorld.m_pGrid.CycleShift != 0 && bMirror && bCross)
             {
                 //определяем, на западе или на востоке будем строить отражение
                 if (pFirstLine.m_pPoint1.X > 0)
@@ -1453,7 +1453,7 @@ namespace MapDrawEngine
 
             //если мир закольцован и построенная линия пересекает нулевой меридиан,
             //то построим для неё отражение
-            if (m_pWorld.m_pGrid.m_bCycled && bCross)
+            if (m_pWorld.m_pGrid.CycleShift != 0 && bCross)
             {
                 if (pRoad.m_aPoints[0].X > 0)
                 {
@@ -1641,7 +1641,7 @@ namespace MapDrawEngine
             if (m_pWorld == null)
                 return;
 
-            if (m_pWorld.m_pGrid.m_bCycled)
+            if (m_pWorld.m_pGrid.CycleShift != 0)
                 m_pDrawFrame.X = iX;
             else
                 m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width));
@@ -1693,7 +1693,7 @@ namespace MapDrawEngine
             gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Ocean.m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
-            if (m_pWorld == null || m_pWorld.m_pGrid.m_aLocations.Length == 0)
+            if (m_pWorld == null || m_pWorld.m_pGrid.Locations.Length == 0)
                 return;
 
             //координаты квадранта, в котором находится левый верхний угол отображаемого участка карты

@@ -8,7 +8,7 @@ using MIConvexHull;
 
 namespace LandscapeGeneration.FastGrid
 {
-     public class ChunksGrid<LOC> : IGrid<LOC>
+    public class ChunksGrid<LOC> : IGrid<LOC>
         where LOC : Location, new()
     {
         public Chunk<LOC>[,] m_cChunk;
@@ -386,13 +386,13 @@ namespace LandscapeGeneration.FastGrid
         }
 
         public readonly int m_iChunkSize = 1000;
-        public readonly int m_iFaceSize;
+        public readonly int Resolution;
 
         public int RX
         {
             get
             {
-                return m_iChunkSize * m_iFaceSize;
+                return m_iChunkSize * Resolution;
             }
         }
 
@@ -400,7 +400,7 @@ namespace LandscapeGeneration.FastGrid
         {
             get
             {
-                return m_iChunkSize * m_iFaceSize;
+                return m_iChunkSize * Resolution;
             }
         }
 
@@ -418,7 +418,7 @@ namespace LandscapeGeneration.FastGrid
 
         public ChunksGrid(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            m_iFaceSize = iFaceSize;
+            Resolution = iFaceSize;
 
             var kHR = 1.2 * m_iChunkSize / Math.Sqrt(locationsCount);
 
@@ -481,6 +481,9 @@ namespace LandscapeGeneration.FastGrid
             for (int x = 0; x < iFaceSize; x++)
                 for (int y = 0; y < iFaceSize; y++)
                     m_cChunk[x, y] = new Chunk<LOC>(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX);
+            
+            LinkNeighbours();
+            
             if (ProgressStep != null)
                 ProgressStep();
 
@@ -492,7 +495,7 @@ namespace LandscapeGeneration.FastGrid
 
             foreach (var pChunk in m_cChunk)
             {
-                pChunk.Final();
+                pChunk.Final(CycleShift);
             }
 
             if (ProgressStep != null)
@@ -509,6 +512,49 @@ namespace LandscapeGeneration.FastGrid
                 cVertexes.AddRange(pChunk.m_aVertexes);
 
             m_aVertexes = cVertexes.ToArray();
+        }
+
+        public void LinkNeighbours()
+        {
+            for (int x = 0; x < Resolution; x++)
+            {
+                for (int y = 0; y < Resolution; y++)
+                {
+                    if (x > 0 && y > 0)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownLeft] = m_cChunk[x - 1, y - 1];
+
+                    if (y > 0)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Down] = m_cChunk[x, y - 1];
+
+                    if (x < Resolution - 1 && y > 0)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownRight] = m_cChunk[x + 1, y - 1];
+
+                    if (x < Resolution - 1)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Right] = m_cChunk[x + 1, y];
+                    else
+                    {
+                        if (m_eShape == WorldShape.Ringworld)
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Right] = m_cChunk[0, y];
+                    }
+
+                    if (x < Resolution - 1 && y < Resolution - 1)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpRight] = m_cChunk[x + 1, y + 1];
+
+                    if (y < Resolution - 1)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Up] = m_cChunk[x, y + 1];
+
+                    if (x > 0 && y < Resolution - 1)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpLeft] = m_cChunk[x - 1, y + 1];
+
+                    if (x > 0)
+                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Left] = m_cChunk[x - 1, y];
+                    else
+                    {
+                        if (m_eShape == WorldShape.Ringworld)
+                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Left] = m_cChunk[Resolution - 1, y];
+                    }
+                }
+            }
         }
     }
 }

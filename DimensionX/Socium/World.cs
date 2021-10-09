@@ -456,8 +456,8 @@ namespace Socium
                      int iEquator, 
                      int iPole, 
                      Epoch[] aEpoches,
-                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                     BeginStepDelegate BeginStep,
+                     ProgressStepDelegate ProgressStep)
             : base(cLocations, iContinents, bGreatOcean, iLandsDiversity, iLandMassesDiversity, iOcean, iEquator, iPole, BeginStep, ProgressStep)
         {
             Create(iProvinces, iStates, aEpoches, BeginStep, ProgressStep);
@@ -468,8 +468,8 @@ namespace Socium
         private void Create(int iProvinces, 
                             int iStates,
                             Epoch[] aEpoches,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             foreach (Race pRace in Race.m_cAllRaces)
                 pRace.ResetNations();
@@ -501,8 +501,8 @@ namespace Socium
         }
 
         private void PopulateWorld(Epoch pEpoch, bool bFinalize,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             BeginStep("Growing states...", 6);
 
@@ -864,8 +864,8 @@ namespace Socium
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
         private void BuildStates(float fCycleShift, bool bFast,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building states...", 10);
 
@@ -1111,8 +1111,8 @@ namespace Socium
         }
 
         private void BuildCities(float fCycleShift, bool bFast,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building cities...", m_aProvinces.Length * 2 + 1);
 
@@ -2170,7 +2170,7 @@ namespace Socium
                 pRoad.ClearRoad();
 
             //все локации в мире
-            foreach (LocationX pLoc in m_pGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pGrid.Locations)
             {
                 //очищаем информацию о дорогах, проходивших через локацию
                 pLoc.m_cRoads.Clear();

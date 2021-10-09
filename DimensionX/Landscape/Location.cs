@@ -228,6 +228,29 @@ namespace LandscapeGeneration
             m_pOrigin = pOrigin;
         }
 
+        /// <summary>
+        /// Заполняем внутренние поля локации после создания - для "призрачных" локаций
+        /// </summary>
+        /// <param name="iID">ID локации</param>
+        /// <param name="x">кооринаты центра локации на плоскости</param>
+        /// <param name="y">кооринаты центра локации на плоскости</param>
+        /// <param name="pOrigin">оригинальная локация, "призрака" которой создаём</param>
+        public void Create(long iID, float x, float y, VertexCH.Direction eGhost)
+        {
+            X = x;
+            Y = y;
+            m_iID = iID;
+
+            m_eGhost = eGhost;
+        }
+
+        public uint m_iShadow;
+
+        public void SetShadows(uint stright)
+        {
+            m_iShadow = stright;
+        }
+
         public Dictionary<object, List<Edge>> m_cBorderWith = new Dictionary<object, List<Edge>>();
 
         public Edge m_pFirstLine = null;
