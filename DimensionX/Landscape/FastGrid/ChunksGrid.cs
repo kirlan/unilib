@@ -392,7 +392,7 @@ namespace LandscapeGeneration.FastGrid
         {
             get
             {
-                return m_iChunkSize * Resolution;
+                return m_iChunkSize * Resolution / 2;
             }
         }
 
@@ -400,7 +400,7 @@ namespace LandscapeGeneration.FastGrid
         {
             get
             {
-                return m_iChunkSize * Resolution;
+                return m_iChunkSize * Resolution / 2;
             }
         }
 
@@ -480,7 +480,7 @@ namespace LandscapeGeneration.FastGrid
 
             for (int x = 0; x < iFaceSize; x++)
                 for (int y = 0; y < iFaceSize; y++)
-                    m_cChunk[x, y] = new Chunk<LOC>(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX);
+                    m_cChunk[x, y] = new Chunk<LOC>(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX * 2);
             
             LinkNeighbours();
             

@@ -14,12 +14,12 @@ namespace MapDrawEngine.Signs
 
         //internal static Font s_pFont = new Font("Arial", 10);
 
-        public SignHideout(float iX, float iY, string sName)
+        public SignHideout(float iX, float iY, float RX, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = 60;
+            r1 = RX / 800;
 
             name = sName;
         }

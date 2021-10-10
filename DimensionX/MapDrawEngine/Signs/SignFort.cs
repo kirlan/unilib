@@ -14,13 +14,13 @@ namespace MapDrawEngine.Signs
 
         internal static Font s_pFont = new Font("Arial", 10);
 
-        public SignFort(float iX, float iY, string sName)
+        public SignFort(float iX, float iY, float RX, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = 133;
-            r2 = 200;
+            r1 = RX / 375;
+            r2 = RX / 250;
 
             List<PointF> cPoints = new List<PointF>();
             cPoints.Add(new PointF(x, y + r1));
