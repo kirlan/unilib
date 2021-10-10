@@ -95,7 +95,21 @@ namespace WorldGeneration
 
             WaitForm.StartWait(pOwnerWindow, "World generation...");
 
-            m_pWorld = new World(m_cLastUsedGrid,
+            //m_pWorld = new World(m_cLastUsedGrid,
+            //    mapProperties1.ContinentsCount,
+            //    !mapProperties1.PartialMap,
+            //    mapProperties1.LandsDiversity,
+            //    Math.Max(10, Math.Min((int)mapProperties1.StatesCount * 7, 300)),
+            //    mapProperties1.StatesCount,
+            //    mapProperties1.LandMassesDiversity,
+            //    mapProperties1.WaterPercent,
+            //    mapProperties1.EquatorPosition,
+            //    mapProperties1.PoleDistance,
+            //    cEpoches.ToArray(),
+            //    WaitForm.BeginStep,
+            //    WaitForm.ProgressStep);
+            m_pWorld = new World(800,
+                5,
                 mapProperties1.ContinentsCount,
                 !mapProperties1.PartialMap,
                 mapProperties1.LandsDiversity,
@@ -108,7 +122,6 @@ namespace WorldGeneration
                 cEpoches.ToArray(),
                 WaitForm.BeginStep,
                 WaitForm.ProgressStep);
-
             WaitForm.CloseWait();
         }
 

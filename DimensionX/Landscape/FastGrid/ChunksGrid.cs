@@ -323,7 +323,7 @@ namespace LandscapeGeneration.FastGrid
                 m_cNewCells.Add(pInnerLeft);
                 m_cNewCells.Add(pInnerRight);
 
-                if (pLeft.m_eGhost == VertexCH.Direction.CenterNone || pRight.m_eGhost == VertexCH.Direction.CenterNone)
+                if (pLeft.m_eShadowDir == VertexCH.Direction.CenterNone || pRight.m_eShadowDir == VertexCH.Direction.CenterNone)
                 {
                     if (from.Circumcenter.X < fMinX)
                         fMinX = (float)from.Circumcenter.X;
@@ -464,7 +464,7 @@ namespace LandscapeGeneration.FastGrid
                 if (!ploc.m_bBorder)
                 {
                     foreach (var pedge in ploc.m_cEdges)
-                        if (pedge.Key.m_eGhost != VertexCH.Direction.CenterNone)
+                        if (pedge.Key.m_eShadowDir != VertexCH.Direction.CenterNone)
                             throw new Exception();
                 }
 

@@ -31,7 +31,7 @@ namespace LandscapeGeneration.FastGrid
             for (int i = 0; i < m_aLocations.Length; i++)
             {
                 var pLoc = m_aLocations[i];
-                if (pLoc.HasShadow)
+                if (pLoc.IsShaded)
                     continue;
 
                 cNewLocations.Add(pLoc);
@@ -102,15 +102,15 @@ namespace LandscapeGeneration.FastGrid
             {
                 var loc = locations[i];
                 LOC myLocation = new LOC();
-                myLocation.Create(loc.m_iID, (float)loc.Position[0] + fDX - fWholeGridSize / 2, (float)loc.Position[1] + fDY - fWholeGridSize / 2, loc.m_eGhost);
+                myLocation.Create(loc.m_iID, (float)loc.Position[0] + fDX - fWholeGridSize / 2, (float)loc.Position[1] + fDY - fWholeGridSize / 2, loc.m_eShadowDir);
                 m_aLocations[i] = myLocation;
                 loc.m_pTag = myLocation;
                 m_cLocations[loc.m_iID] = myLocation;
-                if (myLocation.HasShadow)
+                if (myLocation.IsShaded)
                 {
                     myLocation.SetShadow(loc.m_pShadow.m_iID);
                 }
-                if (loc.m_bBorder && !myLocation.HasShadow)
+                if (loc.m_bBorder && !myLocation.IsShaded)
                     cBorders.Add(myLocation);
             }
 
@@ -159,7 +159,7 @@ namespace LandscapeGeneration.FastGrid
                 foreach (var pEdge in cEdges)
                 {
                     //Нас интересуют только призрачные соседи
-                    if (!((Location)pEdge.Key).HasShadow)
+                    if (!((Location)pEdge.Key).IsShaded)
                         continue;
 
                     //раз призрачная - значит лежит за границей квадрата
@@ -179,7 +179,7 @@ namespace LandscapeGeneration.FastGrid
                         //найдём среди соседей отражения призрачную локацию, соответствующую граничной
                         foreach (var pShadowEdge in pShadow.m_cBorderWith)
                         {
-                            if (((Location)pShadowEdge.Key).HasShadow)
+                            if (((Location)pShadowEdge.Key).IsShaded)
                             {
                                 var pShadowLine = pShadow.m_cBorderWith[pShadowEdge.Key][0];
 
@@ -226,6 +226,13 @@ namespace LandscapeGeneration.FastGrid
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        pOuterLoc.m_bBorder = true;
+                        pOuterLoc.m_eShadowDir = VertexCH.Direction.CenterNone;
+
+                        bMadeIt = true;
                     }
 
                     if (!bMadeIt)

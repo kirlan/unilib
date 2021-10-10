@@ -146,7 +146,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Является ли локация "тенью" какой-то локации, принадлежащей на самом деле соседнему квадрату
         /// </summary>
-        public bool HasShadow
+        public bool IsShaded
         {
             get { return m_eShadowDir != VertexCH.Direction.CenterNone; }
         }
@@ -292,7 +292,7 @@ namespace LandscapeGeneration
         /// </summary>
         public void BuildBorder(float fCycleShift)
         {
-            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0 || HasShadow)
+            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0 || IsShaded)
                 return;
 
             m_pFirstLine = m_cBorderWith[m_aBorderWith[0]][0];
@@ -315,7 +315,7 @@ namespace LandscapeGeneration
             {
                 foreach (var pEdge in m_cBorderWith)
                 {
-                    if (((Location)pEdge.Key).HasShadow)
+                    if (((Location)pEdge.Key).IsShaded)
                         continue;
 
                     if (!cSequence.Contains(pEdge.Value[0]) &&

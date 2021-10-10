@@ -18,7 +18,7 @@ namespace LandscapeGeneration.FastGrid
             m_iID = pOrigin.m_iID;
 
             Position = new double[] { pOrigin.Position[0], pOrigin.Position[1] };
-            m_eGhost = pOrigin.m_eGhost;
+            m_eShadowDir = pOrigin.m_eShadowDir;
             m_eSide = pOrigin.m_eSide;
 
             m_bBorder = pOrigin.m_bBorder;
@@ -63,7 +63,7 @@ namespace LandscapeGeneration.FastGrid
             DownRight
         }
 
-        public Direction m_eGhost;
+        public Direction m_eShadowDir;
 
         public object m_pTag = null;
 
@@ -77,12 +77,12 @@ namespace LandscapeGeneration.FastGrid
         /// </summary>
         /// <param name="x">The x position.</param>
         /// <param name="y">The y position.</param>
-        public VertexCH(double x, double y, Direction eGhost, EdgeSide eSide, bool bBorder)
+        public VertexCH(double x, double y, Direction eShadowDir, EdgeSide eSide, bool bBorder)
         {
             m_iID = ID_counter++;
 
             Position = new double[] { x, y };
-            m_eGhost = eGhost;
+            m_eShadowDir = eShadowDir;
             m_eSide = eSide;
 
             m_bBorder = bBorder;
@@ -129,7 +129,7 @@ namespace LandscapeGeneration.FastGrid
 
         public override string ToString()
         {
-            return string.Format("{0}{4} ({1}, {2}, {3})", m_eGhost != Direction.CenterNone ? "x" : "", Position[0], Position[1], m_bBorder, m_iID);
+            return string.Format("{0}{4} ({1}, {2}, {3})", m_eShadowDir != Direction.CenterNone ? "x" : "", Position[0], Position[1], m_bBorder, m_iID);
         }
     }
 }
