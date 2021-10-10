@@ -137,18 +137,20 @@ namespace LandscapeGeneration
         /// </summary>
         internal Location m_pOrigin = null;
 
+        public bool m_bGhost = false;
+
         /// <summary>
         /// Для "призрачной" локации - направление, в котором следует искать "настоящую" локацию.
         /// Если локация не "призрачная", то CenterNone
         /// </summary>
-        public VertexCH.Direction m_eGhost;
+        public VertexCH.Direction m_eShadowDir;
 
         /// <summary>
-        /// Является ли локация "призрачной", т.е. отражением какой-то локации, принадлежащей на самом деле соседнему квадрату
+        /// Является ли локация "тенью" какой-то локации, принадлежащей на самом деле соседнему квадрату
         /// </summary>
-        public bool Ghost
+        public bool HasShadow
         {
-            get { return m_eGhost != VertexCH.Direction.CenterNone; }
+            get { return m_eShadowDir != VertexCH.Direction.CenterNone; }
         }
 
         /// <summary>
@@ -235,18 +237,18 @@ namespace LandscapeGeneration
         /// <param name="x">кооринаты центра локации на плоскости</param>
         /// <param name="y">кооринаты центра локации на плоскости</param>
         /// <param name="pOrigin">оригинальная локация, "призрака" которой создаём</param>
-        public void Create(long iID, float x, float y, VertexCH.Direction eGhost)
+        public void Create(long iID, float x, float y, VertexCH.Direction eShadowDir)
         {
             X = x;
             Y = y;
             m_iID = iID;
 
-            m_eGhost = eGhost;
+            m_eShadowDir = eShadowDir;
         }
 
         public uint m_iShadow;
 
-        public void SetShadows(uint stright)
+        public void SetShadow(uint stright)
         {
             m_iShadow = stright;
         }
@@ -292,7 +294,7 @@ namespace LandscapeGeneration
         /// </summary>
         public void BuildBorder(float fCycleShift)
         {
-            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0 || Ghost)
+            if (m_bUnclosed || m_bBorder || m_cBorderWith.Count == 0 || HasShadow)
                 return;
 
             m_pFirstLine = m_cBorderWith[m_aBorderWith[0]][0];
@@ -315,7 +317,7 @@ namespace LandscapeGeneration
             {
                 foreach (var pEdge in m_cBorderWith)
                 {
-                    if (((Location)pEdge.Key).Ghost)
+                    if (((Location)pEdge.Key).HasShadow)
                         continue;
 
                     if (!cSequence.Contains(pEdge.Value[0]) &&
@@ -452,7 +454,7 @@ namespace LandscapeGeneration
         
         public override string ToString()
         {
-            return string.Format("{0}{3} ({1}, {2})", Ghost ? "x" : "", m_fX, m_fY, m_iID);
+            return string.Format("{0}{3} ({1}, {2})", m_bGhost ? "x" : "", m_fX, m_fY, m_iID);
         }
 
         public string GetStringID()

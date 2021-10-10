@@ -31,7 +31,7 @@ namespace LandscapeGeneration.FastGrid
             for (int i = 0; i < m_aLocations.Length; i++)
             {
                 var pLoc = m_aLocations[i];
-                if (pLoc.Ghost)
+                if (pLoc.HasShadow)
                     continue;
 
                 cNewLocations.Add(pLoc);
@@ -106,11 +106,11 @@ namespace LandscapeGeneration.FastGrid
                 m_aLocations[i] = myLocation;
                 loc.m_pTag = myLocation;
                 m_cLocations[loc.m_iID] = myLocation;
-                if (myLocation.Ghost)
+                if (myLocation.HasShadow)
                 {
-                    myLocation.SetShadows(loc.m_pShadow.m_iID);
+                    myLocation.SetShadow(loc.m_pShadow.m_iID);
                 }
-                if (loc.m_bBorder && !myLocation.Ghost)
+                if (loc.m_bBorder && !myLocation.HasShadow)
                     cBorders.Add(myLocation);
             }
 
@@ -159,7 +159,7 @@ namespace LandscapeGeneration.FastGrid
                 foreach (var pEdge in cEdges)
                 {
                     //Нас интересуют только призрачные соседи
-                    if (!((Location)pEdge.Key).Ghost)
+                    if (!((Location)pEdge.Key).HasShadow)
                         continue;
 
                     //раз призрачная - значит лежит за границей квадрата
@@ -169,7 +169,7 @@ namespace LandscapeGeneration.FastGrid
 
                     bool bMadeIt = false;
 
-                    VertexCH.Direction eDir = pOuterLoc.m_eGhost;
+                    VertexCH.Direction eDir = pOuterLoc.m_eShadowDir;
                     if (m_cNeighbours.ContainsKey(eDir))
                     {
                         //находим реальное отражение призрачной локации
@@ -179,11 +179,11 @@ namespace LandscapeGeneration.FastGrid
                         //найдём среди соседей отражения призрачную локацию, соответствующую граничной
                         foreach (var pShadowEdge in pShadow.m_cBorderWith)
                         {
-                            if (((Location)pShadowEdge.Key).Ghost)
+                            if (((Location)pShadowEdge.Key).HasShadow)
                             {
                                 var pShadowLine = pShadow.m_cBorderWith[pShadowEdge.Key][0];
 
-                                VertexCH.Direction eShadowDir = ((Location)pShadowEdge.Key).m_eGhost;
+                                VertexCH.Direction eShadowDir = ((Location)pShadowEdge.Key).m_eShadowDir;
                                 if (pNeighbourChunk.m_cNeighbours.ContainsKey(eShadowDir))
                                 {
                                     var pShadowNeighbourChunk = pNeighbourChunk.m_cNeighbours[eShadowDir];

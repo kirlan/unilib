@@ -570,7 +570,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            Locations = cLocations.ToArray();
+            m_aLocations = cLocations.ToArray();
         }
 
         private static int s_iVersion = 30;
@@ -594,8 +594,8 @@ namespace LandscapeGeneration
                         pVertex.Save(binWriter);
                     }
 
-                    binWriter.Write(Locations.Length);
-                    foreach (LOC pLoc in Locations)
+                    binWriter.Write(m_aLocations.Length);
+                    foreach (LOC pLoc in m_aLocations)
                     {
                         pLoc.Save(binWriter);
                     }
@@ -701,7 +701,7 @@ namespace LandscapeGeneration
         {
             Reset();
 
-            Locations = null;
+            m_aLocations = null;
             m_aVertexes = null;
 
             m_bLoaded = false;
@@ -834,10 +834,10 @@ namespace LandscapeGeneration
                                 ProgressStep();
                         }
 
-                        Locations = new List<LOC>(cTempDic.Values).ToArray();
+                        m_aLocations = new List<LOC>(cTempDic.Values).ToArray();
 
                         //Восстанавливаем словарь соседей
-                        foreach (LOC pLoc in Locations)
+                        foreach (LOC pLoc in m_aLocations)
                         {
                             foreach (var ID in pLoc.m_cBorderWithID)
                             {
@@ -867,9 +867,9 @@ namespace LandscapeGeneration
                         cTempDic.Clear();
 
                         if (BeginStep != null)
-                            BeginStep("Recalculating grid edges...", Locations.Length);
+                            BeginStep("Recalculating grid edges...", m_aLocations.Length);
                         //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                        foreach (LOC pLoc in Locations)
+                        foreach (LOC pLoc in m_aLocations)
                         {
                             if (pLoc.Forbidden)
                                 continue;
@@ -900,7 +900,7 @@ namespace LandscapeGeneration
             if (!m_bLoaded)
                 return;
 
-            foreach (LOC pLoc in Locations)
+            foreach (LOC pLoc in m_aLocations)
                 pLoc.Reset();
         }
 
