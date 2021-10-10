@@ -564,7 +564,6 @@ namespace LandscapeGeneration
                         pGhostLocation.Create(cLocations.Count, pLocation.X + RX * 2, pLocation.Y, pLocation);
 
                     pGhostLocation.m_bBorder = true;
-                    pGhostLocation.m_bGhost = true;
 
                     cLocations.Add(pGhostLocation);
                 }

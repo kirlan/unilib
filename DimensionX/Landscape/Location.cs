@@ -137,8 +137,6 @@ namespace LandscapeGeneration
         /// </summary>
         internal Location m_pOrigin = null;
 
-        public bool m_bGhost = false;
-
         /// <summary>
         /// Для "призрачной" локации - направление, в котором следует искать "настоящую" локацию.
         /// Если локация не "призрачная", то CenterNone
@@ -454,7 +452,7 @@ namespace LandscapeGeneration
         
         public override string ToString()
         {
-            return string.Format("{0}{3} ({1}, {2})", m_bGhost ? "x" : "", m_fX, m_fY, m_iID);
+            return string.Format("{0}{3} ({1}, {2})", m_bBorder || m_bUnclosed ? "x" : "", m_fX, m_fY, m_iID);
         }
 
         public string GetStringID()
