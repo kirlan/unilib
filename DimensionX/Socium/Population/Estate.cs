@@ -46,7 +46,7 @@ namespace Socium.Population
 
         public bool IsSegregated()
         {
-            return DominantCulture.m_pCustoms.m_eGenderPriority != Customs.GenderPriority.Genders_equality;
+            return !DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Genders_equality);
         }
 
         void UpdateCultureProgress(Culture pCulture)

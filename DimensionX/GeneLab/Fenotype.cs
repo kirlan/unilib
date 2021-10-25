@@ -57,7 +57,7 @@ namespace GeneLab
             m_pHairs.CheckHairColors();
         }
 
-        public abstract Fenotype GetHumanEtalon();
+        public abstract Fenotype GetHumanEtalon(Gender gender);
         public abstract string GetDescription();
         public abstract bool IsIdentical(GenetixBase pOther);
         public abstract GenetixBase MutateFamily();
@@ -161,7 +161,7 @@ namespace GeneLab
     public class Fenotype<LTI> : Fenotype
         where LTI: LandTypeInfo, new()
     {
-        private readonly static Fenotype<LTI> s_HumanEtalon = new Fenotype<LTI>(BodyGenetix.Human,
+        private readonly static Fenotype<LTI> s_HumanEtalonM = new Fenotype<LTI>(BodyGenetix.Human,
                                                 HeadGenetix.Human,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,
@@ -173,11 +173,24 @@ namespace GeneLab
                                                 FaceGenetix.Human,
                                                 EarsGenetix.Human,
                                                 EyesGenetix.Human,
-                                                HairsGenetix.HumanWhite);
+                                                HairsGenetix.HumanWhiteM);
+        private readonly static Fenotype<LTI> s_HumanEtalonF = new Fenotype<LTI>(BodyGenetix.Human,
+                                                HeadGenetix.Human,
+                                                LegsGenetix.Human,
+                                                ArmsGenetix.Human,
+                                                WingsGenetix.None,
+                                                TailGenetix.None,
+                                                HideGenetix.HumanWhite,
+                                                BrainGenetix.HumanReal,
+                                                LifeCycleGenetix.Human,
+                                                FaceGenetix.Human,
+                                                EarsGenetix.Human,
+                                                EyesGenetix.Human,
+                                                HairsGenetix.HumanWhiteF);
 
-        public override Fenotype GetHumanEtalon()
+        public override Fenotype GetHumanEtalon(Gender gender)
         {
-            return s_HumanEtalon;
+            return gender == Gender.Male ? s_HumanEtalonM : s_HumanEtalonF;
         }
 
         #region String representation
@@ -188,7 +201,7 @@ namespace GeneLab
         /// <returns></returns>
         public override string GetDescription() 
         {
-            string sResult = GetComparsion(s_HumanEtalon);
+            string sResult = GetComparsion(s_HumanEtalonM);
             if (sResult.Length == 0)
                 sResult = "are just humans.";
 
@@ -416,7 +429,8 @@ namespace GeneLab
                         FaceGenetix pFace,
                         EarsGenetix pEars,
                         EyesGenetix pEyes,
-                        HairsGenetix pHairs): base(pBody, pHead, pLegs, pArms, pWings, pTail, pHide, pBrain, pLifeCycle, pFace, pEars, pEyes, pHairs)
+                        HairsGenetix pHairs)
+            : base(pBody, pHead, pLegs, pArms, pWings, pTail, pHide, pBrain, pLifeCycle, pFace, pEars, pEyes, pHairs)
         {
         }
 

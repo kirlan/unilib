@@ -1004,7 +1004,7 @@ namespace MapDrawEngine
                     if (pProvince.m_pLocalSociety.m_pTitularNation.m_bHegemon)
                         pBrush = m_cHegemonNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.m_iMagicLimit][pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.m_eMagic];
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.m_iMagicLimit][pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Magic>()];
                     
                     foreach (MapQuadrant pQuad in aQuads)
                     {

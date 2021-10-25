@@ -269,7 +269,8 @@ namespace VQMapTest2
 
             string sRaceName = pSociety.m_pTitularNation.m_pRace.m_sName;
             sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
-            richTextBox1.AppendText(sRaceName + "s " + pSociety.m_pTitularNation.m_pRace.m_pFenotype.GetDescription());
+            richTextBox1.AppendText(sRaceName + " males " + pSociety.m_pTitularNation.m_pRace.m_pFenotypeM.GetDescription());
+            richTextBox1.AppendText(sRaceName + " females " + pSociety.m_pTitularNation.m_pRace.m_pFenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pFenotypeM));
             List<Nation> cKnownNations = new List<Nation>();
             foreach (State pState in m_pWorld.m_aStates)
             {
@@ -294,25 +295,30 @@ namespace VQMapTest2
                 }
                 richTextBox1.AppendText(".\n\n");
 
-                string sFenotypeNation = pSociety.m_pTitularNation.m_pFenotype.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pFenotype);
-                if (!sFenotypeNation.StartsWith("are"))
-                    sFenotypeNation = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNation.Substring(0, 1).ToLower() + sFenotypeNation.Substring(1);
-                richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + "s " + sFenotypeNation);
+                string sFenotypeNationM = pSociety.m_pTitularNation.m_pFenotypeM.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pFenotypeM);
+                if (!sFenotypeNationM.StartsWith("are"))
+                    sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
+                richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " males " + sFenotypeNationM);
+
+                string sFenotypeNationF = pSociety.m_pTitularNation.m_pFenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pFenotypeF);
+                if (!sFenotypeNationF.StartsWith("are"))
+                    sFenotypeNationF = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationF.Substring(0, 1).ToLower() + sFenotypeNationF.Substring(1);
+                richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " females " + sFenotypeNationM);
             }
             richTextBox1.AppendText("\n\n");
 
             if (pSociety.GetImportedTech() == -1)
-                richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.DominantCulture.m_pCustoms.m_eScience), pSociety.GetEffectiveTech()));
+                richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Science>()), pSociety.GetEffectiveTech()));
             else
                 richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", pSociety.GetImportedTechString(), pSociety.GetImportedTech()));
-            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.DominantCulture.m_pCustoms.m_eScience), pSociety.GetEffectiveTech()));
+            richTextBox1.AppendText(string.Format("Industrial base: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Science>()), pSociety.GetEffectiveTech()));
 
             if (pSociety.m_iMagicLimit > 0)
             {
                 string sMagicAttitude = "regulated";
-                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
+                if (pSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Feared))
                     sMagicAttitude = "outlawed";
-                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+                if (pSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Praised))
                     sMagicAttitude = "unlimited";
                 richTextBox1.AppendText(string.Format("Magic users: {0}, ", sMagicAttitude));
                 richTextBox1.AppendText(string.Format("{2}, up to {0} [M{1}]\n\n", Society.GetMagicString(pSociety.m_iMagicLimit), pSociety.m_iMagicLimit, pSociety.DominantCulture.m_eMagicAbilityDistribution.ToString().Replace('_', ' ')));
@@ -320,9 +326,9 @@ namespace VQMapTest2
             else
             {
                 string sMagicAttitude = "but allowed";
-                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
+                if (pSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Feared))
                     sMagicAttitude = "and outlawed";
-                if (pSociety.DominantCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+                if (pSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Praised))
                     sMagicAttitude = "but praised";
                 richTextBox1.AppendText(string.Format("Magic users: none, {0} [M0]\n\n", sMagicAttitude));
             }
@@ -351,8 +357,8 @@ namespace VQMapTest2
 
                 if (pEstate.IsSegregated() && (sMinorsCustoms != "" || sMinorsCulture != ""))
                 {
-                    string sMajors = pEstate.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "males" : "females";
-                    string sMinors = pEstate.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "females" : "males";
+                    string sMajors = pEstate.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) ? "males" : "females";
+                    string sMinors = pEstate.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) ? "females" : "males";
                     if (sMinorsCustoms != "")
                         richTextBox1.AppendText(" Their " + sMinors + " commonly " + sMinorsCustoms + ".");
                     if (sMinorsCulture != "")
@@ -387,15 +393,15 @@ namespace VQMapTest2
 
                 string sGenderPriority = "";
 
-                if (pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == GenderPriority.Patriarchy)
+                if (pEstate.Value.DominantCulture.m_pCustoms.Has(GenderPriority.Patriarchy))
                 {
                     sGenderPriority = "patriarchal";
                 }
-                else if (pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == GenderPriority.Matriarchy)
+                else if (pEstate.Value.DominantCulture.m_pCustoms.Has(GenderPriority.Matriarchy))
                 {
                     sGenderPriority = "matriarchal";
                 }
-                else if (pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == GenderPriority.Genders_equality)
+                else if (pEstate.Value.DominantCulture.m_pCustoms.Has(GenderPriority.Genders_equality))
                 {
                     sGenderPriority = "gender equality";
                 }
@@ -412,8 +418,8 @@ namespace VQMapTest2
 
                 if (pEstate.Value.IsSegregated() && (sMinorsCustoms != "" || sMinorsCulture != ""))
                 {
-                    string sMajors = pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "males" : "females";
-                    string sMinors = pEstate.Value.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy ? "females" : "males";
+                    string sMajors = pEstate.Value.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) ? "males" : "females";
+                    string sMinors = pEstate.Value.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) ? "females" : "males";
                     if (sCustoms == "" && sCulture == "")
                     {
                         richTextBox1.AppendText("This is a " + sGenderPriority + " society, which members are just a common citizens.");
