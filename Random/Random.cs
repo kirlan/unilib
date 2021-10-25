@@ -182,11 +182,11 @@ namespace Random
         /// </summary>
         /// <param name="cColl"></param>
         /// <returns></returns>
-        public static char Get(ICollection<char> cColl)
+        public static T Get<T>(ICollection<T> cColl)
         {
             int iChoosen = Get(cColl.Count);
 
-            foreach (char iChance in cColl)
+            foreach (T iChance in cColl)
             {
                 if (iChoosen <= 0)
                     return iChance;
