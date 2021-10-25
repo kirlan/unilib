@@ -13,12 +13,12 @@ namespace MapDrawEngine.Signs
 
         internal static Font s_pFont = new Font("Arial", 10);
 
-        public SignTown(float iX, float iY, string sName)
+        public SignTown(float iX, float iY, float RX, string sName)
         {
             x = iX;
             y = iY;
 
-            r = 80;
+            r = RX  / 625;
             name = sName;
         }
 

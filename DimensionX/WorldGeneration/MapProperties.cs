@@ -45,11 +45,11 @@ namespace WorldGeneration
                 if (m_pLocationsGrid == null)
                     return;
 
-                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) != m_pLocationsGrid.m_bCycled)
+                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) == (m_pLocationsGrid.CycleShift == 0))
                 {
                     MapPresets.Items.Clear();
 
-                    if (m_pLocationsGrid.m_bCycled)
+                    if (m_pLocationsGrid.CycleShift != 0)
                         MapPresets.Items.AddRange(m_aWorldMaps);
                     else
                         MapPresets.Items.AddRange(m_aPartialMaps);

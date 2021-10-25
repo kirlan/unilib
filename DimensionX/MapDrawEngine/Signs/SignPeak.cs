@@ -15,12 +15,12 @@ namespace MapDrawEngine.Signs
         //internal static Font s_pFont = new Font("Arial", 10);
         //internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
 
-        public SignPeak(float iX, float iY, string sName)
+        public SignPeak(float iX, float iY, float RX, string sName)
         {
             x = iX;
             y = iY;
 
-            r = 200;
+            r = RX / 250;
             //if (r < 1)
             //    r = 1;
 

@@ -14,7 +14,7 @@ namespace LandscapeGeneration
         public float m_fX = 0;
         public float m_fY = 0;
         
-        public float m_fHeight = float.NaN;
+        public float m_fH = float.NaN;
 
         public float X
         {
@@ -30,8 +30,8 @@ namespace LandscapeGeneration
 
         public float H
         {
-            get { return m_fHeight; }
-            set { m_fHeight = value; }
+            get { return m_fH; }
+            set { m_fH = value; }
         }
 
         private static long s_iCounter = 0;
@@ -42,11 +42,34 @@ namespace LandscapeGeneration
 
         public List<long> m_cLinksTmp = new List<long>();
 
-        public Location[] m_aLocations;
+        /// <summary>
+        /// Список локаций, соприкасающихся с вершиной.
+        /// Используется при настройке связей между квадратами (в Vertex::Replace())
+        /// </summary>
+        public List<Location> m_cLocations = new List<Location>();
 
         internal List<Location> m_cLocationsBuild = new List<Location>();
 
         public List<long> m_cLocationsTmp = new List<long>();
+
+        /// <summary>
+        /// Чанк, в который входит данная вершина. 
+        /// Используется в Chunk::RebuildVertexArray() при просмотре соседей как маркер того, что эта вершина уже была обработана.
+        /// </summary>
+        public object m_pChunkMarker = null;
+
+        /// <summary>
+        /// Заменяет ссылку на текущую вершину во всех связанных локациях.
+        /// Вызывается из Chunk::ReplaceVertexes()
+        /// </summary>
+        /// <param name="pGood">"правильная" вершина</param>
+        public void Replace(VoronoiVertex pGood)
+        {
+            List<Location> cTemp = new List<Location>(m_cLocations);
+            //проходим по всем локациям, связанным к "неправильной" вершиной
+            foreach (Location pLinkedLoc in cTemp)
+                pLinkedLoc.ReplaceVertex(this, pGood);
+        }
 
         public VoronoiVertex()
         {
@@ -64,6 +87,12 @@ namespace LandscapeGeneration
         {
             m_fX = (float)pVector.data[0];
             m_fY = (float)pVector.data[1];
+        }
+
+        public VoronoiVertex(VoronoiVertex pVector)
+        {
+            m_fX = pVector.X;
+            m_fY = pVector.Y;
         }
 
         public VoronoiVertex(BinaryReader binReader)
@@ -111,8 +140,8 @@ namespace LandscapeGeneration
 
         internal void PointOnCurve(VoronoiVertex p0, VoronoiVertex p1, VoronoiVertex p2, VoronoiVertex p3, float t, float fCycle, float smoothRate)
         {
-            for (int i = 0; i < m_aLocations.Length; i++)
-                if (m_aLocations[i].Forbidden || m_aLocations[i].Owner == null)
+            for (int i = 0; i < m_cLocations.Count; i++)
+                if (m_cLocations[i].Forbidden || m_cLocations[i].Owner == null)
                     return;
 
             if (smoothRate > 1.0f)

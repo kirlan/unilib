@@ -7,6 +7,7 @@ using Random;
 using SimpleVectors;
 using LandscapeGeneration.PathFind;
 using System.Drawing;
+using LandscapeGeneration.FastGrid;
 
 namespace LandscapeGeneration
 {
@@ -17,7 +18,7 @@ namespace LandscapeGeneration
         where CONT:Continent<AREA, LAND, LTI>, new()
         where LTI:LandTypeInfo, new()
     {
-        public LocationsGrid<LOC> m_pGrid = null;
+        public IGrid<LOC> m_pGrid = null;
 
         public LAND[] m_aLands = null;
 
@@ -88,7 +89,7 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Генерация мира
+        /// Генерация мира - старый алгоритм
         /// </summary>
         /// <param name="iLocations">Общее количество `локаций` - минимальных "кирпичиков" мира.</param>
         /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.
@@ -97,16 +98,47 @@ namespace LandscapeGeneration
         /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
         /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
-        public Landscape(LocationsGrid<LOC> cLocations, int iContinents, bool bGreatOcean, int iLandsDiversity, int iLandMassesDiversity, int iOcean, int iEquator, int iPole, LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        public Landscape(LocationsGrid<LOC> cLocations, int iContinents, bool bGreatOcean, int iLandsDiversity, int iLandMassesDiversity, int iOcean, int iEquator, int iPole, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             m_pGrid = cLocations;
 
-            m_pGrid.Load(BeginStep, ProgressStep);
+            cLocations.Load(BeginStep, ProgressStep);
 
             if (iOcean > 90 || iOcean < 10)
                 throw new ArgumentException("Oceans percent can't be less then 10 or greater then 100!");
 
-            m_iLandsCount = 600 + iLandsDiversity * m_pGrid.m_aLocations.Length / 200;
+            m_iLandsCount = 600 + iLandsDiversity * m_pGrid.Locations.Length / 200;
+            m_iLandMassesCount = 30 + iLandMassesDiversity * 240 / 100;
+            m_iOceansPercentage = iOcean;
+            m_iContinentsCount = iContinents;
+            m_bGreatOcean = bGreatOcean;
+
+            PresetLandTypesInfo();
+
+            m_iEquator = 2 * cLocations.RY * iEquator / 100 - cLocations.RY;
+            m_iPole = 2 * cLocations.RY * iPole / 100;
+
+            ShapeWorld(BeginStep, ProgressStep);
+        }
+
+        /// <summary>
+        /// Генерация мира - новый быстрый алгоритм
+        /// </summary>
+        /// <param name="iLocations">Общее количество `локаций` - минимальных "кирпичиков" мира.</param>
+        /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.
+        /// Сопредельные земли с одинаковым типом объединяются в 'зоны'</param>
+        /// <param name="iLandMassesDiversity">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
+        /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
+        /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
+        /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
+        public Landscape(int iLocationsCount, int iFaceSize, int iContinents, bool bGreatOcean, int iLandsDiversity, int iLandMassesDiversity, int iOcean, int iEquator, int iPole, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        {
+            m_pGrid = new ChunksGrid<LOC>(iLocationsCount, iFaceSize, BeginStep, ProgressStep);
+
+            if (iOcean > 90 || iOcean < 10)
+                throw new ArgumentException("Oceans percent can't be less then 10 or greater then 100!");
+
+            m_iLandsCount = 600 + iLandsDiversity * m_pGrid.Locations.Length / 200;
             m_iLandMassesCount = 30 + iLandMassesDiversity * 240 / 100;
             m_iOceansPercentage = iOcean;
             m_iContinentsCount = iContinents;
@@ -120,7 +152,7 @@ namespace LandscapeGeneration
             ShapeWorld(BeginStep, ProgressStep);
         }
 
-        private void ShapeWorld(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void ShapeWorld(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BuildLands(BeginStep, ProgressStep);
 
@@ -141,7 +173,7 @@ namespace LandscapeGeneration
 
         private void AddPeaks()
         {
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.Locations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -214,7 +246,7 @@ namespace LandscapeGeneration
                         SmoothBorder(pArea.m_cOrdered);
             }
 
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.Locations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -256,9 +288,9 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildLands(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildLands(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building lands...", m_iLandsCount + m_pGrid.m_aLocations.Length / m_iLandsCount + m_pGrid.m_aLocations.Length + m_iLandsCount); 
+            BeginStep("Building lands...", m_iLandsCount + m_pGrid.Locations.Length / m_iLandsCount + m_pGrid.Locations.Length + m_iLandsCount); 
             
             List<LAND> cLands = new List<LAND>();
             for (int i = 0; i < m_iLandsCount; i++)
@@ -266,13 +298,13 @@ namespace LandscapeGeneration
                 int iIndex;
                 do
                 {
-                    iIndex = Rnd.Get(m_pGrid.m_aLocations.Length);
+                    iIndex = Rnd.Get(m_pGrid.Locations.Length);
                 }
-                while (m_pGrid.m_aLocations[iIndex].Forbidden || 
-                       m_pGrid.m_aLocations[iIndex].Owner != null);
+                while (m_pGrid.Locations[iIndex].Forbidden || 
+                       m_pGrid.Locations[iIndex].Owner != null);
                 
                 LAND pLand = new LAND();
-                pLand.Start(m_pGrid.m_aLocations[iIndex]);
+                pLand.Start(m_pGrid.Locations[iIndex]);
                 cLands.Add(pLand);
                 ProgressStep();
             }
@@ -293,7 +325,7 @@ namespace LandscapeGeneration
             while (bContinue);
 
 //            BeginStep("Fixing void lands...", m_pGrid.m_aLocations.Length);
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.Locations)
             {
                 if (!pLoc.Forbidden && pLoc.Owner == null)
                 {
@@ -320,7 +352,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildLandMasses(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildLandMasses(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building landmasses...", m_iLandMassesCount + m_aLands.Length / m_iLandMassesCount + m_aLands.Length + m_iLandMassesCount); 
             List<LandMass<LAND>> cLandMasses = new List<LandMass<LAND>>();
@@ -384,7 +416,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildContinents(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildContinents(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             int iMaxOceanCount = m_iLandsCount * m_iOceansPercentage / 100;
             int iOceanCount = 0;
@@ -533,7 +565,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void AddCoastral(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void AddCoastral(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting coastral regions...", m_aLands.Length);
             foreach (LAND pLand in m_aLands)
@@ -611,7 +643,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void AddMountains(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void AddMountains(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting mountain regions...", m_aLands.Length);
             foreach (LAND pLand in m_aLands)
@@ -674,7 +706,7 @@ namespace LandscapeGeneration
             }
         }
 
-        private void AddLakes(int iOneChanceFrom, LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void AddLakes(int iOneChanceFrom, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BeginStep("Setting lake regions...", m_aLands.Length);
             foreach (LAND pLand in m_aLands)
@@ -720,7 +752,7 @@ namespace LandscapeGeneration
             return 1 - Math.Abs((m_iEquator - pVertex.Y) / m_iPole);
         }
 
-        private void CalculateHumidity(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void CalculateHumidity(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BeginStep("Calculating humidity...", m_aLands.Length);
 
@@ -796,7 +828,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildAreas(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildAreas(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             //Make seas
             foreach (LAND pLand in m_aLands)
@@ -881,9 +913,9 @@ namespace LandscapeGeneration
         public float m_fMaxDepth = 0;
         public float m_fMaxHeight = 0;
 
-        protected void CalculateElevations(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        protected void CalculateElevations(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Calculating elevation...", m_pGrid.m_aLocations.Length);
+            BeginStep("Calculating elevation...", m_pGrid.Locations.Length);
 
             List<LOC> cOcean = new List<LOC>();
             List<LOC> cLand = new List<LOC>();
@@ -1047,7 +1079,7 @@ namespace LandscapeGeneration
             //SmoothVertexes();
             //SmoothVertexes();
 
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.Locations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -1057,11 +1089,11 @@ namespace LandscapeGeneration
                     var pLine = pLoc.m_pFirstLine;
                     do
                     {
-                        if (pLine.m_pPoint1.m_fHeight > 0)
-                            pLine.m_pPoint1.m_fHeight = 0;
+                        if (pLine.m_pPoint1.m_fH > 0)
+                            pLine.m_pPoint1.m_fH = 0;
 
-                        if (pLine.m_pPoint2.m_fHeight > 0)
-                            pLine.m_pPoint2.m_fHeight = 0;
+                        if (pLine.m_pPoint2.m_fH > 0)
+                            pLine.m_pPoint2.m_fH = 0;
 
                         //if (pLine.m_pMidPoint.m_fHeight > 0)
                         //    pLine.m_pMidPoint.m_fHeight = 0;
@@ -1079,11 +1111,11 @@ namespace LandscapeGeneration
                     var pLine = pLoc.m_pFirstLine;
                     do
                     {
-                        if (pLine.m_pPoint1.m_fHeight < 0)
-                            pLine.m_pPoint1.m_fHeight = 0;
+                        if (pLine.m_pPoint1.m_fH < 0)
+                            pLine.m_pPoint1.m_fH = 0;
 
-                        if (pLine.m_pPoint2.m_fHeight < 0)
-                            pLine.m_pPoint2.m_fHeight = 0;
+                        if (pLine.m_pPoint2.m_fH < 0)
+                            pLine.m_pPoint2.m_fH = 0;
 
                         //if (pLine.m_pMidPoint.m_fHeight < 0)
                         //    pLine.m_pMidPoint.m_fHeight = 0;
@@ -1157,7 +1189,7 @@ namespace LandscapeGeneration
         /// <param name="fMaxElevation"></param>
         private void SmoothMap(float fMaxElevation)
         {
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.Locations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)
                     continue;
@@ -1210,7 +1242,7 @@ namespace LandscapeGeneration
 
             float vMin = 0;
             float vMax = 0;
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.Locations)
             {
                 if (pLoc.Forbidden || pLoc.H < 0)
                     continue;
@@ -1341,11 +1373,11 @@ namespace LandscapeGeneration
             return pNode2.m_cLinks[pNode1];
         }
 
-        private void BuildTransportGrid(LocationsGrid<LOC>.BeginStepDelegate BeginStep, LocationsGrid<LOC>.ProgressStepDelegate ProgressStep)
+        private void BuildTransportGrid(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building transportation links...", m_pGrid.m_aLocations.Length + m_aLands.Length + m_aLandMasses.Length);
+            BeginStep("Building transportation links...", m_pGrid.Locations.Length + m_aLands.Length + m_aLandMasses.Length);
 
-            foreach (LOC pLoc in m_pGrid.m_aLocations)
+            foreach (LOC pLoc in m_pGrid.Locations)
             {
                 if (pLoc.Forbidden || pLoc.Owner == null)// || pLoc.m_bBorder)
                     continue;

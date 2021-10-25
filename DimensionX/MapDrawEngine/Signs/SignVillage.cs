@@ -14,12 +14,12 @@ namespace MapDrawEngine.Signs
 
         internal static Font s_pFont = new Font("Arial", 8, FontStyle.Italic);
 
-        public SignVillage(float iX, float iY, string sName, Brush pBrush)
+        public SignVillage(float iX, float iY, float RX, string sName, Brush pBrush)
         {
             x = iX;
             y = iY;
 
-            r = 80;
+            r = RX / 625;
 
             name = sName;
 

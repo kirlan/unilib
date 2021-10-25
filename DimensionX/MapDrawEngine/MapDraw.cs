@@ -1139,7 +1139,7 @@ namespace MapDrawEngine
 
                 //если карта зациклена по горизонтали, нужно строить отражения и 
                 //контур пересекает нулевой меридиан, то строим отражение!
-                if (m_pWorld.m_pGrid.m_bCycled && bMirror && bCross)
+                if (m_pWorld.m_pGrid.CycleShift != 0 && bMirror && bCross)
                 {
                     //определяем, на западе или на востоке будем строить отражение
                     if (pFirstLine.m_pPoint1.X > 0)
@@ -1192,7 +1192,7 @@ namespace MapDrawEngine
 
             //если карта зациклена по горизонтали, нужно строить отражения и 
             //контур пересекает нулевой меридиан, то строим отражение!
-            if (m_pWorld.m_pGrid.m_bCycled && bMirror && bCross)
+            if (m_pWorld.m_pGrid.CycleShift != 0 && bMirror && bCross)
             {
                 //определяем, на западе или на востоке будем строить отражение
                 if (pFirstLine.m_pPoint1.X > 0)
@@ -1323,10 +1323,10 @@ namespace MapDrawEngine
             switch (pLoc.m_eType)
             {
                 case RegionType.Peak:
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignPeak(fPointX, fPointY, ""));
+                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignPeak(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
                     break;
                 case RegionType.Volcano:
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVolkano(fPointX, fPointY, ""));
+                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVolkano(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
                     break;
             }
 
@@ -1334,29 +1334,29 @@ namespace MapDrawEngine
             {
                 if (pLoc.m_pSettlement.m_iRuinsAge > 0)
                 {
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignRuin(fPointX, fPointY, ""));
+                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignRuin(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
                 }
                 else
                 {
                     switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
                     {
                         case SettlementSize.Capital:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCapital(fPointX, fPointY, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCapital(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.City:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCity(fPointX, fPointY, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCity(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Town:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignTown(fPointX, fPointY, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignTown(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Village:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
                             break;
                         case SettlementSize.Hamlet:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
                             break;
                         case SettlementSize.Fort:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignFort(fPointX, fPointY, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignFort(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
                             break;
                     }
                 }
@@ -1368,10 +1368,10 @@ namespace MapDrawEngine
                     switch (pLoc.m_pBuilding.m_eType)
                     {
                         case BuildingType.Lair:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignLair(fPointX, fPointY, ""));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignLair(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
                             break;
                         case BuildingType.Hideout:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignHideout(fPointX, fPointY, ""));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignHideout(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
                             break;
                     }
                 }
@@ -1453,7 +1453,7 @@ namespace MapDrawEngine
 
             //если мир закольцован и построенная линия пересекает нулевой меридиан,
             //то построим для неё отражение
-            if (m_pWorld.m_pGrid.m_bCycled && bCross)
+            if (m_pWorld.m_pGrid.CycleShift != 0 && bCross)
             {
                 if (pRoad.m_aPoints[0].X > 0)
                 {
@@ -1550,7 +1550,7 @@ namespace MapDrawEngine
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 980 пикселей
-            m_iScaledMapWidth = (int)(720 * m_fScaleMultiplier);
+            m_iScaledMapWidth = (int)(600 * m_fScaleMultiplier);
             //m_iScaledMapWidth = (int)(980 * m_fScaleMultiplier);
             m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
 
@@ -1641,7 +1641,7 @@ namespace MapDrawEngine
             if (m_pWorld == null)
                 return;
 
-            if (m_pWorld.m_pGrid.m_bCycled)
+            if (m_pWorld.m_pGrid.CycleShift != 0)
                 m_pDrawFrame.X = iX;
             else
                 m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width));
@@ -1693,7 +1693,7 @@ namespace MapDrawEngine
             gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Ocean.m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
-            if (m_pWorld == null || m_pWorld.m_pGrid.m_aLocations.Length == 0)
+            if (m_pWorld == null || m_pWorld.m_pGrid.Locations.Length == 0)
                 return;
 
             //координаты квадранта, в котором находится левый верхний угол отображаемого участка карты

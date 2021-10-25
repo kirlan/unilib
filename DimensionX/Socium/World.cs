@@ -445,20 +445,53 @@ namespace Socium
         /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
         /// <param name="aEpoches">Информация об эпохах развития мира (расы, техническое развитие, магические способности, пришельцы и т.д....)</param>
-        public World(LocationsGrid<LocationX> cLocations, 
-                     int iContinents, 
-                     bool bGreatOcean, 
-                     int iLandsDiversity, 
-                     int iProvinces, 
-                     int iStates, 
-                     int iLandMassesDiversity, 
-                     int iOcean, 
-                     int iEquator, 
-                     int iPole, 
+        public World(LocationsGrid<LocationX> cLocations,
+                     int iContinents,
+                     bool bGreatOcean,
+                     int iLandsDiversity,
+                     int iProvinces,
+                     int iStates,
+                     int iLandMassesDiversity,
+                     int iOcean,
+                     int iEquator,
+                     int iPole,
                      Epoch[] aEpoches,
-                     LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                     LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                     BeginStepDelegate BeginStep,
+                     ProgressStepDelegate ProgressStep)
             : base(cLocations, iContinents, bGreatOcean, iLandsDiversity, iLandMassesDiversity, iOcean, iEquator, iPole, BeginStep, ProgressStep)
+        {
+            Create(iProvinces, iStates, aEpoches, BeginStep, ProgressStep);
+        }
+
+        /// <summary>
+        /// Генерация мира
+        /// </summary>
+        /// <param name="cLocations">Сетка локаций, на которой будет строиться мир.</param>
+        /// <param name="iContinents">Общее количество континентов - обособленных, разделённых водой участков суши.</param>
+        /// <param name="bGreatOcean">Если true, то карта со всех сторон окружена водой.</param>
+        /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории</param>
+        /// <param name="iProvinces">Общее количество провинций. Каждая провинция объединяет несколько сопредельных земель.</param>
+        /// <param name="iStates">Общее количество государств. Каждое государство объединяет несколько сопредельных провинций.</param>
+        /// <param name="iLandMassesDiversity">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
+        /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
+        /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
+        /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
+        /// <param name="aEpoches">Информация об эпохах развития мира (расы, техническое развитие, магические способности, пришельцы и т.д....)</param>
+        public World(int iLocations,
+                     int iResolution,
+                     int iContinents,
+                     bool bGreatOcean,
+                     int iLandsDiversity,
+                     int iProvinces,
+                     int iStates,
+                     int iLandMassesDiversity,
+                     int iOcean,
+                     int iEquator,
+                     int iPole,
+                     Epoch[] aEpoches,
+                     BeginStepDelegate BeginStep,
+                     ProgressStepDelegate ProgressStep)
+            : base(iLocations, iResolution, iContinents, bGreatOcean, iLandsDiversity, iLandMassesDiversity, iOcean, iEquator, iPole, BeginStep, ProgressStep)
         {
             Create(iProvinces, iStates, aEpoches, BeginStep, ProgressStep);
         }
@@ -468,8 +501,8 @@ namespace Socium
         private void Create(int iProvinces, 
                             int iStates,
                             Epoch[] aEpoches,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             foreach (Race pRace in Race.m_cAllRaces)
                 pRace.ResetNations();
@@ -501,8 +534,8 @@ namespace Socium
         }
 
         private void PopulateWorld(Epoch pEpoch, bool bFinalize,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             BeginStep("Growing states...", 6);
 
@@ -864,8 +897,8 @@ namespace Socium
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
         private void BuildStates(float fCycleShift, bool bFast,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building states...", 10);
 
@@ -1111,8 +1144,8 @@ namespace Socium
         }
 
         private void BuildCities(float fCycleShift, bool bFast,
-                            LocationsGrid<LocationX>.BeginStepDelegate BeginStep,
-                            LocationsGrid<LocationX>.ProgressStepDelegate ProgressStep)
+                            BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
         {
             BeginStep("Building cities...", m_aProvinces.Length * 2 + 1);
 
@@ -2170,7 +2203,7 @@ namespace Socium
                 pRoad.ClearRoad();
 
             //все локации в мире
-            foreach (LocationX pLoc in m_pGrid.m_aLocations)
+            foreach (LocationX pLoc in m_pGrid.Locations)
             {
                 //очищаем информацию о дорогах, проходивших через локацию
                 pLoc.m_cRoads.Clear();

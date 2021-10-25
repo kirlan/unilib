@@ -13,13 +13,13 @@ namespace MapDrawEngine.Signs
 
         private static Font s_pFont = new Font("Arial", 12, FontStyle.Bold | FontStyle.Underline);
 
-        public SignCapital(float iX, float iY, string sName)
+        public SignCapital(float iX, float iY, float RX, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = 200;
-            r2 = 120;
+            r1 = RX / 250;
+            r2 = RX / 400;
 
             name = sName;
         }

@@ -88,7 +88,7 @@ namespace LandscapeGeneration
             foreach (Location.Edge pLine in aTotalBorder)
             {
                 pLine.m_pNext = null;
-                pLine.m_pPrevious = null;
+                //pLine.m_pPrevious = null;
 
                 float fRelativeX1 = pLine.m_pPoint1.X;
                 if (fRelativeX1 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
@@ -149,7 +149,7 @@ namespace LandscapeGeneration
                                   Math.Abs(pLine.m_pPoint1.X - pCurrentLine.m_pPoint2.X) == fCycleShift)))
                             {
                                 pCurrentLine.m_pNext = pLine;
-                                pLine.m_pPrevious = pCurrentLine;
+                                //pLine.m_pPrevious = pCurrentLine;
                                 cVertexes.Add(pCurrentLine.m_pPoint1);
 
                                 pCurrentLine = pLine;

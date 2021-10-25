@@ -15,12 +15,12 @@ namespace MapDrawEngine.Signs
         //internal static Font s_pFont = new Font("Arial", 10);
         //internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
 
-        public SignRuin(float iX, float iY, string sName)
+        public SignRuin(float iX, float iY, float RX, string sName)
         {
             x = iX;
             y = iY;
 
-            r1 = 120;
+            r1 = RX / 400;
 
             List<PointF> cPoints = new List<PointF>();
             cPoints.Add(new PointF(x, y - r1));

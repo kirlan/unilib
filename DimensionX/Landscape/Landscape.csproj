@@ -39,9 +39,11 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Area.cs" />
+    <Compile Include="IGrid.cs" />
     <Compile Include="ILandMass.cs" />
     <Compile Include="Interfaces\ILand.cs" />
     <Compile Include="Interfaces\IPointF.cs" />
@@ -54,6 +56,10 @@
     <Compile Include="PathFinder\TransportationLink.cs" />
     <Compile Include="PathFinder\TransportationNode.cs" />
     <Compile Include="Perlin.cs" />
+    <Compile Include="FastGrid\CellCH.cs" />
+    <Compile Include="FastGrid\Chunk.cs" />
+    <Compile Include="FastGrid\ChunksGrid.cs" />
+    <Compile Include="FastGrid\VertexCH.cs" />
     <Compile Include="Poisson.cs" />
     <Compile Include="Territory.cs" />
     <Compile Include="Continent.cs" />
@@ -83,6 +89,10 @@
     <ProjectReference Include="..\..\SimpleVectors\SimpleVectors.csproj">
       <Project>{9D04A744-D09B-4B4E-B843-1763A47339A5}</Project>
       <Name>SimpleVectors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MIConvexHull\MIConvexHull.csproj">
+      <Project>{2337776d-7d0c-40aa-a439-c26c3ce24fab}</Project>
+      <Name>MIConvexHull</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
