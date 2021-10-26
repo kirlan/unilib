@@ -449,9 +449,9 @@ namespace Socium
         public Dictionary<Skill, ProfessionInfo.SkillLevel> m_cSkills = new Dictionary<Skill, ProfessionInfo.SkillLevel>();
         public ProfessionInfo m_pProfession;
 
-        public Fenotype m_pFamilyFenotypeM;
-        public Fenotype m_pFamilyFenotypeF;
-        public Fenotype m_pFenotype;
+        public Phenotype m_pFamilyFenotypeM;
+        public Phenotype m_pFamilyFenotypeF;
+        public Phenotype m_pFenotype;
 
         public Appearance m_eAppearance = Appearance.Average;
         public List<Injury> m_cInjury = new List<Injury>();
@@ -488,12 +488,12 @@ namespace Socium
 
             m_pCulture = new Culture(pCulture, iCultureLevel, pCustoms);
 
-            m_pFamilyFenotypeM = pRelative == null ? (Fenotype)m_pNation.m_pFenotypeM.MutateFamily() : pRelative.m_pFamilyFenotypeM;
-            m_pFamilyFenotypeF = pRelative == null ? (Fenotype)m_pNation.m_pFenotypeF.MutateFamily() : pRelative.m_pFamilyFenotypeF;
+            m_pFamilyFenotypeM = pRelative == null ? (Phenotype)m_pNation.m_pFenotypeM.MutateFamily() : pRelative.m_pFamilyFenotypeM;
+            m_pFamilyFenotypeF = pRelative == null ? (Phenotype)m_pNation.m_pFenotypeF.MutateFamily() : pRelative.m_pFamilyFenotypeF;
             if (m_eGender == Gender.Male)
-                m_pFenotype = (Fenotype)m_pFamilyFenotypeM.MutateIndividual();
+                m_pFenotype = (Phenotype)m_pFamilyFenotypeM.MutateIndividual();
             else
-                m_pFenotype = (Fenotype)m_pFamilyFenotypeF.MutateIndividual();
+                m_pFenotype = (Phenotype)m_pFamilyFenotypeF.MutateIndividual();
 
             m_pCulture.m_pCustoms.ApplyFenotype(m_pFenotype);
 
@@ -991,8 +991,8 @@ namespace Socium
                 (!IsSexualRelation(m_cRelations[pRelative]) &&
                 m_cRelations[pRelative] != Relation.ParentOf))
             {
-                Fenotype pFenotype = pRelative == null ? m_pNation.DominantFenotype : pRelative.m_pFenotype;
-                switch (pFenotype.m_pLifeCycle.m_eGendersDistribution)
+                Phenotype pFenotype = pRelative == null ? m_pNation.DominantFenotype : pRelative.m_pFenotype;
+                switch (pFenotype.ValueOf<LifeCycleGenetix>().m_eGendersDistribution)
                 {
                     case GendersDistribution.OnlyMales:
                         m_eGender = Rnd.OneChanceFrom(10) ? Gender.Female : Gender.Male;
@@ -2205,7 +2205,7 @@ namespace Socium
 
             if (m_eAge < pPretender.m_eAge)
             { 
-                switch(m_pFenotype.m_pLifeCycle.m_eBirthRate)
+                switch(m_pFenotype.ValueOf<LifeCycleGenetix>().m_eBirthRate)
                 {
                     case BirthRate.Moderate:
                         cChances[Relation.BastardOf] = 0.25f;
@@ -2609,8 +2609,8 @@ namespace Socium
         public int GetFenotypeDifference(Person pOpponent, ref string sPositiveReasons, ref string sNegativeReasons)
         {
             //Будем сравнивать эталонную внешность для нашей нации с реальной внешностью оппонента
-            Fenotype pNation = pOpponent.Gender == Gender.Male ? m_pNation.m_pFenotypeM : m_pNation.m_pFenotypeF;
-            Fenotype pOpponents = pOpponent.m_pFenotype;
+            Phenotype pNation = pOpponent.Gender == Gender.Male ? m_pNation.m_pFenotypeM : m_pNation.m_pFenotypeF;
+            Phenotype pOpponents = pOpponent.m_pFenotype;
 
             return pNation.GetFenotypeDifference(pOpponents, ref sPositiveReasons, ref sNegativeReasons);
         }
@@ -2633,7 +2633,7 @@ namespace Socium
                 pMine = Customs.ApplyDifferences(m_pCulture.m_pCustoms, m_pEstate.DominantCulture.m_pCustoms, m_pEstate.m_cCulture[pOpponent.m_eGender].m_pCustoms);
             Customs pOpponents = pOpponent.m_pCulture.m_pCustoms;
 
-            if (pMine.ValueOf<Customs.GenderPriority>() != pOpponents.ValueOf<Customs.GenderPriority>() &&
+            if (!pMine.HasIdentical<Customs.GenderPriority>(pOpponents) &&
                 !pMine.Has(Customs.GenderPriority.Genders_equality) &&
                 !pOpponents.Has(Customs.GenderPriority.Genders_equality))
             {
@@ -2727,7 +2727,7 @@ namespace Socium
             //    //}
             //}
 
-            if (pMine.ValueOf<Customs.Sexuality>() != pOpponents.ValueOf<Customs.Sexuality>() &&
+            if (!pMine.HasIdentical<Customs.Sexuality>(pOpponents) &&
                 !pMine.Has(Customs.Sexuality.Moderate_sexuality) &&
                 !pOpponents.Has(Customs.Sexuality.Moderate_sexuality))
             {
@@ -2735,7 +2735,7 @@ namespace Socium
                 sNegativeReasons += " (-1) [SOC] " + pOpponents.ValueOf<Customs.Sexuality>().ToString().Replace('_', ' ').ToLower() + "\n";
             }
 
-            if (pMine.ValueOf<Customs.SexualOrientation>() != pOpponents.ValueOf<Customs.SexualOrientation>() && 
+            if (!pMine.HasIdentical<Customs.SexualOrientation>(pOpponents) && 
                 !pMine.Has(Customs.SexualOrientation.Bisexual) &&
                 !pOpponents.Has(Customs.Sexuality.Puritan))
             {
@@ -2937,7 +2937,7 @@ namespace Socium
         /// "is very clever crature ... could have only a few children during whole lifetime, which are mostly females."
         /// </summary>
         /// <returns></returns>
-        public string GetFenotypeComparsion(Fenotype pOriginal)
+        public string GetFenotypeComparsion(Phenotype pOriginal)
         {
             if (pOriginal.IsIdentical(m_pFenotype))
                 return "";
@@ -2947,11 +2947,11 @@ namespace Socium
             //if (!pOriginal.m_pBrain.IsIdentical(m_pFenotype.m_pBrain))
             //    sResult += "is a " + m_pFenotype.m_pBrain.GetDescription(false) + ".";
 
-            if (!pOriginal.m_pHead.IsIdentical(m_pFenotype.m_pHead) ||
-                !pOriginal.m_pArms.IsIdentical(m_pFenotype.m_pArms) ||
-                !pOriginal.m_pLegs.IsIdentical(m_pFenotype.m_pLegs) ||
-                !pOriginal.m_pWings.IsIdentical(m_pFenotype.m_pWings) ||
-                !pOriginal.m_pTail.IsIdentical(m_pFenotype.m_pTail))
+            if (!pOriginal.HasIdentical<HeadGenetix>(m_pFenotype) ||
+                !pOriginal.HasIdentical<ArmsGenetix>(m_pFenotype) ||
+                !pOriginal.HasIdentical<LegsGenetix>(m_pFenotype) ||
+                !pOriginal.HasIdentical<WingsGenetix>(m_pFenotype) ||
+                !pOriginal.HasIdentical<TailGenetix>(m_pFenotype))
             {
                 if (sResult != "")
                     sResult += " ";
@@ -2959,19 +2959,19 @@ namespace Socium
                 sResult += m_eGender == Gender.Male ? "He has " : "She has ";
 
                 bool bSemicolon = false;
-                if (!pOriginal.m_pHead.IsIdentical(m_pFenotype.m_pHead))
+                if (!pOriginal.HasIdentical<HeadGenetix>(m_pFenotype))
                 {
-                    sResult += m_pFenotype.m_pHead.GetDescription();
+                    sResult += m_pFenotype.ValueOf<HeadGenetix>().GetDescription();
                     bSemicolon = true;
                 }
 
-                if (!pOriginal.m_pArms.IsIdentical(m_pFenotype.m_pArms))
+                if (!pOriginal.HasIdentical<ArmsGenetix>(m_pFenotype))
                 {
-                    if (m_pFenotype.m_pArms.m_eArmsCount != ArmsCount.None)
+                    if (m_pFenotype.ValueOf<ArmsGenetix>().m_eArmsCount != ArmsCount.None)
                     {
                         if (bSemicolon)
                             sResult += ", ";
-                        sResult += m_pFenotype.m_pArms.GetDescription();
+                        sResult += m_pFenotype.ValueOf<ArmsGenetix>().GetDescription();
 
                         bSemicolon = true;
                     }
@@ -2983,22 +2983,22 @@ namespace Socium
                     }
                 }
 
-                if (!pOriginal.m_pLegs.IsIdentical(m_pFenotype.m_pLegs))
+                if (!pOriginal.HasIdentical<LegsGenetix>(m_pFenotype))
                 {
                     if (bSemicolon)
                         sResult += ", ";
-                    sResult += m_pFenotype.m_pLegs.GetDescription();
+                    sResult += m_pFenotype.ValueOf<LegsGenetix>().GetDescription();
 
                     bSemicolon = true;
                 }
 
-                if (!pOriginal.m_pWings.IsIdentical(m_pFenotype.m_pWings))
+                if (!pOriginal.HasIdentical<WingsGenetix>(m_pFenotype))
                 {
-                    if (m_pFenotype.m_pWings.m_eWingsCount != WingsCount.None)
+                    if (m_pFenotype.ValueOf<WingsGenetix>().m_eWingsCount != WingsCount.None)
                     {
                         if (bSemicolon)
                             sResult += ", ";
-                        sResult += m_pFenotype.m_pWings.GetDescription();
+                        sResult += m_pFenotype.ValueOf<WingsGenetix>().GetDescription();
 
                         bSemicolon = true;
                     }
@@ -3010,13 +3010,13 @@ namespace Socium
                     }
                 }
 
-                if (!pOriginal.m_pTail.IsIdentical(m_pFenotype.m_pTail))
+                if (!pOriginal.HasIdentical<TailGenetix>(m_pFenotype))
                 {
-                    if (m_pFenotype.m_pTail.m_eTailLength != TailLength.None)
+                    if (m_pFenotype.ValueOf<TailGenetix>().m_eTailLength != TailLength.None)
                     {
                         if (bSemicolon)
                             sResult += " and ";
-                        sResult += m_pFenotype.m_pTail.GetDescription();
+                        sResult += m_pFenotype.ValueOf<TailGenetix>().GetDescription();
                     }
                     else
                     {
@@ -3029,72 +3029,72 @@ namespace Socium
                 sResult += ".";
             }
 
-            if (!pOriginal.m_pBody.IsIdentical(m_pFenotype.m_pBody) ||
-                !pOriginal.m_pHide.IsIdentical(m_pFenotype.m_pHide))
+            if (!pOriginal.HasIdentical<BodyGenetix>(m_pFenotype) ||
+                !pOriginal.HasIdentical<HideGenetix>(m_pFenotype))
             {
                 if (sResult != "")
                     sResult += " ";
 
                 bool bSemicolon = false;
-                if (!pOriginal.m_pBody.IsIdentical(m_pFenotype.m_pBody))
+                if (!pOriginal.HasIdentical<BodyGenetix>(m_pFenotype))
                 {
-                    sResult += (m_eGender == Gender.Male ? "He is a " : "She is a ") + m_pFenotype.m_pBody.GetDescription(m_eGender);
+                    sResult += (m_eGender == Gender.Male ? "He is a " : "She is a ") + m_pFenotype.ValueOf<BodyGenetix>().GetDescription(m_eGender);
                     bSemicolon = true;
                 }
                 else
                     sResult += (m_eGender == Gender.Male ? "He " : "She ") + "has ";
 
-                if (!pOriginal.m_pHide.IsIdentical(m_pFenotype.m_pHide))
+                if (!pOriginal.HasIdentical<HideGenetix>(m_pFenotype))
                 {
                     if (bSemicolon)
                         sResult += " with ";
-                    sResult += m_pFenotype.m_pHide.GetDescription();
+                    sResult += m_pFenotype.ValueOf<HideGenetix>().GetDescription();
                 }
 
                 sResult += ".";
 
-                sResult += m_pFenotype.m_pBody.GetDescription2(m_eGender);
+                sResult += m_pFenotype.ValueOf<BodyGenetix>().GetDescription2(m_eGender);
             }
 
-            if (!pOriginal.m_pEyes.IsIdentical(m_pFenotype.m_pEyes) ||
-                !pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars) ||
-                !pOriginal.m_pFace.IsIdentical(m_pFenotype.m_pFace))
+            if (!pOriginal.HasIdentical<EyesGenetix>(m_pFenotype) ||
+                !pOriginal.HasIdentical<EarsGenetix>(m_pFenotype) ||
+                !pOriginal.HasIdentical<FaceGenetix>(m_pFenotype))
             {
                 if (sResult != "")
                     sResult += " ";
 
                 bool bSemicolon = false;
-                if (!pOriginal.m_pEyes.IsIdentical(m_pFenotype.m_pEyes) ||
-                    !pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars))
+                if (!pOriginal.HasIdentical<EyesGenetix>(m_pFenotype) ||
+                    !pOriginal.HasIdentical<EarsGenetix>(m_pFenotype))
                 {
                     sResult += m_eGender == Gender.Male ? "He has " : "She has ";
 
-                    if (!pOriginal.m_pEyes.IsIdentical(m_pFenotype.m_pEyes))
+                    if (!pOriginal.HasIdentical<EyesGenetix>(m_pFenotype))
                     {
-                        sResult += m_pFenotype.m_pEyes.GetDescription();
+                        sResult += m_pFenotype.ValueOf<EyesGenetix>().GetDescription();
                         bSemicolon = true;
                     }
 
-                    if (!pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars))
+                    if (!pOriginal.HasIdentical<EarsGenetix>(m_pFenotype))
                     {
                         if (bSemicolon)
                             sResult += " and ";
 
-                        sResult += m_pFenotype.m_pEars.GetDescription() + " of ";
+                        sResult += m_pFenotype.ValueOf<EarsGenetix>().GetDescription() + " of ";
                     }
                     else
                     {
-                        if (bSemicolon && !pOriginal.m_pFace.IsIdentical(m_pFenotype.m_pFace))
+                        if (bSemicolon && !pOriginal.HasIdentical<FaceGenetix>(m_pFenotype))
                             sResult += " at ";
                     }
                 }
                 else
                     sResult += m_eGender == Gender.Male ? "He has " : "She has ";
 
-                if (!pOriginal.m_pFace.IsIdentical(m_pFenotype.m_pFace))
-                    sResult += m_pFenotype.m_pFace.GetDescription();
+                if (!pOriginal.HasIdentical<FaceGenetix>(m_pFenotype))
+                    sResult += m_pFenotype.ValueOf<FaceGenetix>().GetDescription();
                 else
-                    if (!pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars))
+                    if (!pOriginal.HasIdentical<EarsGenetix>(m_pFenotype))
                         sResult += "the head";// m_pFace.m_eNoseType == NoseType.Normal ? "face" : "muzzle";
 
                 sResult += ".";
@@ -3108,14 +3108,14 @@ namespace Socium
                 if (sResult != "")
                     sResult += " ";
 
-                if (m_pFenotype.m_pHairs.GetDescription() != "")
-                    sResult += m_pFenotype.m_pHairs.GetDescription(m_eGender);
+                if (m_pFenotype.ValueOf<HairsGenetix>().GetDescription() != "")
+                    sResult += m_pFenotype.ValueOf<HairsGenetix>().GetDescription(m_eGender);
                 else
                     sResult = "Both males and females are bald, and have no beard or moustache.";
             }
 
-            if ((pOriginal.m_pLifeCycle.m_eDyingRate == DyingRate.High && m_eAge > _Age.Adult) ||
-                (pOriginal.m_pLifeCycle.m_eDyingRate == DyingRate.Moderate && m_eAge > _Age.Aged))
+            if ((pOriginal.ValueOf<LifeCycleGenetix>().m_eDyingRate == DyingRate.High && m_eAge > _Age.Adult) ||
+                (pOriginal.ValueOf<LifeCycleGenetix>().m_eDyingRate == DyingRate.Moderate && m_eAge > _Age.Aged))
             {
                 if (sResult != "")
                     sResult += " ";
@@ -3123,7 +3123,7 @@ namespace Socium
                 sResult += (m_eGender == Gender.Male ? "He" : "She") + " looks very old for " + (m_eGender == Gender.Male ? "his" : "her") + " age.";
             }
 
-            if ((pOriginal.m_pLifeCycle.m_eDyingRate == DyingRate.Low && m_eAge > _Age.Adult))
+            if ((pOriginal.ValueOf<LifeCycleGenetix>().m_eDyingRate == DyingRate.Low && m_eAge > _Age.Adult))
             {
                 if (sResult != "")
                     sResult += " ";

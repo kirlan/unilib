@@ -372,7 +372,7 @@ namespace Socium
                 pLand.m_pNation = m_pSociety.m_pTitularNation;
 
             // если у нас нация паразитов или пришельцев, то они сами живут только в метрополии, а во всей остальной империи коренное население - местное
-            if (m_pSociety.m_pTitularNation.DominantFenotype.m_pBody.IsParasite() || m_pSociety.m_pTitularNation.m_bInvader)
+            if (m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BodyGenetix>().IsParasite() || m_pSociety.m_pTitularNation.m_bInvader)
             {
                 foreach (Province pProvince in m_cContents)
                 {
@@ -456,17 +456,17 @@ namespace Socium
                     case NutritionType.Carnivorous:
                         return iGame + iFish;
                     default:
-                        throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pSociety.m_pTitularNation.DominantFenotype.m_pBody.m_eNutritionType));
+                        throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BodyGenetix>().m_eNutritionType));
                 }
             }
 
-            float fMethropolySatiety = (float)getFood(m_pSociety.m_pTitularNation.DominantFenotype.m_pBody.m_eNutritionType) / iMethropolyPopulation;
-            float fProvincialSatiety = (float)getFood(m_pSociety.m_pHostNation.DominantFenotype.m_pBody.m_eNutritionType) / iProvincialPopulation;
+            float fMethropolySatiety = (float)getFood(m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BodyGenetix>().m_eNutritionType) / iMethropolyPopulation;
+            float fProvincialSatiety = (float)getFood(m_pSociety.m_pHostNation.DominantFenotype.ValueOf<BodyGenetix>().m_eNutritionType) / iProvincialPopulation;
 
             if (fMethropolySatiety > 2)
                 fMethropolySatiety = 2;
 
-            if (m_pSociety.m_pTitularNation.DominantFenotype.m_pBody.IsParasite())
+            if (m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BodyGenetix>().IsParasite())
             {
                 // для паразитов качество их питания зависит от качества питания их жертв
                 m_iFood = (int)(fMethropolySatiety * fProvincialSatiety * m_iPopulation);
@@ -991,9 +991,9 @@ namespace Socium
                                         else if (m_pSociety.DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                             fScience = 0.5f;
 
-                                        if (m_pSociety.m_pTitularNation.DominantFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                        if (m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
                                             fScience *= 2;
-                                        if (m_pSociety.m_pTitularNation.DominantFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                        if (m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious)
                                             fScience *= 4;
 
                                         cResources.Add(fScience);
@@ -1081,9 +1081,9 @@ namespace Socium
                                         else if (m_pSociety.DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                             fScience = 0.5f;
 
-                                        if (m_pSociety.m_pTitularNation.DominantFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                        if (m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
                                             fScience *= 2;
-                                        if (m_pSociety.m_pTitularNation.DominantFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                        if (m_pSociety.m_pTitularNation.DominantFenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious)
                                             fScience *= 4;
 
                                         cResources.Add(fScience);

@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Genetix\ArmsGenetix.cs" />
-    <Compile Include="Fenotype.cs" />
+    <Compile Include="Phenotype.cs" />
     <Compile Include="GenetixBase.cs" />
     <Compile Include="Genetix\BodyGenetix.cs" />
     <Compile Include="Genetix\BrainGenetix.cs" />

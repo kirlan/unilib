@@ -121,23 +121,44 @@ namespace Socium.Psychology
 
         private Dictionary<Type, dynamic> m_cCustoms = new Dictionary<Type, dynamic>();
 
-        public void Accept<T>(T value)
+        public void Accept<T>(T value) where T : Enum
         {
             m_cCustoms[typeof(T)] = value;
         }
 
-        public dynamic ValueOf<T>()
+        public T ValueOf<T>() where T : Enum
         {
             return m_cCustoms[typeof(T)];
         }
 
-        public bool Has<T>(T value)
+        public bool Has<T>(T value) where T : Enum
         {
             dynamic storedValue;
             if (!m_cCustoms.TryGetValue(typeof(T), out storedValue))
                 return false;
 
             return storedValue == value;
+        }
+
+        public bool HasIdentical<T>(Customs pOther) where T : Enum
+        {
+            return HasIdentical(typeof(T), pOther);
+        }
+
+        public bool HasIdentical(Type customType, Customs pOther)
+        {
+            if (pOther == null)
+                return false;
+
+            dynamic storedValue;
+            if (!m_cCustoms.TryGetValue(customType, out storedValue))
+                return false;
+
+            dynamic storedValueOther;
+            if (!pOther.m_cCustoms.TryGetValue(customType, out storedValueOther))
+                return false;
+
+            return storedValue == storedValueOther;
         }
 
         public List<BodyModificationsTypes> m_cMandatoryModifications = new List<BodyModificationsTypes>();
@@ -206,7 +227,7 @@ namespace Socium.Psychology
             Mandatory
         }
 
-        private bool TrySimpleMutation<T>(Type selectedCustom, T middleValue, T majorValue, T minorValue, int majorWeight = 1, int minorWeight = 1)
+        private bool TrySimpleMutation<T>(Type selectedCustom, T middleValue, T majorValue, T minorValue, int majorWeight = 1, int minorWeight = 1) where T : Enum
         {
             if (selectedCustom != typeof(T))
                 return false;
@@ -311,26 +332,26 @@ namespace Socium.Psychology
                     throw new Exception("Customs not changed!");
         }
 
-        public void ApplyFenotype(Fenotype pFenotype)
+        public void ApplyFenotype(Phenotype pFenotype)
         {
-            if (pFenotype.m_pEars.m_eEarsType == EarsType.None)
+            if (pFenotype.ValueOf<EarsGenetix>().m_eEarsType == EarsType.None)
             {
                 if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Small_Ear_Rings))
                     m_cMandatoryModifications.Remove(BodyModificationsTypes.Small_Ear_Rings);
                 if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Huge_Ear_Rings))
                     m_cMandatoryModifications.Remove(BodyModificationsTypes.Huge_Ear_Rings);
             }
-            if (pFenotype.m_pFace.m_eNoseType == NoseType.None)
+            if (pFenotype.ValueOf<FaceGenetix>().m_eNoseType == NoseType.None)
             {
                 if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Nose_Ring))
                     m_cMandatoryModifications.Remove(BodyModificationsTypes.Nose_Ring);
             }
 
-            if (pFenotype.m_pHairs.m_eHairs == HairsAmount.None)
+            if (pFenotype.ValueOf<HairsGenetix>().m_eHairs == HairsAmount.None)
             {
                 Accept(Hairstyle.Bald_Heads);
             }
-            if (pFenotype.m_pHairs.m_eBeard == HairsAmount.None)
+            if (pFenotype.ValueOf<HairsGenetix>().m_eBeard == HairsAmount.None)
             {
                 Accept(Beard.Shaved_Faces);
             }
@@ -795,7 +816,7 @@ namespace Socium.Psychology
         {
             string sResult = "";
 
-            if (ValueOf<GenderPriority>() != pOther.ValueOf<GenderPriority>())
+            if (!HasIdentical<GenderPriority>(pOther))
             {
                 if (Has(GenderPriority.Patriarchy))
                     sResult += "proclaims males supremacy";
@@ -805,7 +826,7 @@ namespace Socium.Psychology
                     sResult += "has no gender prevalence";
             }
 
-            if (ValueOf<MindSet>() != pOther.ValueOf<MindSet>())
+            if (!HasIdentical<MindSet>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -818,7 +839,7 @@ namespace Socium.Psychology
                     sResult += "combines emotions and logic";
             }
 
-            if (ValueOf<Magic>() != pOther.ValueOf<Magic>())
+            if (!HasIdentical<Magic>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -831,7 +852,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Magic.Magic_Feared) ? "has no fear for magic" : "doesn't like magic too much";
             }
 
-            if (ValueOf<BodyModifications>() != pOther.ValueOf<BodyModifications>() || !ListsEqual(m_cMandatoryModifications, pOther.m_cMandatoryModifications))
+            if (!HasIdentical<BodyModifications>(pOther) || !ListsEqual(m_cMandatoryModifications, pOther.m_cMandatoryModifications))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -882,7 +903,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(BodyModifications.Body_Modifications_Blamed) ? "allowed to have some tatoo or pierceing" : "could have tatoo or pierceing on their choice";
             }
 
-            if (ValueOf<Clothes>() != pOther.ValueOf<Clothes>())
+            if (!HasIdentical<Clothes>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -895,7 +916,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Clothes.Covering_Clothes) ? "wears revealing clothes" : "wears covering clothes";
             }
 
-            if (ValueOf<Hairstyle>() != pOther.ValueOf<Hairstyle>())
+            if (!HasIdentical<Hairstyle>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -908,7 +929,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Hairstyle.Bald_Heads) ? "not shaves their heads" : "not spends enough efforts on their hairs";
             }
 
-            if (ValueOf<Beard>() != pOther.ValueOf<Beard>())
+            if (!HasIdentical<Beard>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -921,7 +942,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Beard.Shaved_Faces) ? "has hairs on their faces" : "not grooming their beards properly";
             }
 
-            if (ValueOf<Adornments>() != pOther.ValueOf<Adornments>())
+            if (!HasIdentical<Adornments>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -934,7 +955,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Adornments.No_Adornments) ? "could use some jevelry" : "uses not so much jevelry";
             }
 
-            if (ValueOf<Science>() != pOther.ValueOf<Science>())
+            if (!HasIdentical<Science>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -947,7 +968,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Science.Technophobia) ? "have no fear of novelties" : "doesn't like novelties so much";
             }
 
-            if (ValueOf<FamilyValues>() != pOther.ValueOf<FamilyValues>())
+            if (!HasIdentical<FamilyValues>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -960,7 +981,7 @@ namespace Socium.Psychology
                     sResult += "not so bound to family";
             }
 
-            if (ValueOf<Sexuality>() != pOther.ValueOf<Sexuality>())
+            if (!HasIdentical<Sexuality>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -973,7 +994,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Sexuality.Puritan) ? "likes to have sex for fun and pleasure" : "less interested in sex";
             }
 
-            if (ValueOf<SexualOrientation>() != pOther.ValueOf<SexualOrientation>())
+            if (!HasIdentical<SexualOrientation>(pOther))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -986,7 +1007,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(SexualOrientation.Heterosexual) ? "allows homosexual relations" : "allows heterosexual relations";
             }
 
-            if (ValueOf<MarriageType>() != pOther.ValueOf<MarriageType>())
+            if (!HasIdentical<MarriageType>(pOther))
             {
                 if (sResult != "")
                     sResult += " and ";
@@ -1110,9 +1131,9 @@ namespace Socium.Psychology
             return GetDifference(pOpponent, ref s1, ref s2);
         }
 
-        private void CheckDifference<T>(Customs pOpponent, T middleValue, ref int iHostility, ref string sPositiveReasons, ref string sNegativeReasons)
+        private void CheckDifference<T>(Customs pOpponent, T middleValue, ref int iHostility, ref string sPositiveReasons, ref string sNegativeReasons) where T : Enum, IComparable
         {
-            if (ValueOf<T>() == pOpponent.ValueOf<T>())
+            if (HasIdentical<T>(pOpponent))
             {
                 iHostility--;
                 sPositiveReasons += " (+1) " + pOpponent.ValueOf<T>().ToString().Replace('_', ' ') + "\n";
@@ -1167,7 +1188,7 @@ namespace Socium.Psychology
 
             CheckDifference(pOpponent, Magic.Magic_Allowed, ref iHostility, ref sPositiveReasons, ref sNegativeReasons);
 
-            if (ValueOf<BodyModifications>() == pOpponent.ValueOf<BodyModifications>())
+            if (HasIdentical<BodyModifications>(pOpponent))
             {
                 if (!Has(BodyModifications.Body_Modifications_Mandatory) || ListsEqual(m_cMandatoryModifications, pOpponent.m_cMandatoryModifications))
                 {

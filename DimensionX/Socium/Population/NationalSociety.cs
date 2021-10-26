@@ -133,7 +133,7 @@ namespace Socium.Population
 
         internal float GetAvailableFood(float fWood, float fOre, float fGrain, float fGame, float fFish, int iPopulation)
         { 
-            switch (m_pTitularNation.DominantFenotype.m_pBody.m_eNutritionType)
+            switch (m_pTitularNation.DominantFenotype.ValueOf<BodyGenetix>().m_eNutritionType)
             {
                 case NutritionType.Eternal:
                     return iPopulation* 10;
@@ -158,7 +158,7 @@ namespace Socium.Population
                 case NutritionType.Carnivorous:
                     return fGame + fFish;
                 default:
-                    throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pTitularNation.DominantFenotype.m_pBody.m_eNutritionType));
+                    throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pTitularNation.DominantFenotype.ValueOf<BodyGenetix>().m_eNutritionType));
             }
 }
     }
