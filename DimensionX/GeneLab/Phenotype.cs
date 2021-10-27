@@ -131,9 +131,25 @@ namespace GeneLab
             string sResult = "";
 
             if (!pOriginal.HasIdentical<BrainGenetix>(this))
-                sResult += "are " + ValueOf<BrainGenetix>().GetDescription() + ".";
+                sResult += ValueOf<BrainGenetix>().GetDescription() + ".";
 
-            if (!pOriginal.HasIdentical<HeadGenetix>(this) ||
+            if (!pOriginal.HasIdentical<HeadGenetix>(this))
+            {
+                if (sResult != "")
+                    sResult += " They ";
+
+                sResult += "have ";
+
+                if (!pOriginal.HasIdentical<HeadGenetix>(this))
+                {
+                    sResult += ValueOf<HeadGenetix>().GetDescription();
+                }
+
+                sResult += ".";
+            }
+
+            if (!pOriginal.HasIdentical<BodyGenetix>(this) ||
+                !pOriginal.HasIdentical<HideGenetix>(this) ||
                 !pOriginal.HasIdentical<ArmsGenetix>(this) ||
                 !pOriginal.HasIdentical<LegsGenetix>(this) ||
                 !pOriginal.HasIdentical<WingsGenetix>(this) ||
@@ -144,55 +160,46 @@ namespace GeneLab
 
                 sResult += "have ";
 
-                bool bSemicolon = false;
-                if (!pOriginal.HasIdentical<HeadGenetix>(this))
+                List<string> cBodyDescription = new List<string>();
+
+                bool bBody = false;
+                if (!pOriginal.HasIdentical<BodyGenetix>(this))
                 {
-                    sResult += ValueOf<HeadGenetix>().GetDescription();
-                    bSemicolon = true;
+                    cBodyDescription.Add(ValueOf<BodyGenetix>().GetDescription());
+                    bBody = true;
+                }
+
+                if (!pOriginal.HasIdentical<HideGenetix>(this))
+                {
+                    cBodyDescription.Add(ValueOf<HideGenetix>().GetDescription());
                 }
 
                 if (!pOriginal.HasIdentical<ArmsGenetix>(this))
                 {
                     if (ValueOf<ArmsGenetix>().m_eArmsCount != ArmsCount.None)
                     {
-                        if (bSemicolon)
-                            sResult += ", ";
-                        sResult += ValueOf<ArmsGenetix>().GetDescription();
-
-                        bSemicolon = true;
+                        cBodyDescription.Add(ValueOf<ArmsGenetix>().GetDescription());
                     }
                     else
                     {
-                        if (bSemicolon)
-                            sResult += ", ";
-                        sResult += "no arms";
+                        cBodyDescription.Add("no arms");
                     }
                 }
 
                 if (!pOriginal.HasIdentical<LegsGenetix>(this))
                 {
-                    if (bSemicolon)
-                        sResult += ", ";
-                    sResult += ValueOf<LegsGenetix>().GetDescription();
-
-                    bSemicolon = true;
+                    cBodyDescription.Add(ValueOf<LegsGenetix>().GetDescription());
                 }
 
                 if (!pOriginal.HasIdentical<WingsGenetix>(this))
                 {
                     if (ValueOf<WingsGenetix>().m_eWingsCount != WingsCount.None)
                     {
-                        if (bSemicolon)
-                            sResult += ", ";
-                        sResult += ValueOf<WingsGenetix>().GetDescription();
-
-                        bSemicolon = true;
+                        cBodyDescription.Add(ValueOf<WingsGenetix>().GetDescription());
                     }
                     else
                     {
-                        if (bSemicolon)
-                            sResult += ", ";
-                        sResult += "no wings";
+                        cBodyDescription.Add("no wings");
                     }
                 }
 
@@ -200,41 +207,34 @@ namespace GeneLab
                 {
                     if (ValueOf<TailGenetix>().m_eTailLength != TailLength.None)
                     {
-                        if (bSemicolon)
-                            sResult += " and ";
-                        sResult += ValueOf<TailGenetix>().GetDescription();
+                        cBodyDescription.Add(ValueOf<TailGenetix>().GetDescription());
                     }
                     else
                     {
-                        if (bSemicolon)
-                            sResult += " and ";
-                        sResult += "no tail";
+                        cBodyDescription.Add("no tail");
                     }
                 }
 
-                sResult += ".";
-            }
-
-            if (!pOriginal.HasIdentical<BodyGenetix>(this) ||
-                !pOriginal.HasIdentical<HideGenetix>(this))
-            {
-                if (sResult != "")
-                    sResult += " They ";
-
-                bool bSemicolon = false;
-                if (!pOriginal.HasIdentical<BodyGenetix>(this))
+                foreach (string part in cBodyDescription)
                 {
-                    sResult += ValueOf<BodyGenetix>().GetDescription();
-                    bSemicolon = true;
-                }
-                else
-                    sResult += "have ";
+                    if (part != cBodyDescription.First())
+                    {
+                        if (bBody)
+                        {
+                            sResult += " with ";
+                            bBody = false;
+                        }
+                        else if (part == cBodyDescription.Last())
+                        {
+                            sResult += " and ";
+                        }
+                        else
+                        {
+                            sResult += ", ";
+                        }
+                    }
 
-                if (!pOriginal.HasIdentical<HideGenetix>(this))
-                {
-                    if (bSemicolon)
-                        sResult += " with ";
-                    sResult += ValueOf<HideGenetix>().GetDescription();
+                    sResult += part;
                 }
 
                 sResult += ".";

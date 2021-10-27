@@ -60,7 +60,7 @@ namespace GeneLab.Genetix
     public class BodyGenetix: GenetixBase
     {
         /// <summary>
-        /// have small and agile bodies 
+        /// small and agile bodies 
         /// </summary>
         /// <returns></returns>
         public string GetDescription()
@@ -69,7 +69,7 @@ namespace GeneLab.Genetix
         }
 
         /// <summary>
-        /// 'have tall agile bodies'
+        /// 'tall agile bodies'
         /// or, if gender specified - just
         /// 'tall agile woman'
         /// </summary>
@@ -124,7 +124,7 @@ namespace GeneLab.Genetix
                 if (eGender.HasValue)
                     return sResult + (eGender == Gender.Male ? " man" : " woman") + ".";
                 else
-                    return "have " + sResult + " bodies";
+                    return sResult + " bodies";
             }
             else
             {
@@ -140,7 +140,7 @@ namespace GeneLab.Genetix
                         sResult += " ";
 
                     if (sResult != "")
-                        return "have " + sResult + "bodies";
+                        return sResult + "bodies";
                     else
                         return "";
                 }

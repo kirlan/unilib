@@ -54,7 +54,7 @@ namespace GeneLab.Genetix
     public class BrainGenetix: GenetixBase
     {
         /// <summary>
-        /// very clever creatures with quite common mystic powers
+        /// are very clever creatures and can use some psionic abilities
         /// </summary>
         /// <returns></returns>
         public string GetDescription()
@@ -62,7 +62,7 @@ namespace GeneLab.Genetix
             return GetDescription(true);
         }
         /// <summary>
-        /// very clever creatures with quite common mystic powers
+        /// are very clever creature(s) and can use some psionic abilities
         /// </summary>
         /// <returns></returns>
         public string GetDescription(bool bPlural)
@@ -71,75 +71,61 @@ namespace GeneLab.Genetix
             switch (m_eIntelligence)
             {
                 case Intelligence.None:
-                    sIntellect = "brainless creature";
+                    sIntellect = "are brainless creature";
                     break;
                 case Intelligence.Basic:
-                    sIntellect = "not so clever creature";
+                    sIntellect = "are not so clever creature";
                     break;
                 case Intelligence.Capable:
-                    sIntellect = "very clever creature";
+                    sIntellect = "are very clever creature";
                     break;
                 case Intelligence.Primitive:
-                    sIntellect = "primitive sentient being";
+                    sIntellect = "have quite low IQ";
                     break;
                 case Intelligence.Sapient:
-                    sIntellect = "sentient being";
+                    sIntellect = "have average IQ";
                     break;
                 case Intelligence.Ingenious:
-                    sIntellect = "highly intelligent being";
+                    sIntellect = "have extremely high IQ";
                     break;
             }
 
-            if (bPlural)
+            if (bPlural && m_eIntelligence < Intelligence.Primitive)
                 sIntellect += "s";
-
-            //string sMagic = "?";
-            //switch (m_eMagicAbilityPrevalence)
-            //{
-            //    case MagicAbilityPrevalence.Rare:
-            //        sMagic = "rare";
-            //        break;
-            //    case MagicAbilityPrevalence.Common:
-            //        sMagic = "quite common";
-            //        break;
-            //    case MagicAbilityPrevalence.AlmostEveryone:
-            //        sMagic = "widespreaded";
-            //        break;
-            //}
 
             string sMagicForce = "?";
             switch (m_iMagicAbilityPotential)
             {
                 case 0:
-                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? " and mostly fictional magic abilities" : ", but */" zero magic potencial";
+                    sMagicForce = "can't use any magic";
                     break;
                 case 1:
-                    sMagicForce = " mediums potencial";
+                    sMagicForce = "can see the unseen";
                     break;
                 case 2:
-                    sMagicForce = " psionic potencial";
+                    sMagicForce = "can use some psionic abilities";
                     break;
                 case 3:
-                    sMagicForce = " supers potencial";
+                    sMagicForce = "can use super-powers";
                     break;
                 case 4:
-                    sMagicForce = " average magic potencial";
+                    sMagicForce = "can use average magic";
                     break;
                 case 5:
-                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but quite high magic abilities" : " and */" quite high magic potencial";
+                    sMagicForce = "can use powerful magic";
                     break;
                 case 6:
-                    sMagicForce = /*m_eMagicAbilityPrevalence == MagicAbilityPrevalence.Rare ? ", but extremely high magic abilities" : " and */" extremely high magic potencial";
+                    sMagicForce = "can use extremely powerful magic";
                     break;
                 case 7:
-                    sMagicForce = " god-like potencial";
+                    sMagicForce = "have a god-like supernatural potencial";
                     break;
                 case 8:
-                    sMagicForce = " omnipotence potencial";
+                    sMagicForce = "have an omnipotence supernatural potencial";
                     break;
             }
 
-            return sIntellect + " with" + /*sMagic + */sMagicForce;
+            return sIntellect + " and " + /*sMagic + */sMagicForce;
         }
 
         /// <summary>

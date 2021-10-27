@@ -88,7 +88,7 @@ namespace GeneLab.Genetix
                     sNeck = "short neck";
                     break;
                 case NeckLength.ShortRotary:
-                    sNeck = "short pivoted neck";
+                    sNeck = "short, flexible neck";
                     break;
                 case NeckLength.Long:
                     sNeck = "long neck";
@@ -127,14 +127,14 @@ namespace GeneLab.Genetix
                     sHorns = "";
                     break;
                 case Horns.Small:
-                    sHorns = " with small horns";
+                    sHorns = ", with small horns";
                     break;
                 case Horns.Big:
-                    sHorns = " with big horns";
+                    sHorns = ", with big horns";
                     break;
             }
 
-            return m_iHeadsCount.ToString() + " " + sNeck + " and " + sForm + (m_iHeadsCount == 1 ? "head" : "heads") + sHorns;
+            return (m_iHeadsCount > 1 ? m_iHeadsCount.ToString() : "single") + " " + sNeck + " with " + sForm + (m_iHeadsCount == 1 ? "head" : "heads") + sHorns;
         }
 
         /// <summary>

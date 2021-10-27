@@ -307,7 +307,7 @@ namespace VQMapTest2
                 if (sFenotypeNationM == sFenotypeNationF)
                 {
                     if (!sFenotypeNationM.StartsWith("are"))
-                        sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
+                        sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however they " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
                     richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " " + sFenotypeNationM);
                 }
                 else
@@ -315,7 +315,7 @@ namespace VQMapTest2
                     if (sFenotypeNationM != "")
                     {
                         if (!sFenotypeNationM.StartsWith("are"))
-                            sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
+                            sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however they " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
                         richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " males " + sFenotypeNationM);
                     }
 
@@ -325,7 +325,7 @@ namespace VQMapTest2
                             richTextBox1.AppendText("\n");
 
                         if (!sFenotypeNationF.StartsWith("are"))
-                            sFenotypeNationF = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationF.Substring(0, 1).ToLower() + sFenotypeNationF.Substring(1);
+                            sFenotypeNationF = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however they " + sFenotypeNationF.Substring(0, 1).ToLower() + sFenotypeNationF.Substring(1);
                         richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " females " + sFenotypeNationF);
                     }
                 }

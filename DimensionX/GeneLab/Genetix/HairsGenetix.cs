@@ -91,20 +91,6 @@ namespace GeneLab.Genetix
                 return "";
 
             string sColors = "";
-            if (m_eHairsType == HairsType.Tentackles)
-            {
-                if (m_cHairColors.Count == 1)
-                    sColors = "Most common 'hairs' color is ";
-                else
-                    sColors = "Most common 'hairs' colors are ";
-            }
-            else
-            {
-                if (m_cHairColors.Count == 1)
-                    sColors = "Most common hairs color is ";
-                else
-                    sColors = "Most common hairs colors are ";
-            }
 
             bool bColorsFull = false;
             for (int i = 0; i < m_cHairColors.Count; i++)
@@ -114,7 +100,7 @@ namespace GeneLab.Genetix
                     if (m_cHairColors[i] != HairsColor.Hide)
                     {
                         if (i == m_cHairColors.Count - 1)
-                            sColors += " and ";
+                            sColors += " or ";
                         else
                             sColors += ", ";
                     }
@@ -158,7 +144,12 @@ namespace GeneLab.Genetix
             if (!bColorsFull)
                 sColors = "";
             else
-                sColors = " " + sColors + ".";
+            {
+                if (m_cHairColors.Count == 1)
+                    sColors = " of " + sColors + " color.";
+                else
+                    sColors = " of " + sColors + " colors.";
+            }
 
             string sHairs = "?";
 
@@ -195,18 +186,21 @@ namespace GeneLab.Genetix
                                 break;
                         }
 
-                        sHairs = "have ";
-
-                        if (sHair == "")
-                            sHairs += sBeard;
-                        else
-                            if (sBeard == "")
-                                sHairs += sHair;
-                            else
-                                sHairs += sHair + " and " + sBeard;
-
-                        if (sHairs == "have ")
+                        if (sHair == "" && sBeard == "")
+                        {
                             sHairs = "";
+                        }
+                        else
+                        {
+                            sHairs = "have ";
+
+                            if (sHair == "")
+                                sHairs += sBeard + sColors;
+                            else if (sBeard == "")
+                                sHairs += sHair + sColors;
+                            else
+                                sHairs += sHair + sColors + " and " + sBeard;
+                        }
                     }
                     break;
                 case HairsType.Hair:
@@ -244,11 +238,14 @@ namespace GeneLab.Genetix
                             if (m_eBeard == HairsAmount.None)
                                 sHairs = "are bald, and have " + sBeard;
                             else
-                                sHairs = "are bald, but have " + sBeard;
+                                sHairs = "are bald, but have " + sBeard + sColors;
                         }
                         else
                         {
-                            sHairs += sHair + " and " + sBeard;
+                            if (m_eBeard == HairsAmount.None)
+                                sHairs = sHair + sColors + " and " + sBeard;
+                            else
+                                sHairs = sHair + " and " + sBeard + sColors;
                         }
                     }
                     break;
@@ -280,23 +277,26 @@ namespace GeneLab.Genetix
                                 break;
                         }
 
-                        sHairs = "have ";
-
-                        if (sHair == "")
-                            sHairs += sBeard;
-                        else
-                            if (sBeard == "")
-                                sHairs += sHair;
-                            else
-                                sHairs += sHair + " and " + sBeard;
-
-                        if (sHairs == "have ")
+                        if (sHair == "" && sBeard == "")
+                        {
                             sHairs = "";
+                        }
+                        else
+                        {
+                            sHairs = "have ";
+
+                            if (sHair == "")
+                                sHairs += sBeard + sColors;
+                            else if (sBeard == "")
+                                sHairs += sHair + sColors;
+                            else
+                                sHairs += sHair + " and " + sBeard + sColors;
+                        }
                     }
                     break;
             }
 
-            return sHairs + "." + sColors;
+            return sHairs;
         }
 
         /// <summary>
