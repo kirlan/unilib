@@ -42,7 +42,7 @@ namespace Socium.Population
         /// <summary>
         /// Государство, которому принадлежит сословие
         /// </summary>
-        private State m_pState;
+        //private State m_pState;
 
         public bool IsSegregated()
         {
