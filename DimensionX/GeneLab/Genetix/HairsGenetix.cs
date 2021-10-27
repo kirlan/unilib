@@ -146,9 +146,9 @@ namespace GeneLab.Genetix
             else
             {
                 if (m_cHairColors.Count == 1)
-                    sColors = " of " + sColors + " color.";
+                    sColors = " of " + sColors + " color";
                 else
-                    sColors = " of " + sColors + " colors.";
+                    sColors = " of " + sColors + " colors";
             }
 
             string sHairs = "?";
@@ -243,9 +243,9 @@ namespace GeneLab.Genetix
                         else
                         {
                             if (m_eBeard == HairsAmount.None)
-                                sHairs = sHair + sColors + " and " + sBeard;
+                                sHairs += sHair + sColors + " and " + sBeard;
                             else
-                                sHairs = sHair + " and " + sBeard + sColors;
+                                sHairs += sHair + " and " + sBeard + sColors;
                         }
                     }
                     break;
@@ -296,7 +296,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return sHairs;
+            return sHairs + ".";
         }
 
         /// <summary>
