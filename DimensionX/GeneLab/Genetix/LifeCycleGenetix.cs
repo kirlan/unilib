@@ -80,13 +80,13 @@ namespace GeneLab.Genetix
             switch (m_eDyingRate)
             {
                 case DyingRate.Low:
-                    sDeath = "lives really long";
+                    sDeath = "an extremely long life span";
                     break;
                 case DyingRate.Moderate:
-                    sDeath = "lives moderately long";
+                    sDeath = "an average life span";
                     break;
                 case DyingRate.High:
-                    sDeath = "dies early";
+                    sDeath = "a short life span";
                     break;
             }
 
@@ -94,25 +94,22 @@ namespace GeneLab.Genetix
             switch (m_eBirthRate)
             {
                 case BirthRate.Low:
-                    sBirth = "borns quite rarely";
+                    sBirth = "a quite low birthrate";
                     break;
                 case BirthRate.Moderate:
-                    sBirth = "borns at usual rate";
+                    sBirth = "an average birthrate";
                     break;
                 case BirthRate.High:
-                    sBirth = "borns quite often";
+                    sBirth = "a quite high birthrate";
                     break;
             }
 
             if (sDeath != "" && sBirth != "")
             {
-                if (m_eDyingRate == DyingRate.High)
-                    sDeath += ", but ";
-                else
-                    sDeath += " and ";
+                sDeath += " and ";
             }
 
-            return sDeath + sBirth;
+            return "have " + sDeath + sBirth;
         }
         
         /// <summary>
