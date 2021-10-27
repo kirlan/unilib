@@ -1020,9 +1020,9 @@ namespace Socium.Nations
         public int m_iRank;
         public Language m_pLanguage;
 
-        public Phenotype<LandTypeInfoX> m_pFenotypeM;
+        public Phenotype<LandTypeInfoX> m_pPhenotypeM;
 
-        public Phenotype<LandTypeInfoX> m_pFenotypeF;
+        public Phenotype<LandTypeInfoX> m_pPhenotypeF;
 
         public List<Nation> m_cNations = new List<Nation>();
 
@@ -1035,10 +1035,10 @@ namespace Socium.Nations
 
             m_pLanguage = pLanguage;
 
-            m_pFenotypeM = (Phenotype<LandTypeInfoX>)pFenotypeM.MutateRace();
-            if (m_pFenotypeM.ValueOf<HairsGenetix>().m_cHairColors.Count == 0 &&
-                (m_pFenotypeM.ValueOf<HairsGenetix>().m_eHairs != HairsAmount.None ||
-                 m_pFenotypeM.ValueOf<HairsGenetix>().m_eBeard != HairsAmount.None))
+            m_pPhenotypeM = (Phenotype<LandTypeInfoX>)pFenotypeM.MutateRace();
+            if (m_pPhenotypeM.ValueOf<HairsGenetix>().m_cHairColors.Count == 0 &&
+                (m_pPhenotypeM.ValueOf<HairsGenetix>().m_eHairs != HairsAmount.None ||
+                 m_pPhenotypeM.ValueOf<HairsGenetix>().m_eBeard != HairsAmount.None))
                 throw new Exception();
 
             if (pFenotypeF == null)
