@@ -94,7 +94,21 @@ namespace GeneLab
                 sResult = "are just humans.";
 
             if (!sResult.StartsWith("are"))
-                sResult = "are quite common humans." + sResult;
+            {
+                if (ValueOf<LegsGenetix>().m_eLegsCount != GetHumanEtalon().ValueOf<LegsGenetix>().m_eLegsCount)
+                {
+                    sResult = "are sentient creatures. They " + sResult;
+                }
+                else if (ValueOf<ArmsGenetix>().m_eArmsCount != GetHumanEtalon().ValueOf<ArmsGenetix>().m_eArmsCount ||
+                    ValueOf<ArmsGenetix>().m_eArmsType != GetHumanEtalon().ValueOf<ArmsGenetix>().m_eArmsType)
+                {
+                    sResult = "are human-like creatures. They " + sResult;
+                }
+                else
+                {
+                    sResult = "are quite common humans. They " + sResult;
+                }
+            }
 
             return sResult;
         }
@@ -502,6 +516,11 @@ namespace GeneLab
             }
 
             return pNew;
+        }
+
+        public override string ToString()
+        {
+            return GetDescription();
         }
     }
 

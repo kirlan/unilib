@@ -296,7 +296,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return "They " + sHairs + "." + sColors;
+            return sHairs + "." + sColors;
         }
 
         /// <summary>
