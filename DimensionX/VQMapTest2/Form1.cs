@@ -301,17 +301,34 @@ namespace VQMapTest2
                 richTextBox1.AppendText(".\n\n");
 
                 string sFenotypeNationM = pSociety.m_pTitularNation.m_pPhenotypeM.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM);
-                if (!sFenotypeNationM.StartsWith("are"))
-                    sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
-                richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " males " + sFenotypeNationM);
+                //var expectedFenotypeF = GeneLab.Phenotype<LandTypeInfo>.ApplyDifferences(pSociety.m_pTitularNation.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF);
+                string sFenotypeNationF = pSociety.m_pTitularNation.m_pPhenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF);
 
-                richTextBox1.AppendText("\n");
+                if (sFenotypeNationM == sFenotypeNationF)
+                {
+                    if (!sFenotypeNationM.StartsWith("are"))
+                        sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
+                    richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " " + sFenotypeNationM);
+                }
+                else
+                {
+                    if (sFenotypeNationM != "")
+                    {
+                        if (!sFenotypeNationM.StartsWith("are"))
+                            sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
+                        richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " males " + sFenotypeNationM);
+                    }
 
-                var expectedFenotypeF = GeneLab.Phenotype<LandTypeInfo>.ApplyDifferences(pSociety.m_pTitularNation.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF);
-                string sFenotypeNationF = pSociety.m_pTitularNation.m_pPhenotypeF.GetComparsion(expectedFenotypeF);
-                if (!sFenotypeNationF.StartsWith("are"))
-                    sFenotypeNationF = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationF.Substring(0, 1).ToLower() + sFenotypeNationF.Substring(1);
-                richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " females " + sFenotypeNationM);
+                    if (sFenotypeNationF != "")
+                    {
+                        if (sFenotypeNationM != "")
+                            richTextBox1.AppendText("\n");
+
+                        if (!sFenotypeNationF.StartsWith("are"))
+                            sFenotypeNationF = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however " + sFenotypeNationF.Substring(0, 1).ToLower() + sFenotypeNationF.Substring(1);
+                        richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " females " + sFenotypeNationF);
+                    }
+                }
             }
             richTextBox1.AppendText("\n\n");
 
