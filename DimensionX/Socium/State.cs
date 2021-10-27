@@ -628,7 +628,7 @@ namespace Socium
                     if (fTreat == 0)
                         continue;
 
-                    if (Rnd.ChooseOne(fTreat, fBorder));// - fTreat))
+                    if (Rnd.ChooseOne(fTreat, fBorder))// - fTreat))
                         //if (m_iSize > 1 || Rnd.OneChanceFrom(2))
                         {
                             LocationX pFort = pLand.BuildFort(pMainEnemy, bFast);
