@@ -217,10 +217,10 @@ namespace GeneLab.Genetix
                                 sHair = "";
                                 break;
                             case HairsAmount.Sparse:
-                                sHair = "short hairs";
+                                sHair = "thin hairs";
                                 break;
                             case HairsAmount.Thick:
-                                sHair = "long hairs";
+                                sHair = "thick hairs";
                                 break;
                         }
 

@@ -79,9 +79,11 @@ namespace Socium.Nations
                        !m_pPhenotypeF.IsIdentical(m_pRace.m_pPhenotypeF);
 
                 foreach (Nation pOtherNation in m_pRace.m_cNations)
+                {
                     if (m_pPhenotypeM.IsIdentical(pOtherNation.m_pPhenotypeM) &&
                         m_pPhenotypeF.IsIdentical(pOtherNation.m_pPhenotypeF))
                         bNew = false;
+                }
             }
             while (!bNew);
 

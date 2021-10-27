@@ -58,7 +58,7 @@ namespace GeneLab.Genetix
             switch (m_eEarsType)
             {
                 case EarsType.None:
-                    sEars = "no ears";
+                    sEars = "no visible ears";
                     break;
                 case EarsType.Round:
                     sEars = "small round ears";
