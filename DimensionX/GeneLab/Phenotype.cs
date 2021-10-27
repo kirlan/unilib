@@ -5,6 +5,7 @@ using System.Text;
 using GeneLab.Genetix;
 using LandscapeGeneration;
 using nsUniLibControls;
+using Random;
 
 namespace GeneLab
 {
@@ -47,6 +48,8 @@ namespace GeneLab
         { }
 
         public Phenotype(BodyGenetix pBody,
+                        BreastsGenetix pBreasts,
+                        NutritionGenetix pNutrition,
                         HeadGenetix pHead,
                         LegsGenetix pLegs,
                         ArmsGenetix pArms,
@@ -61,6 +64,8 @@ namespace GeneLab
                         HairsGenetix pHairs)
         {
             Select(pBody);
+            Select(pBreasts);
+            Select(pNutrition);
             Select(pHead);
             Select(pLegs);
             Select(pArms);
@@ -235,6 +240,34 @@ namespace GeneLab
                 sResult += ".";
             }
 
+            if (!pOriginal.HasIdentical<NutritionGenetix>(this) ||
+                !pOriginal.HasIdentical<BreastsGenetix>(this))
+            {
+                string sBody2 = "";
+                if (!pOriginal.HasIdentical<NutritionGenetix>(this))
+                {
+                    sBody2 = ValueOf<NutritionGenetix>().GetDescription();
+                }
+
+                if (!pOriginal.HasIdentical<BreastsGenetix>(this))
+                {
+                    string sBreastsDescription = ValueOf<BreastsGenetix>().GetDescription();
+                    if (sBody2 != "" && sBreastsDescription != "")
+                        sBody2 += " and ";
+                    sBody2 += sBreastsDescription;
+                }
+
+                if (sBody2 != "")
+                {
+                    if (sResult != "")
+                        sResult += " They ";
+
+                    sResult += sBody2;
+
+                    sResult += ".";
+                }
+            }
+
             if (!pOriginal.HasIdentical<EyesGenetix>(this) ||
                 !pOriginal.HasIdentical<EarsGenetix>(this) ||
                 !pOriginal.HasIdentical<FaceGenetix>(this))
@@ -334,6 +367,16 @@ namespace GeneLab
                 pMutant.Select(Convert.ChangeType(phen.Value.MutateRace(), phen.Key));
             }
 
+            if (Rnd.OneChanceFrom(20))
+            {
+                NutritionGenetix pNutritionMutation = new NutritionGenetix(ValueOf<NutritionGenetix>());
+
+                pNutritionMutation.MutateNutritionType(pMutant.ValueOf<BodyGenetix>());
+
+                pMutant.Select(pNutritionMutation);
+            }
+
+
             pMutant.ValueOf<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
@@ -350,6 +393,16 @@ namespace GeneLab
             {
                 pMutant.Select(Convert.ChangeType(phen.Value.MutateGender(), phen.Key));
             }
+
+            if (Rnd.OneChanceFrom(100))
+            {
+                NutritionGenetix pNutritionMutation = new NutritionGenetix(ValueOf<NutritionGenetix>());
+
+                pNutritionMutation.MutateNutritionType(pMutant.ValueOf<BodyGenetix>());
+
+                pMutant.Select(pNutritionMutation);
+            }
+
 
             pMutant.ValueOf<HairsGenetix>().CheckHairColors();
 
@@ -445,6 +498,8 @@ namespace GeneLab
             int iBodyDiff = 0;
             if (!HasIdentical<ArmsGenetix>(pOpponents))
                 iBodyDiff++;
+            if (!HasIdentical<BreastsGenetix>(pOpponents))
+                iBodyDiff++;
             //if (!pNation.m_pLegs.IsIdentical(pOpponents.m_pLegs))
             //    iBodyDiff++;
             //if (!pNation.m_pTail.IsIdentical(pOpponents.m_pTail))
@@ -487,14 +542,17 @@ namespace GeneLab
             }
 
             //а вот тут - берём личные показатели
-            if (ValueOf<BodyGenetix>().m_eNutritionType != pOpponents.ValueOf<BodyGenetix>().m_eNutritionType)
+            if (ValueOf<NutritionGenetix>().m_eNutritionType != pOpponents.ValueOf<NutritionGenetix>().m_eNutritionType)
             {
-                if (ValueOf<BodyGenetix>().IsParasite())
+                iHostility++;
+                sNegativeReasons += " (-1) [PSI] weird food preferences\n";
+
+                if (ValueOf<NutritionGenetix>().IsParasite())
                 {
                     iHostility++;
                     sNegativeReasons += " (-1) [PSI] prey\n";
                 }
-                if (pOpponents.ValueOf<BodyGenetix>().IsParasite())
+                if (pOpponents.ValueOf<NutritionGenetix>().IsParasite())
                 {
                     iHostility += 4;
                     sNegativeReasons += " (-4) [PSI] predator\n";
@@ -528,6 +586,8 @@ namespace GeneLab
         where LTI: LandTypeInfo, new()
     {
         private readonly static Phenotype<LTI> s_HumanEtalonM = new Phenotype<LTI>(BodyGenetix.Human,
+                                                BreastsGenetix.TwoMale,
+                                                NutritionGenetix.Human,
                                                 HeadGenetix.Human,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,
@@ -541,6 +601,8 @@ namespace GeneLab
                                                 EyesGenetix.Human,
                                                 HairsGenetix.HumanWhiteM);
         private readonly static Phenotype<LTI> s_HumanEtalonF = new Phenotype<LTI>(BodyGenetix.Human,
+                                                BreastsGenetix.TwoMale,
+                                                NutritionGenetix.Human,
                                                 HeadGenetix.Human,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,
@@ -575,6 +637,8 @@ namespace GeneLab
         { }
 
         public Phenotype(BodyGenetix pBody,
+                        BreastsGenetix pBreasts,
+                        NutritionGenetix pNutrition,
                         HeadGenetix pHead,
                         LegsGenetix pLegs,
                         ArmsGenetix pArms,
@@ -587,7 +651,7 @@ namespace GeneLab
                         EarsGenetix pEars,
                         EyesGenetix pEyes,
                         HairsGenetix pHairs)
-            : base(pBody, pHead, pLegs, pArms, pWings, pTail, pHide, pBrain, pLifeCycle, pFace, pEars, pEyes, pHairs)
+            : base(pBody, pBreasts, pNutrition, pHead, pLegs, pArms, pWings, pTail, pHide, pBrain, pLifeCycle, pFace, pEars, pEyes, pHairs)
         {
         }
 

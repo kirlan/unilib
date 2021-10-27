@@ -305,7 +305,7 @@ namespace Socium.Population
             }
 
             Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
-            if (m_pTitularNation.DominantPhenotype.ValueOf<BodyGenetix>().IsParasite() || m_pTitularNation.m_bInvader)
+            if (m_pTitularNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite() || m_pTitularNation.m_bInvader)
             {
                 cNationsCount.Remove(m_pTitularNation);
                 if (cNationsCount.Count > 0)
@@ -357,7 +357,7 @@ namespace Socium.Population
                     if (pNation.m_bDying && !bCanBeDying)
                         continue;
 
-                    if (pNation.DominantPhenotype.ValueOf<BodyGenetix>().IsParasite() && !bCanBeParasite)
+                    if (pNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite() && !bCanBeParasite)
                         continue;
 
                     if (!cChances.ContainsKey(pNation))
@@ -403,7 +403,7 @@ namespace Socium.Population
                 return pDefault;
             }
 
-            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.ValueOf<BodyGenetix>().IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
+            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
             {
                 m_pHostNation = getAccessableNation(false, false, true, m_pHostNation);
             }

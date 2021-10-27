@@ -3055,7 +3055,7 @@ namespace Socium
                 bool bSemicolon = false;
                 if (!pOriginal.HasIdentical<BodyGenetix>(m_pPhenotype))
                 {
-                    sResult += (m_eGender == Gender.Male ? "He is a " : "She is a ") + m_pPhenotype.ValueOf<BodyGenetix>().GetDescription(m_eGender);
+                    sResult += (m_eGender == Gender.Male ? "He is a " : "She is a ") + m_pPhenotype.ValueOf<BodyGenetix>().GetDescription(m_eGender, false);
                     bSemicolon = true;
                 }
                 else
@@ -3070,7 +3070,7 @@ namespace Socium
 
                 sResult += ".";
 
-                sResult += m_pPhenotype.ValueOf<BodyGenetix>().GetDescription2(m_eGender);
+                sResult += m_pPhenotype.ValueOf<NutritionGenetix>().GetDescription(m_eGender, true);
             }
 
             if (!pOriginal.HasIdentical<EyesGenetix>(m_pPhenotype) ||

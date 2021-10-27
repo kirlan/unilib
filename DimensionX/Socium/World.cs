@@ -262,7 +262,7 @@ namespace Socium
                 foreach (var pNations in pConti.m_cLocalNations)
                 {
                     foreach (var pNation in pNations.Value)
-                        if (!pNation.m_bDying && !pNation.DominantPhenotype.ValueOf<BodyGenetix>().IsParasite())
+                        if (!pNation.m_bDying && !pNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite())
                             iPop++;
                 }
 
@@ -288,7 +288,7 @@ namespace Socium
                 Dictionary<Nation, float> cNationChances = new Dictionary<Nation, float>();
                 foreach (Nation pNation in m_aLocalNations)
                 {
-                    if (pNation.m_bDying || pNation.DominantPhenotype.ValueOf<BodyGenetix>().IsParasite())
+                    if (pNation.m_bDying || pNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite())
                         continue;
 
                     cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
