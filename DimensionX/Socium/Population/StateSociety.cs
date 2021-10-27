@@ -1823,19 +1823,23 @@ namespace Socium.Population
                     cProvinceMagesCount[Gender.Female] += pLand.m_cContents.Count * fPrevalence;
                 }
 
-                switch (pProvince.m_pLocalSociety.m_pTitularNation.DominantFenotype.ValueOf<LifeCycleGenetix>().m_eGendersDistribution)
+                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate)
                 {
-                    case GendersDistribution.OnlyMales:
-                        cProvinceMagesCount[Gender.Female] *= 0.1f;
-                        break;
-                    case GendersDistribution.OnlyFemales:
+                    case BirthRate.Low:
                         cProvinceMagesCount[Gender.Male] *= 0.1f;
                         break;
-                    case GendersDistribution.MostlyMales:
-                        cProvinceMagesCount[Gender.Female] *= 0.25f;
-                        break;
-                    case GendersDistribution.MostlyFemales:
+                    case BirthRate.Moderate:
                         cProvinceMagesCount[Gender.Male] *= 0.25f;
+                        break;
+                }
+
+                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate)
+                {
+                    case BirthRate.Low:
+                        cProvinceMagesCount[Gender.Female] *= 0.1f;
+                        break;
+                    case BirthRate.Moderate:
+                        cProvinceMagesCount[Gender.Female] *= 0.25f;
                         break;
                 }
 
@@ -2059,16 +2063,16 @@ namespace Socium.Population
         {
             if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
             {
-                if (m_pTitularNation.DominantFenotype.ValueOf<LifeCycleGenetix>().m_eGendersDistribution == GendersDistribution.OnlyFemales ||
-                    m_pTitularNation.DominantFenotype.ValueOf<LifeCycleGenetix>().m_eGendersDistribution == GendersDistribution.MostlyFemales)
+                if (m_pTitularNation.m_pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate >
+                    m_pTitularNation.m_pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate)
                     return Customs.GenderPriority.Genders_equality;
                 else
                     return Customs.GenderPriority.Patriarchy;
             }
             if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Patriarchy))
             {
-                if (m_pTitularNation.DominantFenotype.ValueOf<LifeCycleGenetix>().m_eGendersDistribution == GendersDistribution.OnlyMales ||
-                    m_pTitularNation.DominantFenotype.ValueOf<LifeCycleGenetix>().m_eGendersDistribution == GendersDistribution.MostlyMales)
+                if (m_pTitularNation.m_pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate >
+                    m_pTitularNation.m_pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate)
                     return Customs.GenderPriority.Genders_equality;
                 else
                     return Customs.GenderPriority.Matriarchy;

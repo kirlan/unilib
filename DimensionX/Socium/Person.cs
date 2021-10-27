@@ -991,22 +991,39 @@ namespace Socium
                 (!IsSexualRelation(m_cRelations[pRelative]) &&
                 m_cRelations[pRelative] != Relation.ParentOf))
             {
-                Phenotype pFenotype = pRelative == null ? m_pNation.DominantFenotype : pRelative.m_pFenotype;
-                switch (pFenotype.ValueOf<LifeCycleGenetix>().m_eGendersDistribution)
+                Phenotype pPhenotypeM = m_pNation.m_pPhenotypeM;
+                Phenotype pPhenotypeF = m_pNation.m_pPhenotypeF;
+
+                if (pRelative != null)
                 {
-                    case GendersDistribution.OnlyMales:
-                        m_eGender = Rnd.OneChanceFrom(10) ? Gender.Female : Gender.Male;
-                        break;
-                    case GendersDistribution.OnlyFemales:
-                        m_eGender = Rnd.OneChanceFrom(10) ? Gender.Male : Gender.Female;
-                        break;
-                    case GendersDistribution.MostlyMales:
-                        m_eGender = Rnd.OneChanceFrom(4) ? Gender.Female : Gender.Male;
-                        break;
-                    case GendersDistribution.MostlyFemales:
-                        m_eGender = Rnd.OneChanceFrom(4) ? Gender.Male : Gender.Female;
-                        break;
+                    pPhenotypeM = pRelative.m_pFamilyPhenotypeM;
+                    pPhenotypeF = pRelative.m_pFamilyPhenotypeF;
+
+                    if (pRelative.Gender == Gender.Male)
+                        pPhenotypeM = pRelative.m_pPhenotype;
                 }
+
+                if (pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.High &&
+                    pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.Low)
+                {
+                    m_eGender = Rnd.OneChanceFrom(10) ? Gender.Female : Gender.Male;
+                }
+                else if (pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.Low &&
+                    pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.High)
+                {
+                    m_eGender = Rnd.OneChanceFrom(10) ? Gender.Male : Gender.Female;
+                }
+                else if (pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate >
+                    pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate)
+                {
+                    m_eGender = Rnd.OneChanceFrom(4) ? Gender.Female : Gender.Male;
+                }
+                else if (pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate <
+                    pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate)
+                {
+                    m_eGender = Rnd.OneChanceFrom(4) ? Gender.Male : Gender.Female;
+                }
+
                 CheckGender(pRelative);
             }
             #endregion
