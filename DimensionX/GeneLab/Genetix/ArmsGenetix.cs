@@ -69,7 +69,7 @@ namespace GeneLab.Genetix
         }
 
         /// <summary>
-        /// 2 arms with palms
+        /// 4 arms with palms
         /// </summary>
         public static ArmsGenetix Human4
         {
