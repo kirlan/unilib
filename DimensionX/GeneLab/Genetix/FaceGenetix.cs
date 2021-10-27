@@ -90,26 +90,41 @@ namespace GeneLab.Genetix
             return sFace + (m_eNoseType == NoseType.Proboscis ? " and " : " with ") + sMouth;
         }
 
+        /// <summary>
+        /// normal nose, normal mouth
+        /// </summary>
         public static FaceGenetix Human
         {
             get { return new FaceGenetix(NoseType.Normal, MouthType.Normal); }
         }
 
+        /// <summary>
+        /// normal nose, tentakles mouth
+        /// </summary>
         public static FaceGenetix Ktulhu
         {
             get { return new FaceGenetix(NoseType.Normal, MouthType.Tentackles); }
         }
 
+        /// <summary>
+        /// snout nose, normal mouth
+        /// </summary>
         public static FaceGenetix Animal
         {
             get { return new FaceGenetix(NoseType.Snout, MouthType.Normal); }
         }
 
+        /// <summary>
+        /// no nose, beak mouth
+        /// </summary>
         public static FaceGenetix Bird
         {
             get { return new FaceGenetix(NoseType.None, MouthType.Beak); }
         }
 
+        /// <summary>
+        /// no nose, mandibles muth
+        /// </summary>
         public static FaceGenetix Insect
         {
             get { return new FaceGenetix(NoseType.None, MouthType.Mandibles); }
@@ -164,6 +179,11 @@ namespace GeneLab.Genetix
                     return pMutant;
             }
 
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
             return this;
         }
 

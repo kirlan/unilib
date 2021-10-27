@@ -328,6 +328,23 @@ namespace GeneLab
             return this;
         }
 
+        public GenetixBase MutateGender()
+        {
+            Phenotype pMutant = Clone();
+
+            foreach (var phen in m_cPhens)
+            {
+                pMutant.Select(Convert.ChangeType(phen.Value.MutateGender(), phen.Key));
+            }
+
+            pMutant.ValueOf<HairsGenetix>().CheckHairColors();
+
+            if (!pMutant.IsIdentical(this))
+                return pMutant;
+
+            return this;
+        }
+
         public GenetixBase MutateNation()
         {
             Phenotype pMutant = Clone();

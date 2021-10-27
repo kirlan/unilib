@@ -329,66 +329,105 @@ namespace GeneLab.Genetix
             return (eGender == Gender.Male ? "He " : "She ") + sMeals + ".";
         }
 
+        /// <summary>
+        /// average size, slim, organic food
+        /// </summary>
         public static BodyGenetix Human
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Slim, NutritionType.Organic); }
         }
 
+        /// <summary>
+        /// average size, muscular, organic food
+        /// </summary>
         public static BodyGenetix Barbarian
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.Organic); }
         }
 
+        /// <summary>
+        /// average size, muscular, vegetarian
+        /// </summary>
         public static BodyGenetix Bull
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.Vegetarian); }
         }
 
+        /// <summary>
+        /// average size, muscular, meat food
+        /// </summary>
         public static BodyGenetix Orc
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.Carnivorous); }
         }
 
+        /// <summary>
+        /// small size, skinny, meat food
+        /// </summary>
         public static BodyGenetix Goblin
         {
             get { return new BodyGenetix(BodySize.Small, BodyBuild.Skinny, NutritionType.Carnivorous); }
         }
 
+        /// <summary>
+        /// small size, muscular, organic food
+        /// </summary>
         public static BodyGenetix Dwarf
         {
             get { return new BodyGenetix(BodySize.Small, BodyBuild.Muscular, NutritionType.Organic); }
         }
 
+        /// <summary>
+        /// small size, fat, organic food
+        /// </summary>
         public static BodyGenetix Hobbit
         {
             get { return new BodyGenetix(BodySize.Small, BodyBuild.Fat, NutritionType.Organic); }
         }
 
+        /// <summary>
+        /// average size, skinny, organic food
+        /// </summary>
         public static BodyGenetix Elf
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Skinny, NutritionType.Organic); }
         }
 
+        /// <summary>
+        /// average size, skinny, meat food
+        /// </summary>
         public static BodyGenetix Furry
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Skinny, NutritionType.Carnivorous); }
         }
 
+        /// <summary>
+        /// tiny size, skinny, vegetarian
+        /// </summary>
         public static BodyGenetix Pixie
         {
             get { return new BodyGenetix(BodySize.Tini, BodyBuild.Skinny, NutritionType.Vegetarian); }
         }
 
+        /// <summary>
+        /// giant size, muscular, organic food
+        /// </summary>
         public static BodyGenetix Giant
         {
             get { return new BodyGenetix(BodySize.Giant, BodyBuild.Muscular, NutritionType.Organic); }
         }
 
+        /// <summary>
+        /// average size, slim, drinks blood
+        /// </summary>
         public static BodyGenetix Vampire
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Slim, NutritionType.ParasitismBlood); }
         }
 
+        /// <summary>
+        /// average size, muscular, human meat food
+        /// </summary>
         public static BodyGenetix Werevolf
         {
             get { return new BodyGenetix(BodySize.Normal, BodyBuild.Muscular, NutritionType.ParasitismMeat); }
@@ -649,6 +688,60 @@ namespace GeneLab.Genetix
                     }
 
                 if (Rnd.OneChanceFrom(2))
+                    pMutant.MutateNutritionType();
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(2))
+            {
+                BodyGenetix pMutant = new BodyGenetix(this);
+
+                if (Rnd.OneChanceFrom(50))
+                {
+                    switch (pMutant.m_eBodySize)
+                    {
+                        case BodySize.Tini:
+                            pMutant.m_eBodySize = BodySize.Small;
+                            break;
+                        case BodySize.Small:
+                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Tini : BodySize.Normal;
+                            break;
+                        case BodySize.Normal:
+                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Small : BodySize.Big;
+                            break;
+                        case BodySize.Big:
+                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Normal : BodySize.Giant;
+                            break;
+                        case BodySize.Giant:
+                            pMutant.m_eBodySize = BodySize.Big;
+                            break;
+                    }
+                }
+
+                switch (pMutant.m_eBodyBuild)
+                {
+                    case BodyBuild.Skinny:
+                        pMutant.m_eBodyBuild = BodyBuild.Slim;
+                        break;
+                    case BodyBuild.Slim:
+                        pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                        break;
+                    case BodyBuild.Muscular:
+                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(3) ? BodyBuild.Fat : BodyBuild.Slim;
+                        break;
+                    case BodyBuild.Fat:
+                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(3) ? BodyBuild.Muscular : BodyBuild.Slim;
+                        break;
+                }
+
+                if (Rnd.OneChanceFrom(50))
                     pMutant.MutateNutritionType();
 
                 if (!pMutant.IsIdentical(this))

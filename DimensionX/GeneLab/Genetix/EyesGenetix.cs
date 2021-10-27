@@ -86,36 +86,55 @@ namespace GeneLab.Genetix
             return m_iEyesCount.ToString() + " " + sEyes + ", " + sPlace;
         }
 
+        // 2 normal, at front
         public static EyesGenetix Human
         {
             get { return new EyesGenetix(2, EyesType.Normal, EyesPlacement.Tunnel); }
         }
 
+        /// <summary>
+        /// 3 normal, at front
+        /// </summary>
         public static EyesGenetix Ktulhu
         {
             get { return new EyesGenetix(3, EyesType.Normal, EyesPlacement.Tunnel); }
         }
 
+        /// <summary>
+        /// 2 normal, at sides
+        /// </summary>
         public static EyesGenetix Herbivore
         {
             get { return new EyesGenetix(2, EyesType.Normal, EyesPlacement.Panoramic); }
         }
 
+        /// <summary>
+        /// 2 cat eyes, at front
+        /// </summary>
         public static EyesGenetix Cat
         {
             get { return new EyesGenetix(2, EyesType.CatEye, EyesPlacement.Tunnel); }
         }
 
+        /// <summary>
+        /// 2 fish eyes, at sides
+        /// </summary>
         public static EyesGenetix Fish
         {
             get { return new EyesGenetix(2, EyesType.FishEye, EyesPlacement.Panoramic); }
         }
 
+        /// <summary>
+        /// 2 facetted eyes, ar sides
+        /// </summary>
         public static EyesGenetix Insect
         {
             get { return new EyesGenetix(2, EyesType.Facetted, EyesPlacement.Panoramic); }
         }
 
+        /// <summary>
+        /// 8 acetted eyes, at front
+        /// </summary>
         public static EyesGenetix Spider
         {
             get { return new EyesGenetix(8, EyesType.Facetted, EyesPlacement.Tunnel); }
@@ -167,6 +186,45 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(2))
                     pMutant.m_eEyesType = (EyesType)Rnd.Get(typeof(EyesType));
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    int iChance = (int)Math.Pow(Rnd.Get(23), 2) / 100;
+                    switch (iChance)
+                    {
+                        case 0:
+                            pMutant.m_iEyesCount = 2;
+                            break;
+                        case 1:
+                            pMutant.m_iEyesCount = 1;
+                            break;
+                        case 2:
+                            pMutant.m_iEyesCount = 3;
+                            break;
+                        case 3:
+                            pMutant.m_iEyesCount = 4;
+                            break;
+                        case 4:
+                            pMutant.m_iEyesCount = 8;
+                            break;
+                    }
+                }
+
+                if (pMutant.m_iEyesCount == 1 && pMutant.m_eEyesPlacement == EyesPlacement.Panoramic)
+                    pMutant.m_eEyesPlacement = EyesPlacement.Tunnel;
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(50))
+            {
+                EyesGenetix pMutant = new EyesGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
                 {

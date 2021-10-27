@@ -8,6 +8,7 @@ namespace GeneLab
     public interface GenetixBase
     {
         GenetixBase MutateRace();
+        GenetixBase MutateGender();
         GenetixBase MutateNation();
         GenetixBase MutateFamily();
         GenetixBase MutateIndividual();

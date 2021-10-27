@@ -80,31 +80,49 @@ namespace GeneLab.Genetix
             return sEars + " at the " + (m_eEarsPlacement == EarsPlacement.Top ? "top" : "sides");
         }
 
+        /// <summary>
+        /// no ears
+        /// </summary>
         public static EarsGenetix None
         {
             get { return new EarsGenetix(EarsType.None, EarsPlacement.Side); }
         }
 
+        /// <summary>
+        /// round, at sides
+        /// </summary>
         public static EarsGenetix Human
         {
             get { return new EarsGenetix(EarsType.Round, EarsPlacement.Side); }
         }
 
+        /// <summary>
+        /// round, at top
+        /// </summary>
         public static EarsGenetix Herbivore
         {
             get { return new EarsGenetix(EarsType.Round, EarsPlacement.Top); }
         }
 
+        /// <summary>
+        /// pointy, at top
+        /// </summary>
         public static EarsGenetix Carnivore
         {
             get { return new EarsGenetix(EarsType.Pointy, EarsPlacement.Top); }
         }
 
+        /// <summary>
+        /// pointy, at sides
+        /// </summary>
         public static EarsGenetix Elf
         {
             get { return new EarsGenetix(EarsType.Pointy, EarsPlacement.Side); }
         }
 
+        /// <summary>
+        /// feelers, at top
+        /// </summary>
         public static EarsGenetix Insect
         {
             get { return new EarsGenetix(EarsType.Feelers, EarsPlacement.Top); }
@@ -143,6 +161,25 @@ namespace GeneLab.Genetix
         public GenetixBase MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
+            {
+                EarsGenetix pMutant = new EarsGenetix(this);
+
+                if (Rnd.OneChanceFrom(2))
+                    pMutant.m_eEarsType = (EarsType)Rnd.Get(typeof(EarsType));
+
+                //if (Rnd.OneChanceFrom(2))
+                //    pMutant.m_eEarsPlacement = (EarsPlacement)Rnd.Get(typeof(EarsPlacement));
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(50))
             {
                 EarsGenetix pMutant = new EarsGenetix(this);
 

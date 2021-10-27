@@ -273,8 +273,44 @@ namespace GeneLab.Genetix
                 //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
                 //    pMutant.m_eBirthRate = BirthRate.Moderate;
 
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(5))
+            {
+                LifeCycleGenetix pMutant = new LifeCycleGenetix(this);
+
                 if (Rnd.OneChanceFrom(2))
-                    pMutant.m_eGendersDistribution = (GendersDistribution)Rnd.Get(typeof(GendersDistribution));
+                {
+                    if (pMutant.m_eBirthRate == BirthRate.Low)
+                        pMutant.m_eBirthRate = BirthRate.Moderate;
+                    if (pMutant.m_eBirthRate == BirthRate.Moderate)
+                        pMutant.m_eBirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
+                    if (pMutant.m_eBirthRate == BirthRate.High)
+                        pMutant.m_eBirthRate = BirthRate.Moderate;
+                }
+
+                if (Rnd.OneChanceFrom(5))
+                {
+                    if (pMutant.m_eDyingRate == DyingRate.Low)
+                        pMutant.m_eDyingRate = DyingRate.Moderate;
+                    if (pMutant.m_eDyingRate == DyingRate.Moderate)
+                        pMutant.m_eDyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
+                    if (pMutant.m_eDyingRate == DyingRate.High)
+                        pMutant.m_eDyingRate = DyingRate.Moderate;
+                }
+
+                //if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
+                //    pMutant.m_eBirthRate = BirthRate.High;
+
+                //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
+                //    pMutant.m_eBirthRate = BirthRate.Moderate;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;

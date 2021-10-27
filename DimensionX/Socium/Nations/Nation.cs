@@ -71,23 +71,16 @@ namespace Socium.Nations
             {
                 m_pPhenotypeM = (Phenotype<LandTypeInfoX>)m_pRace.m_pPhenotypeM.MutateNation();
 
-                bNew = !m_pFenotypeM.IsIdentical(m_pRace.m_pFenotypeM);
+                var pExpectedPhenotypeF = Phenotype<LandTypeInfoX>.ApplyDifferences(m_pPhenotypeM, m_pRace.m_pPhenotypeM, m_pRace.m_pPhenotypeF);
+
+                m_pPhenotypeF = (Phenotype<LandTypeInfoX>)pExpectedPhenotypeF.MutateGender();
+
+                bNew = !m_pPhenotypeM.IsIdentical(m_pRace.m_pPhenotypeM) &&
+                       !m_pPhenotypeF.IsIdentical(m_pRace.m_pPhenotypeF);
 
                 foreach (Nation pOtherNation in m_pRace.m_cNations)
-                    if (m_pFenotypeM.IsIdentical(pOtherNation.m_pFenotypeM))
-                        bNew = false;
-            }
-            while (!bNew);
-
-            bNew = false;
-            do
-            {
-                m_pFenotypeF = (Phenotype<LandTypeInfoX>)m_pRace.m_pFenotypeF.MutateNation();
-
-                bNew = !m_pFenotypeF.IsIdentical(m_pRace.m_pFenotypeF);
-
-                foreach (Nation pOtherNation in m_pRace.m_cNations)
-                    if (m_pFenotypeF.IsIdentical(pOtherNation.m_pFenotypeF))
+                    if (m_pPhenotypeM.IsIdentical(pOtherNation.m_pPhenotypeM) &&
+                        m_pPhenotypeF.IsIdentical(pOtherNation.m_pPhenotypeF))
                         bNew = false;
             }
             while (!bNew);

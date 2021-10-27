@@ -36,26 +36,41 @@ namespace GeneLab.Genetix
 
     public class ArmsGenetix : GenetixBase
     {
+        /// <summary>
+        /// No arms
+        /// </summary>
         public static ArmsGenetix None
         {
             get { return new ArmsGenetix(ArmsCount.None, ArmsType.Palms); }
         }
 
+        /// <summary>
+        /// 2 arms with palms
+        /// </summary>
         public static ArmsGenetix Human
         {
             get { return new ArmsGenetix(ArmsCount.Bimanous, ArmsType.Palms); }
         }
 
+        /// <summary>
+        /// 2 arms with nippers
+        /// </summary>
         public static ArmsGenetix Insect2
         {
             get { return new ArmsGenetix(ArmsCount.Bimanous, ArmsType.Nippers); }
         }
 
+        /// <summary>
+        /// 4 arms with nippers
+        /// </summary>
         public static ArmsGenetix Insect4
         {
             get { return new ArmsGenetix(ArmsCount.Quadrumanous, ArmsType.Nippers); }
         }
 
+        /// <summary>
+        /// 2 arms with palms
+        /// </summary>
         public static ArmsGenetix Human4
         {
             get { return new ArmsGenetix(ArmsCount.Quadrumanous, ArmsType.Palms); }
@@ -79,10 +94,34 @@ namespace GeneLab.Genetix
             m_eArmsCount = eArmsCount;
             m_eArmsType = eArmsType;
         }
-        
+
         public GenetixBase MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
+            {
+                ArmsGenetix pMutant = new ArmsGenetix(this);
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    if (pMutant.m_eArmsCount == ArmsCount.Bimanous)
+                        pMutant.m_eArmsCount = ArmsCount.Quadrumanous;
+                    else if (pMutant.m_eArmsCount == ArmsCount.Quadrumanous)
+                        pMutant.m_eArmsCount = ArmsCount.Bimanous;
+                }
+
+                //if (Rnd.OneChanceFrom(2))
+                //    pMutant.m_eArmsType = (ArmsType)Rnd.Get(typeof(ArmsType));
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(50))
             {
                 ArmsGenetix pMutant = new ArmsGenetix(this);
 

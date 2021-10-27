@@ -142,26 +142,41 @@ namespace GeneLab.Genetix
             return sIntellect + " with" + /*sMagic + */sMagicForce;
         }
 
+        /// <summary>
+        /// sapient, average magic
+        /// </summary>
         public static BrainGenetix HumanFantasy
         {
             get { return new BrainGenetix(Intelligence.Sapient, /*MagicAbilityPrevalence.Common,*/ 4); }
         }
 
+        /// <summary>
+        /// sapient, no magic
+        /// </summary>
         public static BrainGenetix HumanReal
         {
             get { return new BrainGenetix(Intelligence.Sapient, /*MagicAbilityPrevalence.Rare,*/ 0); }
         }
 
+        /// <summary>
+        /// sapient, limited magic (supers)
+        /// </summary>
         public static BrainGenetix HumanSF
         {
             get { return new BrainGenetix(Intelligence.Sapient, /*MagicAbilityPrevalence.Rare,*/ 3); }
         }
 
+        /// <summary>
+        /// ingenious, average magic
+        /// </summary>
         public static BrainGenetix Elf
         {
             get { return new BrainGenetix(Intelligence.Ingenious, /*MagicAbilityPrevalence.Common,*/ 4); }
         }
 
+        /// <summary>
+        /// primitive, low magic (shamanism)
+        /// </summary>
         public static BrainGenetix Barbarian
         {
             get { return new BrainGenetix(Intelligence.Primitive, /*MagicAbilityPrevalence.Rare,*/ 2); }
@@ -248,6 +263,86 @@ namespace GeneLab.Genetix
                             break;
                         case Intelligence.Primitive:
                             pMutant.m_eIntelligence = Intelligence.Sapient;
+                            break;
+                        case Intelligence.Sapient:
+                            pMutant.m_eIntelligence = Rnd.OneChanceFrom(2) ? Intelligence.Primitive : Intelligence.Ingenious;
+                            break;
+                        case Intelligence.Ingenious:
+                            pMutant.m_eIntelligence = Intelligence.Sapient;
+                            break;
+                    }
+                }
+
+                //if (Rnd.OneChanceFrom(2))
+                //{
+                //    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
+
+                //    //дополнительно снижаем частоту распространения магических способностей среди животных
+                //    if ((pMutant.m_eIntelligence == Intelligence.None ||
+                //         pMutant.m_eIntelligence == Intelligence.Basic ||
+                //         pMutant.m_eIntelligence == Intelligence.Capable) &&
+                //        Rnd.OneChanceFrom(2))
+                //        pMutant.m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
+                //}
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    if (pMutant.m_eIntelligence == Intelligence.None)
+                        pMutant.m_iMagicAbilityPotential = 0;
+
+                    if (pMutant.m_eIntelligence == Intelligence.Basic ||
+                        pMutant.m_eIntelligence == Intelligence.Capable)
+                        pMutant.m_iMagicAbilityPotential = Rnd.Get(4); //для животных базовый уровень - хоть до джедаев/супергероев включительно... например, все единороги неразумны, но владеют магией на уровне джедаев
+
+                    if (pMutant.m_eIntelligence == Intelligence.Primitive)
+                        pMutant.m_iMagicAbilityPotential = 0; //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями
+
+                    if (pMutant.m_eIntelligence == Intelligence.Sapient)
+                        pMutant.m_iMagicAbilityPotential = Rnd.Get(5); //обычные люди в массе могут владеть магией не выше уровня стандартных фэнтезийным магов
+
+                    if (pMutant.m_eIntelligence == Intelligence.Ingenious)
+                        pMutant.m_iMagicAbilityPotential = 4 + Rnd.Get(5); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
+                }
+                else
+                {
+                    if (pMutant.m_eIntelligence == Intelligence.Primitive)
+                        pMutant.m_iMagicAbilityPotential = 0; //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями
+
+                    if (pMutant.m_eIntelligence == Intelligence.Sapient)
+                        pMutant.m_iMagicAbilityPotential = Math.Min(4, pMutant.m_iMagicAbilityPotential); //обычные люди в массе могут владеть магией не выше уровня стандартных фэнтезийным магов
+
+                    if (pMutant.m_eIntelligence == Intelligence.Ingenious)
+                        pMutant.m_iMagicAbilityPotential = Math.Max(4, pMutant.m_iMagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
+                }
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(10))
+            {
+                BrainGenetix pMutant = new BrainGenetix(this);
+
+                if (Rnd.OneChanceFrom(10))
+                {
+                    switch (pMutant.m_eIntelligence)
+                    {
+                        case Intelligence.None:
+                            pMutant.m_eIntelligence = Intelligence.Basic;
+                            break;
+                        case Intelligence.Basic:
+                            pMutant.m_eIntelligence = Intelligence.Capable;
+                            break;
+                        case Intelligence.Capable:
+                            pMutant.m_eIntelligence = Intelligence.Basic;
+                            break;
+                        case Intelligence.Primitive:
+                            pMutant.m_eIntelligence = Rnd.OneChanceFrom(2) ? Intelligence.Sapient : Intelligence.Capable;
                             break;
                         case Intelligence.Sapient:
                             pMutant.m_eIntelligence = Rnd.OneChanceFrom(2) ? Intelligence.Primitive : Intelligence.Ingenious;

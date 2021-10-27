@@ -473,46 +473,73 @@ namespace GeneLab.Genetix
             return sResult;
         }
 
+        /// <summary>
+        /// thick hair, thick beard, natural colors
+        /// </summary>
         public static HairsGenetix HumanWhiteM
         {
             get { return new HairsGenetix(HairsAmount.Thick, HairsAmount.Thick, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.Brunette, HairsColor.DarkBlond, HairsColor.Red, HairsColor.Black }); }
         }
 
+        /// <summary>
+        /// thick hair, no beard, natural colors
+        /// </summary>
         public static HairsGenetix HumanWhiteF
         {
             get { return new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.Brunette, HairsColor.DarkBlond, HairsColor.Red, HairsColor.Black }); }
         }
 
+        /// <summary>
+        /// thick hair, sparse beard, dark colors
+        /// </summary>
         public static HairsGenetix HumanBlackM
         {
             get { return new HairsGenetix(HairsAmount.Thick, HairsAmount.Sparse, HairsType.Hair, new HairsColor[] { HairsColor.Brunette }); }
         }
 
+        /// <summary>
+        /// thick hair, no beard, dark colors
+        /// </summary>
         public static HairsGenetix HumanBlackF
         {
             get { return new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette }); }
         }
 
+        /// <summary>
+        /// thick hair, no beard, natural colors except red
+        /// </summary>
         public static HairsGenetix Elf
         {
             get { return new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.Brunette, HairsColor.DarkBlond, HairsColor.Black }); }
         }
 
+        /// <summary>
+        /// thick hair, no beard, light colors
+        /// </summary>
         public static HairsGenetix Drow
         {
-            get { return new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.DarkBlond, HairsColor.Brunette }); }
+            get { return new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.DarkBlond }); }
         }
 
+        /// <summary>
+        /// tentacles everywhere
+        /// </summary>
         public static HairsGenetix Ktulhu
         {
             get { return new HairsGenetix(HairsAmount.Sparse, HairsAmount.Sparse, HairsType.Tentackles, new HairsColor[] { HairsColor.Hide }); }
         }
 
+        /// <summary>
+        /// no hair, no beard
+        /// </summary>
         public static HairsGenetix None
         {
             get { return new HairsGenetix(HairsAmount.None, HairsAmount.None, HairsType.Hair, new HairsColor[] { }); }
         }
 
+        /// <summary>
+        /// no hair, sparse whiskers
+        /// </summary>
         public static HairsGenetix AnimalWhiskers
         {
             get { return new HairsGenetix(HairsAmount.None, HairsAmount.Sparse, HairsType.Whiskers, new HairsColor[] { HairsColor.Hide }); }
@@ -704,6 +731,97 @@ namespace GeneLab.Genetix
             }
 
             return (HairsAmount)Rnd.Get(typeof(HairsAmount));
+        }
+
+        public GenetixBase MutateGender()
+        {
+            CheckHairColors();
+
+            if (Rnd.OneChanceFrom(10))
+            {
+                HairsGenetix pMutant = new HairsGenetix(this);
+
+                pMutant.m_eHairs = MutateHairsAmount(pMutant.m_eHairs);
+
+                var eOriginalBeard = pMutant.m_eBeard;
+
+                if (Rnd.OneChanceFrom(3))
+                    pMutant.m_eBeard = MutateHairsAmount(pMutant.m_eBeard);
+                else
+                    pMutant.m_eBeard = pMutant.m_eHairs;
+
+                if (eOriginalBeard < pMutant.m_eBeard && !Rnd.OneChanceFrom(10))
+                    pMutant.m_eBeard = eOriginalBeard;
+
+                if (pMutant.m_eBeard == HairsAmount.None &&
+                    pMutant.m_eHairsType == HairsType.Whiskers)
+                    pMutant.m_eHairsType = HairsType.Hair;
+
+                int iCount = pMutant.m_cHairColors.Count;
+                for (int i = 0; i < iCount; i++)
+                {
+                    int iChoice = Rnd.Get(3);
+                    switch (iChoice)
+                    {
+                        case 0:
+                            if (pMutant.m_cHairColors.Count > 1)
+                                pMutant.m_cHairColors.Remove(pMutant.m_cHairColors[Rnd.Get(pMutant.m_cHairColors.Count)]);
+                            break;
+                        case 1:
+                            if (pMutant.m_cHairColors.Count < Enum.GetValues(typeof(HairsColor)).Length)
+                            {
+                                HairsColor pColor;
+                                do
+                                {
+                                    pColor = (HairsColor)Rnd.Get(typeof(HairsColor));
+                                }
+                                while (pMutant.m_cHairColors.Contains(pColor));
+                                pMutant.m_cHairColors[Rnd.Get(pMutant.m_cHairColors.Count)] = pColor;
+                            }
+                            break;
+                        case 2:
+                            if (pMutant.m_cHairColors.Count < Enum.GetValues(typeof(HairsColor)).Length)
+                            {
+                                HairsColor pColor;
+                                do
+                                {
+                                    pColor = (HairsColor)Rnd.Get(typeof(HairsColor));
+                                }
+                                while (pMutant.m_cHairColors.Contains(pColor));
+                                pMutant.m_cHairColors.Add(pColor);
+                            }
+                            break;
+                    }
+                }
+
+                if (iCount == 0 &&
+                    (pMutant.m_eHairs != HairsAmount.None ||
+                     pMutant.m_eBeard != HairsAmount.None))
+                {
+                    iCount = 1 + Rnd.Get(Enum.GetValues(typeof(HairsColor)).Length);
+                    for (int i = 0; i < iCount; i++)
+                    {
+                        HairsColor pColor;
+                        do
+                        {
+                            pColor = (HairsColor)Rnd.Get(typeof(HairsColor));
+                        }
+                        while (pMutant.m_cHairColors.Contains(pColor));
+                        pMutant.m_cHairColors.Add(pColor);
+                    }
+                }
+
+                if (pMutant.CheckHairColors())
+                    return this;
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            if (CheckHairColors())
+                return this;
+
+            return this;
         }
 
         public GenetixBase MutateNation()

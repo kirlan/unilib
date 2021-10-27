@@ -102,31 +102,49 @@ namespace GeneLab.Genetix
             return (m_eWingsCount == WingsCount.Dipterous ? "pair" : "2 pairs") + " of " + sWings;
         }
         
+        /// <summary>
+        /// no wings
+        /// </summary>
         public static WingsGenetix None
         {
             get { return new WingsGenetix(WingsCount.None, WingsType.Leather, WingsForce.None); }
         }
 
+        /// <summary>
+        /// 2 strong feathered wings
+        /// </summary>
         public static WingsGenetix Bird
         {
             get { return new WingsGenetix(WingsCount.Dipterous, WingsType.Feathered, WingsForce.Flying); }
         }
 
+        /// <summary>
+        /// 4 strong feathered wings
+        /// </summary>
         public static WingsGenetix Seraph
         {
             get { return new WingsGenetix(WingsCount.Quadrupterous, WingsType.Feathered, WingsForce.Flying); }
         }
 
+        /// <summary>
+        /// 2 strong leathery wings
+        /// </summary>
         public static WingsGenetix Bat
         {
             get { return new WingsGenetix(WingsCount.Dipterous, WingsType.Leather, WingsForce.Flying); }
         }
 
+        /// <summary>
+        /// 4 strong insectoid wings
+        /// </summary>
         public static WingsGenetix Insect
         {
             get { return new WingsGenetix(WingsCount.Quadrupterous, WingsType.Insectoid, WingsForce.Flying); }
         }
 
+        /// <summary>
+        /// 4 flexible tentacles
+        /// </summary>
         public static WingsGenetix Tentacles
         {
             get { return new WingsGenetix(WingsCount.Quadrupterous, WingsType.Tentacles, WingsForce.None); }
@@ -209,6 +227,36 @@ namespace GeneLab.Genetix
                     pMutant.m_eWingsForce = WingsForce.None;
 
                 if(!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(20))
+            {
+                WingsGenetix pMutant = new WingsGenetix(this);
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    if (pMutant.m_eWingsCount == WingsCount.Dipterous)
+                        pMutant.m_eWingsCount = WingsCount.Quadrupterous;
+                    if (pMutant.m_eWingsCount == WingsCount.Quadrupterous)
+                        pMutant.m_eWingsCount = WingsCount.Dipterous;
+                }
+                else if (Rnd.OneChanceFrom(2))
+                {
+                    pMutant.m_eWingsCount = WingsCount.None;
+                }
+
+                pMutant.m_eWingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
+
+                if (pMutant.m_eWingsType == WingsType.Tentacles || pMutant.m_eWingsCount == WingsCount.None)
+                    pMutant.m_eWingsForce = WingsForce.None;
+
+                if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
 

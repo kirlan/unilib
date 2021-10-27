@@ -77,66 +77,105 @@ namespace GeneLab.Genetix
             return m_sHideColor + " " + sHide + (m_bSpots ? (" with " + m_sSpotsColor + " spots") : "");
         }
         
+        /// <summary>
+        /// pink skin
+        /// </summary>
         public static HideGenetix HumanWhite
         {
             get { return new HideGenetix(HideType.BareSkin, Color.Moccasin); }
         }
 
+        /// <summary>
+        /// yellow skin
+        /// </summary>
         public static HideGenetix HumanYellow
         {
             get { return new HideGenetix(HideType.BareSkin, Color.Yellow); }
         }
 
+        /// <summary>
+        /// red skin
+        /// </summary>
         public static HideGenetix HumanRed
         {
             get { return new HideGenetix(HideType.BareSkin, Color.Red); }
         }
 
+        /// <summary>
+        /// black skin
+        /// </summary>
         public static HideGenetix HumanBlack
         {
             get { return new HideGenetix(HideType.BareSkin, Color.FromArgb(0x40, 0x20 ,0)); }
         }
 
+        /// <summary>
+        /// brown skin
+        /// </summary>
         public static HideGenetix HumanTan
         {
             get { return new HideGenetix(HideType.BareSkin, Color.FromArgb(0x80, 0x60, 0x40)); }
         }
 
+        /// <summary>
+        /// show-white skin
+        /// </summary>
         public static HideGenetix Vampire
         {
             get { return new HideGenetix(HideType.BareSkin, Color.White); }
         }
 
+        /// <summary>
+        /// green skin
+        /// </summary>
         public static HideGenetix Orc
         {
             get { return new HideGenetix(HideType.BareSkin, Color.Green); }
         }
 
+        /// <summary>
+        /// blue skin
+        /// </summary>
         public static HideGenetix Navi
         {
             get { return new HideGenetix(HideType.BareSkin, Color.Blue); }
         }
 
+        /// <summary>
+        /// absolutely black skin
+        /// </summary>
         public static HideGenetix Drow
         {
             get { return new HideGenetix(HideType.BareSkin, Color.Black); }
         }
 
+        /// <summary>
+        /// black chitin with blue spots
+        /// </summary>
         public static HideGenetix Insect
         {
             get { return new HideGenetix(HideType.Chitin, Color.Black, Color.Blue); }
         }
 
+        /// <summary>
+        /// yellow scales with green spots
+        /// </summary>
         public static HideGenetix Reptile
         {
             get { return new HideGenetix(HideType.Scales, Color.Yellow, Color.Green); }
         }
 
+        /// <summary>
+        /// brown feathers with gray spots
+        /// </summary>
         public static HideGenetix Bird
         {
             get { return new HideGenetix(HideType.Feathers, Color.Brown, Color.Gray); }
         }
 
+        /// <summary>
+        /// brown fur with black spots
+        /// </summary>
         public static HideGenetix Beast
         {
             get { return new HideGenetix(HideType.FurShort, Color.Brown, Color.Black); }
@@ -539,6 +578,38 @@ namespace GeneLab.Genetix
 
             if (!pMutant.IsIdentical(this))
                 return pMutant;
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(5))
+            {
+                HideGenetix pMutant = new HideGenetix(this);
+
+                switch (pMutant.m_eHideType)
+                {
+                    case HideType.FurShort:
+                        {
+                            if (Rnd.OneChanceFrom(10))
+                                pMutant.m_eHideType = Rnd.OneChanceFrom(4) ? HideType.BareSkin : HideType.FurLong;
+                        }
+                        break;
+                    case HideType.FurLong:
+                        {
+                            if (Rnd.OneChanceFrom(2))
+                                pMutant.m_eHideType = HideType.FurShort;
+                        }
+                        break;
+                }
+
+                if (Rnd.OneChanceFrom(10))
+                    pMutant.MutateHideColor();
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
 
             return this;
         }

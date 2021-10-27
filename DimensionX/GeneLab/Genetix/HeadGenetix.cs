@@ -107,21 +107,33 @@ namespace GeneLab.Genetix
             return m_iHeadsCount.ToString() + " " + sForm + (m_iHeadsCount == 1 ? "head" : "heads") + " " + sNeck;
         }
         
+        /// <summary>
+        /// 1 human head on short neck
+        /// </summary>
         public static HeadGenetix Human
         {
             get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Human); }
         }
 
+        /// <summary>
+        /// 1 big head on short neck
+        /// </summary>
         public static HeadGenetix Sectoid
         {
             get { return new HeadGenetix(1, NeckLength.Short, HeadForm.IncreasedForehead); }
         }
 
+        /// <summary>
+        /// 1 small head on short neck
+        /// </summary>
         public static HeadGenetix Pitecantrop
         {
             get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Flat); }
         }
 
+        /// <summary>
+        /// 1 hammer head on short flexible neck
+        /// </summary>
         public static HeadGenetix Insect
         {
             get { return new HeadGenetix(1, NeckLength.ShortRotary, HeadForm.Hammer); }
@@ -226,6 +238,11 @@ namespace GeneLab.Genetix
                     return pMutant;
             }
 
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
             return this;
         }
 

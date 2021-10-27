@@ -1164,10 +1164,12 @@ namespace Socium.Nations
             if (pFenotypeF == null)
                 pFenotypeF = pFenotypeM;
 
-            m_pFenotypeF = (Phenotype<LandTypeInfoX>)pFenotypeF.MutateRace();
-            if (m_pFenotypeF.ValueOf<HairsGenetix>().m_cHairColors.Count == 0 &&
-                (m_pFenotypeF.ValueOf<HairsGenetix>().m_eHairs != HairsAmount.None ||
-                 m_pFenotypeF.ValueOf<HairsGenetix>().m_eBeard != HairsAmount.None))
+            var pExpectedPhenotypeF = Phenotype<LandTypeInfoX>.ApplyDifferences(m_pPhenotypeM, pFenotypeM, pFenotypeF);
+
+            m_pPhenotypeF = (Phenotype<LandTypeInfoX>)pExpectedPhenotypeF.MutateGender();
+            if (m_pPhenotypeF.ValueOf<HairsGenetix>().m_cHairColors.Count == 0 &&
+                (m_pPhenotypeF.ValueOf<HairsGenetix>().m_eHairs != HairsAmount.None ||
+                 m_pPhenotypeF.ValueOf<HairsGenetix>().m_eBeard != HairsAmount.None))
                 throw new Exception();
 
             m_pMentalityTemplate = pCulture;

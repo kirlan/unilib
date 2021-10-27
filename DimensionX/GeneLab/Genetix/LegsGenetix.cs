@@ -134,56 +134,89 @@ namespace GeneLab.Genetix
             return sLegs;
         }
         
+        /// <summary>
+        /// 2 normal legs
+        /// </summary>
         public static LegsGenetix Human
         {
             get { return new LegsGenetix(LegsCount.Bipedal, LegsType.Foots); }
         }
 
+        /// <summary>
+        /// 2 hoofed legs
+        /// </summary>
         public static LegsGenetix Demon
         {
             get { return new LegsGenetix(LegsCount.Bipedal, LegsType.Hoofs); }
         }
 
+        /// <summary>
+        /// 2 clawed legs
+        /// </summary>
         public static LegsGenetix Bird
         {
             get { return new LegsGenetix(LegsCount.Bipedal, LegsType.Claws); }
         }
 
+        /// <summary>
+        /// 2 paws
+        /// </summary>
         public static LegsGenetix Furry
         {
             get { return new LegsGenetix(LegsCount.Bipedal, LegsType.Paws); }
         }
 
+        /// <summary>
+        /// 8 tentacles
+        /// </summary>
         public static LegsGenetix Ktulhu
         {
             get { return new LegsGenetix(LegsCount.Octapod, LegsType.Tentacles); }
         }
 
+        /// <summary>
+        /// 4 hoofed legs
+        /// </summary>
         public static LegsGenetix Horse
         {
             get { return new LegsGenetix(LegsCount.Quadrupedal, LegsType.Hoofs); }
         }
 
+        /// <summary>
+        /// 4 paws
+        /// </summary>
         public static LegsGenetix Beast
         {
             get { return new LegsGenetix(LegsCount.Quadrupedal, LegsType.Paws); }
         }
 
+        /// <summary>
+        /// 6 insect legs
+        /// </summary>
         public static LegsGenetix Insect6
         {
             get { return new LegsGenetix(LegsCount.Hexapod, LegsType.Spidery); }
         }
 
+        /// <summary>
+        /// 8 insect legs
+        /// </summary>
         public static LegsGenetix Insect8
         {
             get { return new LegsGenetix(LegsCount.Octapod, LegsType.Spidery); }
         }
 
+        /// <summary>
+        /// none, hover
+        /// </summary>
         public static LegsGenetix Ifrit
         {
             get { return new LegsGenetix(LegsCount.NoneHover, LegsType.Tentacles); }
         }
 
+        /// <summary>
+        /// 1 snake tail
+        /// </summary>
         public static LegsGenetix Snake
         {
             get { return new LegsGenetix(LegsCount.NoneTail, LegsType.Tentacles); }
@@ -349,6 +382,92 @@ namespace GeneLab.Genetix
                 //        pMutant.m_eLegsType = LegsType.Tentacles;
                 //        break;
                 //}
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(50))
+            {
+                LegsGenetix pMutant = new LegsGenetix(this);
+
+                int iChance = 0;
+
+                switch (pMutant.m_eLegsCount)
+                {
+                    case LegsCount.NoneHover:
+                        {
+                            int[] aChances = new int[] { 8, 1, 4, 0, 0, 0, 0 };
+                            iChance = Rnd.ChooseOne(aChances, 1);
+                        }
+                        break;
+                    case LegsCount.NoneBlob:
+                        {
+                            int[] aChances = new int[] { 2, 8, 4, 0, 0, 0, 0 };
+                            iChance = Rnd.ChooseOne(aChances, 1);
+                        }
+                        break;
+                    case LegsCount.NoneTail:
+                        {
+                            int[] aChances = new int[] { 2, 2, 8, 0, 0, 0, 0 };
+                            iChance = Rnd.ChooseOne(aChances, 1);
+                        }
+                        break;
+                    case LegsCount.Bipedal:
+                        {
+                            int[] aChances = new int[] { 0, 0, 0, 8, 0, 0, 0 };
+                            iChance = Rnd.ChooseOne(aChances, 1);
+                        }
+                        break;
+                    case LegsCount.Quadrupedal:
+                        {
+                            int[] aChances = new int[] { 0, 0, 0, 0, 8, 2, 2 };
+                            iChance = Rnd.ChooseOne(aChances, 1);
+                        }
+                        break;
+                    case LegsCount.Hexapod:
+                        {
+                            int[] aChances = new int[] { 0, 0, 0, 0, 0, 8, 4 };
+                            iChance = Rnd.ChooseOne(aChances, 1);
+                        }
+                        break;
+                    case LegsCount.Octapod:
+                        {
+                            int[] aChances = new int[] { 0, 0, 0, 0, 0, 4, 8 };
+                            iChance = Rnd.ChooseOne(aChances, 1);
+                        }
+                        break;
+                }
+
+                switch (iChance)
+                {
+                    case 0:
+                        pMutant.m_eLegsCount = LegsCount.NoneHover;
+                        break;
+                    case 1:
+                        pMutant.m_eLegsCount = LegsCount.NoneBlob;
+                        break;
+                    case 2:
+                        pMutant.m_eLegsCount = LegsCount.NoneTail;
+                        break;
+                    case 3:
+                        pMutant.m_eLegsCount = LegsCount.Bipedal;
+                        break;
+                    case 4:
+                        pMutant.m_eLegsCount = LegsCount.Quadrupedal;
+                        break;
+                    case 5:
+                        pMutant.m_eLegsCount = LegsCount.Hexapod;
+                        break;
+                    case 6:
+                        pMutant.m_eLegsCount = LegsCount.Octapod;
+                        break;
+                }
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
