@@ -102,6 +102,10 @@ namespace VQMapTest2
             if (radioButton4.Checked)
                 fScale = 32.0f;
 
+            //==========================================DEBUG=================================================
+            mapDraw1.Visible = false;
+            //==========================================DEBUG=================================================
+
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
