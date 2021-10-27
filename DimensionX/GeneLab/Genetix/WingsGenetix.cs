@@ -246,10 +246,6 @@ namespace GeneLab.Genetix
                     if (pMutant.m_eWingsCount == WingsCount.Quadrupterous)
                         pMutant.m_eWingsCount = WingsCount.Dipterous;
                 }
-                else if (Rnd.OneChanceFrom(2))
-                {
-                    pMutant.m_eWingsCount = WingsCount.None;
-                }
 
                 pMutant.m_eWingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
 
