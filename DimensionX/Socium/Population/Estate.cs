@@ -75,9 +75,11 @@ namespace Socium.Population
             m_ePosition = ePosition;
 
             m_cCulture[Gender.Male] = new Culture(pSociety.m_cCulture[Gender.Male], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
             UpdateCultureProgress(m_cCulture[Gender.Male]);
 
             m_cCulture[Gender.Female] = new Culture(pSociety.m_cCulture[Gender.Female], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
             UpdateCultureProgress(m_cCulture[Gender.Female]);
 
             FixSexCustoms();

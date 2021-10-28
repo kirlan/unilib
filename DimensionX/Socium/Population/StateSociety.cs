@@ -279,7 +279,9 @@ namespace Socium.Population
             m_iInfrastructureLevel = 0;
 
             m_cCulture[Gender.Male] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
             m_cCulture[Gender.Female] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
+            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
 
             FixSexCustoms();
         }
@@ -313,7 +315,7 @@ namespace Socium.Population
             }
             else
             {
-                m_pTitularNation = pMostCommonNation;
+                UpdateTitularNation(pMostCommonNation);
                 cNationsCount.Remove(m_pTitularNation);
             }
             m_pHostNation = pMostCommonNation;
@@ -449,7 +451,7 @@ namespace Socium.Population
 
             // средний класс - это и есть основа всего сообщества
             m_cEstates[Estate.Position.Commoners] = pBase;
-            m_cEstates[Estate.Position.Commoners].m_pTitularNation = m_pHostNation;
+            m_cEstates[Estate.Position.Commoners].UpdateTitularNation(m_pHostNation);
             // TODO: насколько сильно родная культура порабощённой нации должна влиять на культуру образованного ей сословия?
             // Сейчас она не влияет вообще, порабощённые расы полностью ассимилируются. Но правильно ли это?
 
@@ -460,7 +462,7 @@ namespace Socium.Population
             }
             while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
                    m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]));
-            m_cEstates[Estate.Position.Lowlifes].m_pTitularNation = m_pSlavesNation;
+            m_cEstates[Estate.Position.Lowlifes].UpdateTitularNation(m_pSlavesNation);
 
 
             // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех 3 других сословий
@@ -481,7 +483,7 @@ namespace Socium.Population
                    m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
                    pBase.m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
                    pBase.m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]));
-            m_cEstates[Estate.Position.Outlaws].m_pTitularNation = Rnd.OneChanceFrom(3) ? m_pTitularNation : Rnd.OneChanceFrom(2) ? m_pHostNation : m_pSlavesNation;
+            m_cEstates[Estate.Position.Outlaws].UpdateTitularNation(Rnd.OneChanceFrom(3) ? m_pTitularNation : Rnd.OneChanceFrom(2) ? m_pHostNation : m_pSlavesNation);
 
             // перебираем все поселения, где присутсвует сообщество
             foreach (LocationX pLocation in Settlements)

@@ -367,7 +367,7 @@ namespace Socium
         {
             m_pSociety.CalculateTitularNation();
 
-            m_pMethropoly.m_pLocalSociety.m_pTitularNation = m_pSociety.m_pTitularNation;
+            m_pMethropoly.m_pLocalSociety.UpdateTitularNation(m_pSociety.m_pTitularNation);
             foreach (LandX pLand in m_pMethropoly.m_cContents)
                 pLand.m_pNation = m_pSociety.m_pTitularNation;
 
