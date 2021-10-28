@@ -80,7 +80,7 @@ namespace GeneLab.Genetix
             if (eGender.HasValue)
                 pronoun = eGender == Gender.Male ? "his" : "her";
 
-            switch (m_eNutritionType)
+            switch (NutritionType)
             {
                 case NutritionType.Eternal:
                     sMeals = "has no need in any food at all";
@@ -180,14 +180,14 @@ namespace GeneLab.Genetix
         }
 
 
-        public NutritionType m_eNutritionType = NutritionType.Organic;
+        public NutritionType NutritionType { get; private set; } = NutritionType.Organic;
 
         public bool IsParasite()
         {
-            return m_eNutritionType == NutritionType.ParasitismBlood ||
-                m_eNutritionType == NutritionType.ParasitismEmote ||
-                m_eNutritionType == NutritionType.ParasitismEnergy ||
-                m_eNutritionType == NutritionType.ParasitismMeat;
+            return NutritionType == NutritionType.ParasitismBlood ||
+                NutritionType == NutritionType.ParasitismEmote ||
+                NutritionType == NutritionType.ParasitismEnergy ||
+                NutritionType == NutritionType.ParasitismMeat;
         }
 
         public bool IsIdentical(GenetixBase pOther)
@@ -197,7 +197,7 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eNutritionType == pAnother.m_eNutritionType;
+            return NutritionType == pAnother.NutritionType;
         }
 
         public NutritionGenetix()
@@ -205,19 +205,19 @@ namespace GeneLab.Genetix
 
         public NutritionGenetix(NutritionGenetix pPredcessor)
         {
-            m_eNutritionType = pPredcessor.m_eNutritionType;
+            NutritionType = pPredcessor.NutritionType;
         }
 
         public NutritionGenetix(NutritionType eNutritionType)
         {
-            m_eNutritionType = eNutritionType;
+            NutritionType = eNutritionType;
         }
 
         public void MutateNutritionType(BodyGenetix pBody)
         {
             int iChance = 0;
             int[] aChances = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-            switch (m_eNutritionType)
+            switch (NutritionType)
             {
                 case NutritionType.Eternal:
                     {
@@ -276,13 +276,13 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            if (pBody.m_eBodySize == BodySize.Big)
+            if (pBody.BodySize == BodySize.Big)
             {
                 aChances[5] *= 2;//Сarnivorous
                 aChances[7] *= 2;//ParasitismMeat
             }
 
-            if (pBody.m_eBodySize == BodySize.Giant)
+            if (pBody.BodySize == BodySize.Giant)
             {
                 aChances[0] *= 2;//Eternal
                 aChances[1] *= 2;//Photosynthesis
@@ -294,14 +294,14 @@ namespace GeneLab.Genetix
                 aChances[5] = Math.Min(1, aChances[5]);//Сarnivorous
             }
 
-            if (pBody.m_eBodySize == BodySize.Tini ||
-                pBody.m_eBodySize == BodySize.Small)
+            if (pBody.BodySize == BodySize.Tini ||
+                pBody.BodySize == BodySize.Small)
             {
                 aChances[5] = Math.Min(1, aChances[5]);//Сarnivorous
                 aChances[7] = Math.Min(1, aChances[7]);//ParasitismMeat
             }
 
-            if (pBody.m_eBodyBuild == BodyBuild.Muscular)
+            if (pBody.BodyBuild == BodyBuild.Muscular)
             {
                 aChances[4] *= 2;//Organic
                 aChances[5] *= 2;//Сarnivorous
@@ -312,7 +312,7 @@ namespace GeneLab.Genetix
                 aChances[9] = Math.Min(1, aChances[9]);//ParasitismEnergy
             }
 
-            if (pBody.m_eBodyBuild == BodyBuild.Fat)
+            if (pBody.BodyBuild == BodyBuild.Fat)
             {
                 aChances[0] *= 2;//Eternal
                 aChances[1] *= 2;//Photosynthesis
@@ -325,7 +325,7 @@ namespace GeneLab.Genetix
                 aChances[7] = 0;// Math.Min(1, aChances[7]);//ParasitismMeat
             }
 
-            if (pBody.m_eBodyBuild == BodyBuild.Skinny)
+            if (pBody.BodyBuild == BodyBuild.Skinny)
             {
                 aChances[3] *= 2;//Vegetarian
                 aChances[6] *= 2;//ParasitismBlood
@@ -336,42 +336,42 @@ namespace GeneLab.Genetix
 
             iChance = Rnd.ChooseOne(aChances, 1);
 
-            NutritionType eNutritionType = m_eNutritionType;
+            NutritionType eNutritionType = NutritionType;
 
             switch (iChance)
             {
                 case 0:
-                    m_eNutritionType = NutritionType.Eternal;
+                    NutritionType = NutritionType.Eternal;
                     break;
                 case 1:
-                    m_eNutritionType = NutritionType.Photosynthesis;
+                    NutritionType = NutritionType.Photosynthesis;
                     break;
                 case 2:
-                    m_eNutritionType = NutritionType.Thermosynthesis;
+                    NutritionType = NutritionType.Thermosynthesis;
                     break;
                 case 3:
-                    m_eNutritionType = NutritionType.Vegetarian;
+                    NutritionType = NutritionType.Vegetarian;
                     break;
                 case 4:
-                    m_eNutritionType = NutritionType.Organic;
+                    NutritionType = NutritionType.Organic;
                     break;
                 case 5:
-                    m_eNutritionType = NutritionType.Carnivorous;
+                    NutritionType = NutritionType.Carnivorous;
                     break;
                 case 6:
-                    m_eNutritionType = NutritionType.ParasitismBlood;
+                    NutritionType = NutritionType.ParasitismBlood;
                     break;
                 case 7:
-                    m_eNutritionType = NutritionType.ParasitismMeat;
+                    NutritionType = NutritionType.ParasitismMeat;
                     break;
                 case 8:
-                    m_eNutritionType = NutritionType.ParasitismEmote;
+                    NutritionType = NutritionType.ParasitismEmote;
                     break;
                 case 9:
-                    m_eNutritionType = NutritionType.ParasitismEnergy;
+                    NutritionType = NutritionType.ParasitismEnergy;
                     break;
                 case 10:
-                    m_eNutritionType = NutritionType.Mineral;
+                    NutritionType = NutritionType.Mineral;
                     break;
             }
         }

@@ -66,11 +66,11 @@ namespace GeneLab.Genetix
         /// <returns></returns>
         public string GetDescription()
         {
-            if (m_eWingsCount == WingsCount.None)
+            if (WingsCount == WingsCount.None)
                 return "";
 
             string sWings = "";
-            switch (m_eWingsForce)
+            switch (WingsForce)
             {
                 case WingsForce.None:
                     sWings = "small";
@@ -83,7 +83,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            switch (m_eWingsType)
+            switch (WingsType)
             {
                 case WingsType.Feathered:
                     sWings += " feathered wings";
@@ -99,7 +99,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return (m_eWingsCount == WingsCount.Dipterous ? "pair" : "2 pairs") + " of " + sWings;
+            return (WingsCount == WingsCount.Dipterous ? "pair" : "2 pairs") + " of " + sWings;
         }
         
         /// <summary>
@@ -150,11 +150,11 @@ namespace GeneLab.Genetix
             get { return new WingsGenetix(WingsCount.Quadrupterous, WingsType.Tentacles, WingsForce.None); }
         }
 
-        public WingsCount m_eWingsCount = WingsCount.Dipterous;
+        public WingsCount WingsCount { get; private set; } = WingsCount.Dipterous;
 
-        public WingsType m_eWingsType = WingsType.Feathered;
+        public WingsType WingsType { get; private set; } = WingsType.Feathered;
 
-        public WingsForce m_eWingsForce = WingsForce.Flying;
+        public WingsForce WingsForce { get; private set; } = WingsForce.Flying;
         
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -163,13 +163,13 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            if (m_eWingsCount == WingsCount.None &&
-                pAnother.m_eWingsCount == WingsCount.None)
+            if (WingsCount == WingsCount.None &&
+                pAnother.WingsCount == WingsCount.None)
                 return true;
 
-            return m_eWingsCount == pAnother.m_eWingsCount &&
-                m_eWingsType == pAnother.m_eWingsType &&
-                m_eWingsForce == pAnother.m_eWingsForce;
+            return WingsCount == pAnother.WingsCount &&
+                WingsType == pAnother.WingsType &&
+                WingsForce == pAnother.WingsForce;
         }
 
         public WingsGenetix()
@@ -177,19 +177,19 @@ namespace GeneLab.Genetix
 
         public WingsGenetix(WingsGenetix pPredcessor)
         {
-            m_eWingsCount = pPredcessor.m_eWingsCount;
-            m_eWingsType = pPredcessor.m_eWingsType;
-            m_eWingsForce = pPredcessor.m_eWingsForce;
+            WingsCount = pPredcessor.WingsCount;
+            WingsType = pPredcessor.WingsType;
+            WingsForce = pPredcessor.WingsForce;
         }
 
         public WingsGenetix(WingsCount eArmsCount, WingsType eArmsType, WingsForce eWingsForce)
         {
-            m_eWingsCount = eArmsCount;
-            m_eWingsType = eArmsType;
-            m_eWingsForce = eWingsForce;
+            WingsCount = eArmsCount;
+            WingsType = eArmsType;
+            WingsForce = eWingsForce;
 
-            if (m_eWingsType == WingsType.Tentacles || m_eWingsCount == WingsCount.None)
-                m_eWingsForce = WingsForce.None;
+            if (WingsType == WingsType.Tentacles || WingsCount == WingsCount.None)
+                WingsForce = WingsForce.None;
         }
         
         public GenetixBase MutateRace()
@@ -199,32 +199,32 @@ namespace GeneLab.Genetix
                 WingsGenetix pMutant = new WingsGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
-                    pMutant.m_eWingsCount = (WingsCount)Rnd.Get(typeof(WingsCount));
+                    pMutant.WingsCount = (WingsCount)Rnd.Get(typeof(WingsCount));
 
                 int iChance = Rnd.Get(4);
-                if (m_eWingsForce != WingsForce.None)
+                if (WingsForce != WingsForce.None)
                     iChance = Rnd.Get(3);
                     
                 switch (iChance)
                 {
                     case 0:
-                        pMutant.m_eWingsType = WingsType.Feathered;
+                        pMutant.WingsType = WingsType.Feathered;
                         break;
                     case 1:
-                        pMutant.m_eWingsType = WingsType.Leather;
+                        pMutant.WingsType = WingsType.Leather;
                         break;
                     case 2:
-                        pMutant.m_eWingsType = WingsType.Insectoid;
+                        pMutant.WingsType = WingsType.Insectoid;
                         break;
                     case 3:
-                        pMutant.m_eWingsType = WingsType.Tentacles;
+                        pMutant.WingsType = WingsType.Tentacles;
                         break;
                 }
 
-                pMutant.m_eWingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
+                pMutant.WingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
 
-                if (pMutant.m_eWingsType == WingsType.Tentacles || pMutant.m_eWingsCount == WingsCount.None)
-                    pMutant.m_eWingsForce = WingsForce.None;
+                if (pMutant.WingsType == WingsType.Tentacles || pMutant.WingsCount == WingsCount.None)
+                    pMutant.WingsForce = WingsForce.None;
 
                 if(!pMutant.IsIdentical(this))
                     return pMutant;
@@ -241,16 +241,16 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eWingsCount == WingsCount.Dipterous)
-                        pMutant.m_eWingsCount = WingsCount.Quadrupterous;
-                    if (pMutant.m_eWingsCount == WingsCount.Quadrupterous)
-                        pMutant.m_eWingsCount = WingsCount.Dipterous;
+                    if (pMutant.WingsCount == WingsCount.Dipterous)
+                        pMutant.WingsCount = WingsCount.Quadrupterous;
+                    if (pMutant.WingsCount == WingsCount.Quadrupterous)
+                        pMutant.WingsCount = WingsCount.Dipterous;
                 }
 
-                pMutant.m_eWingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
+                pMutant.WingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
 
-                if (pMutant.m_eWingsType == WingsType.Tentacles || pMutant.m_eWingsCount == WingsCount.None)
-                    pMutant.m_eWingsForce = WingsForce.None;
+                if (pMutant.WingsType == WingsType.Tentacles || pMutant.WingsCount == WingsCount.None)
+                    pMutant.WingsForce = WingsForce.None;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
@@ -267,24 +267,24 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eWingsCount == WingsCount.Dipterous)
-                        pMutant.m_eWingsCount = WingsCount.Quadrupterous;
-                    if (pMutant.m_eWingsCount == WingsCount.Quadrupterous)
-                        pMutant.m_eWingsCount = WingsCount.Dipterous;
+                    if (pMutant.WingsCount == WingsCount.Dipterous)
+                        pMutant.WingsCount = WingsCount.Quadrupterous;
+                    if (pMutant.WingsCount == WingsCount.Quadrupterous)
+                        pMutant.WingsCount = WingsCount.Dipterous;
                 }
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eWingsType == WingsType.Feathered)
-                        pMutant.m_eWingsType = WingsType.Leather;
-                    if (pMutant.m_eWingsType == WingsType.Leather)
-                        pMutant.m_eWingsType = WingsType.Feathered;
+                    if (pMutant.WingsType == WingsType.Feathered)
+                        pMutant.WingsType = WingsType.Leather;
+                    if (pMutant.WingsType == WingsType.Leather)
+                        pMutant.WingsType = WingsType.Feathered;
                 }
 
-                pMutant.m_eWingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
+                pMutant.WingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
 
-                if (pMutant.m_eWingsType == WingsType.Tentacles || pMutant.m_eWingsCount == WingsCount.None)
-                    pMutant.m_eWingsForce = WingsForce.None;
+                if (pMutant.WingsType == WingsType.Tentacles || pMutant.WingsCount == WingsCount.None)
+                    pMutant.WingsForce = WingsForce.None;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
@@ -304,10 +304,10 @@ namespace GeneLab.Genetix
             {
                 WingsGenetix pMutant = new WingsGenetix(this);
 
-                pMutant.m_eWingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
+                pMutant.WingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
 
-                if (pMutant.m_eWingsType == WingsType.Tentacles || pMutant.m_eWingsCount == WingsCount.None)
-                    pMutant.m_eWingsForce = WingsForce.None;
+                if (pMutant.WingsType == WingsType.Tentacles || pMutant.WingsCount == WingsCount.None)
+                    pMutant.WingsForce = WingsForce.None;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;

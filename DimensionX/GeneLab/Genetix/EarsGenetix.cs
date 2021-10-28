@@ -55,7 +55,7 @@ namespace GeneLab.Genetix
         public string GetDescription()
         {
             string sEars = "?";
-            switch (m_eEarsType)
+            switch (EarsType)
             {
                 case EarsType.None:
                     sEars = "no visible ears";
@@ -77,7 +77,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return sEars + " at the " + (m_eEarsPlacement == EarsPlacement.Top ? "top" : "sides");
+            return sEars + " at the " + (EarsPlacement == EarsPlacement.Top ? "top" : "sides");
         }
 
         /// <summary>
@@ -128,9 +128,9 @@ namespace GeneLab.Genetix
             get { return new EarsGenetix(EarsType.Feelers, EarsPlacement.Top); }
         }
 
-        public EarsType m_eEarsType = EarsType.Round;
+        public EarsType EarsType { get; private set; } = EarsType.Round;
 
-        public EarsPlacement m_eEarsPlacement = EarsPlacement.Side;
+        public EarsPlacement EarsPlacement { get; private set; } = EarsPlacement.Side;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -139,8 +139,8 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eEarsType == pAnother.m_eEarsType &&
-                m_eEarsPlacement == pAnother.m_eEarsPlacement;
+            return EarsType == pAnother.EarsType &&
+                EarsPlacement == pAnother.EarsPlacement;
         }
         
         public EarsGenetix()
@@ -148,14 +148,14 @@ namespace GeneLab.Genetix
 
         public EarsGenetix(EarsGenetix pPredcessor)
         {
-            m_eEarsType = pPredcessor.m_eEarsType;
-            m_eEarsPlacement = pPredcessor.m_eEarsPlacement;
+            EarsType = pPredcessor.EarsType;
+            EarsPlacement = pPredcessor.EarsPlacement;
         }
 
         public EarsGenetix(EarsType eEarsType, EarsPlacement eEarsPlacement)
         {
-            m_eEarsType = eEarsType;
-            m_eEarsPlacement = eEarsPlacement;
+            EarsType = eEarsType;
+            EarsPlacement = eEarsPlacement;
         }
         
         public GenetixBase MutateRace()
@@ -165,7 +165,7 @@ namespace GeneLab.Genetix
                 EarsGenetix pMutant = new EarsGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
-                    pMutant.m_eEarsType = (EarsType)Rnd.Get(typeof(EarsType));
+                    pMutant.EarsType = (EarsType)Rnd.Get(typeof(EarsType));
 
                 //if (Rnd.OneChanceFrom(2))
                 //    pMutant.m_eEarsPlacement = (EarsPlacement)Rnd.Get(typeof(EarsPlacement));
@@ -184,7 +184,7 @@ namespace GeneLab.Genetix
                 EarsGenetix pMutant = new EarsGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
-                    pMutant.m_eEarsType = (EarsType)Rnd.Get(typeof(EarsType));
+                    pMutant.EarsType = (EarsType)Rnd.Get(typeof(EarsType));
 
                 //if (Rnd.OneChanceFrom(2))
                 //    pMutant.m_eEarsPlacement = (EarsPlacement)Rnd.Get(typeof(EarsPlacement));

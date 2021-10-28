@@ -305,7 +305,7 @@ namespace Socium.Population
             }
 
             Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
-            if (m_pTitularNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite() || m_pTitularNation.m_bInvader)
+            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pTitularNation.m_bInvader)
             {
                 cNationsCount.Remove(m_pTitularNation);
                 if (cNationsCount.Count > 0)
@@ -357,7 +357,7 @@ namespace Socium.Population
                     if (pNation.m_bDying && !bCanBeDying)
                         continue;
 
-                    if (pNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite() && !bCanBeParasite)
+                    if (pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() && !bCanBeParasite)
                         continue;
 
                     if (!cChances.ContainsKey(pNation))
@@ -403,7 +403,7 @@ namespace Socium.Population
                 return pDefault;
             }
 
-            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
+            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
             {
                 m_pHostNation = getAccessableNation(false, false, true, m_pHostNation);
             }
@@ -881,9 +881,9 @@ namespace Socium.Population
                                 if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.SchoolSmall] = fScience / 4;
@@ -1004,9 +1004,9 @@ namespace Socium.Population
                             else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Primitive)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1033,9 +1033,9 @@ namespace Socium.Population
                                 else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1191,9 +1191,9 @@ namespace Socium.Population
                             else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Primitive)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1220,9 +1220,9 @@ namespace Socium.Population
                                 else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1395,9 +1395,9 @@ namespace Socium.Population
                             if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Primitive)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1424,9 +1424,9 @@ namespace Socium.Population
                                 else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1823,7 +1823,7 @@ namespace Socium.Population
                     cProvinceMagesCount[Gender.Female] += pLand.m_cContents.Count * fPrevalence;
                 }
 
-                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate)
+                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
                     case BirthRate.Low:
                         cProvinceMagesCount[Gender.Male] *= 0.1f;
@@ -1833,7 +1833,7 @@ namespace Socium.Population
                         break;
                 }
 
-                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate)
+                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
                     case BirthRate.Low:
                         cProvinceMagesCount[Gender.Female] *= 0.1f;
@@ -2063,16 +2063,16 @@ namespace Socium.Population
         {
             if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
             {
-                if (m_pTitularNation.m_pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate >
-                    m_pTitularNation.m_pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate)
+                if (m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate >
+                    m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                     return Customs.GenderPriority.Genders_equality;
                 else
                     return Customs.GenderPriority.Patriarchy;
             }
             if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Patriarchy))
             {
-                if (m_pTitularNation.m_pPhenotypeM.ValueOf<LifeCycleGenetix>().m_eBirthRate >
-                    m_pTitularNation.m_pPhenotypeF.ValueOf<LifeCycleGenetix>().m_eBirthRate)
+                if (m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate >
+                    m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                     return Customs.GenderPriority.Genders_equality;
                 else
                     return Customs.GenderPriority.Matriarchy;

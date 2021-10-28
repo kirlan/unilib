@@ -47,7 +47,7 @@ namespace GeneLab.Genetix
         public string GetDescription(Gender? eGender, bool bFull)
         {
             string sBreasts = "";
-            switch (m_eBreastsCount)
+            switch (BreastsCount)
             {
                 case BreastsCount.Two:
                     if (bFull)
@@ -70,7 +70,7 @@ namespace GeneLab.Genetix
             if (sBreasts != "")
             {
                 sBreasts += " ";
-                switch (m_eBreastSize)
+                switch (BreastSize)
                 {
                     case BreastSize.None:
                         if (eGender.HasValue && eGender != Gender.Male)
@@ -211,9 +211,9 @@ namespace GeneLab.Genetix
         }
 
 
-        public BreastsCount m_eBreastsCount = BreastsCount.Two;
+        public BreastsCount BreastsCount { get; private set; } = BreastsCount.Two;
 
-        public BreastSize m_eBreastSize = BreastSize.None;
+        public BreastSize BreastSize { get; private set; } = BreastSize.None;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -222,8 +222,8 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eBreastsCount == pAnother.m_eBreastsCount &&
-                m_eBreastSize == pAnother.m_eBreastSize;
+            return BreastsCount == pAnother.BreastsCount &&
+                BreastSize == pAnother.BreastSize;
         }
 
         public BreastsGenetix()
@@ -231,14 +231,14 @@ namespace GeneLab.Genetix
 
         public BreastsGenetix(BreastsGenetix pPredcessor)
         {
-            m_eBreastsCount = pPredcessor.m_eBreastsCount;
-            m_eBreastSize = pPredcessor.m_eBreastSize;
+            BreastsCount = pPredcessor.BreastsCount;
+            BreastSize = pPredcessor.BreastSize;
         }
 
         public BreastsGenetix(BreastsCount eBreastsCount, BreastSize eBreastSize)
         {
-            m_eBreastsCount = eBreastsCount;
-            m_eBreastSize = eBreastSize;
+            BreastsCount = eBreastsCount;
+            BreastSize = eBreastSize;
         }
 
         #region GenetixBase Members
@@ -251,38 +251,38 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(10))
                 {
-                    switch (m_eBreastsCount)
+                    switch (BreastsCount)
                     {
                         case BreastsCount.Two:
-                            pMutant.m_eBreastsCount = BreastsCount.Four;
+                            pMutant.BreastsCount = BreastsCount.Four;
                             break;
                         case BreastsCount.Four:
-                            pMutant.m_eBreastsCount = Rnd.OneChanceFrom(2) ? BreastsCount.Two : BreastsCount.Six;
+                            pMutant.BreastsCount = Rnd.OneChanceFrom(2) ? BreastsCount.Two : BreastsCount.Six;
                             break;
                         case BreastsCount.Six:
-                            pMutant.m_eBreastsCount = Rnd.OneChanceFrom(2) ? BreastsCount.Four : BreastsCount.Eight;
+                            pMutant.BreastsCount = Rnd.OneChanceFrom(2) ? BreastsCount.Four : BreastsCount.Eight;
                             break;
                         case BreastsCount.Eight:
-                            pMutant.m_eBreastsCount = Rnd.OneChanceFrom(2) ? BreastsCount.Six : BreastsCount.Dozen;
+                            pMutant.BreastsCount = Rnd.OneChanceFrom(2) ? BreastsCount.Six : BreastsCount.Dozen;
                             break;
                         case BreastsCount.Dozen:
-                            pMutant.m_eBreastsCount = BreastsCount.Eight;
+                            pMutant.BreastsCount = BreastsCount.Eight;
                             break;
                     }
                 }
 
-                if (pMutant.m_eBreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
+                if (pMutant.BreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
                 {
-                    switch (m_eBreastSize)
+                    switch (BreastSize)
                     {
                         //case BreastSize.None:
                         //    pMutant.m_eBreastSize = BreastSize.Small;
                         //    break;
                         case BreastSize.Small:
-                            pMutant.m_eBreastSize = /*Rnd.OneChanceFrom(2) ? BreastSize.None :*/ BreastSize.Big;
+                            pMutant.BreastSize = /*Rnd.OneChanceFrom(2) ? BreastSize.None :*/ BreastSize.Big;
                             break;
                         case BreastSize.Big:
-                            pMutant.m_eBreastSize = BreastSize.Small;
+                            pMutant.BreastSize = BreastSize.Small;
                             break;
                     }
                 }
@@ -300,18 +300,18 @@ namespace GeneLab.Genetix
             {
                 BreastsGenetix pMutant = new BreastsGenetix(this);
 
-                if (pMutant.m_eBreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
+                if (pMutant.BreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
                 {
-                    switch (m_eBreastSize)
+                    switch (BreastSize)
                     {
                         case BreastSize.None:
-                            pMutant.m_eBreastSize = BreastSize.Small;
+                            pMutant.BreastSize = BreastSize.Small;
                             break;
                         case BreastSize.Small:
-                            pMutant.m_eBreastSize = /*Rnd.OneChanceFrom(2) ? BreastSize.None :*/ BreastSize.Big;
+                            pMutant.BreastSize = /*Rnd.OneChanceFrom(2) ? BreastSize.None :*/ BreastSize.Big;
                             break;
                         case BreastSize.Big:
-                            pMutant.m_eBreastSize = BreastSize.Small;
+                            pMutant.BreastSize = BreastSize.Small;
                             break;
                     }
                 }
@@ -329,15 +329,15 @@ namespace GeneLab.Genetix
             {
                 BreastsGenetix pMutant = new BreastsGenetix(this);
 
-                if (pMutant.m_eBreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
+                if (pMutant.BreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
                 {
-                    switch (m_eBreastSize)
+                    switch (BreastSize)
                     {
                         case BreastSize.Small:
-                            pMutant.m_eBreastSize = BreastSize.Big;
+                            pMutant.BreastSize = BreastSize.Big;
                             break;
                         case BreastSize.Big:
-                            pMutant.m_eBreastSize = BreastSize.Small;
+                            pMutant.BreastSize = BreastSize.Small;
                             break;
                     }
                 }
@@ -354,15 +354,15 @@ namespace GeneLab.Genetix
             {
                 BreastsGenetix pMutant = new BreastsGenetix(this);
 
-                if (pMutant.m_eBreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
+                if (pMutant.BreastsCount != BreastsCount.None && Rnd.OneChanceFrom(2))
                 {
-                    switch (m_eBreastSize)
+                    switch (BreastSize)
                     {
                         case BreastSize.Small:
-                            pMutant.m_eBreastSize = BreastSize.Big;
+                            pMutant.BreastSize = BreastSize.Big;
                             break;
                         case BreastSize.Big:
-                            pMutant.m_eBreastSize = BreastSize.Small;
+                            pMutant.BreastSize = BreastSize.Small;
                             break;
                     }
                 }
@@ -377,15 +377,15 @@ namespace GeneLab.Genetix
         {
             BreastsGenetix pMutant = new BreastsGenetix(this);
 
-            if (pMutant.m_eBreastsCount != BreastsCount.None && Rnd.OneChanceFrom(3))
+            if (pMutant.BreastsCount != BreastsCount.None && Rnd.OneChanceFrom(3))
             {
-                switch (m_eBreastSize)
+                switch (BreastSize)
                 {
                     case BreastSize.Small:
-                        pMutant.m_eBreastSize = Rnd.OneChanceFrom(2) ? BreastSize.None : BreastSize.Big;
+                        pMutant.BreastSize = Rnd.OneChanceFrom(2) ? BreastSize.None : BreastSize.Big;
                         break;
                     case BreastSize.Big:
-                        pMutant.m_eBreastSize = BreastSize.Small;
+                        pMutant.BreastSize = BreastSize.Small;
                         break;
                 }
             }

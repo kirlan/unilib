@@ -86,8 +86,8 @@ namespace GeneLab.Genetix
         /// <returns></returns>
         public string GetDescription()
         {
-            if (m_eHairs == HairsAmount.None &&
-                 m_eBeard == HairsAmount.None)
+            if (Hairs == HairsAmount.None &&
+                 Beard == HairsAmount.None)
                 return "";
 
             string sColors = "";
@@ -156,11 +156,11 @@ namespace GeneLab.Genetix
             string sHair = "?";
             string sBeard = "?";
 
-            switch (m_eHairsType)
+            switch (HairsType)
             {
                 case HairsType.Whiskers:
                     {
-                        switch (m_eHairs)
+                        switch (Hairs)
                         {
                             case HairsAmount.None:
                                 sHair = "";
@@ -173,7 +173,7 @@ namespace GeneLab.Genetix
                                 break;
                         }
 
-                        switch (m_eBeard)
+                        switch (Beard)
                         {
                             case HairsAmount.None:
                                 sBeard = "";
@@ -205,7 +205,7 @@ namespace GeneLab.Genetix
                     break;
                 case HairsType.Hair:
                     {
-                        switch (m_eHairs)
+                        switch (Hairs)
                         {
                             case HairsAmount.None:
                                 sHair = "";
@@ -218,7 +218,7 @@ namespace GeneLab.Genetix
                                 break;
                         }
 
-                        switch (m_eBeard)
+                        switch (Beard)
                         {
                             case HairsAmount.None:
                                 sBeard = "no beard or moustache";
@@ -235,14 +235,14 @@ namespace GeneLab.Genetix
 
                         if (sHair == "")
                         {
-                            if (m_eBeard == HairsAmount.None)
+                            if (Beard == HairsAmount.None)
                                 sHairs = "are bald, and have " + sBeard;
                             else
                                 sHairs = "are bald, but have " + sBeard + sColors;
                         }
                         else
                         {
-                            if (m_eBeard == HairsAmount.None)
+                            if (Beard == HairsAmount.None)
                                 sHairs += sHair + sColors + " and " + sBeard;
                             else
                                 sHairs += sHair + " and " + sBeard + sColors;
@@ -251,7 +251,7 @@ namespace GeneLab.Genetix
                     break;
                 case HairsType.Tentackles:
                     {
-                        switch (m_eHairs)
+                        switch (Hairs)
                         {
                             case HairsAmount.None:
                                 sHair = "";
@@ -264,7 +264,7 @@ namespace GeneLab.Genetix
                                 break;
                         }
 
-                        switch (m_eBeard)
+                        switch (Beard)
                         {
                             case HairsAmount.None:
                                 sBeard = "";
@@ -305,8 +305,8 @@ namespace GeneLab.Genetix
         /// <returns></returns>
         public string GetDescription(Gender eGender)
         {
-            if (m_eHairs == HairsAmount.None &&
-                 m_eBeard == HairsAmount.None)
+            if (Hairs == HairsAmount.None &&
+                 Beard == HairsAmount.None)
                 return eGender == Gender.Male ? "He is completely bald." : "She is completely bald.";
 
             string sColor = "";
@@ -343,11 +343,11 @@ namespace GeneLab.Genetix
             string sHair = "?";
             string sBeard = "?";
 
-            switch (m_eHairsType)
+            switch (HairsType)
             {
                 case HairsType.Whiskers:
                     {
-                        switch (m_eHairs)
+                        switch (Hairs)
                         {
                             case HairsAmount.None:
                                 sHair = "";
@@ -359,7 +359,7 @@ namespace GeneLab.Genetix
                                 sHair = "dense " + sColor + " mane";
                                 break;
                         }
-                        switch (m_eBeard)
+                        switch (Beard)
                         {
                             case HairsAmount.None:
                                 sBeard = "";
@@ -387,7 +387,7 @@ namespace GeneLab.Genetix
                     break;
                 case HairsType.Hair:
                     {
-                        switch (m_eHairs)
+                        switch (Hairs)
                         {
                             case HairsAmount.None:
                                 sHair = "";
@@ -399,7 +399,7 @@ namespace GeneLab.Genetix
                                 sHair = "long " + sColor + " hairs";
                                 break;
                         }
-                        switch (m_eBeard)
+                        switch (Beard)
                         {
                             case HairsAmount.None:
                                 sBeard = "no beard or moustache";
@@ -414,7 +414,7 @@ namespace GeneLab.Genetix
 
                         if (sHair == "")
                         {
-                            if (m_eBeard == HairsAmount.None)
+                            if (Beard == HairsAmount.None)
                                 sResult = (eGender == Gender.Male ? "He" : "She") + " is bald, and has " + sBeard;
                             else
                                 sResult = (eGender == Gender.Male ? "He" : "She") + " is bald, but has " + sColor + " " + sBeard;
@@ -427,7 +427,7 @@ namespace GeneLab.Genetix
                     break;
                 case HairsType.Tentackles:
                     {
-                        switch (m_eHairs)
+                        switch (Hairs)
                         {
                             case HairsAmount.None:
                                 sHair = "";
@@ -440,7 +440,7 @@ namespace GeneLab.Genetix
                                 break;
                         }
 
-                        switch (m_eBeard)
+                        switch (Beard)
                         {
                             case HairsAmount.None:
                                 sBeard = "";
@@ -545,13 +545,13 @@ namespace GeneLab.Genetix
             get { return new HairsGenetix(HairsAmount.None, HairsAmount.Sparse, HairsType.Whiskers, new HairsColor[] { HairsColor.Hide }); }
         }
 
-        public HairsAmount m_eHairs = HairsAmount.Sparse;
+        public HairsAmount Hairs { get; private set; } = HairsAmount.Sparse;
 
-        public HairsAmount m_eBeard = HairsAmount.Thick;
+        public HairsAmount Beard { get; private set; } = HairsAmount.Thick;
 
-        public HairsType m_eHairsType = HairsType.Hair;
+        public HairsType HairsType { get; private set; } = HairsType.Hair;
 
-        public List<HairsColor> m_cHairColors = new List<HairsColor>(new HairsColor[] { HairsColor.Brunette, HairsColor.Blonde, HairsColor.DarkBlond, HairsColor.Red });
+        public readonly List<HairsColor> m_cHairColors = new List<HairsColor>(new HairsColor[] { HairsColor.Brunette, HairsColor.Blonde, HairsColor.DarkBlond, HairsColor.Red });
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -569,9 +569,9 @@ namespace GeneLab.Genetix
                         return false;
             }
 
-            return m_eHairs == pAnother.m_eHairs &&
-                m_eBeard == pAnother.m_eBeard &&
-                m_eHairsType == pAnother.m_eHairsType;
+            return Hairs == pAnother.Hairs &&
+                Beard == pAnother.Beard &&
+                HairsType == pAnother.HairsType;
         }
 
         public HairsGenetix()
@@ -580,8 +580,8 @@ namespace GeneLab.Genetix
         public bool CheckHairColors()
         {
             if (m_cHairColors.Count == 0 &&
-                (m_eHairs != HairsAmount.None ||
-                 m_eBeard != HairsAmount.None))
+                (Hairs != HairsAmount.None ||
+                 Beard != HairsAmount.None))
                 return true;
 
             List<HairsColor> cTest = new List<HairsColor>();
@@ -598,9 +598,9 @@ namespace GeneLab.Genetix
 
         public HairsGenetix(HairsGenetix pPredcessor)
         {
-            m_eHairs = pPredcessor.m_eHairs;
-            m_eBeard = pPredcessor.m_eBeard;
-            m_eHairsType = pPredcessor.m_eHairsType;
+            Hairs = pPredcessor.Hairs;
+            Beard = pPredcessor.Beard;
+            HairsType = pPredcessor.HairsType;
 
             m_cHairColors.Clear();
             m_cHairColors.AddRange(pPredcessor.m_cHairColors);
@@ -610,9 +610,9 @@ namespace GeneLab.Genetix
 
         public HairsGenetix(HairsAmount eHairs, HairsAmount eBeard, HairsType eHairsType, HairsColor[] aHairColors)
         {
-            m_eHairs = eHairs;
-            m_eBeard = eBeard;
-            m_eHairsType = eHairsType;
+            Hairs = eHairs;
+            Beard = eBeard;
+            HairsType = eHairsType;
 
             m_cHairColors = new List<HairsColor>(aHairColors);
 
@@ -632,21 +632,21 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(3))
                 {
-                    pMutant.m_eHairs = MutateHairsAmount(pMutant.m_eHairs);
-                    if (Rnd.OneChanceFrom(2) || m_eHairsType == HairsType.Whiskers)
-                        pMutant.m_eHairs = MutateHairsAmount(pMutant.m_eHairs);
+                    pMutant.Hairs = MutateHairsAmount(pMutant.Hairs);
+                    if (Rnd.OneChanceFrom(2) || HairsType == HairsType.Whiskers)
+                        pMutant.Hairs = MutateHairsAmount(pMutant.Hairs);
                     else
-                        pMutant.m_eHairs = HairsAmount.Thick;
+                        pMutant.Hairs = HairsAmount.Thick;
 
-                    if (Rnd.OneChanceFrom(3) || m_eHairsType == HairsType.Whiskers)
-                        pMutant.m_eBeard = MutateHairsAmount(pMutant.m_eBeard);
+                    if (Rnd.OneChanceFrom(3) || HairsType == HairsType.Whiskers)
+                        pMutant.Beard = MutateHairsAmount(pMutant.Beard);
                     else
-                        pMutant.m_eBeard = pMutant.m_eHairs;
+                        pMutant.Beard = pMutant.Hairs;
                 }
 
-                if (pMutant.m_eBeard == HairsAmount.None &&
-                    pMutant.m_eHairsType == HairsType.Whiskers)
-                    pMutant.m_eHairsType = HairsType.Hair;
+                if (pMutant.Beard == HairsAmount.None &&
+                    pMutant.HairsType == HairsType.Whiskers)
+                    pMutant.HairsType = HairsType.Hair;
 
                 if (!pMutant.IsIdentical(this))
                 {
@@ -688,8 +688,8 @@ namespace GeneLab.Genetix
                     }
 
                     if (iCount == 0 &&
-                        (pMutant.m_eHairs != HairsAmount.None ||
-                         pMutant.m_eBeard != HairsAmount.None))
+                        (pMutant.Hairs != HairsAmount.None ||
+                         pMutant.Beard != HairsAmount.None))
                     {
                         iCount = 1 + Rnd.Get(Enum.GetValues(typeof(HairsColor)).Length);
                         for (int i = 0; i < iCount; i++)
@@ -741,21 +741,21 @@ namespace GeneLab.Genetix
             {
                 HairsGenetix pMutant = new HairsGenetix(this);
 
-                pMutant.m_eHairs = MutateHairsAmount(pMutant.m_eHairs);
+                pMutant.Hairs = MutateHairsAmount(pMutant.Hairs);
 
-                var eOriginalBeard = pMutant.m_eBeard;
+                var eOriginalBeard = pMutant.Beard;
 
                 if (Rnd.OneChanceFrom(3))
-                    pMutant.m_eBeard = MutateHairsAmount(pMutant.m_eBeard);
+                    pMutant.Beard = MutateHairsAmount(pMutant.Beard);
                 else
-                    pMutant.m_eBeard = pMutant.m_eHairs;
+                    pMutant.Beard = pMutant.Hairs;
 
-                if (eOriginalBeard < pMutant.m_eBeard && !Rnd.OneChanceFrom(10))
-                    pMutant.m_eBeard = eOriginalBeard;
+                if (eOriginalBeard < pMutant.Beard && !Rnd.OneChanceFrom(10))
+                    pMutant.Beard = eOriginalBeard;
 
-                if (pMutant.m_eBeard == HairsAmount.None &&
-                    pMutant.m_eHairsType == HairsType.Whiskers)
-                    pMutant.m_eHairsType = HairsType.Hair;
+                if (pMutant.Beard == HairsAmount.None &&
+                    pMutant.HairsType == HairsType.Whiskers)
+                    pMutant.HairsType = HairsType.Hair;
 
                 int iCount = pMutant.m_cHairColors.Count;
                 for (int i = 0; i < iCount; i++)
@@ -795,8 +795,8 @@ namespace GeneLab.Genetix
                 }
 
                 if (iCount == 0 &&
-                    (pMutant.m_eHairs != HairsAmount.None ||
-                     pMutant.m_eBeard != HairsAmount.None))
+                    (pMutant.Hairs != HairsAmount.None ||
+                     pMutant.Beard != HairsAmount.None))
                 {
                     iCount = 1 + Rnd.Get(Enum.GetValues(typeof(HairsColor)).Length);
                     for (int i = 0; i < iCount; i++)
@@ -832,17 +832,17 @@ namespace GeneLab.Genetix
             {
                 HairsGenetix pMutant = new HairsGenetix(this);
 
-                pMutant.m_eHairs = MutateHairsAmount(pMutant.m_eHairs);
+                pMutant.Hairs = MutateHairsAmount(pMutant.Hairs);
 
                 if (Rnd.OneChanceFrom(3))
-                    pMutant.m_eBeard = MutateHairsAmount(pMutant.m_eBeard);
+                    pMutant.Beard = MutateHairsAmount(pMutant.Beard);
                 else
-                    pMutant.m_eBeard = pMutant.m_eHairs;
+                    pMutant.Beard = pMutant.Hairs;
 
 
-                if (pMutant.m_eBeard == HairsAmount.None &&
-                    pMutant.m_eHairsType == HairsType.Whiskers)
-                    pMutant.m_eHairsType = HairsType.Hair;
+                if (pMutant.Beard == HairsAmount.None &&
+                    pMutant.HairsType == HairsType.Whiskers)
+                    pMutant.HairsType = HairsType.Hair;
 
                 int iCount = pMutant.m_cHairColors.Count;
                 for (int i = 0; i < iCount; i++)
@@ -882,8 +882,8 @@ namespace GeneLab.Genetix
                 }
 
                 if (iCount == 0 &&
-                    (pMutant.m_eHairs != HairsAmount.None ||
-                     pMutant.m_eBeard != HairsAmount.None))
+                    (pMutant.Hairs != HairsAmount.None ||
+                     pMutant.Beard != HairsAmount.None))
                 {
                     iCount = 1 + Rnd.Get(Enum.GetValues(typeof(HairsColor)).Length);
                     for (int i = 0; i < iCount; i++)

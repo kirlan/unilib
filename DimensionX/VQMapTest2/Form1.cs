@@ -275,7 +275,7 @@ namespace VQMapTest2
             sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
             richTextBox1.AppendText(sRaceName + " males " + pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM.GetDescription());
             richTextBox1.AppendText("\n");
-            richTextBox1.AppendText(sRaceName + " females " + pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM));
+            richTextBox1.AppendText(sRaceName + " females " + pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM.m_pValues));
             List<Nation> cKnownNations = new List<Nation>();
             foreach (State pState in m_pWorld.m_aStates)
             {
@@ -300,9 +300,9 @@ namespace VQMapTest2
                 }
                 richTextBox1.AppendText(".\n\n");
 
-                string sFenotypeNationM = pSociety.m_pTitularNation.m_pPhenotypeM.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM);
+                string sFenotypeNationM = pSociety.m_pTitularNation.m_pPhenotypeM.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM.m_pValues);
                 //var expectedFenotypeF = GeneLab.Phenotype<LandTypeInfo>.ApplyDifferences(pSociety.m_pTitularNation.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF);
-                string sFenotypeNationF = pSociety.m_pTitularNation.m_pPhenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF);
+                string sFenotypeNationF = pSociety.m_pTitularNation.m_pPhenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF.m_pValues);
 
                 if (sFenotypeNationM == sFenotypeNationF)
                 {

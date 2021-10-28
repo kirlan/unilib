@@ -262,7 +262,7 @@ namespace Socium
                 foreach (var pNations in pConti.m_cLocalNations)
                 {
                     foreach (var pNation in pNations.Value)
-                        if (!pNation.m_bDying && !pNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite())
+                        if (!pNation.m_bDying && !pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
                             iPop++;
                 }
 
@@ -288,7 +288,7 @@ namespace Socium
                 Dictionary<Nation, float> cNationChances = new Dictionary<Nation, float>();
                 foreach (Nation pNation in m_aLocalNations)
                 {
-                    if (pNation.m_bDying || pNation.DominantPhenotype.ValueOf<NutritionGenetix>().IsParasite())
+                    if (pNation.m_bDying || pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
                         continue;
 
                     cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
@@ -2330,10 +2330,10 @@ namespace Socium
                 if (fRelativesCount == 0)
                     fRelativesCount = 1;
 
-                if (pPerson.m_pNation.DominantPhenotype.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.Moderate)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Moderate)
                     fRelativesCount *= 2;
 
-                if (pPerson.m_pNation.DominantPhenotype.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.Low)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Low)
                     fRelativesCount *= 5;
 
                 if (fRelativesCount > 10)
@@ -2422,10 +2422,10 @@ namespace Socium
                 if (fRelativesCount == 0)
                     fRelativesCount = 1;
 
-                if (pPerson.m_pNation.DominantPhenotype.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.Moderate)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Moderate)
                     fRelativesCount *= 2;
 
-                if (pPerson.m_pNation.DominantPhenotype.ValueOf<LifeCycleGenetix>().m_eBirthRate == BirthRate.Low)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Low)
                     fRelativesCount *= 5;
 
                 if (fRelativesCount > 10)

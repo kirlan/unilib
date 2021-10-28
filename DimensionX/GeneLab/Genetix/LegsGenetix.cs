@@ -77,7 +77,7 @@ namespace GeneLab.Genetix
             bool bExtended = false;
 
             string sLegs = "?";
-            switch (m_eLegsCount)
+            switch (LegsCount)
             {
                 case LegsCount.NoneHover:
                     sLegs = "no legs (but able to hover above earth)";
@@ -108,7 +108,7 @@ namespace GeneLab.Genetix
 
             if (bExtended)
             {
-                switch (m_eLegsType)
+                switch (LegsType)
                 {
                     case LegsType.Foots:
                         sLegs += "foots";
@@ -191,6 +191,22 @@ namespace GeneLab.Genetix
         }
 
         /// <summary>
+        /// 2 insect legs
+        /// </summary>
+        public static LegsGenetix Insect2
+        {
+            get { return new LegsGenetix(LegsCount.Bipedal, LegsType.Spidery); }
+        }
+
+        /// <summary>
+        /// 4 insect legs
+        /// </summary>
+        public static LegsGenetix Insect4
+        {
+            get { return new LegsGenetix(LegsCount.Quadrupedal, LegsType.Spidery); }
+        }
+
+        /// <summary>
         /// 6 insect legs
         /// </summary>
         public static LegsGenetix Insect6
@@ -223,9 +239,9 @@ namespace GeneLab.Genetix
         }
 
 
-        public LegsCount m_eLegsCount = LegsCount.Bipedal;
+        public LegsCount LegsCount { get; private set; } = LegsCount.Bipedal;
 
-        public LegsType m_eLegsType = LegsType.Foots;
+        public LegsType LegsType { get; private set; } = LegsType.Foots;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -234,8 +250,8 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eLegsCount == pAnother.m_eLegsCount &&
-                m_eLegsType == pAnother.m_eLegsType;
+            return LegsCount == pAnother.LegsCount &&
+                LegsType == pAnother.LegsType;
         }
         
         public LegsGenetix()
@@ -243,14 +259,14 @@ namespace GeneLab.Genetix
 
         public LegsGenetix(LegsGenetix pPredcessor)
         {
-            m_eLegsCount = pPredcessor.m_eLegsCount;
-            m_eLegsType = pPredcessor.m_eLegsType;
+            LegsCount = pPredcessor.LegsCount;
+            LegsType = pPredcessor.LegsType;
         }
 
         public LegsGenetix(LegsCount eLegsCount, LegsType eLegsType)
         {
-            m_eLegsCount = eLegsCount;
-            m_eLegsType = eLegsType;
+            LegsCount = eLegsCount;
+            LegsType = eLegsType;
         }
 
         public GenetixBase MutateRace()
@@ -261,7 +277,7 @@ namespace GeneLab.Genetix
 
                 int iChance = 0;
 
-                switch (pMutant.m_eLegsCount)
+                switch (pMutant.LegsCount)
                 {
                     case LegsCount.NoneHover:
                         {
@@ -310,25 +326,25 @@ namespace GeneLab.Genetix
                 switch (iChance)
                 {
                     case 0:
-                        pMutant.m_eLegsCount = LegsCount.NoneHover;
+                        pMutant.LegsCount = LegsCount.NoneHover;
                         break;
                     case 1:
-                        pMutant.m_eLegsCount = LegsCount.NoneBlob;
+                        pMutant.LegsCount = LegsCount.NoneBlob;
                         break;
                     case 2:
-                        pMutant.m_eLegsCount = LegsCount.NoneTail;
+                        pMutant.LegsCount = LegsCount.NoneTail;
                         break;
                     case 3:
-                        pMutant.m_eLegsCount = LegsCount.Bipedal;
+                        pMutant.LegsCount = LegsCount.Bipedal;
                         break;
                     case 4:
-                        pMutant.m_eLegsCount = LegsCount.Quadrupedal;
+                        pMutant.LegsCount = LegsCount.Quadrupedal;
                         break;
                     case 5:
-                        pMutant.m_eLegsCount = LegsCount.Hexapod;
+                        pMutant.LegsCount = LegsCount.Hexapod;
                         break;
                     case 6:
-                        pMutant.m_eLegsCount = LegsCount.Octapod;
+                        pMutant.LegsCount = LegsCount.Octapod;
                         break;
                 }
 
@@ -398,7 +414,7 @@ namespace GeneLab.Genetix
 
                 int iChance = 0;
 
-                switch (pMutant.m_eLegsCount)
+                switch (pMutant.LegsCount)
                 {
                     case LegsCount.NoneHover:
                         {
@@ -447,25 +463,25 @@ namespace GeneLab.Genetix
                 switch (iChance)
                 {
                     case 0:
-                        pMutant.m_eLegsCount = LegsCount.NoneHover;
+                        pMutant.LegsCount = LegsCount.NoneHover;
                         break;
                     case 1:
-                        pMutant.m_eLegsCount = LegsCount.NoneBlob;
+                        pMutant.LegsCount = LegsCount.NoneBlob;
                         break;
                     case 2:
-                        pMutant.m_eLegsCount = LegsCount.NoneTail;
+                        pMutant.LegsCount = LegsCount.NoneTail;
                         break;
                     case 3:
-                        pMutant.m_eLegsCount = LegsCount.Bipedal;
+                        pMutant.LegsCount = LegsCount.Bipedal;
                         break;
                     case 4:
-                        pMutant.m_eLegsCount = LegsCount.Quadrupedal;
+                        pMutant.LegsCount = LegsCount.Quadrupedal;
                         break;
                     case 5:
-                        pMutant.m_eLegsCount = LegsCount.Hexapod;
+                        pMutant.LegsCount = LegsCount.Hexapod;
                         break;
                     case 6:
-                        pMutant.m_eLegsCount = LegsCount.Octapod;
+                        pMutant.LegsCount = LegsCount.Octapod;
                         break;
                 }
 

@@ -11,78 +11,136 @@ namespace GeneLab
 {
     public abstract class Phenotype : GenetixBase
     {
-        protected Dictionary<Type, dynamic> m_cPhens = new Dictionary<Type, dynamic>();
-
-        public void Select<T>(T value) where T: GenetixBase
+        public class PhensStorage
         {
-            m_cPhens[typeof(T)] = value;
+            public readonly Dictionary<Type, dynamic> m_cInternal = new Dictionary<Type, dynamic>();
+
+            public PhensStorage Set<T>(T value) where T : GenetixBase
+            {
+                m_cInternal[typeof(T)] = value;
+                
+                return this;
+            }
+
+            public T Get<T>() where T : GenetixBase
+            {
+                return m_cInternal[typeof(T)];
+            }
+
+            public bool HasIdentical<T>(PhensStorage pOther) where T : GenetixBase
+            {
+                return HasIdentical(typeof(T), pOther);
+            }
+
+            public bool HasIdentical(Type phenType, PhensStorage pOther)
+            {
+                if (pOther == null)
+                    return false;
+
+                dynamic storedValue;
+                if (!m_cInternal.TryGetValue(phenType, out storedValue))
+                    return false;
+
+                dynamic storedValueOther;
+                if (!pOther.m_cInternal.TryGetValue(phenType, out storedValueOther))
+                    return false;
+
+                return storedValue.IsIdentical(storedValueOther);
+            }
+
+            public bool IsIdentical(PhensStorage pOther)
+            {
+                if (pOther == null)
+                    return false;
+
+                if (pOther.m_cInternal.Count != m_cInternal.Count)
+                    return false;
+
+                foreach (var phen in m_cInternal)
+                {
+                    if (!HasIdentical(phen.Key, pOther))
+                        return false;
+                }
+
+                return true;
+            }
+            public static PhensStorage operator +(PhensStorage pBase, PhensStorage pDifferences)
+            {
+                PhensStorage pNew = new PhensStorage();
+
+                pNew.Add(pBase);
+                pNew.Add(pDifferences);
+
+                return pNew;
+            }
+            public void Add(PhensStorage pDifferences)
+            {
+                if (pDifferences != null)
+                {
+                    foreach (var phen in pDifferences.m_cInternal)
+                    {
+                        Set(phen.Value);
+                    }
+                }
+            }
+            public static PhensStorage operator -(PhensStorage pOther, PhensStorage pBase)
+            {
+                PhensStorage pDifference = new PhensStorage();
+
+                foreach (var phen in pOther.m_cInternal)
+                {
+                    if (!pOther.HasIdentical(phen.Key, pBase))
+                        pDifference.Set(phen.Value);
+                }
+
+                return pDifference;
+            }
+
         }
 
-        public T ValueOf<T>() where T : GenetixBase
-        {
-            return m_cPhens[typeof(T)];
-        }
-
-        public bool HasIdentical<T>(Phenotype pOther) where T : GenetixBase
-        {
-            return HasIdentical(typeof(T), pOther);
-        }
-
-        public bool HasIdentical(Type phenType, Phenotype pOther)
-        {
-            if (pOther == null)
-                return false;
-
-            dynamic storedValue;
-            if (!m_cPhens.TryGetValue(phenType, out storedValue))
-                return false;
-
-            dynamic storedValueOther;
-            if (!pOther.m_cPhens.TryGetValue(phenType, out storedValueOther))
-                return false;
-
-            return storedValue.IsIdentical(storedValueOther);
-        }
+        public readonly PhensStorage m_pValues = new PhensStorage();
 
         protected Phenotype()
-        { }
-
-        public Phenotype(BodyGenetix pBody,
-                        BreastsGenetix pBreasts,
-                        NutritionGenetix pNutrition,
-                        HeadGenetix pHead,
-                        LegsGenetix pLegs,
-                        ArmsGenetix pArms,
-                        WingsGenetix pWings,
-                        TailGenetix pTail,
-                        HideGenetix pHide,
-                        BrainGenetix pBrain,
-                        LifeCycleGenetix pLifeCycle,
-                        FaceGenetix pFace,
-                        EarsGenetix pEars,
-                        EyesGenetix pEyes,
-                        HairsGenetix pHairs)
         {
-            Select(pBody);
-            Select(pBreasts);
-            Select(pNutrition);
-            Select(pHead);
-            Select(pLegs);
-            Select(pArms);
-            Select(pWings);
-            Select(pTail);
-            Select(pHide);
-            Select(pBrain);
-            Select(pLifeCycle);
-            Select(pFace);
-            Select(pEars);
-            Select(pEyes);
-            Select(pHairs);
-            
-            pHairs.CheckHairColors();
+            var pBaseHuman = GetBaseHuman();
+            foreach (var phen in pBaseHuman.m_cInternal)
+                m_pValues.Set(phen.Value);
         }
 
-        public abstract Phenotype GetHumanEtalon(Gender gender = Gender.Male);
+        public Phenotype(PhensStorage cValues)
+            : this()
+        {
+            foreach (var value in cValues.m_cInternal)
+                m_pValues.Set(value.Value);
+            
+            m_pValues.Get<HairsGenetix>().CheckHairColors();
+        }
+
+        private readonly static PhensStorage s_WhiteManEtalon = new PhensStorage().
+                                                Set(BodyGenetix.Human).
+                                                Set(BreastsGenetix.TwoMale).
+                                                Set(NutritionGenetix.Human).
+                                                Set(HeadGenetix.Human).
+                                                Set(LegsGenetix.Human).
+                                                Set(ArmsGenetix.Human).
+                                                Set(WingsGenetix.None).
+                                                Set(TailGenetix.None).
+                                                Set(HideGenetix.HumanWhite).
+                                                Set(BrainGenetix.HumanReal).
+                                                Set(LifeCycleGenetix.Human).
+                                                Set(FaceGenetix.Human).
+                                                Set(EarsGenetix.Human).
+                                                Set(EyesGenetix.Human).
+                                                Set(HairsGenetix.HumanWhiteM);
+        private readonly static PhensStorage s_WhiteWomanDiff = new PhensStorage().
+                                                Set(BreastsGenetix.TwoAverage).
+                                                Set(HairsGenetix.HumanWhiteF);
+
+        public static PhensStorage GetBaseHuman(Gender gender = Gender.Male)
+        {
+            return gender == Gender.Male ? s_WhiteManEtalon : s_WhiteManEtalon + s_WhiteWomanDiff;
+        }
+
 
         public abstract Phenotype Clone();
 
@@ -94,18 +152,18 @@ namespace GeneLab
         /// <returns></returns>
         public string GetDescription()
         {
-            string sResult = GetComparsion(GetHumanEtalon());
+            string sResult = GetComparsion(GetBaseHuman());
             if (sResult.Length == 0)
                 sResult = "are just humans.";
 
             if (!sResult.StartsWith("are"))
             {
-                if (ValueOf<LegsGenetix>().m_eLegsCount != GetHumanEtalon().ValueOf<LegsGenetix>().m_eLegsCount)
+                if (m_pValues.Get<LegsGenetix>().LegsCount != GetBaseHuman().Get<LegsGenetix>().LegsCount)
                 {
                     sResult = "are sentient creatures. They " + sResult;
                 }
-                else if (ValueOf<ArmsGenetix>().m_eArmsCount != GetHumanEtalon().ValueOf<ArmsGenetix>().m_eArmsCount ||
-                    ValueOf<ArmsGenetix>().m_eArmsType != GetHumanEtalon().ValueOf<ArmsGenetix>().m_eArmsType)
+                else if (m_pValues.Get<ArmsGenetix>().ArmsCount != GetBaseHuman().Get<ArmsGenetix>().ArmsCount ||
+                    m_pValues.Get<ArmsGenetix>().ArmsType != GetBaseHuman().Get<ArmsGenetix>().ArmsType)
                 {
                     sResult = "are human-like creatures. They " + sResult;
                 }
@@ -123,37 +181,37 @@ namespace GeneLab
         /// "are very clever cratures ... could have only a few children during whole lifetime, which are mostly females."
         /// </summary>
         /// <returns></returns>
-        public string GetComparsion(Phenotype pOriginal)
+        public string GetComparsion(PhensStorage pOriginalValues)
         {
-            if (pOriginal.IsIdentical(this))
+            if (pOriginalValues.IsIdentical(m_pValues))
                 return "";
 
             string sResult = "";
 
-            if (!pOriginal.HasIdentical<BrainGenetix>(this))
-                sResult += ValueOf<BrainGenetix>().GetDescription() + ".";
+            if (!pOriginalValues.HasIdentical<BrainGenetix>(m_pValues))
+                sResult += m_pValues.Get<BrainGenetix>().GetDescription() + ".";
 
-            if (!pOriginal.HasIdentical<HeadGenetix>(this))
+            if (!pOriginalValues.HasIdentical<HeadGenetix>(m_pValues))
             {
                 if (sResult != "")
                     sResult += " They ";
 
                 sResult += "have ";
 
-                if (!pOriginal.HasIdentical<HeadGenetix>(this))
+                if (!pOriginalValues.HasIdentical<HeadGenetix>(m_pValues))
                 {
-                    sResult += ValueOf<HeadGenetix>().GetDescription();
+                    sResult += m_pValues.Get<HeadGenetix>().GetDescription();
                 }
 
                 sResult += ".";
             }
 
-            if (!pOriginal.HasIdentical<BodyGenetix>(this) ||
-                !pOriginal.HasIdentical<HideGenetix>(this) ||
-                !pOriginal.HasIdentical<ArmsGenetix>(this) ||
-                !pOriginal.HasIdentical<LegsGenetix>(this) ||
-                !pOriginal.HasIdentical<WingsGenetix>(this) ||
-                !pOriginal.HasIdentical<TailGenetix>(this))
+            if (!pOriginalValues.HasIdentical<BodyGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<HideGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<ArmsGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<LegsGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<WingsGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<TailGenetix>(m_pValues))
             {
                 if (sResult != "")
                     sResult += " They ";
@@ -163,22 +221,22 @@ namespace GeneLab
                 List<string> cBodyDescription = new List<string>();
 
                 bool bBody = false;
-                if (!pOriginal.HasIdentical<BodyGenetix>(this))
+                if (!pOriginalValues.HasIdentical<BodyGenetix>(m_pValues))
                 {
-                    cBodyDescription.Add(ValueOf<BodyGenetix>().GetDescription());
+                    cBodyDescription.Add(m_pValues.Get<BodyGenetix>().GetDescription());
                     bBody = true;
                 }
 
-                if (!pOriginal.HasIdentical<HideGenetix>(this))
+                if (!pOriginalValues.HasIdentical<HideGenetix>(m_pValues))
                 {
-                    cBodyDescription.Add(ValueOf<HideGenetix>().GetDescription());
+                    cBodyDescription.Add(m_pValues.Get<HideGenetix>().GetDescription());
                 }
 
-                if (!pOriginal.HasIdentical<ArmsGenetix>(this))
+                if (!pOriginalValues.HasIdentical<ArmsGenetix>(m_pValues))
                 {
-                    if (ValueOf<ArmsGenetix>().m_eArmsCount != ArmsCount.None)
+                    if (m_pValues.Get<ArmsGenetix>().ArmsCount != ArmsCount.None)
                     {
-                        cBodyDescription.Add(ValueOf<ArmsGenetix>().GetDescription());
+                        cBodyDescription.Add(m_pValues.Get<ArmsGenetix>().GetDescription());
                     }
                     else
                     {
@@ -186,16 +244,16 @@ namespace GeneLab
                     }
                 }
 
-                if (!pOriginal.HasIdentical<LegsGenetix>(this))
+                if (!pOriginalValues.HasIdentical<LegsGenetix>(m_pValues))
                 {
-                    cBodyDescription.Add(ValueOf<LegsGenetix>().GetDescription());
+                    cBodyDescription.Add(m_pValues.Get<LegsGenetix>().GetDescription());
                 }
 
-                if (!pOriginal.HasIdentical<WingsGenetix>(this))
+                if (!pOriginalValues.HasIdentical<WingsGenetix>(m_pValues))
                 {
-                    if (ValueOf<WingsGenetix>().m_eWingsCount != WingsCount.None)
+                    if (m_pValues.Get<WingsGenetix>().WingsCount != WingsCount.None)
                     {
-                        cBodyDescription.Add(ValueOf<WingsGenetix>().GetDescription());
+                        cBodyDescription.Add(m_pValues.Get<WingsGenetix>().GetDescription());
                     }
                     else
                     {
@@ -203,11 +261,11 @@ namespace GeneLab
                     }
                 }
 
-                if (!pOriginal.HasIdentical<TailGenetix>(this))
+                if (!pOriginalValues.HasIdentical<TailGenetix>(m_pValues))
                 {
-                    if (ValueOf<TailGenetix>().m_eTailLength != TailLength.None)
+                    if (m_pValues.Get<TailGenetix>().TailLength != TailLength.None)
                     {
-                        cBodyDescription.Add(ValueOf<TailGenetix>().GetDescription());
+                        cBodyDescription.Add(m_pValues.Get<TailGenetix>().GetDescription());
                     }
                     else
                     {
@@ -240,18 +298,18 @@ namespace GeneLab
                 sResult += ".";
             }
 
-            if (!pOriginal.HasIdentical<NutritionGenetix>(this) ||
-                !pOriginal.HasIdentical<BreastsGenetix>(this))
+            if (!pOriginalValues.HasIdentical<NutritionGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<BreastsGenetix>(m_pValues))
             {
                 string sBody2 = "";
-                if (!pOriginal.HasIdentical<NutritionGenetix>(this))
+                if (!pOriginalValues.HasIdentical<NutritionGenetix>(m_pValues))
                 {
-                    sBody2 = ValueOf<NutritionGenetix>().GetDescription();
+                    sBody2 = m_pValues.Get<NutritionGenetix>().GetDescription();
                 }
 
-                if (!pOriginal.HasIdentical<BreastsGenetix>(this))
+                if (!pOriginalValues.HasIdentical<BreastsGenetix>(m_pValues))
                 {
-                    string sBreastsDescription = ValueOf<BreastsGenetix>().GetDescription();
+                    string sBreastsDescription = m_pValues.Get<BreastsGenetix>().GetDescription();
                     if (sBody2 != "" && sBreastsDescription != "")
                         sBody2 += " and ";
                     sBody2 += sBreastsDescription;
@@ -268,9 +326,9 @@ namespace GeneLab
                 }
             }
 
-            if (!pOriginal.HasIdentical<EyesGenetix>(this) ||
-                !pOriginal.HasIdentical<EarsGenetix>(this) ||
-                !pOriginal.HasIdentical<FaceGenetix>(this))
+            if (!pOriginalValues.HasIdentical<EyesGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<EarsGenetix>(m_pValues) ||
+                !pOriginalValues.HasIdentical<FaceGenetix>(m_pValues))
             {
                 if (sResult != "")
                     sResult += " They ";
@@ -278,59 +336,59 @@ namespace GeneLab
                 sResult += "have ";
 
                 bool bSemicolon = false;
-                if (!pOriginal.HasIdentical<EyesGenetix>(this) ||
-                    !pOriginal.HasIdentical<EarsGenetix>(this))
+                if (!pOriginalValues.HasIdentical<EyesGenetix>(m_pValues) ||
+                    !pOriginalValues.HasIdentical<EarsGenetix>(m_pValues))
                 {
-                    if (!pOriginal.HasIdentical<EyesGenetix>(this))
+                    if (!pOriginalValues.HasIdentical<EyesGenetix>(m_pValues))
                     {
-                        sResult += ValueOf<EyesGenetix>().GetDescription();
+                        sResult += m_pValues.Get<EyesGenetix>().GetDescription();
                         bSemicolon = true;
                     }
 
-                    if (!pOriginal.HasIdentical<EarsGenetix>(this))
+                    if (!pOriginalValues.HasIdentical<EarsGenetix>(m_pValues))
                     {
                         if (bSemicolon)
                             sResult += " and ";
 
-                        sResult += ValueOf<EarsGenetix>().GetDescription() + " of a ";
+                        sResult += m_pValues.Get<EarsGenetix>().GetDescription() + " of a ";
                     }
                     else
                     {
-                        if (bSemicolon && !pOriginal.HasIdentical<FaceGenetix>(this))
+                        if (bSemicolon && !pOriginalValues.HasIdentical<FaceGenetix>(m_pValues))
                             sResult += " at the ";
                     }
                 }
 
-                if (!pOriginal.HasIdentical<FaceGenetix>(this))
-                    sResult += ValueOf<FaceGenetix>().GetDescription();
+                if (!pOriginalValues.HasIdentical<FaceGenetix>(m_pValues))
+                    sResult += m_pValues.Get<FaceGenetix>().GetDescription();
                 else
-                    if (!pOriginal.HasIdentical<EarsGenetix>(this))
+                    if (!pOriginalValues.HasIdentical<EarsGenetix>(m_pValues))
                     sResult += "head";// m_pFace.m_eNoseType == NoseType.Normal ? "face" : "muzzle";
 
                 sResult += ".";
             }
 
-            if (!pOriginal.HasIdentical<HairsGenetix>(this))
+            if (!pOriginalValues.HasIdentical<HairsGenetix>(m_pValues))
             {
                 if (sResult != "")
                     sResult += " They ";
 
-                if (ValueOf<HairsGenetix>().GetDescription() != "")
-                    sResult += ValueOf<HairsGenetix>().GetDescription();
+                if (m_pValues.Get<HairsGenetix>().GetDescription() != "")
+                    sResult += m_pValues.Get<HairsGenetix>().GetDescription();
                 else
                     sResult = "are bald, and have no beard or moustache.";
             }
 
-            if (!pOriginal.HasIdentical<LifeCycleGenetix>(this))
+            if (!pOriginalValues.HasIdentical<LifeCycleGenetix>(m_pValues))
             {
                 if (sResult != "")
                     sResult += " They ";
 
-                sResult += "usually " + ValueOf<LifeCycleGenetix>().GetDescription() + ".";
+                sResult += "usually " + m_pValues.Get<LifeCycleGenetix>().GetDescription() + ".";
             }
 
             if (sResult == "")
-                return GetComparsion(pOriginal);
+                return GetComparsion(pOriginalValues);
 
             return sResult;
         }
@@ -344,16 +402,7 @@ namespace GeneLab
             if (pAnother == null)
                 return false;
 
-            if (pAnother.m_cPhens.Count != m_cPhens.Count)
-                return false;
-
-            foreach (var phen in m_cPhens)
-            {
-                if (!pAnother.HasIdentical(phen.Key, this))
-                    return false;
-            }
-
-            return true;
+            return m_pValues.IsIdentical(pAnother.m_pValues);
         }
 
         #region Mutations
@@ -362,22 +411,22 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_cPhens)
+            foreach (var phen in m_pValues.m_cInternal)
             {
-                pMutant.Select(Convert.ChangeType(phen.Value.MutateRace(), phen.Key));
+                pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateRace(), phen.Key));
             }
 
             if (Rnd.OneChanceFrom(20))
             {
-                NutritionGenetix pNutritionMutation = new NutritionGenetix(ValueOf<NutritionGenetix>());
+                NutritionGenetix pNutritionMutation = new NutritionGenetix(m_pValues.Get<NutritionGenetix>());
 
-                pNutritionMutation.MutateNutritionType(pMutant.ValueOf<BodyGenetix>());
+                pNutritionMutation.MutateNutritionType(pMutant.m_pValues.Get<BodyGenetix>());
 
-                pMutant.Select(pNutritionMutation);
+                pMutant.m_pValues.Set(pNutritionMutation);
             }
 
 
-            pMutant.ValueOf<HairsGenetix>().CheckHairColors();
+            pMutant.m_pValues.Get<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
                 return pMutant;
@@ -389,22 +438,22 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_cPhens)
+            foreach (var phen in m_pValues.m_cInternal)
             {
-                pMutant.Select(Convert.ChangeType(phen.Value.MutateGender(), phen.Key));
+                pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateGender(), phen.Key));
             }
 
             if (Rnd.OneChanceFrom(100))
             {
-                NutritionGenetix pNutritionMutation = new NutritionGenetix(ValueOf<NutritionGenetix>());
+                NutritionGenetix pNutritionMutation = new NutritionGenetix(m_pValues.Get<NutritionGenetix>());
 
-                pNutritionMutation.MutateNutritionType(pMutant.ValueOf<BodyGenetix>());
+                pNutritionMutation.MutateNutritionType(pMutant.m_pValues.Get<BodyGenetix>());
 
-                pMutant.Select(pNutritionMutation);
+                pMutant.m_pValues.Set(pNutritionMutation);
             }
 
 
-            pMutant.ValueOf<HairsGenetix>().CheckHairColors();
+            pMutant.m_pValues.Get<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
                 return pMutant;
@@ -416,12 +465,12 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_cPhens)
+            foreach (var phen in m_pValues.m_cInternal)
             {
-                pMutant.Select(Convert.ChangeType(phen.Value.MutateNation(), phen.Key));
+                pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateNation(), phen.Key));
             }
 
-            pMutant.ValueOf<HairsGenetix>().CheckHairColors();
+            pMutant.m_pValues.Get<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
                 return pMutant;
@@ -433,12 +482,12 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_cPhens)
+            foreach (var phen in m_pValues.m_cInternal)
             {
-                pMutant.Select(Convert.ChangeType(phen.Value.MutateFamily(), phen.Key));
+                pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateFamily(), phen.Key));
             }
 
-            pMutant.ValueOf<HairsGenetix>().CheckHairColors();
+            pMutant.m_pValues.Get<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
                 return pMutant;
@@ -450,12 +499,12 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_cPhens)
+            foreach (var phen in m_pValues.m_cInternal)
             {
-                pMutant.Select(Convert.ChangeType(phen.Value.MutateIndividual(), phen.Key));
+                pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateIndividual(), phen.Key));
             }
 
-            pMutant.ValueOf<HairsGenetix>().CheckHairColors();
+            pMutant.m_pValues.Get<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
                 return pMutant;
@@ -489,22 +538,22 @@ namespace GeneLab
         {
             int iHostility = 0;
 
-            if (!HasIdentical<HeadGenetix>(pOpponents))
+            if (!m_pValues.HasIdentical<HeadGenetix>(pOpponents.m_pValues))
             {
                 iHostility++;
                 sNegativeReasons += " (-1) [APP] ugly head\n";
             }
 
             int iBodyDiff = 0;
-            if (!HasIdentical<ArmsGenetix>(pOpponents))
+            if (!m_pValues.HasIdentical<ArmsGenetix>(pOpponents.m_pValues))
                 iBodyDiff++;
-            if (!HasIdentical<BreastsGenetix>(pOpponents))
+            if (!m_pValues.HasIdentical<BreastsGenetix>(pOpponents.m_pValues))
                 iBodyDiff++;
             //if (!pNation.m_pLegs.IsIdentical(pOpponents.m_pLegs))
             //    iBodyDiff++;
             //if (!pNation.m_pTail.IsIdentical(pOpponents.m_pTail))
             //    iBodyDiff++;
-            if (ValueOf<HideGenetix>().m_eHideType != pOpponents.ValueOf<HideGenetix>().m_eHideType)
+            if (m_pValues.Get<HideGenetix>().HideType != pOpponents.m_pValues.Get<HideGenetix>().HideType)
                 iBodyDiff++;
 
             if (iBodyDiff > 0)
@@ -513,10 +562,10 @@ namespace GeneLab
                 sNegativeReasons += string.Format(" (-{0}) [APP] ugly body\n", iBodyDiff);
             }
 
-            if (Math.Abs(ValueOf<BodyGenetix>().m_eBodyBuild - pOpponents.ValueOf<BodyGenetix>().m_eBodyBuild) > 1)
+            if (Math.Abs(m_pValues.Get<BodyGenetix>().BodyBuild - pOpponents.m_pValues.Get<BodyGenetix>().BodyBuild) > 1)
             {
                 iHostility++;
-                sNegativeReasons += string.Format(" (-1) [APP] too {0}\n", pOpponents.ValueOf<BodyGenetix>().m_eBodyBuild.ToString().ToLower());
+                sNegativeReasons += string.Format(" (-1) [APP] too {0}\n", pOpponents.m_pValues.Get<BodyGenetix>().BodyBuild.ToString().ToLower());
             }
 
             //if (pNation.m_pHide.m_eHideType == pOpponents.m_pHide.m_eHideType)
@@ -529,11 +578,11 @@ namespace GeneLab
             //}
 
             int iFaceDiff = 0;
-            if (!HasIdentical<EyesGenetix>(pOpponents))
+            if (!m_pValues.HasIdentical<EyesGenetix>(pOpponents.m_pValues))
                 iFaceDiff++;
             //if (!pNation.m_pEars.IsIdentical(pOpponents.m_pEars))
             //    iFaceDiff++;
-            if (!HasIdentical<FaceGenetix>(pOpponents))
+            if (!m_pValues.HasIdentical<FaceGenetix>(pOpponents.m_pValues))
                 iFaceDiff++;
             if (iFaceDiff > 0)
             {
@@ -542,17 +591,17 @@ namespace GeneLab
             }
 
             //а вот тут - берём личные показатели
-            if (ValueOf<NutritionGenetix>().m_eNutritionType != pOpponents.ValueOf<NutritionGenetix>().m_eNutritionType)
+            if (m_pValues.Get<NutritionGenetix>().NutritionType != pOpponents.m_pValues.Get<NutritionGenetix>().NutritionType)
             {
                 iHostility++;
                 sNegativeReasons += " (-1) [PSI] weird food preferences\n";
 
-                if (ValueOf<NutritionGenetix>().IsParasite())
+                if (m_pValues.Get<NutritionGenetix>().IsParasite())
                 {
                     iHostility++;
                     sNegativeReasons += " (-1) [PSI] prey\n";
                 }
-                if (pOpponents.ValueOf<NutritionGenetix>().IsParasite())
+                if (pOpponents.m_pValues.Get<NutritionGenetix>().IsParasite())
                 {
                     iHostility += 4;
                     sNegativeReasons += " (-4) [PSI] predator\n";
@@ -562,16 +611,11 @@ namespace GeneLab
             return iHostility;
         }
 
-        // Находит все отличия между pBaseSample и pDifferencesSample и затем накладывает их на pBase
-        public static Phenotype ApplyDifferences(Phenotype pBase, Phenotype pBaseSample, Phenotype pDifferencesSample)
+        public static T Combine<T>(T pBase, PhensStorage pDifferences) where T : Phenotype
         {
-            Phenotype pNew = pBase.Clone();
+            T pNew = (T)pBase.Clone();
 
-            foreach (var phen in pBaseSample.m_cPhens)
-            {
-                if (!phen.Value.IsIdentical(pDifferencesSample.m_cPhens[phen.Key]))
-                    pNew.Select(pDifferencesSample.m_cPhens[phen.Key]);
-            }
+            pNew.m_pValues.Add(pDifferences);
 
             return pNew;
         }
@@ -585,73 +629,16 @@ namespace GeneLab
     public class Phenotype<LTI> : Phenotype
         where LTI: LandTypeInfo, new()
     {
-        private readonly static Phenotype<LTI> s_HumanEtalonM = new Phenotype<LTI>(BodyGenetix.Human,
-                                                BreastsGenetix.TwoMale,
-                                                NutritionGenetix.Human,
-                                                HeadGenetix.Human,
-                                                LegsGenetix.Human,
-                                                ArmsGenetix.Human,
-                                                WingsGenetix.None,
-                                                TailGenetix.None,
-                                                HideGenetix.HumanWhite,
-                                                BrainGenetix.HumanReal,
-                                                LifeCycleGenetix.Human,
-                                                FaceGenetix.Human,
-                                                EarsGenetix.Human,
-                                                EyesGenetix.Human,
-                                                HairsGenetix.HumanWhiteM);
-        private readonly static Phenotype<LTI> s_HumanEtalonF = new Phenotype<LTI>(BodyGenetix.Human,
-                                                BreastsGenetix.TwoMale,
-                                                NutritionGenetix.Human,
-                                                HeadGenetix.Human,
-                                                LegsGenetix.Human,
-                                                ArmsGenetix.Human,
-                                                WingsGenetix.None,
-                                                TailGenetix.None,
-                                                HideGenetix.HumanWhite,
-                                                BrainGenetix.HumanReal,
-                                                LifeCycleGenetix.Human,
-                                                FaceGenetix.Human,
-                                                EarsGenetix.Human,
-                                                EyesGenetix.Human,
-                                                HairsGenetix.HumanWhiteF);
-
-        public override Phenotype GetHumanEtalon(Gender gender = Gender.Male)
-        {
-            return gender == Gender.Male ? s_HumanEtalonM : s_HumanEtalonF;
-        }
-
         public override Phenotype Clone()
         {
-            Phenotype<LTI> pClone = new Phenotype<LTI>();
-            
-            foreach (var phen in m_cPhens)
-            {
-                pClone.Select(m_cPhens[phen.Key]);
-            }
-
-            return pClone;
+            return new Phenotype<LTI>(m_pValues);
         }
 
         private Phenotype()
         { }
 
-        public Phenotype(BodyGenetix pBody,
-                        BreastsGenetix pBreasts,
-                        NutritionGenetix pNutrition,
-                        HeadGenetix pHead,
-                        LegsGenetix pLegs,
-                        ArmsGenetix pArms,
-                        WingsGenetix pWings,
-                        TailGenetix pTail,
-                        HideGenetix pHide,
-                        BrainGenetix pBrain,
-                        LifeCycleGenetix pLifeCycle,
-                        FaceGenetix pFace,
-                        EarsGenetix pEars,
-                        EyesGenetix pEyes,
-                        HairsGenetix pHairs)
-            : base(pBody, pBreasts, pNutrition, pHead, pLegs, pArms, pWings, pTail, pHide, pBrain, pLifeCycle, pFace, pEars, pEyes, pHairs)
+        public Phenotype(PhensStorage cValues)
+            : base(cValues)
         {
         }
 
@@ -693,7 +680,7 @@ namespace GeneLab
             //ноги дают преимущество на различных типа территории.
             //чем больше ног - тем больше преимущество
             int iMultiplier = 1;
-            switch (ValueOf<LegsGenetix>().m_eLegsCount)
+            switch (m_pValues.Get<LegsGenetix>().LegsCount)
             {
                 case LegsCount.Quadrupedal:
                     iMultiplier = 2;
@@ -707,11 +694,11 @@ namespace GeneLab
             }
 
 
-            if (ValueOf<LegsGenetix>().m_eLegsCount != LegsCount.NoneBlob &&
-               ValueOf<LegsGenetix>().m_eLegsCount != LegsCount.NoneHover &&
-               ValueOf<LegsGenetix>().m_eLegsCount != LegsCount.NoneTail)
+            if (m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneBlob &&
+               m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneHover &&
+               m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneTail)
             {
-                switch (ValueOf<LegsGenetix>().m_eLegsType)
+                switch (m_pValues.Get<LegsGenetix>().LegsType)
                 {
                     //копыта дают премущества на равнинах и в горах
                     case LegsType.Hoofs:
@@ -752,9 +739,9 @@ namespace GeneLab
                     cLandTypes[pLand.m_eType] += iMultiplier;
             }
 
-            if (ValueOf<TailGenetix>().m_eTailLength == TailLength.Long)
+            if (m_pValues.Get<TailGenetix>().TailLength == TailLength.Long)
             {
-                switch (ValueOf<TailGenetix>().m_eTailControl)
+                switch (m_pValues.Get<TailGenetix>().TailControl)
                 {
                     //длинный плохоуправляемый хвост помогает удерживать равновесие, что важно в лесах и горах
                     case TailControl.Crude:
@@ -769,9 +756,9 @@ namespace GeneLab
                 }
             }
 
-            if (ValueOf<WingsGenetix>().m_eWingsForce != WingsForce.None)
+            if (m_pValues.Get<WingsGenetix>().WingsForce != WingsForce.None)
             {
-                switch (ValueOf<WingsGenetix>().m_eWingsForce)
+                switch (m_pValues.Get<WingsGenetix>().WingsForce)
                 {
                     //слабые крылья хороши там, где есть высокие места, откуда можно планировать - в лесах и горах
                     case WingsForce.Gliding:
@@ -786,12 +773,12 @@ namespace GeneLab
                 }
 
                 //в болотах живут крылатые только с кожистыми или насекомыми крыльями
-                if (ValueOf<WingsGenetix>().m_eWingsType == WingsType.Feathered)
+                if (m_pValues.Get<WingsGenetix>().WingsType == WingsType.Feathered)
                     foreach (LTI pLand in GetLands(LandscapeGeneration.Environment.Soft | LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
                         cLandTypes[pLand.m_eType] = 0;
             }
 
-            switch (ValueOf<HideGenetix>().m_eHideType)
+            switch (m_pValues.Get<HideGenetix>().HideType)
             {
                 //существа с голой кожей не любят болота
                 case HideType.BareSkin:
@@ -842,7 +829,7 @@ namespace GeneLab
             }
 
             KColor pColor = new KColor();
-            pColor.RGB = ValueOf<HideGenetix>().m_eHideColor;
+            pColor.RGB = m_pValues.Get<HideGenetix>().HideColor;
 
             //светлая кожа не подходит для жарких регионов
             if (pColor.Lightness > 0.75)
@@ -863,7 +850,7 @@ namespace GeneLab
 
             int iPigmented = 0;
             int iPigmentless = 0;
-            foreach (HairsColor eColor in ValueOf<HairsGenetix>().m_cHairColors)
+            foreach (HairsColor eColor in m_pValues.Get<HairsGenetix>().m_cHairColors)
             {
                 if (eColor == HairsColor.Albino ||
                     eColor == HairsColor.Blonde ||
@@ -893,7 +880,7 @@ namespace GeneLab
             }
 
             //ловкость и стройность отлично подходит для лесов, но плохо сочетается с горами
-            if (ValueOf<BodyGenetix>().m_eBodyBuild == BodyBuild.Skinny)
+            if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Skinny)
             {
                 foreach (LTI pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Open))
                     cLandTypes[pLand.m_eType] *= 2;
@@ -903,14 +890,14 @@ namespace GeneLab
             }
 
             //склонность к тучности мешает выживанию на пересечённой местности
-            if (ValueOf<BodyGenetix>().m_eBodyBuild == BodyBuild.Fat)
+            if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Fat)
             {
                 foreach (LTI pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
                     cLandTypes[pLand.m_eType] = 0;
             }
 
             //повышенная мускулистость отлично сочетается с горами
-            if (ValueOf<BodyGenetix>().m_eBodyBuild == BodyBuild.Muscular)
+            if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Muscular)
             {
                 foreach (LTI pLand in GetLands(LandscapeGeneration.Environment.Open, LandscapeGeneration.Environment.Flat))
                     cLandTypes[pLand.m_eType] *= 2;

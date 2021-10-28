@@ -334,24 +334,24 @@ namespace Socium.Psychology
 
         public void ApplyFenotype(Phenotype pFenotype)
         {
-            if (pFenotype.ValueOf<EarsGenetix>().m_eEarsType == EarsType.None)
+            if (pFenotype.m_pValues.Get<EarsGenetix>().EarsType == EarsType.None)
             {
                 if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Small_Ear_Rings))
                     m_cMandatoryModifications.Remove(BodyModificationsTypes.Small_Ear_Rings);
                 if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Huge_Ear_Rings))
                     m_cMandatoryModifications.Remove(BodyModificationsTypes.Huge_Ear_Rings);
             }
-            if (pFenotype.ValueOf<FaceGenetix>().m_eNoseType == NoseType.None)
+            if (pFenotype.m_pValues.Get<FaceGenetix>().NoseType == NoseType.None)
             {
                 if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Nose_Ring))
                     m_cMandatoryModifications.Remove(BodyModificationsTypes.Nose_Ring);
             }
 
-            if (pFenotype.ValueOf<HairsGenetix>().m_eHairs == HairsAmount.None)
+            if (pFenotype.m_pValues.Get<HairsGenetix>().Hairs == HairsAmount.None)
             {
                 Accept(Hairstyle.Bald_Heads);
             }
-            if (pFenotype.ValueOf<HairsGenetix>().m_eBeard == HairsAmount.None)
+            if (pFenotype.m_pValues.Get<HairsGenetix>().Beard == HairsAmount.None)
             {
                 Accept(Beard.Shaved_Faces);
             }

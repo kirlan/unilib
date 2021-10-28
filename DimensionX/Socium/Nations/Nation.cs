@@ -71,7 +71,7 @@ namespace Socium.Nations
             {
                 m_pPhenotypeM = (Phenotype<LandTypeInfoX>)m_pRace.m_pPhenotypeM.MutateNation();
 
-                var pExpectedPhenotypeF = Phenotype<LandTypeInfoX>.ApplyDifferences(m_pPhenotypeM, m_pRace.m_pPhenotypeM, m_pRace.m_pPhenotypeF);
+                var pExpectedPhenotypeF = Phenotype.Combine(m_pPhenotypeM, m_pRace.m_pGenderDiffFemale);
 
                 m_pPhenotypeF = (Phenotype<LandTypeInfoX>)pExpectedPhenotypeF.MutateGender();
 
@@ -125,7 +125,7 @@ namespace Socium.Nations
                 m_pProtoSociety.m_iTechLevel = pEpoch.m_iInvadersMinTechLevel + Rnd.Get(pEpoch.m_iInvadersMaxTechLevel - pEpoch.m_iInvadersMinTechLevel + 1);
                 m_pProtoSociety.m_iMagicLimit = pEpoch.m_iInvadersMinMagicLevel + Rnd.Get(pEpoch.m_iInvadersMaxMagicLevel - pEpoch.m_iInvadersMinMagicLevel + 1);
 
-                if (DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Primitive)
+                if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                     m_pProtoSociety.m_iTechLevel = pEpoch.m_iInvadersMinTechLevel;
 
                 int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
@@ -137,8 +137,8 @@ namespace Socium.Nations
                 int iOldTechLevel = m_pProtoSociety.m_iTechLevel;
 
                 int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
-                if (DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence != Intelligence.Primitive &&
-                    (DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(10)))
+                if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence != Intelligence.Primitive &&
+                    (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(10)))
                     m_pProtoSociety.m_iTechLevel += iTechLevel;
                 else
                     m_pProtoSociety.m_iTechLevel -= iTechLevel;
@@ -167,7 +167,7 @@ namespace Socium.Nations
                     else
                         m_pProtoSociety.m_iMagicLimit = (m_pProtoSociety.m_iMagicLimit + iNewMagicLimit + 1) / 2;
 
-                    if (m_pProtoSociety.m_iTechLevel <= pEpoch.m_iNativesMinTechLevel || DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Primitive)
+                    if (m_pProtoSociety.m_iTechLevel <= pEpoch.m_iNativesMinTechLevel || DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                         m_pProtoSociety.m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
                     else
                         m_pProtoSociety.m_iTechLevel = (m_pProtoSociety.m_iTechLevel + iNewTechLevel + 1) / 2;
@@ -182,8 +182,8 @@ namespace Socium.Nations
                 int iOldTechLevel = m_pProtoSociety.m_iTechLevel;
 
                 int iTechLevel = (int)(Math.Pow(Rnd.Get(13), 3) / 1000);
-                if (DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence != Intelligence.Primitive && 
-                    (DominantPhenotype.ValueOf<BrainGenetix>().m_eIntelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(5)))
+                if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence != Intelligence.Primitive && 
+                    (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(5)))
                     m_pProtoSociety.m_iTechLevel += iTechLevel;
                 else
                     m_pProtoSociety.m_iTechLevel -= iTechLevel;
@@ -218,9 +218,9 @@ namespace Socium.Nations
 
             m_pProtoSociety.m_cCulture[Gender.Male].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
             m_pProtoSociety.m_cCulture[Gender.Female].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
-            if (DominantPhenotype.ValueOf<BrainGenetix>().m_iMagicAbilityPotential > m_pProtoSociety.m_iMagicLimit + 1)
+            if (DominantPhenotype.m_pValues.Get<BrainGenetix>().MagicAbilityPotential > m_pProtoSociety.m_iMagicLimit + 1)
                 m_pProtoSociety.DominantCulture.m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_powerful;
-            if (DominantPhenotype.ValueOf<BrainGenetix>().m_iMagicAbilityPotential < m_pProtoSociety.m_iMagicLimit - 1)
+            if (DominantPhenotype.m_pValues.Get<BrainGenetix>().MagicAbilityPotential < m_pProtoSociety.m_iMagicLimit - 1)
                 m_pProtoSociety.InferiorCulture.m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
 
             //int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);

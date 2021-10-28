@@ -77,7 +77,7 @@ namespace GeneLab.Genetix
         public string GetDescription(Gender? eGender, bool bFull)
         {
             string sSize = "";
-            switch (m_eBodySize)
+            switch (BodySize)
             {
                 case BodySize.Tini:
                     sSize = "tiny";
@@ -98,7 +98,7 @@ namespace GeneLab.Genetix
             }
 
             string sComplexion = "";
-            switch (m_eBodyBuild)
+            switch (BodyBuild)
             {
                 case BodyBuild.Skinny:
                     sComplexion = "nimble";
@@ -211,10 +211,17 @@ namespace GeneLab.Genetix
             get { return new BodyGenetix(BodySize.Giant, BodyBuild.Muscular); }
         }
 
+        /// <summary>
+        /// big size, fat
+        /// </summary>
+        public static BodyGenetix InsectQueen
+        {
+            get { return new BodyGenetix(BodySize.Big, BodyBuild.Fat); }
+        }
 
-        public BodySize m_eBodySize = BodySize.Normal;
+        public BodySize BodySize { get; private set; } = BodySize.Normal;
 
-        public BodyBuild m_eBodyBuild = BodyBuild.Slim;
+        public BodyBuild BodyBuild { get; private set; } = BodyBuild.Slim;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -223,8 +230,8 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eBodySize == pAnother.m_eBodySize && 
-                m_eBodyBuild == pAnother.m_eBodyBuild;
+            return BodySize == pAnother.BodySize && 
+                BodyBuild == pAnother.BodyBuild;
         }
 
         public BodyGenetix()
@@ -232,14 +239,14 @@ namespace GeneLab.Genetix
 
         public BodyGenetix(BodyGenetix pPredcessor)
         {
-            m_eBodySize = pPredcessor.m_eBodySize;
-            m_eBodyBuild = pPredcessor.m_eBodyBuild;
+            BodySize = pPredcessor.BodySize;
+            BodyBuild = pPredcessor.BodyBuild;
         }
 
         public BodyGenetix(BodySize eBodySize, BodyBuild eBodyBuild)
         {
-            m_eBodySize = eBodySize;
-            m_eBodyBuild = eBodyBuild;
+            BodySize = eBodySize;
+            BodyBuild = eBodyBuild;
         }
 
         #region GenetixBase Members
@@ -252,41 +259,41 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    switch (m_eBodySize)
+                    switch (BodySize)
                     {
                         case BodySize.Tini:
-                            pMutant.m_eBodySize = BodySize.Small;
+                            pMutant.BodySize = BodySize.Small;
                             break;
                         case BodySize.Small:
-                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Tini : BodySize.Normal;
+                            pMutant.BodySize = Rnd.OneChanceFrom(2) ? BodySize.Tini : BodySize.Normal;
                             break;
                         case BodySize.Normal:
-                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Small : BodySize.Big;
+                            pMutant.BodySize = Rnd.OneChanceFrom(2) ? BodySize.Small : BodySize.Big;
                             break;
                         case BodySize.Big:
-                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Normal : BodySize.Giant;
+                            pMutant.BodySize = Rnd.OneChanceFrom(2) ? BodySize.Normal : BodySize.Giant;
                             break;
                         case BodySize.Giant:
-                            pMutant.m_eBodySize = BodySize.Big;
+                            pMutant.BodySize = BodySize.Big;
                             break;
                     }
                 }
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    switch (m_eBodyBuild)
+                    switch (BodyBuild)
                     {
                         case BodyBuild.Skinny:
-                            pMutant.m_eBodyBuild = BodyBuild.Slim;
+                            pMutant.BodyBuild = BodyBuild.Slim;
                             break;
                         case BodyBuild.Slim:
-                            pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                            pMutant.BodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
                             break;
                         case BodyBuild.Muscular:
-                            pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Fat;
+                            pMutant.BodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Fat;
                             break;
                         case BodyBuild.Fat:
-                            pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
+                            pMutant.BodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
                             break;
                     }
                 }
@@ -306,39 +313,39 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(50))
                 {
-                    switch (pMutant.m_eBodySize)
+                    switch (pMutant.BodySize)
                     {
                         case BodySize.Tini:
-                            pMutant.m_eBodySize = BodySize.Small;
+                            pMutant.BodySize = BodySize.Small;
                             break;
                         case BodySize.Small:
-                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Tini : BodySize.Normal;
+                            pMutant.BodySize = Rnd.OneChanceFrom(2) ? BodySize.Tini : BodySize.Normal;
                             break;
                         case BodySize.Normal:
-                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Small : BodySize.Big;
+                            pMutant.BodySize = Rnd.OneChanceFrom(2) ? BodySize.Small : BodySize.Big;
                             break;
                         case BodySize.Big:
-                            pMutant.m_eBodySize = Rnd.OneChanceFrom(2) ? BodySize.Normal : BodySize.Giant;
+                            pMutant.BodySize = Rnd.OneChanceFrom(2) ? BodySize.Normal : BodySize.Giant;
                             break;
                         case BodySize.Giant:
-                            pMutant.m_eBodySize = BodySize.Big;
+                            pMutant.BodySize = BodySize.Big;
                             break;
                     }
                 }
 
-                switch (pMutant.m_eBodyBuild)
+                switch (pMutant.BodyBuild)
                 {
                     case BodyBuild.Skinny:
-                        pMutant.m_eBodyBuild = BodyBuild.Slim;
+                        pMutant.BodyBuild = BodyBuild.Slim;
                         break;
                     case BodyBuild.Slim:
-                        pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                        pMutant.BodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
                         break;
                     case BodyBuild.Muscular:
-                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(3) ? BodyBuild.Fat : BodyBuild.Slim;
+                        pMutant.BodyBuild = Rnd.OneChanceFrom(3) ? BodyBuild.Fat : BodyBuild.Slim;
                         break;
                     case BodyBuild.Fat:
-                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(3) ? BodyBuild.Muscular : BodyBuild.Slim;
+                        pMutant.BodyBuild = Rnd.OneChanceFrom(3) ? BodyBuild.Muscular : BodyBuild.Slim;
                         break;
                 }
 
@@ -355,19 +362,19 @@ namespace GeneLab.Genetix
             {
                 BodyGenetix pMutant = new BodyGenetix(this);
 
-                switch (pMutant.m_eBodyBuild)
+                switch (pMutant.BodyBuild)
                 {
                     case BodyBuild.Skinny:
-                        pMutant.m_eBodyBuild = BodyBuild.Slim;
+                        pMutant.BodyBuild = BodyBuild.Slim;
                         break;
                     case BodyBuild.Slim:
-                        pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                        pMutant.BodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
                         break;
                     case BodyBuild.Muscular:
-                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Fat;
+                        pMutant.BodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Fat;
                         break;
                     case BodyBuild.Fat:
-                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
+                        pMutant.BodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
                         break;
                 }
 
@@ -383,19 +390,19 @@ namespace GeneLab.Genetix
             {
                 BodyGenetix pMutant = new BodyGenetix(this);
 
-                switch (pMutant.m_eBodyBuild)
+                switch (pMutant.BodyBuild)
                 {
                     case BodyBuild.Skinny:
-                        pMutant.m_eBodyBuild = BodyBuild.Slim;
+                        pMutant.BodyBuild = BodyBuild.Slim;
                         break;
                     case BodyBuild.Slim:
-                        pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                        pMutant.BodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
                         break;
                     case BodyBuild.Muscular:
-                        pMutant.m_eBodyBuild = BodyBuild.Fat;
+                        pMutant.BodyBuild = BodyBuild.Fat;
                         break;
                     case BodyBuild.Fat:
-                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
+                        pMutant.BodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
                         break;
                 }
 
@@ -411,19 +418,19 @@ namespace GeneLab.Genetix
             {
                 BodyGenetix pMutant = new BodyGenetix(this);
 
-                switch (pMutant.m_eBodyBuild)
+                switch (pMutant.BodyBuild)
                 {
                     case BodyBuild.Skinny:
-                        pMutant.m_eBodyBuild = BodyBuild.Slim;
+                        pMutant.BodyBuild = BodyBuild.Slim;
                         break;
                     case BodyBuild.Slim:
-                        pMutant.m_eBodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
+                        pMutant.BodyBuild = (BodyBuild)Rnd.Get(typeof(BodyBuild));
                         break;
                     case BodyBuild.Muscular:
-                        pMutant.m_eBodyBuild = BodyBuild.Fat;
+                        pMutant.BodyBuild = BodyBuild.Fat;
                         break;
                     case BodyBuild.Fat:
-                        pMutant.m_eBodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
+                        pMutant.BodyBuild = Rnd.OneChanceFrom(2) ? BodyBuild.Slim : BodyBuild.Muscular;
                         break;
                 }
 

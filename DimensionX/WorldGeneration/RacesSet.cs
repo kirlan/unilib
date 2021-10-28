@@ -20,7 +20,7 @@ namespace WorldGeneration
             new RacesSet("fantasy (extended)", new string[] {"goblin", "ogre", "halfling", "cobold", "gnoll", "drow", "drakonid"}),
             new RacesSet("fantasy (gothic)", new string[] {"vampire", "werewolf"}),
             new RacesSet("anthropomorphous animals", new string[] {"feline", "lizard", "reptile", "ratling", "ursan"}),
-            new RacesSet("complete aliens", new string[] {"insectoid", "arachnid", "illithid"}),
+            new RacesSet("complete aliens", new string[] {"insectoid", "tranx", "arachnid", "illithid"}),
         };
 
         public string m_sName;
