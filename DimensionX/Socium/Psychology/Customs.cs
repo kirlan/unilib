@@ -350,10 +350,12 @@ namespace Socium.Psychology
             if (pFenotype.m_pValues.Get<HairsGenetix>().Hairs == HairsAmount.None)
             {
                 Accept(Hairstyle.Bald_Heads);
+                m_bNoHair = true;
             }
             if (pFenotype.m_pValues.Get<HairsGenetix>().Beard == HairsAmount.None)
             {
                 Accept(Beard.Shaved_Faces);
+                m_bNoBeard = true;
             }
         }
 
@@ -600,30 +602,36 @@ namespace Socium.Psychology
                 sResult += "wears clothes hiding entire body";
             }
 
-            if (Has(Hairstyle.Bald_Heads))
+            if (!m_bNoHair)
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "shave their heads";
-            }
-            else if (Has(Hairstyle.Gorgeous_Hairstyles))
-            {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "spends a lot of effort on hair care";
+                if (Has(Hairstyle.Bald_Heads))
+                {
+                    if (!string.IsNullOrEmpty(sResult))
+                        sResult += ", ";
+                    sResult += "shave their heads";
+                }
+                else if (Has(Hairstyle.Gorgeous_Hairstyles))
+                {
+                    if (!string.IsNullOrEmpty(sResult))
+                        sResult += ", ";
+                    sResult += "spends a lot of effort on hair care";
+                }
             }
 
-            if (Has(Beard.Shaved_Faces))
+            if (!m_bNoBeard)
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "have no beard or moustaches";
-            }
-            else if (Has(Beard.Groomed_Beards))
-            {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "carefully grooms their beards";
+                if (Has(Beard.Shaved_Faces))
+                {
+                    if (!string.IsNullOrEmpty(sResult))
+                        sResult += ", ";
+                    sResult += "have no beard or moustaches";
+                }
+                else if (Has(Beard.Groomed_Beards))
+                {
+                    if (!string.IsNullOrEmpty(sResult))
+                        sResult += ", ";
+                    sResult += "carefully grooms their beards";
+                }
             }
 
             if (Has(Adornments.No_Adornments))
@@ -916,7 +924,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Clothes.Covering_Clothes) ? "wears revealing clothes" : "wears covering clothes";
             }
 
-            if (!HasIdentical<Hairstyle>(pOther))
+            if (!HasIdentical<Hairstyle>(pOther) && !m_bNoHair)
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -926,10 +934,10 @@ namespace Socium.Psychology
                 else if (Has(Hairstyle.Gorgeous_Hairstyles))
                     sResult += "makes complex hairsyles";
                 else if (Has(Hairstyle.Practical_Hairsyles))
-                    sResult += pOther.Has(Hairstyle.Bald_Heads) ? "not shaves their heads" : "not spends enough efforts on their hairs";
+                    sResult += pOther.Has(Hairstyle.Bald_Heads) ? "not shaves their heads" : "not spends much efforts on their hairs";
             }
 
-            if (!HasIdentical<Beard>(pOther))
+            if (!HasIdentical<Beard>(pOther) && !m_bNoBeard)
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -939,7 +947,7 @@ namespace Socium.Psychology
                 else if (Has(Beard.Groomed_Beards))
                     sResult += "has perfectly groomed beards";
                 else if (Has(Beard.Common_Beards))
-                    sResult += pOther.Has(Beard.Shaved_Faces) ? "has hairs on their faces" : "not grooming their beards properly";
+                    sResult += pOther.Has(Beard.Shaved_Faces) ? "has hairs on their faces" : "not grooming their beards much";
             }
 
             if (!HasIdentical<Adornments>(pOther))
