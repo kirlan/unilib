@@ -958,6 +958,15 @@ namespace Socium
                                     cPossibleHomes.Add(pState.m_pMethropoly.m_pAdministrativeCenter);
                                 }
                                 break;
+                            case Estate.Position.Clergy:
+                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
+                                    cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
+                                foreach (State pState in pWorld.m_aStates)
+                                {
+                                    cPossibleHomes.Add(pRelative.m_pHomeLocation);
+                                    cPossibleHomes.Add(pState.m_pMethropoly.m_pAdministrativeCenter);
+                                }
+                                break;
                             case Estate.Position.Elite:
                                 foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
                                     cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
@@ -2405,6 +2414,9 @@ namespace Socium
                     fPersonalInfluence *= (float)(-0.58 * Math.Pow(m_pState.m_iSocialEquality, 3) + 3.4 * Math.Pow(m_pState.m_iSocialEquality, 2) + 0.4 * m_pState.m_iSocialEquality + 1.6) / 2;
                     //fPersonalInfluence *= 2;
                     break;
+                case Estate.Position.Clergy:
+                    fPersonalInfluence *= 5;//20;
+                    break;
                 case Estate.Position.Elite:
                     //для элиты коэффициент всегда 10, независимо от величины социального неравенства.
                     //регинальные правители и главы государств имеют бонус
@@ -2647,7 +2659,10 @@ namespace Socium
             //pMine - это поведение, которое мы считаем "правильным". Если в нашем обществе есть различия между нормами поведения для мужчин и женщин,
             //а оппонент другого пола - эти различия тоже нужно учитывать.
             if (m_pEstate.IsSegregated() && m_eGender != pOpponent.m_eGender)
+            {
                 pMine = Customs.ApplyDifferences(m_pCulture.m_pCustoms, m_pEstate.DominantCulture.m_pCustoms, m_pEstate.m_cCulture[pOpponent.m_eGender].m_pCustoms);
+                pMine.ApplyFenotype(pOpponent.m_pPhenotype);
+            }
             Customs pOpponents = pOpponent.m_pCulture.m_pCustoms;
 
             if (!pMine.HasIdentical<Customs.GenderPriority>(pOpponents) &&

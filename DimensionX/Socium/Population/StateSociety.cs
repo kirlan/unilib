@@ -449,6 +449,16 @@ namespace Socium.Population
             // Элита может немного отличаться от среднего класса
             m_cEstates[Estate.Position.Elite] = new Estate(pBase, Estate.Position.Elite, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Elite), false);
 
+            // духовенство - его обычаи должны отличаться не только от среднего класса, но и от элиты
+            do
+            {
+                m_cEstates[Estate.Position.Clergy] = new Estate(pBase, Estate.Position.Clergy, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Clergy), false);
+            }
+            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female]));
+            if (Rnd.OneChanceFrom(2))
+                m_cEstates[Estate.Position.Clergy].UpdateTitularNation(m_pHostNation);
+
             // средний класс - это и есть основа всего сообщества
             m_cEstates[Estate.Position.Commoners] = pBase;
             m_cEstates[Estate.Position.Commoners].UpdateTitularNation(m_pHostNation);
@@ -461,11 +471,13 @@ namespace Socium.Population
                 m_cEstates[Estate.Position.Lowlifes] = new Estate(pBase, Estate.Position.Lowlifes, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Lowlifes), false);
             }
             while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]));
+                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]));
             m_cEstates[Estate.Position.Lowlifes].UpdateTitularNation(m_pSlavesNation);
 
 
-            // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех 3 других сословий
+            // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех других сословий
             do
             {
                 if (!Rnd.OneChanceFrom(3) && m_iSocialEquality != 0)
@@ -481,6 +493,8 @@ namespace Socium.Population
                    m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
                    m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
                    m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
                    pBase.m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
                    pBase.m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]));
             m_cEstates[Estate.Position.Outlaws].UpdateTitularNation(Rnd.OneChanceFrom(3) ? m_pTitularNation : Rnd.OneChanceFrom(2) ? m_pHostNation : m_pSlavesNation);
@@ -584,6 +598,9 @@ namespace Socium.Population
                         case ProfessionInfo.Caste.Elite:
                             pEstate = m_cEstates[Estate.Position.Elite];
                             iEliteEstateCount -= iCount;
+                            break;
+                        case ProfessionInfo.Caste.Cleregy:
+                            pEstate = m_cEstates[Estate.Position.Clergy];
                             break;
                         case ProfessionInfo.Caste.Low:
                             pEstate = m_cEstates[Estate.Position.Lowlifes];
@@ -855,7 +872,7 @@ namespace Socium.Population
                             if (iInfrastructureLevel < 2)
                                 pChurch = BuildingInfo.ShamansHutSmall;
                             else
-                                pChurch = BuildingInfo.ChurchSmall;
+                                pChurch = BuildingInfo.TempleSmall;
 
                             cChances[pChurch] = DominantCulture.GetTrait(Trait.Piety);
 
@@ -960,8 +977,9 @@ namespace Socium.Population
 
                             cChances[pPrison] = (float)iControl / 4;
 
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.MonasteryMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
@@ -1142,8 +1160,10 @@ namespace Socium.Population
 
                             cChances[pPrison] = (float)iControl / 4;
 
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.MonasteryMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.MonasteryLarge] = DominantCulture.GetTrait(Trait.Piety) / 10;
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
@@ -1286,7 +1306,7 @@ namespace Socium.Population
                                 pProfile = iInfrastructureLevel < 4 ? (DominantCulture.GetTrait(Trait.Simplicity) > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
                                 break;
                             case SettlementSpeciality.Religious:
-                                pProfile = BuildingInfo.ChurchLarge;
+                                pProfile = BuildingInfo.TempleLarge;
                                 break;
                             case SettlementSpeciality.MilitaryAcademy:
                                 pProfile = BuildingInfo.BarracksHuge;
@@ -1346,8 +1366,10 @@ namespace Socium.Population
 
                             cChances[pPrison] = (float)iControl / 4;
 
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.MonasteryMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.MonasteryLarge] = DominantCulture.GetTrait(Trait.Piety) / 10;
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
@@ -1490,7 +1512,7 @@ namespace Socium.Population
                                 pProfile = iInfrastructureLevel < 4 ? (DominantCulture.GetTrait(Trait.Simplicity) > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
                                 break;
                             case SettlementSpeciality.Religious:
-                                pProfile = BuildingInfo.ChurchLarge;
+                                pProfile = BuildingInfo.TempleLarge;
                                 break;
                             case SettlementSpeciality.MilitaryAcademy:
                                 pProfile = BuildingInfo.BarracksHuge;
@@ -1525,8 +1547,8 @@ namespace Socium.Population
                     {
                         if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;

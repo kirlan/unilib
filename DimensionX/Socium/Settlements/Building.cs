@@ -120,9 +120,12 @@ namespace Socium.Settlements
 
         public static readonly BuildingInfo ShamansHutSmall = new BuildingInfo("Shamans Hut", ProfessionInfo.Shaman, ProfessionInfo.Shaman, BuildingSize.Small);
 
-        public static readonly BuildingInfo ChurchSmall = new BuildingInfo("Church", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Small);
-        public static readonly BuildingInfo ChurchMedium = new BuildingInfo("Temple", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Medium);
-        public static readonly BuildingInfo ChurchLarge = new BuildingInfo("Cathedral", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Large);
+        public static readonly BuildingInfo TempleSmall = new BuildingInfo("Church", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Small);
+        public static readonly BuildingInfo TempleMedium = new BuildingInfo("Temple", ProfessionInfo.Priest, ProfessionInfo.Priest, BuildingSize.Medium);
+        public static readonly BuildingInfo TempleLarge = new BuildingInfo("Cathedral", ProfessionInfo.HighPriest, ProfessionInfo.Priest, BuildingSize.Large);
+
+        public static readonly BuildingInfo MonasteryMedium = new BuildingInfo("Monastery", ProfessionInfo.Priest, ProfessionInfo.Monk, BuildingSize.Medium);
+        public static readonly BuildingInfo MonasteryLarge = new BuildingInfo("Monastery", ProfessionInfo.Priest, ProfessionInfo.Monk, BuildingSize.Large);
 
         public static readonly BuildingInfo TavernSmall = new BuildingInfo("Tavern", ProfessionInfo.Barman, ProfessionInfo.Barman, BuildingSize.Small);
         public static readonly BuildingInfo TavernSlvSmall = new BuildingInfo("Tavern", ProfessionInfo.Barman, ProfessionInfo.PleasureSlave, BuildingSize.Small);
