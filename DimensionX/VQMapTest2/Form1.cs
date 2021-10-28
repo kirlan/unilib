@@ -395,9 +395,12 @@ namespace VQMapTest2
                     }
                 }
 
-                richTextBox1.AppendText("\n    Prevalent professions:");
-                foreach (var pGenderPreference in pEstate.m_cGenderProfessionPreferences)
-                    richTextBox1.AppendText("\n         - " + (pGenderPreference.Value == Customs.GenderPriority.Matriarchy ? pGenderPreference.Key.m_sNameF : pGenderPreference.Key.m_sNameM));
+                if (pEstate.m_cGenderProfessionPreferences.Count > 0)
+                {
+                    richTextBox1.AppendText("\n    Prevalent professions:");
+                    foreach (var pGenderPreference in pEstate.m_cGenderProfessionPreferences)
+                        richTextBox1.AppendText("\n         - " + (pGenderPreference.Value == Customs.GenderPriority.Matriarchy ? pGenderPreference.Key.m_sNameF : pGenderPreference.Key.m_sNameM));
+                }
                 richTextBox1.AppendText("\n\n");
             }
 
