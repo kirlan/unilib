@@ -2115,6 +2115,7 @@ namespace MapDrawEngine
 
             bool bContinent = CheckMousePosition();
 
+            /*
             {
                 sToolTip += "Mouse          X = " + m_pLastMouseLocation.X.ToString() + ", Y = " + m_pLastMouseLocation.Y.ToString() + "\n";
                 sToolTip += "Frame          X = " + m_pDrawFrame.X.ToString() + ", Y = " + m_pDrawFrame.Y.ToString() + "\n";
@@ -2179,6 +2180,7 @@ namespace MapDrawEngine
                     }
                 }
             }
+            */
 
             if (bContinent && m_pFocusedContinent != null)
                 sToolTip += m_pFocusedContinent.ToString();
