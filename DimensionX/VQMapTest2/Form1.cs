@@ -102,10 +102,6 @@ namespace VQMapTest2
             if (radioButton4.Checked)
                 fScale = 32.0f;
 
-            //==========================================DEBUG=================================================
-            mapDraw1.Visible = false;
-            //==========================================DEBUG=================================================
-
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
@@ -790,6 +786,21 @@ namespace VQMapTest2
                 if (m_pWorld != null)
                     ShowWorld();
             }
+        }
+
+        private void hideMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mapDraw1.Visible = !mapDraw1.Visible;
+            miniMapDraw1.Visible = !miniMapDraw1.Visible;
+
+            hideMapToolStripMenuItem.Checked = !hideMapToolStripMenuItem.Checked;
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            //==========================================DEBUG=================================================
+            hideMapToolStripMenuItem_Click(this, null);
+            //==========================================DEBUG=================================================
         }
     }
 }
