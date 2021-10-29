@@ -385,7 +385,7 @@ namespace LandscapeGeneration.FastGrid
             }
         }
 
-        public readonly int m_iChunkSize = 1000;
+        public readonly int m_iChunkSize = 20000;
         public readonly int Resolution;
 
         public int RX
