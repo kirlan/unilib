@@ -2088,9 +2088,77 @@ namespace MapDrawEngine
 
         private string GetTooltipString()
         {
+            if (m_pWorld == null)
+                return "no world";
+
             string sToolTip = "";
 
             bool bContinent = CheckMousePosition();
+
+            {
+                sToolTip += "Mouse          X = " + m_pLastMouseLocation.X.ToString() + ", Y = " + m_pLastMouseLocation.Y.ToString() + "\n";
+                sToolTip += "Frame          X = " + m_pDrawFrame.X.ToString() + ", Y = " + m_pDrawFrame.Y.ToString() + "\n";
+                sToolTip += "Shift          X = " + m_iShiftX.ToString() + ", Y = " + m_iShiftY.ToString() + "\n";
+
+                float fX = m_pLastMouseLocation.X + m_pDrawFrame.X - m_iShiftX;
+                float fY = m_pLastMouseLocation.Y + m_pDrawFrame.Y - m_iShiftY;
+
+                sToolTip += "Scaled screen  X = " + ((int)fX).ToString() + ", Y = " + ((int)fY).ToString() + "\n";
+
+                //while (iX > m_iScaledMapWidth)
+                //    iX -= m_iScaledMapWidth;
+
+                //while (iX < 0)
+                //    iX += m_iScaledMapWidth;
+
+                //переведём координаты курсора из экранных в оригинальные/100 координаты
+                fX = fX / (m_fActualScale * 100);
+                fY = fY / (m_fActualScale * 100);
+
+                sToolTip += "Original 1:100 X = " + ((int)fX).ToString() + ", Y = " + ((int)fY).ToString() + "\n";
+
+                Matrix pMatrix = new Matrix();
+                int iDX = m_pDrawFrame.X;
+                while (iDX < 0)
+                    iDX += m_iScaledMapWidth;
+                while (iDX >= m_iScaledMapWidth)
+                    iDX -= m_iScaledMapWidth;
+                pMatrix.Translate(-iDX, -m_pDrawFrame.Y);
+                //контуры государств в m_cStateBorders лежат уменьшенные в 100 раз, поэтому масштабный коэффициент здесь домножаем на 100
+                pMatrix.Scale(m_fActualScale * 100, m_fActualScale * 100);
+
+                PointF[] pPoints = { new PointF(fX, fY) };
+                pMatrix.TransformPoints(pPoints);
+                sToolTip += "Reverse        X = " + pPoints[0].X.ToString() + ", Y = " + pPoints[0].Y.ToString() + "\n";
+
+                fX = fX * 100 - m_pWorld.m_pGrid.RX;
+                fY = fY * 100 - m_pWorld.m_pGrid.RY;
+
+                sToolTip += "Map            X = " + ((int)fX).ToString() + ", Y = " + ((int)fY).ToString() + "\n";
+
+                if (m_pFocusedLocation != null)
+                {
+                    PointF[][] aPoints;
+                    GraphicsPath pPath;
+                    MapQuadrant[] aQuads;
+
+                    aPoints = BuildPath(m_pFocusedLocation.m_pFirstLine, true, out aQuads);
+
+                    foreach (var aPts in aPoints)
+                    {
+                        pPath = new GraphicsPath();
+                        pPath.AddPolygon(aPts);
+                        Matrix pReverseMatrix = new Matrix();
+                        pReverseMatrix.Translate(-m_pWorld.m_pGrid.RX, -m_pWorld.m_pGrid.RY);
+                        //pReverseMatrix.Scale(0.01f / m_fActualScale, 0.01f / m_fActualScale);
+                        pPath.Transform(pReverseMatrix);
+                        
+                        var pBounds = pPath.GetBounds();
+
+                        sToolTip += "Focused bounds X = (" + ((int)pBounds.X).ToString() + ", " + ((int)(pBounds.X + pBounds.Width)).ToString() + "), Y = (" + ((int)pBounds.Y).ToString() + ", " + ((int)(pBounds.Y + pBounds.Height)).ToString() + ")\n";
+                    }
+                }
+            }
 
             if (bContinent && m_pFocusedContinent != null)
                 sToolTip += m_pFocusedContinent.ToString();
