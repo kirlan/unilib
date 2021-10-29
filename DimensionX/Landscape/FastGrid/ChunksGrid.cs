@@ -385,7 +385,7 @@ namespace LandscapeGeneration.FastGrid
             }
         }
 
-        public readonly int m_iChunkSize = 20000;
+        public readonly int m_iChunkSize = 20000; // WTF??? Why this walue is critical for proper work of MapDraw::CheckMousePosition()?
         public readonly int Resolution;
 
         public int RX

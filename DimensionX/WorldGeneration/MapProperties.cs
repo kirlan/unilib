@@ -188,7 +188,7 @@ namespace WorldGeneration
             PoleBar.Value = pPreset.m_iPoleDistance;
 
             //считаем количество государств на отображаемом участке карты из рассчёта что на полной карте имеем 60 государств (т.е. на четвертинке карты, такой как средиземье или хайбория, будет 15 государств...)
-            StatesCountBar.Value = Math.Min(StatesCountBar.Maximum, Math.Max(StatesCountBar.Minimum, 150000 / (PoleBar.Value * PoleBar.Value)));
+            StatesCountBar.Value = Math.Min(StatesCountBar.Maximum, Math.Max(StatesCountBar.Minimum, 15 * 100 * 100 / (PoleBar.Value * PoleBar.Value)));
         }
 
         public int LandsDiversity

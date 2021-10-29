@@ -203,7 +203,7 @@ namespace LandscapeGeneration
                     m_fX += fCycle;
             }
 
-            if (m_fX < -100000)
+            if (m_fX < -100000) //TODO: здесь должно быть RX*2 !!!
                 throw new Exception();
         }
     }
