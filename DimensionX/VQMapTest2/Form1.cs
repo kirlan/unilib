@@ -238,6 +238,75 @@ namespace VQMapTest2
             mapDraw1.SelectedState = comboBox1.SelectedItem as State;
         }
 
+        private void AddNationInfo(Nation pNation)
+        {
+            string sRaceName = pNation.m_pRace.m_sName;
+            sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
+            richTextBox1.AppendText(sRaceName + (pNation.m_bDying ? " is an ancient race." : " is a young race."));
+            if (pNation.m_bInvader)
+                richTextBox1.AppendText(" They are not from this world.");
+            richTextBox1.AppendText("\n");
+
+            richTextBox1.AppendText(sRaceName + " males " + pNation.m_pRace.m_pPhenotypeM.GetDescription());
+            richTextBox1.AppendText("\n");
+            richTextBox1.AppendText(sRaceName + " females " + pNation.m_pRace.m_pPhenotypeF.GetComparsion(pNation.m_pRace.m_pPhenotypeM.m_pValues));
+            List<Nation> cKnownNations = new List<Nation>();
+            foreach (State pState in m_pWorld.m_aStates)
+            {
+                if (pState.m_pSociety.m_pTitularNation.m_pRace == pNation.m_pRace && !cKnownNations.Contains(pState.m_pSociety.m_pTitularNation))
+                {
+                    cKnownNations.Add(pState.m_pSociety.m_pTitularNation);
+                }
+            }
+            if (cKnownNations.Count > 1)
+            {
+                richTextBox1.AppendText("\n");
+                richTextBox1.AppendText("Known " + pNation.m_pRace.m_sName + " nations are: ");
+                bool bFirst = true;
+                foreach (Nation pKnownNation in cKnownNations)
+                {
+                    if (!bFirst)
+                        richTextBox1.AppendText(", ");
+
+                    bFirst = false;
+
+                    richTextBox1.AppendText(pKnownNation.m_pProtoSociety.m_sName);
+                }
+                richTextBox1.AppendText(".\n\n");
+
+                string sFenotypeNationM = pNation.m_pPhenotypeM.GetComparsion(pNation.m_pRace.m_pPhenotypeM.m_pValues);
+                //var expectedFenotypeF = GeneLab.Phenotype<LandTypeInfo>.ApplyDifferences(pSociety.m_pTitularNation.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF);
+                string sFenotypeNationF = pNation.m_pPhenotypeF.GetComparsion(pNation.m_pRace.m_pPhenotypeF.m_pValues);
+
+                if (sFenotypeNationM == sFenotypeNationF)
+                {
+                    if (!sFenotypeNationM.StartsWith("are"))
+                        sFenotypeNationM = "are common " + pNation.m_pRace.m_sName + "s, however they " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
+                    richTextBox1.AppendText(pNation.m_pProtoSociety.m_sName + " " + sFenotypeNationM);
+                }
+                else
+                {
+                    if (sFenotypeNationM != "")
+                    {
+                        if (!sFenotypeNationM.StartsWith("are"))
+                            sFenotypeNationM = "are common " + pNation.m_pRace.m_sName + "s, however they " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
+                        richTextBox1.AppendText(pNation.m_pProtoSociety.m_sName + " males " + sFenotypeNationM);
+                    }
+
+                    if (sFenotypeNationF != "")
+                    {
+                        if (sFenotypeNationM != "")
+                            richTextBox1.AppendText("\n");
+
+                        if (!sFenotypeNationF.StartsWith("are"))
+                            sFenotypeNationF = "are common " + pNation.m_pRace.m_sName + "s, however they " + sFenotypeNationF.Substring(0, 1).ToLower() + sFenotypeNationF.Substring(1);
+                        richTextBox1.AppendText(pNation.m_pProtoSociety.m_sName + " females " + sFenotypeNationF);
+                    }
+                }
+            }
+            richTextBox1.AppendText("\n\n");
+        }
+
         private void worldMap1_StateSelectedEvent(object sender, MapDraw.SelectedStateChangedEventArgs e)
         {
             comboBox1.SelectedItem = e.m_pState;
@@ -267,66 +336,18 @@ namespace VQMapTest2
             }
             richTextBox1.AppendText("\n");
 
-            string sRaceName = pSociety.m_pTitularNation.m_pRace.m_sName;
-            sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
-            richTextBox1.AppendText(sRaceName + " males " + pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM.GetDescription());
-            richTextBox1.AppendText("\n");
-            richTextBox1.AppendText(sRaceName + " females " + pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM.m_pValues));
-            List<Nation> cKnownNations = new List<Nation>();
-            foreach (State pState in m_pWorld.m_aStates)
+            AddNationInfo(pSociety.m_pTitularNation);
+
+            List<Nation> cDisplayedNations = new List<Nation>();
+            cDisplayedNations.Add(pSociety.m_pTitularNation);
+            foreach (var pEstate in pSociety.m_cEstates)
             {
-                if (pState.m_pSociety.m_pTitularNation.m_pRace == pSociety.m_pTitularNation.m_pRace && !cKnownNations.Contains(pState.m_pSociety.m_pTitularNation))
-                {
-                    cKnownNations.Add(pState.m_pSociety.m_pTitularNation);
-                }
+                if (cDisplayedNations.Contains(pEstate.Value.m_pTitularNation))
+                    continue;
+
+                AddNationInfo(pEstate.Value.m_pTitularNation);
+                cDisplayedNations.Add(pEstate.Value.m_pTitularNation);
             }
-            if (cKnownNations.Count > 1)
-            {
-                richTextBox1.AppendText("\n");
-                richTextBox1.AppendText("Known " + pSociety.m_pTitularNation.m_pRace.m_sName + " nations are: ");
-                bool bFirst = true;
-                foreach (Nation pNation in cKnownNations)
-                {
-                    if (!bFirst)
-                        richTextBox1.AppendText(", ");
-
-                    bFirst = false;
-
-                    richTextBox1.AppendText(pNation.m_pProtoSociety.m_sName);
-                }
-                richTextBox1.AppendText(".\n\n");
-
-                string sFenotypeNationM = pSociety.m_pTitularNation.m_pPhenotypeM.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM.m_pValues);
-                //var expectedFenotypeF = GeneLab.Phenotype<LandTypeInfo>.ApplyDifferences(pSociety.m_pTitularNation.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeM, pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF);
-                string sFenotypeNationF = pSociety.m_pTitularNation.m_pPhenotypeF.GetComparsion(pSociety.m_pTitularNation.m_pRace.m_pPhenotypeF.m_pValues);
-
-                if (sFenotypeNationM == sFenotypeNationF)
-                {
-                    if (!sFenotypeNationM.StartsWith("are"))
-                        sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however they " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
-                    richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " " + sFenotypeNationM);
-                }
-                else
-                {
-                    if (sFenotypeNationM != "")
-                    {
-                        if (!sFenotypeNationM.StartsWith("are"))
-                            sFenotypeNationM = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however they " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
-                        richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " males " + sFenotypeNationM);
-                    }
-
-                    if (sFenotypeNationF != "")
-                    {
-                        if (sFenotypeNationM != "")
-                            richTextBox1.AppendText("\n");
-
-                        if (!sFenotypeNationF.StartsWith("are"))
-                            sFenotypeNationF = "are common " + pSociety.m_pTitularNation.m_pRace.m_sName + "s, however they " + sFenotypeNationF.Substring(0, 1).ToLower() + sFenotypeNationF.Substring(1);
-                        richTextBox1.AppendText(pSociety.m_pTitularNation.m_pProtoSociety.m_sName + " females " + sFenotypeNationF);
-                    }
-                }
-            }
-            richTextBox1.AppendText("\n\n");
 
             if (pSociety.GetImportedTech() == -1)
                 richTextBox1.AppendText(string.Format("Available tech: {0} [T{1}]\n\n", Society.GetTechString(pSociety.m_iTechLevel, pSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Science>()), pSociety.GetEffectiveTech()));
