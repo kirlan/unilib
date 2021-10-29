@@ -58,6 +58,7 @@ namespace LandscapeGeneration
         {
             get { return m_iRX; }
         }
+        public int FrameWidth { get; } = 0;
 
         public float CycleShift
         {

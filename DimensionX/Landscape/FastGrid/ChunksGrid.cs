@@ -403,6 +403,10 @@ namespace LandscapeGeneration.FastGrid
                 return m_iChunkSize * Resolution / 2;
             }
         }
+        public int FrameWidth 
+        { 
+            get { return m_iChunkSize / 100;  } 
+        }
 
         public WorldShape m_eShape = WorldShape.Plain;
 

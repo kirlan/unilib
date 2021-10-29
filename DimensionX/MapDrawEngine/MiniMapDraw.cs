@@ -34,6 +34,9 @@ namespace MapDrawEngine
         /// </summary>
         private float m_fActualScale = 1;
 
+
+        private float m_fFrameWidth = 0f;
+
         /// <summary>
         /// коофициент для перевода координат из абсолютной системы координат в экранную
         /// </summary>
@@ -70,6 +73,18 @@ namespace MapDrawEngine
             m_pDrawFrame.Y = (int)(m_fActualScale * m_pMasterMap.DrawFrame.Y / m_pMasterMap.ActualScale) - 1;
             m_pDrawFrame.Width = (int)(m_fActualScale * m_pMasterMap.DrawFrame.Width / m_pMasterMap.ActualScale);
             m_pDrawFrame.Height = (int)(m_fActualScale * m_pMasterMap.DrawFrame.Height / m_pMasterMap.ActualScale) + 1;
+
+            if (m_pDrawFrame.X < (int)m_fFrameWidth)
+                m_pDrawFrame.X = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.X > m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth)
+                m_pDrawFrame.X = m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y < (int)m_fFrameWidth)
+                m_pDrawFrame.Y = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y > m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth)
+                m_pDrawFrame.Y = m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth;
 
             Refresh();
         }
@@ -263,7 +278,9 @@ namespace MapDrawEngine
 
             //коэффициент для перевода координат из абсолютной системы координат в экранную
             if (m_pMasterMap.m_pWorld != null)
-                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pMasterMap.m_pWorld.m_pGrid.RX * 2);
+                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pMasterMap.m_pWorld.m_pGrid.RX * 2 - m_pMasterMap.m_pWorld.m_pGrid.FrameWidth * 2);
+
+            m_fFrameWidth = (float)m_pMasterMap.m_pWorld.m_pGrid.FrameWidth * m_fActualScale;
 
             //если холст уже окна рисования, вычислим смещение для центрирования холста
             m_iShiftX = (ClientRectangle.Width - m_pCanvas.Width) / 2;
@@ -405,7 +422,7 @@ namespace MapDrawEngine
             if (m_pMasterMap.m_pWorld.m_pGrid.CycleShift != 0)
                 m_pDrawFrame.X = iX;
             else
-                m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width));
+                m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth));
 
             while (m_pDrawFrame.X < 0)
                 m_pDrawFrame.X += m_iScaledMapWidth;
@@ -413,7 +430,19 @@ namespace MapDrawEngine
             while (m_pDrawFrame.X > m_iScaledMapWidth)
                 m_pDrawFrame.X -= m_iScaledMapWidth;
 
-            m_pDrawFrame.Y = Math.Max(0, Math.Min(iY, m_iScaledMapHeight - m_pDrawFrame.Height));
+            m_pDrawFrame.Y = Math.Max(0, Math.Min(iY, m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth));
+
+            if (m_pDrawFrame.X < (int)m_fFrameWidth)
+                m_pDrawFrame.X = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.X > m_iScaledMapWidth - m_pDrawFrame.Width - (int)m_fFrameWidth)
+                m_pDrawFrame.X = m_iScaledMapWidth - m_pDrawFrame.Width - (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y < (int)m_fFrameWidth)
+                m_pDrawFrame.Y = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y > m_iScaledMapHeight - m_pDrawFrame.Height - (int)m_fFrameWidth)
+                m_pDrawFrame.Y = m_iScaledMapHeight - m_pDrawFrame.Height - (int)m_fFrameWidth;
 
             Refresh();
 

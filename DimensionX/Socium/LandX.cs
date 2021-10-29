@@ -47,10 +47,14 @@ namespace Socium
             foreach (LocationX pLoc in m_cContents)
             {
                 bool bBorder = false;
+                bool bMapBorder = false;
                 foreach (LocationX pLink in pLoc.m_aBorderWith)
                 {
                     if (pLink.Owner != pLoc.Owner)
                         bBorder = true;
+
+                    if (pLink.m_bBorder)
+                        bMapBorder = true;
                 }
 
                 int iChances = bBorder ? 1 : 50;
@@ -60,7 +64,8 @@ namespace Socium
                     pLoc.m_cRoads[RoadQuality.Country].Count > 0 ||
                     pLoc.m_cRoads[RoadQuality.Normal].Count > 0 ||
                     pLoc.m_cRoads[RoadQuality.Good].Count > 0 ||
-                    pLoc.m_bBorder)
+                    pLoc.m_bBorder ||
+                    bMapBorder)
                     iChances = 0;
                 else
                     bNoChances = false;
@@ -123,6 +128,7 @@ namespace Socium
             {
                 bool bCoast = false;
                 bool bBorder = false;
+                bool bMapBorder = false;
                 //определим, является ли эта локация пограничной с другой землёй или побережьем.
                 foreach (LocationX pLink in pLoc.m_aBorderWith)
                 {
@@ -131,6 +137,11 @@ namespace Socium
                         bBorder = true;
                         if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
                             bCoast = true;
+                    }
+
+                    if (pLink.m_bBorder)
+                    {
+                        bMapBorder = true;
                     }
                 }
 
@@ -141,6 +152,9 @@ namespace Socium
 
                 //в пограничных локациях строим только если это побережье или есть дороги, во внутренних - отдаём предпочтение локациям с дорогами.
                 int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : (iRoadsCount > 0 ? 50 : 10));
+
+                if (bMapBorder)
+                    iChances = 0;
 
                 //если в локации уже есть поселение - ловить нечего. На руинах, однако, строить можно.
                 if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
@@ -275,6 +289,7 @@ namespace Socium
             {
                 bool bCoast = false;
                 bool bBorder = false;
+                bool bMapBorder = false;
                 foreach (LocationX pLink in pLoc.m_aBorderWith)
                 {
                     if (pLink.Owner != null)
@@ -285,9 +300,17 @@ namespace Socium
                     }
                     if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
                         bCoast = true;
+
+                    if (pLink.m_bBorder)
+                    {
+                        bMapBorder = true;
+                    }
                 }
 
                 int iChances = 100;
+
+                if (bMapBorder)
+                    iChances = 0;
 
                 if (pEnemy != null && !bBorder)
                     iChances = 0;

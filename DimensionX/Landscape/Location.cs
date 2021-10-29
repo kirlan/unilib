@@ -128,6 +128,12 @@ namespace LandscapeGeneration
             if (m_pOwner == null || Forbidden || m_bBorder)
                 return 100;
 
+            foreach (var pEdge in m_cBorderWith)
+            {
+                if (((Location)pEdge.Key).m_bBorder)
+                    return 100;
+            }
+
             ILand pLand = m_pOwner as ILand;
             return pLand.MovementCost * (m_eType == RegionType.Empty ? 1 : 10);
         }
