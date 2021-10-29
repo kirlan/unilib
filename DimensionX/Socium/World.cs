@@ -2104,12 +2104,8 @@ namespace Socium
                                 if (pLoc.m_pSettlement.m_iRuinsAge > 0)
                                 {
                                     //в зависимости от проходимости местности
-                                    if (!Rnd.OneChanceFrom((int)pLand.MovementCost))
-                                    {
-                                        //либо наращиваем возраст руин - в труднодоступных местах
-                                        pLoc.m_pSettlement.m_iRuinsAge++;
-                                    }
-                                    else
+                                    //либо наращиваем возраст руин - в труднодоступных местах
+                                    if (Rnd.OneChanceFrom((int)pLand.MovementCost) || pLoc.m_pSettlement.Ruin())
                                     {
                                         //либо окончательно уничтожаем все следы цивилизации - в легкодоступных местах
                                         pLoc.m_pSettlement = null;
@@ -2131,29 +2127,30 @@ namespace Socium
                                             break;
                                         case SettlementSize.Town:
                                             if (Rnd.OneChanceFrom(1 + (int)(24 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                         case SettlementSize.City:
                                             if (Rnd.OneChanceFrom(1 + (int)(12 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                         case SettlementSize.Capital:
                                             if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                         case SettlementSize.Fort:
-                                            if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                            if (Rnd.OneChanceFrom(1 + (int)(9 / pLoc.GetMovementCost())))
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                     }
 
                                     //административные центры всегда становятся руинами - если только они крупнее деревни
                                     if (pLoc == pState.m_pMethropoly.m_pAdministrativeCenter &&
-                                        pLoc.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
-                                        pLoc.m_pSettlement.m_iRuinsAge = 1;
+                                        pLoc.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village &&
+                                        pLoc.m_pSettlement.m_iRuinsAge == 0)
+                                        pLoc.m_pSettlement.Ruin();
 
                                     //если поселение не превратилось в руины - значит оно полностью погибло и не оставило никаких следов
-                                    if (pLoc.m_pSettlement.m_iRuinsAge == 0)
+                                    if (pLoc.m_pSettlement.m_iRuinsAge == 0 || pLoc.m_pSettlement.m_cBuildings.Count == 0)
                                         pLoc.m_pSettlement = null;
                                     else
                                         //если же оно таки стало руинами - помечаем соответсвенно все пути ведущие в эту локацию, чтобы дороги обходили её стороной
