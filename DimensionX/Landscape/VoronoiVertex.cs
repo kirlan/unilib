@@ -36,7 +36,7 @@ namespace LandscapeGeneration
 
         private static long s_iCounter = 0;
 
-        public long m_iID = s_iCounter++;
+        public long m_iVertexID = s_iCounter++;
 
         public List<VoronoiVertex> m_cVertexes = new List<VoronoiVertex>();
 
@@ -97,7 +97,7 @@ namespace LandscapeGeneration
 
         public VoronoiVertex(BinaryReader binReader)
         {
-            m_iID = binReader.ReadInt64();
+            m_iVertexID = binReader.ReadInt64();
 
             m_fX = (float)binReader.ReadDouble();
             m_fY = (float)binReader.ReadDouble();
@@ -114,14 +114,14 @@ namespace LandscapeGeneration
 
         public void Save(BinaryWriter binWriter)
         {
-            binWriter.Write(m_iID);
+            binWriter.Write(m_iVertexID);
 
             binWriter.Write((double)m_fX);
             binWriter.Write((double)m_fY);
 
             binWriter.Write(m_cVertexes.Count);
             foreach (VoronoiVertex pVertex in m_cVertexes)
-                binWriter.Write(pVertex.m_iID);
+                binWriter.Write(pVertex.m_iVertexID);
 
             binWriter.Write(m_cLocationsBuild.Count);
             foreach (Location pLocation in m_cLocationsBuild)

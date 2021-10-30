@@ -798,7 +798,7 @@ namespace LandscapeGeneration
                         {
                             VoronoiVertex pVertexLoc = new VoronoiVertex(binReader);
 
-                            cTempDicVertex[pVertexLoc.m_iID] = pVertexLoc;
+                            cTempDicVertex[pVertexLoc.m_iVertexID] = pVertexLoc;
 
                             if (ProgressStep != null)
                                 ProgressStep();
