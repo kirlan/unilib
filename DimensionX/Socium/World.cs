@@ -661,32 +661,6 @@ namespace Socium
 
             }
 
-            if (bFinalize)
-            {
-                // Если в какой-то расе всего одна нация - переименовываем расу по названию нации
-                Dictionary<Race, List<Nation>> cRaces = new Dictionary<Race, List<Nation>>();
-
-                foreach (var pNation in m_aLocalNations)
-                {
-                    List<Nation> cRaceNations;
-                    if (!cRaces.TryGetValue(pNation.m_pRace, out cRaceNations))
-                    {
-                        cRaceNations = new List<Nation>();
-                        cRaces[pNation.m_pRace] = cRaceNations;
-                    }
-                    cRaceNations.Add(pNation);
-                }
-
-                foreach (var pRace in cRaces)
-                {
-                    if (pRace.Value.Count == 1)
-                    {
-                        pRace.Key.m_sName = pRace.Value.First().m_pProtoSociety.m_sName.ToLower();
-                        pRace.Key.m_pPhenotypeM = pRace.Value.First().m_pPhenotypeM;
-                        pRace.Key.m_pPhenotypeF = pRace.Value.First().m_pPhenotypeF;
-                    }
-                }
-            }
             //ProgressStep();
         }
 

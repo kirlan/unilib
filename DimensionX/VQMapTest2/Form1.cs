@@ -240,24 +240,39 @@ namespace VQMapTest2
 
         private void AddNationInfo(Nation pNation)
         {
-            string sRaceName = pNation.m_pRace.m_sName;
-            sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
-            richTextBox1.AppendText(sRaceName + (pNation.m_bDying ? " is an ancient race." : " is a young race."));
-            if (pNation.m_bInvader)
-                richTextBox1.AppendText(" They are not from this world.");
-            richTextBox1.AppendText("\n");
-
-            richTextBox1.AppendText(sRaceName + " males " + pNation.m_pRace.m_pPhenotypeM.GetDescription());
-            richTextBox1.AppendText("\n");
-            richTextBox1.AppendText(sRaceName + " females " + pNation.m_pRace.m_pPhenotypeF.GetComparsion(pNation.m_pRace.m_pPhenotypeM.m_pValues));
             List<Nation> cKnownNations = new List<Nation>();
             foreach (State pState in m_pWorld.m_aStates)
             {
-                if (pState.m_pSociety.m_pTitularNation.m_pRace == pNation.m_pRace && !cKnownNations.Contains(pState.m_pSociety.m_pTitularNation))
+                foreach (var pEstate in pState.m_pSociety.m_cEstates)
                 {
-                    cKnownNations.Add(pState.m_pSociety.m_pTitularNation);
+                    if (pEstate.Value.m_pTitularNation.m_pRace == pNation.m_pRace && !cKnownNations.Contains(pEstate.Value.m_pTitularNation))
+                    {
+                        cKnownNations.Add(pEstate.Value.m_pTitularNation);
+                    }
                 }
             }
+
+            string sRaceName = pNation.m_pRace.m_sName;
+            sRaceName = sRaceName.Substring(0, 1).ToUpper() + sRaceName.Substring(1);
+            var pPhenotypeM = pNation.m_pRace.m_pPhenotypeM;
+            var pPhenotypeF = pNation.m_pRace.m_pPhenotypeF;
+            if (cKnownNations.Count == 1)
+            {
+                richTextBox1.AppendText(sRaceName + "s are mostly known in this world as " + pNation.m_pProtoSociety.m_sName + "s. ");
+                sRaceName = pNation.m_pProtoSociety.m_sName.Substring(0, 1).ToUpper() + pNation.m_pProtoSociety.m_sName.Substring(1);
+                pPhenotypeM = pNation.m_pPhenotypeM;
+                pPhenotypeF = pNation.m_pPhenotypeF;
+            }
+
+            richTextBox1.AppendText(sRaceName + (pNation.m_bDying ? " is an ancient race." : " is a young race. "));
+            if (pNation.m_bInvader)
+                richTextBox1.AppendText("They are not from this world. ");
+            richTextBox1.AppendText("\n");
+
+            richTextBox1.AppendText(sRaceName + " males " + pPhenotypeM.GetDescription());
+            richTextBox1.AppendText("\n");
+            richTextBox1.AppendText(sRaceName + " females " + pPhenotypeF.GetComparsion(pPhenotypeM.m_pValues));
+            
             if (cKnownNations.Count > 1)
             {
                 richTextBox1.AppendText("\n");
