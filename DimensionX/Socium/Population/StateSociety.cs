@@ -279,7 +279,9 @@ namespace Socium.Population
             m_iInfrastructureLevel = 0;
 
             m_cCulture[Gender.Male] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
             m_cCulture[Gender.Female] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
+            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
 
             FixSexCustoms();
         }
@@ -305,7 +307,7 @@ namespace Socium.Population
             }
 
             Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
-            if (m_pTitularNation.m_pFenotype.m_pBody.IsParasite() || m_pTitularNation.m_bInvader)
+            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pTitularNation.m_bInvader)
             {
                 cNationsCount.Remove(m_pTitularNation);
                 if (cNationsCount.Count > 0)
@@ -313,7 +315,7 @@ namespace Socium.Population
             }
             else
             {
-                m_pTitularNation = pMostCommonNation;
+                UpdateTitularNation(pMostCommonNation);
                 cNationsCount.Remove(m_pTitularNation);
             }
             m_pHostNation = pMostCommonNation;
@@ -357,7 +359,7 @@ namespace Socium.Population
                     if (pNation.m_bDying && !bCanBeDying)
                         continue;
 
-                    if (pNation.m_pFenotype.m_pBody.IsParasite() && !bCanBeParasite)
+                    if (pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() && !bCanBeParasite)
                         continue;
 
                     if (!cChances.ContainsKey(pNation))
@@ -377,7 +379,7 @@ namespace Socium.Population
                             cChances[pNation]++;
                     }
 
-                    int iHostility = m_pTitularNation.m_pFenotype.GetFenotypeDifference(pNation.m_pFenotype);
+                    int iHostility = m_pTitularNation.DominantPhenotype.GetFenotypeDifference(pNation.DominantPhenotype);
                     if (iHostility > 0)
                         cChances[pNation]++;
                     if (iHostility > 3)
@@ -403,7 +405,7 @@ namespace Socium.Population
                 return pDefault;
             }
 
-            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.m_pFenotype.m_pBody.IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
+            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
             {
                 m_pHostNation = getAccessableNation(false, false, true, m_pHostNation);
             }
@@ -447,9 +449,19 @@ namespace Socium.Population
             // Элита может немного отличаться от среднего класса
             m_cEstates[Estate.Position.Elite] = new Estate(pBase, Estate.Position.Elite, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Elite), false);
 
+            // духовенство - его обычаи должны отличаться не только от среднего класса, но и от элиты
+            do
+            {
+                m_cEstates[Estate.Position.Clergy] = new Estate(pBase, Estate.Position.Clergy, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Clergy), false);
+            }
+            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female]));
+            if (Rnd.OneChanceFrom(2))
+                m_cEstates[Estate.Position.Clergy].UpdateTitularNation(m_pHostNation);
+
             // средний класс - это и есть основа всего сообщества
             m_cEstates[Estate.Position.Commoners] = pBase;
-            m_cEstates[Estate.Position.Commoners].m_pTitularNation = m_pHostNation;
+            m_cEstates[Estate.Position.Commoners].UpdateTitularNation(m_pHostNation);
             // TODO: насколько сильно родная культура порабощённой нации должна влиять на культуру образованного ей сословия?
             // Сейчас она не влияет вообще, порабощённые расы полностью ассимилируются. Но правильно ли это?
 
@@ -459,11 +471,13 @@ namespace Socium.Population
                 m_cEstates[Estate.Position.Lowlifes] = new Estate(pBase, Estate.Position.Lowlifes, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Lowlifes), false);
             }
             while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]));
-            m_cEstates[Estate.Position.Lowlifes].m_pTitularNation = m_pSlavesNation;
+                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]));
+            m_cEstates[Estate.Position.Lowlifes].UpdateTitularNation(m_pSlavesNation);
 
 
-            // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех 3 других сословий
+            // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех других сословий
             do
             {
                 if (!Rnd.OneChanceFrom(3) && m_iSocialEquality != 0)
@@ -479,9 +493,11 @@ namespace Socium.Population
                    m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
                    m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
                    m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
+                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
                    pBase.m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
                    pBase.m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]));
-            m_cEstates[Estate.Position.Outlaws].m_pTitularNation = Rnd.OneChanceFrom(3) ? m_pTitularNation : Rnd.OneChanceFrom(2) ? m_pHostNation : m_pSlavesNation;
+            m_cEstates[Estate.Position.Outlaws].UpdateTitularNation(Rnd.OneChanceFrom(3) ? m_pTitularNation : Rnd.OneChanceFrom(2) ? m_pHostNation : m_pSlavesNation);
 
             // перебираем все поселения, где присутсвует сообщество
             foreach (LocationX pLocation in Settlements)
@@ -550,10 +566,10 @@ namespace Socium.Population
 
                 var eProfessionGenderPriority = GetProfessionGenderPriority(pProfession.Key);
 
-                if (DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy &&
+                if (DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) &&
                     eProfessionGenderPriority == Customs.GenderPriority.Matriarchy)
                     iPreference -= iDiscrimination;
-                if (DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy &&
+                if (DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy) &&
                     eProfessionGenderPriority == Customs.GenderPriority.Patriarchy)
                     iPreference -= iDiscrimination;
 
@@ -582,6 +598,9 @@ namespace Socium.Population
                         case ProfessionInfo.Caste.Elite:
                             pEstate = m_cEstates[Estate.Position.Elite];
                             iEliteEstateCount -= iCount;
+                            break;
+                        case ProfessionInfo.Caste.Cleregy:
+                            pEstate = m_cEstates[Estate.Position.Clergy];
                             break;
                         case ProfessionInfo.Caste.Low:
                             pEstate = m_cEstates[Estate.Position.Lowlifes];
@@ -771,7 +790,7 @@ namespace Socium.Population
             if (pExporter == null)
                 return "";
 
-            return GetTechString(pExporter.m_pSociety.m_iTechLevel, pExporter.m_pSociety.DominantCulture.m_pCustoms.m_eScience);
+            return GetTechString(pExporter.m_pSociety.m_iTechLevel, pExporter.m_pSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Science>());
         }
         public override string ToString()
         {
@@ -853,7 +872,7 @@ namespace Socium.Population
                             if (iInfrastructureLevel < 2)
                                 pChurch = BuildingInfo.ShamansHutSmall;
                             else
-                                pChurch = BuildingInfo.ChurchSmall;
+                                pChurch = BuildingInfo.TempleSmall;
 
                             cChances[pChurch] = DominantCulture.GetTrait(Trait.Piety);
 
@@ -876,14 +895,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.SchoolSmall] = fScience / 4;
@@ -958,24 +977,24 @@ namespace Socium.Population
 
                             cChances[pPrison] = (float)iControl / 4;
 
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.MonasteryMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            switch (DominantCulture.m_pCustoms.m_eSexuality)
+                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                             {
-                                case Psychology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
-                                case Psychology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                            }
+                            else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                            { 
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
 
                             if (iInfrastructureLevel < 4)
@@ -1000,14 +1019,14 @@ namespace Socium.Population
                                 cChances[BuildingInfo.MedicineMedium] = (float)cChances.Count / 12;
 
                             float fBureaucracy = 0.05f;
-                            if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                 fBureaucracy = 0.25f;
-                            if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                            else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Primitive)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1029,14 +1048,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1048,14 +1067,13 @@ namespace Socium.Population
                             if (m_iSocialEquality == 0)
                             {
                                 cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 6 + 1;
-                                switch (DominantCulture.m_pCustoms.m_eSexuality)
+                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                                 {
-                                    case Customs.Sexuality.Moderate_sexuality:
-                                        cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
-                                        break;
-                                    case Customs.Sexuality.Lecherous:
-                                        cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
-                                        break;
+                                    cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
+                                }
+                                else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                                { 
+                                    cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
                                 }
                                 //cChances[BuildingInfo.SlavePensLarge] = (float)cChances.Count;// / 2 + 1;
                             }
@@ -1142,24 +1160,25 @@ namespace Socium.Population
 
                             cChances[pPrison] = (float)iControl / 4;
 
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.MonasteryMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.MonasteryLarge] = DominantCulture.GetTrait(Trait.Piety) / 10;
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            switch (DominantCulture.m_pCustoms.m_eSexuality)
+                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                             {
-                                case Psychology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
-                                case Psychology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                            }
+                            else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                            { 
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
 
                             if (iInfrastructureLevel < 4)
@@ -1189,14 +1208,14 @@ namespace Socium.Population
                             }
 
                             float fBureaucracy = 0.05f;
-                            if (DominantCulture.m_pCustoms.m_eMindSet == Psychology.Customs.MindSet.Balanced_mind)
+                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                 fBureaucracy = 0.25f;
-                            if (DominantCulture.m_pCustoms.m_eMindSet == Psychology.Customs.MindSet.Logic)
+                            else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Primitive)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1218,14 +1237,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1238,14 +1257,13 @@ namespace Socium.Population
                             if (m_iSocialEquality == 0)
                             {
                                 cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 6 + 1;
-                                switch (DominantCulture.m_pCustoms.m_eSexuality)
+                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                                 {
-                                    case Psychology.Customs.Sexuality.Moderate_sexuality:
-                                        cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
-                                        break;
-                                    case Psychology.Customs.Sexuality.Lecherous:
-                                        cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 4 + 1;
-                                        break;
+                                    cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
+                                }
+                                else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                                { 
+                                    cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 4 + 1;
                                 }
                                 //cChances[BuildingInfo.SlavePensHuge] = (float)cChances.Count;// / 2 + 1;
                             }
@@ -1288,7 +1306,7 @@ namespace Socium.Population
                                 pProfile = iInfrastructureLevel < 4 ? (DominantCulture.GetTrait(Trait.Simplicity) > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
                                 break;
                             case SettlementSpeciality.Religious:
-                                pProfile = BuildingInfo.ChurchLarge;
+                                pProfile = BuildingInfo.TempleLarge;
                                 break;
                             case SettlementSpeciality.MilitaryAcademy:
                                 pProfile = BuildingInfo.BarracksHuge;
@@ -1348,24 +1366,25 @@ namespace Socium.Population
 
                             cChances[pPrison] = (float)iControl / 4;
 
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.MonasteryMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.MonasteryLarge] = DominantCulture.GetTrait(Trait.Piety) / 10;
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            switch (DominantCulture.m_pCustoms.m_eSexuality)
+                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                             {
-                                case Psychology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
-                                case Psychology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                            }
+                            else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                            {
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
 
                             if (iInfrastructureLevel < 4)
@@ -1395,14 +1414,14 @@ namespace Socium.Population
                             }
 
                             float fBureaucracy = 0.05f;
-                            if (DominantCulture.m_pCustoms.m_eMindSet == Psychology.Customs.MindSet.Balanced_mind)
+                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                 fBureaucracy = 0.25f;
-                            if (DominantCulture.m_pCustoms.m_eMindSet == Psychology.Customs.MindSet.Logic)
+                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Primitive)
+                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1424,14 +1443,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                if (DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1444,14 +1463,13 @@ namespace Socium.Population
                             if (m_iSocialEquality == 0)
                             {
                                 cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 6 + 1;
-                                switch (DominantCulture.m_pCustoms.m_eSexuality)
+                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                                 {
-                                    case Psychology.Customs.Sexuality.Moderate_sexuality:
-                                        cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
-                                        break;
-                                    case Psychology.Customs.Sexuality.Lecherous:
-                                        cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 4 + 1;
-                                        break;
+                                    cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
+                                }
+                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                                { 
+                                    cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 4 + 1;
                                 }
                                 //cChances[BuildingInfo.SlavePensHuge] = (float)cChances.Count;// / 2 + 1;
                             }
@@ -1494,7 +1512,7 @@ namespace Socium.Population
                                 pProfile = iInfrastructureLevel < 4 ? (DominantCulture.GetTrait(Trait.Simplicity) > Rnd.Get(2f) ? BuildingInfo.CircusMedium : BuildingInfo.TheatreMedium) : BuildingInfo.CinemaLarge;
                                 break;
                             case SettlementSpeciality.Religious:
-                                pProfile = BuildingInfo.ChurchLarge;
+                                pProfile = BuildingInfo.TempleLarge;
                                 break;
                             case SettlementSpeciality.MilitaryAcademy:
                                 pProfile = BuildingInfo.BarracksHuge;
@@ -1529,24 +1547,23 @@ namespace Socium.Population
                     {
                         if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
-                            cChances[BuildingInfo.ChurchMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
-                            cChances[BuildingInfo.ChurchSmall] = DominantCulture.GetTrait(Trait.Piety);
+                            cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
+                            cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
                             BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
                             BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            switch (DominantCulture.m_pCustoms.m_eSexuality)
+                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                             {
-                                case Psychology.Customs.Sexuality.Moderate_sexuality:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
-                                case Psychology.Customs.Sexuality.Lecherous:
-                                    cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    if (iInfrastructureLevel >= 4)
-                                        cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
-                                    break;
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                            }
+                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                            {
+                                cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                                if (iInfrastructureLevel >= 4)
+                                    cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
 
                             if (iInfrastructureLevel < 4)
@@ -1806,17 +1823,17 @@ namespace Socium.Population
                     m_iMagicLimit = pProvince.m_pLocalSociety.m_iMagicLimit;
 
                 float fPrevalence = 1;
-                switch (pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.m_eMagic)
+                if (pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Feared))
                 {
-                    case Customs.Magic.Magic_Feared:
-                        fPrevalence = 0.1f;
-                        break;
-                    case Customs.Magic.Magic_Allowed:
-                        fPrevalence = 0.5f;
-                        break;
-                    case Customs.Magic.Magic_Praised:
-                        fPrevalence = 0.9f;
-                        break;
+                    fPrevalence = 0.1f;
+                }
+                else if (pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Allowed))
+                {
+                    fPrevalence = 0.5f;
+                }
+                else if (pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Praised))
+                {
+                    fPrevalence = 0.9f;
                 }
 
                 Dictionary<Gender, float> cProvinceMagesCount = new Dictionary<Gender, float>()
@@ -1830,19 +1847,23 @@ namespace Socium.Population
                     cProvinceMagesCount[Gender.Female] += pLand.m_cContents.Count * fPrevalence;
                 }
 
-                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution)
+                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
-                    case GendersDistribution.OnlyMales:
-                        cProvinceMagesCount[Gender.Female] *= 0.1f;
-                        break;
-                    case GendersDistribution.OnlyFemales:
+                    case BirthRate.Low:
                         cProvinceMagesCount[Gender.Male] *= 0.1f;
                         break;
-                    case GendersDistribution.MostlyMales:
-                        cProvinceMagesCount[Gender.Female] *= 0.25f;
-                        break;
-                    case GendersDistribution.MostlyFemales:
+                    case BirthRate.Moderate:
                         cProvinceMagesCount[Gender.Male] *= 0.25f;
+                        break;
+                }
+
+                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                {
+                    case BirthRate.Low:
+                        cProvinceMagesCount[Gender.Female] *= 0.1f;
+                        break;
+                    case BirthRate.Moderate:
+                        cProvinceMagesCount[Gender.Female] *= 0.25f;
                         break;
                 }
 
@@ -2064,21 +2085,21 @@ namespace Socium.Population
         /// <returns></returns>
         internal override Customs.GenderPriority GetMinorGender()
         {
-            var eGenderPriority = m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority;
-            switch (eGenderPriority)
+            if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
             {
-                case Customs.GenderPriority.Matriarchy:
-                    if (m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.OnlyFemales ||
-                        m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.MostlyFemales)
-                        return Customs.GenderPriority.Genders_equality;
-                    else
-                        return Customs.GenderPriority.Patriarchy;
-                case Customs.GenderPriority.Patriarchy:
-                    if (m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.OnlyMales ||
-                        m_pTitularNation.m_pFenotype.m_pLifeCycle.m_eGendersDistribution == GendersDistribution.MostlyMales)
-                        return Customs.GenderPriority.Genders_equality;
-                    else
-                        return Customs.GenderPriority.Matriarchy;
+                if (m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate >
+                    m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                    return Customs.GenderPriority.Genders_equality;
+                else
+                    return Customs.GenderPriority.Patriarchy;
+            }
+            if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Patriarchy))
+            {
+                if (m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate >
+                    m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                    return Customs.GenderPriority.Genders_equality;
+                else
+                    return Customs.GenderPriority.Matriarchy;
             }
 
             return base.GetMinorGender();

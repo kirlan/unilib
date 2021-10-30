@@ -54,6 +54,22 @@ namespace GeneLab.Genetix
         Hammer
     }
 
+    public enum Horns
+    { 
+        /// <summary>
+        /// без рогов
+        /// </summary>
+        None,
+        /// <summary>
+        /// маленькие рожки
+        /// </summary>
+        Small,
+        /// <summary>
+        /// большие рога
+        /// </summary>
+        Big
+    }
+
     public class HeadGenetix: GenetixBase
     {
         /// <summary>
@@ -63,35 +79,35 @@ namespace GeneLab.Genetix
         public string GetDescription()
         {
             string sNeck = "?";
-            switch (m_eNeckLength)
+            switch (NeckLength)
             {
                 case NeckLength.None:
-                    sNeck = "without neck";
+                    sNeck = "no neck";
                     break;
                 case NeckLength.Short:
-                    sNeck = "on short neck";
+                    sNeck = "short neck";
                     break;
                 case NeckLength.ShortRotary:
-                    sNeck = "on short pivoted neck";
+                    sNeck = "short, flexible neck";
                     break;
                 case NeckLength.Long:
-                    sNeck = "on long neck";
+                    sNeck = "long neck";
                     break;
                 case NeckLength.ExtraLong:
-                    sNeck = "on long, flexible neck";
+                    sNeck = "long, flexible neck";
                     break;
             }
-            if (m_iHeadsCount > 1)
+            if (HeadsCount > 1)
                 sNeck += "s";
 
             string sForm = "?";
-            switch (m_eHeadForm)
+            switch (HeadForm)
             {
                 case HeadForm.Flat:
                     sForm = "small ";
                     break;
                 case HeadForm.Human:
-                    sForm = "";
+                    sForm = "common ";
                     break;
                 case HeadForm.IncreasedForehead:
                     sForm = "big ";
@@ -104,35 +120,87 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            return m_iHeadsCount.ToString() + " " + sForm + (m_iHeadsCount == 1 ? "head" : "heads") + " " + sNeck;
+            string sHorns = "?";
+            switch (Horns)
+            {
+                case Horns.None:
+                    sHorns = "";
+                    break;
+                case Horns.Small:
+                    sHorns = ", with small horns";
+                    break;
+                case Horns.Big:
+                    sHorns = ", with big horns";
+                    break;
+            }
+
+            return (HeadsCount > 1 ? HeadsCount.ToString() : "single") + " " + sNeck + " with " + sForm + (HeadsCount == 1 ? "head" : "heads") + sHorns;
         }
-        
+
+        /// <summary>
+        /// 1 human head on short neck, no horns
+        /// </summary>
         public static HeadGenetix Human
         {
-            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Human); }
+            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Human, Horns.None); }
         }
 
+        /// <summary>
+        /// 1 human head on short neck, big horns
+        /// </summary>
+        public static HeadGenetix DemonM
+        {
+            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Human, Horns.Big); }
+        }
+
+        /// <summary>
+        /// 1 human head on short neck, small horns
+        /// </summary>
+        public static HeadGenetix DemonF
+        {
+            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Human, Horns.Small); }
+        }
+
+        /// <summary>
+        /// 1 big head on short neck, no horns
+        /// </summary>
         public static HeadGenetix Sectoid
         {
-            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.IncreasedForehead); }
+            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.IncreasedForehead, Horns.None); }
         }
 
+        /// <summary>
+        /// 1 small head on short neck, no horns
+        /// </summary>
         public static HeadGenetix Pitecantrop
         {
-            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Flat); }
+            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Flat, Horns.None); }
         }
 
+        /// <summary>
+        /// 1 small head on short neck, big horns
+        /// </summary>
+        public static HeadGenetix Minotaur
+        {
+            get { return new HeadGenetix(1, NeckLength.Short, HeadForm.Flat, Horns.Big); }
+        }
+
+        /// <summary>
+        /// 1 hammer head on short flexible neck, no horns
+        /// </summary>
         public static HeadGenetix Insect
         {
-            get { return new HeadGenetix(1, NeckLength.ShortRotary, HeadForm.Hammer); }
+            get { return new HeadGenetix(1, NeckLength.ShortRotary, HeadForm.Hammer, Horns.None); }
         }
         
 
-        public int m_iHeadsCount = 1;
+        public int HeadsCount { get; private set; } = 1;
 
-        public NeckLength m_eNeckLength = NeckLength.Short;
+        public NeckLength NeckLength { get; private set; } = NeckLength.Short;
 
-        public HeadForm m_eHeadForm = HeadForm.Human;
+        public HeadForm HeadForm { get; private set; } = HeadForm.Human;
+
+        public Horns Horns { get; private set; } = Horns.None; 
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -141,9 +209,10 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_iHeadsCount == pAnother.m_iHeadsCount &&
-                m_eNeckLength == pAnother.m_eNeckLength &&
-                m_eHeadForm == pAnother.m_eHeadForm;
+            return HeadsCount == pAnother.HeadsCount &&
+                NeckLength == pAnother.NeckLength &&
+                HeadForm == pAnother.HeadForm &&
+                Horns == pAnother.Horns;
         }
         
         public HeadGenetix()
@@ -151,76 +220,122 @@ namespace GeneLab.Genetix
 
         public HeadGenetix(HeadGenetix pPredcessor)
         {
-            m_iHeadsCount = pPredcessor.m_iHeadsCount;
-            m_eNeckLength = pPredcessor.m_eNeckLength;
-            m_eHeadForm = pPredcessor.m_eHeadForm;
+            HeadsCount = pPredcessor.HeadsCount;
+            NeckLength = pPredcessor.NeckLength;
+            HeadForm = pPredcessor.HeadForm;
+            Horns = pPredcessor.Horns;
         }
 
-        public HeadGenetix(int iHeadsCount, NeckLength eNeckLength, HeadForm eHeadForm)
+        public HeadGenetix(int iHeadsCount, NeckLength eNeckLength, HeadForm eHeadForm, Horns eHorns)
         {
-            m_iHeadsCount = iHeadsCount;
-            m_eNeckLength = eNeckLength;
-            m_eHeadForm = eHeadForm;
+            HeadsCount = iHeadsCount;
+            NeckLength = eNeckLength;
+            HeadForm = eHeadForm;
+            Horns = eHorns;
         }
-        
+
         #region GenetixBase Members
 
         public GenetixBase MutateRace()
         {
-            if (Rnd.OneChanceFrom(10))
+            if (Rnd.OneChanceFrom(5))
             {
                 HeadGenetix pMutant = new HeadGenetix(this);
 
                 //pMutant.m_iHeadsCount = 1 + (int)Math.Pow(Rnd.Get(14), 3) / 1000;
-                    
-                if (pMutant.m_iHeadsCount == 1 &&
-                    pMutant.m_eNeckLength != NeckLength.Long &&
-                    pMutant.m_eNeckLength != NeckLength.ExtraLong)
+
+                if (Rnd.OneChanceFrom(2))
                 {
-                    int iChance = (int)Math.Pow(Rnd.Get(15), 3) / 1000;
-                    switch (iChance)
+                    if (pMutant.HeadsCount == 1 &&
+                        pMutant.NeckLength != NeckLength.Long &&
+                        pMutant.NeckLength != NeckLength.ExtraLong)
                     {
-                        case 0:
-                            pMutant.m_eNeckLength = NeckLength.Short;
-                            break;
-                        case 1:
-                            pMutant.m_eNeckLength = NeckLength.ShortRotary;
-                            break;
-                        case 2:
-                            pMutant.m_eNeckLength = NeckLength.Long;
-                            break;
-                        case 3:
-                            pMutant.m_eNeckLength = NeckLength.None;
-                            break;
-                        //case 4:
-                        //    pMutant.m_eNeckLength = NeckLength.ExtraLong;
-                        //    break;
+                        int iChance = (int)Math.Pow(Rnd.Get(15), 3) / 1000;
+                        switch (iChance)
+                        {
+                            case 0:
+                                pMutant.NeckLength = NeckLength.Short;
+                                break;
+                            case 1:
+                                pMutant.NeckLength = NeckLength.ShortRotary;
+                                break;
+                            case 2:
+                                pMutant.NeckLength = NeckLength.Long;
+                                break;
+                            case 3:
+                                pMutant.NeckLength = NeckLength.None;
+                                break;
+                                //case 4:
+                                //    pMutant.m_eNeckLength = NeckLength.ExtraLong;
+                                //    break;
+                        }
                     }
-                }
-                else
-                {
-                    int iChance = (int)Math.Pow(Rnd.Get(15), 3) / 1000;
-                    switch (iChance)
+                    else
                     {
-                        case 0:
-                            pMutant.m_eNeckLength = NeckLength.Long;
-                            break;
-                        case 1:
-                            pMutant.m_eNeckLength = NeckLength.ExtraLong;
-                            break;
-                        case 2:
-                            pMutant.m_eNeckLength = NeckLength.Short;
-                            break;
-                        case 3:
-                            pMutant.m_eNeckLength = NeckLength.ShortRotary;
-                            break;
-                        //case 4:
-                        //    pMutant.m_eNeckLength = NeckLength.None;
-                        //    break;
+                        int iChance = (int)Math.Pow(Rnd.Get(15), 3) / 1000;
+                        switch (iChance)
+                        {
+                            case 0:
+                                pMutant.NeckLength = NeckLength.Long;
+                                break;
+                            case 1:
+                                pMutant.NeckLength = NeckLength.ExtraLong;
+                                break;
+                            case 2:
+                                pMutant.NeckLength = NeckLength.Short;
+                                break;
+                            case 3:
+                                pMutant.NeckLength = NeckLength.ShortRotary;
+                                break;
+                                //case 4:
+                                //    pMutant.m_eNeckLength = NeckLength.None;
+                                //    break;
+                        }
                     }
                 }
 
                 //pMutant.m_eHeadForm = (HeadForm)Rnd.Get(typeof(HeadForm));
+
+                switch (Horns)
+                {
+                    case Horns.None:
+                        if (Rnd.OneChanceFrom(2))
+                            Horns = Rnd.OneChanceFrom(5) ? Horns.Big : Horns.Small;
+                        break;
+                    case Horns.Small:
+                        Horns = Rnd.OneChanceFrom(2) ? Horns.None : Horns.Big;
+                        break;
+                    case Horns.Big:
+                        Horns = Rnd.OneChanceFrom(5) ? Horns.None : Horns.Small;
+                        break;
+                }
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(5))
+            {
+                HeadGenetix pMutant = new HeadGenetix(this);
+
+                switch (Horns)
+                {
+                    case Horns.None:
+                        if (Rnd.OneChanceFrom(2))
+                            pMutant.Horns = Rnd.OneChanceFrom(5) ? Horns.Big : Horns.Small;
+                        break;
+                    case Horns.Small:
+                        pMutant.Horns = Rnd.OneChanceFrom(2) ? Horns.None : Horns.Big;
+                        break;
+                    case Horns.Big:
+                        pMutant.Horns = Rnd.OneChanceFrom(5) ? Horns.None : Horns.Small;
+                        break;
+                }
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
@@ -231,6 +346,28 @@ namespace GeneLab.Genetix
 
         public GenetixBase MutateNation()
         {
+            if (Rnd.OneChanceFrom(10))
+            {
+                HeadGenetix pMutant = new HeadGenetix(this);
+
+                switch (Horns)
+                {
+                    case Horns.None:
+                        if (Rnd.OneChanceFrom(2))
+                            pMutant.Horns = Rnd.OneChanceFrom(5) ? Horns.Big : Horns.Small;
+                        break;
+                    case Horns.Small:
+                        pMutant.Horns = Rnd.OneChanceFrom(2) ? Horns.None : Horns.Big;
+                        break;
+                    case Horns.Big:
+                        pMutant.Horns = Rnd.OneChanceFrom(5) ? Horns.None : Horns.Small;
+                        break;
+                }
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
             return this;
         }
 

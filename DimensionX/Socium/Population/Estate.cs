@@ -16,7 +16,8 @@ namespace Socium.Population
     {
         public enum Position
         {
-            Elite = 2,
+            Elite = 3,
+            Clergy = 2,
             Commoners = 1,
             Lowlifes = 0,
             Outlaws = -1
@@ -34,6 +35,11 @@ namespace Socium.Population
             return m_ePosition == Position.Elite;
         }
 
+        public bool IsCleregy()
+        {
+            return m_ePosition == Position.Clergy;
+        }
+
         public bool IsMiddleUp()
         {
             return m_ePosition == Position.Commoners || m_ePosition == Position.Elite;
@@ -42,11 +48,11 @@ namespace Socium.Population
         /// <summary>
         /// Государство, которому принадлежит сословие
         /// </summary>
-        private State m_pState;
+        //private State m_pState;
 
         public bool IsSegregated()
         {
-            return DominantCulture.m_pCustoms.m_eGenderPriority != Customs.GenderPriority.Genders_equality;
+            return !DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Genders_equality);
         }
 
         void UpdateCultureProgress(Culture pCulture)
@@ -54,6 +60,13 @@ namespace Socium.Population
             if (m_ePosition == Position.Outlaws)
                 pCulture.m_iProgressLevel--;
             if (m_ePosition == Position.Elite)
+            {
+                if (Rnd.OneChanceFrom(2))
+                    pCulture.m_iProgressLevel++; //progressive
+                else
+                    pCulture.m_iProgressLevel--; //decadent
+            }
+            if (m_ePosition == Position.Clergy)
                 pCulture.m_iProgressLevel++;
 
             if (pCulture.m_iProgressLevel < 0)
@@ -75,9 +88,11 @@ namespace Socium.Population
             m_ePosition = ePosition;
 
             m_cCulture[Gender.Male] = new Culture(pSociety.m_cCulture[Gender.Male], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
             UpdateCultureProgress(m_cCulture[Gender.Male]);
 
             m_cCulture[Gender.Female] = new Culture(pSociety.m_cCulture[Gender.Female], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
             UpdateCultureProgress(m_cCulture[Gender.Female]);
 
             FixSexCustoms();

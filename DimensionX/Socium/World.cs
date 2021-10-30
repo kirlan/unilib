@@ -262,7 +262,7 @@ namespace Socium
                 foreach (var pNations in pConti.m_cLocalNations)
                 {
                     foreach (var pNation in pNations.Value)
-                        if (!pNation.m_bDying && !pNation.m_pFenotype.m_pBody.IsParasite())
+                        if (!pNation.m_bDying && !pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
                             iPop++;
                 }
 
@@ -288,7 +288,7 @@ namespace Socium
                 Dictionary<Nation, float> cNationChances = new Dictionary<Nation, float>();
                 foreach (Nation pNation in m_aLocalNations)
                 {
-                    if (pNation.m_bDying || pNation.m_pFenotype.m_pBody.IsParasite())
+                    if (pNation.m_bDying || pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
                         continue;
 
                     cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
@@ -661,31 +661,6 @@ namespace Socium
 
             }
 
-            if (bFinalize)
-            {
-                // Если в какой-то расе всего одна нация - переименовываем расу по названию нации
-                Dictionary<Race, List<Nation>> cRaces = new Dictionary<Race, List<Nation>>();
-
-                foreach (var pNation in m_aLocalNations)
-                {
-                    List<Nation> cRaceNations;
-                    if (!cRaces.TryGetValue(pNation.m_pRace, out cRaceNations))
-                    {
-                        cRaceNations = new List<Nation>();
-                        cRaces[pNation.m_pRace] = cRaceNations;
-                    }
-                    cRaceNations.Add(pNation);
-                }
-
-                foreach (var pRace in cRaces)
-                {
-                    if (pRace.Value.Count == 1)
-                    {
-                        pRace.Key.m_sName = pRace.Value.First().m_pProtoSociety.m_sName.ToLower();
-                        pRace.Key.m_pFenotype = pRace.Value.First().m_pFenotype;
-                    }
-                }
-            }
             //ProgressStep();
         }
 
@@ -2103,12 +2078,8 @@ namespace Socium
                                 if (pLoc.m_pSettlement.m_iRuinsAge > 0)
                                 {
                                     //в зависимости от проходимости местности
-                                    if (!Rnd.OneChanceFrom((int)pLand.MovementCost))
-                                    {
-                                        //либо наращиваем возраст руин - в труднодоступных местах
-                                        pLoc.m_pSettlement.m_iRuinsAge++;
-                                    }
-                                    else
+                                    //либо наращиваем возраст руин - в труднодоступных местах
+                                    if (Rnd.OneChanceFrom((int)pLand.MovementCost) || pLoc.m_pSettlement.Ruin())
                                     {
                                         //либо окончательно уничтожаем все следы цивилизации - в легкодоступных местах
                                         pLoc.m_pSettlement = null;
@@ -2130,29 +2101,30 @@ namespace Socium
                                             break;
                                         case SettlementSize.Town:
                                             if (Rnd.OneChanceFrom(1 + (int)(24 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                         case SettlementSize.City:
                                             if (Rnd.OneChanceFrom(1 + (int)(12 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                         case SettlementSize.Capital:
                                             if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                         case SettlementSize.Fort:
-                                            if (Rnd.OneChanceFrom(1 + (int)(6 / pLoc.GetMovementCost())))
-                                                pLoc.m_pSettlement.m_iRuinsAge++;
+                                            if (Rnd.OneChanceFrom(1 + (int)(9 / pLoc.GetMovementCost())))
+                                                pLoc.m_pSettlement.Ruin();
                                             break;
                                     }
 
                                     //административные центры всегда становятся руинами - если только они крупнее деревни
                                     if (pLoc == pState.m_pMethropoly.m_pAdministrativeCenter &&
-                                        pLoc.m_pSettlement.m_pInfo.m_eSize != SettlementSize.Village)
-                                        pLoc.m_pSettlement.m_iRuinsAge = 1;
+                                        pLoc.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village &&
+                                        pLoc.m_pSettlement.m_iRuinsAge == 0)
+                                        pLoc.m_pSettlement.Ruin();
 
                                     //если поселение не превратилось в руины - значит оно полностью погибло и не оставило никаких следов
-                                    if (pLoc.m_pSettlement.m_iRuinsAge == 0)
+                                    if (pLoc.m_pSettlement.m_iRuinsAge == 0 || pLoc.m_pSettlement.m_cBuildings.Count == 0)
                                         pLoc.m_pSettlement = null;
                                     else
                                         //если же оно таки стало руинами - помечаем соответсвенно все пути ведущие в эту локацию, чтобы дороги обходили её стороной
@@ -2329,10 +2301,10 @@ namespace Socium
                 if (fRelativesCount == 0)
                     fRelativesCount = 1;
 
-                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Moderate)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Moderate)
                     fRelativesCount *= 2;
 
-                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Low)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Low)
                     fRelativesCount *= 5;
 
                 if (fRelativesCount > 10)
@@ -2421,10 +2393,10 @@ namespace Socium
                 if (fRelativesCount == 0)
                     fRelativesCount = 1;
 
-                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Moderate)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Moderate)
                     fRelativesCount *= 2;
 
-                if (pPerson.m_pNation.m_pFenotype.m_pLifeCycle.m_eBirthRate == BirthRate.Low)
+                if (pPerson.m_pNation.DominantPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Low)
                     fRelativesCount *= 5;
 
                 if (fRelativesCount > 10)

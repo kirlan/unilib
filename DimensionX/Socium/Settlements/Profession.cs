@@ -18,6 +18,7 @@ namespace Socium.Settlements
         public enum Caste
         {
             Elite,
+            Cleregy,
             MiddleOrUp,
             Low,
             Outlaw
@@ -59,7 +60,11 @@ namespace Socium.Settlements
 
         public static readonly ProfessionInfo Shaman = new ProfessionInfo("shaman", false, Caste.MiddleOrUp, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
 
-        public static readonly ProfessionInfo Priest = new ProfessionInfo("priest", "priestess", false, null, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
+        public static readonly ProfessionInfo Monk = new ProfessionInfo("monk", false, Caste.Cleregy, SkillLevel.Bad, SkillLevel.None, SkillLevel.None);
+
+        public static readonly ProfessionInfo Priest = new ProfessionInfo("priest", "priestess", false, Caste.Cleregy, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
+
+        public static readonly ProfessionInfo HighPriest = new ProfessionInfo("high priest", "high priestess", true, Caste.Cleregy, SkillLevel.None, SkillLevel.Good, SkillLevel.Good);
 
         public static readonly ProfessionInfo Barman = new ProfessionInfo("barman", "barmaid", false, null, SkillLevel.None, SkillLevel.Bad, SkillLevel.None);
 

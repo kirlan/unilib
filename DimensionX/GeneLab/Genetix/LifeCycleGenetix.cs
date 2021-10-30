@@ -44,29 +44,29 @@ namespace GeneLab.Genetix
         High
     }
 
-    public enum GendersDistribution
-    {
-        /// <summary>
-        /// мужские особи - огромная редкость
-        /// </summary>
-        OnlyFemales,
-        /// <summary>
-        /// женщин заметно больше мужчин
-        /// </summary>
-        MostlyFemales,
-        /// <summary>
-        /// женщин и мужчин примерно поровну
-        /// </summary>
-        Equal,
-        /// <summary>
-        /// мужчин заметно больше, чем женщин
-        /// </summary>
-        MostlyMales,
-        /// <summary>
-        /// женские особи - огромная редкость
-        /// </summary>
-        OnlyMales
-    }
+    //public enum GendersDistribution
+    //{
+    //    /// <summary>
+    //    /// мужские особи - огромная редкость
+    //    /// </summary>
+    //    OnlyFemales,
+    //    /// <summary>
+    //    /// женщин заметно больше мужчин
+    //    /// </summary>
+    //    MostlyFemales,
+    //    /// <summary>
+    //    /// женщин и мужчин примерно поровну
+    //    /// </summary>
+    //    Equal,
+    //    /// <summary>
+    //    /// мужчин заметно больше, чем женщин
+    //    /// </summary>
+    //    MostlyMales,
+    //    /// <summary>
+    //    /// женские особи - огромная редкость
+    //    /// </summary>
+    //    OnlyMales
+    //}
 
     public class LifeCycleGenetix: GenetixBase
     {
@@ -77,101 +77,132 @@ namespace GeneLab.Genetix
         public string GetDescription()
         {
             string sDeath = "";
-            switch (m_eDyingRate)
+            switch (DyingRate)
             {
                 case DyingRate.Low:
-                    sDeath = "lives really long";
+                    sDeath = "an extremely long life span";
                     break;
                 case DyingRate.Moderate:
-                    sDeath = "lives moderately long";
+                    sDeath = "an average life span";
                     break;
                 case DyingRate.High:
-                    sDeath = "dies early";
+                    sDeath = "a short life span";
                     break;
             }
 
             string sBirth = "";
-            switch (m_eBirthRate)
+            switch (BirthRate)
             {
                 case BirthRate.Low:
-                    sBirth = "could have only a few children during whole lifetime";
+                    sBirth = "a quite low birthrate";
                     break;
                 case BirthRate.Moderate:
-                    sBirth = "have a moderate number of children";
+                    sBirth = "an average birthrate";
                     break;
                 case BirthRate.High:
-                    sBirth = "could give a life to a lot of offsprings";
+                    sBirth = "a quite high birthrate";
                     break;
             }
 
             if (sDeath != "" && sBirth != "")
             {
-                if (m_eDyingRate == DyingRate.High)
-                    sDeath += ", but ";
-                else
-                    sDeath += " and ";
+                sDeath += " and ";
             }
 
-            string sGenders = "";
-            switch (m_eGendersDistribution)
-            {
-                case GendersDistribution.MostlyFemales:
-                    sGenders = ", which are mostly females";
-                    break;
-                case GendersDistribution.OnlyFemales:
-                    sGenders = ", which are practically only females";
-                    break;
-                case GendersDistribution.MostlyMales:
-                    sGenders = ", which are mostly males";
-                    break;
-                case GendersDistribution.OnlyMales:
-                    sGenders = ", which are practically only males";
-                    break;
-            }
-
-            return sDeath + sBirth + sGenders;
+            return "have " + sDeath + sBirth;
         }
         
+        /// <summary>
+        /// average population, moderate lifespan
+        /// </summary>
         public static LifeCycleGenetix Human
         {
-            get { return new LifeCycleGenetix(BirthRate.Moderate, DyingRate.Moderate, GendersDistribution.Equal); }
+            get { return new LifeCycleGenetix(BirthRate.Moderate, DyingRate.Moderate); }
         }
 
+        /// <summary>
+        /// small population, long lifespan
+        /// </summary>
         public static LifeCycleGenetix Elf
         {
-            get { return new LifeCycleGenetix(BirthRate.Low, DyingRate.Low, GendersDistribution.Equal); }
+            get { return new LifeCycleGenetix(BirthRate.Low, DyingRate.Low); }
         }
 
-        public static LifeCycleGenetix Dwarf
+        /// <summary>
+        /// average population, long lifespan
+        /// </summary>
+        public static LifeCycleGenetix DwarfM
         {
-            get { return new LifeCycleGenetix(BirthRate.Moderate, DyingRate.Low, GendersDistribution.MostlyMales); }
+            get { return new LifeCycleGenetix(BirthRate.Moderate, DyingRate.Low); }
         }
 
+        /// <summary>
+        /// small population, long lifespan
+        /// </summary>
+        public static LifeCycleGenetix DwarfF
+        {
+            get { return new LifeCycleGenetix(BirthRate.Low, DyingRate.Low); }
+        }
+
+        /// <summary>
+        /// large population, short lifespan
+        /// </summary>
         public static LifeCycleGenetix Barbarian
         {
-            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.High, GendersDistribution.Equal); }
+            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.High); }
         }
 
-        public static LifeCycleGenetix Harpy
+        /// <summary>
+        /// average population, short lifespan
+        /// </summary>
+        public static LifeCycleGenetix HarpyM
         {
-            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.High, GendersDistribution.MostlyFemales); }
+            get { return new LifeCycleGenetix(BirthRate.Moderate, DyingRate.High); }
         }
 
-        public static LifeCycleGenetix Orc
+        /// <summary>
+        /// large population, short lifespan
+        /// </summary>
+        public static LifeCycleGenetix HarpyF
         {
-            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.High, GendersDistribution.MostlyMales); }
+            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.High); }
         }
 
-        public static LifeCycleGenetix Insect
+        /// <summary>
+        /// large population, short lifespan
+        /// </summary>
+        public static LifeCycleGenetix OrcM
         {
-            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.Moderate, GendersDistribution.OnlyMales); }
+            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.High); }
         }
 
-        public BirthRate m_eBirthRate = BirthRate.Moderate;
+        /// <summary>
+        /// average population, short lifespan
+        /// </summary>
+        public static LifeCycleGenetix OrcF
+        {
+            get { return new LifeCycleGenetix(BirthRate.Moderate, DyingRate.High); }
+        }
 
-        public DyingRate m_eDyingRate = DyingRate.Moderate;
+        /// <summary>
+        /// large population, moderate lifespan
+        /// </summary>
+        public static LifeCycleGenetix InsectM
+        {
+            get { return new LifeCycleGenetix(BirthRate.High, DyingRate.Moderate); }
+        }
 
-        public GendersDistribution m_eGendersDistribution = GendersDistribution.Equal;
+        /// <summary>
+        /// small population, long lifespan
+        /// </summary>
+        public static LifeCycleGenetix InsectF
+        {
+            get { return new LifeCycleGenetix(BirthRate.Low, DyingRate.Low); }
+        }
+
+        public BirthRate BirthRate { get; private set; } = BirthRate.Moderate;
+
+        public DyingRate DyingRate { get; private set; } = DyingRate.Moderate;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -180,9 +211,8 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eBirthRate == pAnother.m_eBirthRate &&
-                m_eDyingRate == pAnother.m_eDyingRate &&
-                m_eGendersDistribution == pAnother.m_eGendersDistribution;
+            return BirthRate == pAnother.BirthRate &&
+                DyingRate == pAnother.DyingRate;
         }
         
         public LifeCycleGenetix()
@@ -190,22 +220,20 @@ namespace GeneLab.Genetix
 
         public LifeCycleGenetix(LifeCycleGenetix pPredcessor)
         {
-            m_eBirthRate = pPredcessor.m_eBirthRate;
-            m_eDyingRate = pPredcessor.m_eDyingRate;
-            m_eGendersDistribution = pPredcessor.m_eGendersDistribution;
+            BirthRate = pPredcessor.BirthRate;
+            DyingRate = pPredcessor.DyingRate;
         }
 
-        public LifeCycleGenetix(BirthRate eBirthRate, DyingRate eDyingRate, GendersDistribution eGendersDistribution)
+        public LifeCycleGenetix(BirthRate eBirthRate, DyingRate eDyingRate)
         {
-            m_eBirthRate = eBirthRate;
-            m_eDyingRate = eDyingRate;
-            m_eGendersDistribution = eGendersDistribution;
+            BirthRate = eBirthRate;
+            DyingRate = eDyingRate;
 
-            if (m_eDyingRate == DyingRate.High && m_eBirthRate != BirthRate.High)
-                m_eBirthRate = BirthRate.High;
+            //if (m_eDyingRate == DyingRate.High && m_eBirthRate != BirthRate.High)
+            //    m_eBirthRate = BirthRate.High;
 
-            if (m_eDyingRate == DyingRate.Moderate && m_eBirthRate == BirthRate.Low)
-                m_eBirthRate = BirthRate.Moderate;
+            //if (m_eDyingRate == DyingRate.Moderate && m_eBirthRate == BirthRate.Low)
+            //    m_eBirthRate = BirthRate.Moderate;
         }
         
         #region GenetixBase Members
@@ -218,32 +246,68 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eBirthRate == BirthRate.Low)
-                        pMutant.m_eBirthRate = BirthRate.Moderate;
-                    if (pMutant.m_eBirthRate == BirthRate.Moderate)
-                        pMutant.m_eBirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
-                    if (pMutant.m_eBirthRate == BirthRate.High)
-                        pMutant.m_eBirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Low)
+                        pMutant.BirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Moderate)
+                        pMutant.BirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
+                    if (pMutant.BirthRate == BirthRate.High)
+                        pMutant.BirthRate = BirthRate.Moderate;
                 }
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eDyingRate == DyingRate.Low)
-                        pMutant.m_eDyingRate = DyingRate.Moderate;
-                    if (pMutant.m_eDyingRate == DyingRate.Moderate)
-                        pMutant.m_eDyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
-                    if (pMutant.m_eDyingRate == DyingRate.High)
-                        pMutant.m_eDyingRate = DyingRate.Moderate;
+                    if (pMutant.DyingRate == DyingRate.Low)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                    if (pMutant.DyingRate == DyingRate.Moderate)
+                        pMutant.DyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
+                    if (pMutant.DyingRate == DyingRate.High)
+                        pMutant.DyingRate = DyingRate.Moderate;
                 }
 
-                if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
-                    pMutant.m_eBirthRate = BirthRate.High;
+                //if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
+                //    pMutant.m_eBirthRate = BirthRate.High;
 
-                if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
-                    pMutant.m_eBirthRate = BirthRate.Moderate;
+                //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
+                //    pMutant.m_eBirthRate = BirthRate.Moderate;
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(5))
+            {
+                LifeCycleGenetix pMutant = new LifeCycleGenetix(this);
 
                 if (Rnd.OneChanceFrom(2))
-                    pMutant.m_eGendersDistribution = (GendersDistribution)Rnd.Get(typeof(GendersDistribution));
+                {
+                    if (pMutant.BirthRate == BirthRate.Low)
+                        pMutant.BirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Moderate)
+                        pMutant.BirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
+                    if (pMutant.BirthRate == BirthRate.High)
+                        pMutant.BirthRate = BirthRate.Moderate;
+                }
+
+                if (Rnd.OneChanceFrom(5))
+                {
+                    if (pMutant.DyingRate == DyingRate.Low)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                    if (pMutant.DyingRate == DyingRate.Moderate)
+                        pMutant.DyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
+                    if (pMutant.DyingRate == DyingRate.High)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                }
+
+                //if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
+                //    pMutant.m_eBirthRate = BirthRate.High;
+
+                //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
+                //    pMutant.m_eBirthRate = BirthRate.Moderate;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
@@ -260,52 +324,30 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eBirthRate == BirthRate.Low)
-                        pMutant.m_eBirthRate = BirthRate.Moderate;
-                    if (pMutant.m_eBirthRate == BirthRate.Moderate)
-                        pMutant.m_eBirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
-                    if (pMutant.m_eBirthRate == BirthRate.High)
-                        pMutant.m_eBirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Low)
+                        pMutant.BirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Moderate)
+                        pMutant.BirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
+                    if (pMutant.BirthRate == BirthRate.High)
+                        pMutant.BirthRate = BirthRate.Moderate;
                 }
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eDyingRate == DyingRate.Low)
-                        pMutant.m_eDyingRate = DyingRate.Moderate;
-                    if (pMutant.m_eDyingRate == DyingRate.Moderate)
-                        pMutant.m_eDyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
-                    if (pMutant.m_eDyingRate == DyingRate.High)
-                        pMutant.m_eDyingRate = DyingRate.Moderate;
+                    if (pMutant.DyingRate == DyingRate.Low)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                    if (pMutant.DyingRate == DyingRate.Moderate)
+                        pMutant.DyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
+                    if (pMutant.DyingRate == DyingRate.High)
+                        pMutant.DyingRate = DyingRate.Moderate;
                 }
 
-                if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
-                    pMutant.m_eBirthRate = BirthRate.High;
+                //if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
+                //    pMutant.m_eBirthRate = BirthRate.High;
 
-                if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
-                    pMutant.m_eBirthRate = BirthRate.Moderate;
+                //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
+                //    pMutant.m_eBirthRate = BirthRate.Moderate;
                 
-                if (Rnd.OneChanceFrom(2))
-                {
-                    switch (pMutant.m_eGendersDistribution)
-                    {
-                        case GendersDistribution.OnlyFemales:
-                            pMutant.m_eGendersDistribution = GendersDistribution.MostlyFemales;
-                            break;
-                        case GendersDistribution.MostlyFemales:
-                            pMutant.m_eGendersDistribution = Rnd.OneChanceFrom(2) ? GendersDistribution.OnlyFemales : GendersDistribution.Equal;
-                            break;
-                        case GendersDistribution.Equal:
-                            pMutant.m_eGendersDistribution = Rnd.OneChanceFrom(2) ? GendersDistribution.MostlyFemales : GendersDistribution.MostlyMales;
-                            break;
-                        case GendersDistribution.MostlyMales:
-                            pMutant.m_eGendersDistribution = Rnd.OneChanceFrom(2) ? GendersDistribution.Equal : GendersDistribution.OnlyMales;
-                            break;
-                        case GendersDistribution.OnlyMales:
-                            pMutant.m_eGendersDistribution = GendersDistribution.MostlyMales;
-                            break;
-                    }
-                }
-
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
@@ -315,38 +357,35 @@ namespace GeneLab.Genetix
 
         public GenetixBase MutateFamily()
         {
-            if (Rnd.OneChanceFrom(10))
+            if (Rnd.OneChanceFrom(5))
             {
                 LifeCycleGenetix pMutant = new LifeCycleGenetix(this);
 
-                if (Rnd.OneChanceFrom(5))
+                if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eBirthRate == BirthRate.Low)
-                        pMutant.m_eBirthRate = BirthRate.Moderate;
-                    if (pMutant.m_eBirthRate == BirthRate.Moderate)
-                        pMutant.m_eBirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
-                    if (pMutant.m_eBirthRate == BirthRate.High)
-                        pMutant.m_eBirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Low)
+                        pMutant.BirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Moderate)
+                        pMutant.BirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
+                    if (pMutant.BirthRate == BirthRate.High)
+                        pMutant.BirthRate = BirthRate.Moderate;
                 }
-
-                if (Rnd.OneChanceFrom(5))
-                {
-                    if (pMutant.m_eDyingRate == DyingRate.Low)
-                        pMutant.m_eDyingRate = DyingRate.Moderate;
-                    if (pMutant.m_eDyingRate == DyingRate.Moderate)
-                        pMutant.m_eDyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
-                    if (pMutant.m_eDyingRate == DyingRate.High)
-                        pMutant.m_eDyingRate = DyingRate.Moderate;
-                }
-
-                if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
-                    pMutant.m_eBirthRate = BirthRate.High;
-
-                if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
-                    pMutant.m_eBirthRate = BirthRate.Moderate;
 
                 if (Rnd.OneChanceFrom(2))
-                    pMutant.m_eGendersDistribution = (GendersDistribution)Rnd.Get(typeof(GendersDistribution));
+                {
+                    if (pMutant.DyingRate == DyingRate.Low)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                    if (pMutant.DyingRate == DyingRate.Moderate)
+                        pMutant.DyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
+                    if (pMutant.DyingRate == DyingRate.High)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                }
+
+                //if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
+                //    pMutant.m_eBirthRate = BirthRate.High;
+
+                //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
+                //    pMutant.m_eBirthRate = BirthRate.Moderate;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
@@ -357,6 +396,40 @@ namespace GeneLab.Genetix
 
         public GenetixBase MutateIndividual()
         {
+            if (Rnd.OneChanceFrom(10))
+            {
+                LifeCycleGenetix pMutant = new LifeCycleGenetix(this);
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    if (pMutant.BirthRate == BirthRate.Low)
+                        pMutant.BirthRate = BirthRate.Moderate;
+                    if (pMutant.BirthRate == BirthRate.Moderate)
+                        pMutant.BirthRate = Rnd.OneChanceFrom(2) ? BirthRate.Low : BirthRate.High;
+                    if (pMutant.BirthRate == BirthRate.High)
+                        pMutant.BirthRate = BirthRate.Moderate;
+                }
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    if (pMutant.DyingRate == DyingRate.Low)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                    if (pMutant.DyingRate == DyingRate.Moderate)
+                        pMutant.DyingRate = Rnd.OneChanceFrom(2) ? DyingRate.Low : DyingRate.High;
+                    if (pMutant.DyingRate == DyingRate.High)
+                        pMutant.DyingRate = DyingRate.Moderate;
+                }
+
+                //if (pMutant.m_eDyingRate == DyingRate.High && pMutant.m_eBirthRate != BirthRate.High)
+                //    pMutant.m_eBirthRate = BirthRate.High;
+
+                //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
+                //    pMutant.m_eBirthRate = BirthRate.Moderate;
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
             return this;
         }
 

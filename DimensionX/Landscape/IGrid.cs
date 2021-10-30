@@ -10,5 +10,7 @@
         float CycleShift { get; }
         int RX { get; }
         int RY { get; }
+
+        int FrameWidth { get; }
     }
 }

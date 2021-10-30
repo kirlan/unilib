@@ -69,8 +69,8 @@ namespace LandscapeGeneration
 
             public void Save(BinaryWriter binWriter)
             {
-                binWriter.Write(m_pPoint1.m_iID);
-                binWriter.Write(m_pPoint2.m_iID);
+                binWriter.Write(m_pPoint1.m_iVertexID);
+                binWriter.Write(m_pPoint2.m_iVertexID);
             }
 
             public override string ToString()
@@ -128,6 +128,12 @@ namespace LandscapeGeneration
             if (m_pOwner == null || Forbidden || m_bBorder)
                 return 100;
 
+            foreach (var pEdge in m_cBorderWith)
+            {
+                if (((Location)pEdge.Key).m_bBorder)
+                    return 100;
+            }
+
             ILand pLand = m_pOwner as ILand;
             return pLand.MovementCost * (m_eType == RegionType.Empty ? 1 : 10);
         }
@@ -164,7 +170,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Уникальный номер локации. Пока нужен только для отладки, в будущем возможно ещё понадобится для чего-нибудь...
         /// </summary>
-        public new long m_iID = 0;
+        public long m_iID = 0;
 
         public int m_iGridX = -1;
         public int m_iGridY = -1;
@@ -452,7 +458,7 @@ namespace LandscapeGeneration
         
         public override string ToString()
         {
-            return string.Format("{0}{3} ({1}, {2})", m_bBorder || m_bUnclosed ? "x" : "", m_fX, m_fY, m_iID);
+            return string.Format("{0}{3} ({1}, {2})", m_bBorder || m_bUnclosed ? "x" : "", m_fX, m_fY, GetStringID());
         }
 
         public string GetStringID()

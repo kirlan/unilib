@@ -56,7 +56,7 @@ namespace Socium.Population
         {
             get
             {
-                if (m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy)
+                if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
                     return m_cCulture[Gender.Female];
 
                 return m_cCulture[Gender.Male];
@@ -70,7 +70,7 @@ namespace Socium.Population
         {
             get
             {
-                if (m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy)
+                if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
                     return m_cCulture[Gender.Male];
 
                 return m_cCulture[Gender.Female];
@@ -79,9 +79,9 @@ namespace Socium.Population
 
         protected void FixSexCustoms()
         {
-            InferiorCulture.m_pCustoms.m_eMarriage = DominantCulture.m_pCustoms.m_eMarriage;
-            InferiorCulture.m_pCustoms.m_eGenderPriority = DominantCulture.m_pCustoms.m_eGenderPriority;
-            InferiorCulture.m_pCustoms.m_eSexRelations = DominantCulture.m_pCustoms.m_eSexRelations;
+            InferiorCulture.m_pCustoms.Accept(DominantCulture.m_pCustoms.ValueOf<Customs.MarriageType>());
+            InferiorCulture.m_pCustoms.Accept(DominantCulture.m_pCustoms.ValueOf<Customs.GenderPriority>());
+            InferiorCulture.m_pCustoms.Accept(DominantCulture.m_pCustoms.ValueOf<Customs.SexualOrientation>());
         }
 
         public string m_sName = "Nameless";
@@ -208,38 +208,11 @@ namespace Socium.Population
         public int GetEffectiveTech()
         {
             int iMaxTech = m_iTechLevel;
-            switch (m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority)
-            {
-                case Customs.GenderPriority.Patriarchy:
-                    {
-                        if (m_cCulture[Gender.Male].m_pCustoms.m_eScience == Customs.Science.Ingenuity)
-                            iMaxTech++;
 
-                        if (m_cCulture[Gender.Male].m_pCustoms.m_eScience == Customs.Science.Technophobia)
-                            iMaxTech--;
-                    }
-                    break;
-                case Customs.GenderPriority.Matriarchy:
-                    {
-                        if (m_cCulture[Gender.Female].m_pCustoms.m_eScience == Customs.Science.Ingenuity)
-                            iMaxTech++;
-
-                        if (m_cCulture[Gender.Female].m_pCustoms.m_eScience == Customs.Science.Technophobia)
-                            iMaxTech--;
-                    }
-                    break;
-                case Customs.GenderPriority.Genders_equality:
-                    {
-                        if (m_cCulture[Gender.Male].m_pCustoms.m_eScience == Customs.Science.Ingenuity ||
-                            m_cCulture[Gender.Female].m_pCustoms.m_eScience == Customs.Science.Ingenuity)
-                            iMaxTech++;
-
-                        if (m_cCulture[Gender.Male].m_pCustoms.m_eScience == Customs.Science.Technophobia &&
-                            m_cCulture[Gender.Female].m_pCustoms.m_eScience == Customs.Science.Technophobia)
-                            iMaxTech--;
-                    }
-                    break;
-            }
+            if (DominantCulture.m_pCustoms.Has(Customs.Science.Ingenuity))
+                iMaxTech++;
+            else if (DominantCulture.m_pCustoms.Has(Customs.Science.Technophobia))
+                iMaxTech--;
 
             if (iMaxTech > 8)
                 iMaxTech = 8;
@@ -324,7 +297,7 @@ namespace Socium.Population
         public Customs.GenderPriority GetProfessionGenderPriority(ProfessionInfo pProfession)
         {
             // По умолчанию - гендерные предпочтения профессии совпадают представлениями сообщества о "сильном" поле.
-            var eGenderPriority = DominantCulture.m_pCustoms.m_eGenderPriority;
+            var eGenderPriority = DominantCulture.m_pCustoms.ValueOf<Customs.GenderPriority>();
 
             // но, если это подчинённая должность...
             if (!pProfession.m_bMaster)
@@ -333,7 +306,7 @@ namespace Socium.Population
                 if (pProfession.m_cSkills[Person.Skill.Charm] != ProfessionInfo.SkillLevel.None)
                 {
                     // ...то в гетеросексуальном обществе она считается более подходящей противоположному полу
-                    if (m_cCulture[Gender.Male].m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                    if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.SexualOrientation.Heterosexual))
                     {
                         if (eGenderPriority == Customs.GenderPriority.Patriarchy)
                             eGenderPriority = Customs.GenderPriority.Matriarchy;
@@ -341,7 +314,7 @@ namespace Socium.Population
                             eGenderPriority = Customs.GenderPriority.Patriarchy;
                     }
                     // ...а в бисексуальном обществе - такая профессия так же бисексуальна
-                    else if (m_cCulture[Gender.Male].m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Bisexual)
+                    else if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.SexualOrientation.Bisexual))
                         eGenderPriority = Customs.GenderPriority.Genders_equality;
                 }
                 else
@@ -369,7 +342,7 @@ namespace Socium.Population
         /// <returns></returns>
         internal virtual Customs.GenderPriority GetMinorGender()
         {
-            var eGenderPriority = m_cCulture[Gender.Male].m_pCustoms.m_eGenderPriority;
+            var eGenderPriority = m_cCulture[Gender.Male].m_pCustoms.ValueOf<Customs.GenderPriority>();
 
             if (eGenderPriority == Customs.GenderPriority.Patriarchy)
                 eGenderPriority = Customs.GenderPriority.Matriarchy;

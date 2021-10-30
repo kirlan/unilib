@@ -422,7 +422,7 @@ namespace Socium
             }
 
             if (pMaxNation != null && !m_pLocalSociety.m_pTitularNation.m_bDying)
-                m_pLocalSociety.m_pTitularNation = pMaxNation;
+                m_pLocalSociety.UpdateTitularNation(pMaxNation);
 
             foreach (LandX pLand in m_cContents)
                 pLand.m_pNation = m_pLocalSociety.m_pTitularNation;

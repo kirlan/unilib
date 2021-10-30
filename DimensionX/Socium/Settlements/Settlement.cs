@@ -154,19 +154,43 @@ namespace Socium.Settlements
             m_bCapital = bCapital;
         }
 
+        public bool Ruin()
+        {
+            m_iRuinsAge++;
+
+            var aBuildings = m_cBuildings.ToArray();
+            foreach (var pBuilding in aBuildings)
+            {
+                if (Rnd.OneChanceFrom(2))
+                    m_cBuildings.Remove(pBuilding);
+            }
+
+            return m_cBuildings.Count == 0;
+        }
+
         public override string ToString()
         {
-            switch(m_iRuinsAge)
+            string sRuinsAge = "";
+            switch (m_iRuinsAge)
             {
                 case 0:
-                    return string.Format("{2} {0} {1}", m_pInfo.m_sName, m_sName, m_eSpeciality);
+                    break;
                 case 1:
-                    return string.Format("ruins of {2} {0} {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    sRuinsAge = "ruins of ";
+                    break;
                 case 2:
-                    return string.Format("ancient ruins of {2} {0} {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    sRuinsAge = "ancient ruins of ";
+                    break;
                 default:
-                    return string.Format("forgotten ruins of {2} {0} {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_eSpeciality).ToLower();
+                    sRuinsAge = "prehistoric ruins of ";
+                    break;
             }
+
+            string sRuinsName = string.Format("{2} {0} {1}", m_pInfo.m_sName, m_sName, m_eSpeciality);
+            if (m_iRuinsAge > 0)
+                sRuinsName = string.Format("{2} ({0}) {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_pNation.m_pRace.m_sName).ToLower();
+
+            return string.Format("{1}{0} (T{2}M{3})", sRuinsName, sRuinsAge, m_iTechLevel, m_iMagicLimit);
         }
     }
 }

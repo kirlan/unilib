@@ -47,7 +47,7 @@ namespace GeneLab.Genetix
         public string GetDescription()
         {
             string sTail = "";
-            switch (m_eTailLength)
+            switch (TailLength)
             {
                 case TailLength.Short:
                     sTail = "a short";
@@ -59,16 +59,16 @@ namespace GeneLab.Genetix
 
             if (sTail != "")
             {
-                switch (m_eTailControl)
+                switch (TailControl)
                 {
                     case TailControl.None:
-                        sTail += m_eTailLength == TailLength.Long ? ", but absolutely useless tail" : " and absolutely useless tail";
+                        sTail += TailLength == TailLength.Long ? ", but absolutely useless tail" : " and absolutely useless tail";
                         break;
                     case TailControl.Crude:
-                        sTail += m_eTailLength == TailLength.Long ? ", but almost useless tail" : " and almost useless tail";
+                        sTail += TailLength == TailLength.Long ? ", but almost useless tail" : " and almost useless tail";
                         break;
                     case TailControl.Skillful:
-                        sTail += m_eTailLength == TailLength.Long ? " and very strong and flexible tail" : ", but very strong and flexible tail";
+                        sTail += TailLength == TailLength.Long ? " and very strong and flexible tail" : ", but very strong and flexible tail";
                         break;
                 }
             }
@@ -76,29 +76,41 @@ namespace GeneLab.Genetix
             return sTail;
         }
         
+        /// <summary>
+        /// no tail
+        /// </summary>
         public static TailGenetix None
         {
             get { return new TailGenetix(TailLength.None, TailControl.None); }
         }
 
+        /// <summary>
+        /// long flexible tail
+        /// </summary>
         public static TailGenetix Monkey
         {
             get { return new TailGenetix(TailLength.Long, TailControl.Skillful); }
         }
 
+        /// <summary>
+        /// long, not so flexible tail
+        /// </summary>
         public static TailGenetix Long
         {
             get { return new TailGenetix(TailLength.Long, TailControl.Crude); }
         }
 
+        /// <summary>
+        /// short, not so flexible tail
+        /// </summary>
         public static TailGenetix Short
         {
             get { return new TailGenetix(TailLength.Short, TailControl.Crude); }
         }
 
-        public TailLength m_eTailLength = TailLength.None;
+        public TailLength TailLength { get; private set; } = TailLength.None;
 
-        public TailControl m_eTailControl = TailControl.None;
+        public TailControl TailControl { get; private set; } = TailControl.None;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -107,8 +119,8 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eTailLength == pAnother.m_eTailLength &&
-                m_eTailControl == pAnother.m_eTailControl;
+            return TailLength == pAnother.TailLength &&
+                TailControl == pAnother.TailControl;
         }
         
         public TailGenetix()
@@ -116,23 +128,23 @@ namespace GeneLab.Genetix
 
         public TailGenetix(TailGenetix pPredcessor)
         {
-            m_eTailLength = pPredcessor.m_eTailLength;
-            m_eTailControl = pPredcessor.m_eTailControl;
+            TailLength = pPredcessor.TailLength;
+            TailControl = pPredcessor.TailControl;
         }
 
         public TailGenetix(TailLength eTailLength, TailControl eTailControl)
         {
-            m_eTailLength = eTailLength;
-            m_eTailControl = eTailControl;
+            TailLength = eTailLength;
+            TailControl = eTailControl;
 
-            if (m_eTailLength == TailLength.None)
-                m_eTailControl = TailControl.None;
+            if (TailLength == TailLength.None)
+                TailControl = TailControl.None;
 
-            if (m_eTailLength == TailLength.Short && m_eTailControl == TailControl.Skillful)
-                m_eTailControl = TailControl.Crude;
+            if (TailLength == TailLength.Short && TailControl == TailControl.Skillful)
+                TailControl = TailControl.Crude;
 
-            if (m_eTailLength == TailLength.Long && m_eTailControl == TailControl.None)
-                m_eTailControl = TailControl.Crude;
+            if (TailLength == TailLength.Long && TailControl == TailControl.None)
+                TailControl = TailControl.Crude;
         }
         
         public GenetixBase MutateRace()
@@ -141,19 +153,46 @@ namespace GeneLab.Genetix
             {
                 TailGenetix pMutant = new TailGenetix(this);
 
-                if (pMutant.m_eTailLength != TailLength.None || Rnd.OneChanceFrom(2))
-                    pMutant.m_eTailLength = (TailLength)Rnd.Get(typeof(TailLength));
+                if (pMutant.TailLength != TailLength.None || Rnd.OneChanceFrom(2))
+                    pMutant.TailLength = (TailLength)Rnd.Get(typeof(TailLength));
 
-                pMutant.m_eTailControl = (TailControl)Rnd.Get(typeof(TailControl));
+                pMutant.TailControl = (TailControl)Rnd.Get(typeof(TailControl));
 
-                if (pMutant.m_eTailLength == TailLength.None)
-                    pMutant.m_eTailControl = TailControl.None;
+                if (pMutant.TailLength == TailLength.None)
+                    pMutant.TailControl = TailControl.None;
 
-                if (pMutant.m_eTailLength == TailLength.Short && pMutant.m_eTailControl == TailControl.Skillful)
-                    pMutant.m_eTailControl = TailControl.Crude;
+                if (pMutant.TailLength == TailLength.Short && pMutant.TailControl == TailControl.Skillful)
+                    pMutant.TailControl = TailControl.Crude;
 
-                if (pMutant.m_eTailLength == TailLength.Long && pMutant.m_eTailControl == TailControl.None)
-                    pMutant.m_eTailControl = TailControl.Crude;
+                if (pMutant.TailLength == TailLength.Long && pMutant.TailControl == TailControl.None)
+                    pMutant.TailControl = TailControl.Crude;
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(10))
+            {
+                TailGenetix pMutant = new TailGenetix(this);
+
+                if (pMutant.TailLength != TailLength.None)
+                    pMutant.TailLength = (TailLength)Rnd.Get(typeof(TailLength));
+
+                pMutant.TailControl = (TailControl)Rnd.Get(typeof(TailControl));
+
+                if (pMutant.TailLength == TailLength.None)
+                    pMutant.TailControl = TailControl.None;
+
+                if (pMutant.TailLength == TailLength.Short && pMutant.TailControl == TailControl.Skillful)
+                    pMutant.TailControl = TailControl.Crude;
+
+                if (pMutant.TailLength == TailLength.Long && pMutant.TailControl == TailControl.None)
+                    pMutant.TailControl = TailControl.Crude;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
@@ -168,19 +207,19 @@ namespace GeneLab.Genetix
             {
                 TailGenetix pMutant = new TailGenetix(this);
 
-                if (pMutant.m_eTailLength != TailLength.None)
-                    pMutant.m_eTailLength = (TailLength)Rnd.Get(typeof(TailLength));
+                if (pMutant.TailLength != TailLength.None)
+                    pMutant.TailLength = (TailLength)Rnd.Get(typeof(TailLength));
 
-                pMutant.m_eTailControl = (TailControl)Rnd.Get(typeof(TailControl));
+                pMutant.TailControl = (TailControl)Rnd.Get(typeof(TailControl));
 
-                if (pMutant.m_eTailLength == TailLength.None)
-                    pMutant.m_eTailControl = TailControl.None;
+                if (pMutant.TailLength == TailLength.None)
+                    pMutant.TailControl = TailControl.None;
 
-                if (pMutant.m_eTailLength == TailLength.Short && pMutant.m_eTailControl == TailControl.Skillful)
-                    pMutant.m_eTailControl = TailControl.Crude;
+                if (pMutant.TailLength == TailLength.Short && pMutant.TailControl == TailControl.Skillful)
+                    pMutant.TailControl = TailControl.Crude;
 
-                if (pMutant.m_eTailLength == TailLength.Long && pMutant.m_eTailControl == TailControl.None)
-                    pMutant.m_eTailControl = TailControl.Crude;
+                if (pMutant.TailLength == TailLength.Long && pMutant.TailControl == TailControl.None)
+                    pMutant.TailControl = TailControl.Crude;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;

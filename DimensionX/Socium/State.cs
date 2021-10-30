@@ -367,12 +367,12 @@ namespace Socium
         {
             m_pSociety.CalculateTitularNation();
 
-            m_pMethropoly.m_pLocalSociety.m_pTitularNation = m_pSociety.m_pTitularNation;
+            m_pMethropoly.m_pLocalSociety.UpdateTitularNation(m_pSociety.m_pTitularNation);
             foreach (LandX pLand in m_pMethropoly.m_cContents)
                 pLand.m_pNation = m_pSociety.m_pTitularNation;
 
             // если у нас нация паразитов или пришельцев, то они сами живут только в метрополии, а во всей остальной империи коренное население - местное
-            if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.IsParasite() || m_pSociety.m_pTitularNation.m_bInvader)
+            if (m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pSociety.m_pTitularNation.m_bInvader)
             {
                 foreach (Province pProvince in m_cContents)
                 {
@@ -456,17 +456,17 @@ namespace Socium
                     case NutritionType.Carnivorous:
                         return iGame + iFish;
                     default:
-                        throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType));
+                        throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType));
                 }
             }
 
-            float fMethropolySatiety = (float)getFood(m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType) / iMethropolyPopulation;
-            float fProvincialSatiety = (float)getFood(m_pSociety.m_pHostNation.m_pFenotype.m_pBody.m_eNutritionType) / iProvincialPopulation;
+            float fMethropolySatiety = (float)getFood(m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType) / iMethropolyPopulation;
+            float fProvincialSatiety = (float)getFood(m_pSociety.m_pHostNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType) / iProvincialPopulation;
 
             if (fMethropolySatiety > 2)
                 fMethropolySatiety = 2;
 
-            if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBody.IsParasite())
+            if (m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
             {
                 // для паразитов качество их питания зависит от качества питания их жертв
                 m_iFood = (int)(fMethropolySatiety * fProvincialSatiety * m_iPopulation);
@@ -628,7 +628,7 @@ namespace Socium
                     if (fTreat == 0)
                         continue;
 
-                    if (Rnd.ChooseOne(fTreat, fBorder));// - fTreat))
+                    if (Rnd.ChooseOne(fTreat, fBorder))// - fTreat))
                         //if (m_iSize > 1 || Rnd.OneChanceFrom(2))
                         {
                             LocationX pFort = pLand.BuildFort(pMainEnemy, bFast);
@@ -986,14 +986,14 @@ namespace Socium
                                         cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Treachery));
 
                                         float fScience = 0.05f;
-                                        if (m_pSociety.DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                        if (m_pSociety.DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                             fScience = 0.25f;
-                                        if (m_pSociety.DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                        else if (m_pSociety.DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                             fScience = 0.5f;
 
-                                        if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                        if (m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                             fScience *= 2;
-                                        if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                        if (m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                             fScience *= 4;
 
                                         cResources.Add(fScience);
@@ -1076,14 +1076,14 @@ namespace Socium
                                         cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Treachery));
 
                                         float fScience = 0.05f;
-                                        if (m_pSociety.DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
+                                        if (m_pSociety.DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                                             fScience = 0.25f;
-                                        if (m_pSociety.DominantCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+                                        else if (m_pSociety.DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                                             fScience = 0.5f;
 
-                                        if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Sapient)
+                                        if (m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                             fScience *= 2;
-                                        if (m_pSociety.m_pTitularNation.m_pFenotype.m_pBrain.m_eIntelligence == Intelligence.Ingenious)
+                                        if (m_pSociety.m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                             fScience *= 4;
 
                                         cResources.Add(fScience);

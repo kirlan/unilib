@@ -288,25 +288,25 @@ namespace Socium
             //if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 1.5)
             //    cSkillPreferences[CPerson.Skill.Mind]++;
 
-            if (pCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Emotions)
+            if (pCulture.m_pCustoms.Has(Customs.MindSet.Emotions))
                 cSkillPreferences[Person.Skill.Mind]--;
-            if (pCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+            if (pCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+            if (pCulture.m_pCustoms.Has(Customs.Magic.Magic_Praised))
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCulture.m_pCustoms.m_eScience == Customs.Science.Technophobia)
+            if (pCulture.m_pCustoms.Has(Customs.Science.Technophobia))
                 cSkillPreferences[Person.Skill.Mind]--;
-            if (pCulture.m_pCustoms.m_eScience == Customs.Science.Ingenuity)
+            if (pCulture.m_pCustoms.Has(Customs.Science.Ingenuity))
                 cSkillPreferences[Person.Skill.Mind]++;
 
-            if (pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Puritan)
+            if (pCulture.m_pCustoms.Has(Customs.Sexuality.Puritan))
                 cSkillPreferences[Person.Skill.Charm]--;
-            if (pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Lecherous)
+            if (pCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
                 cSkillPreferences[Person.Skill.Charm]++;
 
-            if (pCulture.m_pCustoms.m_eMarriage == Customs.MarriageType.Polyamory)
+            if (pCulture.m_pCustoms.Has(Customs.MarriageType.Polyamory))
                 cSkillPreferences[Person.Skill.Charm]++;
 
             eMostRespectedSkill = Person.Skill.Body;
@@ -352,27 +352,29 @@ namespace Socium
 
         public Gender GetCompatibleSexPartnerGender(bool bOfficial)
         {
-            switch (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.m_eSexRelations)
+            if (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.SexualOrientation.Heterosexual))
             {
                 //В гетеросексуальном обществе - только персонаж другого пола
-                case Customs.SexualOrientation.Heterosexual:
-                    return m_eGender == Gender.Male ? Gender.Female : Gender.Male;
+                return m_eGender == Gender.Male ? Gender.Female : Gender.Male;
+            }
+            else if (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.SexualOrientation.Homosexual))
+            {
                 //В гомосексуальном обществе - только персонаж того же пола
-                case Customs.SexualOrientation.Homosexual:
-                    return m_eGender;
-                case Customs.SexualOrientation.Bisexual:
-                    //Официальные браки разрешаем заключать только между персонажами разного пола - просто дань канону (Блейд, Конан, etc.)
-                    if (bOfficial)
-                        return m_eGender == Gender.Male ? Gender.Female : Gender.Male;
-                    //В патриархальном бисексуальном обществе мужчины могут иметь партнеров любого пола, а женщины - только мужчин
-                    if (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy &&
-                        m_eGender == Gender.Female)
-                        return Gender.Male;
-                    //В матриархальном бисексуальном обществе - наоборот, женщины свободны в выборе, а мужчины не могут иметь отношения друг с другом
-                    if (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy &&
-                        m_eGender == Gender.Male)
-                        return Gender.Female;
-                    break;
+                return m_eGender;
+            }
+            else if (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.SexualOrientation.Bisexual))
+            { 
+                //Официальные браки разрешаем заключать только между персонажами разного пола - просто дань канону (Блейд, Конан, etc.)
+                if (bOfficial)
+                    return m_eGender == Gender.Male ? Gender.Female : Gender.Male;
+                //В патриархальном бисексуальном обществе мужчины могут иметь партнеров любого пола, а женщины - только мужчин
+                if (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) &&
+                    m_eGender == Gender.Female)
+                    return Gender.Male;
+                //В матриархальном бисексуальном обществе - наоборот, женщины свободны в выборе, а мужчины не могут иметь отношения друг с другом
+                if (m_pHomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy) &&
+                    m_eGender == Gender.Male)
+                    return Gender.Female;
             }
 
             return Rnd.OneChanceFrom(2) ? Gender.Male : Gender.Female;
@@ -447,8 +449,9 @@ namespace Socium
         public Dictionary<Skill, ProfessionInfo.SkillLevel> m_cSkills = new Dictionary<Skill, ProfessionInfo.SkillLevel>();
         public ProfessionInfo m_pProfession;
 
-        public Fenotype m_pFamilyFenotype;
-        public Fenotype m_pFenotype;
+        public Phenotype m_pFamilyPhenotypeM;
+        public Phenotype m_pFamilyPhenotypeF;
+        public Phenotype m_pPhenotype;
 
         public Appearance m_eAppearance = Appearance.Average;
         public List<Injury> m_cInjury = new List<Injury>();
@@ -485,10 +488,14 @@ namespace Socium
 
             m_pCulture = new Culture(pCulture, iCultureLevel, pCustoms);
 
-            m_pFamilyFenotype = pRelative == null ? (Fenotype)m_pNation.m_pFenotype.MutateFamily() : pRelative.m_pFamilyFenotype;
-            m_pFenotype = (Fenotype)m_pFamilyFenotype.MutateIndividual();
-            
-            m_pCulture.m_pCustoms.FixBodyModifications(m_pFenotype);
+            m_pFamilyPhenotypeM = pRelative == null ? (Phenotype)m_pNation.m_pPhenotypeM.MutateFamily() : pRelative.m_pFamilyPhenotypeM;
+            m_pFamilyPhenotypeF = pRelative == null ? (Phenotype)m_pNation.m_pPhenotypeF.MutateFamily() : pRelative.m_pFamilyPhenotypeF;
+            if (m_eGender == Gender.Male)
+                m_pPhenotype = (Phenotype)m_pFamilyPhenotypeM.MutateIndividual();
+            else
+                m_pPhenotype = (Phenotype)m_pFamilyPhenotypeF.MutateIndividual();
+
+            m_pCulture.m_pCustoms.ApplyFenotype(m_pPhenotype);
 
             foreach (var pSkill in m_pProfession.m_cSkills)
             {
@@ -951,6 +958,15 @@ namespace Socium
                                     cPossibleHomes.Add(pState.m_pMethropoly.m_pAdministrativeCenter);
                                 }
                                 break;
+                            case Estate.Position.Clergy:
+                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
+                                    cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
+                                foreach (State pState in pWorld.m_aStates)
+                                {
+                                    cPossibleHomes.Add(pRelative.m_pHomeLocation);
+                                    cPossibleHomes.Add(pState.m_pMethropoly.m_pAdministrativeCenter);
+                                }
+                                break;
                             case Estate.Position.Elite:
                                 foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
                                     cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
@@ -984,22 +1000,39 @@ namespace Socium
                 (!IsSexualRelation(m_cRelations[pRelative]) &&
                 m_cRelations[pRelative] != Relation.ParentOf))
             {
-                Fenotype pFenotype = pRelative == null ? m_pNation.m_pFenotype : pRelative.m_pFenotype;
-                switch (pFenotype.m_pLifeCycle.m_eGendersDistribution)
+                Phenotype pPhenotypeM = m_pNation.m_pPhenotypeM;
+                Phenotype pPhenotypeF = m_pNation.m_pPhenotypeF;
+
+                if (pRelative != null)
                 {
-                    case GendersDistribution.OnlyMales:
-                        m_eGender = Rnd.OneChanceFrom(10) ? Gender.Female : Gender.Male;
-                        break;
-                    case GendersDistribution.OnlyFemales:
-                        m_eGender = Rnd.OneChanceFrom(10) ? Gender.Male : Gender.Female;
-                        break;
-                    case GendersDistribution.MostlyMales:
-                        m_eGender = Rnd.OneChanceFrom(4) ? Gender.Female : Gender.Male;
-                        break;
-                    case GendersDistribution.MostlyFemales:
-                        m_eGender = Rnd.OneChanceFrom(4) ? Gender.Male : Gender.Female;
-                        break;
+                    pPhenotypeM = pRelative.m_pFamilyPhenotypeM;
+                    pPhenotypeF = pRelative.m_pFamilyPhenotypeF;
+
+                    if (pRelative.Gender == Gender.Male)
+                        pPhenotypeM = pRelative.m_pPhenotype;
                 }
+
+                if (pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.High &&
+                    pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Low)
+                {
+                    m_eGender = Rnd.OneChanceFrom(10) ? Gender.Female : Gender.Male;
+                }
+                else if (pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.Low &&
+                    pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate == BirthRate.High)
+                {
+                    m_eGender = Rnd.OneChanceFrom(10) ? Gender.Male : Gender.Female;
+                }
+                else if (pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate >
+                    pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                {
+                    m_eGender = Rnd.OneChanceFrom(4) ? Gender.Female : Gender.Male;
+                }
+                else if (pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate <
+                    pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                {
+                    m_eGender = Rnd.OneChanceFrom(4) ? Gender.Male : Gender.Female;
+                }
+
                 CheckGender(pRelative);
             }
             #endregion
@@ -1189,19 +1222,19 @@ namespace Socium
             {
                 if (m_cRelations[pRelative] == Relation.Lover)
                 {
-                    if (m_eGender == pRelative.m_eGender && pRelative.m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                    if (m_eGender == pRelative.m_eGender && pRelative.m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Heterosexual))
                         return false;
 
-                    if (m_eGender != pRelative.m_eGender && pRelative.m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
+                    if (m_eGender != pRelative.m_eGender && pRelative.m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Homosexual))
                         return false;
                 }
                 
                 if (m_cRelations[pRelative] == Relation.Spouse)
                 {
-                    if (m_eGender == pRelative.m_eGender && pRelative.m_pState.DominantCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                    if (m_eGender == pRelative.m_eGender && pRelative.m_pState.DominantCulture.m_pCustoms.Has(Customs.SexualOrientation.Heterosexual))
                         return false;
 
-                    if (m_eGender != pRelative.m_eGender && pRelative.m_pState.DominantCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
+                    if (m_eGender != pRelative.m_eGender && pRelative.m_pState.DominantCulture.m_pCustoms.Has(Customs.SexualOrientation.Homosexual))
                         return false;
                 }
             }
@@ -1362,10 +1395,10 @@ namespace Socium
                                                 else
                                                     cNewKins[pFarRelative.Key] = Relation.Lover;
 
-                                                if (m_pState.DominantCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual &&
+                                                if (m_pState.DominantCulture.m_pCustoms.Has(Customs.SexualOrientation.Heterosexual) &&
                                                     m_eGender == pFarRelative.Key.m_eGender)
                                                     cNewKins[pFarRelative.Key] = Relation.Friend;
-                                                if (m_pState.DominantCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual &&
+                                                if (m_pState.DominantCulture.m_pCustoms.Has(Customs.SexualOrientation.Homosexual) &&
                                                     m_eGender != pFarRelative.Key.m_eGender)
                                                     cNewKins[pFarRelative.Key] = Relation.Friend;
                                             }
@@ -2069,7 +2102,7 @@ namespace Socium
                 //if (pRelative.Value != Relation.Associate)
                 //    continue;
 
-                if (m_pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Puritan)
+                if (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Puritan))
                     continue;
 
                 //int iMaxTensionMod = fMaxTension;
@@ -2091,14 +2124,13 @@ namespace Socium
                             //!(IsRuler() && pRelative.Key.IsRuler()) &&
                             pRelative.Key.GetLover() != null)
                         {
-                            switch (pRelative.Key.m_pCulture.m_pCustoms.m_eSexuality)
+                            if (pRelative.Key.m_pCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                             {
-                                case Psychology.Customs.Sexuality.Moderate_sexuality:
-                                    cLovers[pRelative.Key] = fTension / fMaxAttraction;
-                                    break;
-                                case Psychology.Customs.Sexuality.Lecherous:
-                                    cLovers[pRelative.Key] = 2f * fTension / fMaxAttraction;
-                                    break;
+                                cLovers[pRelative.Key] = fTension / fMaxAttraction;
+                            }
+                            else if (pRelative.Key.m_pCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                            { 
+                                cLovers[pRelative.Key] = 2f * fTension / fMaxAttraction;
                             }
                         }
                     }
@@ -2199,7 +2231,7 @@ namespace Socium
 
             if (m_eAge < pPretender.m_eAge)
             { 
-                switch(m_pFenotype.m_pLifeCycle.m_eBirthRate)
+                switch(m_pPhenotype.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
                     case BirthRate.Moderate:
                         cChances[Relation.BastardOf] = 0.25f;
@@ -2382,6 +2414,9 @@ namespace Socium
                     fPersonalInfluence *= (float)(-0.58 * Math.Pow(m_pState.m_iSocialEquality, 3) + 3.4 * Math.Pow(m_pState.m_iSocialEquality, 2) + 0.4 * m_pState.m_iSocialEquality + 1.6) / 2;
                     //fPersonalInfluence *= 2;
                     break;
+                case Estate.Position.Clergy:
+                    fPersonalInfluence *= 5;//20;
+                    break;
                 case Estate.Position.Elite:
                     //для элиты коэффициент всегда 10, независимо от величины социального неравенства.
                     //регинальные правители и главы государств имеют бонус
@@ -2397,10 +2432,10 @@ namespace Socium
                     break;
             }
 
-            if (m_pState.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && m_eGender == Gender.Male)
+            if (m_pState.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy) && m_eGender == Gender.Male)
                 fPersonalInfluence /= 2;
 
-            if (m_pState.DominantCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && m_eGender == Gender.Female)
+            if (m_pState.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) && m_eGender == Gender.Female)
                 fPersonalInfluence /= 2;
 
             if (m_eAge == _Age.Young)
@@ -2603,8 +2638,8 @@ namespace Socium
         public int GetFenotypeDifference(Person pOpponent, ref string sPositiveReasons, ref string sNegativeReasons)
         {
             //Будем сравнивать эталонную внешность для нашей нации с реальной внешностью оппонента
-            Fenotype pNation = m_pNation.m_pFenotype;
-            Fenotype pOpponents = pOpponent.m_pFenotype;
+            Phenotype pNation = pOpponent.Gender == Gender.Male ? m_pNation.m_pPhenotypeM : m_pNation.m_pPhenotypeF;
+            Phenotype pOpponents = pOpponent.m_pPhenotype;
 
             return pNation.GetFenotypeDifference(pOpponents, ref sPositiveReasons, ref sNegativeReasons);
         }
@@ -2624,14 +2659,17 @@ namespace Socium
             //pMine - это поведение, которое мы считаем "правильным". Если в нашем обществе есть различия между нормами поведения для мужчин и женщин,
             //а оппонент другого пола - эти различия тоже нужно учитывать.
             if (m_pEstate.IsSegregated() && m_eGender != pOpponent.m_eGender)
+            {
                 pMine = Customs.ApplyDifferences(m_pCulture.m_pCustoms, m_pEstate.DominantCulture.m_pCustoms, m_pEstate.m_cCulture[pOpponent.m_eGender].m_pCustoms);
+                pMine.ApplyFenotype(pOpponent.m_pPhenotype);
+            }
             Customs pOpponents = pOpponent.m_pCulture.m_pCustoms;
 
-            if (pMine.m_eGenderPriority != pOpponents.m_eGenderPriority &&
-                pMine.m_eGenderPriority != Customs.GenderPriority.Genders_equality &&
-                pOpponents.m_eGenderPriority != Customs.GenderPriority.Genders_equality)
+            if (!pMine.HasIdentical<Customs.GenderPriority>(pOpponents) &&
+                !pMine.Has(Customs.GenderPriority.Genders_equality) &&
+                !pOpponents.Has(Customs.GenderPriority.Genders_equality))
             {
-                if (pMine.m_eGenderPriority == Customs.GenderPriority.Patriarchy)
+                if (pMine.Has(Customs.GenderPriority.Patriarchy))
                 {
                     if (m_eGender == Gender.Male && pOpponent.m_eGender == Gender.Female)
                     {
@@ -2665,84 +2703,78 @@ namespace Socium
                 }
             }
 
-            switch(pMine.m_eMindSet)
+            if (pMine.Has(Customs.MindSet.Logic))
             {
-                case Customs.MindSet.Logic:
-                    {
-                        if (pOpponent.m_cSkills[Skill.Mind] < ProfessionInfo.SkillLevel.Bad)//m_cSkills[Skill.Mind] - 1)
-                        {
-                            iHostility++;
-                            sNegativeReasons += " (-1) [SOC] too stupid\n";
-                        }
-                        else if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Good)// m_cSkills[Skill.Mind] + 1)
-                        {
-                            iHostility -= 2;
-                            sPositiveReasons += " (+2) [SOC] genius\n";
-                        }
-                        //else if (pOpponent.m_cSkills[Skill.Mind] > m_cSkills[Skill.Mind])
-                        //{
-                        //    iHostility--;
-                        //    sPositiveReasons += " (+1) smart one\n";
-                        //}
-                    }
-                    break;
-                case Customs.MindSet.Emotions:
-                    {
-                        //if (pOpponent.m_cSkills[Skill.Mind] <= m_cSkills[Skill.Mind])
-                        //{
-                        //    iHostility--;
-                        //    sPositiveReasons += " (+1) right-minded\n";
-                        //}
-                        //else 
-                        if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Good)//m_cSkills[Skill.Mind] + 1)
-                        {
-                            iHostility += 1;
-                            sNegativeReasons += " (-1) [SOC] egghead\n";
-                        }
-                        //else if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Bad)//m_cSkills[Skill.Mind])
-                        //{
-                        //    iHostility++;
-                        //    sNegativeReasons += " (-1) [SOC] too smart\n";
-                        //}
-                    }
-                    break;
-                //case Customs.MindSet.Balanced_mind:
-                //    {
-                //        if (pOpponent.m_cSkills[Skill.Mind] < ProfessionInfo.SkillLevel.Bad)//m_cSkills[Skill.Mind] - 1)
-                //        {
-                //            iHostility++;
-                //            sNegativeReasons += " (-1) [SOC] too stupid\n";
-                //        }
-                //        else if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Good)//m_cSkills[Skill.Mind] + 1)
-                //        {
-                //            iHostility++;
-                //            sNegativeReasons += " (-1) [SOC] too smart\n";
-                //        }
-                //        //else if (pOpponent.m_cSkills[Skill.Mind] == m_cSkills[Skill.Mind])
-                //        //{
-                //        //    iHostility--;
-                //        //    sPositiveReasons += " (+1) right-minded\n";
-                //        //}
-                //    }
-                //    break;
+                if (pOpponent.m_cSkills[Skill.Mind] < ProfessionInfo.SkillLevel.Bad)//m_cSkills[Skill.Mind] - 1)
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) [SOC] too stupid\n";
+                }
+                else if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Good)// m_cSkills[Skill.Mind] + 1)
+                {
+                    iHostility -= 2;
+                    sPositiveReasons += " (+2) [SOC] genius\n";
+                }
+                //else if (pOpponent.m_cSkills[Skill.Mind] > m_cSkills[Skill.Mind])
+                //{
+                //    iHostility--;
+                //    sPositiveReasons += " (+1) smart one\n";
+                //}
             }
-            
-            if (pMine.m_eSexuality != pOpponents.m_eSexuality &&
-                pMine.m_eSexuality != Customs.Sexuality.Moderate_sexuality &&
-                pOpponents.m_eSexuality != Customs.Sexuality.Moderate_sexuality)
-            {
-                iHostility++;
-                sNegativeReasons += " (-1) [SOC] " + pOpponents.m_eSexuality.ToString().Replace('_', ' ').ToLower() + "\n";
-            }
-
-            if (pMine.m_eSexRelations != pOpponents.m_eSexRelations && 
-                pMine.m_eSexRelations != Customs.SexualOrientation.Bisexual &&
-                pOpponents.m_eSexuality != Customs.Sexuality.Puritan)
-            {
-                if (pOpponents.m_eSexRelations != Customs.SexualOrientation.Bisexual)
+            else if (pMine.Has(Customs.MindSet.Emotions))
+            { 
+                //if (pOpponent.m_cSkills[Skill.Mind] <= m_cSkills[Skill.Mind])
+                //{
+                //    iHostility--;
+                //    sPositiveReasons += " (+1) right-minded\n";
+                //}
+                //else 
+                if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Good)//m_cSkills[Skill.Mind] + 1)
                 {
                     iHostility += 1;
-                    sNegativeReasons += " (-1) [SOC] " + pOpponents.m_eSexRelations.ToString().Replace('_', ' ').ToLower() + "\n";
+                    sNegativeReasons += " (-1) [SOC] egghead\n";
+                }
+                //else if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Bad)//m_cSkills[Skill.Mind])
+                //{
+                //    iHostility++;
+                //    sNegativeReasons += " (-1) [SOC] too smart\n";
+                //}
+            }
+            //else if (pMine.Has(Customs.MindSet.Balanced_mind)
+            //{
+            //    if (pOpponent.m_cSkills[Skill.Mind] < ProfessionInfo.SkillLevel.Bad)//m_cSkills[Skill.Mind] - 1)
+            //    {
+            //        iHostility++;
+            //        sNegativeReasons += " (-1) [SOC] too stupid\n";
+            //    }
+            //    else if (pOpponent.m_cSkills[Skill.Mind] > ProfessionInfo.SkillLevel.Good)//m_cSkills[Skill.Mind] + 1)
+            //    {
+            //        iHostility++;
+            //        sNegativeReasons += " (-1) [SOC] too smart\n";
+            //    }
+            //    //else if (pOpponent.m_cSkills[Skill.Mind] == m_cSkills[Skill.Mind])
+            //    //{
+            //    //    iHostility--;
+            //    //    sPositiveReasons += " (+1) right-minded\n";
+            //    //}
+            //}
+
+            if (!pMine.HasIdentical<Customs.Sexuality>(pOpponents) &&
+                !pMine.Has(Customs.Sexuality.Moderate_sexuality) &&
+                !pOpponents.Has(Customs.Sexuality.Moderate_sexuality))
+            {
+                iHostility++;
+                sNegativeReasons += " (-1) [SOC] " + pOpponents.ValueOf<Customs.Sexuality>().ToString().Replace('_', ' ').ToLower() + "\n";
+            }
+
+            if (!pMine.HasIdentical<Customs.SexualOrientation>(pOpponents) && 
+                !pMine.Has(Customs.SexualOrientation.Bisexual) &&
+                !pOpponents.Has(Customs.Sexuality.Puritan))
+            {
+                if (pOpponents.Has(Customs.SexualOrientation.Bisexual))
+                {
+                    iHostility += 1;
+                    sNegativeReasons += " (-1) [SOC] " + pOpponents.ValueOf<Customs.SexualOrientation>().ToString().Replace('_', ' ').ToLower() + "\n";
                 }
                 //else
                 //{
@@ -2770,63 +2802,61 @@ namespace Socium
 
             }
 
-            if (pMine.m_eMarriage < pOpponents.m_eMarriage)
+            if (pMine.ValueOf<Customs.MarriageType>() < pOpponents.ValueOf<Customs.MarriageType>())
             {
                 iHostility++;
-                sNegativeReasons += " (-1) [SOC] " + pOpponents.m_eMarriage.ToString().Replace('_', ' ').ToLower() + "\n";
+                sNegativeReasons += " (-1) [SOC] " + pOpponents.ValueOf<Customs.MarriageType>().ToString().Replace('_', ' ').ToLower() + "\n";
             }
 
-            switch (pMine.m_eBodyModifications)
+            if (pMine.Has(Customs.BodyModifications.Body_Modifications_Mandatory))
             {
-                case Customs.BodyModifications.Body_Modifications_Mandatory:
-                    if (pOpponents.m_eBodyModifications == Customs.BodyModifications.Body_Modifications_Blamed)
-                    {
-                        iHostility++;
-                        sNegativeReasons += " (-1) [SOC] no proper body modifications\n";
-                    }
-                    else if (pOpponents.m_eBodyModifications == Customs.BodyModifications.Body_Modifications_Mandatory)
-                    {
-                        iHostility--;
-                        sPositiveReasons += " (+1) [SOC] have proper body modifications\n";
-                    }
-                    break;
-                case Customs.BodyModifications.Body_Modifications_Blamed:
-                    //if (pOpponents.m_eBodyModifications == Customs.BodyModifications.Body_Modifications_Allowed)
-                    //{
-                    //    iHostility++;
-                    //    sNegativeReasons += " (-1) [SOC] have body modifications\n";
-                    //}
-                    //else 
-                    if (pOpponents.m_eBodyModifications == Customs.BodyModifications.Body_Modifications_Mandatory)
-                    {
-                        iHostility += 1;
-                        sNegativeReasons += " (-1) [SOC] have disgusting body modifications\n";
-                    }
-                    break;
+                if (pOpponents.Has(Customs.BodyModifications.Body_Modifications_Blamed))
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) [SOC] no proper body modifications\n";
+                }
+                else if (pOpponents.Has(Customs.BodyModifications.Body_Modifications_Mandatory))
+                {
+                    iHostility--;
+                    sPositiveReasons += " (+1) [SOC] have proper body modifications\n";
+                }
+            }
+            else if (pMine.Has(Customs.BodyModifications.Body_Modifications_Blamed))
+            { 
+                //if (pOpponents.m_eBodyModifications == Customs.BodyModifications.Body_Modifications_Allowed)
+                //{
+                //    iHostility++;
+                //    sNegativeReasons += " (-1) [SOC] have body modifications\n";
+                //}
+                //else 
+                if (pOpponents.Has(Customs.BodyModifications.Body_Modifications_Mandatory))
+                {
+                    iHostility += 1;
+                    sNegativeReasons += " (-1) [SOC] have disgusting body modifications\n";
+                }
             }
 
-            switch (pMine.m_eClothes)
+            if (pMine.Has(Customs.Clothes.Minimal_Clothes))
             {
-                case Customs.Clothes.Minimal_Clothes:
-                    if (pOpponents.m_eClothes == Customs.Clothes.Covering_Clothes)
-                    {
-                        iHostility++;
-                        sNegativeReasons += " (-1) [SOC] prude\n";
-                    }
-                    break;
-                case Customs.Clothes.Covering_Clothes:
-                    //if (pOpponents.m_eClothes == Customs.Clothes.Revealing_Clothes)
-                    //{
-                    //    iHostility++;
-                    //    sNegativeReasons += " (-1) [SOC] debaucher\n";
-                    //}
-                    //else 
-                    if (pOpponents.m_eClothes == Customs.Clothes.Minimal_Clothes)
-                    {
-                        iHostility += 1;
-                        sNegativeReasons += " (-1) [SOC] shameless\n";
-                    }
-                    break;
+                if (pOpponents.Has(Customs.Clothes.Covering_Clothes))
+                {
+                    iHostility++;
+                    sNegativeReasons += " (-1) [SOC] prude\n";
+                }
+            }
+            else if (pMine.Has(Customs.Clothes.Covering_Clothes))
+            { 
+                //if (pOpponents.m_eClothes == Customs.Clothes.Revealing_Clothes)
+                //{
+                //    iHostility++;
+                //    sNegativeReasons += " (-1) [SOC] debaucher\n";
+                //}
+                //else 
+                if (pOpponents.Has(Customs.Clothes.Minimal_Clothes))
+                {
+                    iHostility += 1;
+                    sNegativeReasons += " (-1) [SOC] shameless\n";
+                }
             }
 
             //switch (pMine.m_eAdornments)
@@ -2862,12 +2892,12 @@ namespace Socium
             {
                 if (IsFamily(m_cRelations[pOpponent]))
                 {
-                    if (pMine.m_eFamilyValues == Customs.FamilyValues.Praised_Family_Values)
+                    if (pMine.Has(Customs.FamilyValues.Praised_Family_Values))
                     {
                         iHostility -= 2;
                         sPositiveReasons += " (+2) [SOC] family ties\n";
                     }
-                    if (pMine.m_eFamilyValues == Customs.FamilyValues.Moderate_Family_Values)
+                    else if (pMine.Has(Customs.FamilyValues.Moderate_Family_Values))
                     {
                         iHostility -= 1;
                         sPositiveReasons += " (+1) [SOC] family ties\n";
@@ -2875,7 +2905,7 @@ namespace Socium
                 }
                 else if (IsKinship(m_cRelations[pOpponent]))
                 {
-                    if (pMine.m_eFamilyValues == Customs.FamilyValues.Praised_Family_Values)
+                    if (pMine.Has(Customs.FamilyValues.Praised_Family_Values))
                     {
                         iHostility -= 1;
                         sPositiveReasons += " (+1) [SOC] blood ties\n";
@@ -2903,12 +2933,12 @@ namespace Socium
 
             if (pOpponent.m_pState.m_iMagicLimit > 0)
             {
-                if (pMine.m_eMagic == Customs.Magic.Magic_Praised)
+                if (pMine.Has(Customs.Magic.Magic_Praised))
                 {
                     iHostility--;
                     sPositiveReasons += " (+1) [SOC] mage\n";
                 }
-                else if (pMine.m_eMagic == Customs.Magic.Magic_Feared)
+                else if (pMine.Has(Customs.Magic.Magic_Feared))
                 {
                     iHostility++;
                     sNegativeReasons += " (-1) [SOC] mage\n";
@@ -2924,7 +2954,7 @@ namespace Socium
         /// <returns></returns>
         public string GetFenotypeDescription()
         {
-            string sResult = GetFenotypeComparsion(m_pFenotype.GetHumanEtalon());
+            string sResult = GetFenotypeComparsion(Phenotype.GetBaseHuman(m_eGender));
             if (sResult.Length == 0)
                 sResult = "is just a common " + m_eAge.ToString().ToLower() + " " + (m_eGender == Gender.Male ? "man" : "woman") + ".";
 
@@ -2939,9 +2969,9 @@ namespace Socium
         /// "is very clever crature ... could have only a few children during whole lifetime, which are mostly females."
         /// </summary>
         /// <returns></returns>
-        public string GetFenotypeComparsion(Fenotype pOriginal)
+        public string GetFenotypeComparsion(Phenotype.PhensStorage pOriginal)
         {
-            if (pOriginal.IsIdentical(m_pFenotype))
+            if (pOriginal.IsIdentical(m_pPhenotype.m_pValues))
                 return "";
 
             string sResult = "";
@@ -2949,11 +2979,11 @@ namespace Socium
             //if (!pOriginal.m_pBrain.IsIdentical(m_pFenotype.m_pBrain))
             //    sResult += "is a " + m_pFenotype.m_pBrain.GetDescription(false) + ".";
 
-            if (!pOriginal.m_pHead.IsIdentical(m_pFenotype.m_pHead) ||
-                !pOriginal.m_pArms.IsIdentical(m_pFenotype.m_pArms) ||
-                !pOriginal.m_pLegs.IsIdentical(m_pFenotype.m_pLegs) ||
-                !pOriginal.m_pWings.IsIdentical(m_pFenotype.m_pWings) ||
-                !pOriginal.m_pTail.IsIdentical(m_pFenotype.m_pTail))
+            if (!pOriginal.HasIdentical<HeadGenetix>(m_pPhenotype.m_pValues) ||
+                !pOriginal.HasIdentical<ArmsGenetix>(m_pPhenotype.m_pValues) ||
+                !pOriginal.HasIdentical<LegsGenetix>(m_pPhenotype.m_pValues) ||
+                !pOriginal.HasIdentical<WingsGenetix>(m_pPhenotype.m_pValues) ||
+                !pOriginal.HasIdentical<TailGenetix>(m_pPhenotype.m_pValues))
             {
                 if (sResult != "")
                     sResult += " ";
@@ -2961,19 +2991,19 @@ namespace Socium
                 sResult += m_eGender == Gender.Male ? "He has " : "She has ";
 
                 bool bSemicolon = false;
-                if (!pOriginal.m_pHead.IsIdentical(m_pFenotype.m_pHead))
+                if (!pOriginal.HasIdentical<HeadGenetix>(m_pPhenotype.m_pValues))
                 {
-                    sResult += m_pFenotype.m_pHead.GetDescription();
+                    sResult += m_pPhenotype.m_pValues.Get<HeadGenetix>().GetDescription();
                     bSemicolon = true;
                 }
 
-                if (!pOriginal.m_pArms.IsIdentical(m_pFenotype.m_pArms))
+                if (!pOriginal.HasIdentical<ArmsGenetix>(m_pPhenotype.m_pValues))
                 {
-                    if (m_pFenotype.m_pArms.m_eArmsCount != ArmsCount.None)
+                    if (m_pPhenotype.m_pValues.Get<ArmsGenetix>().ArmsCount != ArmsCount.None)
                     {
                         if (bSemicolon)
                             sResult += ", ";
-                        sResult += m_pFenotype.m_pArms.GetDescription();
+                        sResult += m_pPhenotype.m_pValues.Get<ArmsGenetix>().GetDescription();
 
                         bSemicolon = true;
                     }
@@ -2985,22 +3015,22 @@ namespace Socium
                     }
                 }
 
-                if (!pOriginal.m_pLegs.IsIdentical(m_pFenotype.m_pLegs))
+                if (!pOriginal.HasIdentical<LegsGenetix>(m_pPhenotype.m_pValues))
                 {
                     if (bSemicolon)
                         sResult += ", ";
-                    sResult += m_pFenotype.m_pLegs.GetDescription();
+                    sResult += m_pPhenotype.m_pValues.Get<LegsGenetix>().GetDescription();
 
                     bSemicolon = true;
                 }
 
-                if (!pOriginal.m_pWings.IsIdentical(m_pFenotype.m_pWings))
+                if (!pOriginal.HasIdentical<WingsGenetix>(m_pPhenotype.m_pValues))
                 {
-                    if (m_pFenotype.m_pWings.m_eWingsCount != WingsCount.None)
+                    if (m_pPhenotype.m_pValues.Get<WingsGenetix>().WingsCount != WingsCount.None)
                     {
                         if (bSemicolon)
                             sResult += ", ";
-                        sResult += m_pFenotype.m_pWings.GetDescription();
+                        sResult += m_pPhenotype.m_pValues.Get<WingsGenetix>().GetDescription();
 
                         bSemicolon = true;
                     }
@@ -3012,13 +3042,13 @@ namespace Socium
                     }
                 }
 
-                if (!pOriginal.m_pTail.IsIdentical(m_pFenotype.m_pTail))
+                if (!pOriginal.HasIdentical<TailGenetix>(m_pPhenotype.m_pValues))
                 {
-                    if (m_pFenotype.m_pTail.m_eTailLength != TailLength.None)
+                    if (m_pPhenotype.m_pValues.Get<TailGenetix>().TailLength != TailLength.None)
                     {
                         if (bSemicolon)
                             sResult += " and ";
-                        sResult += m_pFenotype.m_pTail.GetDescription();
+                        sResult += m_pPhenotype.m_pValues.Get<TailGenetix>().GetDescription();
                     }
                     else
                     {
@@ -3031,72 +3061,72 @@ namespace Socium
                 sResult += ".";
             }
 
-            if (!pOriginal.m_pBody.IsIdentical(m_pFenotype.m_pBody) ||
-                !pOriginal.m_pHide.IsIdentical(m_pFenotype.m_pHide))
+            if (!pOriginal.HasIdentical<BodyGenetix>(m_pPhenotype.m_pValues) ||
+                !pOriginal.HasIdentical<HideGenetix>(m_pPhenotype.m_pValues))
             {
                 if (sResult != "")
                     sResult += " ";
 
                 bool bSemicolon = false;
-                if (!pOriginal.m_pBody.IsIdentical(m_pFenotype.m_pBody))
+                if (!pOriginal.HasIdentical<BodyGenetix>(m_pPhenotype.m_pValues))
                 {
-                    sResult += (m_eGender == Gender.Male ? "He is a " : "She is a ") + m_pFenotype.m_pBody.GetDescription(m_eGender);
+                    sResult += (m_eGender == Gender.Male ? "He is a " : "She is a ") + m_pPhenotype.m_pValues.Get<BodyGenetix>().GetDescription(m_eGender, false);
                     bSemicolon = true;
                 }
                 else
                     sResult += (m_eGender == Gender.Male ? "He " : "She ") + "has ";
 
-                if (!pOriginal.m_pHide.IsIdentical(m_pFenotype.m_pHide))
+                if (!pOriginal.HasIdentical<HideGenetix>(m_pPhenotype.m_pValues))
                 {
                     if (bSemicolon)
                         sResult += " with ";
-                    sResult += m_pFenotype.m_pHide.GetDescription();
+                    sResult += m_pPhenotype.m_pValues.Get<HideGenetix>().GetDescription();
                 }
 
                 sResult += ".";
 
-                sResult += m_pFenotype.m_pBody.GetDescription2(m_eGender);
+                sResult += m_pPhenotype.m_pValues.Get<NutritionGenetix>().GetDescription(m_eGender, true);
             }
 
-            if (!pOriginal.m_pEyes.IsIdentical(m_pFenotype.m_pEyes) ||
-                !pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars) ||
-                !pOriginal.m_pFace.IsIdentical(m_pFenotype.m_pFace))
+            if (!pOriginal.HasIdentical<EyesGenetix>(m_pPhenotype.m_pValues) ||
+                !pOriginal.HasIdentical<EarsGenetix>(m_pPhenotype.m_pValues) ||
+                !pOriginal.HasIdentical<FaceGenetix>(m_pPhenotype.m_pValues))
             {
                 if (sResult != "")
                     sResult += " ";
 
                 bool bSemicolon = false;
-                if (!pOriginal.m_pEyes.IsIdentical(m_pFenotype.m_pEyes) ||
-                    !pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars))
+                if (!pOriginal.HasIdentical<EyesGenetix>(m_pPhenotype.m_pValues) ||
+                    !pOriginal.HasIdentical<EarsGenetix>(m_pPhenotype.m_pValues))
                 {
                     sResult += m_eGender == Gender.Male ? "He has " : "She has ";
 
-                    if (!pOriginal.m_pEyes.IsIdentical(m_pFenotype.m_pEyes))
+                    if (!pOriginal.HasIdentical<EyesGenetix>(m_pPhenotype.m_pValues))
                     {
-                        sResult += m_pFenotype.m_pEyes.GetDescription();
+                        sResult += m_pPhenotype.m_pValues.Get<EyesGenetix>().GetDescription();
                         bSemicolon = true;
                     }
 
-                    if (!pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars))
+                    if (!pOriginal.HasIdentical<EarsGenetix>(m_pPhenotype.m_pValues))
                     {
                         if (bSemicolon)
                             sResult += " and ";
 
-                        sResult += m_pFenotype.m_pEars.GetDescription() + " of ";
+                        sResult += m_pPhenotype.m_pValues.Get<EarsGenetix>().GetDescription() + " of ";
                     }
                     else
                     {
-                        if (bSemicolon && !pOriginal.m_pFace.IsIdentical(m_pFenotype.m_pFace))
+                        if (bSemicolon && !pOriginal.HasIdentical<FaceGenetix>(m_pPhenotype.m_pValues))
                             sResult += " at ";
                     }
                 }
                 else
                     sResult += m_eGender == Gender.Male ? "He has " : "She has ";
 
-                if (!pOriginal.m_pFace.IsIdentical(m_pFenotype.m_pFace))
-                    sResult += m_pFenotype.m_pFace.GetDescription();
+                if (!pOriginal.HasIdentical<FaceGenetix>(m_pPhenotype.m_pValues))
+                    sResult += m_pPhenotype.m_pValues.Get<FaceGenetix>().GetDescription();
                 else
-                    if (!pOriginal.m_pEars.IsIdentical(m_pFenotype.m_pEars))
+                    if (!pOriginal.HasIdentical<EarsGenetix>(m_pPhenotype.m_pValues))
                         sResult += "the head";// m_pFace.m_eNoseType == NoseType.Normal ? "face" : "muzzle";
 
                 sResult += ".";
@@ -3110,14 +3140,14 @@ namespace Socium
                 if (sResult != "")
                     sResult += " ";
 
-                if (m_pFenotype.m_pHairs.GetDescription() != "")
-                    sResult += m_pFenotype.m_pHairs.GetDescription(m_eGender);
+                if (m_pPhenotype.m_pValues.Get<HairsGenetix>().GetDescription() != "")
+                    sResult += m_pPhenotype.m_pValues.Get<HairsGenetix>().GetDescription(m_eGender);
                 else
                     sResult = "Both males and females are bald, and have no beard or moustache.";
             }
 
-            if ((pOriginal.m_pLifeCycle.m_eDyingRate == DyingRate.High && m_eAge > _Age.Adult) ||
-                (pOriginal.m_pLifeCycle.m_eDyingRate == DyingRate.Moderate && m_eAge > _Age.Aged))
+            if ((pOriginal.Get<LifeCycleGenetix>().DyingRate == DyingRate.High && m_eAge > _Age.Adult) ||
+                (pOriginal.Get<LifeCycleGenetix>().DyingRate == DyingRate.Moderate && m_eAge > _Age.Aged))
             {
                 if (sResult != "")
                     sResult += " ";
@@ -3125,7 +3155,7 @@ namespace Socium
                 sResult += (m_eGender == Gender.Male ? "He" : "She") + " looks very old for " + (m_eGender == Gender.Male ? "his" : "her") + " age.";
             }
 
-            if ((pOriginal.m_pLifeCycle.m_eDyingRate == DyingRate.Low && m_eAge > _Age.Adult))
+            if ((pOriginal.Get<LifeCycleGenetix>().DyingRate == DyingRate.Low && m_eAge > _Age.Adult))
             {
                 if (sResult != "")
                     sResult += " ";
@@ -3145,57 +3175,57 @@ namespace Socium
 
             if (m_eGender == Gender.Male)
             {
-                if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy)
+                if (m_pCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy))
                     sResult += "proclaims males supremacy";
-                if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy)
+                else if (m_pCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
                     sResult += "admits females supremacy";
                 //if (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Genders_equality)
                 //    sResult += "admits genders equality";
             }
             else
             {
-                if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy)
+                if (m_pCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy))
                     sResult += "admits males supremacy";
-                if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy)
+                else if (m_pCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
                     sResult += "proclaims females supremacy";
                 //if (m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Genders_equality)
                 //    sResult += "admits genders equality";
             }
 
-            if (sResult != "" && m_pCulture.m_pCustoms.m_eMindSet != Customs.MindSet.Balanced_mind)
+            if (sResult != "" && !m_pCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
                 sResult += ", ";
 
-            if (m_pCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Emotions)
+            if (m_pCulture.m_pCustoms.Has(Customs.MindSet.Emotions))
                 sResult += "usually behaves " + (m_eGender == Gender.Male ? "himself" : "herself") + " very emotinally";
-            if (m_pCulture.m_pCustoms.m_eMindSet == Customs.MindSet.Logic)
+            else if (m_pCulture.m_pCustoms.Has(Customs.MindSet.Logic))
                 sResult += "usually behaves " + (m_eGender == Gender.Male ? "himself" : "herself") + " quite unemotional";
             //if (m_pCustoms.m_eMindSet == Customs.MindSet.Balanced_mind)
             //    sResult += "combines emotions and logic";
 
-            if (sResult != "" && m_pCulture.m_pCustoms.m_eMagic != Customs.Magic.Magic_Allowed)
+            if (sResult != "" && !m_pCulture.m_pCustoms.Has(Customs.Magic.Magic_Allowed))
                 sResult += ", ";
 
-            if (m_pCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Feared)
+            if (m_pCulture.m_pCustoms.Has(Customs.Magic.Magic_Feared))
                 sResult += "shows a lot of fear about magic";
-            if (m_pCulture.m_pCustoms.m_eMagic == Customs.Magic.Magic_Praised)
+            else if (m_pCulture.m_pCustoms.Has(Customs.Magic.Magic_Praised))
                 sResult += "shows a lot of interest in magic";
             //if (m_pCustoms.m_eMagic == Customs.Magic.Magic_Allowed)
             //    sResult += pOther.m_eMagic == Magic.Magic_Feared ? "has no fear for magic" : "doesn't like magic too much";
 
-            if (sResult != "" && m_pCulture.m_pCustoms.m_eScience != Customs.Science.Moderate_Science)
+            if (sResult != "" && !m_pCulture.m_pCustoms.Has(Customs.Science.Moderate_Science))
                 sResult += ", ";
 
-            if (m_pCulture.m_pCustoms.m_eScience == Customs.Science.Technophobia)
+            if (m_pCulture.m_pCustoms.Has(Customs.Science.Technophobia))
                 sResult += "rejects any technological novelties";
-            if (m_pCulture.m_pCustoms.m_eScience == Customs.Science.Ingenuity)
+            else if (m_pCulture.m_pCustoms.Has(Customs.Science.Ingenuity))
                 sResult += "likes any technological novelties";
             //if (m_pCustoms.m_eProgress == Customs.Progressiveness.Moderate_Science)
             //    sResult += pOther.m_eProgress == Progressiveness.Traditionalism ? "accepts some regulated progress" : "doesn't like novelties so much";
 
-            if (sResult != "" && (m_pCulture.m_pCustoms.m_eBodyModifications == Customs.BodyModifications.Body_Modifications_Blamed || m_pCulture.m_pCustoms.m_cMandatoryModifications.Count > 0))
+            if (sResult != "" && (m_pCulture.m_pCustoms.Has(Customs.BodyModifications.Body_Modifications_Blamed) || m_pCulture.m_pCustoms.m_cMandatoryModifications.Count > 0))
                 sResult += ", ";
 
-            if (m_pCulture.m_pCustoms.m_eBodyModifications == Customs.BodyModifications.Body_Modifications_Blamed)
+            if (m_pCulture.m_pCustoms.Has(Customs.BodyModifications.Body_Modifications_Blamed))
                 sResult += "rejects any form of body modification";
             else
             {
@@ -3217,29 +3247,29 @@ namespace Socium
             if (sResult != "")
                 sResult += ", ";
 
-            if (m_pCulture.m_pCustoms.m_eClothes == Customs.Clothes.Covering_Clothes)
+            if (m_pCulture.m_pCustoms.Has(Customs.Clothes.Covering_Clothes))
                 sResult += "wears hiding clothes";
-            if (m_pCulture.m_pCustoms.m_eClothes == Customs.Clothes.Minimal_Clothes)
+            else if (m_pCulture.m_pCustoms.Has(Customs.Clothes.Minimal_Clothes))
                 sResult += "wears quite revealing clothes";
-            if (m_pCulture.m_pCustoms.m_eClothes == Customs.Clothes.Revealing_Clothes)
+            else if (m_pCulture.m_pCustoms.Has(Customs.Clothes.Revealing_Clothes))
                 sResult += "wears common clothes";
 
-            if (sResult != "" && m_pCulture.m_pCustoms.m_eAdornments != Customs.Adornments.No_Adornments)
+            if (sResult != "" && !m_pCulture.m_pCustoms.Has(Customs.Adornments.No_Adornments))
                 sResult += " with ";
 
             //if (m_pCustoms.m_eAdornments == Customs.Adornments.No_Adornments)
             //    sResult += "wears no adornments";
-            if (m_pCulture.m_pCustoms.m_eAdornments == Customs.Adornments.Lavish_Adornments)
+            if (m_pCulture.m_pCustoms.Has(Customs.Adornments.Lavish_Adornments))
                 sResult += "a lot of adornments";
-            if (m_pCulture.m_pCustoms.m_eAdornments == Customs.Adornments.Some_Adornments)
+            else if (m_pCulture.m_pCustoms.Has(Customs.Adornments.Some_Adornments))
                 sResult += "some adornments";
 
-            if (sResult != "" && m_pCulture.m_pCustoms.m_eFamilyValues != Customs.FamilyValues.Moderate_Family_Values)
+            if (sResult != "" && !m_pCulture.m_pCustoms.Has(Customs.FamilyValues.Moderate_Family_Values))
                 sResult += ", ";
 
-            if (m_pCulture.m_pCustoms.m_eFamilyValues == Customs.FamilyValues.Praised_Family_Values)
+            if (m_pCulture.m_pCustoms.Has(Customs.FamilyValues.Praised_Family_Values))
                 sResult += "have very tight family bonds";
-            if (m_pCulture.m_pCustoms.m_eFamilyValues == Customs.FamilyValues.No_Family_Values)
+            else if (m_pCulture.m_pCustoms.Has(Customs.FamilyValues.No_Family_Values))
                 sResult += "have absolutely no family ties";
             //if (m_pCustoms.m_eFamilyValues == Customs.FamilyValues.Moderate_Family_Values)
             //    sResult += "have not so tight family bonds";
@@ -3249,22 +3279,22 @@ namespace Socium
 
             sResult += m_eGender == Gender.Male ? "He is " : "She is ";
 
-            if (m_pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Puritan)
+            if (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Puritan))
                 sResult += "not interested in sex";
             else
             {
-                if (m_pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Lecherous)
+                if (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
                     sResult += "a quite horny ";
-                if (m_pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Moderate_sexuality)
+                else if (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
                     sResult += "a moderate ";
 
-                if (m_pCulture.m_pCustoms.m_eSexuality != Customs.Sexuality.Puritan)
+                if (!m_pCulture.m_pCustoms.Has(Customs.Sexuality.Puritan))
                 {
-                    if (m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual)
+                    if (m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Heterosexual))
                         sResult += m_eGender == Gender.Male ? "stright male" : "strignt female";
-                    if (m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual)
+                    else if (m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Homosexual))
                         sResult += m_eGender == Gender.Male ? "gay" : "lesbian";
-                    if (m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Bisexual)
+                    else if (m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Bisexual))
                         sResult += m_eGender == Gender.Male ? "besexual male" : "besexual female";
                 }
             }
@@ -3707,14 +3737,14 @@ namespace Socium
 
             if (iHostility == 0 && m_eAge != _Age.Old)
             {
-                if(m_pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Lecherous ||
-                    (m_pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Moderate_sexuality && 
+                if(m_pCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous) ||
+                    (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality) && 
                      (!m_cRelations.ContainsKey(pOpponent) || !IsBloodKinship(m_cRelations[pOpponent]))))
                 {
                     if (pOpponent == this ||
-                        m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Bisexual ||
-                        (m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Heterosexual && pOpponent.m_eGender != m_eGender) ||
-                        (m_pCulture.m_pCustoms.m_eSexRelations == Customs.SexualOrientation.Homosexual && pOpponent.m_eGender == m_eGender))
+                        m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Bisexual) ||
+                        (m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Heterosexual) && pOpponent.m_eGender != m_eGender) ||
+                        (m_pCulture.m_pCustoms.Has(Customs.SexualOrientation.Homosexual) && pOpponent.m_eGender == m_eGender))
                     {
                         int iBeauty = 0;
                         if (pOpponent.m_eAge == _Age.Young)
@@ -3728,7 +3758,7 @@ namespace Socium
                         if(pOpponent.m_eAppearance == Appearance.Handsome)
                             iBeauty *= 2;
 
-                        if (m_pCulture.m_pCustoms.m_eSexuality == Customs.Sexuality.Lecherous)
+                        if (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
                             iBeauty += 2;
 
                         if(iBeauty > 0)
@@ -4447,43 +4477,44 @@ namespace Socium
         /// <returns></returns>
         public Person GetSpouse()
         {
-            switch (m_pCulture.m_pCustoms.m_eMarriage)
+            if (m_pCulture.m_pCustoms.Has(Customs.MarriageType.Monogamy))
             {
-                case Customs.MarriageType.Monogamy:
-                    if (m_cRelations.ContainsValue(Relation.Spouse))
-                        return null; //моногамная семья и супруг уже есть
-                    break;
-                case Customs.MarriageType.Polyamory:
-                    return null; //институт семьи вообще отсутствует
-                case Customs.MarriageType.Polygamy:
-                    if (m_cRelations.ContainsValue(Relation.Spouse))
+                if (m_cRelations.ContainsValue(Relation.Spouse))
+                    return null; //моногамная семья и супруг уже есть
+            }
+            else if (m_pCulture.m_pCustoms.Has(Customs.MarriageType.Polyamory))
+            {
+                return null; //институт семьи вообще отсутствует
+            }
+            else if (m_pCulture.m_pCustoms.Has(Customs.MarriageType.Polygamy))
+            { 
+                if (m_cRelations.ContainsValue(Relation.Spouse))
+                {
+                    //если в обществе патриархат, а потенциальный супруг - замужняя женщина, то нужно найти женатого на ней мужчину
+                    if (m_pCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) && m_eGender == Gender.Female)
                     {
-                        //если в обществе патриархат, а потенциальный супруг - замужняя женщина, то нужно найти женатого на ней мужчину
-                        if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Patriarchy && m_eGender == Gender.Female)
+                        foreach (var pRel in m_cRelations)
                         {
-                            foreach (var pRel in m_cRelations)
+                            if (pRel.Value == Relation.Spouse && pRel.Key.Gender == Gender.Male)
                             {
-                                if (pRel.Value == Relation.Spouse && pRel.Key.Gender == Gender.Male)
-                                {
-                                    return pRel.Key;
-                                }
+                                return pRel.Key;
                             }
-                            return null;
                         }
-                        //если в обществе матриархат, а потенциальный супруг - женатый мужчина, то нужно найти его жену
-                        if (m_pCulture.m_pCustoms.m_eGenderPriority == Customs.GenderPriority.Matriarchy && m_eGender == Gender.Male)
-                        {
-                            foreach (var pRel in m_cRelations)
-                            {
-                                if (pRel.Value == Relation.Spouse && pRel.Key.Gender == Gender.Female)
-                                {
-                                    return pRel.Key;
-                                }
-                            }
-                            return null;
-                        }
+                        return null;
                     }
-                    break;
+                    //если в обществе матриархат, а потенциальный супруг - женатый мужчина, то нужно найти его жену
+                    if (m_pCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy) && m_eGender == Gender.Male)
+                    {
+                        foreach (var pRel in m_cRelations)
+                        {
+                            if (pRel.Value == Relation.Spouse && pRel.Key.Gender == Gender.Female)
+                            {
+                                return pRel.Key;
+                            }
+                        }
+                        return null;
+                    }
+                }
             }
 
             return this;
@@ -4497,16 +4528,15 @@ namespace Socium
         /// <returns></returns>
         public Person GetLover()
         {
-            switch (m_pCulture.m_pCustoms.m_eSexuality)
+            if (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Puritan))
             {
-                case Customs.Sexuality.Puritan:
-                    //if (!Rnd.OneChanceFrom(5))
-                        return null;
-                    //break;
-                case Customs.Sexuality.Moderate_sexuality:
-                    if (m_cRelations.ContainsValue(Relation.Lover))// && !Rnd.OneChanceFrom(5))
-                        return null;
-                    break;
+                //if (!Rnd.OneChanceFrom(5))
+                    return null;
+            }
+            else if (m_pCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+            { 
+                if (m_cRelations.ContainsValue(Relation.Lover))// && !Rnd.OneChanceFrom(5))
+                    return null;
             }
 
             return this;

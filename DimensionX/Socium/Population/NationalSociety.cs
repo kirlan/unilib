@@ -34,7 +34,9 @@ namespace Socium.Population
             m_iMagicLimit = m_pTitularNation.m_pProtoSociety.m_iMagicLimit;
 
             m_cCulture[Gender.Male] = new Culture(m_pTitularNation.m_pProtoSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
             m_cCulture[Gender.Female] = new Culture(m_pTitularNation.m_pProtoSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
+            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
 
             FixSexCustoms();
         }
@@ -52,6 +54,8 @@ namespace Socium.Population
 
             m_cCulture[Gender.Male] = new Culture(pRaceMentality, m_iTechLevel, pRaceCustoms);
             m_cCulture[Gender.Female] = new Culture(pRaceMentality, m_iTechLevel, new Customs(pRaceCustoms, Customs.Mutation.Possible));
+
+            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
 
             FixSexCustoms();
         }
@@ -133,7 +137,7 @@ namespace Socium.Population
 
         internal float GetAvailableFood(float fWood, float fOre, float fGrain, float fGame, float fFish, int iPopulation)
         { 
-            switch (m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType)
+            switch (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType)
             {
                 case NutritionType.Eternal:
                     return iPopulation* 10;
@@ -158,8 +162,16 @@ namespace Socium.Population
                 case NutritionType.Carnivorous:
                     return fGame + fFish;
                 default:
-                    throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pTitularNation.m_pFenotype.m_pBody.m_eNutritionType));
+                    throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType));
             }
 }
+
+        public void UpdateTitularNation(Nation pNewTitularNation)
+        {
+            m_pTitularNation = pNewTitularNation;
+
+            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
+            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
+        }
     }
 }

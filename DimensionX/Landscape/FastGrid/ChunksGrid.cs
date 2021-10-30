@@ -47,7 +47,7 @@ namespace LandscapeGeneration.FastGrid
             for (int i = 0; i <= quanticSize / 2; i++)
             {
                 var x1 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * r.NextDouble());
-                var y1 = -k * 0.5 + k * (fDeltaY - fDeltaY * 2 * r.NextDouble());
+                var y1 = k * 0.5 + k * (fDeltaY - fDeltaY * 2 * r.NextDouble());
 
                 var x2 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * r.NextDouble());
                 var y2 = k * 0.5 + k * (fDeltaY - fDeltaY * 2 * r.NextDouble());
@@ -62,10 +62,18 @@ namespace LandscapeGeneration.FastGrid
 
                 //Потом - против часовой.
 
-                var v1tr = new VertexCH(size - x1, size + y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopRight, true);
-                var v1rb = new VertexCH(size + y1, x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightBottom, true);
-                var v1bl = new VertexCH(x1, -y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomLeft, true);
-                var v1lt = new VertexCH(-y1, size - x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftTop, true);
+                var v1tr = new VertexCH(size - x1, size - y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.TopRight, true);
+                var v1rb = new VertexCH(size - y1, x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.RightBottom, true);
+                var v1bl = new VertexCH(x1, y1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.BottomLeft, true);
+                var v1lt = new VertexCH(y1, size - x1, VertexCH.Direction.CenterNone, VertexCH.EdgeSide.LeftTop, true);
+
+                if (i == 0)
+                {
+                    v2rt = v1tr;
+                    v2lb = v1bl;
+                    v2tl = v1lt;
+                    v2br = v1rb;
+                }
 
                 //Те, которые по часовой - добавляем по любому.
                 locations.Add(v2tl);
@@ -88,28 +96,20 @@ namespace LandscapeGeneration.FastGrid
 
                 //Дальше считаем наружные точки. Наружные точки добаволяем всегда, но они могут быть отражением различных внутренних точек
 
-                //Если это первый шаг, то наружная точка по часовой должна быть тенью внутренней по часовой, т.к. на первом шаге у нас нет внутренних против часовой
-                var v_1tl = new VertexCH(v2lb.Position[0], v2lb.Position[1] + size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft, true);
-                if (i != 0) //иначе - внутренней против часовой
-                    v_1tl = new VertexCH(v1bl.Position[0], v1bl.Position[1] + size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft, true);
+                //Если это первый шаг, то наружная точка по часовой должна быть тенью внутренней против часовой
+                var v_1tl = new VertexCH(v1bl.Position[0], v1bl.Position[1] + size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopLeft, true);
                 locations.Add(v_1tl);
 
-                var v_1rt = new VertexCH(v2tl.Position[0] + size, v2tl.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop, true);
-                if (i != 0)
-                    v_1rt = new VertexCH(v1lt.Position[0] + size, v1lt.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop, true);
+                var v_1rt = new VertexCH(v1lt.Position[0] + size, v1lt.Position[1], VertexCH.Direction.Right, VertexCH.EdgeSide.RightTop, true);
                 locations.Add(v_1rt);
 
-                var v_1br = new VertexCH(v2rt.Position[0], v2rt.Position[1] - size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight, true);
-                if (i != 0)
-                    v_1br = new VertexCH(v1tr.Position[0], v1tr.Position[1] - size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight, true);
+                var v_1br = new VertexCH(v1tr.Position[0], v1tr.Position[1] - size, VertexCH.Direction.Down, VertexCH.EdgeSide.BottomRight, true);
                 locations.Add(v_1br);
 
-                var v_1lb = new VertexCH(v2br.Position[0] - size, v2br.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom, true);
-                if (i != 0)
-                    v_1lb = new VertexCH(v1rb.Position[0] - size, v1rb.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom, true);
+                var v_1lb = new VertexCH(v1rb.Position[0] - size, v1rb.Position[1], VertexCH.Direction.Left, VertexCH.EdgeSide.LeftBottom, true);
                 locations.Add(v_1lb);
 
-                //Для наружных точек против часовой всё проще, т.к. они являются тенями внутренних по часовой, которые у нас есть всегда
+                //Для наружные точки против часовой являются тенями внутренних по часовой
                 var v_2tr = new VertexCH(v2br.Position[0], v2br.Position[1] + size, VertexCH.Direction.Up, VertexCH.EdgeSide.TopRight, true);
                 locations.Add(v_2tr);
 
@@ -150,11 +150,6 @@ namespace LandscapeGeneration.FastGrid
                 }
 
                 //Наконец, для всех наружных точек укажем, какой внутренней точке на соседнем квадрате они соответствуют с учётом возможных типов соединения
-                v_1tl.SetShadows(v2lb);
-                v_1rt.SetShadows(v2tl);
-                v_1br.SetShadows(v2rt);
-                v_1lb.SetShadows(v2br);
-
                 if (i != 0)
                 {
                     v_1tl.SetShadows(v1bl);
@@ -162,29 +157,39 @@ namespace LandscapeGeneration.FastGrid
                     v_1br.SetShadows(v1tr);
                     v_1lb.SetShadows(v1rb);
                 }
+                else
+                {
+                    v_1tl.SetShadows(v2lb);
+                    v_1rt.SetShadows(v2tl);
+                    v_1br.SetShadows(v2rt);
+                    v_1lb.SetShadows(v2br);
+                }
 
                 v_2tr.SetShadows(v2br);
                 v_2rb.SetShadows(v2lb);
                 v_2bl.SetShadows(v2tl);
                 v_2lt.SetShadows(v2rt);
 
-                v111.SetShadows(v2br);
-                v112.SetShadows(v2lb);
-                v121.SetShadows(v2tl);
-                v122.SetShadows(v2rt);
-
-                if (i != 0)
+                if (i < 4)
                 {
-                    v111.SetShadows(v1rb);
-                    v112.SetShadows(v1bl);
-                    v121.SetShadows(v1lt);
-                    v122.SetShadows(v1tr);
-                }
+                    //v111.SetShadows(v2br);
+                    //v112.SetShadows(v2lb);
+                    //v121.SetShadows(v2tl);
+                    //v122.SetShadows(v2rt);
 
-                v211.SetShadows(v2br);
-                v212.SetShadows(v2lb);
-                v221.SetShadows(v2tl);
-                v222.SetShadows(v2rt);
+                    if (i != 0)
+                    {
+                        v111.SetShadows(v1rb);
+                        v112.SetShadows(v1bl);
+                        v121.SetShadows(v1lt);
+                        v122.SetShadows(v1tr);
+                    }
+
+                    v211.SetShadows(v2br);
+                    v212.SetShadows(v2lb);
+                    v221.SetShadows(v2tl);
+                    v222.SetShadows(v2rt);
+                }
             }
 
             return locations;
@@ -385,7 +390,7 @@ namespace LandscapeGeneration.FastGrid
             }
         }
 
-        public readonly int m_iChunkSize = 1000;
+        public readonly int m_iChunkSize = 20000; // WTF??? Why this walue is critical for proper work of MapDraw::CheckMousePosition()?
         public readonly int Resolution;
 
         public int RX
@@ -402,6 +407,10 @@ namespace LandscapeGeneration.FastGrid
             {
                 return m_iChunkSize * Resolution / 2;
             }
+        }
+        public int FrameWidth 
+        { 
+            get { return m_iChunkSize / 100;  } 
         }
 
         public WorldShape m_eShape = WorldShape.Plain;

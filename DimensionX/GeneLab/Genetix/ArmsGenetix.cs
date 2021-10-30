@@ -36,50 +36,65 @@ namespace GeneLab.Genetix
 
     public class ArmsGenetix : GenetixBase
     {
+        /// <summary>
+        /// No arms
+        /// </summary>
         public static ArmsGenetix None
         {
             get { return new ArmsGenetix(ArmsCount.None, ArmsType.Palms); }
         }
 
+        /// <summary>
+        /// 2 arms with palms
+        /// </summary>
         public static ArmsGenetix Human
         {
             get { return new ArmsGenetix(ArmsCount.Bimanous, ArmsType.Palms); }
         }
 
+        /// <summary>
+        /// 2 arms with nippers
+        /// </summary>
         public static ArmsGenetix Insect2
         {
             get { return new ArmsGenetix(ArmsCount.Bimanous, ArmsType.Nippers); }
         }
 
+        /// <summary>
+        /// 4 arms with nippers
+        /// </summary>
         public static ArmsGenetix Insect4
         {
             get { return new ArmsGenetix(ArmsCount.Quadrumanous, ArmsType.Nippers); }
         }
 
+        /// <summary>
+        /// 4 arms with palms
+        /// </summary>
         public static ArmsGenetix Human4
         {
             get { return new ArmsGenetix(ArmsCount.Quadrumanous, ArmsType.Palms); }
         }
 
-        public ArmsCount m_eArmsCount = ArmsCount.Bimanous;
+        public ArmsCount ArmsCount { get; private set; } = ArmsCount.Bimanous;
 
-        public ArmsType m_eArmsType = ArmsType.Palms;
+        public ArmsType ArmsType { get; private set; } = ArmsType.Palms;
 
         public ArmsGenetix()
         { }
 
         public ArmsGenetix(ArmsGenetix pPredcessor)
         {
-            m_eArmsCount = pPredcessor.m_eArmsCount;
-            m_eArmsType = pPredcessor.m_eArmsType;
+            ArmsCount = pPredcessor.ArmsCount;
+            ArmsType = pPredcessor.ArmsType;
         }
 
         public ArmsGenetix(ArmsCount eArmsCount, ArmsType eArmsType)
         {
-            m_eArmsCount = eArmsCount;
-            m_eArmsType = eArmsType;
+            ArmsCount = eArmsCount;
+            ArmsType = eArmsType;
         }
-        
+
         public GenetixBase MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
@@ -88,10 +103,34 @@ namespace GeneLab.Genetix
 
                 if (Rnd.OneChanceFrom(2))
                 {
-                    if (pMutant.m_eArmsCount == ArmsCount.Bimanous)
-                        pMutant.m_eArmsCount = ArmsCount.Quadrumanous;
-                    else if (pMutant.m_eArmsCount == ArmsCount.Quadrumanous)
-                        pMutant.m_eArmsCount = ArmsCount.Bimanous;
+                    if (pMutant.ArmsCount == ArmsCount.Bimanous)
+                        pMutant.ArmsCount = ArmsCount.Quadrumanous;
+                    else if (pMutant.ArmsCount == ArmsCount.Quadrumanous)
+                        pMutant.ArmsCount = ArmsCount.Bimanous;
+                }
+
+                //if (Rnd.OneChanceFrom(2))
+                //    pMutant.m_eArmsType = (ArmsType)Rnd.Get(typeof(ArmsType));
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(50))
+            {
+                ArmsGenetix pMutant = new ArmsGenetix(this);
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    if (pMutant.ArmsCount == ArmsCount.Bimanous)
+                        pMutant.ArmsCount = ArmsCount.Quadrumanous;
+                    else if (pMutant.ArmsCount == ArmsCount.Quadrumanous)
+                        pMutant.ArmsCount = ArmsCount.Bimanous;
                 }
 
                 //if (Rnd.OneChanceFrom(2))
@@ -126,7 +165,7 @@ namespace GeneLab.Genetix
             if(pAnother == null)
                 return false;
 
-            return m_eArmsCount == pAnother.m_eArmsCount && m_eArmsType == pAnother.m_eArmsType;
+            return ArmsCount == pAnother.ArmsCount && ArmsType == pAnother.ArmsType;
         }
 
         /// <summary>
@@ -135,10 +174,10 @@ namespace GeneLab.Genetix
         /// <returns></returns>
         public string GetDescription()
         {
-            if (m_eArmsCount == ArmsCount.None)
+            if (ArmsCount == ArmsCount.None)
                 return "";
 
-            return (m_eArmsCount == ArmsCount.Bimanous ? "2" : "4") + " arms with " + (m_eArmsType == ArmsType.Palms ? "5 fingers" : "mighty nippers") + " on each";
+            return (ArmsCount == ArmsCount.Bimanous ? "2" : "4") + " arms with " + (ArmsType == ArmsType.Palms ? "5 fingers" : "mighty nippers") + " on each";
         }
     }
 }

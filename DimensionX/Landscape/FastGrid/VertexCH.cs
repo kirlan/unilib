@@ -48,6 +48,14 @@ namespace LandscapeGeneration.FastGrid
         public void SetShadows(VertexCH stright)
         {
             m_pShadow = stright;
+
+            if (Position[0] != stright.Position[0] &&
+                Math.Abs(Position[0] - stright.Position[0]) != 20000f)
+                throw new Exception("Wrong shadow coordinates!");
+
+            if (Position[1] != stright.Position[1] &&
+                Math.Abs(Position[1] - stright.Position[1]) != 20000f)
+                throw new Exception("Wrong shadow coordinates!");
         }
 
         public enum Direction

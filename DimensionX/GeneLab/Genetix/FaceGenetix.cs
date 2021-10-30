@@ -55,7 +55,7 @@ namespace GeneLab.Genetix
         public string GetDescription()
         {
             string sFace = "?";
-            switch (m_eNoseType)
+            switch (NoseType)
             {
                 case NoseType.None:
                     sFace = "a flat face";
@@ -72,7 +72,7 @@ namespace GeneLab.Genetix
             }
 
             string sMouth = "?";
-            switch (m_eMouthType)
+            switch (MouthType)
             {
                 case MouthType.Normal:
                     sMouth = "small mouth";
@@ -87,37 +87,52 @@ namespace GeneLab.Genetix
                     sMouth = "a tangle of wiggling tentackles instead of mouth";
                     break;
             }
-            return sFace + (m_eNoseType == NoseType.Proboscis ? " and " : " with ") + sMouth;
+            return sFace + (NoseType == NoseType.Proboscis ? " and " : " with ") + sMouth;
         }
 
+        /// <summary>
+        /// normal nose, normal mouth
+        /// </summary>
         public static FaceGenetix Human
         {
             get { return new FaceGenetix(NoseType.Normal, MouthType.Normal); }
         }
 
+        /// <summary>
+        /// normal nose, tentakles mouth
+        /// </summary>
         public static FaceGenetix Ktulhu
         {
             get { return new FaceGenetix(NoseType.Normal, MouthType.Tentackles); }
         }
 
+        /// <summary>
+        /// snout nose, normal mouth
+        /// </summary>
         public static FaceGenetix Animal
         {
             get { return new FaceGenetix(NoseType.Snout, MouthType.Normal); }
         }
 
+        /// <summary>
+        /// no nose, beak mouth
+        /// </summary>
         public static FaceGenetix Bird
         {
             get { return new FaceGenetix(NoseType.None, MouthType.Beak); }
         }
 
+        /// <summary>
+        /// no nose, mandibles muth
+        /// </summary>
         public static FaceGenetix Insect
         {
             get { return new FaceGenetix(NoseType.None, MouthType.Mandibles); }
         }
 
-        public NoseType m_eNoseType = NoseType.Normal;
+        public NoseType NoseType { get; private set; } = NoseType.Normal;
 
-        public MouthType m_eMouthType = MouthType.Normal;
+        public MouthType MouthType { get; private set; } = MouthType.Normal;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -126,8 +141,8 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eNoseType == pAnother.m_eNoseType &&
-                m_eMouthType == pAnother.m_eMouthType;
+            return NoseType == pAnother.NoseType &&
+                MouthType == pAnother.MouthType;
         }
         
         public FaceGenetix()
@@ -135,14 +150,14 @@ namespace GeneLab.Genetix
 
         public FaceGenetix(FaceGenetix pPredcessor)
         {
-            m_eNoseType = pPredcessor.m_eNoseType;
-            m_eMouthType = pPredcessor.m_eMouthType;
+            NoseType = pPredcessor.NoseType;
+            MouthType = pPredcessor.MouthType;
         }
 
         public FaceGenetix(NoseType eNoseType, MouthType eMouthType)
         {
-            m_eNoseType = eNoseType;
-            m_eMouthType = eMouthType;
+            NoseType = eNoseType;
+            MouthType = eMouthType;
         }
         
         public GenetixBase MutateRace()
@@ -152,18 +167,23 @@ namespace GeneLab.Genetix
                 FaceGenetix pMutant = new FaceGenetix(this);
 
                 if (Rnd.OneChanceFrom(3))
-                    pMutant.m_eNoseType = (NoseType)Rnd.Get(typeof(NoseType));
+                    pMutant.NoseType = (NoseType)Rnd.Get(typeof(NoseType));
 
                 //if (Rnd.OneChanceFrom(3))
                 //    pMutant.m_eMouthType = (MouthType)Rnd.Get(typeof(MouthType));
 
-                if (pMutant.m_eMouthType == MouthType.Beak || pMutant.m_eMouthType == MouthType.Mandibles)
-                    pMutant.m_eNoseType = NoseType.None;
+                if (pMutant.MouthType == MouthType.Beak || pMutant.MouthType == MouthType.Mandibles)
+                    pMutant.NoseType = NoseType.None;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
             }
 
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
             return this;
         }
 

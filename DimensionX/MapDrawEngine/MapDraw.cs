@@ -106,39 +106,41 @@ namespace MapDrawEngine
         /// </summary>
         private const int QUADRANTS_COUNT = 8;
 
+        private const int ROUGH_SCALE = 100;
+
         /// <summary>
         /// Контуры конкретных географических регионов - для определения, над каким из них находится мышь.
-        /// В масштабе 1:100 для ускорения.
+        /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
         private Dictionary<AreaX, GraphicsPath> m_cAreaBorders = new Dictionary<AreaX, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных провинций - для определения, над какой из них находится мышь.
-        /// В масштабе 1:100 для ускорения.
+        /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
         private Dictionary<Province, GraphicsPath> m_cProvinceBorders = new Dictionary<Province, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных тектонических плит - для определения, над какой из них находится мышь.
-        /// В масштабе 1:100 для ускорения.
+        /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
         private Dictionary<LandMass<LandX>, GraphicsPath> m_cLandMassBorders = new Dictionary<LandMass<LandX>, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных земель - для определения, над какой из них находится мышь.
-        /// В масштабе 1:100 для ускорения.
+        /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
         private Dictionary<LandX, GraphicsPath> m_cLandBorders = new Dictionary<LandX, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных локаций - для определения, над какой из них находится мышь.
-        /// В масштабе 1:100 для ускорения.
+        /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
         private Dictionary<LocationX, GraphicsPath> m_cLocationBorders = new Dictionary<LocationX, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных государств - для определения, над каким из них находится мышь.
-        /// В масштабе 1:100 для ускорения.
+        /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
         private Dictionary<State, GraphicsPath> m_cStateBorders = new Dictionary<State, GraphicsPath>();
 
@@ -355,6 +357,11 @@ namespace MapDrawEngine
         /// коофициент для перевода координат из абсолютной системы координат в экранную
         /// </summary>
         private float m_fActualScale = 1;
+
+        /// <summary>
+        /// ширина "рамки" для скрытия неровного края карты - уже отмасштабированная
+        /// </summary>
+        private float m_fFrameWidth = 0f;
 
         /// <summary>
         /// коофициент для перевода координат из абсолютной системы координат в экранную
@@ -822,10 +829,6 @@ namespace MapDrawEngine
             //    m_cHegemonRaceColorsID[pRace] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, m_aRaceColorsTemplate[iIndex]);
             //}
 
-            //левый верхний угол зоны отображения - в ноль!
-            m_pDrawFrame.X = 0;
-            m_pDrawFrame.Y = 0;
-            
             PointF[][] aPoints;
             GraphicsPath pPath;
             MapQuadrant[] aQuads;
@@ -1004,7 +1007,7 @@ namespace MapDrawEngine
                     if (pProvince.m_pLocalSociety.m_pTitularNation.m_bHegemon)
                         pBrush = m_cHegemonNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.m_iMagicLimit][pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.m_eMagic];
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.m_iMagicLimit][pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Magic>()];
                     
                     foreach (MapQuadrant pQuad in aQuads)
                     {
@@ -1042,10 +1045,10 @@ namespace MapDrawEngine
                     m_aQuadrants[i, j].Normalize(fQuadX, fQuadY);
                 }
 
-            //смасштабируем используемые для определения положения курсора контуры в 100 раз - 
+            //смасштабируем используемые для определения положения курсора контуры в ROUGH_SCALE раз - 
             //для ускорения выполнения функции GraphicsPath::IsVisible(x,y)
             Matrix pScaleMatrix = new Matrix();
-            pScaleMatrix.Scale(0.01f, 0.01f);
+            pScaleMatrix.Scale(1f / ROUGH_SCALE, 1f / ROUGH_SCALE);
 
             foreach (var pPair in m_cAreaBorders)
                 pPair.Value.Transform(pScaleMatrix);
@@ -1071,6 +1074,8 @@ namespace MapDrawEngine
 
             if (m_pMiniMap != null)
                 m_pMiniMap.WorldAssigned();
+
+            SetPan(0, 0);
         }
 
 
@@ -1290,17 +1295,6 @@ namespace MapDrawEngine
         /// <param name="fDX">заданное смещение</param>
         /// <returns>смещённая точка</returns>
         private PointF ShiftPoint(IPointF pPoint, float fDX)
-        {
-            return new PointF(m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pWorld.m_pGrid.RY + pPoint.Y);
-        }
-
-        /// <summary>
-        /// Смещает начало координат из пересечения экватора и нулевого меридиана в верхний левый угол карты, плюс заданное смещение по горизонтали.
-        /// </summary>
-        /// <param name="pPoint">исходная точка</param>
-        /// <param name="fDX">заданное смещение</param>
-        /// <returns>смещённая точка</returns>
-        private PointF ShiftPoint(PointF pPoint, float fDX)
         {
             return new PointF(m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pWorld.m_pGrid.RY + pPoint.Y);
         }
@@ -1550,7 +1544,7 @@ namespace MapDrawEngine
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 980 пикселей
-            m_iScaledMapWidth = (int)(600 * m_fScaleMultiplier);
+            m_iScaledMapWidth = (int)(ClientRectangle.Width * m_fScaleMultiplier);
             //m_iScaledMapWidth = (int)(980 * m_fScaleMultiplier);
             m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
 
@@ -1560,7 +1554,9 @@ namespace MapDrawEngine
 
             //коэффициент для перевода координат из абсолютной системы координат в экранную
             if (m_pWorld != null)
-                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.m_pGrid.RX * 2);
+                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.m_pGrid.RX * 2 - m_pWorld.m_pGrid.FrameWidth * 2);
+
+            m_fFrameWidth = (float)m_pWorld.m_pGrid.FrameWidth * m_fActualScale;
 
             //если холст уже окна рисования, вычислим смещение для центрирования холста
             m_iShiftX = (ClientRectangle.Width - m_pCanvas.Width) / 2;
@@ -1644,7 +1640,7 @@ namespace MapDrawEngine
             if (m_pWorld.m_pGrid.CycleShift != 0)
                 m_pDrawFrame.X = iX;
             else
-                m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width));
+                m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth));
 
             while (m_pDrawFrame.X < 0)
                 m_pDrawFrame.X += m_iScaledMapWidth;
@@ -1652,7 +1648,19 @@ namespace MapDrawEngine
             while (m_pDrawFrame.X > m_iScaledMapWidth)
                 m_pDrawFrame.X -= m_iScaledMapWidth;
 
-            m_pDrawFrame.Y = Math.Max(0, Math.Min(iY, m_iScaledMapHeight - m_pDrawFrame.Height));
+            m_pDrawFrame.Y = Math.Max(0, Math.Min(iY, m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth));
+
+            if (m_pDrawFrame.X < (int)m_fFrameWidth)
+                m_pDrawFrame.X = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.X > m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth)
+                m_pDrawFrame.X = m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y < (int)m_fFrameWidth)
+                m_pDrawFrame.Y = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y > m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth)
+                m_pDrawFrame.Y = m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth;
 
             Draw();
 
@@ -1670,6 +1678,18 @@ namespace MapDrawEngine
             m_pDrawFrame.Y = (int)(m_fActualScale * m_pMiniMap.DrawFrame.Y / m_pMiniMap.ActualScale) - 1;
             //m_pDrawFrame.Width = (int)(m_fActualScale * m_pMiniMap.DrawFrame.Width / m_pMiniMap.m_fK);
             //m_pDrawFrame.Height = (int)(m_fActualScale * m_pMiniMap.DrawFrame.Height / m_pMiniMap.m_fK) + 1;
+
+            if (m_pDrawFrame.X < (int)m_fFrameWidth)
+                m_pDrawFrame.X = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.X > m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth)
+                m_pDrawFrame.X = m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y < (int)m_fFrameWidth)
+                m_pDrawFrame.Y = (int)m_fFrameWidth;
+
+            if (m_pDrawFrame.Y > m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth)
+                m_pDrawFrame.Y = m_iScaledMapHeight - m_pDrawFrame.Height + (int)m_fFrameWidth;
 
             Draw();
         }
@@ -1868,8 +1888,8 @@ namespace MapDrawEngine
             while (iDX >= m_iScaledMapWidth)
                 iDX -= m_iScaledMapWidth;
             pMatrix.Translate(-iDX, -m_pDrawFrame.Y);
-            //контуры государств в m_cStateBorders лежат уменьшенные в 100 раз, поэтому масштабный коэффициент здесь домножаем на 100
-            pMatrix.Scale(m_fActualScale * 100, m_fActualScale * 100);
+            //контуры государств в m_cStateBorders лежат уменьшенные в ROUGH_SCALE раз, поэтому масштабный коэффициент здесь домножаем на ROUGH_SCALE
+            pMatrix.Scale(m_fActualScale * ROUGH_SCALE, m_fActualScale * ROUGH_SCALE);
 
             GraphicsPath pPath2 = (GraphicsPath)pPath.Clone();
             pPath2.Transform(pMatrix);
@@ -1982,9 +2002,9 @@ namespace MapDrawEngine
             while (iX < 0)
                 iX += m_iScaledMapWidth;
 
-            //переведём координаты курсора из экранных в оригинальные/100 координаты
-            iX = (int)(iX / m_fActualScale) / 100;
-            iY = (int)(iY / m_fActualScale) / 100;
+            //переведём координаты курсора из экранных в оригинальные/ROUGH_SCALE координаты
+            iX = (int)(iX / m_fActualScale) / ROUGH_SCALE;
+            iY = (int)(iY / m_fActualScale) / ROUGH_SCALE;
 
             bool bContinent = false;
             if (m_pFocusedLandMass == null || !m_cLandMassBorders[m_pFocusedLandMass].IsVisible(iX, iY))
@@ -2088,9 +2108,79 @@ namespace MapDrawEngine
 
         private string GetTooltipString()
         {
+            if (m_pWorld == null)
+                return "no world";
+
             string sToolTip = "";
 
             bool bContinent = CheckMousePosition();
+
+            /*
+            {
+                sToolTip += "Mouse          X = " + m_pLastMouseLocation.X.ToString() + ", Y = " + m_pLastMouseLocation.Y.ToString() + "\n";
+                sToolTip += "Frame          X = " + m_pDrawFrame.X.ToString() + ", Y = " + m_pDrawFrame.Y.ToString() + "\n";
+                sToolTip += "Shift          X = " + m_iShiftX.ToString() + ", Y = " + m_iShiftY.ToString() + "\n";
+
+                float fX = m_pLastMouseLocation.X + m_pDrawFrame.X - m_iShiftX;
+                float fY = m_pLastMouseLocation.Y + m_pDrawFrame.Y - m_iShiftY;
+
+                sToolTip += "Scaled screen  X = " + ((int)fX).ToString() + ", Y = " + ((int)fY).ToString() + "\n";
+
+                //while (iX > m_iScaledMapWidth)
+                //    iX -= m_iScaledMapWidth;
+
+                //while (iX < 0)
+                //    iX += m_iScaledMapWidth;
+
+                //переведём координаты курсора из экранных в оригинальные/ROUGH_SCALE координаты
+                fX = fX / (m_fActualScale * ROUGH_SCALE);
+                fY = fY / (m_fActualScale * ROUGH_SCALE);
+
+                sToolTip += "Original 1:100 X = " + ((int)fX).ToString() + ", Y = " + ((int)fY).ToString() + "\n";
+
+                Matrix pMatrix = new Matrix();
+                int iDX = m_pDrawFrame.X;
+                while (iDX < 0)
+                    iDX += m_iScaledMapWidth;
+                while (iDX >= m_iScaledMapWidth)
+                    iDX -= m_iScaledMapWidth;
+                pMatrix.Translate(-iDX, -m_pDrawFrame.Y);
+                //контуры государств в m_cStateBorders лежат уменьшенные в ROUGH_SCALE раз, поэтому масштабный коэффициент здесь домножаем на ROUGH_SCALE
+                pMatrix.Scale(m_fActualScale * ROUGH_SCALE, m_fActualScale * ROUGH_SCALE);
+
+                PointF[] pPoints = { new PointF(fX, fY) };
+                pMatrix.TransformPoints(pPoints);
+                sToolTip += "Reverse        X = " + pPoints[0].X.ToString() + ", Y = " + pPoints[0].Y.ToString() + "\n";
+
+                fX = fX * ROUGH_SCALE - m_pWorld.m_pGrid.RX;
+                fY = fY * ROUGH_SCALE - m_pWorld.m_pGrid.RY;
+
+                sToolTip += "Map            X = " + ((int)fX).ToString() + ", Y = " + ((int)fY).ToString() + "\n";
+
+                if (m_pFocusedLocation != null)
+                {
+                    PointF[][] aPoints;
+                    GraphicsPath pPath;
+                    MapQuadrant[] aQuads;
+
+                    aPoints = BuildPath(m_pFocusedLocation.m_pFirstLine, true, out aQuads);
+
+                    foreach (var aPts in aPoints)
+                    {
+                        pPath = new GraphicsPath();
+                        pPath.AddPolygon(aPts);
+                        Matrix pReverseMatrix = new Matrix();
+                        pReverseMatrix.Translate(-m_pWorld.m_pGrid.RX, -m_pWorld.m_pGrid.RY);
+                        //pReverseMatrix.Scale(0.01f / m_fActualScale, 0.01f / m_fActualScale);
+                        pPath.Transform(pReverseMatrix);
+                        
+                        var pBounds = pPath.GetBounds();
+
+                        sToolTip += "Focused bounds X = (" + ((int)pBounds.X).ToString() + ", " + ((int)(pBounds.X + pBounds.Width)).ToString() + "), Y = (" + ((int)pBounds.Y).ToString() + ", " + ((int)(pBounds.Y + pBounds.Height)).ToString() + ")\n";
+                    }
+                }
+            }
+            */
 
             if (bContinent && m_pFocusedContinent != null)
                 sToolTip += m_pFocusedContinent.ToString();

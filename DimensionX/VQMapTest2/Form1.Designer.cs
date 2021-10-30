@@ -77,6 +77,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.testPathFinding1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
@@ -608,7 +609,8 @@
             // debugToolStripMenuItem2
             // 
             this.debugToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.testPathFinding1ToolStripMenuItem});
+            this.testPathFinding1ToolStripMenuItem,
+            this.hideMapToolStripMenuItem});
             this.debugToolStripMenuItem2.Name = "debugToolStripMenuItem2";
             this.debugToolStripMenuItem2.Size = new System.Drawing.Size(54, 20);
             this.debugToolStripMenuItem2.Text = "Debug";
@@ -616,9 +618,16 @@
             // testPathFinding1ToolStripMenuItem
             // 
             this.testPathFinding1ToolStripMenuItem.Name = "testPathFinding1ToolStripMenuItem";
-            this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.testPathFinding1ToolStripMenuItem.Text = "Build random path";
             this.testPathFinding1ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding1_Click);
+            // 
+            // hideMapToolStripMenuItem
+            // 
+            this.hideMapToolStripMenuItem.Name = "hideMapToolStripMenuItem";
+            this.hideMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideMapToolStripMenuItem.Text = "Hide map";
+            this.hideMapToolStripMenuItem.Click += new System.EventHandler(this.hideMapToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -780,6 +789,7 @@
             this.Name = "Form1";
             this.Text = "Dimension X Worlds Builder";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Shown += new System.EventHandler(this.Form1_Shown);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
@@ -862,6 +872,7 @@
         private System.Windows.Forms.ToolStripMenuItem repeatCreationFromPresetToolStripMenuItem;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.TabPage tabPage10;
+        private System.Windows.Forms.ToolStripMenuItem hideMapToolStripMenuItem;
     }
 }
 

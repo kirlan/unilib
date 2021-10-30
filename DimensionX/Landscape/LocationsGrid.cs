@@ -58,6 +58,7 @@ namespace LandscapeGeneration
         {
             get { return m_iRX; }
         }
+        public int FrameWidth { get; } = 0;
 
         public float CycleShift
         {
@@ -797,7 +798,7 @@ namespace LandscapeGeneration
                         {
                             VoronoiVertex pVertexLoc = new VoronoiVertex(binReader);
 
-                            cTempDicVertex[pVertexLoc.m_iID] = pVertexLoc;
+                            cTempDicVertex[pVertexLoc.m_iVertexID] = pVertexLoc;
 
                             if (ProgressStep != null)
                                 ProgressStep();

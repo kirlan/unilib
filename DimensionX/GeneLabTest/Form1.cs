@@ -55,18 +55,18 @@ namespace GeneLabTest
             LandTypes<LandTypeInfoX>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
         }
 
-        private void Mutate(Fenotype<LandTypeInfoX> pFenotype, string sName)
+        private void Mutate(Phenotype<LandTypeInfoX> pFenotype, string sName)
         {
             richTextBox1.Clear();
 
             richTextBox1.AppendText("Original race: " + sName + ".\n\r");
             richTextBox1.AppendText(sName + " " + pFenotype.GetDescription() + "\n\r");
 
-            Fenotype<LandTypeInfoX> pMutant;
+            Phenotype<LandTypeInfoX> pMutant;
 
             do
             {
-                pMutant = (Fenotype<LandTypeInfoX>)pFenotype.MutateRace();
+                pMutant = (Phenotype<LandTypeInfoX>)pFenotype.MutateRace();
             }
             while (pMutant.IsIdentical(pFenotype));
 
@@ -75,17 +75,17 @@ namespace GeneLabTest
 
             pFenotype = pMutant;
 
-            List<Fenotype<LandTypeInfoX>> cMutants = new List<Fenotype<LandTypeInfoX>>();
+            List<Phenotype<LandTypeInfoX>> cMutants = new List<Phenotype<LandTypeInfoX>>();
             for (int i = 0; i < 5; i++)
             {
                 bool bNew = false;
                 do
                 {
-                    pMutant = (Fenotype<LandTypeInfoX>)pFenotype.MutateNation();
+                    pMutant = (Phenotype<LandTypeInfoX>)pFenotype.MutateNation();
 
                     bNew = !pMutant.IsIdentical(pFenotype);
 
-                    foreach (Fenotype<LandTypeInfoX> pOldMutation in cMutants)
+                    foreach (Phenotype<LandTypeInfoX> pOldMutation in cMutants)
                         if (pMutant.IsIdentical(pOldMutation))
                             bNew = false;
 
@@ -128,7 +128,7 @@ namespace GeneLabTest
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Fenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Human,
+            Phenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Human,
                                                 HeadGenetix.Human,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,
@@ -147,7 +147,7 @@ namespace GeneLabTest
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Fenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Human,
+            Phenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Human,
                                                 HeadGenetix.Human,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,
@@ -166,7 +166,7 @@ namespace GeneLabTest
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Fenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Elf,
+            Phenotype<LandTypeInfoX> pFenotype = new Phenotype<LandTypeInfoX>(BodyGenetix.Elf,
                                                 HeadGenetix.Human,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,
@@ -185,7 +185,7 @@ namespace GeneLabTest
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Fenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Dwarf,
+            Phenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Dwarf,
                                                 HeadGenetix.Human,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,
@@ -204,7 +204,7 @@ namespace GeneLabTest
 
         private void button5_Click(object sender, EventArgs e)
         {
-            Fenotype<LandTypeInfoX> pFenotype = new Fenotype<LandTypeInfoX>(BodyGenetix.Orc,
+            Phenotype<LandTypeInfoX> pFenotype = new Phenotype<LandTypeInfoX>(BodyGenetix.Orc,
                                                 HeadGenetix.Pitecantrop,
                                                 LegsGenetix.Human,
                                                 ArmsGenetix.Human,

@@ -40,7 +40,24 @@ namespace LandscapeGeneration.FastGrid
 
                 foreach (var pEdge in pLoc.m_cBorderWith)
                 {
+                    if (!pLoc.Forbidden && ((Location)pEdge.Key).IsShaded)
+                        throw new Exception("Still shaded!");
+
                     Location.Edge pEdgeValue = pEdge.Value[0];
+
+                    var aLocations1 = pEdgeValue.m_pPoint1.m_cLocations.ToArray();
+                    foreach (var pEdgeLoc1 in aLocations1)
+                    {
+                        if (pEdgeLoc1.IsShaded)
+                            pEdgeValue.m_pPoint1.m_cLocations.Remove(pEdgeLoc1);
+                    }
+
+                    var aLocations2 = pEdgeValue.m_pPoint2.m_cLocations.ToArray();
+                    foreach (var pEdgeLoc2 in aLocations2)
+                    {
+                        if (pEdgeLoc2.IsShaded)
+                            pEdgeValue.m_pPoint2.m_cLocations.Remove(pEdgeLoc2);
+                    }
 
                     if (pEdgeValue.m_pPoint1.m_pChunkMarker != this)
                     {
@@ -109,6 +126,14 @@ namespace LandscapeGeneration.FastGrid
                 if (myLocation.IsShaded)
                 {
                     myLocation.SetShadow(loc.m_pShadow.m_iID);
+
+                    if (loc.Position[0] != loc.m_pShadow.Position[0] &&
+                        Math.Abs(loc.Position[0] - loc.m_pShadow.Position[0]) != 20000f)
+                        throw new Exception("Wrong shadow coordinates!");
+
+                    if (loc.Position[1] != loc.m_pShadow.Position[1] &&
+                        Math.Abs(loc.Position[1] - loc.m_pShadow.Position[1]) != 20000f)
+                        throw new Exception("Wrong shadow coordinates!");
                 }
                 if (loc.m_bBorder && !myLocation.IsShaded)
                     cBorders.Add(myLocation);
@@ -252,7 +277,7 @@ namespace LandscapeGeneration.FastGrid
             //{
             //    var pInnerLoc = m_aLocations[i];
 
-            //    if (pInnerLoc.Ghost)
+            //    if (!pInnerLoc.IsShaded)
             //        continue;
 
             //    foreach (var pEdge in pInnerLoc.m_cEdges)

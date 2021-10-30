@@ -51,7 +51,7 @@ namespace GeneLab.Genetix
         public string GetDescription()
         {
             string sEyes = "?";
-            switch (m_eEyesType)
+            switch (EyesType)
             {
                 case EyesType.Normal:
                     sEyes = "eye";
@@ -66,11 +66,11 @@ namespace GeneLab.Genetix
                     sEyes = "facetted eye";
                     break;
             }
-            if (m_iEyesCount > 1)
+            if (EyesCount > 1)
                 sEyes += "s";
 
             string sPlace = "?";
-            switch (m_eEyesPlacement)
+            switch (EyesPlacement)
             {
                 case EyesPlacement.Tunnel:
                     sPlace = "looking forward";
@@ -79,53 +79,72 @@ namespace GeneLab.Genetix
                     sPlace = "looking asides";
                     break;
                 case EyesPlacement.Stalks:
-                    sPlace = m_iEyesCount == 1 ? "placed on flexible stalk" : "placed on flexible stalks";
+                    sPlace = EyesCount == 1 ? "placed on flexible stalk" : "placed on flexible stalks";
                     break;
             }
 
-            return m_iEyesCount.ToString() + " " + sEyes + ", " + sPlace;
+            return EyesCount.ToString() + " " + sEyes + ", " + sPlace;
         }
 
+        // 2 normal, at front
         public static EyesGenetix Human
         {
             get { return new EyesGenetix(2, EyesType.Normal, EyesPlacement.Tunnel); }
         }
 
+        /// <summary>
+        /// 3 normal, at front
+        /// </summary>
         public static EyesGenetix Ktulhu
         {
             get { return new EyesGenetix(3, EyesType.Normal, EyesPlacement.Tunnel); }
         }
 
+        /// <summary>
+        /// 2 normal, at sides
+        /// </summary>
         public static EyesGenetix Herbivore
         {
             get { return new EyesGenetix(2, EyesType.Normal, EyesPlacement.Panoramic); }
         }
 
+        /// <summary>
+        /// 2 cat eyes, at front
+        /// </summary>
         public static EyesGenetix Cat
         {
             get { return new EyesGenetix(2, EyesType.CatEye, EyesPlacement.Tunnel); }
         }
 
+        /// <summary>
+        /// 2 fish eyes, at sides
+        /// </summary>
         public static EyesGenetix Fish
         {
             get { return new EyesGenetix(2, EyesType.FishEye, EyesPlacement.Panoramic); }
         }
 
+        /// <summary>
+        /// 2 facetted eyes, ar sides
+        /// </summary>
         public static EyesGenetix Insect
         {
             get { return new EyesGenetix(2, EyesType.Facetted, EyesPlacement.Panoramic); }
         }
 
+        /// <summary>
+        /// 8 acetted eyes, at front
+        /// </summary>
         public static EyesGenetix Spider
         {
             get { return new EyesGenetix(8, EyesType.Facetted, EyesPlacement.Tunnel); }
         }
 
-        public EyesPlacement m_eEyesPlacement = EyesPlacement.Tunnel;
+        public EyesPlacement EyesPlacement { get; private set; } = EyesPlacement.Tunnel;
 
-        public int m_iEyesCount = 2;
+        public int EyesCount { get; private set; } = 2;
 
-        public EyesType m_eEyesType = EyesType.Normal;
+        public EyesType EyesType { get; private set; } = EyesType.Normal;
 
         public bool IsIdentical(GenetixBase pOther)
         {
@@ -134,9 +153,9 @@ namespace GeneLab.Genetix
             if (pAnother == null)
                 return false;
 
-            return m_eEyesPlacement == pAnother.m_eEyesPlacement &&
-                m_iEyesCount == pAnother.m_iEyesCount &&
-                m_eEyesType == pAnother.m_eEyesType;
+            return EyesPlacement == pAnother.EyesPlacement &&
+                EyesCount == pAnother.EyesCount &&
+                EyesType == pAnother.EyesType;
         }
 
         public EyesGenetix()
@@ -144,16 +163,16 @@ namespace GeneLab.Genetix
 
         public EyesGenetix(EyesGenetix pPredcessor)
         {
-            m_eEyesPlacement = pPredcessor.m_eEyesPlacement;
-            m_eEyesType = pPredcessor.m_eEyesType;
-            m_iEyesCount = pPredcessor.m_iEyesCount;
+            EyesPlacement = pPredcessor.EyesPlacement;
+            EyesType = pPredcessor.EyesType;
+            EyesCount = pPredcessor.EyesCount;
         }
 
         public EyesGenetix(int iEyesCount, EyesType eEyesType, EyesPlacement eEyesPlacement)
         {
-            m_eEyesPlacement = eEyesPlacement;
-            m_eEyesType = eEyesType;
-            m_iEyesCount = iEyesCount;
+            EyesPlacement = eEyesPlacement;
+            EyesType = eEyesType;
+            EyesCount = iEyesCount;
         }
         
         public GenetixBase MutateRace()
@@ -163,10 +182,10 @@ namespace GeneLab.Genetix
                 EyesGenetix pMutant = new EyesGenetix(this);
 
                 if (Rnd.OneChanceFrom(5))
-                    pMutant.m_eEyesPlacement = (EyesPlacement)Rnd.Get(typeof(EyesPlacement));
+                    pMutant.EyesPlacement = (EyesPlacement)Rnd.Get(typeof(EyesPlacement));
 
                 if (Rnd.OneChanceFrom(2))
-                    pMutant.m_eEyesType = (EyesType)Rnd.Get(typeof(EyesType));
+                    pMutant.EyesType = (EyesType)Rnd.Get(typeof(EyesType));
 
                 if (Rnd.OneChanceFrom(2))
                 {
@@ -174,25 +193,64 @@ namespace GeneLab.Genetix
                     switch (iChance)
                     {
                         case 0:
-                            pMutant.m_iEyesCount = 2;
+                            pMutant.EyesCount = 2;
                             break;
                         case 1:
-                            pMutant.m_iEyesCount = 1;
+                            pMutant.EyesCount = 1;
                             break;
                         case 2:
-                            pMutant.m_iEyesCount = 3;
+                            pMutant.EyesCount = 3;
                             break;
                         case 3:
-                            pMutant.m_iEyesCount = 4;
+                            pMutant.EyesCount = 4;
                             break;
                         case 4:
-                            pMutant.m_iEyesCount = 8;
+                            pMutant.EyesCount = 8;
                             break;
                     }
                 }
 
-                if (pMutant.m_iEyesCount == 1 && pMutant.m_eEyesPlacement == EyesPlacement.Panoramic)
-                    pMutant.m_eEyesPlacement = EyesPlacement.Tunnel;
+                if (pMutant.EyesCount == 1 && pMutant.EyesPlacement == EyesPlacement.Panoramic)
+                    pMutant.EyesPlacement = EyesPlacement.Tunnel;
+
+                if (!pMutant.IsIdentical(this))
+                    return pMutant;
+            }
+
+            return this;
+        }
+
+        public GenetixBase MutateGender()
+        {
+            if (Rnd.OneChanceFrom(50))
+            {
+                EyesGenetix pMutant = new EyesGenetix(this);
+
+                if (Rnd.OneChanceFrom(2))
+                {
+                    int iChance = (int)Math.Pow(Rnd.Get(23), 2) / 100;
+                    switch (iChance)
+                    {
+                        case 0:
+                            pMutant.EyesCount = 2;
+                            break;
+                        case 1:
+                            pMutant.EyesCount = 1;
+                            break;
+                        case 2:
+                            pMutant.EyesCount = 3;
+                            break;
+                        case 3:
+                            pMutant.EyesCount = 4;
+                            break;
+                        case 4:
+                            pMutant.EyesCount = 8;
+                            break;
+                    }
+                }
+
+                if (pMutant.EyesCount == 1 && pMutant.EyesPlacement == EyesPlacement.Panoramic)
+                    pMutant.EyesPlacement = EyesPlacement.Tunnel;
 
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
