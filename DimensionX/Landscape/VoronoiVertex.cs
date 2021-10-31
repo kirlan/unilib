@@ -69,6 +69,13 @@ namespace LandscapeGeneration
             //проходим по всем локациям, связанным к "неправильной" вершиной
             foreach (Location pLinkedLoc in cTemp)
                 pLinkedLoc.ReplaceVertex(this, pGood);
+
+            foreach (VoronoiVertex pLinkedVertex in m_cVertexes)
+            {
+                pLinkedVertex.m_cVertexes.Remove(this);
+                if (!pLinkedVertex.m_cVertexes.Contains(pGood))
+                    pLinkedVertex.m_cVertexes.Add(pGood);
+            }
         }
 
         public VoronoiVertex()

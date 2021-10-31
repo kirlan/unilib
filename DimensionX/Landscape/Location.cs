@@ -34,6 +34,12 @@ namespace LandscapeGeneration
                 m_pPoint1 = pPoint1;
                 m_pPoint2 = pPoint2;
 
+                if (!m_pPoint1.m_cVertexes.Contains(m_pPoint2))
+                    m_pPoint1.m_cVertexes.Add(m_pPoint2);
+
+                if (!m_pPoint2.m_cVertexes.Contains(m_pPoint1))
+                    m_pPoint2.m_cVertexes.Add(m_pPoint1);
+
                 m_fLength = (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
             }
 
