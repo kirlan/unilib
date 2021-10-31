@@ -16,6 +16,8 @@ namespace LandscapeGeneration
 
         protected float m_fH = float.NaN;
 
+        protected float fDepth = 0;
+
         public float X
         {
             get { return m_fX; }
@@ -33,6 +35,8 @@ namespace LandscapeGeneration
             get { return m_fH; }
             set { m_fH = value; }
         }
+
+        public float Depth { get => fDepth; set => fDepth = value; }
 
         private static long s_iCounter = 0;
 

@@ -29,6 +29,8 @@ namespace LandscapeGeneration
 
             public Edge m_pNext = null;
 
+            public IRiver m_pRiver = null;
+
             public Edge(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
             {
                 m_pPoint1 = pPoint1;

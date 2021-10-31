@@ -22,6 +22,8 @@ namespace LandscapeGeneration
 
         public LAND[] m_aLands = null;
 
+        public River<LOC, LAND, LTI>[] m_aRivers = null;
+
         public LandMass<LAND>[] m_aLandMasses = null;
 
         public CONT[] m_aContinents = null;
@@ -160,12 +162,16 @@ namespace LandscapeGeneration
 
             BuildContinents(BeginStep, ProgressStep);
 
+            AssignLands(BeginStep, ProgressStep);
+
+            CalculateElevations(BeginStep, ProgressStep);
+
+            AddRivers(BeginStep, ProgressStep);
+
             BuildAreas(BeginStep, ProgressStep);
 
             SmoothAreas();
             
-            CalculateElevations(BeginStep, ProgressStep);
-
             AddPeaks();
 
             BuildTransportGrid(BeginStep, ProgressStep);
@@ -735,6 +741,63 @@ namespace LandscapeGeneration
             }
         }
 
+        /// <summary>
+        /// Добавляет реки
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
+        private void AddRivers(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        {
+            BeginStep("Adding rivers...", m_pGrid.RX * 4);
+
+            Dictionary<LOC, float> cMouthChance = new Dictionary<LOC, float>();
+            foreach (LAND pLand in m_aLands)
+            {
+                if (pLand.Type != LandTypes<LTI>.Coastral)
+                    continue;
+
+                foreach (LOC pLoc in pLand.m_cContents)
+                {
+                    int iCoastralEdges = 0;
+                    foreach (LOC pLink in pLoc.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden || pLink.Owner == null || pLink.Owner == pLand)
+                            continue;
+
+                        if (!(pLink.Owner as LAND).Type.m_eEnvironment.HasFlag(Environment.Liquid))
+                        {
+                            iCoastralEdges++;
+                        }
+                    }
+
+                    if (iCoastralEdges > 1)
+                        cMouthChance[pLoc] = iCoastralEdges - 1;
+                }
+            }
+
+            float fTotalRiversLength = 0f;
+            List<River<LOC, LAND, LTI>> cRivers = new List<River<LOC, LAND, LTI>>();
+            while (fTotalRiversLength < m_pGrid.RX * 4 && cMouthChance.Count > 0)
+            {
+                int iChances = Rnd.ChooseOne(cMouthChance.Values);
+
+                LOC pMouth = cMouthChance.Keys.ElementAt(iChances);
+                cMouthChance.Remove(pMouth);
+
+                River<LOC, LAND, LTI> cRiver = new River<LOC, LAND, LTI>(pMouth);
+                if (cRiver.Length > 0f)
+                {
+                    cRivers.Add(cRiver);
+                    fTotalRiversLength += cRiver.Length;
+                }
+            }
+
+            m_aRivers = cRivers.ToArray();
+
+            ProgressStep();
+        }
+
+
 
         private float GetTemperature(VoronoiVertex pVertex)
         {
@@ -824,11 +887,11 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Распределяет типы территорий и объединяет смежные земли с одинаковым типом территории в "зоны"
+        /// Распределяет типы территорий
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildAreas(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        private void AssignLands(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             //Make seas
             foreach (LAND pLand in m_aLands)
@@ -901,7 +964,15 @@ namespace LandscapeGeneration
 
                 ProgressStep();
             }
+        }
 
+        /// <summary>
+        /// Объединяет смежные земли с одинаковым типом территории в "зоны"
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
+        private void BuildAreas(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        { 
             BeginStep("Building areas...", m_aContinents.Length);
             //Gathering areas of the same land type
             foreach (CONT pContinent in m_aContinents)
@@ -910,6 +981,7 @@ namespace LandscapeGeneration
                 ProgressStep();
             }
         }
+
         public float m_fMaxDepth = 0;
         public float m_fMaxHeight = 0;
 
@@ -970,8 +1042,7 @@ namespace LandscapeGeneration
                             if (pLink.Forbidden || pLink.Owner == null || pLink.Owner == pLand)
                                 continue;
 
-                            if ((pLink.Owner as LAND).Type != LandTypes<LTI>.Ocean &&
-                                (pLink.Owner as LAND).Type != LandTypes<LTI>.Coastral)
+                            if (!(pLink.Owner as LAND).Type.m_eEnvironment.HasFlag(Environment.Liquid))
                             {
                                 if (!cOcean.Contains(pLoc))
                                     cOcean.Add(pLoc);

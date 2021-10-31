@@ -64,6 +64,7 @@
     <Compile Include="FastGrid\ChunksGrid.cs" />
     <Compile Include="FastGrid\VertexCH.cs" />
     <Compile Include="Poisson.cs" />
+    <Compile Include="River.cs" />
     <Compile Include="Territory.cs" />
     <Compile Include="Continent.cs" />
     <Compile Include="Interfaces\ITerritory.cs" />

@@ -73,6 +73,7 @@ namespace MapDrawEngine
         internal Dictionary<MapLayer, GraphicsPath> m_cLayers = new Dictionary<MapLayer,GraphicsPath>();
         internal Dictionary<MapMode, Dictionary<Brush, GraphicsPath>> m_cModes = new Dictionary<MapMode,Dictionary<Brush,GraphicsPath>>();
         internal Dictionary<RoadType, GraphicsPath> m_cRoadsMap = new Dictionary<RoadType, GraphicsPath>();
+        internal Dictionary<int, GraphicsPath> m_cRiversMap = new Dictionary<int, GraphicsPath>();
 
         public MapQuadrant()
         {
@@ -84,6 +85,8 @@ namespace MapDrawEngine
 
             foreach (RoadType eRoadType in Enum.GetValues(typeof(RoadType)))
                 m_cRoadsMap[eRoadType] = new GraphicsPath();
+
+            m_cRiversMap[1] = new GraphicsPath();
         }
 
         internal void Clear()
@@ -98,6 +101,9 @@ namespace MapDrawEngine
 
             foreach (var pRoadType in m_cRoadsMap)
                 pRoadType.Value.Reset();
+
+            foreach (var pRiverType in m_cRiversMap)
+                pRiverType.Value.Reset();
         }
 
         /// <summary>
@@ -124,6 +130,9 @@ namespace MapDrawEngine
 
             foreach (var pRoadType in m_cRoadsMap)
                 pRoadType.Value.Transform(pMatrix);
+
+            foreach (var pRiverType in m_cRiversMap)
+                pRiverType.Value.Transform(pMatrix);
 
             DateTime pTime2 = DateTime.Now;
         }
@@ -219,6 +228,25 @@ namespace MapDrawEngine
                 //pPath.Transform(pMatrix);
                 //gr.DrawPath(MapDraw.s_pAqua1DotPen, pPath);
             }
+        }
+
+        /// <summary>
+        /// Рисует реки
+        /// </summary>
+        /// <param name="gr">куда рисовать</param>
+        /// <param name="fScaleMultiplier">уровень мастабирования (в зависимости от него будем выбирать толщину перьев)</param>
+        /// <param name="fDX">экранная X-координата левого верхнего угла квадранта</param>
+        /// <param name="fDY">экранная Y-координата левого верхнего угла квадранта</param>
+        /// <param name="fScale">масштаб (экранные кординаты : абсолютные)</param>
+        internal void DrawRivers(Graphics gr, float fScaleMultiplier, float fDX, float fDY, float fScale)
+        {
+            Matrix pMatrix = new Matrix();
+            pMatrix.Translate(fDX, fDY);
+            pMatrix.Scale(fScale, fScale);
+
+            GraphicsPath pPath = (GraphicsPath)m_cRiversMap[1].Clone();
+            pPath.Transform(pMatrix);
+            gr.DrawPath(MapDraw.s_pAqua2Pen, pPath);
         }
 
         /// <summary>
