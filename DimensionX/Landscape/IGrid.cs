@@ -12,5 +12,6 @@
         int RY { get; }
 
         int FrameWidth { get; }
+        VoronoiVertex[] Vertexes { get; }
     }
 }

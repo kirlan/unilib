@@ -87,7 +87,7 @@ namespace Socium
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
                 foreach (Location.Edge pLine in pBorder.Value)
-                    PerimeterLength += pLine.m_fLength;
+                    PerimeterLength += pLine.Length;
         }
 
         public Province m_pMethropoly = null;
@@ -190,7 +190,7 @@ namespace Socium
 
                     float fSharedPerimeter = 0;
                     foreach (var pLine in m_cBorder[pProvince])
-                        fSharedPerimeter += pLine.m_fLength;
+                        fSharedPerimeter += pLine.Length;
 
                     fSharedPerimeter /= pProvince.PerimeterLength;
 
@@ -617,11 +617,11 @@ namespace Socium
                         Location.Edge[] cLines = pLinkedTerr.Value.ToArray();
                         foreach (var pLine in cLines)
                         {
-                            fBorder += pLine.m_fLength / pLinkedLand.MovementCost;
+                            fBorder += pLine.Length / pLinkedLand.MovementCost;
                             if (pLinkedLand.m_pProvince == null)
-                                fTreat += pLine.m_fLength / pLinkedLand.MovementCost;
+                                fTreat += pLine.Length / pLinkedLand.MovementCost;
                             else
-                                fTreat += pLine.m_fLength * (float)Math.Sqrt(iHostility) / pLinkedLand.MovementCost;
+                                fTreat += pLine.Length * (float)Math.Sqrt(iHostility) / pLinkedLand.MovementCost;
                         }
                     }
 

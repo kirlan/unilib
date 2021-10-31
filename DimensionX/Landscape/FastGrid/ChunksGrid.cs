@@ -421,7 +421,10 @@ namespace LandscapeGeneration.FastGrid
         }
 
         private LOC[] m_aLocations;
+
         public VoronoiVertex[] m_aVertexes;
+
+        public VoronoiVertex[] Vertexes { get => m_aVertexes; }
 
         public LOC[] Locations { get => m_aLocations; set => m_aLocations = value; }
 

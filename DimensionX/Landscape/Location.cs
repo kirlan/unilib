@@ -23,7 +23,9 @@ namespace LandscapeGeneration
             public VoronoiVertex m_pPoint1;
             public VoronoiVertex m_pPoint2;
 
-            public float m_fLength;
+            private float m_fLength;
+
+            public float Length { get => m_fLength; }
 
             public Edge m_pNext = null;
 
@@ -32,16 +34,16 @@ namespace LandscapeGeneration
                 m_pPoint1 = pPoint1;
                 m_pPoint2 = pPoint2;
 
-                m_fLength = (float)Math.Sqrt((pPoint1.m_fX - pPoint2.m_fX) * (pPoint1.m_fX - pPoint2.m_fX) + (pPoint1.m_fY - pPoint2.m_fY) * (pPoint1.m_fY - pPoint2.m_fY));
+                m_fLength = (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
             }
 
             private void CalcLength(float fCycle)
             {
-                float fPoint1X = m_pPoint1.m_fX;
-                float fPoint1Y = m_pPoint1.m_fY;
+                float fPoint1X = m_pPoint1.X;
+                float fPoint1Y = m_pPoint1.Y;
 
-                float fPoint2X = m_pPoint2.m_fX;
-                float fPoint2Y = m_pPoint2.m_fY;
+                float fPoint2X = m_pPoint2.X;
+                float fPoint2Y = m_pPoint2.Y;
 
                 if (fPoint2X + fCycle / 2 < fPoint1X)
                     fPoint2X += fCycle;
@@ -52,19 +54,13 @@ namespace LandscapeGeneration
             }
 
             public Edge(Edge pOriginal)
+                :this(pOriginal.m_pPoint1, pOriginal.m_pPoint2)
             {
-                m_pPoint1 = pOriginal.m_pPoint1;
-                m_pPoint2 = pOriginal.m_pPoint2;
-
-                m_fLength = pOriginal.m_fLength;
             }
 
             public Edge(BinaryReader binReader, Dictionary<long, VoronoiVertex> cVertexes)
+                :this(cVertexes[binReader.ReadInt64()], cVertexes[binReader.ReadInt64()])
             {
-                m_pPoint1 = cVertexes[binReader.ReadInt64()];
-                m_pPoint2 = cVertexes[binReader.ReadInt64()];
-
-                m_fLength = (float)Math.Sqrt((m_pPoint1.m_fX - m_pPoint2.m_fX) * (m_pPoint1.m_fX - m_pPoint2.m_fX) + (m_pPoint1.m_fY - m_pPoint2.m_fY) * (m_pPoint1.m_fY - m_pPoint2.m_fY));
             }
 
             public void Save(BinaryWriter binWriter)
@@ -75,7 +71,7 @@ namespace LandscapeGeneration
 
             public override string ToString()
             {
-                return string.Format("({0}) - ({1}), Length {2}", m_pPoint1, m_pPoint2, m_fLength);
+                return string.Format("({0}) - ({1}), Length {2}", m_pPoint1, m_pPoint2, Length);
             }
 
         }
@@ -257,7 +253,7 @@ namespace LandscapeGeneration
             m_iShadow = stright;
         }
 
-        public Dictionary<object, List<Edge>> m_cBorderWith = new Dictionary<object, List<Edge>>();
+        private Dictionary<object, List<Edge>> m_cBorderWith = new Dictionary<object, List<Edge>>();
 
         public Edge m_pFirstLine = null;
 
@@ -310,7 +306,7 @@ namespace LandscapeGeneration
             {
                 cTotalBorder.AddRange(cEdges.Value);
                 foreach (Edge pEdge in cEdges.Value)
-                    m_fPerimeter += pEdge.m_fLength;
+                    m_fPerimeter += pEdge.Length;
             } 
             
             List<Edge> cSequence = new List<Edge>();
@@ -326,9 +322,9 @@ namespace LandscapeGeneration
 
                     if (!cSequence.Contains(pEdge.Value[0]) &&
                         (pEdge.Value[0].m_pPoint1 == pLast.m_pPoint2 ||
-                         (pEdge.Value[0].m_pPoint1.m_fY == pLast.m_pPoint2.m_fY &&
-                          (pEdge.Value[0].m_pPoint1.m_fX == pLast.m_pPoint2.m_fX ||
-                           Math.Abs(pEdge.Value[0].m_pPoint1.m_fX - pLast.m_pPoint2.m_fX) == fCycleShift))))
+                         (pEdge.Value[0].m_pPoint1.Y == pLast.m_pPoint2.Y &&
+                          (pEdge.Value[0].m_pPoint1.X == pLast.m_pPoint2.X ||
+                           Math.Abs(pEdge.Value[0].m_pPoint1.X - pLast.m_pPoint2.X) == fCycleShift))))
                     {
                         pLast = pEdge.Value[0];
                         cSequence.Add(pLast);
@@ -370,9 +366,9 @@ namespace LandscapeGeneration
             Edge pLine = m_pFirstLine;
             do
             {
-                fX += pLine.m_fLength * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
-                fY += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
-                fLength += pLine.m_fLength;
+                fX += pLine.Length * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
+                fY += pLine.Length * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                fLength += pLine.Length;
 
                 pLine = pLine.m_pNext;
             }

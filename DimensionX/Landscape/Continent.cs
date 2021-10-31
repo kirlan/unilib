@@ -57,7 +57,7 @@ namespace LandscapeGeneration
                     {
                         cBorderLength[pLM] = 0;
                         foreach (var pLine in pLandMass.Value)
-                            cBorderLength[pLM] += pLine.m_fLength;
+                            cBorderLength[pLM] += pLine.Length;
                     }
                 }
             }

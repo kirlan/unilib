@@ -55,7 +55,7 @@ namespace Socium
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
                 foreach (var pLine in pBorder.Value)
-                    PerimeterLength += pLine.m_fLength;
+                    PerimeterLength += pLine.Length;
         }
 
         public LandX m_pCenter;
@@ -232,7 +232,7 @@ namespace Socium
                         float fSharedPerimeter = 1;
                         Location.Edge[] aBorderLine = m_cBorder[pLinkedLand].ToArray();
                         foreach (var pLine in aBorderLine)
-                            fSharedPerimeter += pLine.m_fLength;
+                            fSharedPerimeter += pLine.Length;
 
                         //fCommonLength /= fTotalLength;
 

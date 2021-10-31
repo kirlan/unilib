@@ -66,7 +66,7 @@ namespace LandscapeGeneration
                     float fWholeLength = 1;
                     Location.Edge[] aBorderLine = m_cBorder[pLand].ToArray();
                     foreach (var pLine in aBorderLine)
-                        fWholeLength += pLine.m_fLength;
+                        fWholeLength += pLine.Length;
 
                     foreach (var pLinkTerr in pLand.BorderWith)
                     {

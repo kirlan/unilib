@@ -49,10 +49,10 @@ namespace LandscapeGeneration
 
                     Location.Edge pLine = aTotalBorder[j];
                     if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
-                                pLine.m_pPoint1.m_fY == pCurrentLine.m_pPoint2.m_fY)
+                                pLine.m_pPoint1.Y == pCurrentLine.m_pPoint2.Y)
                         bGot1 = true;
                     if (pLine.m_pPoint2 == pCurrentLine.m_pPoint1 ||
-                                pLine.m_pPoint2.m_fY == pCurrentLine.m_pPoint1.m_fY)
+                                pLine.m_pPoint2.Y == pCurrentLine.m_pPoint1.Y)
                         bGot2 = true;
 
                     if (bGot1 && bGot2)
@@ -102,10 +102,10 @@ namespace LandscapeGeneration
                 if (fRelativeX2 < aTotalBorder[0].m_pPoint1.X - fCycleShift / 2)
                     fRelativeX2 += fCycleShift;
 
-                X += pLine.m_fLength * (fRelativeX1 + fRelativeX2) / 2;
-                Y += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
-                H += pLine.m_fLength * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
-                fPerimeter += pLine.m_fLength;
+                X += pLine.Length * (fRelativeX1 + fRelativeX2) / 2;
+                Y += pLine.Length * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                H += pLine.Length * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
+                fPerimeter += pLine.Length;
             }
             X /= fPerimeter;
             Y /= fPerimeter;

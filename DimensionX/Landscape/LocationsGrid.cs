@@ -78,7 +78,9 @@ namespace LandscapeGeneration
 
         private LOC[] m_aLocations = null;
 
-        public VoronoiVertex[] m_aVertexes = null;
+        private VoronoiVertex[] m_aVertexes = null;
+
+        public VoronoiVertex[] Vertexes { get => m_aVertexes; }
 
         public WorldShape m_eShape = WorldShape.Plain;
 
@@ -287,7 +289,7 @@ namespace LandscapeGeneration
                 if (pLoc2 != null)
                 {
                     Location.Edge pLine = new Location.Edge(pVertexA, pVertexB);
-                    if (pLine.m_fLength > 0)
+                    if (pLine.Length > 0)
                     {
                         foreach (List<Location.Edge> cLines in pLoc1.BorderWith.Values)
                             if (cLines[0].m_pPoint1 == pVertexA)
@@ -317,9 +319,9 @@ namespace LandscapeGeneration
                 if (pLoc1 != null)
                 {
                     Location.Edge pLine = new Location.Edge(pVertexB, pVertexA);
-                    if (pLine.m_fLength > 0)
+                    if (pLine.Length > 0)
                     {
-                        foreach (List<Location.Edge> cLines in pLoc2.m_cBorderWith.Values)
+                        foreach (List<Location.Edge> cLines in pLoc2.BorderWith.Values)
                             if (cLines[0].m_pPoint1 == pVertexB)
                                 throw new Exception("Wrong edge!");
                         //if (!bTwin)
@@ -841,7 +843,7 @@ namespace LandscapeGeneration
                         {
                             foreach (var ID in pLoc.m_cBorderWithID)
                             {
-                                pLoc.m_cBorderWith[cTempDic[ID.Key]] = ID.Value;
+                                pLoc.BorderWith[cTempDic[ID.Key]] = ID.Value;
                             }
                             pLoc.m_cBorderWithID.Clear();
                             pLoc.FillBorderWithKeys();

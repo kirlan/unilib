@@ -71,7 +71,7 @@ namespace LandscapeGeneration
             m_fPerimeter = 0;
             foreach (var pBorder in m_cBorderWith)
                 foreach (var pLine in pBorder.Value)
-                    m_fPerimeter += pLine.m_fLength;
+                    m_fPerimeter += pLine.Length;
         }
 
         public override void Start(INNER pSeed)
@@ -102,7 +102,7 @@ namespace LandscapeGeneration
                     float fWholeLength = 1;
                     Location.Edge[] aBorderLine = pInner.Value.ToArray();
                     foreach (var pLine in aBorderLine)
-                        fWholeLength += pLine.m_fLength;
+                        fWholeLength += pLine.Length;
 
                     fWholeLength /= pInnerTerritory.PerimeterLength;
 

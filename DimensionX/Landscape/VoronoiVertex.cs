@@ -11,10 +11,10 @@ namespace LandscapeGeneration
 {
     public class VoronoiVertex : IPointF
     {
-        public float m_fX = 0;
-        public float m_fY = 0;
-        
-        public float m_fH = float.NaN;
+        protected float m_fX = 0;
+        protected float m_fY = 0;
+
+        protected float m_fH = float.NaN;
 
         public float X
         {
