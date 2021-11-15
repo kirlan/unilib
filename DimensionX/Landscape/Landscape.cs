@@ -11,11 +11,10 @@ using LandscapeGeneration.FastGrid;
 
 namespace LandscapeGeneration
 {
-    public class Landscape<LOC, LAND, AREA, CONT, LTI>
+    public class Landscape<LOC, LAND, CONT, LTI>
         where LOC:Location, new()
         where LAND:Land<LOC, LTI>, new()
-        where AREA:Area<LAND, LTI>, new()
-        where CONT:Continent<AREA, LAND, LTI>, new()
+        where CONT:Continent<LAND, LTI>, new()
         where LTI:LandTypeInfo, new()
     {
         public IGrid<LOC> m_pGrid = null;
@@ -162,7 +161,7 @@ namespace LandscapeGeneration
 
             BuildAreas(BeginStep, ProgressStep);
 
-            SmoothAreas();
+            SmoothBiomes();
             
             CalculateElevations(BeginStep, ProgressStep);
 
@@ -203,47 +202,110 @@ namespace LandscapeGeneration
             }
         }
 
-        private void SmoothAreas()
+        private class Biome : BorderBuilder<LAND>
+        {
+            public HashSet<LAND> m_cContents = new HashSet<LAND>();
+            public Biome(LAND pSeed, float fCycleShift)
+            {
+                base.Start(pSeed);
+
+                m_cContents.Add(pSeed);
+
+                bool bAdded;
+                do
+                {
+                    bAdded = false;
+
+                    object[] aBorderLands = new List<object>(m_cBorder.Keys).ToArray();
+                    foreach (ITerritory pTerr in aBorderLands)
+                    {
+                        if (pTerr.Forbidden)
+                            continue;
+
+                        LAND pLand = pTerr as LAND;
+
+                        if (pLand.Type == pSeed.Type && !m_cContents.Contains(pLand))
+                        {
+                            m_cContents.Add(pLand);
+
+                            m_cBorder[pLand].Clear();
+                            m_cBorder.Remove(pLand);
+
+                            foreach (var pBorderLand in pLand.BorderWith)
+                            {
+                                if (m_cContents.Contains(pBorderLand.Key))
+                                    continue;
+
+                                if (!m_cBorder.ContainsKey(pBorderLand.Key))
+                                    m_cBorder[pBorderLand.Key] = new List<Location.Edge>();
+                                Location.Edge[] cLines = pBorderLand.Value.ToArray();
+                                foreach (var pLine in cLines)
+                                    m_cBorder[pBorderLand.Key].Add(new Location.Edge(pLine));
+                            }
+
+                            bAdded = true;
+                        }
+                    }
+                }
+                while (bAdded);
+
+                ChainBorder(fCycleShift);
+            }
+
+            public override float GetMovementCost() { return 0; }
+        }
+
+        private void SmoothBiomes()
         {
             foreach (CONT pCont in m_aContinents)
             {
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Plains)
-                        SmoothBorder(pArea.m_cOrdered);
+                Dictionary<LTI, List<Biome>> cBiomes = new Dictionary<LTI, List<Biome>>();
+                foreach (var pLandType in LandTypes<LTI>.m_pInstance.m_pLandTypes)
+                    cBiomes[pLandType.Value] = new List<Biome>();
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Savanna)
-                        SmoothBorder(pArea.m_cOrdered);
+                HashSet<LAND> cProcessedLands = new HashSet<LAND>();
+                foreach (var pLandMass in pCont.m_cContents)
+                {
+                    foreach (var pLand in pLandMass.m_cContents)
+                    {
+                        if (!pLand.Forbidden && !cProcessedLands.Contains(pLand))
+                        {
+                            Biome pNewBiome = new Biome(pLand, m_pGrid.CycleShift);
+                            cBiomes[pLand.Type].Add(pNewBiome);
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Tundra)
-                        SmoothBorder(pArea.m_cOrdered);
+                            cProcessedLands.UnionWith(pNewBiome.m_cContents);
+                        }
+                    }
+                }
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Swamp)
-                        SmoothBorder(pArea.m_cOrdered);
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Plains])
+                    SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Desert)
-                        SmoothBorder(pArea.m_cOrdered);
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Savanna])
+                    SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Forest)
-                        SmoothBorder(pArea.m_cOrdered);
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Tundra])
+                    SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Jungle)
-                        SmoothBorder(pArea.m_cOrdered);
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Swamp])
+                    SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Taiga)
-                        SmoothBorder(pArea.m_cOrdered);
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Desert])
+                    SmoothBorder(pBiome.m_cOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Forest])
+                    SmoothBorder(pBiome.m_cOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Jungle])
+                    SmoothBorder(pBiome.m_cOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Taiga])
+                    SmoothBorder(pBiome.m_cOrdered);
 
                 SmoothBorder(pCont.m_cOrdered);
 
-                foreach (AREA pArea in pCont.m_cAreas)
-                    if (pArea.m_pType.m_eType == LandType.Mountains)
-                        SmoothBorder(pArea.m_cOrdered);
+                foreach (Biome pBiome in cBiomes[LandTypes<LTI>.Mountains])
+                    SmoothBorder(pBiome.m_cOrdered);
             }
 
             foreach (LOC pLoc in m_pGrid.Locations)
@@ -899,14 +961,6 @@ namespace LandscapeGeneration
                         pLand.Type = LandTypes<LTI>.Forest;
                 }
 
-                ProgressStep();
-            }
-
-            BeginStep("Building areas...", m_aContinents.Length);
-            //Gathering areas of the same land type
-            foreach (CONT pContinent in m_aContinents)
-            {
-                pContinent.BuildAreas(m_pGrid.CycleShift, m_iLandsCount / 100);
                 ProgressStep();
             }
         }

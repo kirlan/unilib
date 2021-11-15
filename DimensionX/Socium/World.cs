@@ -17,7 +17,7 @@ using GeneLab.Genetix;
 
 namespace Socium
 {
-    public class World : Landscape<LocationX, LandX, AreaX, ContinentX, LandTypeInfoX>
+    public class World : Landscape<LocationX, LandX, ContinentX, LandTypeInfoX>
     {
         public Province[] m_aProvinces = null;
 
@@ -344,6 +344,7 @@ namespace Socium
                 //List<Race> cSettledDyingRaces = new List<Race>();
                 //переберём все пригодные для заселения и незаселённые территории
                 foreach (AreaX pArea in pConti.m_cAreas)
+                {
                     if (!pArea.IsWater && pArea.m_pNation == null)
                     {
                         //составим список тектонических плит, к которым принадлежит рассматриваемая территория
@@ -368,7 +369,7 @@ namespace Socium
                             foreach (LandMass<LandX> pLandMass in cLandMasses)
                                 foreach (ITerritory pLinkedLM in pLandMass.m_aBorderWith)
                                 {
-                                    if(pLinkedLM.Forbidden)
+                                    if (pLinkedLM.Forbidden)
                                         continue;
                                     LandMass<LandX> pLinkedLandMass = pLinkedLM as LandMass<LandX>;
                                     if (!pLinkedLandMass.IsWater && !cLandMasses2.Contains(pLinkedLandMass))
@@ -386,13 +387,14 @@ namespace Socium
                             //cAvailableRaces.AddRange(cDyingRaces);
                             //cAvailableRaces.AddRange(cHegemonRaces);
                             pArea.SetRace(cAvailableNations);
-                            
+
                             //if (cDyingRaces.Contains(pArea.m_pRace))
                             //    cSettledDyingRaces.Add(pArea.m_pRace);
                         }
                         else
                             pArea.SetRace(cAvailableContinentNations);
                     }
+                }
             }
         }
 
@@ -504,6 +506,8 @@ namespace Socium
                             BeginStepDelegate BeginStep,
                             ProgressStepDelegate ProgressStep)
         {
+            BuildAreas(BeginStep, ProgressStep);
+
             foreach (Race pRace in Race.m_cAllRaces)
                 pRace.ResetNations();
             Language.ResetUsedLists();
@@ -530,6 +534,18 @@ namespace Socium
 
                 BeginStep("Simulating history - " + pEpoch.m_sName + " (" + pEpoch.m_iLength.ToString() + ")...", 8);
                 PopulateWorld(pEpoch, iCounter == 0, BeginStep, ProgressStep);
+            }
+        }
+
+        public void BuildAreas(BeginStepDelegate BeginStep,
+                            ProgressStepDelegate ProgressStep)
+        {
+            BeginStep("Building areas...", m_aContinents.Length);
+            //Gathering areas of the same land type
+            foreach (ContinentX pContinent in m_aContinents)
+            {
+                pContinent.BuildAreas(m_pGrid.CycleShift, m_aLands.Length / 100);
+                ProgressStep();
             }
         }
 

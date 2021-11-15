@@ -6,19 +6,14 @@ using Random;
 
 namespace LandscapeGeneration
 {
-    public class Continent<AREA, LAND, LTI> : Territory<LandMass<LAND>>
-        where AREA: Area<LAND, LTI>, new()
+    public class Continent<LAND, LTI> : Territory<LandMass<LAND>>
         where LAND: class, ITypedLand<LTI>, ITerritory
         where LTI: LandTypeInfo
     {
-        public List<AREA> m_cAreas = new List<AREA>();
-
         private bool m_bIsland = false;
 
         public override void  Start(LandMass<LAND> pSeed)
         {
-            m_cAreas.Clear();
-
             if (pSeed.IsWater)
                 return;
 
@@ -102,20 +97,6 @@ namespace LandscapeGeneration
             //ChainBorder();
 
             return pAddon;
-        }
-
-        public void BuildAreas(float fCycleShift, int iMaxSize)
-        {
-            foreach (LandMass<LAND> pLandMass in m_cContents)
-                foreach (LAND pLand in pLandMass.m_cContents)
-                    if (!pLand.Forbidden && pLand.Area == null)
-                    {
-                        AREA pArea = new AREA();
-                        pArea.Start(pLand, iMaxSize);
-                        while (pArea.Grow()) { }
-                        pArea.Finish(fCycleShift);
-                        m_cAreas.Add(pArea);
-                    }
         }
     }
 }
