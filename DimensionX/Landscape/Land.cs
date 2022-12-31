@@ -8,17 +8,9 @@ using Random;
 namespace LandscapeGeneration
 {
     public class Land<LOC, LTI> : Territory<LOC>, IPointF, ITypedLand<LTI>
-        where LOC:Location
-        where LTI:LandTypeInfo
+        where LOC: Location
+        where LTI: LandTypeInfo
     {
-        private object m_pArea = null;
-
-        public object Area
-        {
-            get { return m_pArea; }
-            set { m_pArea = value; }
-        }
-
         private LTI m_pType = null;
 
         public LTI Type

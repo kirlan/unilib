@@ -16,6 +16,10 @@ namespace Socium
         public float m_fCost = 0;
     }
 
+    /// <summary>
+    /// расширение LandscapeGeneration.Location
+    /// добавляет имя, ссылку на поселение, дороги, отдельностоящие постройки (aka логова)
+    /// </summary>
     public class LocationX : Location
     {
         public string m_sName = "";
@@ -72,44 +76,6 @@ namespace Socium
             {
                 return OwnerProvince.Owner as State;
             }
-        }
-
-        public bool HaveEstate(Estate.Position eEstate)
-        {
-            StateSociety pOwnerSociety = OwnerState.m_pSociety;
-
-            if (m_pSettlement != null && pOwnerSociety.m_cEstates.ContainsKey(eEstate))
-            {
-                Estate pEstate = pOwnerSociety.m_cEstates[eEstate];
-
-                foreach (Building pBuilding in m_pSettlement.m_cBuildings)
-                {
-                    if (pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pOwnerProfession))
-                    {
-                        List<Person> cOwners = new List<Person>();
-                        foreach (Person pDweller in pBuilding.m_cPersons)
-                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pOwnerProfession)
-                                cOwners.Add(pDweller);
-
-                        if (cOwners.Count < pBuilding.m_pInfo.OwnersCount)
-                            return true;
-                    }
-
-                    if (pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pWorkersProfession))
-                    {
-                        List<Person> cWorkers = new List<Person>();
-                        foreach (Person pDweller in pBuilding.m_cPersons)
-                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pWorkersProfession)
-                                cWorkers.Add(pDweller);
-
-                        if (cWorkers.Count < pBuilding.m_pInfo.WorkersCount)
-                            return true;
-                    }
-                }
-            }
-
-            return false;
-
         }
 
         public override string ToString()

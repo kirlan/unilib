@@ -12,19 +12,27 @@ using LandscapeGeneration.PathFind;
 
 namespace Socium
 {
+    /// <summary>
+    /// расширение LandscapeGeneration.Land
+    /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя, 
+    /// а так же методы для строительства логова, поселения или форта
+    /// </summary>
     public class LandX: Land<LocationX, LandTypeInfoX>
     {
-        public Province m_pProvince = null;
+        private Region m_pRegion = null;
+
+        public Region Region
+        {
+            get { return m_pRegion; }
+            set { m_pRegion = value; }
+        }
 
         public string m_sName = "";
 
-        public Nation m_pNation;
-
         /// <summary>
-        /// Военное присутсвие сил провинции в данной земле.
-        /// Нужно только для формирования карты провинций.
+        /// доминирующая нация в локации
         /// </summary>
-        public int m_iProvincePresence = 0;
+        public Nation m_pNation;
 
         public ContinentX Continent
         {
@@ -231,7 +239,7 @@ namespace Socium
 
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, m_pProvince.m_pLocalSociety.m_iTechLevel, m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
+            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, Region.m_pProvince.m_pLocalSociety.m_iTechLevel, Region.m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
@@ -259,12 +267,12 @@ namespace Socium
 
         public string GetLesserRaceString()
         {
-            if (Area != null)
+            if (Region != null)
             {
-                if ((Area as AreaX).m_pNation == null)
+                if (Region.m_pNation == null)
                     return "unpopulated";
                 else
-                    return (Area as AreaX).m_pNation.ToString();
+                    return Region.m_pNation.ToString();
             }
             return "unpopulated";
         }
@@ -295,7 +303,7 @@ namespace Socium
                     if (pLink.Owner != null)
                     {
                         LandX pLandLink = pLink.Owner as LandX;
-                        if (pLandLink.m_pProvince != null && pLandLink.m_pProvince.Owner == pEnemy)
+                        if (pLandLink.Region.m_pProvince != null && pLandLink.Region.m_pProvince.Owner == pEnemy)
                             bBorder = true;
                     }
                     if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
@@ -367,7 +375,7 @@ namespace Socium
 
             if (m_cContents[iFort].m_pSettlement == null && m_cContents[iFort].m_pBuilding == null)
             {
-                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, m_pProvince.OwnerState.m_pSociety.m_iTechLevel, m_pProvince.m_pLocalSociety.m_iMagicLimit, false, bFast);
+                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, Region.m_pProvince.OwnerState.m_pSociety.m_iTechLevel, Region.m_pProvince.m_pLocalSociety.m_iMagicLimit, false, bFast);
 
                 foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
                     if (pLoc.m_pBuilding == null)

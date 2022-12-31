@@ -112,7 +112,7 @@ namespace MapDrawEngine
         /// Контуры конкретных географических регионов - для определения, над каким из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<AreaX, GraphicsPath> m_cAreaBorders = new Dictionary<AreaX, GraphicsPath>();
+        private Dictionary<Socium.Region, GraphicsPath> m_cAreaBorders = new Dictionary<Socium.Region, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных провинций - для определения, над какой из них находится мышь.
@@ -956,7 +956,7 @@ namespace MapDrawEngine
                 }
 
                 //вычислим контуры географических регионов
-                foreach (AreaX pArea in pContinent.m_cAreas)
+                foreach (Socium.Region pArea in pContinent.m_cRegions)
                 {
                     aPoints = BuildPath(pArea.m_cFirstLines, true, out aQuads);
                     pPath = new GraphicsPath();

@@ -506,7 +506,7 @@ namespace Socium
             }
             #endregion Build capital and regional centers
 
-            if (m_pMethropoly.m_pCenter.Area != null)
+            if (m_pMethropoly.m_pCenter.Region != null)
                 m_pSociety.m_sName = m_pSociety.m_pTitularNation.m_pRace.m_pLanguage.RandomCountryName();
 
             return m_pMethropoly.m_pAdministrativeCenter;

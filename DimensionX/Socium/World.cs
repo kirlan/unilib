@@ -233,14 +233,14 @@ namespace Socium
                     }
                 }
 
-                if (pCradle != null && pCradle.Area != null)
+                if (pCradle != null && pCradle.Region != null)
                 {
-                    (pCradle.Area as AreaX).m_pNation = pNation;
-                    (pCradle.Area as AreaX).m_sName = pNation.m_pRace.m_pLanguage.RandomCountryName();
-                    foreach (LandX pLand in (pCradle.Area as AreaX).m_cContents)
+                    pCradle.Region.m_pNation = pNation;
+                    pCradle.Region.m_sName = pNation.m_pRace.m_pLanguage.RandomCountryName();
+                    foreach (LandX pLand in pCradle.Region.m_cContents)
                     {
-                        pLand.m_sName = (pCradle.Area as AreaX).m_sName;
-                        pLand.m_pNation = (pCradle.Area as AreaX).m_pNation;
+                        pLand.m_sName = pCradle.Region.m_sName;
+                        pLand.m_pNation = pCradle.Region.m_pNation;
                     }
 
                     LandMass<LandX> pLandMass = pCradle.Owner as LandMass<LandX>;
@@ -343,7 +343,7 @@ namespace Socium
 
                 //List<Race> cSettledDyingRaces = new List<Race>();
                 //переберём все пригодные для заселения и незаселённые территории
-                foreach (AreaX pArea in pConti.m_cAreas)
+                foreach (Region pArea in pConti.m_cRegions)
                 {
                     if (!pArea.IsWater && pArea.m_pNation == null)
                     {
@@ -544,7 +544,7 @@ namespace Socium
             //Gathering areas of the same land type
             foreach (ContinentX pContinent in m_aContinents)
             {
-                pContinent.BuildAreas(m_pGrid.CycleShift, m_aLands.Length / 100);
+                pContinent.BuildRegions(m_pGrid.CycleShift, m_aLands.Length / 100);
                 ProgressStep();
             }
         }
@@ -615,18 +615,18 @@ namespace Socium
                     //то переименовываем провинцию по имени самой крупной из полностью включенных территорий.
                     foreach (Province pProvince in pState.m_cContents)
                     {
-                        Dictionary<AreaX, int> cAreas = new Dictionary<AreaX,int>();
+                        Dictionary<Region, int> cAreas = new Dictionary<Region,int>();
     
                         foreach(LandX pLand in pProvince.m_cContents)
                         {
                             int iSize = 0;
-                            cAreas.TryGetValue(pLand.Area as AreaX, out iSize);
-                            cAreas[pLand.Area as AreaX] = iSize + pLand.m_cContents.Count;
+                            cAreas.TryGetValue(pLand.Region, out iSize);
+                            cAreas[pLand.Region] = iSize + pLand.m_cContents.Count;
                         }
                         
                         int iBiggestSize = 0;
                         int iTotalSize = 0;
-                        AreaX pBiggestArea = null;
+                        Region pBiggestArea = null;
                         foreach(var pArea in cAreas)
                         {
                             iTotalSize += pArea.Value;
@@ -665,15 +665,15 @@ namespace Socium
                 {
                     //если на континенте одно государство и одна территория, то государство должно называться по имени этой территории,
                     //независимо от того, из скольки провинций оно состоит
-                    if (pConti.m_cAreas.Count == 1)
-                        pConti.m_cStates[0].m_pSociety.m_sName = pConti.m_cAreas[0].m_sName;
+                    if (pConti.m_cRegions.Count == 1)
+                        pConti.m_cStates[0].m_pSociety.m_sName = pConti.m_cRegions[0].m_sName;
 
                     pConti.m_sName = pConti.m_cStates[0].m_pSociety.m_sName;
                 }
                 else
                     //если государств несколько, но территория одна - переименовываем континент по имени этой территории
-                    if (pConti.m_cAreas.Count == 1)
-                        pConti.m_sName = pConti.m_cAreas[0].m_sName;
+                    if (pConti.m_cRegions.Count == 1)
+                        pConti.m_sName = pConti.m_cRegions[0].m_sName;
 
             }
 
@@ -707,7 +707,7 @@ namespace Socium
                 int iUsed = 0;
 
                 //Для каждого анклава древней цивилизации создаём собственную провинцию
-                foreach (AreaX pArea in pConti.m_cAreas)
+                foreach (Region pArea in pConti.m_cRegions)
                 {
                     if (pArea.m_pNation != null && pArea.m_pNation.m_bDying)
                     {
@@ -732,18 +732,18 @@ namespace Socium
                 }
 
                 //если на континенте есть хоть одна провинция - дальше делать нечего
-                if (cUsed.Contains(pConti) || pConti.m_cAreas.Count == iUsed)
+                if (cUsed.Contains(pConti) || pConti.m_cRegions.Count == iUsed)
                     continue;
 
                 //иначе ищем подходящее место дня новой провинции
                 LandX pSeed = null;
                 do
                 {
-                    int iIndex = Rnd.Get(pConti.m_cAreas.Count);
-                    if (!pConti.m_cAreas[iIndex].IsWater)
+                    int iIndex = Rnd.Get(pConti.m_cRegions.Count);
+                    if (!pConti.m_cRegions[iIndex].IsWater)
                     {
-                        int iIndex2 = Rnd.Get(pConti.m_cAreas[iIndex].m_cContents.Count);
-                        pSeed = pConti.m_cAreas[iIndex].m_cContents[iIndex2];
+                        int iIndex2 = Rnd.Get(pConti.m_cRegions[iIndex].m_cContents.Count);
+                        pSeed = pConti.m_cRegions[iIndex].m_cContents[iIndex2];
 
                         bool bBorder = false;
                         foreach (LocationX pLoc in pSeed.m_cContents)
@@ -947,11 +947,11 @@ namespace Socium
                 Province pSeed = null;
                 do
                 {
-                    int iIndex = Rnd.Get(pConti.m_cAreas.Count);
-                    if(!pConti.m_cAreas[iIndex].IsWater)
+                    int iIndex = Rnd.Get(pConti.m_cRegions.Count);
+                    if(!pConti.m_cRegions[iIndex].IsWater)
                     {
-                        int iIndex2 = Rnd.Get(pConti.m_cAreas[iIndex].m_cContents.Count);
-                        pSeed = pConti.m_cAreas[iIndex].m_cContents[iIndex2].m_pProvince;
+                        int iIndex2 = Rnd.Get(pConti.m_cRegions[iIndex].m_cContents.Count);
+                        pSeed = pConti.m_cRegions[iIndex].m_cContents[iIndex2].m_pProvince;
 
                         bool bBorder = true;
                         foreach (LandX pLand in pSeed.m_cContents)
@@ -1966,7 +1966,7 @@ namespace Socium
                         if (pProvince.m_pLocalSociety.m_pTitularNation.m_bHegemon || bPreferred || Rnd.OneChanceFrom(2))
                         {
                             pLand.m_pNation = pProvince.m_pLocalSociety.m_pTitularNation;
-                            (pLand.Area as AreaX).m_pNation = pProvince.m_pLocalSociety.m_pTitularNation;
+                            pLand.Region.m_pNation = pProvince.m_pLocalSociety.m_pTitularNation;
                         }
                     }
                     //иначе, если коренная раса и доминирующая совпадают, но земля не самая подходящая - есть вероятность того, что её покинут.
@@ -1983,7 +1983,7 @@ namespace Socium
                         if (bHated && Rnd.OneChanceFrom(2))
                         {
                             pLand.m_pNation = null;
-                            (pLand.Area as AreaX).m_pNation = null;
+                            pLand.Region.m_pNation = null;
                         }
                     }
                 }
@@ -2032,7 +2032,7 @@ namespace Socium
                 //    //    }
                 //}
 
-                foreach (AreaX pArea in pConti.m_cAreas)
+                foreach (Region pArea in pConti.m_cRegions)
                 {
                     if (pArea.m_pNation == null)
                         continue;

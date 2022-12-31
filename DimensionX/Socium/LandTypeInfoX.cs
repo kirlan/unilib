@@ -9,6 +9,11 @@ using Socium.Nations;
 
 namespace Socium
 {
+    /// <summary>
+    /// расширение LandscapeGeneration.LandTypeInfo
+    /// добавляет ресурсы, допустимую частоту поселений и логов, 
+    /// метод для вычисления привлекательности данного типа территории для заданной нации
+    /// </summary>
     public class LandTypeInfoX : LandTypeInfo
     {
         public enum Resource
@@ -56,40 +61,6 @@ namespace Socium
             m_cStandAloneBuildingsProbability[BuildingType.Lair] = iLair;
             m_cStandAloneBuildingsProbability[BuildingType.Hideout] = iHideout;
             m_cStandAloneBuildingsProbability[BuildingType.None] = iNone;
-        }
-
-        /// <summary>
-        /// Вычисляет условную стоимость заселения территории указанной расой, в соответсвии с ландшафтом и фенотипом расы.
-        /// Возвращает значение в диапазоне 1-100. 
-        /// 1 - любая территория, идеально подходящая указанной расе (горы для гномов). Так же - простая для заселения территория, просто подходящая указанной расе.
-        /// 10 - простая для заселения территория (равнины), но совсем не подходящая указанной расе (горы для эльфов). Так же - максимально сложная для заселения территория, просто подходящая указанной расе (горы для людей).
-        /// 100 - максимально сложная для заселения территория (непроходимые горы), совсем не подходящая указанной расе.
-        /// </summary>
-        /// <param name="pNation"></param>
-        /// <returns></returns>
-        public int GetClaimingCost(Nation pNation)
-        {
-            if (!m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
-                return -1;
-
-            float fCost = m_iMovementCost; // 1 - 10
-
-            if (pNation.m_aPreferredLands.Contains(this))
-                fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
-
-            if (pNation.m_aHatedLands.Contains(this))
-                fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
-
-            if (pNation.m_bHegemon)
-                fCost /= 2;
-
-            if (fCost < 1)
-                fCost = 1;
-
-            if (fCost > int.MaxValue)
-                fCost = int.MaxValue - 1;
-
-            return (int)fCost;
         }
     }
 }
