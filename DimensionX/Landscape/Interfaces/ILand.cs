@@ -24,7 +24,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Географическое образование, в которое входит эта земля
         /// </summary>
-        object Area { get; set; }
+        //object Region { get; set; }
 
         float MovementCost { get; }
 

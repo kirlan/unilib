@@ -9,6 +9,9 @@ namespace LandscapeGeneration
     public abstract class BorderBuilder<INNER> : TransportationNode
         where INNER : class, ITerritory
     {
+        /// <summary>
+        /// границы с другими объектами НИЗШЕГО УРОВНЯ, т.е. составными частями данного объекта
+        /// </summary>
         public Dictionary<object, List<Location.Edge>> m_cBorder = new Dictionary<object, List<Location.Edge>>();
 
         public virtual void Start(INNER pSeed)
