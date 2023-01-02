@@ -2094,7 +2094,7 @@ namespace Socium
 
                                         //административные центры всегда становятся руинами - если только они крупнее деревни
                                         if (pLoc == pState.m_pMethropoly.m_pAdministrativeCenter &&
-                                            pLoc.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village &&
+                                            pLoc.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village &&
                                             pLoc.m_pSettlement.m_iRuinsAge == 0)
                                             pLoc.m_pSettlement.Ruin();
 
