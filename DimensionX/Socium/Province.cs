@@ -570,7 +570,7 @@ namespace Socium
                             if (pLinked is LocationX)
                             {
                                 LandX pLinkedOwner = (pLinked as LocationX).Owner as LandX;
-                                if (pLinkedOwner.Region.m_pProvince != this)
+                                if (pLinkedOwner.Region == null || pLinkedOwner.Region.m_pProvince != this)
                                     pLoc.m_cLinks[pLinked].m_bClosed = true;
                             }
                             else

@@ -46,10 +46,12 @@ namespace Socium
                         Region pRegion = new Region();
                         pRegion.Start(pLand, iMaxSize);
                         while (pRegion.Grow()) { }
-                        pRegion.Finish(fCycleShift);
                         m_cRegions.Add(pRegion);
                         pRegion.Owner = pLandMass;
                     }
+
+            foreach (Region pRegion in m_cRegions)
+                pRegion.Finish(fCycleShift);
         }
     }
 }

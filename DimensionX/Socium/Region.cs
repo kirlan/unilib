@@ -203,7 +203,7 @@ namespace Socium
             foreach (ITerritory pLand in m_cBorder.Keys)
             {
                 Region pRegion;
-                if (pLand.Forbidden || (pLand as LandX).Region.m_pProvince == null)
+                if (pLand.Forbidden || (pLand as LandX).Region == null)
                     pRegion = Region.m_pForbidden;
                 else
                     pRegion = (pLand as LandX).Region;
@@ -299,7 +299,7 @@ namespace Socium
                         if (pLink.Owner != null)
                         {
                             LandX pLandLink = pLink.Owner as LandX;
-                            if (pLandLink.Region.m_pProvince != null && pLandLink.Region.m_pProvince.Owner == pEnemy)
+                            if (pLandLink.Region != null && pLandLink.Region.m_pProvince != null && pLandLink.Region.m_pProvince.Owner == pEnemy)
                                 bBorder = true;
                         }
                         if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
@@ -375,7 +375,7 @@ namespace Socium
             {
                 pChoosenLocation.m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], (pChoosenLocation.Owner as LandX).m_pDominantNation, m_pProvince.OwnerState.m_pSociety.m_iTechLevel, m_pProvince.m_pLocalSociety.m_iMagicLimit, false, bFast);
 
-                foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
+                foreach (LocationX pLoc in pChoosenLocation.m_aBorderWith)
                     if (pLoc.m_pBuilding == null)
                         pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 

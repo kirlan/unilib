@@ -733,26 +733,30 @@ namespace Socium
                     int iIndex = Rnd.Get(m_aLands.Length);
                     pSeed = m_aLands[iIndex].Region;
 
-                    if (pSeed.Forbidden ||
-                        pSeed.m_pProvince != null ||
-                        pSeed.IsWater ||
-                        pSeed.Owner == null ||
-                        (pSeed.Owner as LandMass<LandX>).IsWater ||
-                        (pSeed.m_pNatives != null && pSeed.m_pNatives.IsAncient))
+                    if (pSeed != null)
                     {
-                        pSeed = null;
-                    }
-                    else
-                    {
-                        bool bBorder = false;
-                        foreach (LandX pLand in pSeed.m_cContents)
-                            foreach (LocationX pLoc in pLand.m_cContents)
-                                if (pLoc.m_bBorder)
-                                    bBorder = true;
-
-                        if (bBorder)
+                        if (pSeed.Forbidden ||
+                            pSeed.m_pProvince != null ||
+                            pSeed.IsWater ||
+                            pSeed.Owner == null ||
+                            (pSeed.Owner as LandMass<LandX>).IsWater ||
+                            (pSeed.m_pNatives != null && pSeed.m_pNatives.IsAncient))
+                        {
                             pSeed = null;
+                        }
+                        else
+                        {
+                            bool bBorder = false;
+                            foreach (LandX pLand in pSeed.m_cContents)
+                                foreach (LocationX pLoc in pLand.m_cContents)
+                                    if (pLoc.m_bBorder)
+                                        bBorder = true;
+
+                            if (bBorder)
+                                pSeed = null;
+                        }
                     }
+
                     if (pSeed == null)
                         iCounter++;
                     else
