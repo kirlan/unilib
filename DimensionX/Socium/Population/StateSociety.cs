@@ -307,7 +307,7 @@ namespace Socium.Population
             }
 
             Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
-            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pTitularNation.m_bInvader)
+            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pTitularNation.IsInvader)
             {
                 cNationsCount.Remove(m_pTitularNation);
                 if (cNationsCount.Count > 0)
@@ -356,7 +356,7 @@ namespace Socium.Population
                 Dictionary<Nation, int> cChances = new Dictionary<Nation, int>();
                 foreach (var pNation in cAccessableNations)
                 {
-                    if (pNation.m_bDying && !bCanBeDying)
+                    if (pNation.IsAncient && !bCanBeDying)
                         continue;
 
                     if (pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() && !bCanBeParasite)
@@ -405,7 +405,7 @@ namespace Socium.Population
                 return pDefault;
             }
 
-            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || (m_pTitularNation.m_bInvader /*&& m_iControl >= 3*/)))
+            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || (m_pTitularNation.IsInvader /*&& m_iControl >= 3*/)))
             {
                 m_pHostNation = getAccessableNation(false, false, true, m_pHostNation);
             }
@@ -749,7 +749,7 @@ namespace Socium.Population
 
         public int GetImportedTech()
         {
-            if (m_pTitularNation.m_bDying)
+            if (m_pTitularNation.IsAncient)
                 return -1;
 
             int iMaxTech = GetEffectiveTech();
@@ -770,7 +770,7 @@ namespace Socium.Population
 
         public string GetImportedTechString()
         {
-            if (m_pTitularNation.m_bDying)
+            if (m_pTitularNation.IsAncient)
                 return "";
 
             int iMaxTech = GetEffectiveTech();
@@ -1841,10 +1841,13 @@ namespace Socium.Population
                     { Gender.Male, 0 },
                     { Gender.Female, 0 }
                 };
-                foreach (LandX pLand in pProvince.m_cContents)
+                foreach (Region pRegion in pProvince.m_cContents)
                 {
-                    cProvinceMagesCount[Gender.Male] += pLand.m_cContents.Count * fPrevalence;
-                    cProvinceMagesCount[Gender.Female] += pLand.m_cContents.Count * fPrevalence;
+                    foreach (LandX pLand in pRegion.m_cContents)
+                    {
+                        cProvinceMagesCount[Gender.Male] += pLand.m_cContents.Count * fPrevalence;
+                        cProvinceMagesCount[Gender.Female] += pLand.m_cContents.Count * fPrevalence;
+                    }
                 }
 
                 switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate)

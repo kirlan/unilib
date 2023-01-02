@@ -264,8 +264,8 @@ namespace VQMapTest2
                 pPhenotypeF = pNation.m_pPhenotypeF;
             }
 
-            richTextBox1.AppendText(sRaceName + (pNation.m_bDying ? " is an ancient race." : " is a young race. "));
-            if (pNation.m_bInvader)
+            richTextBox1.AppendText(sRaceName + (pNation.IsAncient ? " is an ancient race." : " is a young race. "));
+            if (pNation.IsInvader)
                 richTextBox1.AppendText("They are not from this world. ");
             richTextBox1.AppendText("\n");
 

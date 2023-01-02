@@ -6,6 +6,11 @@ using Random;
 
 namespace LandscapeGeneration
 {
+    /// <summary>
+    /// Континент - группа сопредельных надводных тектонических плит.
+    /// </summary>
+    /// <typeparam name="LAND"></typeparam>
+    /// <typeparam name="LTI"></typeparam>
     public class Continent<LAND, LTI> : Territory<LandMass<LAND>>
         where LAND: class, ITypedLand<LTI>, ITerritory
         where LTI: LandTypeInfo

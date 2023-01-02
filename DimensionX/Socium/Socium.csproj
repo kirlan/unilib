@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AreaX.cs" />
+    <Compile Include="Region.cs" />
     <Compile Include="Misc\Median.cs" />
     <Compile Include="Population\Estate.cs" />
     <Compile Include="Languages\Latin.cs" />

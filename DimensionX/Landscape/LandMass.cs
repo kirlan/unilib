@@ -7,6 +7,11 @@ using SimpleVectors;
 
 namespace LandscapeGeneration
 {
+    /// <summary>
+    /// Тектоническая плита, дрейф которых образует горы и впадины. Является объединением группы сопредельных земель.
+    /// Может быть или полностью затоплена океаном, или являться частью какого-то континента.
+    /// </summary>
+    /// <typeparam name="LAND"></typeparam>
     public class LandMass<LAND> : Territory<LAND>, ILandMass
         where LAND: class, ILand
     {

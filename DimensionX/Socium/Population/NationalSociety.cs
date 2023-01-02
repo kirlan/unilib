@@ -78,7 +78,7 @@ namespace Socium.Population
             else if ((fWood > Rnd.Get(iPopulation) * 2 && fOre > Rnd.Get(iPopulation) * 2))// || Rnd.OneChanceFrom(4))
                 m_iTechLevel++;
 
-            if (m_pTitularNation.m_bInvader)
+            if (m_pTitularNation.IsInvader)
             {
                 if (m_iTechLevel < m_pTitularNation.m_pEpoch.m_iInvadersMinTechLevel)
                     m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMinTechLevel;
@@ -123,7 +123,7 @@ namespace Socium.Population
             if (m_iTechLevel < 0)
                 m_iTechLevel = 0;
 
-            if (m_pTitularNation.m_bInvader)
+            if (m_pTitularNation.IsInvader)
             {
                 if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel)
                     m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel;

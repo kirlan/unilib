@@ -16,6 +16,10 @@ namespace LandscapeGeneration
         Volcano
     }
 
+    /// <summary>
+    /// Локация - минимальная единица деления карты. Представляет собой выпуклый многоугольник, ячейку диаграммы Вороного.
+    /// Локации объедняются в земли (Land)
+    /// </summary>
     public class Location : TransportationNode, ITerritory
     {
         public class Edge

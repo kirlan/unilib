@@ -119,7 +119,7 @@ namespace MapDrawEngine
                     m_pContinents.AddPolygon(aPts);
 
                 //вычислим контуры географических регионов
-                foreach (AreaX pArea in pContinent.m_cAreas)
+                foreach (Socium.Region pArea in pContinent.m_cRegions)
                 {
                     aPoints = BuildPath(pArea.m_cFirstLines);
                     foreach (var aPts in aPoints)

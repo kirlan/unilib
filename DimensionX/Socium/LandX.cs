@@ -12,19 +12,27 @@ using LandscapeGeneration.PathFind;
 
 namespace Socium
 {
+    /// <summary>
+    /// расширение LandscapeGeneration.Land
+    /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя, 
+    /// а так же методы для строительства логова, поселения или форта
+    /// </summary>
     public class LandX: Land<LocationX, LandTypeInfoX>
     {
-        public Province m_pProvince = null;
+        private Region m_pRegion = null;
+
+        public Region Region
+        {
+            get { return m_pRegion; }
+            set { m_pRegion = value; }
+        }
 
         public string m_sName = "";
 
-        public Nation m_pNation;
-
         /// <summary>
-        /// Военное присутсвие сил провинции в данной земле.
-        /// Нужно только для формирования карты провинций.
+        /// доминирующая нация в локации, может отличаться от коренного населения региона
         /// </summary>
-        public int m_iProvincePresence = 0;
+        public Nation m_pDominantNation;
 
         public ContinentX Continent
         {
@@ -231,7 +239,7 @@ namespace Socium
 
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pNation, m_pProvince.m_pLocalSociety.m_iTechLevel, m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
+            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pDominantNation, Region.m_pProvince.m_pLocalSociety.m_iTechLevel, Region.m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
@@ -251,20 +259,20 @@ namespace Socium
 
         public string GetMajorRaceString()
         {
-            if (m_pNation == null)
+            if (m_pDominantNation == null)
                 return "unpopulated";
             else
-                return m_pNation.ToString();
+                return m_pDominantNation.ToString();
         }
 
         public string GetLesserRaceString()
         {
-            if (Area != null)
+            if (Region != null)
             {
-                if ((Area as AreaX).m_pNation == null)
+                if (Region.m_pNatives == null)
                     return "unpopulated";
                 else
-                    return (Area as AreaX).m_pNation.ToString();
+                    return Region.m_pNatives.ToString();
             }
             return "unpopulated";
         }
@@ -278,113 +286,6 @@ namespace Socium
                 sRace = sRace + "/" + GetLesserRaceString();
 
             return string.Format("{0} {1} ({2}, {3}) (H:{4}%)", m_sName, Type.m_sName, m_cContents.Count, sRace, Humidity);
-        }
-
-        internal LocationX BuildFort(State pEnemy, bool bFast)
-        {
-            //сначала составим список претендентов из числа незанятых локаций, лежащих непосредственно на границе с супостатом (или на берегу, если супостат не определён).
-            List<int> cChances = new List<int>();
-            bool bNoChances = true;
-            foreach (LocationX pLoc in m_cContents)
-            {
-                bool bCoast = false;
-                bool bBorder = false;
-                bool bMapBorder = false;
-                foreach (LocationX pLink in pLoc.m_aBorderWith)
-                {
-                    if (pLink.Owner != null)
-                    {
-                        LandX pLandLink = pLink.Owner as LandX;
-                        if (pLandLink.m_pProvince != null && pLandLink.m_pProvince.Owner == pEnemy)
-                            bBorder = true;
-                    }
-                    if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
-                        bCoast = true;
-
-                    if (pLink.m_bBorder)
-                    {
-                        bMapBorder = true;
-                    }
-                }
-
-                int iChances = 100;
-
-                if (bMapBorder)
-                    iChances = 0;
-
-                if (pEnemy != null && !bBorder)
-                    iChances = 0;
-
-                if (pEnemy == null && !bCoast)
-                    iChances = 0;
-
-                if (pLoc.m_pSettlement != null)
-                    iChances = 0;
-
-                if (pLoc.m_pBuilding != null)
-                    iChances = pLoc.m_pBuilding.m_eType == BuildingType.Farm || pLoc.m_pBuilding.m_eType == BuildingType.HuntingFields ? 1 : 0;
-
-                if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
-                    iChances = 0;
-
-                if (iChances > 0)
-                    bNoChances = false;
-
-                cChances.Add(iChances);
-            }
-
-            //если список претендентов пуст - снизим критерии. теперь сгодится любая незанятая локация
-            if (bNoChances)
-            {
-                //cChances.Clear();
-                //foreach (LocationX pLoc in m_cContents)
-                //{
-                //    int iChances = 100;
-
-                //    if (pLoc.m_pSettlement != null)
-                //        iChances = 0;
-
-                //    if (pLoc.m_pBuilding != null)
-                //        iChances = pLoc.m_pBuilding.m_eType == BuildingType.Farm || pLoc.m_pBuilding.m_eType == BuildingType.HuntingFields ? 1 : 0;
-
-                //    if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
-                //        iChances = 0;
-
-                //    if (iChances > 0)
-                //        bNoChances = false;
-
-                //    cChances.Add(iChances);
-                //}
-
-                ////в самом деле, совершенно нет места!
-                //if (bNoChances)
-                    return null;
-            }
-
-            int iFort = Rnd.ChooseOne(cChances, 2);
-            //Построим форт в выбранной локации.
-            //Все локации на 1 шаг вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-
-            if (m_cContents[iFort].m_pSettlement == null && m_cContents[iFort].m_pBuilding == null)
-            {
-                m_cContents[iFort].m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], m_pNation, m_pProvince.OwnerState.m_pSociety.m_iTechLevel, m_pProvince.m_pLocalSociety.m_iMagicLimit, false, bFast);
-
-                foreach (LocationX pLoc in m_cContents[iFort].m_aBorderWith)
-                    if (pLoc.m_pBuilding == null)
-                        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
-
-                List<Road> cRoads = new List<Road>();
-                foreach (var pRoads in m_cContents[iFort].m_cRoads)
-                    cRoads.AddRange(pRoads.Value);
-
-                Road[] aRoads = cRoads.ToArray();
-                foreach (Road pRoad in aRoads)
-                    World.RenewRoad(pRoad);
-
-                return m_cContents[iFort];
-            }
-            else
-                return null;
         }
 
         /// <summary>
@@ -401,13 +302,13 @@ namespace Socium
         /// <returns></returns>
         public int GetClaimingCost(Nation pNation)
         {
-            double fCost = Type.GetClaimingCost(pNation);
+            double fCost = pNation.GetClaimingCost(Type);
 
             foreach (var pLink in m_cBorder)
             {
                 LandX pOtherLand = pLink.Key as LandX;
                 if (pOtherLand.Owner == null && pOtherLand.Type.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
-                    fCost += (double)pOtherLand.Type.GetClaimingCost(pNation) / m_cBorder.Count;
+                    fCost += (double)pNation.GetClaimingCost(pOtherLand.Type) / m_cBorder.Count;
             }
 
             if (fCost < 2)

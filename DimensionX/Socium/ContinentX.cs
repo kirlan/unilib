@@ -9,9 +9,13 @@ using Socium.Nations;
 
 namespace Socium
 {
+    /// <summary>
+    /// расширение LandscapeGeneration.Continent
+    /// добавлены списки регионов, государств, имя, метод для постройки регионов 
+    /// </summary>
     public class ContinentX: Continent<LandX, LandTypeInfoX>
     {
-        public List<AreaX> m_cAreas = new List<AreaX>();
+        public List<Region> m_cRegions = new List<Region>();
 
         public List<State> m_cStates = new List<State>();
 
@@ -19,7 +23,7 @@ namespace Socium
 
         public override void Start(LandMass<LandX> pCenter)
         {
-            m_cAreas.Clear();
+            m_cRegions.Clear();
 
             base.Start(pCenter);
 
@@ -33,17 +37,18 @@ namespace Socium
 
         public Dictionary<LandMass<LandX>, List<Nation>> m_cLocalNations = new Dictionary<LandMass<LandX>,List<Nation>>();
 
-        public void BuildAreas(float fCycleShift, int iMaxSize)
+        public void BuildRegions(float fCycleShift, int iMaxSize)
         {
             foreach (LandMass<LandX> pLandMass in m_cContents)
                 foreach (LandX pLand in pLandMass.m_cContents)
-                    if (!pLand.Forbidden && pLand.Area == null)
+                    if (!pLand.Forbidden && pLand.Region == null)
                     {
-                        AreaX pArea = new AreaX();
-                        pArea.Start(pLand, iMaxSize);
-                        while (pArea.Grow()) { }
-                        pArea.Finish(fCycleShift);
-                        m_cAreas.Add(pArea);
+                        Region pRegion = new Region();
+                        pRegion.Start(pLand, iMaxSize);
+                        while (pRegion.Grow()) { }
+                        pRegion.Finish(fCycleShift);
+                        m_cRegions.Add(pRegion);
+                        pRegion.Owner = pLandMass;
                     }
         }
     }

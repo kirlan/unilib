@@ -7,6 +7,12 @@ using Random;
 
 namespace LandscapeGeneration
 {
+    /// <summary>
+    /// Земля - группа сопредельных локаций, имеющих один тип местности.
+    /// Земли объединяются в тектонические плиты (LandMass).
+    /// </summary>
+    /// <typeparam name="LOC"></typeparam>
+    /// <typeparam name="LTI"></typeparam>
     public class Land<LOC, LTI> : Territory<LOC>, IPointF, ITypedLand<LTI>
         where LOC: Location
         where LTI: LandTypeInfo
@@ -22,6 +28,15 @@ namespace LandscapeGeneration
         public bool IsWater
         {
             get { return m_pType != null && m_pType.m_eEnvironment.HasFlag(Environment.Liquid); }
+        }
+
+        public bool IsBorder()
+        {
+            foreach (var pLoc in m_cContents)
+                if (pLoc.m_bBorder)
+                    return true;
+
+            return false;
         }
 
         public float MovementCost

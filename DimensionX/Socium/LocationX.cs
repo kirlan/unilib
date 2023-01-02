@@ -16,6 +16,10 @@ namespace Socium
         public float m_fCost = 0;
     }
 
+    /// <summary>
+    /// расширение LandscapeGeneration.Location
+    /// добавляет имя, ссылку на поселение, дороги, отдельностоящие постройки (aka логова)
+    /// </summary>
     public class LocationX : Location
     {
         public string m_sName = "";
@@ -62,7 +66,7 @@ namespace Socium
             get
             {
                 LandX pLand = Owner as LandX;
-                return pLand.m_pProvince;
+                return pLand.Region.m_pProvince;
             }
         }
 

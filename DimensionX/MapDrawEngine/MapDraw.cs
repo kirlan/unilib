@@ -112,7 +112,7 @@ namespace MapDrawEngine
         /// Контуры конкретных географических регионов - для определения, над каким из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<AreaX, GraphicsPath> m_cAreaBorders = new Dictionary<AreaX, GraphicsPath>();
+        private Dictionary<Socium.Region, GraphicsPath> m_cAreaBorders = new Dictionary<Socium.Region, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных провинций - для определения, над какой из них находится мышь.
@@ -956,7 +956,7 @@ namespace MapDrawEngine
                 }
 
                 //вычислим контуры географических регионов
-                foreach (AreaX pArea in pContinent.m_cAreas)
+                foreach (Socium.Region pArea in pContinent.m_cRegions)
                 {
                     aPoints = BuildPath(pArea.m_cFirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
@@ -972,14 +972,14 @@ namespace MapDrawEngine
                             pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush].AddPolygon(aPts);
 
                             //если регион обитаем
-                            if (pArea.m_pNation != null)
+                            if (pArea.m_pNatives != null)
                             {
                                 //сохраним информацию о контуре региона и для этнографической карты
-                                Brush pBrush = m_cNationColorsID[pArea.m_pNation];
-                                if (pArea.m_pNation.m_bDying)
-                                    pBrush = m_cAncientNationColorsID[pArea.m_pNation];
-                                if (pArea.m_pNation.m_bHegemon)
-                                    pBrush = m_cHegemonNationColorsID[pArea.m_pNation];
+                                Brush pBrush = m_cNationColorsID[pArea.m_pNatives];
+                                if (pArea.m_pNatives.IsAncient)
+                                    pBrush = m_cAncientNationColorsID[pArea.m_pNatives];
+                                if (pArea.m_pNatives.IsHegemon)
+                                    pBrush = m_cHegemonNationColorsID[pArea.m_pNatives];
 
                                 if (!pQuad.m_cModes[MapMode.Natives].ContainsKey(pBrush))
                                     pQuad.m_cModes[MapMode.Natives][pBrush] = new GraphicsPath();
@@ -1002,9 +1002,9 @@ namespace MapDrawEngine
 
                     //сохраним информацию о контуре провинции для этнографической карты
                     Brush pBrush = m_cNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
-                    if (pProvince.m_pLocalSociety.m_pTitularNation.m_bDying)
+                    if (pProvince.m_pLocalSociety.m_pTitularNation.IsAncient)
                         pBrush = m_cAncientNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
-                    if (pProvince.m_pLocalSociety.m_pTitularNation.m_bHegemon)
+                    if (pProvince.m_pLocalSociety.m_pTitularNation.IsHegemon)
                         pBrush = m_cHegemonNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
 
                     Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.m_iMagicLimit][pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Magic>()];

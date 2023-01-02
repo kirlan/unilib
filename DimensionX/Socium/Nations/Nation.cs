@@ -49,16 +49,39 @@ namespace Socium.Nations
             }
         }
 
+
         public Race m_pRace = null;
 
         public LandTypeInfoX[] m_aPreferredLands;
         public LandTypeInfoX[] m_aHatedLands;
 
-        public bool m_bDying = false;
-        public bool m_bHegemon = false;
-        public bool m_bInvader = false;
+        public bool IsAncient { get; private set; }
+        public bool IsHegemon { get; private set; }
+        public bool IsInvader { get; private set; }
+
+        /// <summary>
+        /// Пометить как "древнюю". Древние расы не могут быть гегемонами!
+        /// </summary>
+        public void Age()
+        {
+            IsAncient = true;
+            IsHegemon = false;
+        }
+
+        /// <summary>
+        /// Сделать гегемоном
+        /// </summary>
+        public void Grow()
+        {
+            IsHegemon = true;
+        }
 
         public Epoch m_pEpoch = null;
+
+        public Nation(Race pRace, Epoch pEpoch, bool bInvader) : this(pRace, pEpoch)
+        {
+            IsInvader = bInvader;
+        }
 
         public Nation(Race pRace, Epoch pEpoch)
         {
@@ -117,7 +140,7 @@ namespace Socium.Nations
         /// <param name="pWorld">мир</param>
         public void Accommodate(Epoch pEpoch)
         {
-            if (m_bInvader)
+            if (IsInvader)
             {
                 //m_iTechLevel = Math.Min(pEpoch.m_iInvadersMaxTechLevel, pEpoch.m_iInvadersMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
                 //m_iMagicLimit = Math.Min(pEpoch.m_iInvadersMaxMagicLevel, pEpoch.m_iInvadersMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
@@ -155,7 +178,7 @@ namespace Socium.Nations
             }
             else
             {
-                if (!m_bDying)
+                if (!IsAncient)
                 {
                     //m_iTechLevel = Math.Min(pEpoch.m_iNativesMaxTechLevel, pEpoch.m_iNativesMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
                     //m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
@@ -188,7 +211,7 @@ namespace Socium.Nations
                 else
                     m_pProtoSociety.m_iTechLevel -= iTechLevel;
 
-                if (!m_bDying)
+                if (!IsAncient)
                 {
                     if (m_pProtoSociety.m_iMagicLimit < pEpoch.m_iNativesMinMagicLevel)
                         m_pProtoSociety.m_iMagicLimit = pEpoch.m_iNativesMinMagicLevel;
