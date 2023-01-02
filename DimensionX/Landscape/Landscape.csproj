@@ -48,6 +48,7 @@
     <Compile Include="IGrid.cs" />
     <Compile Include="ILandMass.cs" />
     <Compile Include="Interfaces\ILand.cs" />
+    <Compile Include="Interfaces\ILayer.cs" />
     <Compile Include="Interfaces\IPointF.cs" />
     <Compile Include="LandTypeInfo.cs" />
     <Compile Include="LocationsGrid.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PathFinder\ShortestPath.cs" />
     <Compile Include="BorderBuilder.cs" />
+    <Compile Include="BaseTerritory.cs" />
     <Compile Include="VoronoiVertex.cs" />
   </ItemGroup>
   <ItemGroup>

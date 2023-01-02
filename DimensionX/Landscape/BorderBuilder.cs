@@ -30,6 +30,7 @@ namespace LandscapeGeneration
         }
         public List<Location.Edge> m_cFirstLines = new List<Location.Edge>();
 
+        /*
         public bool TestChain()
         {
             List<Location.Edge> cTotalBorder = new List<Location.Edge>();
@@ -68,7 +69,7 @@ namespace LandscapeGeneration
 
             return true;
         }
-
+        */
         public readonly List<List<VoronoiVertex>> m_cOrdered = new List<List<VoronoiVertex>>();
 
         /// <summary>

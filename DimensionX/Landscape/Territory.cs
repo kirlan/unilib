@@ -6,83 +6,41 @@ using Random;
 
 namespace LandscapeGeneration
 {
-    public class Territory<INNER> : BorderBuilder<INNER>, ITerritory
-        where INNER: class, ITerritory
+    public class Territory : BaseTerritory
     {
-        private bool m_bForbidden = false;
-
-        private static Territory<INNER> m_pForbidden = new Territory<INNER>(true);
-
-        public bool Forbidden
-        {
-            get { return m_bForbidden; /*this == Territory<INNER>.m_pForbidden;*/ }
-        }
-
         /// <summary>
         /// Локации, составляющие территорию
         /// </summary>
-        public List<INNER> m_cContents = new List<INNER>();
+        public List<BaseTerritory> m_cContents = new List<BaseTerritory>();
 
         /// <summary>
-        /// Границы с другими такими же объектами
+        /// границы с другими объектами НИЗШЕГО УРОВНЯ, т.е. составными частями данного объекта
         /// </summary>
-        private Dictionary<object, List<Location.Edge>> m_cBorderWith = new Dictionary<object, List<Location.Edge>>();
+        public Dictionary<BaseTerritory, List<Location.Edge>> m_cBorder = new Dictionary<BaseTerritory, List<Location.Edge>>();
 
-        private object m_pOwner = null;
+        private static Territory m_pForbidden = new Territory(true);
 
         public Territory(bool bForbidden)
+            : base(bForbidden)
         {
-            m_bForbidden = bForbidden;
         }
 
-        public Territory()
-        {}
-
-        public object Owner
-        {
-            get { return m_pOwner; }
-            set { m_pOwner = value; }
-        }
-
-        /// <summary>
-        /// Границы с другими такими же объектами
-        /// </summary>
-        public Dictionary<object, List<Location.Edge>> BorderWith
-        {
-            get { return m_cBorderWith; }
-        }
-
-        public object[] m_aBorderWith = null;
-
-        /// <summary>
-        /// Суммарная длина всех линий в BorderWith
-        /// </summary>
-        private float m_fPerimeter = 0;
-
-        public float PerimeterLength
-        {
-            get { return m_fPerimeter; }
-        }
-
-        internal void FillBorderWithKeys()
-        {
-            m_aBorderWith = new List<object>(m_cBorderWith.Keys).ToArray();
-
-            m_fPerimeter = 0;
-            foreach (var pBorder in m_cBorderWith)
-                foreach (var pLine in pBorder.Value)
-                    m_fPerimeter += pLine.m_fLength;
-        }
-
-        public override void Start(INNER pSeed)
+        public void Start(BaseTerritory pSeed)
         {
             m_cContents.Clear();
-            m_cBorderWith.Clear();
+            BorderWith.Clear();
 
-            base.Start(pSeed);
+            m_cBorder.Clear();
+
+            foreach (var pInner in pSeed.BorderWith)
+            {
+                m_cBorder[pInner.Key] = new List<Location.Edge>();
+                Location.Edge[] aLines = pInner.Value.ToArray();
+                foreach (Location.Edge pLine in aLines)
+                    m_cBorder[pInner.Key].Add(new Location.Edge(pLine));
+            }
 
             m_cContents.Add(pSeed);
-            pSeed.Owner = this;
         }
 
         /// <summary>
@@ -90,37 +48,37 @@ namespace LandscapeGeneration
         /// Чем длиннее общая граница с локацией - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public virtual object Grow()
+        public virtual object Grow(Func<BaseTerritory, float> getWeightFunc)
         {
-            Dictionary<ITerritory, float> cBorderLength = new Dictionary<ITerritory, float>();
+            Dictionary<BaseTerritory, float> cBorderLength = new Dictionary<BaseTerritory, float>();
 
             foreach (var pInner in m_cBorder)
             {
-                ITerritory pInnerTerritory = pInner.Key as ITerritory;
+                BaseTerritory pInnerTerritory = pInner.Key as BaseTerritory;
                 if (pInnerTerritory.Owner == null && !pInnerTerritory.Forbidden)
                 {
-                    float fWholeLength = 1;
-                    Location.Edge[] aBorderLine = pInner.Value.ToArray();
-                    foreach (var pLine in aBorderLine)
-                        fWholeLength += pLine.m_fLength;
+                    float weight = getWeightFunc(pInnerTerritory);
 
-                    fWholeLength /= pInnerTerritory.PerimeterLength;
+                    //float fWholeLength = 1;
+                    //Location.Edge[] aBorderLine = pInner.Value.ToArray();
+                    //foreach (var pLine in aBorderLine)
+                    //    fWholeLength += pLine.m_fLength;
 
-                    if (fWholeLength < 0.15f && m_cContents.Count > 1)
-                        continue;
-                    if (fWholeLength < 0.25f)
-                        fWholeLength /= 10;
-                    if (fWholeLength > 0.5f)
-                        fWholeLength *= 10; 
+                    //fWholeLength /= pInnerTerritory.PerimeterLength;
+
+                    //if (fWholeLength < 0.15f && m_cContents.Count > 1)
+                    //    continue;
+                    //if (fWholeLength < 0.25f)
+                    //    fWholeLength /= 10;
+                    //if (fWholeLength > 0.5f)
+                    //    fWholeLength *= 10; 
                     
-                    cBorderLength[pInnerTerritory] = fWholeLength;// 0;
-                    //Line[] aBorderLine = m_cBorder[pInner].ToArray();
-                    //foreach (Line pLine in aBorderLine)
-                    //    cBorderLength[pInner] += pLine.m_fLength;
+                    if (weight > 0)
+                        cBorderLength[pInnerTerritory] = weight;// 0;
                 }
             }
 
-            ITerritory pAddon = null;
+            BaseTerritory pAddon = null;
 
             int iChoice = Rnd.ChooseOne(cBorderLength.Values, 4);
             foreach (var pInner in cBorderLength)
@@ -136,7 +94,7 @@ namespace LandscapeGeneration
             if (pAddon == null)
                 return null;
 
-            m_cContents.Add(pAddon as INNER);
+            m_cContents.Add(pAddon);
             pAddon.Owner = this;
 
             m_cBorder[pAddon].Clear();
@@ -144,7 +102,7 @@ namespace LandscapeGeneration
 
             foreach (var pInner in pAddon.BorderWith)
             {
-                if (m_cContents.Contains(pInner.Key as INNER))
+                if (m_cContents.Contains(pInner.Key))
                     continue;
 
                 if (!m_cBorder.ContainsKey(pInner.Key))
@@ -159,6 +117,10 @@ namespace LandscapeGeneration
             return pAddon;
         }
 
+        public List<Location.Edge> m_cFirstLines = new List<Location.Edge>();
+
+        public readonly List<List<VoronoiVertex>> m_cOrdered = new List<List<VoronoiVertex>>();
+
         /// <summary>
         /// Заполняет словарь границ с другими землями.
         /// </summary>
@@ -167,23 +129,121 @@ namespace LandscapeGeneration
         {
             ChainBorder(fCycleShift);
 
-            foreach (ITerritory pInner in m_cBorder.Keys)
+            foreach (BaseTerritory pInner in m_cBorder.Keys)
             {
-                Territory<INNER> pBorder = pInner.Owner as Territory<INNER>;
+                Territory pBorder = pInner.Owner as Territory;
 
                 if (pBorder == null)
-                    pBorder = Territory<INNER>.m_pForbidden;
+                    pBorder = Territory.m_pForbidden;
 
-                if (!m_cBorderWith.ContainsKey(pBorder))
-                    m_cBorderWith[pBorder] = new List<Location.Edge>();
-                m_cBorderWith[pBorder].AddRange(m_cBorder[pInner]);
+                if (!BorderWith.ContainsKey(pBorder))
+                    BorderWith[pBorder] = new List<Location.Edge>();
+                BorderWith[pBorder].AddRange(m_cBorder[pInner]);
             }
             FillBorderWithKeys();
         }
 
-        public override float GetMovementCost()
+        /// <summary>
+        /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
+        /// </summary>
+        /// <param name="fCycleShift">Величина смещения X-координаты для закольцованной карты</param>
+        protected void ChainBorder(float fCycleShift)
         {
-            return 1000;
+            List<Location.Edge> cTotalBorder = new List<Location.Edge>();
+            foreach (var cLines in m_cBorder)
+                cTotalBorder.AddRange(cLines.Value);
+
+            Location.Edge[] aTotalBorder = cTotalBorder.ToArray();
+            int iTotalCount = aTotalBorder.Length;
+
+            X = 0;
+            Y = 0;
+            H = 0;
+            float fPerimeter = 0;
+            foreach (Location.Edge pLine in aTotalBorder)
+            {
+                pLine.m_pNext = null;
+                //pLine.m_pPrevious = null;
+
+                float fRelativeX1 = pLine.m_pPoint1.X;
+                if (fRelativeX1 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
+                    fRelativeX1 -= fCycleShift;
+                if (fRelativeX1 < aTotalBorder[0].m_pPoint1.X - fCycleShift / 2)
+                    fRelativeX1 += fCycleShift;
+
+                float fRelativeX2 = pLine.m_pPoint2.X;
+                if (fRelativeX2 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
+                    fRelativeX2 -= fCycleShift;
+                if (fRelativeX2 < aTotalBorder[0].m_pPoint1.X - fCycleShift / 2)
+                    fRelativeX2 += fCycleShift;
+
+                X += pLine.m_fLength * (fRelativeX1 + fRelativeX2) / 2;
+                Y += pLine.m_fLength * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                H += pLine.m_fLength * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
+                fPerimeter += pLine.m_fLength;
+            }
+            X /= fPerimeter;
+            Y /= fPerimeter;
+            H /= fPerimeter;
+
+            m_cFirstLines.Clear();
+            m_cOrdered.Clear();
+
+            Location.Edge pFirstLine;
+            do
+            {
+                pFirstLine = null;
+                for (int i = 0; i < iTotalCount; i++)
+                {
+                    Location.Edge pLine = aTotalBorder[i];
+                    if (pLine.m_pNext == null)// && pLine.m_pPrevious == null)
+                    {
+                        pFirstLine = pLine;
+                        break;
+                    }
+                }
+
+                if (pFirstLine != null)
+                {
+                    List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
+
+                    m_cFirstLines.Add(pFirstLine);
+                    Location.Edge pCurrentLine = pFirstLine;
+
+                    bool bGotIt;
+                    int iCounter = 0;
+                    do
+                    {
+                        bGotIt = false;
+                        for (int i = 0; i < iTotalCount; i++)
+                        {
+                            Location.Edge pLine = aTotalBorder[i];
+                            if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
+                                (pLine.m_pPoint1.Y == pCurrentLine.m_pPoint2.Y &&
+                                 (pLine.m_pPoint1.X == pCurrentLine.m_pPoint2.X ||
+                                  Math.Abs(pLine.m_pPoint1.X - pCurrentLine.m_pPoint2.X) == fCycleShift)))
+                            {
+                                pCurrentLine.m_pNext = pLine;
+                                //pLine.m_pPrevious = pCurrentLine;
+                                cVertexes.Add(pCurrentLine.m_pPoint1);
+
+                                pCurrentLine = pLine;
+                                bGotIt = true;
+                                iCounter++;
+                                break;
+                            }
+                        }
+                        if (!bGotIt)
+                        {
+                            throw new Exception("Can't chain the border!");
+                        }
+                    }
+                    while (pCurrentLine != pFirstLine && bGotIt && iCounter <= iTotalCount);
+
+                    m_cOrdered.Add(cVertexes);
+                }
+            }
+            while (pFirstLine != null);
         }
-    }
+     }
 }

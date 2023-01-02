@@ -10,7 +10,6 @@ namespace LandscapeGeneration
         Dictionary<object, List<Location.Edge>> BorderWith { get; }
 
         bool Forbidden { get; }
-        object Owner { get; set; }
 
         /// <summary>
         /// Суммарная длина всех линий в BorderWith
