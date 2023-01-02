@@ -260,5 +260,43 @@ namespace Socium.Nations
             //        m_pCustoms.Degrade();
             //    }
         }
+        
+        /// <summary>
+        /// Вычисляет условную стоимость заселения территории указанной расой, в соответсвии с ландшафтом и фенотипом расы.
+        /// Возвращает значение в диапазоне 1-100. 
+        /// 1 - любая территория, идеально подходящая указанной расе (горы для гномов). Так же - простая для заселения территория, просто подходящая указанной расе.
+        /// 10 - простая для заселения территория (равнины), но совсем не подходящая указанной расе (горы для эльфов). Так же - максимально сложная для заселения территория, просто подходящая указанной расе (горы для людей).
+        /// 100 - максимально сложная для заселения территория (непроходимые горы), совсем не подходящая указанной расе.
+        /// </summary>
+        /// <param name="pNation"></param>
+        /// <returns></returns>
+        public int GetClaimingCost(LandTypeInfoX pLandType)
+        {
+            if (pLandType == null)
+                return -1;
+
+            if (!pLandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                return -1;
+
+            float fCost = pLandType.m_iMovementCost; // 1 - 10
+
+            if (m_aPreferredLands.Contains(pLandType))
+                fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            if (m_aHatedLands.Contains(pLandType))
+                fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            if (IsHegemon)
+                fCost /= 2;
+
+            if (fCost < 1)
+                fCost = 1;
+
+            if (fCost > int.MaxValue)
+                fCost = int.MaxValue - 1;
+
+            return (int)fCost;
+        }
+
     }
 }
