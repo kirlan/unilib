@@ -18,7 +18,7 @@ namespace Socium
     /// Провинция - группа сопредельных регионов, имеющих общую инфраструктуру и социум, принадлежащих одному государству.
     /// Провинции объединяются в государства (State).
     /// </summary>
-    public class Province : BorderBuilder<Region>, ITerritory
+    public class Province : Territory<Region>
     {
         /// <summary>
         /// ТОЛКО ДЛЯ ОТЛАДКИ!!!!
@@ -26,21 +26,6 @@ namespace Socium
         public Dictionary<Province, string> m_cConnectionString = new Dictionary<Province,string>();
         
         private static Province m_pForbidden = new Province(true);
-
-        /// <summary>
-        /// Регионы, составляющие провинцию
-        /// </summary>
-        public readonly List<Region> m_cContents = new List<Region>();
-
-        #region ITerritory members
-        public Dictionary<ITerritory, List<Location.Edge>> BorderWith { get; } = new Dictionary<ITerritory, List<Location.Edge>>();
-
-        public bool Forbidden { get; } = false;
-
-        public ITerritory Owner { get; set; } = null;
-
-        public float PerimeterLength { get; private set; } = 0;
-        #endregion ITerritory members
 
         public bool IsBorder()
         {
@@ -59,18 +44,6 @@ namespace Socium
             }
         }
 
-        public ITerritory[] m_aBorderWith = null;
-
-        internal void FillBorderWithKeys()
-        {
-            m_aBorderWith = new List<ITerritory>(BorderWith.Keys).ToArray();
-
-            PerimeterLength = 0;
-            foreach (var pBorder in BorderWith)
-                foreach (var pLine in pBorder.Value)
-                    PerimeterLength += pLine.m_fLength;
-        }
-
         public Region m_pCenter;
 
         public LocationX m_pAdministrativeCenter = null;
@@ -84,9 +57,8 @@ namespace Socium
         public float m_fWood = 0;
         public int m_iPopulation = 0;
 
-        public Province(bool bForbidden)
+        public Province(bool bForbidden): base(bForbidden)
         {
-            Forbidden = bForbidden;
         }
 
         public Province()
@@ -96,7 +68,7 @@ namespace Socium
         /// Зарождение провинции в указанном регионе
         /// </summary>
         /// <param name="pSeed"></param>
-        public void Start(Region pSeed)
+        public override void Start(Region pSeed)
         {
             if (pSeed.m_pProvince != null)
                 throw new Exception("That land already belongs to province!!!");
@@ -392,7 +364,7 @@ namespace Socium
         /// <summary>
         /// Заполняет словарь границ с другими провинциями.
         /// </summary>
-        public void Finish(float fCycleShift)
+        public override void Finish(float fCycleShift)
         {
             ChainBorder(fCycleShift);
 
