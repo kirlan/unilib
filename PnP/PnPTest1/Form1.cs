@@ -106,7 +106,7 @@ namespace PnPTest1
             //double f = fKSpeed * (1000 / (FullMass(fBatteryMass, fShipMass) * (1 + 1152 / Math.Pow(FullMass(fBatteryMass, fShipMass), 0.5))) +
             //    0.035 / Math.Exp(FullMass(fBatteryMass, fShipMass) * 0.0000007));
 
-            Вообще-то логичнее было было наоборот - расход энергии считать через скорость...
+            //TODO: Вообще-то логичнее было было наоборот - расход энергии считать через скорость...
             double f = fKSpeed * EnergyConsumption(fBatteryMass, fShipMass, fPowerLevel) / FullMass(fBatteryMass, fShipMass);
             if (double.IsPositiveInfinity(f))
                 f = 10000;
