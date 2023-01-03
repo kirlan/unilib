@@ -102,10 +102,12 @@ namespace Socium
             if (eSize == BuildingType.None)
                 return null;
 
-            m_cContents[iLair].m_pBuilding = new BuildingStandAlone(eSize);
+            var pLair = m_cContents.ElementAt(iLair);
+
+            pLair.m_pBuilding = new BuildingStandAlone(eSize);
             //m_cLocations[iLair].m_sName = NameGenerator.GetAbstractName();
 
-            foreach (LocationX pLoc in m_cContents[iLair].m_aBorderWith)
+            foreach (LocationX pLoc in pLair.m_aBorderWith)
             {
                 if (pLoc.m_pBuilding == null)
                 {
@@ -113,7 +115,7 @@ namespace Socium
                 }
             }
 
-            return m_cContents[iLair];
+            return pLair;
         }
 
         /// <summary>
@@ -236,25 +238,26 @@ namespace Socium
             }
 
             int iTown = Rnd.ChooseOne(cChances, 2);
+            var pTown = m_cContents.ElementAt(iTown);
 
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-            m_cContents[iTown].m_pSettlement = new Settlement(pInfo, m_pDominantNation, Region.m_pProvince.m_pLocalSociety.m_iTechLevel, Region.m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
+            pTown.m_pSettlement = new Settlement(pInfo, m_pDominantNation, Region.m_pProvince.m_pLocalSociety.m_iTechLevel, Region.m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 
             //обновим все дороги, проходящие через новое поселение, чтобы на дорожных указателях появилось имя нового поселения.
             List<Road> cRoads = new List<Road>();
-            cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Country]);
-            cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Normal]);
-            cRoads.AddRange(m_cContents[iTown].m_cRoads[RoadQuality.Good]);
+            cRoads.AddRange(pTown.m_cRoads[RoadQuality.Country]);
+            cRoads.AddRange(pTown.m_cRoads[RoadQuality.Normal]);
+            cRoads.AddRange(pTown.m_cRoads[RoadQuality.Good]);
 
             Road[] aRoads = cRoads.ToArray();
             foreach(Road pRoad in aRoads)
                 World.RenewRoad(pRoad);
 
-            return m_cContents[iTown];
+            return pTown;
         }
 
         public string GetMajorRaceString()

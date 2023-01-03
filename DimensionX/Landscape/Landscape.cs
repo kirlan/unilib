@@ -206,9 +206,8 @@ namespace LandscapeGeneration
         /// Биом - группа ВСЕХ сопредельных земель одного типа.
         /// Используется ТОЛЬКО при сглаживании границ локаций - внутри SmoothBiomes() 
         /// </summary>
-        private class Biome : BorderBuilder<LAND>
+        private class Biome : Territory<LAND>
         {
-            public HashSet<LAND> m_cContents = new HashSet<LAND>();
             public Biome(LAND pSeed, float fCycleShift)
             {
                 InitBorder(pSeed);

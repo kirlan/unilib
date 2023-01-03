@@ -259,7 +259,7 @@ namespace Socium
                 if (iPop > 0)
                     continue;
 
-                LandMass<LandX> pLandMass = pConti.m_cContents[Rnd.Get(pConti.m_cContents.Count)];
+                LandMass<LandX> pLandMass = pConti.m_cContents.ElementAt(Rnd.Get(pConti.m_cContents.Count));
 
                 pConti.m_cLocalNations[pLandMass] = new List<Nation>();
 
@@ -616,7 +616,7 @@ namespace Socium
 
                     //если государство состоит из единственной провинции, то переименовываем государство по имени провинции
                     if (pState.m_cContents.Count == 1)
-                        pState.m_pSociety.m_sName = pState.m_cContents[0].m_pLocalSociety.m_sName;
+                        pState.m_pSociety.m_sName = pState.m_cContents.First().m_pLocalSociety.m_sName;
 
                     pState.m_pSociety.CalculateMagic();
                     
