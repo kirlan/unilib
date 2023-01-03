@@ -42,11 +42,11 @@ namespace Socium
         }
 
         #region ITerritory members
-        public Dictionary<object, List<Location.Edge>> BorderWith { get; } = new Dictionary<object, List<Location.Edge>>();
+        public Dictionary<ITerritory, List<Location.Edge>> BorderWith { get; } = new Dictionary<ITerritory, List<Location.Edge>>();
 
         public bool Forbidden { get; } = false;
 
-        public object Owner { get; set; } = null;
+        public ITerritory Owner { get; set; } = null;
 
         public float PerimeterLength { get; private set; } = 0;
         #endregion ITerritory members
@@ -112,7 +112,7 @@ namespace Socium
 
             Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
 
-            object[] aBorderLands = new List<object>(m_cBorder.Keys).ToArray();
+            ITerritory[] aBorderLands = new List<ITerritory>(m_cBorder.Keys).ToArray();
             foreach (ITerritory pTerr in aBorderLands)
             {
                 if (pTerr.Forbidden)
@@ -215,11 +215,11 @@ namespace Socium
             FillBorderWithKeys();
         }
 
-        public object[] m_aBorderWith = null;
+        public ITerritory[] m_aBorderWith = null;
 
         internal void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<object>(BorderWith.Keys).ToArray();
+            m_aBorderWith = new List<ITerritory>(BorderWith.Keys).ToArray();
 
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)

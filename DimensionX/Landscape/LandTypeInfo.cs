@@ -67,14 +67,15 @@ namespace LandscapeGeneration
     {
         public Color m_pColor;
         public Brush m_pBrush;
-        public LandType m_eType;
 
         public void SetColor(Color pColor)
         {
             m_pColor = pColor;
             m_pBrush = new SolidBrush(m_pColor);
         }
-        
+
+        public LandType m_eType;
+
         public int m_iMovementCost = 100;
 
         public Environment m_eEnvironment = Environment.None;

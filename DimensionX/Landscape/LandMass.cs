@@ -43,7 +43,7 @@ namespace LandscapeGeneration
                 m_iMaxSize = Rnd.Get(5) + 1;
         }
 
-        public override object Grow()
+        public override ITerritory Grow()
         {
             if (m_iMaxSize > 0 && m_cContents.Count >= m_iMaxSize)
                 return null;

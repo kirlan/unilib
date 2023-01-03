@@ -66,14 +66,14 @@ namespace Socium
         /// <summary>
         /// границы с другими государствами
         /// </summary>
-        public Dictionary<object, List<Location.Edge>> BorderWith { get; } = new Dictionary<object, List<Location.Edge>>();
+        public Dictionary<ITerritory, List<Location.Edge>> BorderWith { get; } = new Dictionary<ITerritory, List<Location.Edge>>();
 
         public bool Forbidden
         {
             get { return this == State.m_pForbidden; }
         }
 
-        public object Owner { get; set; } = null;
+        public ITerritory Owner { get; set; } = null;
 
         public float PerimeterLength { get; private set; } = 0;
         #endregion ITerritory members
@@ -81,11 +81,11 @@ namespace Socium
         /// <summary>
         /// соседние государствами (включая те, с которыми только морское сообщение)
         /// </summary>
-        public object[] m_aBorderWith = null;
+        public ITerritory[] m_aBorderWith = null;
 
         internal void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<object>(BorderWith.Keys).ToArray();
+            m_aBorderWith = new List<ITerritory>(BorderWith.Keys).ToArray();
 
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
@@ -125,7 +125,7 @@ namespace Socium
         /// <returns></returns>
         public bool ForcedGrow()
         {
-            object[] aBorder = new List<object>(m_cBorder.Keys).ToArray();
+            ITerritory[] aBorder = new List<ITerritory>(m_cBorder.Keys).ToArray();
 
             bool bFullyGrown = true;
 

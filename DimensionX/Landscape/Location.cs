@@ -89,16 +89,16 @@ namespace LandscapeGeneration
         /// <summary>
         /// Границы с другими такими же объектами
         /// </summary>
-        public Dictionary<object, List<Edge>> BorderWith
+        public Dictionary<ITerritory, List<Edge>> BorderWith
         {
             get { return m_cBorderWith; }
         }
 
-        public object[] m_aBorderWith = null;
+        public ITerritory[] m_aBorderWith = null;
 
         internal void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<object>(m_cBorderWith.Keys).ToArray();
+            m_aBorderWith = new List<ITerritory>(m_cBorderWith.Keys).ToArray();
         }
 
         public bool m_bUnclosed = false;
@@ -108,9 +108,9 @@ namespace LandscapeGeneration
             get { return m_bUnclosed || m_bBorder; }
         }
 
-        private object m_pOwner = null;
+        private ITerritory m_pOwner = null;
 
-        public object Owner
+        public ITerritory Owner
         {
             get { return m_pOwner; }
             set { m_pOwner = value; }
@@ -261,7 +261,7 @@ namespace LandscapeGeneration
             m_iShadow = stright;
         }
 
-        public Dictionary<object, List<Edge>> m_cBorderWith = new Dictionary<object, List<Edge>>();
+        public Dictionary<ITerritory, List<Edge>> m_cBorderWith = new Dictionary<ITerritory, List<Edge>>();
 
         public Edge m_pFirstLine = null;
 

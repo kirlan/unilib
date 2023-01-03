@@ -1661,13 +1661,13 @@ namespace Socium
             if (pProvince1.Owner != pProvince2.Owner)
             {
 
-                List<object> pProvince1Neighbours = new List<object>(pProvince1.m_aBorderWith);
+                List<ITerritory> pProvince1Neighbours = new List<ITerritory>(pProvince1.m_aBorderWith);
                 if (!pProvince1Neighbours.Contains(pProvince2))
                     pProvince1Neighbours.Add(pProvince2);
                 pProvince1.m_aBorderWith = pProvince1Neighbours.ToArray();
                 pProvince1.m_cConnectionString[pProvince2] = "ok";
 
-                List<object> pProvince2Neighbours = new List<object>(pProvince2.m_aBorderWith);
+                List<ITerritory> pProvince2Neighbours = new List<ITerritory>(pProvince2.m_aBorderWith);
                 if (!pProvince2Neighbours.Contains(pProvince1))
                     pProvince2Neighbours.Add(pProvince1);
                 pProvince2.m_aBorderWith = pProvince2Neighbours.ToArray();

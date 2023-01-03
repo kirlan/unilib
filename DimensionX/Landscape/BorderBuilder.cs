@@ -12,7 +12,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// границы с другими объектами НИЗШЕГО УРОВНЯ, т.е. составными частями данного объекта
         /// </summary>
-        public Dictionary<object, List<Location.Edge>> m_cBorder = new Dictionary<object, List<Location.Edge>>();
+        public Dictionary<ITerritory, List<Location.Edge>> m_cBorder = new Dictionary<ITerritory, List<Location.Edge>>();
 
         public virtual void Start(INNER pSeed)
         {

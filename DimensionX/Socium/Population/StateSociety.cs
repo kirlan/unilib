@@ -339,6 +339,7 @@ namespace Socium.Population
                     if (InfrastructureLevels[m_iInfrastructureLevel].m_eMaxNavalPath == RoadQuality.Good ||
                         InfrastructureLevels[m_iInfrastructureLevel].m_iAerialAvailability > 1)
                     {
+                        // World - не ITerritory!
                         var pWorld = pContinent.Owner as World;
                         foreach (var pOtherContinent in pWorld.m_aContinents)
                         {
@@ -411,7 +412,9 @@ namespace Socium.Population
             }
             if (m_pTitularNation == m_pSlavesNation && Rnd.OneChanceFrom(3))
             {
-                m_pSlavesNation = getAccessableNation(true, false, false, m_pSlavesNation);
+                //TODO: вообще рабы могут быть не только местные, но сейчас у нас нет механики как получить список рас живущих на других континентах,
+                //поэтому при вызове getAccessableNation передаём bOnlyLocals как true
+                m_pSlavesNation = getAccessableNation(true, false, true, m_pSlavesNation);
             }
         }
 

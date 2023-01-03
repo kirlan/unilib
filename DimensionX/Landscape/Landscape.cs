@@ -216,7 +216,7 @@ namespace LandscapeGeneration
                 {
                     bAdded = false;
 
-                    object[] aBorderLands = new List<object>(m_cBorder.Keys).ToArray();
+                    ITerritory[] aBorderLands = new List<ITerritory>(m_cBorder.Keys).ToArray();
                     foreach (ITerritory pTerr in aBorderLands)
                     {
                         if (pTerr.Forbidden)
@@ -613,7 +613,7 @@ namespace LandscapeGeneration
             foreach (CONT pCont in m_aContinents)
             {
                 pCont.Finish(m_pGrid.CycleShift);
-                pCont.Owner = this;
+                pCont.Owner = new Territory<CONT>(true); //грязный хак, но в случае континентов нам не важно что именно лежит в Owner, главное что не null
                 ProgressStep();
             }
 

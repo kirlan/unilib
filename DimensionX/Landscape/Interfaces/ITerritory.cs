@@ -7,10 +7,10 @@ namespace LandscapeGeneration
         /// <summary>
         /// Границы с другими ТАКИМИ ЖЕ объектами
         /// </summary>
-        Dictionary<object, List<Location.Edge>> BorderWith { get; }
+        Dictionary<ITerritory, List<Location.Edge>> BorderWith { get; }
 
         bool Forbidden { get; }
-        object Owner { get; set; }
+        ITerritory Owner { get; set; }
 
         /// <summary>
         /// Суммарная длина всех линий в BorderWith
