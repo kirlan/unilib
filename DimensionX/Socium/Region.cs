@@ -90,7 +90,7 @@ namespace Socium
         /// Присоединяет к территории сопредельную землю того же типа.
         /// </summary>
         /// <returns></returns>
-        public override ITerritory Grow()
+        public override ITerritory Grow(int iMaxSize)
         {
             if (m_cContents.Count > m_iMaxSize && Rnd.OneChanceFrom(m_cContents.Count - m_iMaxSize))
                 return null;

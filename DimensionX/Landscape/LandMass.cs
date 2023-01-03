@@ -43,12 +43,12 @@ namespace LandscapeGeneration
                 m_iMaxSize = Rnd.Get(5) + 1;
         }
 
-        public override ITerritory Grow()
+        public override ITerritory Grow(int iMaxSize)
         {
             if (m_iMaxSize > 0 && m_cContents.Count >= m_iMaxSize)
                 return null;
 
-            return base.Grow();
+            return base.Grow(iMaxSize);
         }
 
         public bool HaveForbiddenBorders()

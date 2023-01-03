@@ -31,7 +31,7 @@ namespace LandscapeGeneration
         /// Присоединяет к континенту сопредельную неприкаянную страну.
         /// </summary>
         /// <returns></returns>
-        public override ITerritory Grow()
+        public override ITerritory Grow(int iMaxSize)
         {
             if (m_bIsland && !Rnd.OneChanceFrom(25))
                 return null;

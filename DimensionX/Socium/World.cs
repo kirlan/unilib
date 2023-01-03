@@ -679,7 +679,7 @@ namespace Socium
                             Province pLostProvince = new Province();
                             pLostProvince.Start(pRegion);
                             cProvinces.Add(pLostProvince);
-                            while (pLostProvince.Grow(pRegion.m_cContents.Count)) { }
+                            while (pLostProvince.Grow(pRegion.m_cContents.Count) != null) { }
                             cFinished.Add(pLostProvince);
                         }
                         iUsed++;
@@ -785,7 +785,7 @@ namespace Socium
                     if (pProvince.m_bFullyGrown)
                         continue;
 
-                    if (!pProvince.Grow(iMaxProvinceSize))
+                    if (pProvince.Grow(iMaxProvinceSize) == null)
                         cFinished.Add(pProvince);
                 }
             }
@@ -837,7 +837,7 @@ namespace Socium
                         Province pProvince = new Province();
                         pProvince.Start(pRegion);
                         cProvinces.Add(pProvince);
-                        while (pProvince.Grow(iMaxProvinceSize)) { };
+                        while (pProvince.Grow(iMaxProvinceSize) != null) { };
                     }
                 }
             }
@@ -972,7 +972,7 @@ namespace Socium
             {
                 bContinue = false;
                 foreach (State pState in cStates)
-                    if (pState.Grow(iMaxStateSize))
+                    if (pState.Grow(iMaxStateSize) != null)
                         bContinue = true;
             }
             while (bContinue);
@@ -1012,7 +1012,7 @@ namespace Socium
                     State pState = new State();
                     pState.Start(pProvince);
                     cStates.Add(pState);
-                    while (pState.Grow(iMaxStateSize)) { }
+                    while (pState.Grow(iMaxStateSize) != null) { }
                 }
             }
 

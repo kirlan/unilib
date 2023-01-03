@@ -90,8 +90,22 @@ namespace LandscapeGeneration
         /// Чем длиннее общая граница с локацией - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public virtual ITerritory Grow()
+        public ITerritory Grow()
         {
+            return Grow(int.MaxValue);
+        }
+
+        /// <summary>
+        /// Присоединяет к земле сопредельную нечейную локацию.
+        /// Чем длиннее общая граница с локацией - тем выше вероятность того, что выбрана будет именно она.
+        /// </summary>
+        /// <returns></returns>
+        public virtual ITerritory Grow(int iMaxSize)
+        {
+            //если территория уже достаточно большая - игнорируем.
+            if (m_cContents.Count > iMaxSize)
+                return null;
+
             Dictionary<ITerritory, float> cBorderLength = new Dictionary<ITerritory, float>();
 
             foreach (var pInner in m_cBorder)

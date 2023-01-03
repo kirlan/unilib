@@ -18,7 +18,7 @@ namespace Socium
     /// <summary>
     /// Государство - группа сопредельных провинций, объединённых общей властью.
     /// </summary>
-    public class State: BorderBuilder<Province>, ITerritory
+    public class State: Territory<Province>
     {
         public class Infrastructure
         {
@@ -58,40 +58,14 @@ namespace Socium
             new Infrastructure(RoadQuality.Country, RoadQuality.None, 3, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Fort}),
         }; 
         
-        private static State m_pForbidden = new State();
+        private static State m_pForbidden = new State(true);
 
-        public List<Province> m_cContents = new List<Province>();
-
-        #region ITerritory members
-        /// <summary>
-        /// границы с другими государствами
-        /// </summary>
-        public Dictionary<ITerritory, List<Location.Edge>> BorderWith { get; } = new Dictionary<ITerritory, List<Location.Edge>>();
-
-        public bool Forbidden
+        public State(bool bForbidden) : base(bForbidden)
         {
-            get { return this == State.m_pForbidden; }
         }
 
-        public ITerritory Owner { get; set; } = null;
-
-        public float PerimeterLength { get; private set; } = 0;
-        #endregion ITerritory members
-
-        /// <summary>
-        /// соседние государствами (включая те, с которыми только морское сообщение)
-        /// </summary>
-        public ITerritory[] m_aBorderWith = null;
-
-        internal void FillBorderWithKeys()
-        {
-            m_aBorderWith = new List<ITerritory>(BorderWith.Keys).ToArray();
-
-            PerimeterLength = 0;
-            foreach (var pBorder in BorderWith)
-                foreach (Location.Edge pLine in pBorder.Value)
-                    PerimeterLength += pLine.m_fLength;
-        }
+        public State()
+        { }
 
         public Province m_pMethropoly = null;
 
@@ -101,7 +75,7 @@ namespace Socium
         /// Зарождение государства в указанной провинции
         /// </summary>
         /// <param name="pSeed"></param>
-        public void Start(Province pSeed)
+        public override void Start(Province pSeed)
         {
             if (pSeed.Owner != null)
                 throw new Exception("This province already belongs to state!!!");
@@ -154,11 +128,11 @@ namespace Socium
         /// Возвращает false, если больше расти некуда, иначе true.
         /// </summary>
         /// <returns></returns>
-        public bool Grow(int iMaxStateSize)
+        public override ITerritory Grow(int iMaxSize)
         {
             //если государство уже достаточно большое - сваливаем.
-            if (m_cContents.Count > iMaxStateSize)
-                return false;
+            if (m_cContents.Count > iMaxSize)
+                return null;
 
             Dictionary<Province, float> cChances = new Dictionary<Province, float>();
 
@@ -214,33 +188,22 @@ namespace Socium
 
             int iChoice = Rnd.ChooseOne(cChances.Values, 2);
 
-            if (iChoice < 0)
-                return false;
-
-            foreach (Province pProvince in cChances.Keys)
+            if (iChoice >= 0)
             {
-                iChoice--;
-                if (iChoice < 0)
-                {
-                    pAddon = pProvince;
-                    break;
-                }
+                pAddon = cChances.ElementAt(iChoice).Key;
+
+                //if (!Rnd.OneChanceFrom(1 + m_iPower * m_iPower))
+                //if (Rnd.OneChanceFrom(1 + pAddon.m_pCenter.Type.m_iMovementCost * pAddon.m_pCenter.Type.m_iMovementCost))
+                //    return true;
+
+                //foreach (LandTypeInfoX pType in m_pRace.m_cHatedLands)
+                //    if (pType == pAddon.m_pCenter.Type && !Rnd.OneChanceFrom(5))
+                //        return true;
+
+                AddProvince(pAddon);
             }
 
-            if (pAddon == null)
-                return false;
-
-            //if (!Rnd.OneChanceFrom(1 + m_iPower * m_iPower))
-            //if (Rnd.OneChanceFrom(1 + pAddon.m_pCenter.Type.m_iMovementCost * pAddon.m_pCenter.Type.m_iMovementCost))
-            //    return true;
-
-            //foreach (LandTypeInfoX pType in m_pRace.m_cHatedLands)
-            //    if (pType == pAddon.m_pCenter.Type && !Rnd.OneChanceFrom(5))
-            //        return true;
-
-            AddProvince(pAddon);
-
-            return true;
+            return pAddon;
         }
 
         private void AddProvince(Province pAddon)
@@ -318,7 +281,7 @@ namespace Socium
         /// <summary>
         /// Заполняет словарь границ с другими странами и гарантирует принадлежность государства той расе, которая доминирует на его территории.
         /// </summary>
-        public void Finish(float fCycleShift)
+        public override void Finish(float fCycleShift)
         {
             ChainBorder(fCycleShift);
 
@@ -529,6 +492,7 @@ namespace Socium
                     continue;
 
                 State pState = pTerr as State;
+
                 int iHostility = m_pSociety.CalcHostility(pState);
                 int iHostility2 = pState.m_pSociety.CalcHostility(this);
 
@@ -554,6 +518,7 @@ namespace Socium
                     continue;
 
                 State pState = pTerr as State;
+
                 int iHostility = m_pSociety.CalcHostility(pState);
                 int iHostility2 = pState.m_pSociety.CalcHostility(this);
 

@@ -325,15 +325,15 @@ namespace Socium
         /// Чем длиннее общая граница с землёй - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public bool Grow(int iMaxProvinceSize)
+        public override ITerritory Grow(int iMaxSize)
         {
             m_bFullyGrown = false;
             //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
-            if (m_cContents.Count >= iMaxProvinceSize || m_pCenter.m_iProvincePresence > 200 * Math.Sqrt(iMaxProvinceSize / Math.PI))
+            if (m_cContents.Count >= iMaxSize || m_pCenter.m_iProvincePresence > 200 * Math.Sqrt(iMaxSize / Math.PI))
             {
                 //GrowForce(m_pCenter, 1);
                 m_bFullyGrown = true;
-                return false;
+                return null;
             }
 
             Region pAddon = GrowPresence(m_pCenter, 1);
@@ -358,7 +358,7 @@ namespace Socium
                 }
             }
 
-            return true;
+            return pAddon;
         }
 
         /// <summary>
