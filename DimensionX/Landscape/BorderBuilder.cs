@@ -14,7 +14,7 @@ namespace LandscapeGeneration
         /// </summary>
         public Dictionary<ITerritory, List<Location.Edge>> m_cBorder = new Dictionary<ITerritory, List<Location.Edge>>();
 
-        public virtual void Start(INNER pSeed)
+        public void InitBorder(INNER pSeed)
         {
             m_cBorder.Clear();
 

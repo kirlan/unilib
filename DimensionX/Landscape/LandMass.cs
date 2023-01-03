@@ -35,7 +35,7 @@ namespace LandscapeGeneration
             //m_iElevation = (int)(Math.Tan(1.2f - Rnd.Get(2.22f)));
         }
 
-        public override void Start(LAND pSeed)
+        public void Start(LAND pSeed)
         {
             base.Start(pSeed);
 

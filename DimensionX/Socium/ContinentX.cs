@@ -45,7 +45,7 @@ namespace Socium
                     {
                         Region pRegion = new Region();
                         pRegion.Start(pLand, iMaxSize);
-                        while (pRegion.Grow()) { }
+                        while (pRegion.Grow() != null) { }
                         m_cRegions.Add(pRegion);
                         pRegion.Owner = pLandMass;
                     }

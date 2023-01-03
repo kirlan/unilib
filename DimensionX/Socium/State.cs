@@ -101,7 +101,7 @@ namespace Socium
         /// Зарождение государства в указанной провинции
         /// </summary>
         /// <param name="pSeed"></param>
-        public override void Start(Province pSeed)
+        public void Start(Province pSeed)
         {
             if (pSeed.Owner != null)
                 throw new Exception("This province already belongs to state!!!");
@@ -109,7 +109,7 @@ namespace Socium
             BorderWith.Clear();
             m_cContents.Clear();
 
-            base.Start(pSeed);
+            InitBorder(pSeed);
 
             m_pMethropoly = pSeed;
 

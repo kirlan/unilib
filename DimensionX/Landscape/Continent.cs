@@ -17,7 +17,7 @@ namespace LandscapeGeneration
     {
         private bool m_bIsland = false;
 
-        public override void  Start(LandMass<LAND> pSeed)
+        public override void Start(LandMass<LAND> pSeed)
         {
             if (pSeed.IsWater)
                 return;

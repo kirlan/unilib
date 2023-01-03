@@ -96,7 +96,7 @@ namespace Socium
         /// Зарождение провинции в указанном регионе
         /// </summary>
         /// <param name="pSeed"></param>
-        public override void Start(Region pSeed)
+        public void Start(Region pSeed)
         {
             if (pSeed.m_pProvince != null)
                 throw new Exception("That land already belongs to province!!!");
@@ -104,7 +104,7 @@ namespace Socium
             BorderWith.Clear();
             m_cContents.Clear();
 
-            base.Start(pSeed);
+            InitBorder(pSeed);
 
             m_pCenter = pSeed;
 

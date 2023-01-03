@@ -64,7 +64,7 @@ namespace LandscapeGeneration
             get { return m_fPerimeter; }
         }
 
-        internal void FillBorderWithKeys()
+        protected void FillBorderWithKeys()
         {
             m_aBorderWith = new List<ITerritory>(m_cBorderWith.Keys).ToArray();
 
@@ -74,12 +74,12 @@ namespace LandscapeGeneration
                     m_fPerimeter += pLine.m_fLength;
         }
 
-        public override void Start(INNER pSeed)
+        public virtual void Start(INNER pSeed)
         {
             m_cContents.Clear();
             m_cBorderWith.Clear();
 
-            base.Start(pSeed);
+            InitBorder(pSeed);
 
             m_cContents.Add(pSeed);
             pSeed.Owner = this;

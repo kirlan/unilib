@@ -14,11 +14,9 @@ namespace Socium
     /// Регион - группа сопредельных земель одного типа, населённых одной нацией и имеющих одно название (например. Арденнский Лес).
     /// Регионы объеиняются в провинции (Province).
     /// </summary>
-    public class Region: BorderBuilder<LandX>, ITerritory
+    public class Region: Territory<LandX>
     {
         private static Region m_pForbidden = new Region(true);
-
-        public List<LandX> m_cContents = new List<LandX>();
 
         public LandTypeInfoX m_pType;
 
@@ -40,16 +38,6 @@ namespace Socium
         {
             get { return m_pType == null ? 100 : m_pType.m_iMovementCost; }
         }
-
-        #region ITerritory members
-        public Dictionary<ITerritory, List<Location.Edge>> BorderWith { get; } = new Dictionary<ITerritory, List<Location.Edge>>();
-
-        public bool Forbidden { get; } = false;
-
-        public ITerritory Owner { get; set; } = null;
-
-        public float PerimeterLength { get; private set; } = 0;
-        #endregion ITerritory members
 
         public ContinentX Continent
         {
@@ -76,9 +64,8 @@ namespace Socium
 
         private int m_iMaxSize = 1;
 
-        public Region(bool bForbidden)
+        public Region(bool bForbidden) : base(bForbidden)
         {
-            Forbidden = bForbidden;
         }
 
         public Region()
@@ -89,7 +76,7 @@ namespace Socium
             BorderWith.Clear();
             m_cContents.Clear();
 
-            base.Start(pSeed);
+            InitBorder(pSeed);
 
             m_cContents.Add(pSeed);
             pSeed.Region = this;
@@ -103,10 +90,10 @@ namespace Socium
         /// Присоединяет к территории сопредельную землю того же типа.
         /// </summary>
         /// <returns></returns>
-        public bool Grow()
+        public override ITerritory Grow()
         {
             if (m_cContents.Count > m_iMaxSize && Rnd.OneChanceFrom(m_cContents.Count - m_iMaxSize))
-                return false;
+                return null;
 
             //List<LAND> cBorder = new List<LAND>();
 
@@ -153,7 +140,7 @@ namespace Socium
             }
 
             if (cBorderLength.Count == 0)
-                return false;
+                return null;
 
             LandX pAddon = null;
 
@@ -170,7 +157,7 @@ namespace Socium
             }
 
             if (pAddon == null)
-                return false;
+                return null;
 
             m_cContents.Add(pAddon);
             pAddon.Region = this;
@@ -192,10 +179,10 @@ namespace Socium
 
             //ChainBorder();
 
-            return true;
+            return pAddon;
         }
 
-        public virtual void Finish(float fCycleShift)
+        public override void Finish(float fCycleShift)
         {
             //base.Finish();
             ChainBorder(fCycleShift);
@@ -215,22 +202,11 @@ namespace Socium
             FillBorderWithKeys();
         }
 
-        public ITerritory[] m_aBorderWith = null;
-
-        internal void FillBorderWithKeys()
-        {
-            m_aBorderWith = new List<ITerritory>(BorderWith.Keys).ToArray();
-
-            PerimeterLength = 0;
-            foreach (var pBorder in BorderWith)
-                foreach (var pLine in pBorder.Value)
-                    PerimeterLength += pLine.m_fLength;
-        }
-
         public override float GetMovementCost()
         {
             return m_pType == null ? 100 : m_pType.m_iMovementCost;
         }
+
         public void SetRace(List<Nation> cPossibleNations)
         {
             Dictionary<Nation, float> cChances = new Dictionary<Nation, float>();
