@@ -13,7 +13,7 @@ namespace LandscapeGeneration
 {
     public class Landscape: IInfoLayer
     {
-        public IGrid<Location> m_pGrid = null;
+        public IGrid m_pGrid = null;
 
         public Land[] m_aLands = null;
 

@@ -8,9 +8,9 @@ using MIConvexHull;
 
 namespace LandscapeGeneration.FastGrid
 {
-    public class ChunksGrid : IGrid<Location>
+    public class ChunksGrid : IGrid
     {
-        public Chunk<LOC>[,] m_cChunk;
+        public Chunk[,] m_cChunk;
 
         static int IsLeft(Point a, Point b, Point c)
         {
@@ -419,10 +419,9 @@ namespace LandscapeGeneration.FastGrid
             get { return m_eShape == WorldShape.Ringworld ? RX * 2 : 0; }
         }
 
-        private LOC[] m_aLocations;
         public VoronoiVertex[] m_aVertexes;
 
-        public LOC[] Locations { get => m_aLocations; set => m_aLocations = value; }
+        public Location[] Locations { get; private set; } = null;
 
         public ChunksGrid(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
@@ -484,11 +483,11 @@ namespace LandscapeGeneration.FastGrid
             if (BeginStep != null)
                 BeginStep("Forming grid...", 15);
 
-            m_cChunk = new Chunk<LOC>[iFaceSize, iFaceSize];
+            m_cChunk = new Chunk[iFaceSize, iFaceSize];
 
             for (int x = 0; x < iFaceSize; x++)
                 for (int y = 0; y < iFaceSize; y++)
-                    m_cChunk[x, y] = new Chunk<LOC>(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX * 2);
+                    m_cChunk[x, y] = new Chunk(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX * 2);
             
             LinkNeighbours();
             
@@ -509,11 +508,11 @@ namespace LandscapeGeneration.FastGrid
             if (ProgressStep != null)
                 ProgressStep();
 
-            List<LOC> cLocations = new List<LOC>();
+            List<Location> cLocations = new List<Location>();
             foreach (var pChunk in m_cChunk)
                 cLocations.AddRange(pChunk.m_aLocations);
 
-            m_aLocations = cLocations.ToArray();
+            Locations = cLocations.ToArray();
 
             List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
             foreach (var pChunk in m_cChunk)

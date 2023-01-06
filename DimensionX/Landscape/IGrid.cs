@@ -3,10 +3,9 @@
     public delegate void BeginStepDelegate(string sDescription, int iLength);
     public delegate void ProgressStepDelegate();
 
-    public interface IGrid<LOC>
-         where LOC : Location, new()
+    public interface IGrid
     {
-        LOC[] Locations { get; set; }
+        Location[] Locations { get; set; }
         float CycleShift { get; }
         int RX { get; }
         int RY { get; }

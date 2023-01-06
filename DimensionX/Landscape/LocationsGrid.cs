@@ -36,7 +36,7 @@ namespace LandscapeGeneration
         Chalice
     }
 
-    public class LocationsGrid : IGrid<Location> 
+    public class LocationsGrid : IGrid 
     {
         /// <summary>
         /// Расстояние от экватора до полюса. 
@@ -64,7 +64,7 @@ namespace LandscapeGeneration
             get { return m_eShape == WorldShape.Ringworld ? m_iRX * 2 : 0; }
         }
 
-        public Location[] Locations { get; set; } = null;
+        public Location[] Locations { get; private set; } = null;
 
         public string m_sDescription = "";
 
