@@ -114,7 +114,7 @@ namespace Socium
             //    float fLinkedLandsBorderLength = 0;
             //    foreach (var pLinkTerr in pLand.BorderWith)
             //    {
-            //        if ((pLinkTerr.Key as ITerritory).Forbidden)
+            //        if ((pLinkTerr.Key as Territory).Forbidden)
             //            continue;
 
             //        Line[] cLines = pLinkTerr.Value.ToArray();
@@ -191,7 +191,7 @@ namespace Socium
 
                 foreach (var pLinkTerr in pRegion.BorderWith)
                 {
-                    if ((pLinkTerr.Key as ITerritory).Forbidden)
+                    if ((pLinkTerr.Key as Territory).Forbidden)
                         continue;
 
                     Region pLinkedRegion = pLinkTerr.Key as Region;
@@ -274,14 +274,14 @@ namespace Socium
         /// <returns></returns>
         public bool ForcedGrow()
         {
-            ITerritory[] aBorder = new List<ITerritory>(m_cBorder.Keys).ToArray();
+            Territory[] aBorder = new List<Territory>(m_cBorder.Keys).ToArray();
 
             m_bFullyGrown = true;
 
             if (m_pLocalSociety.m_pTitularNation.IsAncient)
                 return !m_bFullyGrown;
 
-            foreach (ITerritory pTerr in aBorder)
+            foreach (Territory pTerr in aBorder)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -301,7 +301,7 @@ namespace Socium
 
                     foreach (var pAddonLinkedRegion in pRegion.BorderWith)
                     {
-                        if (!(pAddonLinkedRegion.Key as ITerritory).Forbidden && m_cContents.Contains(pAddonLinkedRegion.Key as Region))
+                        if (!(pAddonLinkedRegion.Key as Territory).Forbidden && m_cContents.Contains(pAddonLinkedRegion.Key as Region))
                             continue;
 
                         if (!m_cBorder.ContainsKey(pAddonLinkedRegion.Key))
@@ -325,7 +325,7 @@ namespace Socium
         /// Чем длиннее общая граница с землёй - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public override ITerritory Grow(int iMaxSize)
+        public override Territory Grow(int iMaxSize)
         {
             m_bFullyGrown = false;
             //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
@@ -347,7 +347,7 @@ namespace Socium
 
                 foreach (var pAddonLinkedLand in pAddon.BorderWith)
                 {
-                    if (!(pAddonLinkedLand.Key as ITerritory).Forbidden && m_cContents.Contains(pAddonLinkedLand.Key as Region))
+                    if (!(pAddonLinkedLand.Key as Territory).Forbidden && m_cContents.Contains(pAddonLinkedLand.Key as Region))
                         continue;
 
                     if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
@@ -726,7 +726,7 @@ namespace Socium
 
                     bool bProvinceBorder = false;
                     bool bStateBorder = false;
-                    foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                    foreach (Territory pTerr in pLand.m_aBorderWith)
                     {
                         if (pTerr.Forbidden)
                             continue;

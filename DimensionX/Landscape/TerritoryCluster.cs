@@ -7,15 +7,15 @@ using Random;
 
 namespace LandscapeGeneration
 {
-    public class TerritoryCluster<LAYER, INNER> : BaseTerritory, IInfoLayer
+    public class TerritoryCluster<LAYER, INNER> : Territory, IInfoLayer
         where LAYER: TerritoryCluster<LAYER, INNER>
-        where INNER: class, ITerritory
+        where INNER: Territory
     {
         #region BorderBuilder
         /// <summary>
         /// границы с другими объектами НИЗШЕГО УРОВНЯ, т.е. составными частями данного объекта
         /// </summary>
-        public Dictionary<ITerritory, List<VoronoiEdge>> m_cBorder = new Dictionary<ITerritory, List<VoronoiEdge>>();
+        public Dictionary<Territory, List<VoronoiEdge>> m_cBorder = new Dictionary<Territory, List<VoronoiEdge>>();
 
         public void InitBorder(INNER pSeed)
         {
@@ -198,11 +198,11 @@ namespace LandscapeGeneration
         /// <summary>
         /// Соседние ТАКИЕ ЖЕ объекты
         /// </summary>
-        public ITerritory[] m_aBorderWith = null;
+        public Territory[] m_aBorderWith = null;
 
         protected void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<ITerritory>(BorderWith.Keys).ToArray();
+            m_aBorderWith = new List<Territory>(BorderWith.Keys).ToArray();
 
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
@@ -225,7 +225,7 @@ namespace LandscapeGeneration
         /// Чем длиннее общая граница с локацией - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public ITerritory Grow()
+        public Territory Grow()
         {
             return Grow(int.MaxValue);
         }
@@ -235,17 +235,17 @@ namespace LandscapeGeneration
         /// Чем длиннее общая граница с локацией - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public virtual ITerritory Grow(int iMaxSize)
+        public virtual Territory Grow(int iMaxSize)
         {
             //если территория уже достаточно большая - игнорируем.
             if (Contents.Count > iMaxSize)
                 return null;
 
-            Dictionary<ITerritory, float> cBorderLength = new Dictionary<ITerritory, float>();
+            Dictionary<Territory, float> cBorderLength = new Dictionary<Territory, float>();
 
             foreach (var pInner in m_cBorder)
             {
-                ITerritory pInnerTerritory = pInner.Key as ITerritory;
+                Territory pInnerTerritory = pInner.Key as Territory;
                 if (!pInnerTerritory.HasLayer<LAYER>() && !pInnerTerritory.Forbidden)
                 {
                     float fWholeLength = 1;
@@ -269,7 +269,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            ITerritory pAddon = null;
+            Territory pAddon = null;
 
             int iChoice = Rnd.ChooseOne(cBorderLength.Values, 4);
             foreach (var pInner in cBorderLength)
@@ -316,7 +316,7 @@ namespace LandscapeGeneration
         {
             ChainBorder(fCycleShift);
 
-            foreach (ITerritory pInner in m_cBorder.Keys)
+            foreach (Territory pInner in m_cBorder.Keys)
             {
                 TerritoryCluster<LAYER, INNER> pBorderCluster = TerritoryCluster<LAYER, INNER>.m_pForbidden;
                 if (pInner.HasLayer<LAYER>())

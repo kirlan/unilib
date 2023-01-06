@@ -55,7 +55,7 @@ namespace Socium
             Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
 
             object[] aBorderLands = new List<object>(m_cBorder.Keys).ToArray();
-            foreach (ITerritory pTerr in aBorderLands)
+            foreach (Territory pTerr in aBorderLands)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -73,7 +73,7 @@ namespace Socium
 
                     foreach (var pLinkTerr in pLand.BorderWith)
                     {
-                        if ((pLinkTerr.Key as ITerritory).Forbidden)
+                        if ((pLinkTerr.Key as Territory).Forbidden)
                             continue;
 
                         if ((pLinkTerr.Key as LandX).Type == m_pType &&

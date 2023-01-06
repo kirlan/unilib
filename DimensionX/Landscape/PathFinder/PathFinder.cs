@@ -56,8 +56,8 @@ namespace LandscapeGeneration.PathFind
                     if (bNaval && !path.LastStep.m_cLinks[pLinked].m_bSea && !path.LastStep.m_cLinks[pLinked].m_bEmbark)
                         continue;
 
-                    if ((pLinked as ITerritory).Owner != null && !visited.Contains((pLinked as ITerritory).Owner as TransportationNode))
-                        visited.Add((pLinked as ITerritory).Owner as TransportationNode);
+                    if ((pLinked as Territory).Owner != null && !visited.Contains((pLinked as Territory).Owner as TransportationNode))
+                        visited.Add((pLinked as Territory).Owner as TransportationNode);
 
                     var newPath = path.AddStep(pLinked, path.LastStep.m_cLinks[pLinked].MovementCost);
 

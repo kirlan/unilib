@@ -58,7 +58,7 @@ namespace LandscapeGeneration.PathFind
                     if (bNavalOnly && !pLinked.Value.Sea && !pLinked.Value.Embark)
                         continue;
 
-                    //TransportationNode pLinkedNodeOwner = (pLinkedNode as ITerritory).Owner as TransportationNode;
+                    //TransportationNode pLinkedNodeOwner = (pLinkedNode as Territory).Owner as TransportationNode;
                     //if (pLinkedNodeOwner != null && !visited.Contains(pLinkedNodeOwner))
                     //    visited.Add(pLinkedNodeOwner);
 

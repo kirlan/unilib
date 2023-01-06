@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace LandscapeGeneration
 {
-    public abstract class BaseTerritory : TransportationNode, ITerritory
+    public abstract class Territory : TransportationNode
     {
         public readonly Dictionary<Type, dynamic> m_cInfoLayers = new Dictionary<Type, dynamic>();
 
-        #region ITerritory Members
+        #region Territory Members
 
         /// <summary>
         /// Границы с другими ТАКИМИ ЖЕ объектами
         /// </summary>
-        public Dictionary<ITerritory, List<VoronoiEdge>> BorderWith { get; } = new Dictionary<ITerritory, List<VoronoiEdge>>();
+        public Dictionary<Territory, List<VoronoiEdge>> BorderWith { get; } = new Dictionary<Territory, List<VoronoiEdge>>();
 
         public virtual bool Forbidden { get; } = false;
 
-        public ITerritory AddLayer<T>(T value) where T : class, IInfoLayer
+        public Territory AddLayer<T>(T value) where T : class, IInfoLayer
         {
             m_cInfoLayers[typeof(T)] = value;
 
@@ -41,16 +41,19 @@ namespace LandscapeGeneration
             return m_cInfoLayers.ContainsKey(typeof(T));
         }
 
+        /// <summary>
+        /// Суммарная длина всех линий в BorderWith
+        /// </summary>
         public float PerimeterLength { get; protected set; } = 0;
 
         #endregion
 
-        public BaseTerritory(bool bForbidden)
+        public Territory(bool bForbidden)
         {
             Forbidden = bForbidden;
         }
 
-        public BaseTerritory()
+        public Territory()
         { }
     }
 }

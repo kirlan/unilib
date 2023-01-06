@@ -339,7 +339,7 @@ namespace Socium.Population
                     if (InfrastructureLevels[m_iInfrastructureLevel].m_eMaxNavalPath == RoadQuality.Good ||
                         InfrastructureLevels[m_iInfrastructureLevel].m_iAerialAvailability > 1)
                     {
-                        // World - не ITerritory!
+                        // World - не Territory!
                         var pWorld = pContinent.Owner as World;
                         foreach (var pOtherContinent in pWorld.m_aContinents)
                         {
@@ -1940,7 +1940,7 @@ namespace Socium.Population
 
             //float fContact = 0;
             //float fBorder = 0;
-            //foreach (ITerritory pTerr in BorderWith.Keys)
+            //foreach (Territory pTerr in BorderWith.Keys)
             //{ 
             //    if(pTerr.Forbidden)
             //        continue;

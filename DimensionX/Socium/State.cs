@@ -99,11 +99,11 @@ namespace Socium
         /// <returns></returns>
         public bool ForcedGrow()
         {
-            ITerritory[] aBorder = new List<ITerritory>(m_cBorder.Keys).ToArray();
+            Territory[] aBorder = new List<Territory>(m_cBorder.Keys).ToArray();
 
             bool bFullyGrown = true;
 
-            foreach (ITerritory pTerr in aBorder)
+            foreach (Territory pTerr in aBorder)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -128,7 +128,7 @@ namespace Socium
         /// Возвращает false, если больше расти некуда, иначе true.
         /// </summary>
         /// <returns></returns>
-        public override ITerritory Grow(int iMaxSize)
+        public override Territory Grow(int iMaxSize)
         {
             //если государство уже достаточно большое - сваливаем.
             if (m_cContents.Count > iMaxSize)
@@ -136,7 +136,7 @@ namespace Socium
 
             Dictionary<Province, float> cChances = new Dictionary<Province, float>();
 
-            foreach (ITerritory pTerr in m_cBorder.Keys)
+            foreach (Territory pTerr in m_cBorder.Keys)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -219,7 +219,7 @@ namespace Socium
             //List<Line> cFalseBorder = new List<Line>();
             foreach (var pLand in pAddon.BorderWith)
             {
-                ITerritory pL = pLand.Key as ITerritory;
+                Territory pL = pLand.Key as Territory;
 
                 if (!pL.Forbidden && m_cContents.Contains(pL))
                 {
@@ -288,7 +288,7 @@ namespace Socium
             BorderWith.Clear();
 
             //добавляем в общий список контуры границ с соседними государствами
-            foreach (ITerritory pProvince in m_cBorder.Keys)
+            foreach (Territory pProvince in m_cBorder.Keys)
             {
                 State pState;
                 if (pProvince.Forbidden || (pProvince as Province).Owner == null)
@@ -486,7 +486,7 @@ namespace Socium
         {
             List<State> cList = new List<State>();
  
-            foreach (ITerritory pTerr in m_aBorderWith)
+            foreach (Territory pTerr in m_aBorderWith)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -512,7 +512,7 @@ namespace Socium
         {
             List<State> cList = new List<State>();
 
-            foreach (ITerritory pTerr in m_aBorderWith)
+            foreach (Territory pTerr in m_aBorderWith)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -550,7 +550,7 @@ namespace Socium
 
                         foreach (var pLinkedTerr in pRegion.BorderWith)
                         {
-                            if((pLinkedTerr.Key as ITerritory).Forbidden)
+                            if((pLinkedTerr.Key as Territory).Forbidden)
                                 continue;
 
                             Region pLinkedRegion = pLinkedTerr.Key as Region;

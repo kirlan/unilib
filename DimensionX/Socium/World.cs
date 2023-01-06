@@ -347,7 +347,7 @@ namespace Socium
                             List<LandMass<LandX>> cLandMassesExtended = new List<LandMass<LandX>>(cLandMasses);
 
                             foreach (LandMass<LandX> pLandMass in cLandMasses)
-                                foreach (ITerritory pLinkedLM in pLandMass.m_aBorderWith)
+                                foreach (Territory pLinkedLM in pLandMass.m_aBorderWith)
                                 {
                                     if (pLinkedLM.Forbidden)
                                         continue;
@@ -1273,7 +1273,7 @@ namespace Socium
         {
             List<LocationX> cWaveFront = new List<LocationX>();
 
-            foreach (ITerritory pLinkedTerr in pHarbor.m_aBorderWith)
+            foreach (Territory pLinkedTerr in pHarbor.m_aBorderWith)
             {
                 if (pLinkedTerr.Forbidden)
                     continue;
@@ -1375,7 +1375,7 @@ namespace Socium
                             continue;
 
                         bool bCoastral = false;
-                        foreach (ITerritory pTerr in pTown.m_aBorderWith)
+                        foreach (Territory pTerr in pTown.m_aBorderWith)
                         {
                             if (pTerr.Forbidden || pTerr.Owner == null)
                                 continue;
@@ -1660,13 +1660,13 @@ namespace Socium
             if (pProvince1.Owner != pProvince2.Owner)
             {
 
-                List<ITerritory> pProvince1Neighbours = new List<ITerritory>(pProvince1.m_aBorderWith);
+                List<Territory> pProvince1Neighbours = new List<Territory>(pProvince1.m_aBorderWith);
                 if (!pProvince1Neighbours.Contains(pProvince2))
                     pProvince1Neighbours.Add(pProvince2);
                 pProvince1.m_aBorderWith = pProvince1Neighbours.ToArray();
                 pProvince1.m_cConnectionString[pProvince2] = "ok";
 
-                List<ITerritory> pProvince2Neighbours = new List<ITerritory>(pProvince2.m_aBorderWith);
+                List<Territory> pProvince2Neighbours = new List<Territory>(pProvince2.m_aBorderWith);
                 if (!pProvince2Neighbours.Contains(pProvince1))
                     pProvince2Neighbours.Add(pProvince1);
                 pProvince2.m_aBorderWith = pProvince2Neighbours.ToArray();

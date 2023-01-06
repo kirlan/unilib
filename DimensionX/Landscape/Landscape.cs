@@ -204,8 +204,8 @@ namespace LandscapeGeneration
                 {
                     bAdded = false;
 
-                    ITerritory[] aBorderLands = new List<ITerritory>(m_cBorder.Keys).ToArray();
-                    foreach (ITerritory pTerr in aBorderLands)
+                    Territory[] aBorderLands = new List<Territory>(m_cBorder.Keys).ToArray();
+                    foreach (Territory pTerr in aBorderLands)
                     {
                         if (pTerr.Forbidden)
                             continue;
@@ -527,7 +527,7 @@ namespace LandscapeGeneration
                         iRealContinentsCount++;
 
                     cChances[pChoosenLM] = 0;
-                    foreach (ITerritory pTerr in pChoosenLM.m_aBorderWith)
+                    foreach (Territory pTerr in pChoosenLM.m_aBorderWith)
                     {
                         if (pTerr.Forbidden)
                             continue;
@@ -559,7 +559,7 @@ namespace LandscapeGeneration
                         iLandGrowActual += pAddon.Contents.Count;
 
                         cChances[pAddon] = 0;
-                        foreach (ITerritory pTerr in pAddon.m_aBorderWith)
+                        foreach (Territory pTerr in pAddon.m_aBorderWith)
                         {
                             if (pTerr.Forbidden)
                                 continue;
@@ -583,7 +583,7 @@ namespace LandscapeGeneration
                     cContinents.Add(pContinent);
 
                     cChances[pLandMass] = 0;
-                    foreach (ITerritory pTerr in pLandMass.m_aBorderWith)
+                    foreach (Territory pTerr in pLandMass.m_aBorderWith)
                     {
                         if (pTerr.Forbidden)
                             continue;
@@ -626,7 +626,7 @@ namespace LandscapeGeneration
 
                     float fMinCollision = float.MaxValue;
                     Land pBestLand = null;
-                    foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                    foreach (Territory pTerr in pLand.m_aBorderWith)
                     {
                         if (pTerr.Forbidden)
                             continue;
@@ -670,7 +670,7 @@ namespace LandscapeGeneration
 
                     if (fMinCollision < -1.25 && pLM1.Contents.Count > 3)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
                     {
-                        foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                        foreach (Territory pTerr in pLand.m_aBorderWith)
                         {
                             if (pTerr.Forbidden)
                                 continue;
@@ -704,7 +704,7 @@ namespace LandscapeGeneration
 
                     float fMaxCollision = float.MinValue;
                     Land pBestLand = null;
-                    foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                    foreach (Territory pTerr in pLand.m_aBorderWith)
                     {
                         if (pTerr.Forbidden)
                             continue;
@@ -764,7 +764,7 @@ namespace LandscapeGeneration
                 if (pLand.LandType == null)
                 {
                     bool bCouldBe = true;
-                    foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                    foreach (Territory pTerr in pLand.m_aBorderWith)
                     {
                         if (pTerr.Forbidden)
                             continue;
@@ -806,12 +806,12 @@ namespace LandscapeGeneration
         {
             BeginStep("Calculating humidity...", m_aLands.Length);
 
-            List<ITerritory> cHumidityFront = new List<ITerritory>();
+            List<Territory> cHumidityFront = new List<Territory>();
             foreach (Land pLand in m_aLands)
             {
                 if (pLand.IsWater)
                 {
-                    foreach (ITerritory pLink in pLand.m_aBorderWith)
+                    foreach (Territory pLink in pLand.m_aBorderWith)
                     {
                         if (!pLink.Forbidden && !(pLink as Land).IsWater)
                         {
@@ -836,18 +836,18 @@ namespace LandscapeGeneration
                 ProgressStep();
             }
 
-            List<ITerritory> cNewWave = new List<ITerritory>();
+            List<Territory> cNewWave = new List<Territory>();
 
-            ITerritory[] aHumidityFront = cHumidityFront.ToArray();
+            Territory[] aHumidityFront = cHumidityFront.ToArray();
             do
             {
                 cNewWave.Clear();
-                foreach (ITerritory pTerr in aHumidityFront)
+                foreach (Territory pTerr in aHumidityFront)
                 {
                     Land pLand = pTerr as Land;
                     if (pLand.Humidity > 0)
                     {
-                        foreach (ITerritory pLink in pLand.m_aBorderWith)
+                        foreach (Territory pLink in pLand.m_aBorderWith)
                         {
                             if (pLink.Forbidden)
                                 continue;
@@ -1443,7 +1443,7 @@ namespace LandscapeGeneration
                 if (pLand.Forbidden || !pLand.HasLayer<LandMass>())// || pLoc.m_bBorder)
                     continue;
 
-                foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                foreach (Territory pTerr in pLand.m_aBorderWith)
                 {
                     if (pTerr.Forbidden || !pTerr.HasLayer<LandMass>())// || pLink.m_bBorder)
                         continue;
@@ -1461,7 +1461,7 @@ namespace LandscapeGeneration
                 if (pLandMass.Forbidden)// || pLandMass.Owner == null)// || pLoc.m_bBorder)
                     continue;
 
-                foreach (ITerritory pTerr in pLandMass.m_aBorderWith)
+                foreach (Territory pTerr in pLandMass.m_aBorderWith)
                 {
                     if (pTerr.Forbidden)// || pLink.Owner == null)// || pLink.m_bBorder)
                         continue;
@@ -1504,7 +1504,7 @@ namespace LandscapeGeneration
                 {
                     pLand.m_iPassword = m_iPassword;
                 }
-                foreach (ITerritory pTerr in pLandMass.m_aBorderWith)
+                foreach (Territory pTerr in pLandMass.m_aBorderWith)
                 {
                     if (!pTerr.Forbidden)
                     {
@@ -1523,7 +1523,7 @@ namespace LandscapeGeneration
                 {
                     pLoc.m_iPassword = m_iPassword;
                 }
-                foreach (ITerritory pTerr in pLand.m_aBorderWith)
+                foreach (Territory pTerr in pLand.m_aBorderWith)
                 {
                     if (!pTerr.Forbidden)
                     {

@@ -90,7 +90,7 @@ namespace Socium
         /// Присоединяет к территории сопредельную землю того же типа.
         /// </summary>
         /// <returns></returns>
-        public override ITerritory Grow(int iMaxSize)
+        public override Territory Grow(int iMaxSize)
         {
             if (m_cContents.Count > m_iMaxSize && Rnd.OneChanceFrom(m_cContents.Count - m_iMaxSize))
                 return null;
@@ -99,8 +99,8 @@ namespace Socium
 
             Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
 
-            ITerritory[] aBorderLands = new List<ITerritory>(m_cBorder.Keys).ToArray();
-            foreach (ITerritory pTerr in aBorderLands)
+            Territory[] aBorderLands = new List<Territory>(m_cBorder.Keys).ToArray();
+            foreach (Territory pTerr in aBorderLands)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -118,7 +118,7 @@ namespace Socium
 
                     foreach (var pLinkTerr in pLand.BorderWith)
                     {
-                        if ((pLinkTerr.Key as ITerritory).Forbidden)
+                        if ((pLinkTerr.Key as Territory).Forbidden)
                             continue;
 
                         if ((pLinkTerr.Key as LandX).Type == m_pType &&
@@ -187,7 +187,7 @@ namespace Socium
             //base.Finish();
             ChainBorder(fCycleShift);
 
-            foreach (ITerritory pLand in m_cBorder.Keys)
+            foreach (Territory pLand in m_cBorder.Keys)
             {
                 Region pRegion;
                 if (pLand.Forbidden || (pLand as LandX).Region == null)
