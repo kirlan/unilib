@@ -11,7 +11,7 @@ namespace LandscapeGeneration
     /// Земля - группа сопредельных локаций, имеющих один тип местности.
     /// Земли объединяются в тектонические плиты (LandMass).
     /// </summary>
-    public class Land : TerritoryCluster<Land, Location>, ITypedLand<LandTypeInfo>
+    public class Land : TerritoryCluster<Land, Location>, ILand
     {
         public LandTypeInfo LandType { get; set; } = null;
 

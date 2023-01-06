@@ -102,6 +102,28 @@ namespace VQMapTest2
             if (radioButton4.Checked)
                 fScale = 32.0f;
 
+            LandTypes.Coastral.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0x27, 0x67, 0x71)));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+
+            LandTypes.Ocean.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0x1e, 0x5e, 0x69)));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+
+            LandTypes.Plains.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0xd3, 0xfa, 0x5f)));//(0xdc, 0xfa, 0x83);//LightGreen;
+
+            LandTypes.Savanna.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0xf0, 0xff, 0x8a)));//(0xbd, 0xb0, 0x6b);//PaleGreen;
+
+            LandTypes.Tundra.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0xc9, 0xff, 0xff)));//(0xc9, 0xe0, 0xff);//PaleGreen;
+
+            LandTypes.Desert.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0xfa, 0xdc, 0x36)));//(0xf9, 0xfa, 0x8a);//LightYellow;
+
+            LandTypes.Forest.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0x56, 0x78, 0x34)));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
+
+            LandTypes.Taiga.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0x63, 0x78, 0x4e)));//LightGreen;//ForestGreen;
+
+            LandTypes.Swamp.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0xa7, 0xbd, 0x6b)));// DarkKhaki;
+
+            LandTypes.Mountains.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0xbd, 0x6d, 0x46)));//Tan;
+
+            LandTypes.Jungle.AddLayer(new LandTypeInfoDraw(Color.FromArgb(0x8d, 0xb7, 0x31)));//(0x72, 0x94, 0x28);//PaleGreen;
+
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 

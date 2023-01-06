@@ -20,7 +20,7 @@ namespace LandscapeGeneration
     /// Локация - минимальная единица деления карты. Представляет собой выпуклый многоугольник, ячейку диаграммы Вороного.
     /// Локации объедняются в земли (Land)
     /// </summary>
-    public class Location : BaseTerritory
+    public class Location : BaseTerritory, IInfoLayer
     {
         public ITerritory[] m_aBorderWith = null;
 

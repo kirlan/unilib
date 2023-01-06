@@ -49,38 +49,27 @@ namespace LandscapeGeneration
 
         public virtual void PresetLandTypesInfo()
         {
-            LandTypes<LandTypeInfo>.Coastral.Init(10, 1, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "sea");
-            LandTypes<LandTypeInfo>.Coastral.SetColor(Color.FromArgb(0x27, 0x67, 0x71));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+            LandTypes.Coastral.Init(10, 1, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "sea");
             
-            LandTypes<LandTypeInfo>.Ocean.Init(10, 5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "ocean");
-            LandTypes<LandTypeInfo>.Ocean.SetColor(Color.FromArgb(0x1e, 0x5e, 0x69));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+            LandTypes.Ocean.Init(10, 5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "ocean");
             
-            LandTypes<LandTypeInfo>.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, "plains");
-            LandTypes<LandTypeInfo>.Plains.SetColor(Color.FromArgb(0xd3, 0xfa, 0x5f));//(0xdc, 0xfa, 0x83);//LightGreen;
+            LandTypes.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, "plains");
             
-            LandTypes<LandTypeInfo>.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, "savanna");
-            LandTypes<LandTypeInfo>.Savanna.SetColor(Color.FromArgb(0xf0, 0xff, 0x8a));//(0xbd, 0xb0, 0x6b);//PaleGreen;
+            LandTypes.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, "savanna");
             
-            LandTypes<LandTypeInfo>.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, "tundra");
-            LandTypes<LandTypeInfo>.Tundra.SetColor(Color.FromArgb(0xc9, 0xff, 0xff));//(0xc9, 0xe0, 0xff);//PaleGreen;
+            LandTypes.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, "tundra");
             
-            LandTypes<LandTypeInfo>.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, "desert");
-            LandTypes<LandTypeInfo>.Desert.SetColor(Color.FromArgb(0xfa, 0xdc, 0x36));//(0xf9, 0xfa, 0x8a);//LightYellow;
+            LandTypes.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, "desert");
             
-            LandTypes<LandTypeInfo>.Forest.Init(3, 2, Environment.Habitable, "forest");
-            LandTypes<LandTypeInfo>.Forest.SetColor(Color.FromArgb(0x56, 0x78, 0x34));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
+            LandTypes.Forest.Init(3, 2, Environment.Habitable, "forest");
             
-            LandTypes<LandTypeInfo>.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, "taiga");
-            LandTypes<LandTypeInfo>.Taiga.SetColor(Color.FromArgb(0x63, 0x78, 0x4e));//LightGreen;//ForestGreen;
+            LandTypes.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, "taiga");
             
-            LandTypes<LandTypeInfo>.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, "swamp");
-            LandTypes<LandTypeInfo>.Swamp.SetColor(Color.FromArgb(0xa7, 0xbd, 0x6b));// DarkKhaki;
+            LandTypes.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, "swamp");
             
-            LandTypes<LandTypeInfo>.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, "mountains");
-            LandTypes<LandTypeInfo>.Mountains.SetColor(Color.FromArgb(0xbd, 0x6d, 0x46));//Tan;
+            LandTypes.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, "mountains");
             
-            LandTypes<LandTypeInfo>.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, "jungle");
-            LandTypes<LandTypeInfo>.Jungle.SetColor(Color.FromArgb(0x8d, 0xb7, 0x31));//(0x72, 0x94, 0x28);//PaleGreen;
+            LandTypes.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, "jungle");
         }
 
         /// <summary>
@@ -173,7 +162,7 @@ namespace LandscapeGeneration
                 if (pLoc.Forbidden || !pLoc.HasLayer<Land>())
                     continue;
 
-                if (pLoc.GetLayer<Land>().LandType == LandTypes<LandTypeInfo>.Mountains)
+                if (pLoc.GetLayer<Land>().LandType == LandTypes.Mountains)
                 {
                     bool bPeak = true;
                     foreach (Location pLink in pLoc.m_aBorderWith)
@@ -181,7 +170,7 @@ namespace LandscapeGeneration
                         if (pLink.Forbidden || !pLink.HasLayer<Land>())
                             continue;
 
-                        if (pLink.GetLayer<Land>().LandType != LandTypes<LandTypeInfo>.Mountains ||
+                        if (pLink.GetLayer<Land>().LandType != LandTypes.Mountains ||
                             pLink.H >= pLoc.H)
                         {
                             bPeak = false;
@@ -259,7 +248,7 @@ namespace LandscapeGeneration
             foreach (Continent pCont in m_aContinents)
             {
                 Dictionary<LandTypeInfo, List<Biome>> cBiomes = new Dictionary<LandTypeInfo, List<Biome>>();
-                foreach (var pLandType in LandTypes<LandTypeInfo>.m_pInstance.m_pLandTypes)
+                foreach (var pLandType in LandTypes.m_pInstance.m_pLandTypes)
                     cBiomes[pLandType.Value] = new List<Biome>();
 
                 HashSet<Land> cProcessedLands = new HashSet<Land>();
@@ -277,33 +266,33 @@ namespace LandscapeGeneration
                     }
                 }
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Plains])
+                foreach (Biome pBiome in cBiomes[LandTypes.Plains])
                     SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Savanna])
+                foreach (Biome pBiome in cBiomes[LandTypes.Savanna])
                     SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Tundra])
+                foreach (Biome pBiome in cBiomes[LandTypes.Tundra])
                     SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Swamp])
+                foreach (Biome pBiome in cBiomes[LandTypes.Swamp])
                     SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Desert])
+                foreach (Biome pBiome in cBiomes[LandTypes.Desert])
                     SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Forest])
+                foreach (Biome pBiome in cBiomes[LandTypes.Forest])
                     SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Jungle])
+                foreach (Biome pBiome in cBiomes[LandTypes.Jungle])
                     SmoothBorder(pBiome.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Taiga])
+                foreach (Biome pBiome in cBiomes[LandTypes.Taiga])
                     SmoothBorder(pBiome.m_cOrdered);
 
                 SmoothBorder(pCont.m_cOrdered);
 
-                foreach (Biome pBiome in cBiomes[LandTypes<LandTypeInfo>.Mountains])
+                foreach (Biome pBiome in cBiomes[LandTypes.Mountains])
                     SmoothBorder(pBiome.m_cOrdered);
             }
 
@@ -631,7 +620,7 @@ namespace LandscapeGeneration
             BeginStep("Setting coastral regions...", m_aLands.Length);
             foreach (Land pLand in m_aLands)
             {
-                if (pLand.LandType == LandTypes<LandTypeInfo>.Ocean || pLand.LandType == LandTypes<LandTypeInfo>.Coastral)
+                if (pLand.LandType == LandTypes.Ocean || pLand.LandType == LandTypes.Coastral)
                 {
                     LandMass pLM1 = pLand.GetLayer<LandMass>();
 
@@ -677,7 +666,7 @@ namespace LandscapeGeneration
                         continue;
 
                     if (fMinCollision < 1)// || Rnd.OneChanceFrom(2))
-                        pLand.LandType = LandTypes<LandTypeInfo>.Coastral;
+                        pLand.LandType = LandTypes.Coastral;
 
                     if (fMinCollision < -1.25 && pLM1.Contents.Count > 3)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
                     {
@@ -688,8 +677,8 @@ namespace LandscapeGeneration
 
                             Land pLink = pTerr as Land;
 
-                            if(pLink.LandType == LandTypes<LandTypeInfo>.Ocean)
-                                pLink.LandType = LandTypes<LandTypeInfo>.Coastral;
+                            if(pLink.LandType == LandTypes.Ocean)
+                                pLink.LandType = LandTypes.Coastral;
                         }
                     }
 
@@ -750,7 +739,7 @@ namespace LandscapeGeneration
 
                     if (fMaxCollision > 1.25)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
                     {
-                        pLand.LandType = LandTypes<LandTypeInfo>.Mountains;
+                        pLand.LandType = LandTypes.Mountains;
 
                         //if (!Rnd.OneChanceFrom(3))
                         //{
@@ -789,7 +778,7 @@ namespace LandscapeGeneration
                     }
 
                     if (bCouldBe && Rnd.OneChanceFrom(iOneChanceFrom))
-                        pLand.LandType = LandTypes<LandTypeInfo>.Ocean;
+                        pLand.LandType = LandTypes.Ocean;
                 }
 
                 ProgressStep();
@@ -895,7 +884,7 @@ namespace LandscapeGeneration
             foreach (Land pLand in m_aLands)
             {
                 if (!pLand.HasLayer<LandMass>() || pLand.GetLayer<LandMass>().IsWater)
-                    pLand.LandType = LandTypes<LandTypeInfo>.Ocean;
+                    pLand.LandType = LandTypes.Ocean;
                 else
                     pLand.LandType = null;
             }
@@ -920,44 +909,44 @@ namespace LandscapeGeneration
 
                     if (fTemperature < 0.25 || (pLand.Humidity < 5 && fTemperature < 0.35))
                     {
-                        pLand.LandType = LandTypes<LandTypeInfo>.Tundra;
+                        pLand.LandType = LandTypes.Tundra;
                         continue;
                     }
 
                     if (pLand.Humidity > 80 && Rnd.OneChanceFrom(10))
                     {
-                        pLand.LandType = LandTypes<LandTypeInfo>.Swamp;
+                        pLand.LandType = LandTypes.Swamp;
                         continue;
                     }
 
                     if (pLand.Humidity < 40 && fTemperature > 5)
                     {
-                        pLand.LandType = LandTypes<LandTypeInfo>.Desert;
+                        pLand.LandType = LandTypes.Desert;
                         continue;
                     }
 
                     if (fTemperature > 8)
                     {
                         if (pLand.Humidity < 75 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))
-                            pLand.LandType = LandTypes<LandTypeInfo>.Savanna;
+                            pLand.LandType = LandTypes.Savanna;
                         else
-                            pLand.LandType = LandTypes<LandTypeInfo>.Jungle;
+                            pLand.LandType = LandTypes.Jungle;
                         continue;
                     }
 
                     if (fTemperature < 0.475)
                     {
                         if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))
-                            pLand.LandType = LandTypes<LandTypeInfo>.Plains;
+                            pLand.LandType = LandTypes.Plains;
                         else
-                            pLand.LandType = LandTypes<LandTypeInfo>.Taiga;
+                            pLand.LandType = LandTypes.Taiga;
                         continue;
                     }
 
                     if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))// || Rnd.OneChanceFrom(2))
-                        pLand.LandType = LandTypes<LandTypeInfo>.Plains;
+                        pLand.LandType = LandTypes.Plains;
                     else
-                        pLand.LandType = LandTypes<LandTypeInfo>.Forest;
+                        pLand.LandType = LandTypes.Forest;
                 }
 
                 ProgressStep();
@@ -985,7 +974,7 @@ namespace LandscapeGeneration
                 }
 
 
-                if (pLand.LandType == LandTypes<LandTypeInfo>.Coastral)
+                if (pLand.LandType == LandTypes.Coastral)
                 {
                     foreach (Location pLoc in pLand.Contents)
                     {
@@ -998,14 +987,14 @@ namespace LandscapeGeneration
                             if (pLink.Forbidden || !pLink.HasLayer<Land>() || pLink.GetLayer<Land>() == pLand)
                                 continue;
 
-                            if (pLink.GetLayer<Land>().LandType == LandTypes<LandTypeInfo>.Ocean)
+                            if (pLink.GetLayer<Land>().LandType == LandTypes.Ocean)
                             {
                                 if (!cOcean.Contains(pLink))
                                     cOcean.Add(pLink);
                             }
                             else
                             {
-                                if (pLink.GetLayer<Land>().LandType != LandTypes<LandTypeInfo>.Coastral && !cLand.Contains(pLink))
+                                if (pLink.GetLayer<Land>().LandType != LandTypes.Coastral && !cLand.Contains(pLink))
                                     cLand.Add(pLink);
                             }
                         }
@@ -1014,7 +1003,7 @@ namespace LandscapeGeneration
 
                 //Бывают прибрежные участки океана, где нет шельфа...
                 //Их тоже надо учесть!
-                if (pLand.LandType == LandTypes<LandTypeInfo>.Ocean)
+                if (pLand.LandType == LandTypes.Ocean)
                 {
                     foreach (Location pLoc in pLand.Contents)
                     {
@@ -1023,8 +1012,8 @@ namespace LandscapeGeneration
                             if (pLink.Forbidden || !pLink.HasLayer<Land>() || pLink.GetLayer<Land>() == pLand)
                                 continue;
 
-                            if (pLink.GetLayer<Land>().LandType != LandTypes<LandTypeInfo>.Ocean &&
-                                pLink.GetLayer<Land>().LandType != LandTypes<LandTypeInfo>.Coastral)
+                            if (pLink.GetLayer<Land>().LandType != LandTypes.Ocean &&
+                                pLink.GetLayer<Land>().LandType != LandTypes.Coastral)
                             {
                                 if (!cOcean.Contains(pLoc))
                                     cOcean.Add(pLoc);
@@ -1056,7 +1045,7 @@ namespace LandscapeGeneration
                         //if (cWaveFront.Contains(pLink))
                         //    continue;
 
-                        if (pLink.GetLayer<Land>().LandType == LandTypes<LandTypeInfo>.Ocean)
+                        if (pLink.GetLayer<Land>().LandType == LandTypes.Ocean)
                         {
                             cWaveFront.Add(pLink);
                             pLink.H = -1;
@@ -1319,7 +1308,7 @@ namespace LandscapeGeneration
 
                 v = Math.Min(1, Math.Max(-1, v * 5));
 
-                //float fLinkElevation = GetElevation(LandTypes<LTI>.GetLandType((pLoc.Owner as LAND).Type));
+                //float fLinkElevation = GetElevation(LandTypes.GetLandType((pLoc.Owner as LAND).Type));
                 if (pLoc.H > 0)
                 {
                     float fLinkElevation = Math.Min(pLoc.H - 0.5f, 10);

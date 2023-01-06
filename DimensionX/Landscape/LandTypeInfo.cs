@@ -63,15 +63,24 @@ namespace LandscapeGeneration
         Habitable = 256
     }
 
+    public interface ILandTypeInfoExt
+    { 
+    }
+
     public class LandTypeInfo
     {
-        public Color m_pColor;
-        public Brush m_pBrush;
+        public readonly Dictionary<Type, dynamic> m_cInfoLayers = new Dictionary<Type, dynamic>();
 
-        public void SetColor(Color pColor)
+        public LandTypeInfo AddLayer<T>(T value) where T : ILandTypeInfoExt
         {
-            m_pColor = pColor;
-            m_pBrush = new SolidBrush(m_pColor);
+            m_cInfoLayers[typeof(T)] = value;
+
+            return this;
+        }
+
+        public T GetLayer<T>() where T : ILandTypeInfoExt
+        {
+            return m_cInfoLayers[typeof(T)];
         }
 
         public LandType m_eType;
@@ -93,73 +102,72 @@ namespace LandscapeGeneration
         }
     }
 
-    public class LandTypes<LTI>
-        where LTI: LandTypeInfo, new()
+    public class LandTypes
     {
-        public Dictionary<LandType, LTI> m_pLandTypes = new Dictionary<LandType, LTI>();
+        public Dictionary<LandType, LandTypeInfo> m_pLandTypes = new Dictionary<LandType, LandTypeInfo>();
 
-        public static LandTypes<LTI> m_pInstance = new LandTypes<LTI>();
+        public static LandTypes m_pInstance = new LandTypes();
 
         private LandTypes()
         {
             foreach (LandType eType in Enum.GetValues(typeof(LandType)))
             {
-                m_pLandTypes[eType] = new LTI();
+                m_pLandTypes[eType] = new LandTypeInfo();
                 m_pLandTypes[eType].m_eType = eType;
             }
         }
 
-        public static LTI Desert
+        public static LandTypeInfo Desert
         {
             get { return m_pInstance.m_pLandTypes[LandType.Desert]; }
         }
 
-        public static LTI Forest
+        public static LandTypeInfo Forest
         {
             get { return m_pInstance.m_pLandTypes[LandType.Forest]; }
         }
 
-        public static LTI Jungle
+        public static LandTypeInfo Jungle
         {
             get { return m_pInstance.m_pLandTypes[LandType.Jungle]; }
         }
 
-        public static LTI Mountains
+        public static LandTypeInfo Mountains
         {
             get { return m_pInstance.m_pLandTypes[LandType.Mountains]; }
         }
 
-        public static LTI Plains
+        public static LandTypeInfo Plains
         {
             get { return m_pInstance.m_pLandTypes[LandType.Plains]; }
         }
 
-        public static LTI Savanna
+        public static LandTypeInfo Savanna
         {
             get { return m_pInstance.m_pLandTypes[LandType.Savanna]; }
         }
 
-        public static LTI Ocean
+        public static LandTypeInfo Ocean
         {
             get { return m_pInstance.m_pLandTypes[LandType.Ocean]; }
         }
 
-        public static LTI Coastral
+        public static LandTypeInfo Coastral
         {
             get { return m_pInstance.m_pLandTypes[LandType.Coastral]; }
         }
 
-        public static LTI Swamp
+        public static LandTypeInfo Swamp
         {
             get { return m_pInstance.m_pLandTypes[LandType.Swamp]; }
         }
 
-        public static LTI Taiga
+        public static LandTypeInfo Taiga
         {
             get { return m_pInstance.m_pLandTypes[LandType.Taiga]; }
         }
 
-        public static LTI Tundra
+        public static LandTypeInfo Tundra
         {
             get { return m_pInstance.m_pLandTypes[LandType.Tundra]; }
         }

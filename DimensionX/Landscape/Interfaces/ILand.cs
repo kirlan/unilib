@@ -2,20 +2,16 @@
 using LandscapeGeneration.PathFind;
 namespace LandscapeGeneration
 {
-    public interface ITypedLand<LTI> : ILand
-        where LTI : LandTypeInfo
-    {
-        /// <summary>
-        /// Тип территории
-        /// </summary>
-        LTI LandType { get; set; }
-    }
-
     /// <summary>
     /// Интерфейс для объекта "земля"
     /// </summary>
     public interface ILand : ITerritory, ITransportationNode
     {
+        /// <summary>
+        /// Тип территории
+        /// </summary>
+        LandTypeInfo LandType { get; set; }
+
         /// <summary>
         /// Влажность, в процентах 0-100
         /// </summary>
