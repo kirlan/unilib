@@ -50,7 +50,7 @@
     <Compile Include="Grids\VoronoiEdge.cs" />
     <Compile Include="Grids\VoronoiVertex.cs" />
     <Compile Include="Layers\Base\Territory.cs" />
-    <Compile Include="Grids\Base\GenerationDelegates.cs" />
+    <Compile Include="Grids\GenerationDelegates.cs" />
     <Compile Include="Layers\Base\IInfoLayer.cs" />
     <Compile Include="Layers\Base\LandTypeInfo.cs" />
     <Compile Include="PathFinder\BasicHeap.cs" />
