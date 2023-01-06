@@ -28,7 +28,7 @@ namespace LandscapeGeneration.FastGrid
         Chalice
     }
 
-    public class ChunksGrid
+    public class LocationsGrid
     {
         public Chunk[,] m_cChunk;
 
@@ -443,7 +443,7 @@ namespace LandscapeGeneration.FastGrid
 
         public Location[] Locations { get; private set; } = null;
 
-        public ChunksGrid(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        public LocationsGrid(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             Resolution = iFaceSize;
 

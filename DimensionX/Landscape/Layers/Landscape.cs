@@ -13,7 +13,7 @@ namespace LandscapeGeneration
 {
     public class Landscape: IInfoLayer
     {
-        public ChunksGrid m_pGrid = null;
+        public LocationsGrid m_pLocationsGrid = null;
 
         public Land[] m_aLands = null;
 
@@ -84,12 +84,12 @@ namespace LandscapeGeneration
         /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
         public Landscape(int iLocationsCount, int iFaceSize, int iContinents, bool bGreatOcean, int iLandsDiversity, int iLandMassesDiversity, int iOcean, int iEquator, int iPole, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            m_pGrid = new ChunksGrid(iLocationsCount, iFaceSize, BeginStep, ProgressStep);
+            m_pLocationsGrid = new LocationsGrid(iLocationsCount, iFaceSize, BeginStep, ProgressStep);
 
             if (iOcean > 90 || iOcean < 10)
                 throw new ArgumentException("Oceans percent can't be less then 10 or greater then 100!");
 
-            m_iLandsCount = 600 + iLandsDiversity * m_pGrid.Locations.Length / 200;
+            m_iLandsCount = 600 + iLandsDiversity * m_pLocationsGrid.Locations.Length / 200;
             m_iLandMassesCount = 30 + iLandMassesDiversity * 240 / 100;
             m_iOceansPercentage = iOcean;
             m_iContinentsCount = iContinents;
@@ -97,8 +97,8 @@ namespace LandscapeGeneration
 
             PresetLandTypesInfo();
 
-            m_iEquator = 2 * m_pGrid.RY * iEquator / 100 - m_pGrid.RY;
-            m_iPole = 2 * m_pGrid.RY * iPole / 100;
+            m_iEquator = 2 * m_pLocationsGrid.RY * iEquator / 100 - m_pLocationsGrid.RY;
+            m_iPole = 2 * m_pLocationsGrid.RY * iPole / 100;
 
             ShapeWorld(BeginStep, ProgressStep);
         }
@@ -124,7 +124,7 @@ namespace LandscapeGeneration
 
         private void AddPeaks()
         {
-            foreach (Location pLoc in m_pGrid.Locations)
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
                 if (pLoc.Forbidden || !pLoc.HasLayer<Land>())
                     continue;
@@ -225,7 +225,7 @@ namespace LandscapeGeneration
                     {
                         if (!pLand.Forbidden && !cProcessedLands.Contains(pLand))
                         {
-                            Biome pNewBiome = new Biome(pLand, m_pGrid.CycleShift);
+                            Biome pNewBiome = new Biome(pLand, m_pLocationsGrid.CycleShift);
                             cBiomes[pLand.LandType].Add(pNewBiome);
 
                             cProcessedLands.UnionWith(pNewBiome.Contents);
@@ -263,7 +263,7 @@ namespace LandscapeGeneration
                     SmoothBorder(pBiome.m_cOrdered);
             }
 
-            foreach (Location pLoc in m_pGrid.Locations)
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
                 if (pLoc.Forbidden || !pLoc.HasLayer<Land>())
                     continue;
@@ -284,18 +284,18 @@ namespace LandscapeGeneration
                 for (int a = 0; a < 2; a++)
                 {
                     ordered[0].PointOnCurve(ordered[ordered.Count - 2], ordered[ordered.Count - 1], ordered[1],
-                                                 ordered[2], 0.5f, m_pGrid.CycleShift, smoothRate);
+                                                 ordered[2], 0.5f, m_pLocationsGrid.CycleShift, smoothRate);
                     ordered[1].PointOnCurve(ordered[ordered.Count - 1], ordered[0], ordered[2],
-                                                 ordered[3], 0.5f, m_pGrid.CycleShift, smoothRate);
+                                                 ordered[3], 0.5f, m_pLocationsGrid.CycleShift, smoothRate);
                     for (int i = 2; i < ordered.Count - 2; i++)
                     {
                         ordered[i].PointOnCurve(ordered[i - 2], ordered[i - 1], ordered[i + 1],
-                                                     ordered[i + 2], 0.5f, m_pGrid.CycleShift, smoothRate);
+                                                     ordered[i + 2], 0.5f, m_pLocationsGrid.CycleShift, smoothRate);
                     }
                     ordered[ordered.Count - 2].PointOnCurve(ordered[ordered.Count - 4], ordered[ordered.Count - 3], ordered[ordered.Count - 1],
-                                                 ordered[0], 0.5f, m_pGrid.CycleShift, smoothRate);
+                                                 ordered[0], 0.5f, m_pLocationsGrid.CycleShift, smoothRate);
                     ordered[ordered.Count - 1].PointOnCurve(ordered[ordered.Count - 3], ordered[ordered.Count - 2], ordered[0],
-                                                 ordered[1], 0.5f, m_pGrid.CycleShift, smoothRate);
+                                                 ordered[1], 0.5f, m_pLocationsGrid.CycleShift, smoothRate);
                 }
             }
         }
@@ -307,7 +307,7 @@ namespace LandscapeGeneration
         /// <param name="ProgressStep"></param>
         private void BuildLands(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building lands...", m_iLandsCount + m_pGrid.Locations.Length / m_iLandsCount + m_pGrid.Locations.Length + m_iLandsCount); 
+            BeginStep("Building lands...", m_iLandsCount + m_pLocationsGrid.Locations.Length / m_iLandsCount + m_pLocationsGrid.Locations.Length + m_iLandsCount); 
             
             List<Land> cLands = new List<Land>();
             for (int i = 0; i < m_iLandsCount; i++)
@@ -315,13 +315,13 @@ namespace LandscapeGeneration
                 int iIndex;
                 do
                 {
-                    iIndex = Rnd.Get(m_pGrid.Locations.Length);
+                    iIndex = Rnd.Get(m_pLocationsGrid.Locations.Length);
                 }
-                while (m_pGrid.Locations[iIndex].Forbidden || 
-                       m_pGrid.Locations[iIndex].HasLayer<Land>());
+                while (m_pLocationsGrid.Locations[iIndex].Forbidden || 
+                       m_pLocationsGrid.Locations[iIndex].HasLayer<Land>());
                 
                 Land pLand = new Land();
-                pLand.Start(m_pGrid.Locations[iIndex]);
+                pLand.Start(m_pLocationsGrid.Locations[iIndex]);
                 cLands.Add(pLand);
                 ProgressStep();
             }
@@ -342,7 +342,7 @@ namespace LandscapeGeneration
             while (bContinue);
 
 //            BeginStep("Fixing void lands...", m_pGrid.m_aLocations.Length);
-            foreach (Location pLoc in m_pGrid.Locations)
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
                 if (!pLoc.Forbidden && !pLoc.HasLayer<Land>())
                 {
@@ -359,7 +359,7 @@ namespace LandscapeGeneration
 //            BeginStep("Recalculating lands edges...", m_aLands.Length);
             foreach (Land pLand in m_aLands)
             {
-                pLand.Finish(m_pGrid.CycleShift);
+                pLand.Finish(m_pLocationsGrid.CycleShift);
                 ProgressStep();
             }
         }
@@ -422,7 +422,7 @@ namespace LandscapeGeneration
 //            BeginStep("Recalculating landmasses edges...", m_aLandMasses.Length);
             foreach (LandMass pLandMass in m_aLandMasses)
             {
-                pLandMass.Finish(m_pGrid.CycleShift);
+                pLandMass.Finish(m_pLocationsGrid.CycleShift);
                 ProgressStep();
             }
         }
@@ -567,7 +567,7 @@ namespace LandscapeGeneration
             BeginStep("Recalculating continents edges...", m_aContinents.Length);
             foreach (Continent pCont in m_aContinents)
             {
-                pCont.Finish(m_pGrid.CycleShift);
+                pCont.Finish(m_pLocationsGrid.CycleShift);
                 pCont.AddLayer(this);
                 ProgressStep();
             }
@@ -611,15 +611,15 @@ namespace LandscapeGeneration
                             float fDriftedY1 = pLand.Y + (float)pLM1.m_pDrift.Y;
                             float fDriftedX2 = pLink.X + (float)pLM2.m_pDrift.X;
                             float fDriftedY2 = pLink.Y + (float)pLM2.m_pDrift.Y;
-                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pGrid.CycleShift / 2)
+                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pLocationsGrid.CycleShift / 2)
                                 if (fDriftedX1 < 0)
-                                    fDriftedX2 -= m_pGrid.CycleShift;
+                                    fDriftedX2 -= m_pLocationsGrid.CycleShift;
                                 else
-                                    fDriftedX2 += m_pGrid.CycleShift;
+                                    fDriftedX2 += m_pLocationsGrid.CycleShift;
 
                             float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2));
 
-                            float fCollision = pLand.DistanceTo(pLink, m_pGrid.CycleShift) - fDriftedDist;
+                            float fCollision = pLand.DistanceTo(pLink, m_pLocationsGrid.CycleShift) - fDriftedDist;
 
                             if (fCollision < fMinCollision)
                             {
@@ -686,15 +686,15 @@ namespace LandscapeGeneration
                             float fDriftedY1 = pLand.Y + (float)pLM1.m_pDrift.Y;
                             float fDriftedX2 = pLink.X + (float)pLM2.m_pDrift.X;
                             float fDriftedY2 = pLink.Y + (float)pLM2.m_pDrift.Y;
-                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pGrid.CycleShift / 2)
+                            if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pLocationsGrid.CycleShift / 2)
                                 if (fDriftedX1 < 0)
-                                    fDriftedX2 -= m_pGrid.CycleShift;
+                                    fDriftedX2 -= m_pLocationsGrid.CycleShift;
                                 else
-                                    fDriftedX2 += m_pGrid.CycleShift;
+                                    fDriftedX2 += m_pLocationsGrid.CycleShift;
 
                             float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2));
 
-                            float fCollision = pLand.DistanceTo(pLink, m_pGrid.CycleShift) - fDriftedDist;
+                            float fCollision = pLand.DistanceTo(pLink, m_pLocationsGrid.CycleShift) - fDriftedDist;
 
                             if (fCollision > fMaxCollision)
                             {
@@ -924,7 +924,7 @@ namespace LandscapeGeneration
 
         protected void CalculateElevations(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Calculating elevation...", m_pGrid.Locations.Length);
+            BeginStep("Calculating elevation...", m_pLocationsGrid.Locations.Length);
 
             List<Location> cOcean = new List<Location>();
             List<Location> cLand = new List<Location>();
@@ -1088,7 +1088,7 @@ namespace LandscapeGeneration
             //SmoothVertexes();
             //SmoothVertexes();
 
-            foreach (Location pLoc in m_pGrid.Locations)
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
                 if (pLoc.Forbidden || !pLoc.HasLayer<Land>())
                     continue;
@@ -1198,7 +1198,7 @@ namespace LandscapeGeneration
         /// <param name="fMaxElevation"></param>
         private void SmoothMap(float fMaxElevation)
         {
-            foreach (Location pLoc in m_pGrid.Locations)
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
                 if (pLoc.Forbidden || !pLoc.HasLayer<Land>())
                     continue;
@@ -1246,12 +1246,12 @@ namespace LandscapeGeneration
         private void NoiseMap()
         {
             PerlinNoise perlinNoise = new PerlinNoise(99);
-            double widthDivisor = 0.5 / (double)m_pGrid.RX;
-            double heightDivisor = 0.5 / (double)m_pGrid.RY;
+            double widthDivisor = 0.5 / (double)m_pLocationsGrid.RX;
+            double heightDivisor = 0.5 / (double)m_pLocationsGrid.RY;
 
             float vMin = 0;
             float vMax = 0;
-            foreach (Location pLoc in m_pGrid.Locations)
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
                 if (pLoc.Forbidden || pLoc.H < 0)
                     continue;
@@ -1313,11 +1313,11 @@ namespace LandscapeGeneration
                 {
                     TransportationLinkBase pLink = null;
                     if (pNode1 is Location && pNode2 is Location)
-                        pLink = new TransportationLinkBase(pNode1 as Location, pNode2 as Location, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as Location, pNode2 as Location, m_pLocationsGrid.CycleShift);
                     if (pNode1 is Land && pNode2 is Land)
-                        pLink = new TransportationLinkBase(pNode1 as Land, pNode2 as Land, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as Land, pNode2 as Land, m_pLocationsGrid.CycleShift);
                     if (pNode1 is LandMass && pNode2 is LandMass)
-                        pLink = new TransportationLinkBase(pNode1 as LandMass, pNode2 as LandMass, m_pGrid.CycleShift);
+                        pLink = new TransportationLinkBase(pNode1 as LandMass, pNode2 as LandMass, m_pLocationsGrid.CycleShift);
 
                     if (pLink == null)
                         throw new Exception("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
@@ -1384,9 +1384,9 @@ namespace LandscapeGeneration
 
         private void BuildTransportGrid(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building transportation links...", m_pGrid.Locations.Length + m_aLands.Length + m_aLandMasses.Length);
+            BeginStep("Building transportation links...", m_pLocationsGrid.Locations.Length + m_aLands.Length + m_aLandMasses.Length);
 
-            foreach (Location pLoc in m_pGrid.Locations)
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
                 if (pLoc.Forbidden || !pLoc.HasLayer<Land>())// || pLoc.m_bBorder)
                     continue;

@@ -60,7 +60,7 @@
     <Compile Include="PathFinder\TransportationNode.cs" />
     <Compile Include="Grids\FastGrid\CellCH.cs" />
     <Compile Include="Grids\FastGrid\Chunk.cs" />
-    <Compile Include="Grids\FastGrid\ChunksGrid.cs" />
+    <Compile Include="Grids\FastGrid\LocationsGrid.cs" />
     <Compile Include="Grids\FastGrid\VertexCH.cs" />
     <Compile Include="Layers\Base\TerritoryCluster.cs" />
     <Compile Include="Layers\Continent.cs" />
