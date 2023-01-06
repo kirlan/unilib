@@ -275,9 +275,9 @@ namespace LandscapeGeneration.PathFind
             }
         }
 
-        public IPointF[] m_aPoints = new IPointF[3];
+        public VoronoiVertex[] m_aPoints = new VoronoiVertex[3];
 
-        private static float GetDist(IPointF pPoint1, IPointF pPoint2)
+        private static float GetDist(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
         {
             return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
         }
@@ -287,7 +287,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLoc1;
             m_aPoints[2] = pLoc2;
 
-            IPointF point2 = new VoronoiVertex(pLoc2.X, pLoc2.Y);
+            VoronoiVertex point2 = new VoronoiVertex(pLoc2.X, pLoc2.Y);
             if (Math.Abs(pLoc1.X - pLoc2.X) > fCycleShift / 2)
             {
                 if (pLoc1.X < 0)
@@ -418,7 +418,7 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(TransportationNode[] aPath)
         {
-            List<IPointF> cPoints = new List<IPointF>();
+            List<VoronoiVertex> cPoints = new List<VoronoiVertex>();
             cPoints.Add(aPath[0]);
 
             m_fBaseCost = 0;

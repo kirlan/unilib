@@ -224,7 +224,7 @@ namespace MapDrawEngine
         /// <param name="pPoint">исходная точка</param>
         /// <param name="fDX">заданное смещение</param>
         /// <returns>смещённая точка</returns>
-        private PointF ShiftPoint(IPointF pPoint, float fDX)
+        private PointF ShiftPoint(VoronoiVertex pPoint, float fDX)
         {
             return new PointF(m_pMasterMap.m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pMasterMap.m_pWorld.m_pGrid.RY + pPoint.Y);
         }

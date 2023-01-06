@@ -1294,7 +1294,7 @@ namespace MapDrawEngine
         /// <param name="pPoint">исходная точка</param>
         /// <param name="fDX">заданное смещение</param>
         /// <returns>смещённая точка</returns>
-        private PointF ShiftPoint(IPointF pPoint, float fDX)
+        private PointF ShiftPoint(VoronoiVertex pPoint, float fDX)
         {
             return new PointF(m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pWorld.m_pGrid.RY + pPoint.Y);
         }
@@ -1483,7 +1483,7 @@ namespace MapDrawEngine
 
             List<PointF> cRoadLine = new List<PointF>();
             float fLastPointX = pPath.m_aPoints[0].X + fShift;
-            foreach (IPointF pPoint in pPath.m_aPoints)
+            foreach (VoronoiVertex pPoint in pPath.m_aPoints)
             {
                 //пересекает-ли линия от предыдущей точки к текущей нулевой меридиан?
                 float fDX = fShift;
