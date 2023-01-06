@@ -14,7 +14,7 @@ namespace Socium
     /// Регион - группа сопредельных земель одного типа, населённых одной нацией и имеющих одно название (например. Арденнский Лес).
     /// Регионы объеиняются в провинции (Province).
     /// </summary>
-    public class Region: Territory<LandX>
+    public class Region: TerritoryCluster<LandX>
     {
         private static Region m_pForbidden = new Region(true);
 
@@ -245,8 +245,7 @@ namespace Socium
 
             foreach (LandX pLand in m_cContents)
             {
-                pLand.m_sName = m_sName;
-                pLand.m_pDominantNation = m_pNatives;
+                pLand.Populate(m_pNatives, m_sName);
             }
         }
 
@@ -304,7 +303,7 @@ namespace Socium
                     if (pLoc.m_pBuilding != null)
                         iChances = pLoc.m_pBuilding.m_eType == BuildingType.Farm || pLoc.m_pBuilding.m_eType == BuildingType.HuntingFields ? 1 : 0;
 
-                    if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
+                    if (pLoc.m_bBorder || pLoc.m_eType != LandmarkType.Empty)
                         iChances = 0;
 
                     if (iChances > 0)

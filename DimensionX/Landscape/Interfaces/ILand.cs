@@ -8,7 +8,7 @@ namespace LandscapeGeneration
         /// <summary>
         /// Тип территории
         /// </summary>
-        LTI Type { get; set; }
+        LTI LandType { get; set; }
     }
 
     /// <summary>

@@ -18,7 +18,7 @@ namespace Socium
     /// Провинция - группа сопредельных регионов, имеющих общую инфраструктуру и социум, принадлежащих одному государству.
     /// Провинции объединяются в государства (State).
     /// </summary>
-    public class Province : Territory<Region>
+    public class Province : TerritoryCluster<Region>
     {
         /// <summary>
         /// ТОЛКО ДЛЯ ОТЛАДКИ!!!!

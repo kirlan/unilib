@@ -11,28 +11,18 @@ namespace LandscapeGeneration
     /// Земля - группа сопредельных локаций, имеющих один тип местности.
     /// Земли объединяются в тектонические плиты (LandMass).
     /// </summary>
-    /// <typeparam name="LOC"></typeparam>
-    /// <typeparam name="LTI"></typeparam>
-    public class Land<LOC, LTI> : Territory<LOC>, IPointF, ITypedLand<LTI>
-        where LOC: Location
-        where LTI: LandTypeInfo
+    public class Land : TerritoryCluster<Land, Location>, ITypedLand<LandTypeInfo>
     {
-        private LTI m_pType = null;
-
-        public LTI Type
-        {
-            get { return m_pType; }
-            set { m_pType = value; }
-        }
+        public LandTypeInfo LandType { get; set; } = null;
 
         public bool IsWater
         {
-            get { return m_pType != null && m_pType.m_eEnvironment.HasFlag(Environment.Liquid); }
+            get { return LandType != null && LandType.m_eEnvironment.HasFlag(Environment.Liquid); }
         }
 
         public bool IsBorder()
         {
-            foreach (var pLoc in m_cContents)
+            foreach (var pLoc in Contents)
                 if (pLoc.m_bBorder)
                     return true;
 
@@ -41,7 +31,7 @@ namespace LandscapeGeneration
 
         public float MovementCost
         {
-            get { return m_pType == null ? 100 : m_pType.m_iMovementCost; }
+            get { return LandType == null ? 100 : LandType.m_iMovementCost; }
         }
 
         public override float GetMovementCost()
@@ -76,19 +66,26 @@ namespace LandscapeGeneration
             set { m_fTemperature = value; }
         }
 
+        public override void Start(Location pSeed)
+        {
+            base.Start(pSeed);
+
+            pSeed.AddLayer(this);
+        }
+
         public string GetLandsString()
         {
-            string sLands = "";
+            List<string> sLands = new List<string>();
 
-            foreach (LOC pLoc in m_cContents)
-                sLands += pLoc.GetStringID() + ", ";
+            foreach (var pLoc in Contents)
+                sLands.Add(pLoc.GetStringID());
 
-            return sLands;
+            return String.Join(", ", sLands); ;
         }
 
         public override string ToString()
         {
-            return string.Format("{0} ({1})", m_pType.m_sName, m_cContents.Count);
+            return string.Format("{0} ({1})", LandType.m_sName, Contents.Count);
         }
     }
 }

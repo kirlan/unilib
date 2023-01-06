@@ -18,12 +18,10 @@ namespace Socium
 
     /// <summary>
     /// расширение LandscapeGeneration.Location
-    /// добавляет имя, ссылку на поселение, дороги, отдельностоящие постройки (aka логова)
+    /// добавляет ссылку на поселение, дороги, отдельностоящие постройки (aka логова)
     /// </summary>
     public class LocationX : Location
     {
-        public string m_sName = "";
-
         public Settlement m_pSettlement = null;
 
         public BuildingStandAlone m_pBuilding = null;
@@ -124,12 +122,11 @@ namespace Socium
             if (m_pBuilding != null)
                 return string.Format("{0} {1}", m_pBuilding.ToString(), base.ToString());
 
-            return string.Format("{0} {1} {2}", m_eType, m_sName, base.ToString());
+            return string.Format("{0} {1}", m_eType, base.ToString());
         }
 
         public override void Reset()
         {
-            m_sName = "";
             m_pSettlement = null;
             m_pBuilding = null;
             m_cRoads.Clear();

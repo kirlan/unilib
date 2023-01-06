@@ -11,10 +11,10 @@ namespace LandscapeGeneration
 {
     public class VoronoiVertex : IPointF
     {
-        public float m_fX = 0;
-        public float m_fY = 0;
-        
-        public float m_fH = float.NaN;
+        private float m_fX = 0;
+        private float m_fY = 0;
+
+        private float m_fH = float.NaN;
 
         public float X
         {
@@ -141,7 +141,7 @@ namespace LandscapeGeneration
         internal void PointOnCurve(VoronoiVertex p0, VoronoiVertex p1, VoronoiVertex p2, VoronoiVertex p3, float t, float fCycle, float smoothRate)
         {
             for (int i = 0; i < m_cLocations.Count; i++)
-                if (m_cLocations[i].Forbidden || m_cLocations[i].Owner == null)
+                if (m_cLocations[i].Forbidden || !m_cLocations[i].HasLayer<Land>())
                     return;
 
             if (smoothRate > 1.0f)

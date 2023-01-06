@@ -36,8 +36,7 @@ namespace LandscapeGeneration
         Chalice
     }
 
-    public class LocationsGrid<LOC> : IGrid<LOC> 
-        where LOC : Location, new()
+    public class LocationsGrid : IGrid<Location> 
     {
         /// <summary>
         /// Расстояние от экватора до полюса. 
@@ -65,7 +64,7 @@ namespace LandscapeGeneration
             get { return m_eShape == WorldShape.Ringworld ? m_iRX * 2 : 0; }
         }
 
-        public LOC[] Locations { get => m_aLocations; set => m_aLocations = value; }
+        public Location[] Locations { get; set; } = null;
 
         public string m_sDescription = "";
 
@@ -75,8 +74,6 @@ namespace LandscapeGeneration
         /// локации, недоступные для посещения.
         /// </summary>
         public int m_iLocationsCount = 5000;//25000;
-
-        private LOC[] m_aLocations = null;
 
         public VoronoiVertex[] m_aVertexes = null;
 
@@ -103,7 +100,7 @@ namespace LandscapeGeneration
                 if (bOK)
                 {
                     //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                    foreach (LOC pLoc in m_aLocations)
+                    foreach (Location pLoc in Locations)
                     {
                         pLoc.BuildBorder(m_iRX * 2);
                         pLoc.CorrectCenter();
@@ -142,7 +139,7 @@ namespace LandscapeGeneration
                 while (!bOK);
 
                 //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                foreach (LOC pLoc in m_aLocations)
+                foreach (Location pLoc in Locations)
                 {
                     pLoc.BuildBorder(m_iRX * 2);
                     pLoc.CorrectCenter();
@@ -162,8 +159,8 @@ namespace LandscapeGeneration
         /// <returns></returns>
         private bool CalculateVoronoi()
         {
-            Dictionary<BTVector, LOC> cData = new Dictionary<BTVector, LOC>();
-            foreach (LOC pLoc in m_aLocations)
+            Dictionary<BTVector, Location> cData = new Dictionary<BTVector, Location>();
+            foreach (Location pLoc in Locations)
                 cData[new BTVector(pLoc.X, pLoc.Y)] = pLoc;
 
             //Строим диаграмму вороного - определяем границы локаций
@@ -173,7 +170,7 @@ namespace LandscapeGeneration
             //Переводим данные из диаграммы Вороного в наш формат
             try
             {
-                foreach (VoronoiEdge pEdge in graph.Edges)
+                foreach (BenTools.Mathematics.VoronoiEdge pEdge in graph.Edges)
                     AddEdge(cData, cVertexes, pEdge);
             }
             catch (Exception ex)
@@ -185,16 +182,16 @@ namespace LandscapeGeneration
 
             m_aVertexes = new List<VoronoiVertex>(cVertexes.Values).ToArray();
 
-            foreach (LOC pLoc in m_aLocations)
+            foreach (Location pLoc in Locations)
                 pLoc.FillBorderWithKeys();
 
             return true;
         }
 
-        private bool AddEdge(Dictionary<BTVector, LOC> cData, Dictionary<BTVector, VoronoiVertex> cVertexes, VoronoiEdge pEdge)
+        private bool AddEdge(Dictionary<BTVector, Location> cData, Dictionary<BTVector, VoronoiVertex> cVertexes, BenTools.Mathematics.VoronoiEdge pEdge)
         {
-            LOC pLoc1 = null;
-            LOC pLoc2 = null;
+            Location pLoc1 = null;
+            Location pLoc2 = null;
 
             if (pEdge.VVertexA == pEdge.VVertexB)
                 return false;
@@ -286,22 +283,22 @@ namespace LandscapeGeneration
 
                 if (pLoc2 != null)
                 {
-                    Location.Edge pLine = new Location.Edge(pVertexA, pVertexB);
-                    if (pLine.m_fLength > 0)
+                    VoronoiEdge pLine = new VoronoiEdge(pVertexA, pVertexB);
+                    if (pLine.Length > 0)
                     {
-                        foreach (List<Location.Edge> cLines in pLoc1.BorderWith.Values)
+                        foreach (List<VoronoiEdge> cLines in pLoc1.BorderWith.Values)
                             if (cLines[0].m_pPoint1 == pVertexA)
                                 throw new Exception("Wrong edge!");
                         //if(!bTwin)
                         if (pLoc2.m_pOrigin == null)
                         {
-                            pLoc1.BorderWith[pLoc2] = new List<Location.Edge>();
+                            pLoc1.BorderWith[pLoc2] = new List<VoronoiEdge>();
                             pLoc1.BorderWith[pLoc2].Add(pLine);
                         }
                         else
                         {
-                            pLoc1.BorderWith[(LOC)pLoc2.m_pOrigin] = new List<Location.Edge>();
-                            pLoc1.BorderWith[(LOC)pLoc2.m_pOrigin].Add(pLine);
+                            pLoc1.BorderWith[pLoc2.m_pOrigin] = new List<VoronoiEdge>();
+                            pLoc1.BorderWith[pLoc2.m_pOrigin].Add(pLine);
                         }
                     }
                 }
@@ -316,22 +313,22 @@ namespace LandscapeGeneration
 
                 if (pLoc1 != null)
                 {
-                    Location.Edge pLine = new Location.Edge(pVertexB, pVertexA);
-                    if (pLine.m_fLength > 0)
+                    VoronoiEdge pLine = new VoronoiEdge(pVertexB, pVertexA);
+                    if (pLine.Length > 0)
                     {
-                        foreach (List<Location.Edge> cLines in pLoc2.m_cBorderWith.Values)
+                        foreach (List<VoronoiEdge> cLines in pLoc2.BorderWith.Values)
                             if (cLines[0].m_pPoint1 == pVertexB)
                                 throw new Exception("Wrong edge!");
                         //if (!bTwin)
                         if (pLoc1.m_pOrigin == null)
                         {
-                            pLoc2.BorderWith[pLoc1] = new List<Location.Edge>();
+                            pLoc2.BorderWith[pLoc1] = new List<VoronoiEdge>();
                             pLoc2.BorderWith[pLoc1].Add(pLine);
                         }
                         else
                         {
-                            pLoc2.BorderWith[(LOC)pLoc1.m_pOrigin] = new List<Location.Edge>();
-                            pLoc2.BorderWith[(LOC)pLoc1.m_pOrigin].Add(pLine);
+                            pLoc2.BorderWith[pLoc1.m_pOrigin] = new List<VoronoiEdge>();
+                            pLoc2.BorderWith[pLoc1.m_pOrigin].Add(pLine);
                         }
                     }
                 }
@@ -342,7 +339,7 @@ namespace LandscapeGeneration
 
         private void BuildHexGrid(int iWidth, int iHeight)
         {
-            List<LOC> cLocations = new List<LOC>();
+            List<Location> cLocations = new List<Location>();
 
             //float stepX = 2.0f * RX / (iWidth);
             //float stepY = stepX / (float)Math.Sqrt(0.75);
@@ -358,7 +355,7 @@ namespace LandscapeGeneration
             for (int yy = -iHeightReserv; yy < iHeight / 2 + iHeightReserv; yy++)
                 for (int xx = -iWidthReserv; xx < iWidth + iWidthReserv; xx++)
                 {
-                    LOC pLocation = new LOC();
+                    Location pLocation = new Location();
 
                     float fx = xx * stepX;
 
@@ -382,7 +379,7 @@ namespace LandscapeGeneration
 
                     if (m_eShape == WorldShape.Ringworld)
                     {
-                        LOC pGhostLocation = new LOC();
+                        Location pGhostLocation = new Location();
 
                         if (stepX / 2 + fx > RX)
                             pGhostLocation.Create(iID + iWidth * iHeight * 4, -RX * 3 + stepX / 2 + fx, -RY + stepY / 2 + fy, pLocation);
@@ -398,12 +395,12 @@ namespace LandscapeGeneration
 
                 }
 
-            m_aLocations = cLocations.ToArray();
+            Locations = cLocations.ToArray();
         }
 
-        private List<LOC> BuildRandomGridFrame()
+        private List<Location> BuildRandomGridFrame()
         {
-            List<LOC> cLocations = new List<LOC>();
+            List<Location> cLocations = new List<Location>();
 
             float kx = (int)(Math.Sqrt((float)RX * m_iLocationsCount / RY));
             float ky = m_iLocationsCount / kx;
@@ -416,25 +413,25 @@ namespace LandscapeGeneration
             {
                 int xx = (int)(ii * 2 * RX / kx);
 
-                LOC pLocation11 = new LOC();
+                Location pLocation11 = new Location();
                 pLocation11.Create(cLocations.Count, RX - xx, RY - dky);
                 pLocation11.m_bBorder = xx == 0 || xx == 2 * RX;//false;
                 pLocation11.m_bFixed = true;
                 cLocations.Add(pLocation11);
 
-                LOC pLocation12 = new LOC();
+                Location pLocation12 = new Location();
                 pLocation12.Create(cLocations.Count, RX - xx, RY + dky);
                 pLocation12.m_bBorder = true;
                 pLocation12.m_bFixed = true;
                 cLocations.Add(pLocation12);
 
-                LOC pLocation21 = new LOC();
+                Location pLocation21 = new Location();
                 pLocation21.Create(cLocations.Count, RX - xx, -RY - dky);
                 pLocation21.m_bBorder = true;
                 pLocation21.m_bFixed = true;
                 cLocations.Add(pLocation21);
 
-                LOC pLocation22 = new LOC();
+                Location pLocation22 = new Location();
                 pLocation22.Create(cLocations.Count, RX - xx, -RY + dky);
                 pLocation22.m_bBorder = xx == 0 || xx == 2 * RX;//false;
                 pLocation22.m_bFixed = true;
@@ -442,7 +439,7 @@ namespace LandscapeGeneration
 
                 if (m_eShape == WorldShape.Ringworld)
                 {
-                    LOC pLocation11Ghost = new LOC();
+                    Location pLocation11Ghost = new Location();
                     if (pLocation11.X > 0)
                         pLocation11Ghost.Create(cLocations.Count, pLocation11.X - RX * 2, pLocation11.Y, pLocation11);
                     else
@@ -451,7 +448,7 @@ namespace LandscapeGeneration
                     pLocation11Ghost.m_bFixed = true;
                     cLocations.Add(pLocation11Ghost);
 
-                    LOC pLocation12Ghost = new LOC();
+                    Location pLocation12Ghost = new Location();
                     if (pLocation12.X > 0)
                         pLocation12Ghost.Create(cLocations.Count, pLocation12.X - RX * 2, pLocation12.Y, pLocation12);
                     else
@@ -460,7 +457,7 @@ namespace LandscapeGeneration
                     pLocation12Ghost.m_bFixed = true;
                     cLocations.Add(pLocation12Ghost);
 
-                    LOC pLocation21Ghost = new LOC();
+                    Location pLocation21Ghost = new Location();
                     if (pLocation21.X > 0)
                         pLocation21Ghost.Create(cLocations.Count, pLocation21.X - RX * 2, pLocation21.Y, pLocation21);
                     else
@@ -469,7 +466,7 @@ namespace LandscapeGeneration
                     pLocation21Ghost.m_bFixed = true;
                     cLocations.Add(pLocation21Ghost);
 
-                    LOC pLocation22Ghost = new LOC();
+                    Location pLocation22Ghost = new Location();
                     if (pLocation22.X > 0)
                         pLocation22Ghost.Create(cLocations.Count, pLocation22.X - RX * 2, pLocation22.Y, pLocation22);
                     else
@@ -486,25 +483,25 @@ namespace LandscapeGeneration
                 {
                     int yy = (int)(jj * 2 * RY / ky);
 
-                    LOC pLocation11 = new LOC();
+                    Location pLocation11 = new Location();
                     pLocation11.Create(cLocations.Count, RX - dkx, RY - yy);
                     pLocation11.m_bBorder = yy == 0 || yy == 2 * RY;//false;
                     pLocation11.m_bFixed = true;
                     cLocations.Add(pLocation11);
 
-                    LOC pLocation12 = new LOC();
+                    Location pLocation12 = new Location();
                     pLocation12.Create(cLocations.Count, RX + dkx, RY - yy);
                     pLocation12.m_bBorder = true;
                     pLocation12.m_bFixed = true;
                     cLocations.Add(pLocation12);
 
-                    LOC pLocation21 = new LOC();
+                    Location pLocation21 = new Location();
                     pLocation21.Create(cLocations.Count, -RX - dkx, RY - yy);
                     pLocation21.m_bBorder = true;
                     pLocation21.m_bFixed = true;
                     cLocations.Add(pLocation21);
 
-                    LOC pLocation22 = new LOC();
+                    Location pLocation22 = new Location();
                     pLocation22.Create(cLocations.Count, -RX + dkx, RY - yy);
                     pLocation22.m_bBorder = yy == 0 || yy == 2 * RY;//false;
                     pLocation22.m_bFixed = true;
@@ -517,7 +514,7 @@ namespace LandscapeGeneration
 
         private void BuildRandomGrid()
         {
-            List<LOC> cLocations = BuildRandomGridFrame();
+            List<Location> cLocations = BuildRandomGridFrame();
 
             float kx = (int)(Math.Sqrt((float)RX * m_iLocationsCount / RY));
             float ky = m_iLocationsCount / kx;
@@ -550,14 +547,14 @@ namespace LandscapeGeneration
             //Добавляем центры остальных локаций в случайные позиции внутри периметра.
             for (int i = 0; i < m_iLocationsCount; i++)
             {
-                LOC pLocation = new LOC();
+                Location pLocation = new Location();
                 //                pLocation.Create(cLocations.Count, RX - dkx * 2 - Rnd.Get(RX * 2 - 4 * dkx), RY - dky * 2 - Rnd.Get(RY * 2 - 4 * dky), 0);
                 pLocation.Create(cLocations.Count, cPoints[i].X, cPoints[i].Y);
                 cLocations.Add(pLocation);
 
                 if (m_eShape == WorldShape.Ringworld)
                 {
-                    LOC pGhostLocation = new LOC();
+                    Location pGhostLocation = new Location();
 
                     if (pLocation.X > 0)
                         pGhostLocation.Create(cLocations.Count, pLocation.X - RX * 2, pLocation.Y, pLocation);
@@ -570,7 +567,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            m_aLocations = cLocations.ToArray();
+            Locations = cLocations.ToArray();
         }
 
         private static int s_iVersion = 30;
@@ -594,8 +591,8 @@ namespace LandscapeGeneration
                         pVertex.Save(binWriter);
                     }
 
-                    binWriter.Write(m_aLocations.Length);
-                    foreach (LOC pLoc in m_aLocations)
+                    binWriter.Write(Locations.Length);
+                    foreach (Location pLoc in Locations)
                     {
                         pLoc.Save(binWriter);
                     }
@@ -701,7 +698,7 @@ namespace LandscapeGeneration
         {
             Reset();
 
-            m_aLocations = null;
+            Locations = null;
             m_aVertexes = null;
 
             m_bLoaded = false;
@@ -819,13 +816,13 @@ namespace LandscapeGeneration
                                 ProgressStep();
                         }
 
-                        Dictionary<long, LOC> cTempDic = new Dictionary<long, LOC>();
+                        Dictionary<long, Location> cTempDic = new Dictionary<long, Location>();
                         int iLocationsCount = binReader.ReadInt32();
                         if (BeginStep != null)
                             BeginStep("Loading locations...", iLocationsCount * 2);
                         for (int i = 0; i < iLocationsCount; i++)
                         {
-                            LOC pLoc = new LOC();
+                            Location pLoc = new Location();
                             pLoc.Load(binReader, cTempDicVertex);
 
                             cTempDic[pLoc.m_iID] = pLoc;
@@ -834,14 +831,14 @@ namespace LandscapeGeneration
                                 ProgressStep();
                         }
 
-                        m_aLocations = new List<LOC>(cTempDic.Values).ToArray();
+                        Locations = new List<Location>(cTempDic.Values).ToArray();
 
                         //Восстанавливаем словарь соседей
-                        foreach (LOC pLoc in m_aLocations)
+                        foreach (Location pLoc in Locations)
                         {
                             foreach (var ID in pLoc.m_cBorderWithID)
                             {
-                                pLoc.m_cBorderWith[cTempDic[ID.Key]] = ID.Value;
+                                pLoc.BorderWith[cTempDic[ID.Key]] = ID.Value;
                             }
                             pLoc.m_cBorderWithID.Clear();
                             pLoc.FillBorderWithKeys();
@@ -867,9 +864,9 @@ namespace LandscapeGeneration
                         cTempDic.Clear();
 
                         if (BeginStep != null)
-                            BeginStep("Recalculating grid edges...", m_aLocations.Length);
+                            BeginStep("Recalculating grid edges...", Locations.Length);
                         //для всех ячеек связываем разрозненные рёбра в замкнутую ломаную границу
-                        foreach (LOC pLoc in m_aLocations)
+                        foreach (Location pLoc in Locations)
                         {
                             if (pLoc.Forbidden)
                                 continue;
@@ -900,7 +897,7 @@ namespace LandscapeGeneration
             if (!m_bLoaded)
                 return;
 
-            foreach (LOC pLoc in m_aLocations)
+            foreach (Location pLoc in Locations)
                 pLoc.Reset();
         }
 

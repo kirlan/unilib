@@ -8,8 +8,7 @@ using MIConvexHull;
 
 namespace LandscapeGeneration.FastGrid
 {
-    public class ChunksGrid<LOC> : IGrid<LOC>
-        where LOC : Location, new()
+    public class ChunksGrid : IGrid<Location>
     {
         public Chunk<LOC>[,] m_cChunk;
 

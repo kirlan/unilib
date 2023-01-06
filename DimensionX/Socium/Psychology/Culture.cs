@@ -64,5 +64,10 @@ namespace Socium.Psychology
                 m_pMentality.Equals(pOther.m_pMentality) &&
                 m_pCustoms.Equals(pOther.m_pCustoms);
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(m_pCustoms, m_pMentality, m_iProgressLevel);
+        }
     }
 }

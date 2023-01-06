@@ -229,8 +229,7 @@ namespace Socium
                     pCradle.m_sName = pNation.m_pRace.m_pLanguage.RandomCountryName();
                     foreach (LandX pLand in pCradle.m_cContents)
                     {
-                        pLand.m_sName = pCradle.m_sName;
-                        pLand.m_pDominantNation = pCradle.m_pNatives;
+                        pLand.Populate(pCradle.m_pNatives, pCradle.m_sName);
                     }
 
                     LandMass<LandX> pLandMass = pCradle.Owner as LandMass<LandX>;

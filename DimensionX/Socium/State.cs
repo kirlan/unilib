@@ -18,7 +18,7 @@ namespace Socium
     /// <summary>
     /// Государство - группа сопредельных провинций, объединённых общей властью.
     /// </summary>
-    public class State: Territory<Province>
+    public class State: TerritoryCluster<Province>
     {
         public class Infrastructure
         {

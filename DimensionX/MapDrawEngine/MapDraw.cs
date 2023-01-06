@@ -1316,10 +1316,10 @@ namespace MapDrawEngine
 
             switch (pLoc.m_eType)
             {
-                case RegionType.Peak:
+                case LandmarkType.Peak:
                     m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignPeak(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
                     break;
-                case RegionType.Volcano:
+                case LandmarkType.Volcano:
                     m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVolkano(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
                     break;
             }

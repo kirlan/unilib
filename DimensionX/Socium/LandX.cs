@@ -27,7 +27,7 @@ namespace Socium
             set { m_pRegion = value; }
         }
 
-        public string m_sName = "";
+        private string m_sName = "";
 
         /// <summary>
         /// доминирующая нация в локации, может отличаться от коренного населения региона
@@ -175,7 +175,7 @@ namespace Socium
                     iChances = 0;
 
                 //если это край карты или географическая аномалия (горный пик, вулкан...) - тоже пролетаем.
-                if (pLoc.m_bBorder || pLoc.m_eType != RegionType.Empty)
+                if (pLoc.m_bBorder || pLoc.m_eType != LandmarkType.Empty)
                     iChances = 0;
 
                 if(iChances > 0)
@@ -278,6 +278,12 @@ namespace Socium
                     return Region.m_pNatives.ToString();
             }
             return "unpopulated";
+        }
+
+        public void Populate(Nation pNation, string sName)
+        {
+            m_pDominantNation = pNation;
+            m_sName = sName;
         }
 
         public override string ToString()

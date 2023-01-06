@@ -400,5 +400,15 @@ namespace Socium.Psychology
 
             return true;
         }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+
+            foreach (Trait eTrait in AllTraits)
+                hash.Add(m_cTraits[eTrait]);
+
+            return hash.ToHashCode();
+        }
     }
 }

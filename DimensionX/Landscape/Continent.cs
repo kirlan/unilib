@@ -9,15 +9,11 @@ namespace LandscapeGeneration
     /// <summary>
     /// Континент - группа сопредельных надводных тектонических плит.
     /// </summary>
-    /// <typeparam name="LAND"></typeparam>
-    /// <typeparam name="LTI"></typeparam>
-    public class Continent<LAND, LTI> : Territory<LandMass<LAND>>
-        where LAND: class, ITypedLand<LTI>, ITerritory
-        where LTI: LandTypeInfo
+    public class Continent : TerritoryCluster<Continent, LandMass>
     {
         private bool m_bIsland = false;
 
-        public override void Start(LandMass<LAND> pSeed)
+        public override void Start(LandMass pSeed)
         {
             if (pSeed.IsWater)
                 return;
@@ -36,28 +32,28 @@ namespace LandscapeGeneration
             if (m_bIsland && !Rnd.OneChanceFrom(25))
                 return null;
 
-            Dictionary<LandMass<LAND>, float> cBorderLength = new Dictionary<LandMass<LAND>, float>();
+            Dictionary<LandMass, float> cBorderLength = new Dictionary<LandMass, float>();
 
             foreach (var pLandMass in m_cBorder)
             {
-                if ((pLandMass.Key as ITerritory).Forbidden)
+                if (pLandMass.Key.Forbidden)
                     continue;
 
-                LandMass<LAND> pLM = pLandMass.Key as LandMass<LAND>;
+                LandMass pLM = pLandMass.Key as LandMass;
 
-                if (pLM.Owner == null && !pLM.IsWater)
+                if (!pLM.HasLayer<Continent>() && !pLM.IsWater)
                 {
                     bool bFree = true;
                     foreach (ITerritory pLink in pLM.BorderWith.Keys)
                     {
-                        if (pLink.Owner != null && pLink.Owner != this)
+                        if (pLink.HasLayer<Continent>() && pLink.GetLayer<Continent>() != this)
                             bFree = false;
                     }
                     if (bFree)
                     {
                         cBorderLength[pLM] = 0;
                         foreach (var pLine in pLandMass.Value)
-                            cBorderLength[pLM] += pLine.m_fLength;
+                            cBorderLength[pLM] += pLine.Length;
                     }
                 }
             }
@@ -66,37 +62,27 @@ namespace LandscapeGeneration
             if (cBorderLength.Count == 0)
                 return null;
 
-            LandMass<LAND> pAddon = null;
-            
             int iChoice = Rnd.ChooseOne(cBorderLength.Values, 2);
             if (iChoice == -1)
                 return null;
 
-            foreach (var pInner in cBorderLength)
-            {
-                iChoice--;
-                if (iChoice < 0)
-                {
-                    pAddon = pInner.Key;
-                    break;
-                }
-            }
+            LandMass pAddon = cBorderLength.ElementAt(iChoice).Key;
 
-            m_cContents.Add(pAddon);
-            pAddon.Owner = this;
+            Contents.Add(pAddon);
+            pAddon.AddLayer(this);
 
             m_cBorder[pAddon].Clear();
             m_cBorder.Remove(pAddon);
 
             foreach (var pLandMass in pAddon.BorderWith)
             {
-                if (!(pLandMass.Key as ITerritory).Forbidden && m_cContents.Contains(pLandMass.Key as LandMass<LAND>))
+                if (!pLandMass.Key.Forbidden && Contents.Contains(pLandMass.Key as LandMass))
                     continue;
 
                 if (!m_cBorder.ContainsKey(pLandMass.Key))
-                    m_cBorder[pLandMass.Key] = new List<Location.Edge>();
+                    m_cBorder[pLandMass.Key] = new List<VoronoiEdge>();
                 foreach (var pLine in pLandMass.Value)
-                    m_cBorder[pLandMass.Key].Add(new Location.Edge(pLine));
+                    m_cBorder[pLandMass.Key].Add(new VoronoiEdge(pLine));
             }
 
             //ChainBorder();

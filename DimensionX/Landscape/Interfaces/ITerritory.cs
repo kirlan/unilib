@@ -7,10 +7,14 @@ namespace LandscapeGeneration
         /// <summary>
         /// Границы с другими ТАКИМИ ЖЕ объектами
         /// </summary>
-        Dictionary<ITerritory, List<Location.Edge>> BorderWith { get; }
+        Dictionary<ITerritory, List<VoronoiEdge>> BorderWith { get; }
 
         bool Forbidden { get; }
-        ITerritory Owner { get; set; }
+        //ITerritory Owner { get; set; }
+
+        ITerritory AddLayer<T>(T value) where T : class, IInfoLayer;
+        T GetLayer<T>() where T : class, IInfoLayer;
+        bool HasLayer<T>() where T : class, IInfoLayer;
 
         /// <summary>
         /// Суммарная длина всех линий в BorderWith

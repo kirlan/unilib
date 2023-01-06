@@ -12,16 +12,9 @@ namespace LandscapeGeneration
     /// Может быть или полностью затоплена океаном, или являться частью какого-то континента.
     /// </summary>
     /// <typeparam name="LAND"></typeparam>
-    public class LandMass<LAND> : Territory<LAND>, ILandMass
-        where LAND: class, ILand
+    public class LandMass : TerritoryCluster<LandMass, Land>, ILandMass
     {
-        private bool m_bOcean = false;
-
-        public bool IsWater
-        {
-            get { return m_bOcean; }
-            set { m_bOcean = value; }
-        }
+        public bool IsWater { get; set; } = false;
 
         public SimpleVector3d m_pDrift;
 
@@ -35,7 +28,7 @@ namespace LandscapeGeneration
             //m_iElevation = (int)(Math.Tan(1.2f - Rnd.Get(2.22f)));
         }
 
-        public void Start(LAND pSeed)
+        public override void Start(Land pSeed)
         {
             base.Start(pSeed);
 
@@ -45,7 +38,7 @@ namespace LandscapeGeneration
 
         public override ITerritory Grow(int iMaxSize)
         {
-            if (m_iMaxSize > 0 && m_cContents.Count >= m_iMaxSize)
+            if (m_iMaxSize > 0 && Contents.Count >= m_iMaxSize)
                 return null;
 
             return base.Grow(iMaxSize);
@@ -54,7 +47,7 @@ namespace LandscapeGeneration
         public bool HaveForbiddenBorders()
         {
             foreach (var pLand in m_cBorder)
-                if ((pLand.Key as ITerritory).Forbidden)
+                if (pLand.Key.Forbidden)
                     return true;
 
             return false;
@@ -64,7 +57,7 @@ namespace LandscapeGeneration
         {
             string sLands = "";
 
-            foreach (LAND pLand in m_cContents)
+            foreach (var pLand in Contents)
                 sLands += String.Format("({0}), ", pLand.GetLandsString());
 
             return sLands;
@@ -74,12 +67,12 @@ namespace LandscapeGeneration
         {
             return GetLandsString();
 
-            //return (m_bOcean ? "ocean": "land") + " " + m_cContents.Count.ToString(); 
+            //return (IsWater ? "ocean": "land") + " " + Contents.Count.ToString(); 
         }
 
         public override float GetMovementCost()
         {
-            return (m_bOcean ? 10 : 1);// *m_cContents.Count;
+            return (IsWater ? 10 : 1);// *Contents.Count;
         }
     }
 }
