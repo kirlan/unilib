@@ -13,7 +13,7 @@ namespace LandscapeGeneration
 {
     public class Landscape: IInfoLayer
     {
-        public IGrid m_pGrid = null;
+        public ChunksGrid m_pGrid = null;
 
         public Land[] m_aLands = null;
 
@@ -73,40 +73,7 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Генерация мира - старый алгоритм
-        /// </summary>
-        /// <param name="iLocations">Общее количество `локаций` - минимальных "кирпичиков" мира.</param>
-        /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.
-        /// Сопредельные земли с одинаковым типом объединяются в 'зоны'</param>
-        /// <param name="iLandMassesDiversity">Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.</param>
-        /// <param name="iOcean">Процент тектонических плит, лежащих на дне океана - от 10 до 90.</param>
-        /// <param name="iEquator">Положение экватора на карте в процентах по вертикали. 50 - середина карты, 0 - верхний край, 100 - нижний край</param>
-        /// <param name="iPole">Расстояние от экватора до полюсов в процентах по вертикали. Если экватор расположен посередине карты, то значение 50 даст для полюсов верхний и нижний края карты соответственно.</param>
-        public Landscape(LocationsGrid cLocations, int iContinents, bool bGreatOcean, int iLandsDiversity, int iLandMassesDiversity, int iOcean, int iEquator, int iPole, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
-        {
-            m_pGrid = cLocations;
-
-            cLocations.Load(BeginStep, ProgressStep);
-
-            if (iOcean > 90 || iOcean < 10)
-                throw new ArgumentException("Oceans percent can't be less then 10 or greater then 100!");
-
-            m_iLandsCount = 600 + iLandsDiversity * m_pGrid.Locations.Length / 200;
-            m_iLandMassesCount = 30 + iLandMassesDiversity * 240 / 100;
-            m_iOceansPercentage = iOcean;
-            m_iContinentsCount = iContinents;
-            m_bGreatOcean = bGreatOcean;
-
-            PresetLandTypesInfo();
-
-            m_iEquator = 2 * cLocations.RY * iEquator / 100 - cLocations.RY;
-            m_iPole = 2 * cLocations.RY * iPole / 100;
-
-            ShapeWorld(BeginStep, ProgressStep);
-        }
-
-        /// <summary>
-        /// Генерация мира - новый быстрый алгоритм
+        /// Генерация мира
         /// </summary>
         /// <param name="iLocations">Общее количество `локаций` - минимальных "кирпичиков" мира.</param>
         /// <param name="iLandsDiversity">Общее количество `земель` - групп соседних локаций с одинаковым типом территории.

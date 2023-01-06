@@ -18,14 +18,11 @@ namespace WorldGeneration
     {
         public class Settings
         {
-            public string m_sWorkingDir = "";
             public List<string> m_cLastUsedPresets = new List<string>();
         }
 
         public Settings m_pSettings = null;
 
-        private LocationsGrid<LocationX> m_cLocationsGrid = null;
-        private LocationsGrid<LocationX> m_cLastUsedGrid = null;
         private World m_pWorld = null;
 
         public World World
@@ -50,7 +47,6 @@ namespace WorldGeneration
             Cursor = Cursors.WaitCursor;
             StartGenerationButton.Enabled = false;
             groupBox5.Enabled = false;
-            groupBox6.Enabled = false;
             mapProperties1.Enabled = false;
 
             StartGenerationButton.Text = "... Please wait ...";
@@ -63,7 +59,6 @@ namespace WorldGeneration
 
             StartGenerationButton.Enabled = true;
             groupBox5.Enabled = true;
-            groupBox6.Enabled = true;
             mapProperties1.Enabled = true;
 
             StartGenerationButton.Text = "Start generation!"; 
@@ -73,21 +68,6 @@ namespace WorldGeneration
 
         public void GenerateWorld(IWin32Window pOwnerWindow)
         {
-            if (m_cLastUsedGrid == m_cLocationsGrid)
-                m_cLastUsedGrid.Reset();
-            else
-            {
-                if (m_cLastUsedGrid != null)
-                    m_cLastUsedGrid.Unload();
-                m_cLastUsedGrid = m_cLocationsGrid;
-            }
-
-            if (m_cLastUsedGrid == null)
-            {
-                MessageBox.Show("No grids in Grids Manager! Please, create some.");
-                return;
-            }
-
             List<Epoch> cEpoches = new List<Epoch>();
 
             foreach (ListViewItem pItem in AgesView.Items)
@@ -95,19 +75,6 @@ namespace WorldGeneration
 
             WaitForm.StartWait(pOwnerWindow, "World generation...");
 
-            //m_pWorld = new World(m_cLastUsedGrid,
-            //    mapProperties1.ContinentsCount,
-            //    !mapProperties1.PartialMap,
-            //    mapProperties1.LandsDiversity,
-            //    Math.Max(10, Math.Min((int)mapProperties1.StatesCount * 7, 300)),
-            //    mapProperties1.StatesCount,
-            //    mapProperties1.LandMassesDiversity,
-            //    mapProperties1.WaterPercent,
-            //    mapProperties1.EquatorPosition,
-            //    mapProperties1.PoleDistance,
-            //    cEpoches.ToArray(),
-            //    WaitForm.BeginStep,
-            //    WaitForm.ProgressStep);
             m_pWorld = new World(800,
                 5,
                 mapProperties1.ContinentsCount,
@@ -130,38 +97,6 @@ namespace WorldGeneration
             e.Cancel = !groupBox5.Enabled;
         }
 
-        private void GridsManagerButton_Click(object sender, EventArgs e)
-        {
-            GridsManager pForm = new GridsManager(m_pSettings.m_sWorkingDir);
-
-            pForm.ShowDialog();
-            ScanWorkingDir();
-
-            //GridBuildingForm pForm = new GridBuildingForm(m_sWorkingDir);
-
-            //if (pForm.ShowDialog() == DialogResult.OK)
-            //{
-            //    StartGenerationButton.Enabled = true;
-            //    groupBox5.Enabled = true;
-            //    groupBox6.Enabled = true;
-            //    mapProperties1.Enabled = true;
-
-            //    GridsComboBox.Items.Add(pForm.m_pLocationsGrid);
-            //    GridsComboBox.SelectedItem = pForm.m_pLocationsGrid;
-            //}
-        }
-
-        private bool GetNewWorkingDir()
-        {
-            folderBrowserDialog1.SelectedPath = Application.CommonAppDataPath;
-            if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
-                return false;
-
-            m_pSettings.m_sWorkingDir = folderBrowserDialog1.SelectedPath;
-
-            return true;
-        }
-
         public bool Preload(Settings settings)
         {
             m_pSettings = settings;
@@ -170,68 +105,7 @@ namespace WorldGeneration
                 if (!File.Exists(sPrset))
                     settings.m_cLastUsedPresets.Remove(sPrset);
 
-            if (m_pSettings.m_sWorkingDir == "" && !GetNewWorkingDir())
-            {
-                return false;
-            }
-
-            DirectoryInfo dirInfo = new DirectoryInfo(m_pSettings.m_sWorkingDir);
-            if(!dirInfo.Exists && !GetNewWorkingDir())
-            {
-                return false;
-            }
-
-            ScanWorkingDir();
-
             return true;
-        }
-
-        private void ScanWorkingDir()
-        {
-            GridsComboBox.Items.Clear();
-
-            DirectoryInfo dirInfo = new DirectoryInfo(m_pSettings.m_sWorkingDir);
-            FileInfo[] fileNames = dirInfo.GetFiles("*.*");
-
-            foreach (FileInfo fi in fileNames)
-            {
-                if (fi.Extension == ".dxz")
-                {
-                    try
-                    {
-                        LocationsGrid<LocationX> pGrid = new LocationsGrid<LocationX>(fi.FullName);
-                        GridsComboBox.Items.Add(pGrid);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }
-            }
-
-            if (GridsComboBox.Items.Count > 0)
-            {
-                GridsComboBox.SelectedIndex = 0;
-            }
-        }
-
-        private void GridsComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (GridsComboBox.SelectedIndex == -1)
-                return;
-
-            m_cLocationsGrid = (LocationsGrid<LocationX>)GridsComboBox.SelectedItem;
-
-            groupBox5.Enabled = true;
-            groupBox6.Enabled = true;
-            mapProperties1.Enabled = true;
-            StartGenerationButton.Enabled = true;
-
-            mapProperties1.LocationsGrid = m_cLocationsGrid;
-            //CalculateLimits(m_cLocations.m_iLocationsCount);
-
-            if (AgesView.Items.Count == 0)
-                AddNewAge_Click(sender, e);
         }
 
         private void AgesView_SelectedIndexChanged(object sender, EventArgs e)
@@ -341,22 +215,12 @@ namespace WorldGeneration
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                if (m_cLastUsedGrid == m_cLocationsGrid)
-                    m_cLastUsedGrid.Reset();
-                else
-                {
-                    if (m_cLastUsedGrid != null)
-                        m_cLastUsedGrid.Unload();
-                    m_cLastUsedGrid = m_cLocationsGrid;
-                }
-
                 List<Epoch> cEpoches = new List<Epoch>();
 
                 foreach (ListViewItem pItem in AgesView.Items)
                     cEpoches.Add((pItem.Tag as EpochWrapper).GetEpochInfo());
 
-                WorldPreset pWorldPreset = new WorldPreset(m_cLastUsedGrid,
-                    mapProperties1.ContinentsCount,
+                WorldPreset pWorldPreset = new WorldPreset(mapProperties1.ContinentsCount,
                     !mapProperties1.PartialMap,
                     mapProperties1.LandsDiversity,
                     mapProperties1.StatesCount,
@@ -386,9 +250,7 @@ namespace WorldGeneration
 
         public void LoadPreset(string sFileName)
         {
-            WorldPreset pWorldPreset = new WorldPreset(sFileName, GridsComboBox.Items);
-            if (pWorldPreset.m_pLocationsGrid != null)
-                GridsComboBox.SelectedItem = pWorldPreset.m_pLocationsGrid;
+            WorldPreset pWorldPreset = new WorldPreset(sFileName);
 
             if (m_pSettings.m_cLastUsedPresets.Contains(sFileName))
                 m_pSettings.m_cLastUsedPresets.Remove(sFileName);

@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.StartGenerationButton = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.GridsManagerButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.AgesView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -44,8 +43,6 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.epochProperties1 = new WorldGeneration.EpochProperties();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.GridsComboBox = new System.Windows.Forms.ComboBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.mapProperties1 = new WorldGeneration.MapProperties();
             this.button5 = new System.Windows.Forms.Button();
@@ -55,7 +52,6 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // StartGenerationButton
@@ -77,23 +73,10 @@
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
             // 
-            // GridsManagerButton
-            // 
-            this.GridsManagerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.GridsManagerButton.Location = new System.Drawing.Point(305, 16);
-            this.GridsManagerButton.Name = "GridsManagerButton";
-            this.GridsManagerButton.Size = new System.Drawing.Size(127, 23);
-            this.GridsManagerButton.TabIndex = 2;
-            this.GridsManagerButton.Text = "Show grids manager...";
-            this.toolTip1.SetToolTip(this.GridsManagerButton, "Build completely new grid to use it and - optional - save to file for future use." +
-                    "");
-            this.GridsManagerButton.UseVisualStyleBackColor = true;
-            this.GridsManagerButton.Click += new System.EventHandler(this.GridsManagerButton_Click);
-            // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.AgesView);
             this.groupBox5.Controls.Add(this.tableLayoutPanel1);
             this.groupBox5.Controls.Add(this.epochProperties1);
@@ -106,8 +89,8 @@
             // 
             // AgesView
             // 
-            this.AgesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.AgesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AgesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -148,8 +131,8 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 5;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -217,9 +200,9 @@
             // epochProperties1
             // 
             this.epochProperties1.AdvancedMode = false;
-            this.epochProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.epochProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.epochProperties1.BackColor = System.Drawing.Color.White;
             this.epochProperties1.Enabled = false;
             this.epochProperties1.Epoch = null;
@@ -228,28 +211,6 @@
             this.epochProperties1.Size = new System.Drawing.Size(425, 215);
             this.epochProperties1.TabIndex = 4;
             this.epochProperties1.UpdateEvent += new WorldGeneration.EpochProperties.UpdateEventHandler(this.epochProperties1_UpdateEvent);
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.GridsComboBox);
-            this.groupBox6.Controls.Add(this.GridsManagerButton);
-            this.groupBox6.Location = new System.Drawing.Point(12, 3);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(438, 46);
-            this.groupBox6.TabIndex = 1;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Grid";
-            // 
-            // GridsComboBox
-            // 
-            this.GridsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.GridsComboBox.FormattingEnabled = true;
-            this.GridsComboBox.Location = new System.Drawing.Point(9, 17);
-            this.GridsComboBox.Name = "GridsComboBox";
-            this.GridsComboBox.Size = new System.Drawing.Size(286, 21);
-            this.GridsComboBox.Sorted = true;
-            this.GridsComboBox.TabIndex = 3;
-            this.GridsComboBox.SelectedIndexChanged += new System.EventHandler(this.GridsComboBox_SelectedIndexChanged);
             // 
             // checkBox1
             // 
@@ -267,20 +228,20 @@
             // mapProperties1
             // 
             this.mapProperties1.AdvancedMode = false;
-            this.mapProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.mapProperties1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.mapProperties1.BackColor = System.Drawing.Color.White;
             this.mapProperties1.ContinentsCount = 5;
             this.mapProperties1.Enabled = false;
             this.mapProperties1.EquatorPosition = 50;
             this.mapProperties1.LandMassesDiversity = 15;
             this.mapProperties1.LandsDiversity = 30;
-            this.mapProperties1.Location = new System.Drawing.Point(9, 55);
+            this.mapProperties1.Location = new System.Drawing.Point(9, 12);
             this.mapProperties1.LocationsGrid = null;
             this.mapProperties1.Name = "mapProperties1";
             this.mapProperties1.PartialMap = false;
             this.mapProperties1.PoleDistance = 45;
-            this.mapProperties1.Size = new System.Drawing.Size(443, 229);
+            this.mapProperties1.Size = new System.Drawing.Size(443, 272);
             this.mapProperties1.StatesCount = 8;
             this.mapProperties1.TabIndex = 16;
             this.mapProperties1.WaterPercent = 66;
@@ -331,7 +292,6 @@
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.mapProperties1);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.StartGenerationButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -343,7 +303,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GenerationForm_FormClosing);
             this.groupBox5.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -353,9 +312,6 @@
 
         private System.Windows.Forms.Button StartGenerationButton;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.ComboBox GridsComboBox;
-        private System.Windows.Forms.Button GridsManagerButton;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ListView AgesView;
         private System.Windows.Forms.ColumnHeader columnHeader1;

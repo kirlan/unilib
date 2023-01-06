@@ -30,38 +30,6 @@ namespace WorldGeneration
             new MapPreset("Tropical Paradise", "Archipelago of about 15 tropical islands.", false, true, 100, 100, 15, 90, 50, 100),
         };
 
-        private LocationsGrid<LocationX> m_pLocationsGrid = null;
-
-        [Browsable(false)]
-        public LocationsGrid<LocationX> LocationsGrid
-        {
-            get { return m_pLocationsGrid; }
-            set 
-            {
-                m_pLocationsGrid = value;
-
-                Enabled = m_pLocationsGrid != null;
-
-                if (m_pLocationsGrid == null)
-                    return;
-
-                if (MapPresets.Items.Count == 0 || MapPresets.Items.Contains(m_aWorldMaps[0]) == (m_pLocationsGrid.CycleShift == 0))
-                {
-                    MapPresets.Items.Clear();
-
-                    if (m_pLocationsGrid.CycleShift != 0)
-                        MapPresets.Items.AddRange(m_aWorldMaps);
-                    else
-                        MapPresets.Items.AddRange(m_aPartialMaps);
-                }
-
-                CalculateLimits(m_pLocationsGrid.m_iLocationsCount);
-
-                if (MapPresets.Items.Count > 0)
-                    MapPresets.SelectedIndex = 0;
-            }
-        }
-
         private bool m_bAdvancedMode = false;
 
         public bool AdvancedMode

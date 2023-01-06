@@ -12,7 +12,6 @@ namespace WorldGeneration
 {
     public class WorldPreset
     {
-        public LocationsGrid<LocationX> m_pLocationsGrid;
         public int m_iContinents;
         public bool m_bGreatOcean;
         public int m_iLandsDiversity;
@@ -23,8 +22,7 @@ namespace WorldGeneration
         public int m_iPole;
         public Epoch[] m_aEpoches;
 
-        public WorldPreset(LocationsGrid<LocationX> pLocationsGrid,
-                     int iContinents,
+        public WorldPreset(int iContinents,
                      bool bGreatOcean,
                      int iLandsDivesity,
                      int iStates,
@@ -34,7 +32,6 @@ namespace WorldGeneration
                      int iPole,
                      Epoch[] aEpoches)
         {
-            m_pLocationsGrid = pLocationsGrid;
             m_iContinents = iContinents;
             m_bGreatOcean = bGreatOcean;
             m_iLandsDiversity = iLandsDivesity;
@@ -46,14 +43,13 @@ namespace WorldGeneration
             m_aEpoches = aEpoches;
         }
 
-        public WorldPreset(string sFileName, ComboBox.ObjectCollection aGrids)
+        public WorldPreset(string sFileName)
         {
             UniLibXML pXml = new UniLibXML("DimensionX_WorldPreset");
 
             if (!pXml.Load(sFileName))
                 throw new ArgumentException("Can't load world preset from file '" + sFileName + "'");
 
-            m_pLocationsGrid = null;
             bool bOK1 = false;
             bool bOK2 = false;
 
@@ -61,15 +57,6 @@ namespace WorldGeneration
             {
                 if (pCatNode.Name == "World")
                 {
-                    string sGridFileName = "";
-                    pXml.GetStringAttribute(pCatNode, "grid", ref sGridFileName);
-                    foreach(LocationsGrid<LocationX> pGrid in aGrids)
-                        if (pGrid.m_sFilename.EndsWith("\\" + sGridFileName))
-                        {
-                            m_pLocationsGrid = pGrid;
-                            break;
-                        }
-
                     pXml.GetIntAttribute(pCatNode, "continents", ref m_iContinents);
                     pXml.GetBoolAttribute(pCatNode, "borderless", ref m_bGreatOcean);
                     pXml.GetIntAttribute(pCatNode, "lands", ref m_iLandsDiversity);
@@ -108,9 +95,7 @@ namespace WorldGeneration
 
             XmlNode pWorldPropertiesNode = pXml.CreateNode(pXml.Root, "World");
             
-            string[] aFileName = m_pLocationsGrid.m_sFilename.Split(new char[] {'/', '\\'}, StringSplitOptions.RemoveEmptyEntries);
 
-            pXml.AddAttribute(pWorldPropertiesNode, "grid", aFileName[aFileName.Length - 1]);
             pXml.AddAttribute(pWorldPropertiesNode, "continents", m_iContinents);
             pXml.AddAttribute(pWorldPropertiesNode, "borderless", m_bGreatOcean);
             pXml.AddAttribute(pWorldPropertiesNode, "lands", m_iLandsDiversity);

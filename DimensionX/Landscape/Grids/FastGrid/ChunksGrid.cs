@@ -8,7 +8,27 @@ using MIConvexHull;
 
 namespace LandscapeGeneration.FastGrid
 {
-    public class ChunksGrid : IGrid
+    public enum WorldShape
+    {
+        /// <summary>
+        /// обычная плоская прямоугольная карта с непереходимым краем
+        /// </summary>
+        Plain,
+        /// <summary>
+        /// Мир-кольцо - внутренняя поверхность цилиндра, боковые грани непереходимые
+        /// </summary>
+        Ringworld,
+        /// <summary>
+        /// Панцирь черепахи - круглый плоский мир с горами в центре, со всех сторон окружённый бесконечным океаном
+        /// </summary>
+        Shell,
+        /// <summary>
+        /// Чаша - круглый плоский мир с центральным морем, со всех сторон окружённый непроходимыми горами
+        /// </summary>
+        Chalice
+    }
+
+    public class ChunksGrid
     {
         public Chunk[,] m_cChunk;
 
