@@ -47,9 +47,7 @@
   <ItemGroup>
     <Compile Include="BaseTerritory.cs" />
     <Compile Include="IGrid.cs" />
-    <Compile Include="Interfaces\ILandMass.cs" />
     <Compile Include="Interfaces\IInfoLayer.cs" />
-    <Compile Include="Interfaces\ILand.cs" />
     <Compile Include="Interfaces\IPointF.cs" />
     <Compile Include="LandTypeInfo.cs" />
     <Compile Include="LocationsGrid.cs" />

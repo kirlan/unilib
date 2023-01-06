@@ -54,7 +54,7 @@ namespace LandscapeGeneration
                     return 100;
             }
 
-            ILand pLand = GetLayer<Land>();
+            Land pLand = GetLayer<Land>();
             return pLand.MovementCost * (m_eType == LandmarkType.Empty ? 1 : 10);
         }
 

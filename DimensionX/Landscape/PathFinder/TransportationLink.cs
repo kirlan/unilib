@@ -296,7 +296,7 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Location.Edge pLine = pLoc1.BorderWith[pLoc2][0];
+            VoronoiEdge pLine = pLoc1.BorderWith[pLoc2][0];
 
             m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
 
@@ -338,7 +338,7 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLinkBase(ILand pLand1, ILand pLand2, float fCycleShift)
+        public TransportationLinkBase(Land pLand1, Land pLand2, float fCycleShift)
         {
             m_aPoints[0] = pLand1;
             m_aPoints[2] = pLand2;
@@ -352,9 +352,9 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Location.Edge pBestLine = null;
+            VoronoiEdge pBestLine = null;
             float fShortest = float.MaxValue;
-            Location.Edge[] cLines = pLand1.BorderWith[pLand2].ToArray();
+            VoronoiEdge[] cLines = pLand1.BorderWith[pLand2].ToArray();
             foreach (var pLine in cLines)
             {
                 m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
@@ -377,7 +377,7 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLinkBase(ILandMass pLandMass1, ILandMass pLandMass2, float fCycleShift)
+        public TransportationLinkBase(LandMass pLandMass1, LandMass pLandMass2, float fCycleShift)
         {
             m_aPoints[0] = pLandMass1;
             m_aPoints[2] = pLandMass2;
@@ -391,9 +391,9 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Location.Edge pBestLine = null;
+            VoronoiEdge pBestLine = null;
             float fShortest = float.MaxValue;
-            Location.Edge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
+            VoronoiEdge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
             foreach (var pLine in cLines)
             {
                 m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);

@@ -813,7 +813,7 @@ namespace LandscapeGeneration
                 {
                     foreach (ITerritory pLink in pLand.m_aBorderWith)
                     {
-                        if (!pLink.Forbidden && !(pLink as ILand).IsWater)
+                        if (!pLink.Forbidden && !(pLink as Land).IsWater)
                         {
                             Land pLinkedLand = pLink as Land;
 
@@ -1347,10 +1347,10 @@ namespace LandscapeGeneration
                     TransportationLinkBase pLink = null;
                     if (pNode1 is Location && pNode2 is Location)
                         pLink = new TransportationLinkBase(pNode1 as Location, pNode2 as Location, m_pGrid.CycleShift);
-                    if (pNode1 is ILand && pNode2 is ILand)
-                        pLink = new TransportationLinkBase(pNode1 as ILand, pNode2 as ILand, m_pGrid.CycleShift);
-                    if (pNode1 is ILandMass && pNode2 is ILandMass)
-                        pLink = new TransportationLinkBase(pNode1 as ILandMass, pNode2 as ILandMass, m_pGrid.CycleShift);
+                    if (pNode1 is Land && pNode2 is Land)
+                        pLink = new TransportationLinkBase(pNode1 as Land, pNode2 as Land, m_pGrid.CycleShift);
+                    if (pNode1 is LandMass && pNode2 is LandMass)
+                        pLink = new TransportationLinkBase(pNode1 as LandMass, pNode2 as LandMass, m_pGrid.CycleShift);
 
                     if (pLink == null)
                         throw new Exception("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
@@ -1359,9 +1359,9 @@ namespace LandscapeGeneration
                     pNode2.m_cLinks[pNode1] = pLink;
                     if (pNode1 is Location && pNode2 is Location)
                         m_cTransportGrid.Add(pLink);
-                    if (pNode1 is ILand && pNode2 is ILand)
+                    if (pNode1 is Land && pNode2 is Land)
                         m_cLandsTransportGrid.Add(pLink);
-                    if (pNode1 is ILandMass && pNode2 is ILandMass)
+                    if (pNode1 is LandMass && pNode2 is LandMass)
                         m_cLMTransportGrid.Add(pLink);
 
                     return pLink;
@@ -1392,9 +1392,9 @@ namespace LandscapeGeneration
                     pNode2.m_cLinks[pNode1] = pLink;
                     if (pNode1 is Location && pNode2 is Location)
                         m_cTransportGrid.Add(pLink);
-                    if (pNode1 is ILand && pNode2 is ILand)
+                    if (pNode1 is Land && pNode2 is Land)
                         m_cLandsTransportGrid.Add(pLink);
-                    if (pNode1 is ILandMass && pNode2 is ILandMass)
+                    if (pNode1 is LandMass && pNode2 is LandMass)
                         m_cLMTransportGrid.Add(pLink);
 
                     return pLink;

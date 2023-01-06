@@ -12,7 +12,7 @@ namespace LandscapeGeneration
     /// Может быть или полностью затоплена океаном, или являться частью какого-то континента.
     /// </summary>
     /// <typeparam name="LAND"></typeparam>
-    public class LandMass : TerritoryCluster<LandMass, Land>, ILandMass
+    public class LandMass : TerritoryCluster<LandMass, Land>
     {
         public bool IsWater { get; set; } = false;
 
