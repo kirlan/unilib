@@ -52,7 +52,6 @@
     <Compile Include="LandTypeInfo.cs" />
     <Compile Include="LocationsGrid.cs" />
     <Compile Include="PathFinder\BasicHeap.cs" />
-    <Compile Include="PathFinder\ITransportationNode.cs" />
     <Compile Include="PathFinder\Path.cs" />
     <Compile Include="PathFinder\PriorityQueue.cs" />
     <Compile Include="PathFinder\TransportationLink.cs" />

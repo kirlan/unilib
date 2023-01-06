@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LandscapeGeneration.PathFind
 {
-    public abstract class TransportationNode : VoronoiVertex, ITransportationNode
+    public abstract class TransportationNode : VoronoiVertex
     {
         public int m_iPassword = 0;
 
@@ -16,7 +16,7 @@ namespace LandscapeGeneration.PathFind
         // не использовать! обращение к словарю занимает больше времени, чем повторное вычисление квадратного корня!
         //public Dictionary<TransportationNode, float> m_cLinksDist = new Dictionary<TransportationNode, float>();
 
-        public float DistanceTo(ITransportationNode pOtherNode, float fCycleShift)
+        public float DistanceTo(TransportationNode pOtherNode, float fCycleShift)
         {
             float fDist = 0;
             //if (m_cLinksDist.TryGetValue(pOtherNode as TransportationNode, out fDist))
