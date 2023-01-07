@@ -17,7 +17,7 @@ namespace Socium
     /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя, 
     /// а так же методы для строительства логова, поселения или форта
     /// </summary>
-    public class LandX: Territory<Land>
+    public class LandX: TerritoryExtended<Land>
     {
         private string m_sName = "";
 
@@ -30,12 +30,16 @@ namespace Socium
         {
             get
             {
-                LandMass pLandMass = BaseLayer.GetOwner<LandMass>();
+                LandMass pLandMass = Origin.GetOwner<LandMass>();
                 if (pLandMass != null)
                     return pLandMass.GetOwner<Continent>().As<ContinentX>();
 
                 return null;
             }
+        }
+
+        public LandX(Land pLand) : base(pLand)
+        { 
         }
 
         public Location BuildLair()
@@ -44,7 +48,7 @@ namespace Socium
             //Исключение для побережья - ему наоборот, предпочтение.
             List<int> cChances = new List<int>();
             bool bNoChances = true;
-            foreach (Location pLoc in BaseLayer.Contents)
+            foreach (Location pLoc in Origin.Contents)
             {
                 bool bBorder = false;
                 bool bMapBorder = false;
@@ -84,8 +88,8 @@ namespace Socium
 
             BuildingType eSize = BuildingType.Lair;
 
-            int iSize = Rnd.ChooseOne(BaseLayer.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Values, 1);
-            foreach (BuildingType eType in BaseLayer.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Keys)
+            int iSize = Rnd.ChooseOne(Origin.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Values, 1);
+            foreach (BuildingType eType in Origin.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Keys)
             {
                 iSize--;
                 if (iSize < 0)
@@ -98,7 +102,7 @@ namespace Socium
             if (eSize == BuildingType.None)
                 return null;
 
-            var pLair = BaseLayer.Contents.ElementAt(iLair);
+            var pLair = Origin.Contents.ElementAt(iLair);
 
             pLair.As<LocationX>().m_pBuilding = new BuildingStandAlone(eSize);
             //m_cLocations[iLair].m_sName = NameGenerator.GetAbstractName();
@@ -122,7 +126,7 @@ namespace Socium
         /// <param name="bCapital">если true - будем пытаться строить даже если все места заняты. исключение - только если пригодных для заселения локаций нет вообще в принципе</param>
         /// <param name="bFast">флаг режима ускоренной генерации - в "быстром" режиме не составляем имя для поселения</param>
         /// <returns></returns>
-        public LocationX BuildSettlement(SettlementInfo pInfo, bool bCapital, bool bFast)
+        public Location BuildSettlement(SettlementInfo pInfo, bool bCapital, bool bFast)
         {
             //Теперь в этой земле выберем локацию, желательно не на границе с другой землёй.
             //Исключение для побережья - ему наоборот, предпочтение.
@@ -130,18 +134,18 @@ namespace Socium
             bool bNoChances = true;
 
             //вычислим шансы быть выбранной для строительства для всех локаций в земле.
-            foreach (LocationX pLoc in m_cContents)
+            foreach (Location pLoc in Origin.Contents)
             {
                 bool bCoast = false;
                 bool bBorder = false;
                 bool bMapBorder = false;
                 //определим, является ли эта локация пограничной с другой землёй или побережьем.
-                foreach (LocationX pLink in pLoc.m_aBorderWith)
+                foreach (Location pLink in pLoc.m_aBorderWith)
                 {
-                    if (pLink.Owner != pLoc.Owner)
+                    if (pLink.GetOwner<Land>() != pLoc.GetOwner<Land>())
                     {
                         bBorder = true;
-                        if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                        if (pLink.HasOwner<Land>() && pLink.GetOwner<Land>().IsWater)
                             bCoast = true;
                     }
 
@@ -151,9 +155,11 @@ namespace Socium
                     }
                 }
 
+                LocationX pLocX = pLoc.As<LocationX>();
+
                 //сколько дорог проходит через этй локацию?
                 int iRoadsCount = 0;
-                foreach(var pRoads in pLoc.m_cRoads)
+                foreach(var pRoads in pLocX.m_cRoads)
                     iRoadsCount += pRoads.Value.Count;
 
                 //в пограничных локациях строим только если это побережье или есть дороги, во внутренних - отдаём предпочтение локациям с дорогами.
@@ -163,11 +169,11 @@ namespace Socium
                     iChances = 0;
 
                 //если в локации уже есть поселение - ловить нечего. На руинах, однако, строить можно.
-                if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
+                if (pLocX.m_pSettlement != null && pLocX.m_pSettlement.m_iRuinsAge == 0)
                     iChances = 0;
 
                 //если в локации есть какая-то одиночная постройка (монстрячье логово, например), опять ловить нечего.
-                if (pLoc.m_pBuilding != null)
+                if (pLocX.m_pBuilding != null)
                     iChances = 0;
 
                 //если это край карты или географическая аномалия (горный пик, вулкан...) - тоже пролетаем.
@@ -190,30 +196,32 @@ namespace Socium
                     bNoChances = true;
                     cChances.Clear();
                     //вычислим шансы быть выбранной для строительства для всех локаций в земле.
-                    foreach (LocationX pLoc in m_cContents)
+                    foreach (Location pLoc in Origin.Contents)
                     {
                         bool bCoast = false;
                         bool bBorder = false;
                         //определим, является ли эта локация пограничной с другой землёй или побережьем.
-                        foreach (LocationX pLink in pLoc.m_aBorderWith)
+                        foreach (Location pLink in pLoc.m_aBorderWith)
                         {
-                            if (pLink.Owner != pLoc.Owner)
+                            if (pLink.GetOwner<Land>() != pLoc.GetOwner<Land>())
                             {
                                 bBorder = true;
-                                if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
+                                if (pLink.HasOwner<Land>() && pLink.GetOwner<Land>().IsWater)
                                     bCoast = true;
                             }
                         }
 
+                        LocationX pLocX = pLoc.As<LocationX>();
+
                         //сколько дорог проходит через этй локацию?
                         int iRoadsCount = 0;
-                        foreach (var pRoads in pLoc.m_cRoads)
+                        foreach (var pRoads in pLocX.m_cRoads)
                             iRoadsCount += pRoads.Value.Count;
 
                         //в пограничных локациях строим только если это побережье или есть дороги, во внутренних - отдаём предпочтение локациям с дорогами.
                         int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : (iRoadsCount > 0 ? 50 : 10));
 
-                        if (pLoc.m_pSettlement != null || pLoc.m_pBuilding != null)
+                        if (pLocX.m_pSettlement != null || pLocX.m_pBuilding != null)
                             iChances = 1;
 
                         //если это край карты - тоже пролетаем.
@@ -234,20 +242,24 @@ namespace Socium
             }
 
             int iTown = Rnd.ChooseOne(cChances, 2);
-            var pTown = m_cContents.ElementAt(iTown);
+            if (iTown < 0)
+                return null;
+
+            var pTown = Origin.Contents.ElementAt(iTown);
+            var pTownX = pTown.As<LocationX>();
 
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-            pTown.m_pSettlement = new Settlement(pInfo, m_pDominantNation, Region.m_pProvince.m_pLocalSociety.m_iTechLevel, Region.m_pProvince.m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
+            pTownX.m_pSettlement = new Settlement(pInfo, m_pDominantNation, GetOwner<Region>().GetOwner<Province>().m_pLocalSociety.m_iTechLevel, GetOwner<Region>().GetOwner<Province>().m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 
             //обновим все дороги, проходящие через новое поселение, чтобы на дорожных указателях появилось имя нового поселения.
             List<Road> cRoads = new List<Road>();
-            cRoads.AddRange(pTown.m_cRoads[RoadQuality.Country]);
-            cRoads.AddRange(pTown.m_cRoads[RoadQuality.Normal]);
-            cRoads.AddRange(pTown.m_cRoads[RoadQuality.Good]);
+            cRoads.AddRange(pTownX.m_cRoads[RoadQuality.Country]);
+            cRoads.AddRange(pTownX.m_cRoads[RoadQuality.Normal]);
+            cRoads.AddRange(pTownX.m_cRoads[RoadQuality.Good]);
 
             Road[] aRoads = cRoads.ToArray();
             foreach(Road pRoad in aRoads)
@@ -266,12 +278,12 @@ namespace Socium
 
         public string GetLesserRaceString()
         {
-            if (Region != null)
+            if (HasOwner<Region>())
             {
-                if (Region.m_pNatives == null)
+                if (GetOwner<Region>().m_pNatives == null)
                     return "unpopulated";
                 else
-                    return Region.m_pNatives.ToString();
+                    return GetOwner<Region>().m_pNatives.ToString();
             }
             return "unpopulated";
         }
@@ -290,7 +302,7 @@ namespace Socium
             if (sRace != GetLesserRaceString())
                 sRace = sRace + "/" + GetLesserRaceString();
 
-            return string.Format("{0} {1} ({2}, {3}) (H:{4}%)", m_sName, Type.m_sName, m_cContents.Count, sRace, Humidity);
+            return string.Format("{0} {1} ({2}, {3}) (H:{4}%)", m_sName, Origin.LandType.m_sName, Origin.Contents.Count, sRace, Origin.Humidity);
         }
 
         /// <summary>
@@ -307,13 +319,13 @@ namespace Socium
         /// <returns></returns>
         public int GetClaimingCost(Nation pNation)
         {
-            double fCost = pNation.GetClaimingCost(Type);
+            double fCost = pNation.GetClaimingCost(Origin.LandType);
 
-            foreach (var pLink in m_cBorder)
+            foreach (var pLink in Origin.m_cBorder)
             {
-                LandX pOtherLand = pLink.Key as LandX;
-                if (pOtherLand.Owner == null && pOtherLand.Type.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
-                    fCost += (double)pNation.GetClaimingCost(pOtherLand.Type) / m_cBorder.Count;
+                Land pOtherLand = pLink.Key as Land;
+                if (!pOtherLand.HasOwner<LandMass>() && pOtherLand.LandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                    fCost += (double)pNation.GetClaimingCost(pOtherLand.LandType) / Origin.m_cBorder.Count;
             }
 
             if (fCost < 2)
@@ -321,9 +333,9 @@ namespace Socium
             return (int)(fCost / 2);
         }
 
-        internal float GetResource(LandTypeInfoX.Resource resource)
+        internal float GetResource(LandTypeInfoResources.Resource resource)
         {
-            return Type.m_cResources[resource] * m_cContents.Count;
+            return Origin.LandType.GetLayer<LandTypeInfoResources>().m_cResources[resource] * Origin.Contents.Count;
         }
     }
 }

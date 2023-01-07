@@ -88,50 +88,23 @@ namespace LandscapeGeneration
         { }
     }
 
-    public abstract class Territory<BASE> : Territory
+    public abstract class TerritoryExtended<BASE> : Territory
         where BASE: Territory
     {
-        public override Dictionary<Territory, List<VoronoiEdge>> BorderWith
-        {
-            get
-            {
-                return As<BASE>().BorderWith;
-            }
-        }
+        public override Dictionary<Territory, List<VoronoiEdge>> BorderWith => Origin.BorderWith;
 
-        public override bool Forbidden
-        {
-            get
-            {
-                return As<BASE>().Forbidden;
-            }
-        }
+        public override bool Forbidden => Origin.Forbidden;
 
-        /// <summary>
-        /// Суммарная длина всех линий в BorderWith
-        /// </summary>
-        public override float PerimeterLength
-        {
-            get
-            {
-                return As<BASE>().PerimeterLength;
-            }
-        }
+        public override float PerimeterLength => Origin.PerimeterLength;
 
         public override float GetMovementCost()
         {
-            return As<BASE>().GetMovementCost();
+            return Origin.GetMovementCost();
         }
 
-        public BASE BaseLayer
-        {
-            get 
-            {
-                return As<BASE>();
-            }
-        }
+        public BASE Origin => this.As<BASE>();
 
-        public Territory(BASE pBase)
+        public TerritoryExtended(BASE pBase)
         {
             AddLayer(pBase);
         }
