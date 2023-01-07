@@ -1893,7 +1893,7 @@ namespace VQMapTest2
                     {
                         pPath.AddPolygon(aPts);
 
-                        if (pArea.m_pType != LandTypes<LandTypeInfoX>.Plains)
+                        if (pArea.m_pType != LandTypes.Plains)
                         {
                             foreach (MapQuadrant pQuad in aQuads)
                             {
@@ -1982,7 +1982,7 @@ namespace VQMapTest2
 
             Graphics gr = Graphics.FromImage(ActualMap);
 
-            gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Sea.m_pColor), 0, 0, ActualMap.Width, ActualMap.Height);
+            gr.FillRectangle(new SolidBrush(LandTypes.Sea.m_pColor), 0, 0, ActualMap.Width, ActualMap.Height);
 
             if (m_pWorld == null || m_pWorld.m_cGrid.m_aLocations.Length == 0)
                 return;
@@ -2038,7 +2038,7 @@ namespace VQMapTest2
                         for (int i = 0; i < m_iQuadsWidth; i++)
                             for (int j = 0; j < m_iQuadsHeight; j++)
                                 if (aVisibleQuads[i, j] != null)
-                                    aVisibleQuads[i, j].FillPath(gr, LandTypes<LandTypeInfoX>.Plains.m_pBrush, aVisibleQuads[i, j].m_pContinentsPath, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY);
+                                    aVisibleQuads[i, j].FillPath(gr, LandTypes.Plains.m_pBrush, aVisibleQuads[i, j].m_pContinentsPath, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY);
 
                         for (int i = 0; i < m_iQuadsWidth; i++)
                             for (int j = 0; j < m_iQuadsHeight; j++)

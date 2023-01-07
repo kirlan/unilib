@@ -17,7 +17,7 @@ using GeneLab.Genetix;
 
 namespace Socium
 {
-    public class World : Landscape<LocationX, LandX, ContinentX, LandTypeInfoX>
+    public class World : Landscape
     {
         public Province[] m_aProvinces = null;
 
@@ -149,16 +149,20 @@ namespace Socium
             {
                 //убедимся, что эта раса ещё нигде не живёт
                 bool bHomeless = true;
-                foreach (ContinentX pConti in m_aContinents)
+                foreach (Continent pConti in m_aContinents)
                 {
-                    foreach (LandMass<LandX> pLandMass in pConti.m_cContents)
-                        if (pConti.m_cLocalNations.ContainsKey(pLandMass) && pConti.m_cLocalNations[pLandMass].Contains(pNation))
-                        {
-                            bHomeless = false;
+                    ContinentX pContiX = pConti.GetOwner<ContinentX>();
+                    if (pContiX != null)
+                    {
+                        foreach (LandMass pLandMass in pConti.Contents)
+                            if (pContiX.m_cLocalNations.ContainsKey(pLandMass) && pContiX.m_cLocalNations[pLandMass].Contains(pNation))
+                            {
+                                bHomeless = false;
+                                break;
+                            }
+                        if (!bHomeless)
                             break;
-                        }
-                    if (!bHomeless)
-                        break;
+                    }
                 }
 
                 //если уже где-то живёт и не гегемон - пропускаем её
@@ -167,55 +171,59 @@ namespace Socium
 
                 //рассчитаем вероятности для всех регионов стать прародиной этой расы
                 Dictionary<Region, float> cRegionChances = new Dictionary<Region, float>();
-                foreach (ContinentX pContinent in m_aContinents)
+                foreach (Continent pContinent in m_aContinents)
                 {
-                    foreach (Region pRegion in pContinent.m_cRegions)
+                    ContinentX pContiX = pContinent.GetOwner<ContinentX>();
+                    if (pContiX != null)
                     {
-                        //отсеиваем уже занятые и непригодные для заселения регионы
-                        if (pRegion.Forbidden ||
-                            pRegion.m_pProvince != null ||
-                            pRegion.IsWater)
-                            continue;
-
-                        cRegionChances[pRegion] = 1.0f;// / pRace.m_iRank;
-
-                        //рассчитываем шансы, исходя из предпочтений и антипатий расы
-                        foreach (LandTypeInfoX pType in pNation.m_aPreferredLands)
-                            if (pRegion.m_pType == pType)
-                                cRegionChances[pRegion] *= 100;
-
-                        foreach (LandTypeInfoX pType in pNation.m_aHatedLands)
-                            if (pRegion.m_pType == pType)
-                                cRegionChances[pRegion] /= 1000;
-
-                        //смотрим, сколько ещё других рас уже живут на этом же континенте и говорят ли они на нашем языке
-                        int iPop = 0;
-                        bool bSameLanguage = false;
-                        foreach (var pRaces in pRegion.Continent.m_cLocalNations)
+                        foreach (Region pRegion in pContiX.m_cRegions)
                         {
-                            foreach (var pRce in pRaces.Value)
+                            //отсеиваем уже занятые и непригодные для заселения регионы
+                            if (pRegion.Forbidden ||
+                                pRegion.m_pProvince != null ||
+                                pRegion.IsWater)
+                                continue;
+
+                            cRegionChances[pRegion] = 1.0f;// / pRace.m_iRank;
+
+                            //рассчитываем шансы, исходя из предпочтений и антипатий расы
+                            foreach (LandTypeInfo pType in pNation.m_aPreferredLands)
+                                if (pRegion.m_pType == pType)
+                                    cRegionChances[pRegion] *= 100;
+
+                            foreach (LandTypeInfo pType in pNation.m_aHatedLands)
+                                if (pRegion.m_pType == pType)
+                                    cRegionChances[pRegion] /= 1000;
+
+                            //смотрим, сколько ещё других рас уже живут на этом же континенте и говорят ли они на нашем языке
+                            int iPop = 0;
+                            bool bSameLanguage = false;
+                            foreach (var pRaces in pRegion.Continent.m_cLocalNations)
                             {
-                                if (!pRce.IsAncient)
-                                    iPop++;
+                                foreach (var pRce in pRaces.Value)
+                                {
+                                    if (!pRce.IsAncient)
+                                        iPop++;
 
-                                if (pRce.m_pRace.m_pLanguage == pNation.m_pRace.m_pLanguage)
-                                    bSameLanguage = true;
+                                    if (pRce.m_pRace.m_pLanguage == pNation.m_pRace.m_pLanguage)
+                                        bSameLanguage = true;
+                                }
                             }
-                        }
 
-                        if (iPop > 0)
-                        {
-                            //снижаем привлекательность земли в зависимости от количества конкурентов.
-                            //гегемоны и вторженцы игнорируют эту проверку.
-                            if (!pNation.IsHegemon && !pNation.IsInvader && !bSameLanguage)
-                                cRegionChances[pRegion] = (float)Math.Pow(cRegionChances[pRegion], 1.0 / (1 + iPop));
+                            if (iPop > 0)
+                            {
+                                //снижаем привлекательность земли в зависимости от количества конкурентов.
+                                //гегемоны и вторженцы игнорируют эту проверку.
+                                if (!pNation.IsHegemon && !pNation.IsInvader && !bSameLanguage)
+                                    cRegionChances[pRegion] = (float)Math.Pow(cRegionChances[pRegion], 1.0 / (1 + iPop));
 
-                            //смотрим, на каких языках говорят другие уже живущие здесь расы
-                            //и снижаем либо повышаем привлекательность земли в зависимости от совпдения языка
-                            if (bSameLanguage)
-                                cRegionChances[pRegion] *= 100;
-                            else
-                                cRegionChances[pRegion] /= 100;
+                                //смотрим, на каких языках говорят другие уже живущие здесь расы
+                                //и снижаем либо повышаем привлекательность земли в зависимости от совпдения языка
+                                if (bSameLanguage)
+                                    cRegionChances[pRegion] *= 100;
+                                else
+                                    cRegionChances[pRegion] /= 100;
+                            }
                         }
                     }
                 }
@@ -1102,58 +1110,58 @@ namespace Socium
         {
             base.PresetLandTypesInfo();
 
-            LandTypes<LandTypeInfoX>.Coastral.SetResources(0, 0, 0, 0);
-            LandTypes<LandTypeInfoX>.Coastral.SetStandAloneBuildingsProbability(0, 0, 1);
-            LandTypes<LandTypeInfoX>.Coastral.SetSettlementsDensity(0, 0, 0);
+            LandTypes.Coastral.AddLayer(new LandTypeInfoResources(0, 0, 0, 0));
+            LandTypes.Coastral.AddLayer(new LandTypeInfoStandAlone(0, 0, 1));
+            LandTypes.Coastral.AddLayer(new LandTypeInfoSettlements(0, 0, 0));
 
-            LandTypes<LandTypeInfoX>.Ocean.SetResources(0, 0, 0, 0);
-            LandTypes<LandTypeInfoX>.Ocean.SetStandAloneBuildingsProbability(0, 0, 1);
-            LandTypes<LandTypeInfoX>.Ocean.SetSettlementsDensity(0, 0, 0);
+            LandTypes.Ocean.AddLayer(new LandTypeInfoResources(0, 0, 0, 0));
+            LandTypes.Ocean.AddLayer(new LandTypeInfoStandAlone(0, 0, 1));
+            LandTypes.Ocean.AddLayer(new LandTypeInfoSettlements(0, 0, 0));
 
-            LandTypes<LandTypeInfoX>.Tundra.SetResources(0, 0.1f, 0, 0);
-            LandTypes<LandTypeInfoX>.Tundra.SetStandAloneBuildingsProbability(1, 0, 10);
-            LandTypes<LandTypeInfoX>.Tundra.SetSettlementsDensity(0.004f, 0.02f, 0.05f);
-//            LandTypes<LandTypeInfoX>.Tundra.SetSettlementsDensity(0.004f, 0.01f, 0.003f);
+            LandTypes.Tundra.AddLayer(new LandTypeInfoResources(0, 0.1f, 0, 0));
+            LandTypes.Tundra.AddLayer(new LandTypeInfoStandAlone(1, 0, 10));
+            LandTypes.Tundra.AddLayer(new LandTypeInfoSettlements(0.004f, 0.02f, 0.05f));
+//            LandTypes.Tundra.SetSettlementsDensity(0.004f, 0.01f, 0.003f);
             
-            LandTypes<LandTypeInfoX>.Plains.SetResources(3, 0, 0, 0);
-            LandTypes<LandTypeInfoX>.Plains.SetStandAloneBuildingsProbability(1, 3, 30);
-            LandTypes<LandTypeInfoX>.Plains.SetSettlementsDensity(0.02f, 0.1f, 0.3f);
-//            LandTypes<LandTypeInfoX>.Plains.SetSettlementsDensity(0.01f, 0.026f, 0.1f);
+            LandTypes.Plains.AddLayer(new LandTypeInfoResources(3, 0, 0, 0));
+            LandTypes.Plains.AddLayer(new LandTypeInfoStandAlone(1, 3, 30));
+            LandTypes.Plains.AddLayer(new LandTypeInfoSettlements(0.02f, 0.1f, 0.3f));
+//            LandTypes.Plains.SetSettlementsDensity(0.01f, 0.026f, 0.1f);
             
-            LandTypes<LandTypeInfoX>.Savanna.SetResources(0.1f, 0.2f, 0, 0);
-            LandTypes<LandTypeInfoX>.Savanna.SetStandAloneBuildingsProbability(1, 3, 20);
-            LandTypes<LandTypeInfoX>.Savanna.SetSettlementsDensity(0.01f, 0.05f, 0.2f);
-//            LandTypes<LandTypeInfoX>.Savanna.SetSettlementsDensity(0.01f, 0.023f, 0.02f);
+            LandTypes.Savanna.AddLayer(new LandTypeInfoResources(0.1f, 0.2f, 0, 0));
+            LandTypes.Savanna.AddLayer(new LandTypeInfoStandAlone(1, 3, 20));
+            LandTypes.Savanna.AddLayer(new LandTypeInfoSettlements(0.01f, 0.05f, 0.2f));
+//            LandTypes.Savanna.SetSettlementsDensity(0.01f, 0.023f, 0.02f);
             
-            LandTypes<LandTypeInfoX>.Desert.SetResources(0, 0.1f, 0, 0);
-            LandTypes<LandTypeInfoX>.Desert.SetStandAloneBuildingsProbability(1, 2, 30);
-            LandTypes<LandTypeInfoX>.Desert.SetSettlementsDensity(0.01f, 0.03f, 0.025f);
-//            LandTypes<LandTypeInfoX>.Desert.SetSettlementsDensity(0.006f, 0.01f, 0.003f);
+            LandTypes.Desert.AddLayer(new LandTypeInfoResources(0, 0.1f, 0, 0));
+            LandTypes.Desert.AddLayer(new LandTypeInfoStandAlone(1, 2, 30));
+            LandTypes.Desert.AddLayer(new LandTypeInfoSettlements(0.01f, 0.03f, 0.025f));
+//            LandTypes.Desert.SetSettlementsDensity(0.006f, 0.01f, 0.003f);
             
-            LandTypes<LandTypeInfoX>.Forest.SetResources(0, 1, 5, 0);
-            LandTypes<LandTypeInfoX>.Forest.SetStandAloneBuildingsProbability(10, 5, 10);
-            LandTypes<LandTypeInfoX>.Forest.SetSettlementsDensity(0.01f, 0.05f, 0.05f);
-//            LandTypes<LandTypeInfoX>.Forest.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
+            LandTypes.Forest.AddLayer(new LandTypeInfoResources(0, 1, 5, 0));
+            LandTypes.Forest.AddLayer(new LandTypeInfoStandAlone(10, 5, 10));
+            LandTypes.Forest.AddLayer(new LandTypeInfoSettlements(0.01f, 0.05f, 0.05f));
+//            LandTypes.Forest.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
             
-            LandTypes<LandTypeInfoX>.Taiga.SetResources(0, 1, 5, 0);
-            LandTypes<LandTypeInfoX>.Taiga.SetStandAloneBuildingsProbability(10, 5, 10);
-            LandTypes<LandTypeInfoX>.Taiga.SetSettlementsDensity(0.01f, 0.05f, 0.05f);
-//            LandTypes<LandTypeInfoX>.Taiga.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
+            LandTypes.Taiga.AddLayer(new LandTypeInfoResources(0, 1, 5, 0));
+            LandTypes.Taiga.AddLayer(new LandTypeInfoStandAlone(10, 5, 10));
+            LandTypes.Taiga.AddLayer(new LandTypeInfoSettlements(0.01f, 0.05f, 0.05f));
+//            LandTypes.Taiga.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
             
-            LandTypes<LandTypeInfoX>.Jungle.SetResources(0, 0.5f, 2, 0);
-            LandTypes<LandTypeInfoX>.Jungle.SetStandAloneBuildingsProbability(10, 5, 10);
-            LandTypes<LandTypeInfoX>.Jungle.SetSettlementsDensity(0.002f, 0.01f, 0.05f);
-//            LandTypes<LandTypeInfoX>.Jungle.SetSettlementsDensity(0.008f, 0.006f, 0.006f);
+            LandTypes.Jungle.AddLayer(new LandTypeInfoResources(0, 0.5f, 2, 0));
+            LandTypes.Jungle.AddLayer(new LandTypeInfoStandAlone(10, 5, 10));
+            LandTypes.Jungle.AddLayer(new LandTypeInfoSettlements(0.002f, 0.01f, 0.05f));
+//            LandTypes.Jungle.SetSettlementsDensity(0.008f, 0.006f, 0.006f);
             
-            LandTypes<LandTypeInfoX>.Swamp.SetResources(0, 0.2f, 1, 0);
-            LandTypes<LandTypeInfoX>.Swamp.SetStandAloneBuildingsProbability(10, 8, 0);
-            LandTypes<LandTypeInfoX>.Swamp.SetSettlementsDensity(0.002f, 0.01f, 0.04f);
-//            LandTypes<LandTypeInfoX>.Swamp.SetSettlementsDensity(0.003f, 0.005f, 0.026f);
+            LandTypes.Swamp.AddLayer(new LandTypeInfoResources(0, 0.2f, 1, 0));
+            LandTypes.Swamp.AddLayer(new LandTypeInfoStandAlone(10, 8, 0));
+            LandTypes.Swamp.AddLayer(new LandTypeInfoSettlements(0.002f, 0.01f, 0.04f));
+//            LandTypes.Swamp.SetSettlementsDensity(0.003f, 0.005f, 0.026f);
             
-            LandTypes<LandTypeInfoX>.Mountains.SetResources(0, 0.5f, 0, 10);
-            LandTypes<LandTypeInfoX>.Mountains.SetStandAloneBuildingsProbability(1, 1, 7);
-            LandTypes<LandTypeInfoX>.Mountains.SetSettlementsDensity(0.01f, 0.075f, 0.06f);
-//            LandTypes<LandTypeInfoX>.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
+            LandTypes.Mountains.AddLayer(new LandTypeInfoResources(0, 0.5f, 0, 10));
+            LandTypes.Mountains.AddLayer(new LandTypeInfoStandAlone(1, 1, 7));
+            LandTypes.Mountains.AddLayer(new LandTypeInfoSettlements(0.01f, 0.075f, 0.06f));
+//            LandTypes.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
         }
 
         #region Roads stuff

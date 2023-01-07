@@ -73,7 +73,7 @@ namespace LandscapeGeneration
         {
             base.Start(pSeed);
 
-            pSeed.AddLayer(this);
+            pSeed.SetOwner(this);
         }
 
         public string GetLandsString()

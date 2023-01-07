@@ -11,12 +11,12 @@ namespace Socium
 {
     /// <summary>
     /// расширение LandscapeGeneration.LandTypeInfo
-    /// добавляет ресурсы, допустимую частоту поселений и логов
+    /// информация о доступных ресурсах
     /// </summary>
-    public class LandTypeInfoX : LandTypeInfo
+    public class LandTypeInfoResources : ILandTypeInfoExt
     {
         public enum Resource
-        { 
+        {
             Grain,
             Game,
             Wood,
@@ -25,14 +25,21 @@ namespace Socium
 
         public readonly Dictionary<Resource, float> m_cResources = new Dictionary<Resource, float>();
 
-        public void SetResources(float fGrain, float fGame, float fWood, float fOre)
+        public LandTypeInfoResources(float fGrain, float fGame, float fWood, float fOre)
         {
             m_cResources[Resource.Grain] = fGrain;
             m_cResources[Resource.Game] = fGame;
             m_cResources[Resource.Wood] = fWood;
             m_cResources[Resource.Ore] = fOre;
         }
+    }
 
+    /// <summary>
+    /// расширение LandscapeGeneration.LandTypeInfo
+    /// информация о допустимой частоте поселений
+    /// </summary>
+    public class LandTypeInfoSettlements : ILandTypeInfoExt
+    {
         public Dictionary<SettlementSize, float> m_cSettlementsDensity = new Dictionary<SettlementSize, float>();
 
         /// <summary>
@@ -44,7 +51,7 @@ namespace Socium
         /// <param name="fCity">Capital и City</param>
         /// <param name="fTown">Town</param>
         /// <param name="fVillage">Village и Hamlet</param>
-        public void SetSettlementsDensity(float fCity, float fTown, float fVillage)
+        public LandTypeInfoSettlements(float fCity, float fTown, float fVillage)
         {
             m_cSettlementsDensity[SettlementSize.Capital] = fCity;
             m_cSettlementsDensity[SettlementSize.City] = fCity;
@@ -52,10 +59,17 @@ namespace Socium
             m_cSettlementsDensity[SettlementSize.Village] = fVillage;
             m_cSettlementsDensity[SettlementSize.Hamlet] = fVillage;
         }
+    }
 
+    /// <summary>
+    /// расширение LandscapeGeneration.LandTypeInfo
+    /// добавляет ресурсы, допустимую частоту поселений и логов
+    /// </summary>
+    public class LandTypeInfoStandAlone : ILandTypeInfoExt
+    {
         public Dictionary<BuildingType, int> m_cStandAloneBuildingsProbability = new Dictionary<BuildingType, int>();
 
-        public void SetStandAloneBuildingsProbability(int iLair, int iHideout, int iNone)
+        public LandTypeInfoStandAlone(int iLair, int iHideout, int iNone)
         {
             m_cStandAloneBuildingsProbability[BuildingType.Lair] = iLair;
             m_cStandAloneBuildingsProbability[BuildingType.Hideout] = iHideout;

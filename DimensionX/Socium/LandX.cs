@@ -17,16 +17,8 @@ namespace Socium
     /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя, 
     /// а так же методы для строительства логова, поселения или форта
     /// </summary>
-    public class LandX: Land<LocationX, LandTypeInfoX>
+    public class LandX: Territory<Land>
     {
-        private Region m_pRegion = null;
-
-        public Region Region
-        {
-            get { return m_pRegion; }
-            set { m_pRegion = value; }
-        }
-
         private string m_sName = "";
 
         /// <summary>
@@ -38,27 +30,27 @@ namespace Socium
         {
             get
             {
-                LandMass<LandX> pLandMass = Owner as LandMass<LandX>;
+                LandMass pLandMass = BaseLayer.GetOwner<LandMass>();
                 if (pLandMass != null)
-                    return pLandMass.Owner as ContinentX;
+                    return pLandMass.GetOwner<Continent>().As<ContinentX>();
 
                 return null;
             }
         }
 
-        public LocationX BuildLair()
+        public Location BuildLair()
         {
             //Теперь в этой земле выберем локацию, желательно не на границе с другой землёй.
             //Исключение для побережья - ему наоборот, предпочтение.
             List<int> cChances = new List<int>();
             bool bNoChances = true;
-            foreach (LocationX pLoc in m_cContents)
+            foreach (Location pLoc in BaseLayer.Contents)
             {
                 bool bBorder = false;
                 bool bMapBorder = false;
-                foreach (LocationX pLink in pLoc.m_aBorderWith)
+                foreach (Location pLink in pLoc.m_aBorderWith)
                 {
-                    if (pLink.Owner != pLoc.Owner)
+                    if (pLink.GetOwner<Land>() != pLoc.GetOwner<Land>())
                         bBorder = true;
 
                     if (pLink.m_bBorder)
@@ -67,11 +59,13 @@ namespace Socium
 
                 int iChances = bBorder ? 1 : 50;
 
-                if (pLoc.m_pSettlement != null || 
-                    pLoc.m_pBuilding != null ||
-                    pLoc.m_cRoads[RoadQuality.Country].Count > 0 ||
-                    pLoc.m_cRoads[RoadQuality.Normal].Count > 0 ||
-                    pLoc.m_cRoads[RoadQuality.Good].Count > 0 ||
+                LocationX pLocX = pLoc.As<LocationX>();
+
+                if (pLocX.m_pSettlement != null || 
+                    pLocX.m_pBuilding != null ||
+                    pLocX.m_cRoads[RoadQuality.Country].Count > 0 ||
+                    pLocX.m_cRoads[RoadQuality.Normal].Count > 0 ||
+                    pLocX.m_cRoads[RoadQuality.Good].Count > 0 ||
                     pLoc.m_bBorder ||
                     bMapBorder)
                     iChances = 0;
@@ -85,11 +79,13 @@ namespace Socium
                 return null;
 
             int iLair = Rnd.ChooseOne(cChances, 3);
+            if (iLair < 0)
+                return null;
 
             BuildingType eSize = BuildingType.Lair;
 
-            int iSize = Rnd.ChooseOne(Type.m_cStandAloneBuildingsProbability.Values, 1);
-            foreach (BuildingType eType in Type.m_cStandAloneBuildingsProbability.Keys)
+            int iSize = Rnd.ChooseOne(BaseLayer.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Values, 1);
+            foreach (BuildingType eType in BaseLayer.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Keys)
             {
                 iSize--;
                 if (iSize < 0)
@@ -102,16 +98,16 @@ namespace Socium
             if (eSize == BuildingType.None)
                 return null;
 
-            var pLair = m_cContents.ElementAt(iLair);
+            var pLair = BaseLayer.Contents.ElementAt(iLair);
 
-            pLair.m_pBuilding = new BuildingStandAlone(eSize);
+            pLair.As<LocationX>().m_pBuilding = new BuildingStandAlone(eSize);
             //m_cLocations[iLair].m_sName = NameGenerator.GetAbstractName();
 
-            foreach (LocationX pLoc in pLair.m_aBorderWith)
+            foreach (Location pLoc in pLair.m_aBorderWith)
             {
-                if (pLoc.m_pBuilding == null)
+                if (pLoc.As<LocationX>().m_pBuilding == null)
                 {
-                    pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.HuntingFields);
+                    pLoc.As<LocationX>().m_pBuilding = new BuildingStandAlone(BuildingType.HuntingFields);
                 }
             }
 

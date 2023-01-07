@@ -41,12 +41,12 @@ namespace LandscapeGeneration
 
                 LandMass pLM = pLandMass.Key as LandMass;
 
-                if (!pLM.HasLayer<Continent>() && !pLM.IsWater)
+                if (!pLM.HasOwner<Continent>() && !pLM.IsWater)
                 {
                     bool bFree = true;
                     foreach (Territory pLink in pLM.BorderWith.Keys)
                     {
-                        if (pLink.HasLayer<Continent>() && pLink.GetLayer<Continent>() != this)
+                        if (pLink.HasOwner<Continent>() && pLink.GetOwner<Continent>() != this)
                             bFree = false;
                     }
                     if (bFree)
@@ -69,7 +69,7 @@ namespace LandscapeGeneration
             LandMass pAddon = cBorderLength.ElementAt(iChoice).Key;
 
             Contents.Add(pAddon);
-            pAddon.AddLayer(this);
+            pAddon.SetOwner(this);
 
             m_cBorder[pAddon].Clear();
             m_cBorder.Remove(pAddon);

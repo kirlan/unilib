@@ -7,7 +7,7 @@ using Random;
 
 namespace LandscapeGeneration
 {
-    public class TerritoryCluster<LAYER, INNER> : Territory, IInfoLayer
+    public class TerritoryCluster<LAYER, INNER> : Territory
         where LAYER: TerritoryCluster<LAYER, INNER>
         where INNER: Territory
     {
@@ -246,7 +246,7 @@ namespace LandscapeGeneration
             foreach (var pInner in m_cBorder)
             {
                 Territory pInnerTerritory = pInner.Key as Territory;
-                if (!pInnerTerritory.HasLayer<LAYER>() && !pInnerTerritory.Forbidden)
+                if (!pInnerTerritory.HasOwner<LAYER>() && !pInnerTerritory.Forbidden)
                 {
                     float fWholeLength = 1;
                     VoronoiEdge[] aBorderLine = pInner.Value.ToArray();
@@ -286,7 +286,7 @@ namespace LandscapeGeneration
                 return null;
 
             Contents.Add(pAddon as INNER);
-            pAddon.AddLayer((LAYER) this);
+            pAddon.SetOwner((LAYER) this);
 
             m_cBorder[pAddon].Clear();
             m_cBorder.Remove(pAddon);
@@ -319,8 +319,8 @@ namespace LandscapeGeneration
             foreach (Territory pInner in m_cBorder.Keys)
             {
                 TerritoryCluster<LAYER, INNER> pBorderCluster = TerritoryCluster<LAYER, INNER>.m_pForbidden;
-                if (pInner.HasLayer<LAYER>())
-                    pBorderCluster = pInner.GetLayer<LAYER>();
+                if (pInner.HasOwner<LAYER>())
+                    pBorderCluster = pInner.GetOwner<LAYER>();
 
                 if (!BorderWith.ContainsKey(pBorderCluster))
                     BorderWith[pBorderCluster] = new List<VoronoiEdge>();

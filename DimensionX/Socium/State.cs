@@ -18,7 +18,7 @@ namespace Socium
     /// <summary>
     /// Государство - группа сопредельных провинций, объединённых общей властью.
     /// </summary>
-    public class State: TerritoryCluster<Province>
+    public class State: TerritoryCluster<State, Province>
     {
         public class Infrastructure
         {
@@ -561,7 +561,7 @@ namespace Socium
                             int iHostility = 0;
                             if (pLinkedRegion.m_pProvince != null)
                             {
-                                State pLinkedState = pLinkedRegion.m_pProvince.OwnerState;
+                                State pLinkedState = pLinkedRegion.m_pProvince.Layers.Get<State>();
 
                                 Dictionary<State, int> cLinkedStateHostility;
                                 if (!cHostility.TryGetValue(pLinkedState, out cLinkedStateHostility))

@@ -303,7 +303,7 @@ namespace MapDrawEngine
             Graphics gr = Graphics.FromImage(m_pCanvas);
 
             //грунтуем холст цветом моря
-            gr.FillRectangle(new SolidBrush(LandTypes<LandTypeInfoX>.Ocean.GetLayer<LandTypeInfoDraw>().m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
+            gr.FillRectangle(new SolidBrush(LandTypes.Ocean.GetLayer<LandTypeInfoDraw>().m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
             if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null || m_pMasterMap.m_pWorld.m_pGrid.Locations.Length == 0)

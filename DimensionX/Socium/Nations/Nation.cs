@@ -1,5 +1,6 @@
 ﻿using GeneLab;
 using GeneLab.Genetix;
+using LandscapeGeneration;
 using Random;
 using Socium.Population;
 using Socium.Psychology;
@@ -19,12 +20,12 @@ namespace Socium.Nations
 
     public class Nation 
     {
-        public Phenotype<LandTypeInfoX> m_pPhenotypeM;
-        public Phenotype<LandTypeInfoX> m_pPhenotypeF;
+        public Phenotype m_pPhenotypeM;
+        public Phenotype m_pPhenotypeF;
 
         public Society m_pProtoSociety = null;
         
-        public Phenotype<LandTypeInfoX> DominantPhenotype
+        public Phenotype DominantPhenotype
         {
             get
             {
@@ -38,7 +39,7 @@ namespace Socium.Nations
         /// <summary>
         /// Культура "слабого" пола
         /// </summary>
-        public Phenotype<LandTypeInfoX> InferiorFenotype
+        public Phenotype InferiorFenotype
         {
             get
             {
@@ -52,8 +53,8 @@ namespace Socium.Nations
 
         public Race m_pRace = null;
 
-        public LandTypeInfoX[] m_aPreferredLands;
-        public LandTypeInfoX[] m_aHatedLands;
+        public LandTypeInfo[] m_aPreferredLands;
+        public LandTypeInfo[] m_aHatedLands;
 
         public bool IsAncient { get; private set; }
         public bool IsHegemon { get; private set; }
@@ -92,11 +93,11 @@ namespace Socium.Nations
             bool bNew = false;
             do
             {
-                m_pPhenotypeM = (Phenotype<LandTypeInfoX>)m_pRace.m_pPhenotypeM.MutateNation();
+                m_pPhenotypeM = (Phenotype)m_pRace.m_pPhenotypeM.MutateNation();
 
                 var pExpectedPhenotypeF = Phenotype.Combine(m_pPhenotypeM, m_pRace.m_pGenderDiffFemale);
 
-                m_pPhenotypeF = (Phenotype<LandTypeInfoX>)pExpectedPhenotypeF.MutateGender();
+                m_pPhenotypeF = (Phenotype)pExpectedPhenotypeF.MutateGender();
 
                 bNew = !m_pPhenotypeM.IsIdentical(m_pRace.m_pPhenotypeM) &&
                        !m_pPhenotypeF.IsIdentical(m_pRace.m_pPhenotypeF);
@@ -270,7 +271,7 @@ namespace Socium.Nations
         /// </summary>
         /// <param name="pNation"></param>
         /// <returns></returns>
-        public int GetClaimingCost(LandTypeInfoX pLandType)
+        public int GetClaimingCost(LandTypeInfo pLandType)
         {
             if (pLandType == null)
                 return -1;

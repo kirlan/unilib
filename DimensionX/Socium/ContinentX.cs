@@ -13,7 +13,7 @@ namespace Socium
     /// расширение LandscapeGeneration.Continent
     /// добавлены списки регионов, государств, имя, метод для постройки регионов 
     /// </summary>
-    public class ContinentX: Continent<LandX, LandTypeInfoX>
+    public class ContinentX: IInfoLayer
     {
         public List<Region> m_cRegions = new List<Region>();
 
@@ -21,11 +21,11 @@ namespace Socium
 
         public string m_sName;
 
-        public override void Start(LandMass<LandX> pCenter)
+        public ContinentX(Continent pOrigin)
         {
             m_cRegions.Clear();
 
-            base.Start(pCenter);
+            Layers.Add(pOrigin);
 
             m_sName = NameGenerator.GetAbstractName();
         }
@@ -35,7 +35,7 @@ namespace Socium
             return m_sName;
         }
 
-        public Dictionary<LandMass<LandX>, List<Nation>> m_cLocalNations = new Dictionary<LandMass<LandX>,List<Nation>>();
+        public Dictionary<LandMass, List<Nation>> m_cLocalNations = new Dictionary<LandMass,List<Nation>>();
 
         public void BuildRegions(float fCycleShift, int iMaxSize)
         {

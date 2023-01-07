@@ -20,7 +20,7 @@ namespace LandscapeGeneration
     /// Локация - минимальная единица деления карты. Представляет собой выпуклый многоугольник, ячейку диаграммы Вороного.
     /// Локации объедняются в земли (Land)
     /// </summary>
-    public class Location : Territory, IInfoLayer
+    public class Location : Territory
     {
         public Territory[] m_aBorderWith = null;
 
@@ -45,7 +45,7 @@ namespace LandscapeGeneration
         public override float GetMovementCost()
         {
             //TODO: не гуд, что локация спрашивает что-то у земли, нужно вынести этот метод из локации
-            if (GetLayer<Land>() == null || Forbidden || m_bBorder)
+            if (GetOwner<Land>() == null || Forbidden || m_bBorder)
                 return 100;
 
             foreach (var pEdge in BorderWith)
@@ -54,7 +54,7 @@ namespace LandscapeGeneration
                     return 100;
             }
 
-            Land pLand = GetLayer<Land>();
+            Land pLand = GetOwner<Land>();
             return pLand.MovementCost * (m_eType == LandmarkType.Empty ? 1 : 10);
         }
 
@@ -311,7 +311,7 @@ namespace LandscapeGeneration
             binWriter.Write(m_bUnclosed ? 1 : 0);
 
             //TODO: зачем здесь эта проверка???
-            if (GetLayer<Land>() == null)
+            if (!HasOwner<Land>())
                 throw new Exception("Oops...");
 
             binWriter.Write(BorderWith.Count);
@@ -344,7 +344,7 @@ namespace LandscapeGeneration
             m_cLinks.Clear();
             BorderWith.Clear();
             m_eType = LandmarkType.Empty;
-            m_cInfoLayers.Clear();
+            ClearOwner();
 
             m_iID = binReader.ReadInt64();
 
@@ -368,12 +368,12 @@ namespace LandscapeGeneration
             }
         }
 
-        public virtual void Reset()
-        {
-            m_cLinks.Clear();
-            m_eType = LandmarkType.Empty;
-            m_cInfoLayers.Clear();
-        }
+        //public virtual void Reset()
+        //{
+        //    m_cLinks.Clear();
+        //    m_eType = LandmarkType.Empty;
+        //    ClearOwner();
+        //}
         
         public override string ToString()
         {
