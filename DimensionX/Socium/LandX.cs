@@ -17,7 +17,7 @@ namespace Socium
     /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя, 
     /// а так же методы для строительства логова, поселения или форта
     /// </summary>
-    public class LandX: TerritoryExtended<Region, Land>
+    public class LandX: TerritoryExtended<LandX, Region, Land>
     {
         private string m_sName = "";
 
@@ -316,7 +316,7 @@ namespace Socium
 
             foreach (var pLink in Origin.m_cBorder)
             {
-                Land pOtherLand = pLink.Key as Land;
+                Land pOtherLand = pLink.Key.GetOwner();
                 if (!pOtherLand.HasOwner() && pOtherLand.LandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
                     fCost += (double)pNation.GetClaimingCost(pOtherLand.LandType) / Origin.m_cBorder.Count;
             }

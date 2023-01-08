@@ -26,7 +26,7 @@ namespace Socium
         public bool IsBorder()
         {
             foreach (var pLand in Contents)
-                if (pLand.As<Land>().IsBorder())
+                if (pLand.Origin.IsBorder())
                     return true;
 
             return false;
@@ -49,7 +49,7 @@ namespace Socium
         {
             get
             {
-                return Contents.First().As<Land>().GetOwner();
+                return Contents.First().Origin.GetOwner();
             }
         }
 
@@ -84,7 +84,7 @@ namespace Socium
             Contents.Add(pSeed);
             pSeed.SetOwner(this);
 
-            m_pType = pSeed.As<Land>().LandType;
+            m_pType = pSeed.Origin.LandType;
 
             m_iMaxSize = iMaxSize / m_pType.m_iMovementCost;
         }
@@ -93,7 +93,7 @@ namespace Socium
         /// Присоединяет к территории сопредельную землю того же типа.
         /// </summary>
         /// <returns></returns>
-        public override Territory Grow(int iMaxSize)
+        public override LandX Grow(int iMaxSize)
         {
             if (Contents.Count > m_iMaxSize && Rnd.OneChanceFrom(Contents.Count - m_iMaxSize))
                 return null;
@@ -102,15 +102,13 @@ namespace Socium
 
             Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
 
-            Territory[] aBorderLands = new List<Territory>(m_cBorder.Keys).ToArray();
-            foreach (Territory pTerr in aBorderLands)
+            LandX[] aBorderLands = new List<LandX>(m_cBorder.Keys).ToArray();
+            foreach (LandX pLand in aBorderLands)
             {
-                if (pTerr.Forbidden)
+                if (pLand.Forbidden)
                     continue;
 
-                LandX pLand = pTerr as LandX;
-
-                if (!pLand.HasOwner() && pLand.As<Land>().LandType == m_pType)
+                if (!pLand.HasOwner() && pLand.Origin.LandType == m_pType)
                 {
                     bool bHavePotential = false;
 
@@ -119,7 +117,7 @@ namespace Socium
                     foreach (var pLine in aBorderLine)
                         fWholeLength += pLine.Length;
 
-                    foreach (var pLinkTerr in pLand.BorderWith)
+                    foreach (var pLinkTerr in pLand.Origin.BorderWith)
                     {
                         if (pLinkTerr.Key.Forbidden)
                             continue;
@@ -158,16 +156,14 @@ namespace Socium
 
             foreach (var pBorderLand in pAddon.BorderWith)
             {
-                LandX pBorderLandX = (pBorderLand.Key as Land).As<LandX>();
-
-                if (Contents.Contains(pBorderLandX))
+                if (Contents.Contains(pBorderLand.Key))
                     continue;
 
-                if (!m_cBorder.ContainsKey(pBorderLandX))
-                    m_cBorder[pBorderLandX] = new List<VoronoiEdge>();
+                if (!m_cBorder.ContainsKey(pBorderLand.Key))
+                    m_cBorder[pBorderLand.Key] = new List<VoronoiEdge>();
                 VoronoiEdge[] cLines = pBorderLand.Value.ToArray();
                 foreach (var pLine in cLines)
-                    m_cBorder[pBorderLandX].Add(new VoronoiEdge(pLine));
+                    m_cBorder[pBorderLand.Key].Add(new VoronoiEdge(pLine));
             }
 
             //ChainBorder();
@@ -261,7 +257,7 @@ namespace Socium
             bool bNoChances = true;
             foreach (LandX pLand in Contents)
             {
-                foreach (Location pLoc in pLand.As<Land>().Contents)
+                foreach (Location pLoc in pLand.Origin.Contents)
                 {
                     bool bCoast = false;
                     bool bBorder = false;
@@ -353,9 +349,9 @@ namespace Socium
                 LandX pChoosenLandX = pChoosenLocation.GetOwner().As<LandX>();
                 pChoosenLocationX.m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], pChoosenLandX.m_pDominantNation, GetOwner().GetOwner().m_pSociety.m_iTechLevel, GetOwner().m_pLocalSociety.m_iMagicLimit, false, bFast);
 
-                foreach (LocationX pLoc in pChoosenLocation.m_aBorderWith)
-                    if (pLoc.m_pBuilding == null)
-                        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
+                foreach (Location pLoc in pChoosenLocation.m_aBorderWith)
+                    if (pLoc.As<LocationX>().m_pBuilding == null)
+                        pLoc.As<LocationX>().m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
 
                 List<Road> cRoads = new List<Road>();
                 foreach (var pRoads in pChoosenLocationX.m_cRoads)

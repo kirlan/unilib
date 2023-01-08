@@ -11,7 +11,7 @@ using LandscapeGeneration.FastGrid;
 
 namespace LandscapeGeneration
 {
-    public class Landscape: Territory
+    public class Landscape: Territory<Landscape>
     {
         public LocationsGrid m_pLocationsGrid = null;
 
@@ -159,15 +159,15 @@ namespace LandscapeGeneration
             }
         }
 
-        private class LandBiome : TerritoryExtended<Biome, Land>
+        private class LandBiome : TerritoryExtended<LandBiome, Biome, Land>
         {
             public LandBiome(Land pLand) : base(pLand)
             { }
         }
 
         /// <summary>
-        /// Биом - группа ВСЕХ сопредельных земель (<see cref="Land">/<see cref="LandBiome">) одного типа <see cref="LandTypeInfo">.
-        /// Используется ТОЛЬКО при сглаживании границ локаций - внутри <see cref="SmoothBiomes"/>() 
+        /// Биом - группа ВСЕХ сопредельных земель (<see cref="Land"/>/<see cref="LandBiome"/>) одного типа <see cref="LandTypeInfo"/>.
+        /// Используется ТОЛЬКО при сглаживании границ локаций - внутри <see cref="SmoothBiomes"/> 
         /// </summary>
         private class Biome : TerritoryCluster<Biome, Landscape, LandBiome>
         {
@@ -185,15 +185,13 @@ namespace LandscapeGeneration
                 {
                     bAdded = false;
 
-                    Territory[] aBorderLands = new List<Territory>(m_cBorder.Keys).ToArray();
-                    foreach (Territory pTerr in aBorderLands)
+                    LandBiome[] aBorderLands = new List<LandBiome>(m_cBorder.Keys).ToArray();
+                    foreach (LandBiome pLand in aBorderLands)
                     {
-                        if (pTerr.Forbidden)
+                        if (pLand.Forbidden)
                             continue;
 
-                        LandBiome pLand = pTerr as LandBiome;
-
-                        if (pLand.As<Land>().LandType == pSeed.As<Land>().LandType && !Contents.Contains(pLand))
+                        if (pLand.Origin.LandType == pSeed.Origin.LandType && !Contents.Contains(pLand))
                         {
                             Contents.Add(pLand);
 
@@ -513,11 +511,10 @@ namespace LandscapeGeneration
                         iRealContinentsCount++;
 
                     cChances[pChoosenLM] = 0;
-                    foreach (Territory pTerr in pChoosenLM.m_aBorderWith)
+                    foreach (LandMass pLandMass in pChoosenLM.m_aBorderWith)
                     {
-                        if (pTerr.Forbidden)
+                        if (pLandMass.Forbidden)
                             continue;
-                        LandMass pLandMass = pTerr as LandMass;
                         //if (cChances[pLandMass] > 0)
                         cChances[pLandMass] = 0;
                     }
@@ -545,11 +542,10 @@ namespace LandscapeGeneration
                         iLandGrowActual += pAddon.Contents.Count;
 
                         cChances[pAddon] = 0;
-                        foreach (Territory pTerr in pAddon.m_aBorderWith)
+                        foreach (LandMass pLM in pAddon.m_aBorderWith)
                         {
-                            if (pTerr.Forbidden)
+                            if (pLM.Forbidden)
                                 continue;
-                            LandMass pLM = pTerr as LandMass;
                             //if (cChances[pLandMass] > 0)
                             cChances[pLM] = 0;
                         }
@@ -569,11 +565,10 @@ namespace LandscapeGeneration
                     cContinents.Add(pContinent);
 
                     cChances[pLandMass] = 0;
-                    foreach (Territory pTerr in pLandMass.m_aBorderWith)
+                    foreach (LandMass pLM in pLandMass.m_aBorderWith)
                     {
-                        if (pTerr.Forbidden)
+                        if (pLM.Forbidden)
                             continue;
-                        LandMass pLM = pTerr as LandMass;
                         //if (cChances[pLandMass] > 0)
                         cChances[pLM] = 0;
                     }
@@ -612,12 +607,10 @@ namespace LandscapeGeneration
 
                     float fMinCollision = float.MaxValue;
                     Land pBestLand = null;
-                    foreach (Territory pTerr in pLand.m_aBorderWith)
+                    foreach (Land pLink in pLand.m_aBorderWith)
                     {
-                        if (pTerr.Forbidden)
+                        if (pLink.Forbidden)
                             continue;
-
-                        Land pLink = pTerr as Land;
 
                         if (pLink.LandType != null)
                             continue;
@@ -656,12 +649,10 @@ namespace LandscapeGeneration
 
                     if (fMinCollision < -1.25 && pLM1.Contents.Count > 3)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
                     {
-                        foreach (Territory pTerr in pLand.m_aBorderWith)
+                        foreach (Land pLink in pLand.m_aBorderWith)
                         {
-                            if (pTerr.Forbidden)
+                            if (pLink.Forbidden)
                                 continue;
-
-                            Land pLink = pTerr as Land;
 
                             if(pLink.LandType == LandTypes.Ocean)
                                 pLink.LandType = LandTypes.Coastral;
@@ -690,12 +681,10 @@ namespace LandscapeGeneration
 
                     float fMaxCollision = float.MinValue;
                     Land pBestLand = null;
-                    foreach (Territory pTerr in pLand.m_aBorderWith)
+                    foreach (Land pLink in pLand.m_aBorderWith)
                     {
-                        if (pTerr.Forbidden)
+                        if (pLink.Forbidden)
                             continue;
-
-                        Land pLink = pTerr as Land;
 
                         LandMass pLM2 = pLink.GetOwner();
 
@@ -750,12 +739,11 @@ namespace LandscapeGeneration
                 if (pLand.LandType == null)
                 {
                     bool bCouldBe = true;
-                    foreach (Territory pTerr in pLand.m_aBorderWith)
+                    foreach (Land pLink in pLand.m_aBorderWith)
                     {
-                        if (pTerr.Forbidden)
+                        if (pLink.Forbidden)
                             continue;
 
-                        Land pLink = pTerr as Land;
                         if (pLink.IsWater)
                         {
                             bCouldBe = false;
@@ -792,17 +780,15 @@ namespace LandscapeGeneration
         {
             BeginStep("Calculating humidity...", m_aLands.Length);
 
-            List<Territory> cHumidityFront = new List<Territory>();
+            List<Land> cHumidityFront = new List<Land>();
             foreach (Land pLand in m_aLands)
             {
                 if (pLand.IsWater)
                 {
-                    foreach (Territory pLink in pLand.m_aBorderWith)
+                    foreach (Land pLinkedLand in pLand.m_aBorderWith)
                     {
-                        if (!pLink.Forbidden && !(pLink as Land).IsWater)
+                        if (!pLinkedLand.Forbidden && !pLinkedLand.IsWater)
                         {
-                            Land pLinkedLand = pLink as Land;
-
                             //удалённость точки от экватора 0..1
                             float fTemperatureMod = 1 - GetTemperature(pLinkedLand); 
 
@@ -812,8 +798,8 @@ namespace LandscapeGeneration
                             if (pLinkedLand.LandType != null && pLinkedLand.LandType.m_eEnvironment.HasFlag(Environment.Barrier))
                                 pLinkedLand.Humidity /= 2;
 
-                            if (!cHumidityFront.Contains(pLink))
-                                cHumidityFront.Add(pLink);
+                            if (!cHumidityFront.Contains(pLinkedLand))
+                                cHumidityFront.Add(pLinkedLand);
                         }
                     }
                     pLand.Humidity = 100;
@@ -822,23 +808,21 @@ namespace LandscapeGeneration
                 ProgressStep();
             }
 
-            List<Territory> cNewWave = new List<Territory>();
+            List<Land> cNewWave = new List<Land>();
 
-            Territory[] aHumidityFront = cHumidityFront.ToArray();
+            Land[] aHumidityFront = cHumidityFront.ToArray();
             do
             {
                 cNewWave.Clear();
-                foreach (Territory pTerr in aHumidityFront)
+                foreach (Land pLand in aHumidityFront)
                 {
-                    Land pLand = pTerr as Land;
                     if (pLand.Humidity > 0)
                     {
-                        foreach (Territory pLink in pLand.m_aBorderWith)
+                        foreach (Land pLinkedLand in pLand.m_aBorderWith)
                         {
-                            if (pLink.Forbidden)
+                            if (pLinkedLand.Forbidden)
                                 continue;
 
-                            Land pLinkedLand = pLink as Land;
                             if (!pLinkedLand.IsWater && pLinkedLand.Humidity == 0)
                             {
                                 pLinkedLand.Humidity = pLand.Humidity - 10 - Rnd.Get(5);
@@ -846,8 +830,8 @@ namespace LandscapeGeneration
                                 if (pLinkedLand.LandType != null && pLinkedLand.LandType.m_eEnvironment.HasFlag(Environment.Barrier))
                                     pLinkedLand.Humidity /= 2;
 
-                                if (!cNewWave.Contains(pLink))
-                                    cNewWave.Add(pLink);
+                                if (!cNewWave.Contains(pLinkedLand))
+                                    cNewWave.Add(pLinkedLand);
                             }
                         }
                     }
@@ -1447,12 +1431,11 @@ namespace LandscapeGeneration
                 if (pLandMass.Forbidden)// || pLandMass.Owner == null)// || pLoc.m_bBorder)
                     continue;
 
-                foreach (Territory pTerr in pLandMass.m_aBorderWith)
+                foreach (LandMass pLinked in pLandMass.m_aBorderWith)
                 {
-                    if (pTerr.Forbidden)// || pLink.Owner == null)// || pLink.m_bBorder)
+                    if (pLinked.Forbidden)// || pLink.Owner == null)// || pLink.m_bBorder)
                         continue;
 
-                    LandMass pLinked = pTerr as LandMass;
                     TransportationLinkBase pLink = SetLink(pLandMass, pLinked);
                     pLink.Sea = !pLinked.HasOwner() && !pLandMass.HasOwner();
                     pLink.Embark = (pLinked.HasOwner()) != (pLandMass.HasOwner());
@@ -1490,11 +1473,10 @@ namespace LandscapeGeneration
                 {
                     pLand.m_iPassword = m_iPassword;
                 }
-                foreach (Territory pTerr in pLandMass.m_aBorderWith)
+                foreach (LandMass pLinkedLandMass in pLandMass.m_aBorderWith)
                 {
-                    if (!pTerr.Forbidden)
+                    if (!pLinkedLandMass.Forbidden)
                     {
-                        LandMass pLinkedLandMass = pTerr as LandMass;
                         foreach (Land pLand in pLinkedLandMass.Contents)
                             pLand.m_iPassword = m_iPassword;
                     }
@@ -1509,11 +1491,10 @@ namespace LandscapeGeneration
                 {
                     pLoc.m_iPassword = m_iPassword;
                 }
-                foreach (Territory pTerr in pLand.m_aBorderWith)
+                foreach (Land pLinkedLand in pLand.m_aBorderWith)
                 {
-                    if (!pTerr.Forbidden)
+                    if (!pLinkedLand.Forbidden)
                     {
-                        Land pLinkedLand = pTerr as Land;
                         foreach (Location pLoc in pLinkedLand.Contents)
                             pLoc.m_iPassword = m_iPassword;
                     }

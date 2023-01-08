@@ -580,9 +580,9 @@ namespace Socium.Nations
         public int m_iRank;
         public Language m_pLanguage;
 
-        public Phenotype<LandTypeInfoX> m_pPhenotypeM;
+        public Phenotype m_pPhenotypeM;
 
-        public Phenotype<LandTypeInfoX> m_pPhenotypeF;
+        public Phenotype m_pPhenotypeF;
 
         public Phenotype.PhensStorage m_pGenderDiffFemale;
 
@@ -597,7 +597,7 @@ namespace Socium.Nations
 
             m_pLanguage = pLanguage;
 
-            m_pPhenotypeM = (Phenotype<LandTypeInfoX>)new Phenotype<LandTypeInfoX>(pDiffFromWhiteMale).MutateRace();
+            m_pPhenotypeM = (Phenotype)new Phenotype(pDiffFromWhiteMale).MutateRace();
             if (m_pPhenotypeM.m_pValues.Get<HairsGenetix>().m_cHairColors.Count == 0 &&
                 (m_pPhenotypeM.m_pValues.Get<HairsGenetix>().Hairs != HairsAmount.None ||
                  m_pPhenotypeM.m_pValues.Get<HairsGenetix>().Beard != HairsAmount.None))
@@ -605,7 +605,7 @@ namespace Socium.Nations
 
             var pExpectedPhenotypeF = Phenotype.Combine(m_pPhenotypeM, pGenderDiffFemale);
 
-            m_pPhenotypeF = (Phenotype<LandTypeInfoX>)pExpectedPhenotypeF.MutateGender();
+            m_pPhenotypeF = (Phenotype)pExpectedPhenotypeF.MutateGender();
             if (m_pPhenotypeF.m_pValues.Get<HairsGenetix>().m_cHairColors.Count == 0 &&
                 (m_pPhenotypeF.m_pValues.Get<HairsGenetix>().Hairs != HairsAmount.None ||
                  m_pPhenotypeF.m_pValues.Get<HairsGenetix>().Beard != HairsAmount.None))

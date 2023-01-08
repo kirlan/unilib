@@ -13,10 +13,10 @@ namespace LandscapeGeneration
     /// <typeparam name="LAYER">Имя класса, содержащего всю логику</typeparam>
     /// <typeparam name="OWNER">Владеющая территория</typeparam>
     /// <typeparam name="INNER">Составляющие территории</typeparam>
-    public abstract class TerritoryCluster<LAYER, OWNER, INNER> : TerritoryOf<OWNER>
+    public abstract class TerritoryCluster<LAYER, OWNER, INNER> : TerritoryOf<LAYER, OWNER>
         where LAYER: TerritoryCluster<LAYER, OWNER, INNER>, new()
         where OWNER: class, IInfoLayer
-        where INNER: TerritoryOf<LAYER>
+        where INNER: TerritoryOf<INNER, LAYER>
     {
         #region BorderBuilder
         /// <summary>
@@ -30,10 +30,10 @@ namespace LandscapeGeneration
 
             foreach (var pInner in pSeed.BorderWith)
             {
-                m_cBorder[(INNER)pInner.Key] = new List<VoronoiEdge>();
+                m_cBorder[pInner.Key] = new List<VoronoiEdge>();
                 VoronoiEdge[] aLines = pInner.Value.ToArray();
                 foreach (VoronoiEdge pLine in aLines)
-                    m_cBorder[(INNER)pInner.Key].Add(new VoronoiEdge(pLine));
+                    m_cBorder[pInner.Key].Add(new VoronoiEdge(pLine));
             }
 
             //ChainBorder();
@@ -204,7 +204,7 @@ namespace LandscapeGeneration
 
         protected void FillBorderWithKeys()
         {
-            m_aBorderWith = BorderWith.Select(x => (LAYER)x.Key).ToArray();
+            m_aBorderWith = new List<LAYER>(BorderWith.Keys).ToArray();
 
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
@@ -232,7 +232,7 @@ namespace LandscapeGeneration
         /// Чем длиннее общая граница с <typeparamref name="INNER"/> - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public Territory Grow()
+        public INNER Grow()
         {
             return Grow(int.MaxValue);
         }
@@ -242,13 +242,13 @@ namespace LandscapeGeneration
         /// Чем длиннее общая граница с <typeparamref name="INNER"/> - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public virtual Territory Grow(int iMaxSize)
+        public virtual INNER Grow(int iMaxSize)
         {
             //если территория уже достаточно большая - игнорируем.
             if (Contents.Count > iMaxSize)
                 return null;
 
-            Dictionary<Territory, float> cBorderLength = new Dictionary<Territory, float>();
+            Dictionary<INNER, float> cBorderLength = new Dictionary<INNER, float>();
 
             foreach (var pInner in m_cBorder)
             {

@@ -18,7 +18,7 @@ namespace Socium
     /// <summary>
     /// Государство - группа сопредельных провинций (<see cref="Province"/>), объединённых общей властью.
     /// </summary>
-    public class State: TerritoryCluster<State, World, Province>
+    public class State: TerritoryCluster<State, ContinentX, Province>
     {
         public class Infrastructure
         {
@@ -93,16 +93,14 @@ namespace Socium
         /// <returns></returns>
         public bool ForcedGrow()
         {
-            Territory[] aBorder = new List<Territory>(m_cBorder.Keys).ToArray();
+            Province[] aBorder = new List<Province>(m_cBorder.Keys).ToArray();
 
             bool bFullyGrown = true;
 
-            foreach (Territory pTerr in aBorder)
+            foreach (Province pProvince in aBorder)
             {
-                if (pTerr.Forbidden)
+                if (pProvince.Forbidden)
                     continue;
-
-                Province pProvince = pTerr as Province;
 
                 if (pProvince != null && !pProvince.HasOwner() && !pProvince.m_pCenter.IsWater && 
                     m_pMethropoly.m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage == pProvince.m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage)
@@ -122,7 +120,7 @@ namespace Socium
         /// Возвращает false, если больше расти некуда, иначе true.
         /// </summary>
         /// <returns></returns>
-        public override Territory Grow(int iMaxSize)
+        public override Province Grow(int iMaxSize)
         {
             //если государство уже достаточно большое - сваливаем.
             if (Contents.Count > iMaxSize)
@@ -130,7 +128,7 @@ namespace Socium
 
             Dictionary<Province, float> cChances = new Dictionary<Province, float>();
 
-            foreach (Territory pTerr in m_cBorder.Keys)
+            foreach (Province pTerr in m_cBorder.Keys)
             {
                 if (pTerr.Forbidden)
                     continue;
@@ -211,23 +209,23 @@ namespace Socium
 
             //List<Line> cNewBorder = new List<Line>();
             //List<Line> cFalseBorder = new List<Line>();
-            foreach (var pLand in pAddon.BorderWith)
+            foreach (var pLink in pAddon.BorderWith)
             {
-                Province pL = pLand.Key as Province;
+                Province pLinkedProvince = pLink.Key;
 
-                if (!pL.Forbidden && Contents.Contains(pL))
+                if (!pLinkedProvince.Forbidden && Contents.Contains(pLinkedProvince))
                 {
                     //foreach (Line pLine in pLand.Value)
                     //    cFalseBorder.Add(new Line(pLine));
                     continue;
                 }
 
-                if (!m_cBorder.ContainsKey(pL))
-                    m_cBorder[pL] = new List<VoronoiEdge>();
-                VoronoiEdge[] cLines = pLand.Value.ToArray();
+                if (!m_cBorder.ContainsKey(pLinkedProvince))
+                    m_cBorder[pLinkedProvince] = new List<VoronoiEdge>();
+                VoronoiEdge[] cLines = pLink.Value.ToArray();
                 foreach (var pLine in cLines)
                 {
-                    m_cBorder[pL].Add(new VoronoiEdge(pLine));
+                    m_cBorder[pLinkedProvince].Add(new VoronoiEdge(pLine));
                     //cNewBorder.Add(new Line(pLine));
                 }
             }
@@ -447,12 +445,10 @@ namespace Socium
         {
             List<State> cList = new List<State>();
  
-            foreach (Territory pTerr in m_aBorderWith)
+            foreach (State pState in m_aBorderWith)
             {
-                if (pTerr.Forbidden)
+                if (pState.Forbidden)
                     continue;
-
-                State pState = pTerr as State;
 
                 int iHostility = m_pSociety.CalcHostility(pState);
                 int iHostility2 = pState.m_pSociety.CalcHostility(this);
@@ -473,12 +469,10 @@ namespace Socium
         {
             List<State> cList = new List<State>();
 
-            foreach (Territory pTerr in m_aBorderWith)
+            foreach (State pState in m_aBorderWith)
             {
-                if (pTerr.Forbidden)
+                if (pState.Forbidden)
                     continue;
-
-                State pState = pTerr as State;
 
                 int iHostility = m_pSociety.CalcHostility(pState);
                 int iHostility2 = pState.m_pSociety.CalcHostility(this);
@@ -509,12 +503,12 @@ namespace Socium
                         int iMaxHostility = 0;
                         State pMainEnemy = null;
 
-                        foreach (var pLinkedTerr in pRegion.BorderWith)
+                        foreach (var pLink in pRegion.BorderWith)
                         {
-                            if(pLinkedTerr.Key.Forbidden)
-                                continue;
+                            Region pLinkedRegion = pLink.Key;
 
-                            Region pLinkedRegion = pLinkedTerr.Key as Region;
+                            if (pLinkedRegion.Forbidden)
+                                continue;
 
                             if (pLinkedRegion.HasOwner() && pLinkedRegion.GetOwner().GetOwner() == this)
                                 continue;
@@ -547,7 +541,7 @@ namespace Socium
                                 }
                             }
 
-                            VoronoiEdge[] cLines = pLinkedTerr.Value.ToArray();
+                            VoronoiEdge[] cLines = pLink.Value.ToArray();
                             foreach (var pLine in cLines)
                             {
                                 fBorder += pLine.Length / pLinkedRegion.MovementCost;

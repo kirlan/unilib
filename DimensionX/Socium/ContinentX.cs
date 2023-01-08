@@ -13,7 +13,7 @@ namespace Socium
     /// расширение LandscapeGeneration.Continent
     /// добавлены списки регионов, государств, имя, метод для постройки регионов 
     /// </summary>
-    public class ContinentX: TerritoryExtended<World, Continent>
+    public class ContinentX: TerritoryExtended<ContinentX, Continent>
     {
         public List<Region> m_cRegions = new List<Region>();
 

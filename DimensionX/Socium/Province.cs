@@ -178,12 +178,10 @@ namespace Socium
                 int iBestCost = 0;
                 Region pBestRegion = null;
 
-                foreach (var pLinkTerr in pRegion.BorderWith)
+                foreach (Region pLinkedRegion in pRegion.m_aBorderWith)
                 {
-                    if ((pLinkTerr.Key as Territory).Forbidden)
+                    if (pLinkedRegion.Forbidden)
                         continue;
-
-                    Region pLinkedRegion = pLinkTerr.Key as Region;
 
                     if (pLinkedRegion.IsWater || (pLinkedRegion.HasOwner() && pLinkedRegion.GetOwner() != this))
                         continue;
@@ -263,19 +261,17 @@ namespace Socium
         /// <returns></returns>
         public bool ForcedGrow()
         {
-            Territory[] aBorder = new List<Territory>(m_cBorder.Keys).ToArray();
+            Region[] aBorder = new List<Region>(m_cBorder.Keys).ToArray();
 
             m_bFullyGrown = true;
 
             if (m_pLocalSociety.m_pTitularNation.IsAncient)
                 return !m_bFullyGrown;
 
-            foreach (Territory pTerr in aBorder)
+            foreach (Region pRegion in aBorder)
             {
-                if (pTerr.Forbidden)
+                if (pRegion.Forbidden)
                     continue;
-
-                Region pRegion = pTerr as Region;
 
                 if (pRegion.m_pNatives != m_pLocalSociety.m_pTitularNation)
                     continue;
@@ -290,14 +286,14 @@ namespace Socium
 
                     foreach (var pAddonLinkedRegion in pRegion.BorderWith)
                     {
-                        if (!(pAddonLinkedRegion.Key as Territory).Forbidden && Contents.Contains(pAddonLinkedRegion.Key as Region))
+                        if (!pAddonLinkedRegion.Key.Forbidden && Contents.Contains(pAddonLinkedRegion.Key))
                             continue;
 
-                        if (!m_cBorder.ContainsKey(pAddonLinkedRegion.Key as Region))
-                            m_cBorder[pAddonLinkedRegion.Key as Region] = new List<VoronoiEdge>();
+                        if (!m_cBorder.ContainsKey(pAddonLinkedRegion.Key))
+                            m_cBorder[pAddonLinkedRegion.Key] = new List<VoronoiEdge>();
                         VoronoiEdge[] cLines = pAddonLinkedRegion.Value.ToArray();
                         foreach (var pLine in cLines)
-                            m_cBorder[pAddonLinkedRegion.Key as Region].Add(new VoronoiEdge(pLine));
+                            m_cBorder[pAddonLinkedRegion.Key].Add(new VoronoiEdge(pLine));
                     }
 
                     m_bFullyGrown = false;
@@ -314,7 +310,7 @@ namespace Socium
         /// Чем длиннее общая граница с землёй - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public override Territory Grow(int iMaxSize)
+        public override Region Grow(int iMaxSize)
         {
             m_bFullyGrown = false;
             //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
@@ -379,7 +375,7 @@ namespace Socium
             {
                 bool bRestricted = true;
                 foreach (LandX pLand in pRegion.Contents)
-                    foreach (Location pLoc in pLand.As<Land>().Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
                         if (!pLoc.Forbidden && !pLoc.m_bBorder)
                             bRestricted = false;
 
@@ -440,7 +436,7 @@ namespace Socium
             Dictionary<LandX, float> cLandsChances = new Dictionary<LandX, float>();
             foreach (Region pRegion in Contents)
                 foreach (LandX pLand in pRegion.Contents)
-                    cLandsChances[pLand] = (float)pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<SettlementsInfo>().GetDensity(eSize);
+                    cLandsChances[pLand] = pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(eSize);
 
             //пытаемся построить заданное количество поселений.
             //реально может быть построено меньше, если свободных мест меньше, чем поселений
@@ -467,9 +463,9 @@ namespace Socium
                 foreach (LandX pLand in pRegion.Contents)
                 {
                     int iSettlements = 0;
-                    foreach (Location pLoc in pLand.As<Land>().Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
                     {
-                        LocationX pLocX = pLoc.GetOwner().As<LocationX>();
+                        LocationX pLocX = pLoc.As<LocationX>();
                         if (pLocX.m_pSettlement != null && pLocX.m_pSettlement.m_iRuinsAge == 0)
                         {
                             iSettlements++;
@@ -482,10 +478,10 @@ namespace Socium
                     //считаем среднее количество поселений в земле исходя из размеров земли и вероятности поселения.
                     //если количество выходит меньше 1, то считаем вероятность единственного поселения.
                     //впрочем, больше одного строить всё равно не будем.
-                    int iSettlementsCount = (int)(pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<SettlementsInfo>().GetDensity(eSize) * iSingleLandMultiplier);
+                    int iSettlementsCount = (int)(pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(eSize) * iSingleLandMultiplier);
                     if (iSettlementsCount == 0)
                     {
-                        int iSettlementChance = (int)(1 / (pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<SettlementsInfo>().GetDensity(eSize) * iSingleLandMultiplier));
+                        int iSettlementChance = (int)(1 / (pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(eSize) * iSingleLandMultiplier));
                         if (Rnd.OneChanceFrom(iSettlementChance))
                             iSettlementsCount = 1;
                     }
@@ -524,7 +520,7 @@ namespace Socium
 
             foreach (Region pRegion in Contents)
                 foreach (LandX pLand in pRegion.Contents)
-                    foreach (Location pLoc in pLand.As<Land>().Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
                         foreach (TransportationNode pLinked in pLoc.Links.Keys)
                         {
                             if (pLinked is Location)
@@ -607,7 +603,7 @@ namespace Socium
 
             foreach (Region pRegion in Contents)
                 foreach (LandX pLand in pRegion.Contents)
-                    foreach (Location pLoc in pLand.As<Land>().Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
                         foreach (TransportationNode pLink in pLoc.Links.Keys)
                             pLoc.Links[pLink].m_bClosed = false;
         }
@@ -632,7 +628,7 @@ namespace Socium
                 {
                     int iCoast = 0;
                     int iBorder = 0;
-                    foreach (Location pLoc in pLand.As<Land>().Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
                     {
                         foreach (Location pLink in pLoc.m_aBorderWith)
                         {
@@ -643,14 +639,14 @@ namespace Socium
                         }
                     }
 
-                    m_cResources[LandResource.Fish] += iCoast * 3 / pLand.As<Land>().MovementCost;
-                    m_cResources[LandResource.Grain] += pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<ResourcesInfo>().GetAmount(LandResource.Grain);
-                    m_cResources[LandResource.Game] += pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<ResourcesInfo>().GetAmount(LandResource.Game);
-                    m_cResources[LandResource.Wood] += pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<ResourcesInfo>().GetAmount(LandResource.Wood);
-                    m_cResources[LandResource.Ore] += pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<ResourcesInfo>().GetAmount(LandResource.Ore);
+                    m_cResources[LandResource.Fish] += iCoast * 3 / pLand.Origin.MovementCost;
+                    m_cResources[LandResource.Grain] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Grain);
+                    m_cResources[LandResource.Game] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Game);
+                    m_cResources[LandResource.Wood] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Wood);
+                    m_cResources[LandResource.Ore] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Ore);
 
-                    m_iPopulation += pLand.As<Land>().Contents.Count;
-                    iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pProtoSociety.m_iMagicLimit * pLand.As<Land>().Contents.Count;
+                    m_iPopulation += pLand.Origin.Contents.Count;
+                    iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pProtoSociety.m_iMagicLimit * pLand.Origin.Contents.Count;
                 }
             }
 
@@ -699,23 +695,21 @@ namespace Socium
                 foreach (LandX pLand in pRegion.Contents)
                 {
                     bool bRestricted = true;
-                    foreach (Location pLoc in pLand.As<Land>().Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
                         if (!pLoc.Forbidden && !pLoc.m_bBorder)
                             bRestricted = false;
 
                     if (bRestricted)
                         continue;
 
-                    cLandsChances[pLand] = (float)pLand.As<Land>().Contents.Count * pLand.As<Land>().LandType.Get<SettlementsInfo>().GetDensity(pCenter.m_eSize);
+                    cLandsChances[pLand] = (float)pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(pCenter.m_eSize);
 
                     bool bProvinceBorder = false;
                     bool bStateBorder = false;
-                    foreach (Territory pTerr in pLand.As<Land>().m_aBorderWith)
+                    foreach (Land pLink in pLand.Origin.m_aBorderWith)
                     {
-                        if (pTerr.Forbidden)
+                        if (pLink.Forbidden)
                             continue;
-
-                        Land pLink = pTerr as Land;
 
                         if (pLink.IsWater)
                             continue;

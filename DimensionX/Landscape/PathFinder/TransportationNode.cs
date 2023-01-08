@@ -11,7 +11,10 @@ namespace LandscapeGeneration.PathFind
 
         public virtual Dictionary<TransportationNode, TransportationLinkBase> Links { get; } = new Dictionary<TransportationNode, TransportationLinkBase>();
 
-        public bool IsHarbor { get; set; } = false;
+        /// <summary>
+        /// здесь сухопутные и морские маршруты могут пересекаться
+        /// </summary>
+        public virtual bool IsHarbor { get; set; } = false;
 
         // не использовать! обращение к словарю занимает больше времени, чем повторное вычисление квадратного корня!
         //public Dictionary<TransportationNode, float> m_cLinksDist = new Dictionary<TransportationNode, float>();

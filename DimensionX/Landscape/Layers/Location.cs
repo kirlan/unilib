@@ -20,13 +20,16 @@ namespace LandscapeGeneration
     /// Локация - минимальная единица деления карты. Представляет собой выпуклый многоугольник, ячейку диаграммы Вороного.
     /// Локации объедняются в земли (Land)
     /// </summary>
-    public class Location : TerritoryOf<Land>
+    public class Location : TerritoryOf<Location, Land>
     {
-        public Territory[] m_aBorderWith = null;
+        /// <summary>
+        /// Соседние объекты <see cref="Location"/>
+        /// </summary>
+        public Location[] m_aBorderWith = null;
 
         internal void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<Territory>(BorderWith.Keys).ToArray();
+            m_aBorderWith = new List<Location>(BorderWith.Keys).ToArray();
         }
 
         public bool m_bUnclosed = false;

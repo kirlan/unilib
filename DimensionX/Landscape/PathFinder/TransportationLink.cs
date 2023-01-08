@@ -343,7 +343,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLand1;
             m_aPoints[2] = pLand2;
 
-            IPointF point2 = new VoronoiVertex(pLand2.X, pLand2.Y);
+            VoronoiVertex point2 = new VoronoiVertex(pLand2.X, pLand2.Y);
             if (Math.Abs(pLand1.X - pLand2.X) > fCycleShift / 2)
             {
                 if (pLand1.X < 0)
@@ -382,7 +382,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLandMass1;
             m_aPoints[2] = pLandMass2;
 
-            IPointF point2 = new VoronoiVertex(pLandMass2.X, pLandMass2.Y);
+            VoronoiVertex point2 = new VoronoiVertex(pLandMass2.X, pLandMass2.Y);
             if (Math.Abs(pLandMass1.X - pLandMass2.X) > fCycleShift / 2)
             {
                 if (pLandMass1.X < 0)

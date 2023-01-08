@@ -290,7 +290,7 @@ namespace Socium.Population
         { 
             Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
 
-            foreach (Province pProvince in m_pState.m_cContents)
+            foreach (Province pProvince in m_pState.Contents)
             {
                 int iCount = 0;
                 if (!cNationsCount.TryGetValue(pProvince.m_pLocalSociety.m_pTitularNation, out iCount))
@@ -329,7 +329,7 @@ namespace Socium.Population
             Nation getAccessableNation(bool bCanBeDying, bool bCanBeParasite, bool bOnlyLocals, Nation pDefault)
             {
                 List<Nation> cAccessableNations = new List<Nation>();
-                ContinentX pContinent = m_pState.Owner as ContinentX;
+                ContinentX pContinent = m_pState.GetOwner();
                 foreach (var pNations in pContinent.m_cLocalNations)
                 {
                     cAccessableNations.AddRange(pNations.Value);
@@ -340,13 +340,13 @@ namespace Socium.Population
                         InfrastructureLevels[m_iInfrastructureLevel].m_iAerialAvailability > 1)
                     {
                         // World - не Territory!
-                        var pWorld = pContinent.Owner as World;
+                        var pWorld = pContinent.Origin.GetOwner();
                         foreach (var pOtherContinent in pWorld.m_aContinents)
                         {
-                            if (pOtherContinent == pContinent)
+                            if (pOtherContinent.As<ContinentX>() == pContinent)
                                 continue;
 
-                            foreach (var pNations in pOtherContinent.m_cLocalNations)
+                            foreach (var pNations in pOtherContinent.As<ContinentX>().m_cLocalNations)
                             {
                                 cAccessableNations.AddRange(pNations.Value);
                             }
@@ -370,9 +370,8 @@ namespace Socium.Population
                     if (pNation.m_pRace.m_pLanguage == m_pTitularNation.m_pRace.m_pLanguage)
                         cChances[pNation]++;
 
-                    foreach (var pNeighbour in m_pState.BorderWith)
+                    foreach (var pOtherState in m_pState.m_aBorderWith)
                     {
-                        var pOtherState = pNeighbour.Key as State;
                         if (pOtherState.Forbidden)
                             continue;
 
@@ -1634,7 +1633,7 @@ namespace Socium.Population
         internal void CalculateSocietyFeatures(int iEmpireTreshold)
         {
             // Adjustiong TL due to lack or abundance of resouces
-            CheckResources(m_pState.m_iWood, m_pState.m_iOre, m_pState.m_iFood, m_pState.m_iPopulation, m_pState.m_cContents.Count);
+            CheckResources(m_pState.m_cResources, m_pState.m_iPopulation, m_pState.Contents.Count);
 
             // Choose state system
             SelectGovernmentSystem(iEmpireTreshold);
@@ -1746,7 +1745,9 @@ namespace Socium.Population
 
             if (m_iSocialEquality > 0 && m_pState.m_iFood < m_pState.m_iPopulation)
                 m_iSocialEquality--;
-            if (m_pState.m_iFood > m_pState.m_iPopulation && m_pState.m_iOre > m_pState.m_iPopulation && m_pState.m_iWood > m_pState.m_iPopulation)
+            if (m_pState.m_iFood > m_pState.m_iPopulation && 
+                m_pState.m_cResources[LandResource.Ore] > m_pState.m_iPopulation && 
+                m_pState.m_cResources[LandResource.Wood] > m_pState.m_iPopulation)
                 m_iSocialEquality++;
 
             //в либеральном обществе (фанатизм < 2/3) не может быть рабства (0) или крепостного права (1), т.е. только 2 и выше
@@ -1769,7 +1770,9 @@ namespace Socium.Population
                 m_iSocialEquality = Math.Min(2, m_iSocialEquality);
 
             //коммунизм возможен только в условиях изобилия ресурсов
-            if (m_pState.m_iFood < m_pState.m_iPopulation * 2 || m_pState.m_iOre < m_pState.m_iPopulation * 2 || m_pState.m_iWood < m_pState.m_iPopulation * 2)
+            if (m_pState.m_iFood < m_pState.m_iPopulation * 2 || 
+                m_pState.m_cResources[LandResource.Ore] < m_pState.m_iPopulation * 2 || 
+                m_pState.m_cResources[LandResource.Wood] < m_pState.m_iPopulation * 2)
                 m_iSocialEquality = Math.Min(3, m_iSocialEquality);
 
             //при всём уважении - какой нафиг социализм/коммунизм при наследственной власти???
@@ -1820,7 +1823,7 @@ namespace Socium.Population
                 {Gender.Female, new float[10] }
             };
 
-            foreach (Province pProvince in m_pState.m_cContents)
+            foreach (Province pProvince in m_pState.Contents)
             {
                 if (pProvince.m_pLocalSociety.m_iMagicLimit > m_iMagicLimit)
                     m_iMagicLimit = pProvince.m_pLocalSociety.m_iMagicLimit;
@@ -1844,12 +1847,12 @@ namespace Socium.Population
                     { Gender.Male, 0 },
                     { Gender.Female, 0 }
                 };
-                foreach (Region pRegion in pProvince.m_cContents)
+                foreach (Region pRegion in pProvince.Contents)
                 {
-                    foreach (LandX pLand in pRegion.m_cContents)
+                    foreach (LandX pLand in pRegion.Contents)
                     {
-                        cProvinceMagesCount[Gender.Male] += pLand.m_cContents.Count * fPrevalence;
-                        cProvinceMagesCount[Gender.Female] += pLand.m_cContents.Count * fPrevalence;
+                        cProvinceMagesCount[Gender.Male] += pLand.Origin.Contents.Count * fPrevalence;
+                        cProvinceMagesCount[Gender.Female] += pLand.Origin.Contents.Count * fPrevalence;
                     }
                 }
 
@@ -1978,12 +1981,12 @@ namespace Socium.Population
                 iHostility++;
                 sNegativeReasons += " (-1) Envy for food\n";
             }
-            if (m_pState.m_iWood < m_pState.m_iPopulation && pOpponent.m_iWood > pOpponent.m_iPopulation * 2)
+            if (m_pState.m_cResources[LandResource.Wood] < m_pState.m_iPopulation && pOpponent.m_cResources[LandResource.Wood] > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
                 sNegativeReasons += " (-1) Envy for wood\n";
             }
-            if (m_pState.m_iOre < m_pState.m_iPopulation && pOpponent.m_iOre > pOpponent.m_iPopulation * 2)
+            if (m_pState.m_cResources[LandResource.Ore] < m_pState.m_iPopulation && pOpponent.m_cResources[LandResource.Ore] > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
                 sNegativeReasons += " (-1) Envy for ore\n";

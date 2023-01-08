@@ -20,7 +20,7 @@ namespace Socium
     /// расширение LandscapeGeneration.Location
     /// добавляет ссылку на поселение, дороги, отдельностоящие постройки (aka логова)
     /// </summary>
-    public class LocationX : TerritoryExtended<Land, Location>
+    public class LocationX : TerritoryExtended<LocationX, Location>
     {
         public Settlement m_pSettlement = null;
 

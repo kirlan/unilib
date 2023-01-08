@@ -941,7 +941,7 @@ namespace Socium
                         switch (eEstate)
                         {
                             case Estate.Position.Outlaws:
-                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
+                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.Contents)
                                     cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
                                 break;
                             case Estate.Position.Lowlifes:
@@ -959,7 +959,7 @@ namespace Socium
                                 }
                                 break;
                             case Estate.Position.Clergy:
-                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
+                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.Contents)
                                     cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
                                 foreach (State pState in pWorld.m_aStates)
                                 {
@@ -968,10 +968,10 @@ namespace Socium
                                 }
                                 break;
                             case Estate.Position.Elite:
-                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.m_cContents)
+                                foreach (Province pProvince in pRelative.m_pHomeLocation.OwnerState.Contents)
                                     cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
                                 foreach (State pState in pWorld.m_aStates)
-                                    foreach (Province pProvince in pState.m_cContents)
+                                    foreach (Province pProvince in pState.Contents)
                                         cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
                                 break;
                         }
@@ -4275,7 +4275,7 @@ namespace Socium
             }
             iConnectionsMax += 2;
 
-            if (pPerson1.m_pHomeLocation.Owner == pPerson2.m_pHomeLocation.Owner)
+            if (pPerson1.m_pHomeLocation.OwnerState == pPerson2.m_pHomeLocation.OwnerState)
             {
                 //если они живут в одном государстве, то для низших слоёв общества это имеет меньшее значение, чем для всех остальных
                 if (pPerson1.m_pEstate.m_ePosition == Estate.Position.Lowlifes ||
