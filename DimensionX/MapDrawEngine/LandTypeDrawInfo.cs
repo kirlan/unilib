@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace MapDrawEngine
 {
-    public class LandTypeInfoDraw : ILandTypeInfoExt
+    public class LandTypeDrawInfo : ILandTypeInfoExt
     {
         public Color m_pColor;
         public Brush m_pBrush;
 
-        public LandTypeInfoDraw(Color pColor)
+        public LandTypeDrawInfo(Color pColor)
         {
             m_pColor = pColor;
             m_pBrush = new SolidBrush(m_pColor);

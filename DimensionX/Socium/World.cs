@@ -151,7 +151,7 @@ namespace Socium
                 bool bHomeless = true;
                 foreach (Continent pConti in m_aContinents)
                 {
-                    ContinentX pContiX = pConti.GetOwner<ContinentX>();
+                    ContinentX pContiX = pConti.As<ContinentX>();
                     if (pContiX != null)
                     {
                         foreach (LandMass pLandMass in pConti.Contents)
@@ -173,14 +173,14 @@ namespace Socium
                 Dictionary<Region, float> cRegionChances = new Dictionary<Region, float>();
                 foreach (Continent pContinent in m_aContinents)
                 {
-                    ContinentX pContiX = pContinent.GetOwner<ContinentX>();
+                    ContinentX pContiX = pContinent.As<ContinentX>();
                     if (pContiX != null)
                     {
                         foreach (Region pRegion in pContiX.m_cRegions)
                         {
                             //отсеиваем уже занятые и непригодные для заселения регионы
                             if (pRegion.Forbidden ||
-                                pRegion.m_pProvince != null ||
+                                pRegion.HasOwner() ||
                                 pRegion.IsWater)
                                 continue;
 
@@ -198,7 +198,7 @@ namespace Socium
                             //смотрим, сколько ещё других рас уже живут на этом же континенте и говорят ли они на нашем языке
                             int iPop = 0;
                             bool bSameLanguage = false;
-                            foreach (var pRaces in pRegion.Continent.m_cLocalNations)
+                            foreach (var pRaces in pRegion.Continent.As<ContinentX>().m_cLocalNations)
                             {
                                 foreach (var pRce in pRaces.Value)
                                 {
@@ -235,28 +235,28 @@ namespace Socium
                 {
                     pCradle.m_pNatives = pNation;
                     pCradle.m_sName = pNation.m_pRace.m_pLanguage.RandomCountryName();
-                    foreach (LandX pLand in pCradle.m_cContents)
+                    foreach (LandX pLand in pCradle.Contents)
                     {
                         pLand.Populate(pCradle.m_pNatives, pCradle.m_sName);
                     }
 
-                    LandMass<LandX> pLandMass = pCradle.Owner as LandMass<LandX>;
+                    LandMass pLandMass = pCradle.LandMass;
                     if (pLandMass != null)
                     {
-                        if (!pCradle.Continent.m_cLocalNations.ContainsKey(pLandMass))
-                            pCradle.Continent.m_cLocalNations[pLandMass] = new List<Nation>();
+                        if (!pCradle.Continent.As<ContinentX>().m_cLocalNations.ContainsKey(pLandMass))
+                            pCradle.Continent.As<ContinentX>().m_cLocalNations[pLandMass] = new List<Nation>();
                         
-                        pCradle.Continent.m_cLocalNations[pLandMass].Add(pNation);
+                        pCradle.Continent.As<ContinentX>().m_cLocalNations[pLandMass].Add(pNation);
                     }
                 }
             }
 
             //Позаботимся о том, чтобы на каждом континенте жила бы хоть одна раса
-            foreach (ContinentX pConti in m_aContinents)
+            foreach (Continent pConti in m_aContinents)
             {
                 //если континент уже обитаем, пропускаем его
                 int iPop = 0;
-                foreach (var pNations in pConti.m_cLocalNations)
+                foreach (var pNations in pConti.As<ContinentX>().m_cLocalNations)
                 {
                     foreach (var pNation in pNations.Value)
                         if (!pNation.IsAncient && !pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
@@ -266,20 +266,20 @@ namespace Socium
                 if (iPop > 0)
                     continue;
 
-                LandMass<LandX> pLandMass = pConti.m_cContents.ElementAt(Rnd.Get(pConti.m_cContents.Count));
+                LandMass pLandMass = pConti.Contents.ElementAt(Rnd.Get(pConti.Contents.Count));
 
-                pConti.m_cLocalNations[pLandMass] = new List<Nation>();
+                pConti.As<ContinentX>().m_cLocalNations[pLandMass] = new List<Nation>();
 
-                Dictionary<LandTypeInfoX, int> cLandTypesCount = new Dictionary<LandTypeInfoX, int>();
-                foreach (LandX pLand in pLandMass.m_cContents)
+                Dictionary<LandTypeInfo, int> cLandTypesCount = new Dictionary<LandTypeInfo, int>();
+                foreach (Land pLand in pLandMass.Contents)
                 {
                     if (pLand.IsWater)
                         continue;
 
-                    if (!cLandTypesCount.ContainsKey(pLand.Type))
-                        cLandTypesCount[pLand.Type] = 0;
+                    if (!cLandTypesCount.ContainsKey(pLand.LandType))
+                        cLandTypesCount[pLand.LandType] = 0;
 
-                    cLandTypesCount[pLand.Type] += pLand.m_cContents.Count;
+                    cLandTypesCount[pLand.LandType] += pLand.Contents.Count;
                 }
 
                 Dictionary<Nation, float> cNationChances = new Dictionary<Nation, float>();
@@ -290,11 +290,11 @@ namespace Socium
 
                     cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
 
-                    foreach (LandTypeInfoX pType in pNation.m_aPreferredLands)
+                    foreach (LandTypeInfo pType in pNation.m_aPreferredLands)
                         if (cLandTypesCount.ContainsKey(pType))
                             cNationChances[pNation] *= cLandTypesCount[pType];
 
-                    foreach (LandTypeInfoX pType in pNation.m_aHatedLands)
+                    foreach (LandTypeInfo pType in pNation.m_aHatedLands)
                         if (cLandTypesCount.ContainsKey(pType))
                             cNationChances[pNation] /= cLandTypesCount[pType];
                 }
@@ -313,23 +313,23 @@ namespace Socium
 
                 if (pChoosenNation != null)
                 {
-                    pConti.m_cLocalNations[pLandMass].Add(pChoosenNation);
-                    if (pConti.m_cContents.Count == 1)
-                        pConti.m_sName = pChoosenNation.m_pRace.m_pLanguage.RandomCountryName();
+                    pConti.As<ContinentX>().m_cLocalNations[pLandMass].Add(pChoosenNation);
+                    if (pConti.Contents.Count == 1)
+                        pConti.As<ContinentX>().m_sName = pChoosenNation.m_pRace.m_pLanguage.RandomCountryName();
                 }
             }
         }
 
         private void PopulateAreas()
         {
-            foreach (ContinentX pConti in m_aContinents)
+            foreach (Continent pConti in m_aContinents)
             {
                 List<Nation> cHegemonNations = new List<Nation>();
                 //список рас, способных свободно расселяться по континенту
                 List<Nation> cAvailableContinentNations = new List<Nation>();
-                foreach (LandMass<LandX> pLandMass in pConti.m_cLocalNations.Keys)
+                foreach (LandMass pLandMass in pConti.As<ContinentX>().m_cLocalNations.Keys)
                 {
-                    foreach (Nation pNation in pConti.m_cLocalNations[pLandMass])
+                    foreach (Nation pNation in pConti.As<ContinentX>().m_cLocalNations[pLandMass])
                     {
                         if (!pNation.IsAncient && !cAvailableContinentNations.Contains(pNation))
                             cAvailableContinentNations.Add(pNation);
@@ -340,26 +340,25 @@ namespace Socium
 
                 //List<Race> cSettledDyingRaces = new List<Race>();
                 //переберём все пригодные для заселения и незаселённые территории
-                foreach (Region pRegion in pConti.m_cRegions)
+                foreach (Region pRegion in pConti.As<ContinentX>().m_cRegions)
                 {
                     if (!pRegion.IsWater && pRegion.m_pNatives == null)
                     {
-                        List<LandMass<LandX>> cLandMasses = new List<LandMass<LandX>>();
-                        cLandMasses.Add(pRegion.Owner as LandMass<LandX>);
+                        List<LandMass> cLandMasses = new List<LandMass>();
+                        cLandMasses.Add(pRegion.LandMass);
 
                         //составим список рас, которые могут претендовать на эту территорию
                         List<Nation> cAvailableNations = GetAvailableNations(cLandMasses);
 
                         while (cAvailableNations.Count == 0)
                         {
-                            List<LandMass<LandX>> cLandMassesExtended = new List<LandMass<LandX>>(cLandMasses);
+                            List<LandMass> cLandMassesExtended = new List<LandMass>(cLandMasses);
 
-                            foreach (LandMass<LandX> pLandMass in cLandMasses)
-                                foreach (Territory pLinkedLM in pLandMass.m_aBorderWith)
+                            foreach (LandMass pLandMass in cLandMasses)
+                                foreach (LandMass pLinkedLandMass in pLandMass.m_aBorderWith)
                                 {
-                                    if (pLinkedLM.Forbidden)
+                                    if (pLinkedLandMass.Forbidden)
                                         continue;
-                                    LandMass<LandX> pLinkedLandMass = pLinkedLM as LandMass<LandX>;
                                     if (!pLinkedLandMass.IsWater && !cLandMassesExtended.Contains(pLinkedLandMass))
                                         cLandMassesExtended.Add(pLinkedLandMass);
                                 }
@@ -386,13 +385,13 @@ namespace Socium
             }
         }
 
-        private List<Nation> GetAvailableNations(List<LandMass<LandX>> cLandMasses)
+        private List<Nation> GetAvailableNations(List<LandMass> cLandMasses)
         {
             List<Nation> cAvailableNations = new List<Nation>();
             //List<Race> cDyingRaces = new List<Race>();
-            foreach (LandMass<LandX> pLandMass in cLandMasses)
+            foreach (LandMass pLandMass in cLandMasses)
             {
-                ContinentX pConti = pLandMass.Owner as ContinentX;
+                ContinentX pConti = pLandMass.GetOwner().As<ContinentX>();
 
                 if (!pConti.m_cLocalNations.ContainsKey(pLandMass))
                     continue;
@@ -498,9 +497,9 @@ namespace Socium
         {
             BeginStep("Building areas...", m_aContinents.Length);
             //Gathering areas of the same land type
-            foreach (ContinentX pContinent in m_aContinents)
+            foreach (Continent pContinent in m_aContinents)
             {
-                pContinent.BuildRegions(m_pGrid.CycleShift, m_aLands.Length / 100);
+                pContinent.As<ContinentX>().BuildRegions(m_pLocationsGrid.CycleShift, m_aLands.Length / 100);
                 ProgressStep();
             }
         }
@@ -529,11 +528,11 @@ namespace Socium
             ProgressStep();
 
             //BeginStep("Building cities...", 1);
-            BuildCities(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
+            BuildCities(m_pLocationsGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
             ProgressStep();
 
             //BeginStep("Building states...", 1);
-            BuildStates(m_pGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
+            BuildStates(m_pLocationsGrid.CycleShift, !bFinalize, BeginStep, ProgressStep);
             ProgressStep();
 
             //if (bFinalize)
@@ -563,22 +562,22 @@ namespace Socium
 
             BeginStep("Renaming provinces...", m_aStates.Length);
             //ProgressStep();
-            foreach (ContinentX pConti in m_aContinents)
+            foreach (Continent pConti in m_aContinents)
             {
-                foreach (State pState in pConti.m_cStates)
+                foreach (State pState in pConti.As<ContinentX>().m_cStates)
                 {
                     //если какой-то регион занимает больше половины провинции - переименовываем провинцию по его имени.
-                    foreach (Province pProvince in pState.m_cContents)
+                    foreach (Province pProvince in pState.Contents)
                     {
                         int iBiggestSize = 0;
                         int iTotalSize = 0;
                         Region pBiggestRegion = null;
-                        foreach(Region pRegion in pProvince.m_cContents)
+                        foreach(Region pRegion in pProvince.Contents)
                         {
-                            iTotalSize += pRegion.m_cContents.Count;
-                            if(pRegion.m_cContents.Count > iBiggestSize)
+                            iTotalSize += pRegion.Contents.Count;
+                            if(pRegion.Contents.Count > iBiggestSize)
                             {
-                                iBiggestSize = pRegion.m_cContents.Count;
+                                iBiggestSize = pRegion.Contents.Count;
                                 pBiggestRegion = pRegion;
                             }
                         }
@@ -590,8 +589,8 @@ namespace Socium
                     }
 
                     //если государство состоит из единственной провинции, то переименовываем государство по имени провинции
-                    if (pState.m_cContents.Count == 1)
-                        pState.m_pSociety.m_sName = pState.m_cContents.First().m_pLocalSociety.m_sName;
+                    if (pState.Contents.Count == 1)
+                        pState.m_pSociety.m_sName = pState.Contents.First().m_pLocalSociety.m_sName;
 
                     pState.m_pSociety.CalculateMagic();
                     
@@ -620,7 +619,7 @@ namespace Socium
 
         private void BuildProvinces()
         {
-            List<ContinentX> cUsed = new List<ContinentX>();
+            List<Continent> cUsed = new List<Continent>();
 
             List<Province> cProvinces = new List<Province>();
 
@@ -640,21 +639,23 @@ namespace Socium
             
             List<Province> cFinished = new List<Province>();
             //Позаботимся о том, чтобы на каждом континенте была хотя бы одна провинция
-            foreach (ContinentX pConti in m_aContinents)
+            foreach (Continent pConti in m_aContinents)
             {
                 int iUsed = 0;
 
+                ContinentX pContiX = pConti.As<ContinentX>();
+
                 //Для каждого анклава древней цивилизации создаём собственную провинцию
-                foreach (Region pRegion in pConti.m_cRegions)
+                foreach (Region pRegion in pContiX.m_cRegions)
                 {
                     if (pRegion.m_pNatives != null && pRegion.m_pNatives.IsAncient)
                     {
-                        if (pRegion.m_pProvince == null)
+                        if (!pRegion.HasOwner())
                         {
                             Province pLostProvince = new Province();
                             pLostProvince.Start(pRegion);
                             cProvinces.Add(pLostProvince);
-                            while (pLostProvince.Grow(pRegion.m_cContents.Count) != null) { }
+                            while (pLostProvince.Grow(pRegion.Contents.Count) != null) { }
                             cFinished.Add(pLostProvince);
                         }
                         iUsed++;
@@ -662,21 +663,21 @@ namespace Socium
                 }
 
                 //если на континенте есть хоть одна провинция - дальше делать нечего
-                if (cUsed.Contains(pConti) || pConti.m_cRegions.Count == iUsed)
+                if (cUsed.Contains(pConti) || pContiX.m_cRegions.Count == iUsed)
                     continue;
 
                 //иначе ищем подходящее место дня новой провинции
                 Region pSeed = null;
                 do
                 {
-                    int iRegionIndex = Rnd.Get(pConti.m_cRegions.Count);
-                    if (!pConti.m_cRegions[iRegionIndex].IsWater)
+                    int iRegionIndex = Rnd.Get(pContiX.As<ContinentX>().m_cRegions.Count);
+                    if (!pContiX.m_cRegions[iRegionIndex].IsWater)
                     {
-                        pSeed = pConti.m_cRegions[iRegionIndex];
+                        pSeed = pContiX.m_cRegions[iRegionIndex];
 
                         bool bBorder = false;
-                        foreach (LandX pLand in pSeed.m_cContents)
-                            foreach (LocationX pLoc in pLand.m_cContents)
+                        foreach (LandX pLand in pSeed.Contents)
+                            foreach (Location pLoc in pLand.As<Land>().Contents)
                                 if (pLoc.m_bBorder)
                                     bBorder = true;
 
@@ -706,15 +707,14 @@ namespace Socium
                 do
                 {
                     int iIndex = Rnd.Get(m_aLands.Length);
-                    pSeed = m_aLands[iIndex].Region;
+                    pSeed = m_aLands[iIndex].As<LandX>().GetOwner();
 
                     if (pSeed != null)
                     {
                         if (pSeed.Forbidden ||
-                            pSeed.m_pProvince != null ||
+                            pSeed.HasOwner() ||
                             pSeed.IsWater ||
-                            pSeed.Owner == null ||
-                            (pSeed.Owner as LandMass<LandX>).IsWater ||
+                            pSeed.LandMass.IsWater ||
                             (pSeed.m_pNatives != null && pSeed.m_pNatives.IsAncient))
                         {
                             pSeed = null;
@@ -722,8 +722,8 @@ namespace Socium
                         else
                         {
                             bool bBorder = false;
-                            foreach (LandX pLand in pSeed.m_cContents)
-                                foreach (LocationX pLoc in pLand.m_cContents)
+                            foreach (LandX pLand in pSeed.Contents)
+                                foreach (Location pLoc in pLand.As<Land>().Contents)
                                     if (pLoc.m_bBorder)
                                         bBorder = true;
 
@@ -776,11 +776,11 @@ namespace Socium
             do
             {
                 bAlreadyFinished = true;
-                foreach (ContinentX pConti in m_aContinents)
+                foreach (Continent pConti in m_aContinents)
                 {
-                    foreach (Region pRegion in pConti.m_cRegions)
+                    foreach (Region pRegion in pConti.As<ContinentX>().m_cRegions)
                     {
-                        if (!pRegion.Forbidden && !pRegion.IsWater && pRegion.m_pProvince == null)
+                        if (!pRegion.Forbidden && !pRegion.IsWater && !pRegion.HasOwner())
                         {
                             bAlreadyFinished = false;
                             break;
@@ -1110,57 +1110,57 @@ namespace Socium
         {
             base.PresetLandTypesInfo();
 
-            LandTypes.Coastral.AddLayer(new LandTypeInfoResources(0, 0, 0, 0));
-            LandTypes.Coastral.AddLayer(new LandTypeInfoStandAlone(0, 0, 1));
-            LandTypes.Coastral.AddLayer(new LandTypeInfoSettlements(0, 0, 0));
+            LandTypes.Coastral.AddLayer(new ResourcesInfo(0, 0, 0, 0));
+            LandTypes.Coastral.AddLayer(new StandAloneBuildingsInfo(0, 0, 1));
+            LandTypes.Coastral.AddLayer(new SettlementsInfo(0, 0, 0));
 
-            LandTypes.Ocean.AddLayer(new LandTypeInfoResources(0, 0, 0, 0));
-            LandTypes.Ocean.AddLayer(new LandTypeInfoStandAlone(0, 0, 1));
-            LandTypes.Ocean.AddLayer(new LandTypeInfoSettlements(0, 0, 0));
+            LandTypes.Ocean.AddLayer(new ResourcesInfo(0, 0, 0, 0));
+            LandTypes.Ocean.AddLayer(new StandAloneBuildingsInfo(0, 0, 1));
+            LandTypes.Ocean.AddLayer(new SettlementsInfo(0, 0, 0));
 
-            LandTypes.Tundra.AddLayer(new LandTypeInfoResources(0, 0.1f, 0, 0));
-            LandTypes.Tundra.AddLayer(new LandTypeInfoStandAlone(1, 0, 10));
-            LandTypes.Tundra.AddLayer(new LandTypeInfoSettlements(0.004f, 0.02f, 0.05f));
+            LandTypes.Tundra.AddLayer(new ResourcesInfo(0, 0.1f, 0, 0));
+            LandTypes.Tundra.AddLayer(new StandAloneBuildingsInfo(1, 0, 10));
+            LandTypes.Tundra.AddLayer(new SettlementsInfo(0.004f, 0.02f, 0.05f));
 //            LandTypes.Tundra.SetSettlementsDensity(0.004f, 0.01f, 0.003f);
             
-            LandTypes.Plains.AddLayer(new LandTypeInfoResources(3, 0, 0, 0));
-            LandTypes.Plains.AddLayer(new LandTypeInfoStandAlone(1, 3, 30));
-            LandTypes.Plains.AddLayer(new LandTypeInfoSettlements(0.02f, 0.1f, 0.3f));
+            LandTypes.Plains.AddLayer(new ResourcesInfo(3, 0, 0, 0));
+            LandTypes.Plains.AddLayer(new StandAloneBuildingsInfo(1, 3, 30));
+            LandTypes.Plains.AddLayer(new SettlementsInfo(0.02f, 0.1f, 0.3f));
 //            LandTypes.Plains.SetSettlementsDensity(0.01f, 0.026f, 0.1f);
             
-            LandTypes.Savanna.AddLayer(new LandTypeInfoResources(0.1f, 0.2f, 0, 0));
-            LandTypes.Savanna.AddLayer(new LandTypeInfoStandAlone(1, 3, 20));
-            LandTypes.Savanna.AddLayer(new LandTypeInfoSettlements(0.01f, 0.05f, 0.2f));
+            LandTypes.Savanna.AddLayer(new ResourcesInfo(0.1f, 0.2f, 0, 0));
+            LandTypes.Savanna.AddLayer(new StandAloneBuildingsInfo(1, 3, 20));
+            LandTypes.Savanna.AddLayer(new SettlementsInfo(0.01f, 0.05f, 0.2f));
 //            LandTypes.Savanna.SetSettlementsDensity(0.01f, 0.023f, 0.02f);
             
-            LandTypes.Desert.AddLayer(new LandTypeInfoResources(0, 0.1f, 0, 0));
-            LandTypes.Desert.AddLayer(new LandTypeInfoStandAlone(1, 2, 30));
-            LandTypes.Desert.AddLayer(new LandTypeInfoSettlements(0.01f, 0.03f, 0.025f));
+            LandTypes.Desert.AddLayer(new ResourcesInfo(0, 0.1f, 0, 0));
+            LandTypes.Desert.AddLayer(new StandAloneBuildingsInfo(1, 2, 30));
+            LandTypes.Desert.AddLayer(new SettlementsInfo(0.01f, 0.03f, 0.025f));
 //            LandTypes.Desert.SetSettlementsDensity(0.006f, 0.01f, 0.003f);
             
-            LandTypes.Forest.AddLayer(new LandTypeInfoResources(0, 1, 5, 0));
-            LandTypes.Forest.AddLayer(new LandTypeInfoStandAlone(10, 5, 10));
-            LandTypes.Forest.AddLayer(new LandTypeInfoSettlements(0.01f, 0.05f, 0.05f));
+            LandTypes.Forest.AddLayer(new ResourcesInfo(0, 1, 5, 0));
+            LandTypes.Forest.AddLayer(new StandAloneBuildingsInfo(10, 5, 10));
+            LandTypes.Forest.AddLayer(new SettlementsInfo(0.01f, 0.05f, 0.05f));
 //            LandTypes.Forest.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
             
-            LandTypes.Taiga.AddLayer(new LandTypeInfoResources(0, 1, 5, 0));
-            LandTypes.Taiga.AddLayer(new LandTypeInfoStandAlone(10, 5, 10));
-            LandTypes.Taiga.AddLayer(new LandTypeInfoSettlements(0.01f, 0.05f, 0.05f));
+            LandTypes.Taiga.AddLayer(new ResourcesInfo(0, 1, 5, 0));
+            LandTypes.Taiga.AddLayer(new StandAloneBuildingsInfo(10, 5, 10));
+            LandTypes.Taiga.AddLayer(new SettlementsInfo(0.01f, 0.05f, 0.05f));
 //            LandTypes.Taiga.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
             
-            LandTypes.Jungle.AddLayer(new LandTypeInfoResources(0, 0.5f, 2, 0));
-            LandTypes.Jungle.AddLayer(new LandTypeInfoStandAlone(10, 5, 10));
-            LandTypes.Jungle.AddLayer(new LandTypeInfoSettlements(0.002f, 0.01f, 0.05f));
+            LandTypes.Jungle.AddLayer(new ResourcesInfo(0, 0.5f, 2, 0));
+            LandTypes.Jungle.AddLayer(new StandAloneBuildingsInfo(10, 5, 10));
+            LandTypes.Jungle.AddLayer(new SettlementsInfo(0.002f, 0.01f, 0.05f));
 //            LandTypes.Jungle.SetSettlementsDensity(0.008f, 0.006f, 0.006f);
             
-            LandTypes.Swamp.AddLayer(new LandTypeInfoResources(0, 0.2f, 1, 0));
-            LandTypes.Swamp.AddLayer(new LandTypeInfoStandAlone(10, 8, 0));
-            LandTypes.Swamp.AddLayer(new LandTypeInfoSettlements(0.002f, 0.01f, 0.04f));
+            LandTypes.Swamp.AddLayer(new ResourcesInfo(0, 0.2f, 1, 0));
+            LandTypes.Swamp.AddLayer(new StandAloneBuildingsInfo(10, 8, 0));
+            LandTypes.Swamp.AddLayer(new SettlementsInfo(0.002f, 0.01f, 0.04f));
 //            LandTypes.Swamp.SetSettlementsDensity(0.003f, 0.005f, 0.026f);
             
-            LandTypes.Mountains.AddLayer(new LandTypeInfoResources(0, 0.5f, 0, 10));
-            LandTypes.Mountains.AddLayer(new LandTypeInfoStandAlone(1, 1, 7));
-            LandTypes.Mountains.AddLayer(new LandTypeInfoSettlements(0.01f, 0.075f, 0.06f));
+            LandTypes.Mountains.AddLayer(new ResourcesInfo(0, 0.5f, 0, 10));
+            LandTypes.Mountains.AddLayer(new StandAloneBuildingsInfo(1, 1, 7));
+            LandTypes.Mountains.AddLayer(new SettlementsInfo(0.01f, 0.075f, 0.06f));
 //            LandTypes.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
         }
 
@@ -1280,14 +1280,14 @@ namespace Socium
                 List<LocationX> cFutureWaveFront = new List<LocationX>();
                 foreach (LocationX pLoc in cWaveFront)
                 {
-                    foreach (var pLinkedNode in pLoc.m_cLinks)
+                    foreach (var pLinkedNode in pLoc.Links)
                     {
                         LocationX pLinkedLoc = pLinkedNode.Key as LocationX;
 
                         if (pLinkedLoc == null)
                             continue;
 
-                        if ((pLinkedLoc.Owner as LandX).IsWater || pLinkedLoc.m_bHarbor)
+                        if ((pLinkedLoc.Owner as LandX).IsWater || pLinkedLoc.IsHarbor)
                         {
                             float fDist = pLoc.m_cSeaRouteBuildInfo[pHarbor].m_fCost + pLinkedNode.Value.MovementCost;// pLoc.DistanceTo(pLinkedLoc, fCycleShift) * pLoc.GetMovementCost();
 
@@ -1328,7 +1328,7 @@ namespace Socium
         private void BuildSeaRoutes(float fCycleShift)
         {
             foreach (LandX pLand in m_aLands)
-                pLand.m_bHarbor = false;
+                pLand.IsHarbor = false;
 
             foreach (LandMass<LandX> pLandMass in m_aLandMasses)
                 pLandMass.m_bHarbor = false;
@@ -1340,7 +1340,7 @@ namespace Socium
                 {
                     foreach (LocationX pTown in pProvince.m_pLocalSociety.Settlements)
                     {
-                        pTown.m_bHarbor = false;
+                        pTown.IsHarbor = false;
 
                         if (pTown.m_pSettlement.m_iRuinsAge > 0)
                             continue;
@@ -1366,8 +1366,8 @@ namespace Socium
                         if (bCoastral)
                         {
                             cHarbors.Add(pTown);
-                            pTown.m_bHarbor = true;
-                            (pTown.Owner as LandX).m_bHarbor = true;
+                            pTown.IsHarbor = true;
+                            (pTown.Owner as LandX).IsHarbor = true;
                             ((pTown.Owner as LandX).Owner as LandMass<LandX>).m_bHarbor = true;
                         }
                     }
@@ -1597,7 +1597,7 @@ namespace Socium
             {
                 if (pLastNode != null)
                 {
-                    pLastNode.m_cLinks[pNode].BuildRoad(RoadQuality.Country);
+                    pLastNode.Links[pNode].BuildRoad(RoadQuality.Country);
                     //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
 
                     //if (pLastNode.Owner != pNode.Owner)
@@ -1740,14 +1740,14 @@ namespace Socium
 
                 if (pLastNode != null)
                 {
-                    pLastNode.m_cLinks[pNode].BuildRoad(eRoadLevel);
+                    pLastNode.Links[pNode].BuildRoad(eRoadLevel);
                     //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
 
                     if (pLastNode.Owner != pNode.Owner)
                     {
                         try
                         {
-                            (pLastNode.Owner as LandX).m_cLinks[pNode.Owner as LandX].BuildRoad(eRoadLevel);
+                            (pLastNode.Owner as LandX).Links[pNode.Owner as LandX].BuildRoad(eRoadLevel);
 
                             if ((pLastNode.Owner as LandX).Owner != (pNode.Owner as LandX).Owner)
                             {
@@ -2038,7 +2038,7 @@ namespace Socium
                                             //либо окончательно уничтожаем все следы цивилизации - в легкодоступных местах
                                             pLoc.m_pSettlement = null;
                                             //снимаем флаг "руины" со всех путей, ведущих в эту локацию
-                                            foreach (var pLink in pLoc.m_cLinks)
+                                            foreach (var pLink in pLoc.Links)
                                                 pLink.Value.Ruins = false;
                                             //и убираем локацию из списка поселений в провинции
                                             //if (pProvince.m_cSettlements.Contains(pLoc))
@@ -2082,14 +2082,14 @@ namespace Socium
                                             pLoc.m_pSettlement = null;
                                         else
                                             //если же оно таки стало руинами - помечаем соответсвенно все пути ведущие в эту локацию, чтобы дороги обходили её стороной
-                                            foreach (var pLink in pLoc.m_cLinks)
+                                            foreach (var pLink in pLoc.Links)
                                                 pLink.Value.Ruins = true;
 
                                     }
                                 }
 
                                 //так же снимаем пометку "порт" и сносим все отдельно стоящие строения
-                                pLoc.m_bHarbor = false;
+                                pLoc.IsHarbor = false;
                                 pLoc.m_pBuilding = null;
                             }//все локации в каждой земле
                         }//все земли в каждом регионе
@@ -2144,15 +2144,15 @@ namespace Socium
                 if (pLoc.Owner != null && !(pLoc.Owner as LandX).IsWater)
                 {
                     List<TransportationNode> cErase = new List<TransportationNode>();
-                    foreach (TransportationNode pNode in pLoc.m_cLinks.Keys)
+                    foreach (TransportationNode pNode in pLoc.Links.Keys)
                     {
-                        if (pLoc.m_cLinks[pNode].Sea)
+                        if (pLoc.Links[pNode].Sea)
                             cErase.Add(pNode);
                     }
                     foreach (TransportationNode pNode in cErase)
                     {
-                        pLoc.m_cLinks.Remove(pNode);
-                        pNode.m_cLinks.Remove(pLoc);
+                        pLoc.Links.Remove(pNode);
+                        pNode.Links.Remove(pLoc);
                     }
                 }
             }

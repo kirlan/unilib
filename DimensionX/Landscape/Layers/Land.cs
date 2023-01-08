@@ -8,10 +8,10 @@ using Random;
 namespace LandscapeGeneration
 {
     /// <summary>
-    /// Земля - группа сопредельных локаций, имеющих один тип местности.
-    /// Земли объединяются в тектонические плиты (LandMass).
+    /// Земля - группа сопредельных локаций (<see cref="Location"/>), имеющих один тип местности <see cref="LandTypeInfo"/>.
+    /// Земли объединяются в тектонические плиты (<see cref="LandMass"/>).
     /// </summary>
-    public class Land : TerritoryCluster<Land, Location>
+    public class Land : TerritoryCluster<Land, LandMass, Location>
     {
         /// <summary>
         /// Тип территории

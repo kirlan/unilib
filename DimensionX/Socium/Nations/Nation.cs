@@ -299,5 +299,35 @@ namespace Socium.Nations
             return (int)fCost;
         }
 
+        public float GetAvailableFood(Dictionary<LandResource, float> cResources, int iPrey)
+        {
+            switch (DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType)
+            {
+                case NutritionType.Eternal:
+                    return float.MaxValue;
+                case NutritionType.Mineral:
+                    return cResources[LandResource.Ore];
+                case NutritionType.Organic:
+                    return cResources[LandResource.Grain] + cResources[LandResource.Game] + cResources[LandResource.Fish];
+                case NutritionType.ParasitismBlood:
+                    return iPrey; //TODO: нyжно учитывать размеры и телосложение жертв - в гигантах и толстяках крови больше, чем в карликах и худышках
+                case NutritionType.ParasitismEmote:
+                    return iPrey; //TODO: нужно учитывать темперамент жертв 
+                case NutritionType.ParasitismEnergy:
+                    return iPrey; //TODO: нужно учитывать... хз что именно, но что-то точно нужно :)
+                case NutritionType.ParasitismMeat:
+                    return iPrey; //TODO: нyжно учитывать размеры и телосложение жертв - в гигантах и толстяках мяса больше, чем в карликах и худышках
+                case NutritionType.Photosynthesis:
+                    return float.MaxValue; //TODO: нужно учитывать климат и расстояние до экватора
+                case NutritionType.Thermosynthesis:
+                    return float.MaxValue; //TODO: нужно учитывать наличие вулканов и расстояние до экватора
+                case NutritionType.Vegetarian:
+                    return cResources[LandResource.Grain];
+                case NutritionType.Carnivorous:
+                    return cResources[LandResource.Game] + cResources[LandResource.Fish];
+                default:
+                    throw new Exception(string.Format("Unknown Nutrition type: {0}", DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType));
+            }
+        }
     }
 }

@@ -428,7 +428,7 @@ namespace LandscapeGeneration.PathFind
             {
                 if (pLastNode != null)
                 {
-                    TransportationLinkBase pLink = pLastNode.m_cLinks[pNode];
+                    TransportationLinkBase pLink = pLastNode.Links[pNode];
                     if (pLink.m_aPoints[0] == pLastNode)
                     {
                         for (int i = 1; i < pLink.m_aPoints.Length; i++)

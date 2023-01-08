@@ -16,19 +16,19 @@ namespace LandscapeGeneration
 
         private float m_fH = float.NaN;
 
-        public float X
+        public virtual float X
         {
             get { return m_fX; }
             set { m_fX = value; }
         }
 
-        public float Y
+        public virtual float Y
         {
             get { return m_fY; }
             set { m_fY = value; }
         }
 
-        public float H
+        public virtual float H
         {
             get { return m_fH; }
             set { m_fH = value; }

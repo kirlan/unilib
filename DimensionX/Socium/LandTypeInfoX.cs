@@ -13,24 +13,21 @@ namespace Socium
     /// расширение LandscapeGeneration.LandTypeInfo
     /// информация о доступных ресурсах
     /// </summary>
-    public class LandTypeInfoResources : ILandTypeInfoExt
+    public class ResourcesInfo : ILandTypeInfoExt
     {
-        public enum Resource
+        private readonly Dictionary<LandResource, float> m_cResources = new Dictionary<LandResource, float>();
+
+        public ResourcesInfo(float fGrain, float fGame, float fWood, float fOre)
         {
-            Grain,
-            Game,
-            Wood,
-            Ore
+            m_cResources[LandResource.Grain] = fGrain;
+            m_cResources[LandResource.Game] = fGame;
+            m_cResources[LandResource.Wood] = fWood;
+            m_cResources[LandResource.Ore] = fOre;
         }
 
-        public readonly Dictionary<Resource, float> m_cResources = new Dictionary<Resource, float>();
-
-        public LandTypeInfoResources(float fGrain, float fGame, float fWood, float fOre)
+        public float GetAmount(LandResource key)
         {
-            m_cResources[Resource.Grain] = fGrain;
-            m_cResources[Resource.Game] = fGame;
-            m_cResources[Resource.Wood] = fWood;
-            m_cResources[Resource.Ore] = fOre;
+            return m_cResources[key];
         }
     }
 
@@ -38,9 +35,9 @@ namespace Socium
     /// расширение LandscapeGeneration.LandTypeInfo
     /// информация о допустимой частоте поселений
     /// </summary>
-    public class LandTypeInfoSettlements : ILandTypeInfoExt
+    public class SettlementsInfo : ILandTypeInfoExt
     {
-        public Dictionary<SettlementSize, float> m_cSettlementsDensity = new Dictionary<SettlementSize, float>();
+        private readonly Dictionary<SettlementSize, float> m_cDensity = new Dictionary<SettlementSize, float>();
 
         /// <summary>
         /// Вероятность встретить поселение заданного типа в земле этого типа.
@@ -51,13 +48,18 @@ namespace Socium
         /// <param name="fCity">Capital и City</param>
         /// <param name="fTown">Town</param>
         /// <param name="fVillage">Village и Hamlet</param>
-        public LandTypeInfoSettlements(float fCity, float fTown, float fVillage)
+        public SettlementsInfo(float fCity, float fTown, float fVillage)
         {
-            m_cSettlementsDensity[SettlementSize.Capital] = fCity;
-            m_cSettlementsDensity[SettlementSize.City] = fCity;
-            m_cSettlementsDensity[SettlementSize.Town] = fTown;
-            m_cSettlementsDensity[SettlementSize.Village] = fVillage;
-            m_cSettlementsDensity[SettlementSize.Hamlet] = fVillage;
+            m_cDensity[SettlementSize.Capital] = fCity;
+            m_cDensity[SettlementSize.City] = fCity;
+            m_cDensity[SettlementSize.Town] = fTown;
+            m_cDensity[SettlementSize.Village] = fVillage;
+            m_cDensity[SettlementSize.Hamlet] = fVillage;
+        }
+
+        public float GetDensity(SettlementSize eSize)
+        {
+            return m_cDensity[eSize];
         }
     }
 
@@ -65,15 +67,15 @@ namespace Socium
     /// расширение LandscapeGeneration.LandTypeInfo
     /// добавляет ресурсы, допустимую частоту поселений и логов
     /// </summary>
-    public class LandTypeInfoStandAlone : ILandTypeInfoExt
+    public class StandAloneBuildingsInfo : ILandTypeInfoExt
     {
-        public Dictionary<BuildingType, int> m_cStandAloneBuildingsProbability = new Dictionary<BuildingType, int>();
+        public Dictionary<BuildingType, int> Probability { get; } = new Dictionary<BuildingType, int>();
 
-        public LandTypeInfoStandAlone(int iLair, int iHideout, int iNone)
+        public StandAloneBuildingsInfo(int iLair, int iHideout, int iNone)
         {
-            m_cStandAloneBuildingsProbability[BuildingType.Lair] = iLair;
-            m_cStandAloneBuildingsProbability[BuildingType.Hideout] = iHideout;
-            m_cStandAloneBuildingsProbability[BuildingType.None] = iNone;
+            Probability[BuildingType.Lair] = iLair;
+            Probability[BuildingType.Hideout] = iHideout;
+            Probability[BuildingType.None] = iNone;
         }
     }
 }

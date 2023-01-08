@@ -20,7 +20,7 @@ namespace Socium
     /// расширение LandscapeGeneration.Location
     /// добавляет ссылку на поселение, дороги, отдельностоящие постройки (aka логова)
     /// </summary>
-    public class LocationX : TerritoryExtended<Location>
+    public class LocationX : TerritoryExtended<Land, Location>
     {
         public Settlement m_pSettlement = null;
 
@@ -62,8 +62,8 @@ namespace Socium
         {
             get
             {
-                LandX pLand = Origin.GetOwner<Land>().As<LandX>();
-                return pLand.GetOwner<Region>().GetOwner<Province>();
+                LandX pLand = Origin.GetOwner().As<LandX>();
+                return pLand.GetOwner().GetOwner();
             }
         }
 
@@ -71,7 +71,7 @@ namespace Socium
         {
             get
             {
-                return OwnerProvince.GetOwner<State>();
+                return OwnerProvince.GetOwner();
             }
         }
 

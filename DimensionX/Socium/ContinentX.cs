@@ -13,7 +13,7 @@ namespace Socium
     /// расширение LandscapeGeneration.Continent
     /// добавлены списки регионов, государств, имя, метод для постройки регионов 
     /// </summary>
-    public class ContinentX: IInfoLayer
+    public class ContinentX: TerritoryExtended<World, Continent>
     {
         public List<Region> m_cRegions = new List<Region>();
 
@@ -21,11 +21,9 @@ namespace Socium
 
         public string m_sName;
 
-        public ContinentX(Continent pOrigin)
+        public ContinentX(Continent pOrigin) : base(pOrigin)
         {
             m_cRegions.Clear();
-
-            Layers.Add(pOrigin);
 
             m_sName = NameGenerator.GetAbstractName();
         }
@@ -39,15 +37,14 @@ namespace Socium
 
         public void BuildRegions(float fCycleShift, int iMaxSize)
         {
-            foreach (LandMass<LandX> pLandMass in m_cContents)
-                foreach (LandX pLand in pLandMass.m_cContents)
-                    if (!pLand.Forbidden && pLand.Region == null)
+            foreach (LandMass pLandMass in Origin.Contents)
+                foreach (Land pLand in pLandMass.Contents)
+                    if (!pLand.Forbidden && !pLand.HasOwner())
                     {
                         Region pRegion = new Region();
-                        pRegion.Start(pLand, iMaxSize);
+                        pRegion.Start(pLand.As<LandX>(), iMaxSize);
                         while (pRegion.Grow() != null) { }
                         m_cRegions.Add(pRegion);
-                        pRegion.Owner = pLandMass;
                     }
 
             foreach (Region pRegion in m_cRegions)

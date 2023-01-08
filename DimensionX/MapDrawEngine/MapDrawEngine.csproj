@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LandTypeInfoDraw.cs" />
+    <Compile Include="LandTypeDrawInfo.cs" />
     <Compile Include="MiniMapDraw.cs">
       <SubType>UserControl</SubType>
     </Compile>

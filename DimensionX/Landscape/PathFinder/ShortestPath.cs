@@ -39,7 +39,7 @@ namespace LandscapeGeneration.PathFind
                 
                 closed.Add(path.LastStep);
 
-                foreach (var pLinked in path.LastStep.m_cLinks)
+                foreach (var pLinked in path.LastStep.Links)
                 {
                     TransportationNode pLinkedNode = pLinked.Key;
 
@@ -48,7 +48,7 @@ namespace LandscapeGeneration.PathFind
                         continue;
 
                     //грузиться на корабли и высаживаться с них можно только в портах
-                    if (pLinked.Value.Embark && !pLinkedNode.m_bHarbor && !path.LastStep.m_bHarbor)
+                    if (pLinked.Value.Embark && !pLinkedNode.IsHarbor && !path.LastStep.IsHarbor)
                         continue;
 
                     //ограничиваем доступную территорию по государственному признаку

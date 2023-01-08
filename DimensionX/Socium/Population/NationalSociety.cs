@@ -69,13 +69,15 @@ namespace Socium.Population
         {
             throw new NotImplementedException();
         }
-        internal void CheckResources(float fWood, float fOre, float fFood, int iPopulation, int iSize)
+        internal void CheckResources(Dictionary<LandResource, float> cResources, int iPopulation, int iSize)
         {
-            if (fWood * 2 < Rnd.Get(iPopulation) && fOre * 2 < Rnd.Get(iPopulation))// && Rnd.OneChanceFrom(2))
+            float fFood = m_pTitularNation.GetAvailableFood(cResources, iPopulation);
+
+            if (cResources[LandResource.Wood] * 2 < Rnd.Get(iPopulation) && cResources[LandResource.Ore] * 2 < Rnd.Get(iPopulation))// && Rnd.OneChanceFrom(2))
                 m_iTechLevel -= 2;
-            else if (fWood + fOre < Rnd.Get(iPopulation))// && Rnd.OneChanceFrom(2))
+            else if (cResources[LandResource.Wood] + cResources[LandResource.Ore] < Rnd.Get(iPopulation))// && Rnd.OneChanceFrom(2))
                 m_iTechLevel--;
-            else if ((fWood > Rnd.Get(iPopulation) * 2 && fOre > Rnd.Get(iPopulation) * 2))// || Rnd.OneChanceFrom(4))
+            else if ((cResources[LandResource.Wood] > Rnd.Get(iPopulation) * 2 && cResources[LandResource.Ore] > Rnd.Get(iPopulation) * 2))// || Rnd.OneChanceFrom(4))
                 m_iTechLevel++;
 
             if (m_pTitularNation.IsInvader)
@@ -102,6 +104,7 @@ namespace Socium.Population
             if (m_iTechLevel == 0 && m_pTitularNation.m_pProtoSociety.m_iMagicLimit == 0)
                 m_iInfrastructureLevel = 0;
 
+            //TODO: нужно учитывать размеры и телосложение - гиганты и толстяки едят больше, чем карлики и худышки
             if (fFood * 2 < iPopulation)
                 m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);            
             if (fFood < iPopulation || Rnd.OneChanceFrom(10))
@@ -134,37 +137,6 @@ namespace Socium.Population
                     m_iTechLevel = m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel;
             }
         }
-
-        internal float GetAvailableFood(float fWood, float fOre, float fGrain, float fGame, float fFish, int iPopulation)
-        { 
-            switch (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType)
-            {
-                case NutritionType.Eternal:
-                    return iPopulation* 10;
-                case NutritionType.Mineral:
-                    return fOre;
-                case NutritionType.Organic:
-                    return fGrain + fGame + fFish;
-                case NutritionType.ParasitismBlood:
-                    return iPopulation;
-                case NutritionType.ParasitismEmote:
-                    return iPopulation;
-                case NutritionType.ParasitismEnergy:
-                    return iPopulation;
-                case NutritionType.ParasitismMeat:
-                    return iPopulation;
-                case NutritionType.Photosynthesis:
-                    return iPopulation* 10;
-                case NutritionType.Thermosynthesis:
-                    return iPopulation* 10;
-                case NutritionType.Vegetarian:
-                    return fGrain;
-                case NutritionType.Carnivorous:
-                    return fGame + fFish;
-                default:
-                    throw new Exception(string.Format("Unknown Nutrition type: {0}", m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType));
-            }
-}
 
         public void UpdateTitularNation(Nation pNewTitularNation)
         {

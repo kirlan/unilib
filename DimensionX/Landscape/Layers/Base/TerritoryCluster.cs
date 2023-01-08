@@ -7,15 +7,22 @@ using Random;
 
 namespace LandscapeGeneration
 {
-    public class TerritoryCluster<LAYER, INNER> : Territory
-        where LAYER: TerritoryCluster<LAYER, INNER>
-        where INNER: Territory
+    /// <summary>
+    /// Группа сопредельных <typeparamref name="INNER"/>, известная как <typeparamref name="LAYER"/> и являющаяся частью <typeparamref name="OWNER"/>
+    /// </summary>
+    /// <typeparam name="LAYER">Имя класса, содержащего всю логику</typeparam>
+    /// <typeparam name="OWNER">Владеющая территория</typeparam>
+    /// <typeparam name="INNER">Составляющие территории</typeparam>
+    public abstract class TerritoryCluster<LAYER, OWNER, INNER> : TerritoryOf<OWNER>
+        where LAYER: TerritoryCluster<LAYER, OWNER, INNER>, new()
+        where OWNER: class, IInfoLayer
+        where INNER: TerritoryOf<LAYER>
     {
         #region BorderBuilder
         /// <summary>
-        /// границы с другими объектами НИЗШЕГО УРОВНЯ, т.е. составными частями данного объекта
+        /// границы с другими <typeparamref name="INNER"/>, т.е. составными частями соседних <typeparamref name="LAYER"/>
         /// </summary>
-        public Dictionary<Territory, List<VoronoiEdge>> m_cBorder = new Dictionary<Territory, List<VoronoiEdge>>();
+        public Dictionary<INNER, List<VoronoiEdge>> m_cBorder = new Dictionary<INNER, List<VoronoiEdge>>();
 
         public void InitBorder(INNER pSeed)
         {
@@ -23,16 +30,17 @@ namespace LandscapeGeneration
 
             foreach (var pInner in pSeed.BorderWith)
             {
-                m_cBorder[pInner.Key] = new List<VoronoiEdge>();
+                m_cBorder[(INNER)pInner.Key] = new List<VoronoiEdge>();
                 VoronoiEdge[] aLines = pInner.Value.ToArray();
                 foreach (VoronoiEdge pLine in aLines)
-                    m_cBorder[pInner.Key].Add(new VoronoiEdge(pLine));
+                    m_cBorder[(INNER)pInner.Key].Add(new VoronoiEdge(pLine));
             }
 
             //ChainBorder();
         }
         public List<VoronoiEdge> m_cFirstLines = new List<VoronoiEdge>();
 
+        /*
         public bool TestChain()
         {
             List<VoronoiEdge> cTotalBorder = new List<VoronoiEdge>();
@@ -71,6 +79,7 @@ namespace LandscapeGeneration
 
             return true;
         }
+        */
 
         public readonly List<List<VoronoiVertex>> m_cOrdered = new List<List<VoronoiVertex>>();
 
@@ -178,31 +187,24 @@ namespace LandscapeGeneration
         }
         #endregion
 
-        private static TerritoryCluster<LAYER, INNER> m_pForbidden = new TerritoryCluster<LAYER, INNER>(true);
+        protected static LAYER m_pForbidden = (LAYER)(new LAYER().SetForbidden());
 
         /// <summary>
-        /// Локации, составляющие территорию
+        /// Список <typeparamref name="INNER"/>, составляющих <typeparamref name="LAYER"/>
         /// </summary>
         public HashSet<INNER> Contents { get; } = new HashSet<INNER>();
-
-        public TerritoryCluster(bool bForbidden): base(bForbidden)
-        {
-        }
-
-        public TerritoryCluster()
-        {}
 
         //public Location Owner { get; set; } = null;
 
 
         /// <summary>
-        /// Соседние ТАКИЕ ЖЕ объекты
+        /// Соседние объекты <typeparamref name="LAYER"/>
         /// </summary>
-        public Territory[] m_aBorderWith = null;
+        public LAYER[] m_aBorderWith = null;
 
         protected void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<Territory>(BorderWith.Keys).ToArray();
+            m_aBorderWith = BorderWith.Select(x => (LAYER)x.Key).ToArray();
 
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
@@ -210,6 +212,11 @@ namespace LandscapeGeneration
                     PerimeterLength += pLine.Length;
         }
 
+        /// <summary>
+        /// Стартует новый <typeparamref name="LAYER"/>, добавляя в него указанную <typeparamref name="INNER"/>.<br/>
+        /// Заполняет <c>m_cBorder</c>.<br/><c>BorderWith</c> будет заполнен ТОЛЬКО после вызова <c>Finish(float)</c>
+        /// </summary>
+        /// <param name="pSeed"></param>
         public virtual void Start(INNER pSeed)
         {
             Contents.Clear();
@@ -221,8 +228,8 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Присоединяет к земле сопредельную нечейную локацию.
-        /// Чем длиннее общая граница с локацией - тем выше вероятность того, что выбрана будет именно она.
+        /// Присоединяет к <typeparamref name="LAYER"/> сопредельную ничейную <typeparamref name="INNER"/>.
+        /// Чем длиннее общая граница с <typeparamref name="INNER"/> - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
         public Territory Grow()
@@ -231,8 +238,8 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Присоединяет к земле сопредельную нечейную локацию.
-        /// Чем длиннее общая граница с локацией - тем выше вероятность того, что выбрана будет именно она.
+        /// Присоединяет к <typeparamref name="LAYER"/> сопредельную нечейную <typeparamref name="INNER"/>.
+        /// Чем длиннее общая граница с <typeparamref name="INNER"/> - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
         public virtual Territory Grow(int iMaxSize)
@@ -245,8 +252,8 @@ namespace LandscapeGeneration
 
             foreach (var pInner in m_cBorder)
             {
-                Territory pInnerTerritory = pInner.Key as Territory;
-                if (!pInnerTerritory.HasOwner<LAYER>() && !pInnerTerritory.Forbidden)
+                INNER pInnerTerritory = pInner.Key as INNER;
+                if (!pInnerTerritory.HasOwner() && !pInnerTerritory.Forbidden)
                 {
                     float fWholeLength = 1;
                     VoronoiEdge[] aBorderLine = pInner.Value.ToArray();
@@ -269,7 +276,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            Territory pAddon = null;
+            INNER pAddon = null;
 
             int iChoice = Rnd.ChooseOne(cBorderLength.Values, 4);
             foreach (var pInner in cBorderLength)
@@ -277,7 +284,7 @@ namespace LandscapeGeneration
                 iChoice--;
                 if (iChoice < 0)
                 {
-                    pAddon = pInner.Key;
+                    pAddon = (INNER)pInner.Key;
                     break;
                 }
             }
@@ -285,8 +292,8 @@ namespace LandscapeGeneration
             if (pAddon == null)
                 return null;
 
-            Contents.Add(pAddon as INNER);
-            pAddon.SetOwner((LAYER) this);
+            Contents.Add(pAddon);
+            pAddon.SetOwner((LAYER)this);
 
             m_cBorder[pAddon].Clear();
             m_cBorder.Remove(pAddon);
@@ -296,11 +303,11 @@ namespace LandscapeGeneration
                 if (Contents.Contains(pInner.Key as INNER))
                     continue;
 
-                if (!m_cBorder.ContainsKey(pInner.Key))
-                    m_cBorder[pInner.Key] = new List<VoronoiEdge>();
+                if (!m_cBorder.ContainsKey((INNER)pInner.Key))
+                    m_cBorder[(INNER)pInner.Key] = new List<VoronoiEdge>();
                 VoronoiEdge[] aBorderLine = pInner.Value.ToArray();
                 foreach (var pLine in aBorderLine)
-                    m_cBorder[pInner.Key].Add(new VoronoiEdge(pLine)); 
+                    m_cBorder[(INNER)pInner.Key].Add(new VoronoiEdge(pLine)); 
             }
 
             //ChainBorder();
@@ -309,18 +316,18 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Заполняет словарь границ с другими землями.
+        /// Заполняет словари границ с другими <typeparamref name="INNER"/> (т.е. <c>BorderWith</c> и <c>m_aBorderWith</c>).
         /// </summary>
         /// <param name="fCycleShift">Величина смещения X-координаты для закольцованной карты</param>
         public virtual void Finish(float fCycleShift)
         {
             ChainBorder(fCycleShift);
 
-            foreach (Territory pInner in m_cBorder.Keys)
+            foreach (INNER pInner in m_cBorder.Keys)
             {
-                TerritoryCluster<LAYER, INNER> pBorderCluster = TerritoryCluster<LAYER, INNER>.m_pForbidden;
-                if (pInner.HasOwner<LAYER>())
-                    pBorderCluster = pInner.GetOwner<LAYER>();
+                LAYER pBorderCluster = m_pForbidden;
+                if (pInner.HasOwner())
+                    pBorderCluster = pInner.GetOwner();
 
                 if (!BorderWith.ContainsKey(pBorderCluster))
                     BorderWith[pBorderCluster] = new List<VoronoiEdge>();

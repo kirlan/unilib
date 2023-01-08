@@ -9,9 +9,9 @@ namespace LandscapeGeneration.PathFind
     {
         public int m_iPassword = 0;
 
-        public bool m_bHarbor = false;
+        public virtual Dictionary<TransportationNode, TransportationLinkBase> Links { get; } = new Dictionary<TransportationNode, TransportationLinkBase>();
 
-        public Dictionary<TransportationNode, TransportationLinkBase> m_cLinks = new Dictionary<TransportationNode, TransportationLinkBase>();
+        public bool IsHarbor { get; set; } = false;
 
         // не использовать! обращение к словарю занимает больше времени, чем повторное вычисление квадратного корня!
         //public Dictionary<TransportationNode, float> m_cLinksDist = new Dictionary<TransportationNode, float>();

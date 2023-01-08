@@ -20,7 +20,7 @@ namespace LandscapeGeneration
     /// Локация - минимальная единица деления карты. Представляет собой выпуклый многоугольник, ячейку диаграммы Вороного.
     /// Локации объедняются в земли (Land)
     /// </summary>
-    public class Location : Territory
+    public class Location : TerritoryOf<Land>
     {
         public Territory[] m_aBorderWith = null;
 
@@ -44,8 +44,7 @@ namespace LandscapeGeneration
 
         public override float GetMovementCost()
         {
-            //TODO: не гуд, что локация спрашивает что-то у земли, нужно вынести этот метод из локации
-            if (GetOwner<Land>() == null || Forbidden || m_bBorder)
+            if (!HasOwner() || Forbidden || m_bBorder)
                 return 100;
 
             foreach (var pEdge in BorderWith)
@@ -54,7 +53,7 @@ namespace LandscapeGeneration
                     return 100;
             }
 
-            Land pLand = GetOwner<Land>();
+            Land pLand = GetOwner();
             return pLand.MovementCost * (m_eType == LandmarkType.Empty ? 1 : 10);
         }
 
@@ -311,7 +310,7 @@ namespace LandscapeGeneration
             binWriter.Write(m_bUnclosed ? 1 : 0);
 
             //TODO: зачем здесь эта проверка???
-            if (!HasOwner<Land>())
+            if (!HasOwner())
                 throw new Exception("Oops...");
 
             binWriter.Write(BorderWith.Count);
@@ -341,7 +340,7 @@ namespace LandscapeGeneration
         /// <param name="binReader"></param>
         public void Load(BinaryReader binReader, Dictionary<long, VoronoiVertex> cVertexes)
         {
-            m_cLinks.Clear();
+            Links.Clear();
             BorderWith.Clear();
             m_eType = LandmarkType.Empty;
             ClearOwner();

@@ -17,7 +17,7 @@ namespace Socium
     /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя, 
     /// а так же методы для строительства логова, поселения или форта
     /// </summary>
-    public class LandX: TerritoryExtended<Land>
+    public class LandX: TerritoryExtended<Region, Land>
     {
         private string m_sName = "";
 
@@ -30,9 +30,9 @@ namespace Socium
         {
             get
             {
-                LandMass pLandMass = Origin.GetOwner<LandMass>();
+                LandMass pLandMass = Origin.GetOwner();
                 if (pLandMass != null)
-                    return pLandMass.GetOwner<Continent>().As<ContinentX>();
+                    return pLandMass.GetOwner().As<ContinentX>();
 
                 return null;
             }
@@ -54,7 +54,7 @@ namespace Socium
                 bool bMapBorder = false;
                 foreach (Location pLink in pLoc.m_aBorderWith)
                 {
-                    if (pLink.GetOwner<Land>() != pLoc.GetOwner<Land>())
+                    if (pLink.GetOwner() != pLoc.GetOwner())
                         bBorder = true;
 
                     if (pLink.m_bBorder)
@@ -88,16 +88,9 @@ namespace Socium
 
             BuildingType eSize = BuildingType.Lair;
 
-            int iSize = Rnd.ChooseOne(Origin.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Values, 1);
-            foreach (BuildingType eType in Origin.LandType.GetLayer<LandTypeInfoStandAlone>().m_cStandAloneBuildingsProbability.Keys)
-            {
-                iSize--;
-                if (iSize < 0)
-                {
-                    eSize = eType;
-                    break;
-                }
-            }
+            int iSize = Rnd.ChooseOne(Origin.LandType.Get<StandAloneBuildingsInfo>().Probability.Values, 1);
+            if (iSize >= 0)
+                eSize = Origin.LandType.Get<StandAloneBuildingsInfo>().Probability.ElementAt(iSize).Key;
 
             if (eSize == BuildingType.None)
                 return null;
@@ -126,7 +119,7 @@ namespace Socium
         /// <param name="bCapital">если true - будем пытаться строить даже если все места заняты. исключение - только если пригодных для заселения локаций нет вообще в принципе</param>
         /// <param name="bFast">флаг режима ускоренной генерации - в "быстром" режиме не составляем имя для поселения</param>
         /// <returns></returns>
-        public Location BuildSettlement(SettlementInfo pInfo, bool bCapital, bool bFast)
+        public LocationX BuildSettlement(SettlementInfo pInfo, bool bCapital, bool bFast)
         {
             //Теперь в этой земле выберем локацию, желательно не на границе с другой землёй.
             //Исключение для побережья - ему наоборот, предпочтение.
@@ -142,10 +135,10 @@ namespace Socium
                 //определим, является ли эта локация пограничной с другой землёй или побережьем.
                 foreach (Location pLink in pLoc.m_aBorderWith)
                 {
-                    if (pLink.GetOwner<Land>() != pLoc.GetOwner<Land>())
+                    if (pLink.GetOwner() != pLoc.GetOwner())
                     {
                         bBorder = true;
-                        if (pLink.HasOwner<Land>() && pLink.GetOwner<Land>().IsWater)
+                        if (pLink.HasOwner() && pLink.GetOwner().IsWater)
                             bCoast = true;
                     }
 
@@ -203,10 +196,10 @@ namespace Socium
                         //определим, является ли эта локация пограничной с другой землёй или побережьем.
                         foreach (Location pLink in pLoc.m_aBorderWith)
                         {
-                            if (pLink.GetOwner<Land>() != pLoc.GetOwner<Land>())
+                            if (pLink.GetOwner() != pLoc.GetOwner())
                             {
                                 bBorder = true;
-                                if (pLink.HasOwner<Land>() && pLink.GetOwner<Land>().IsWater)
+                                if (pLink.HasOwner() && pLink.GetOwner().IsWater)
                                     bCoast = true;
                             }
                         }
@@ -250,7 +243,7 @@ namespace Socium
 
             //Построим город в выбранной локации.
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
-            pTownX.m_pSettlement = new Settlement(pInfo, m_pDominantNation, GetOwner<Region>().GetOwner<Province>().m_pLocalSociety.m_iTechLevel, GetOwner<Region>().GetOwner<Province>().m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
+            pTownX.m_pSettlement = new Settlement(pInfo, m_pDominantNation, GetOwner().GetOwner().m_pLocalSociety.m_iTechLevel, GetOwner().GetOwner().m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
@@ -265,7 +258,7 @@ namespace Socium
             foreach(Road pRoad in aRoads)
                 World.RenewRoad(pRoad);
 
-            return pTown;
+            return pTownX;
         }
 
         public string GetMajorRaceString()
@@ -278,12 +271,12 @@ namespace Socium
 
         public string GetLesserRaceString()
         {
-            if (HasOwner<Region>())
+            if (HasOwner())
             {
-                if (GetOwner<Region>().m_pNatives == null)
+                if (GetOwner().m_pNatives == null)
                     return "unpopulated";
                 else
-                    return GetOwner<Region>().m_pNatives.ToString();
+                    return GetOwner().m_pNatives.ToString();
             }
             return "unpopulated";
         }
@@ -324,7 +317,7 @@ namespace Socium
             foreach (var pLink in Origin.m_cBorder)
             {
                 Land pOtherLand = pLink.Key as Land;
-                if (!pOtherLand.HasOwner<LandMass>() && pOtherLand.LandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                if (!pOtherLand.HasOwner() && pOtherLand.LandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
                     fCost += (double)pNation.GetClaimingCost(pOtherLand.LandType) / Origin.m_cBorder.Count;
             }
 
@@ -333,9 +326,9 @@ namespace Socium
             return (int)(fCost / 2);
         }
 
-        internal float GetResource(LandTypeInfoResources.Resource resource)
+        internal float GetResource(LandResource resource)
         {
-            return Origin.LandType.GetLayer<LandTypeInfoResources>().m_cResources[resource] * Origin.Contents.Count;
+            return Origin.LandType.Get<ResourcesInfo>().GetAmount(resource) * Origin.Contents.Count;
         }
     }
 }

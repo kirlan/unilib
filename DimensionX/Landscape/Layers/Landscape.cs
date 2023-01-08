@@ -131,18 +131,18 @@ namespace LandscapeGeneration
         {
             foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
-                if (pLoc.Forbidden || !pLoc.HasOwner<Land>())
+                if (pLoc.Forbidden || !pLoc.HasOwner())
                     continue;
 
-                if (pLoc.GetOwner<Land>().LandType == LandTypes.Mountains)
+                if (pLoc.GetOwner().LandType == LandTypes.Mountains)
                 {
                     bool bPeak = true;
                     foreach (Location pLink in pLoc.m_aBorderWith)
                     {
-                        if (pLink.Forbidden || !pLink.HasOwner<Land>())
+                        if (pLink.Forbidden || !pLink.HasOwner())
                             continue;
 
-                        if (pLink.GetOwner<Land>().LandType != LandTypes.Mountains ||
+                        if (pLink.GetOwner().LandType != LandTypes.Mountains ||
                             pLink.H >= pLoc.H)
                         {
                             bPeak = false;
@@ -159,13 +159,22 @@ namespace LandscapeGeneration
             }
         }
 
-        /// <summary>
-        /// Биом - группа ВСЕХ сопредельных земель одного типа.
-        /// Используется ТОЛЬКО при сглаживании границ локаций - внутри SmoothBiomes() 
-        /// </summary>
-        private class Biome : TerritoryCluster<Biome, Land>
+        private class LandBiome : TerritoryExtended<Biome, Land>
         {
-            public Biome(Land pSeed, float fCycleShift)
+            public LandBiome(Land pLand) : base(pLand)
+            { }
+        }
+
+        /// <summary>
+        /// Биом - группа ВСЕХ сопредельных земель (<see cref="Land">/<see cref="LandBiome">) одного типа <see cref="LandTypeInfo">.
+        /// Используется ТОЛЬКО при сглаживании границ локаций - внутри <see cref="SmoothBiomes"/>() 
+        /// </summary>
+        private class Biome : TerritoryCluster<Biome, Landscape, LandBiome>
+        {
+            public Biome()
+            { }
+
+            public Biome(LandBiome pSeed, float fCycleShift)
             {
                 InitBorder(pSeed);
 
@@ -182,9 +191,9 @@ namespace LandscapeGeneration
                         if (pTerr.Forbidden)
                             continue;
 
-                        Land pLand = pTerr as Land;
+                        LandBiome pLand = pTerr as LandBiome;
 
-                        if (pLand.LandType == pSeed.LandType && !Contents.Contains(pLand))
+                        if (pLand.As<Land>().LandType == pSeed.As<Land>().LandType && !Contents.Contains(pLand))
                         {
                             Contents.Add(pLand);
 
@@ -217,20 +226,25 @@ namespace LandscapeGeneration
 
         private void SmoothBiomes()
         {
+            foreach (Land pLand in m_aLands)
+            {
+                pLand.AddLayer(new LandBiome(pLand));
+            }
+
             foreach (Continent pCont in m_aContinents)
             {
                 Dictionary<LandTypeInfo, List<Biome>> cBiomes = new Dictionary<LandTypeInfo, List<Biome>>();
                 foreach (var pLandType in LandTypes.m_pInstance.m_pLandTypes)
                     cBiomes[pLandType.Value] = new List<Biome>();
 
-                HashSet<Land> cProcessedLands = new HashSet<Land>();
+                HashSet<LandBiome> cProcessedLands = new HashSet<LandBiome>();
                 foreach (var pLandMass in pCont.Contents)
                 {
                     foreach (var pLand in pLandMass.Contents)
                     {
-                        if (!pLand.Forbidden && !cProcessedLands.Contains(pLand))
+                        if (!pLand.Forbidden && !cProcessedLands.Contains(pLand.As<LandBiome>()))
                         {
-                            Biome pNewBiome = new Biome(pLand, m_pLocationsGrid.CycleShift);
+                            Biome pNewBiome = new Biome(pLand.As<LandBiome>(), m_pLocationsGrid.CycleShift);
                             cBiomes[pLand.LandType].Add(pNewBiome);
 
                             cProcessedLands.UnionWith(pNewBiome.Contents);
@@ -270,7 +284,7 @@ namespace LandscapeGeneration
 
             foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
-                if (pLoc.Forbidden || !pLoc.HasOwner<Land>())
+                if (pLoc.Forbidden || !pLoc.HasOwner())
                     continue;
 
                 pLoc.CorrectCenter();
@@ -323,7 +337,7 @@ namespace LandscapeGeneration
                     iIndex = Rnd.Get(m_pLocationsGrid.Locations.Length);
                 }
                 while (m_pLocationsGrid.Locations[iIndex].Forbidden || 
-                       m_pLocationsGrid.Locations[iIndex].HasOwner<Land>());
+                       m_pLocationsGrid.Locations[iIndex].HasOwner());
                 
                 Land pLand = new Land();
                 pLand.Start(m_pLocationsGrid.Locations[iIndex]);
@@ -349,7 +363,7 @@ namespace LandscapeGeneration
 //            BeginStep("Fixing void lands...", m_pGrid.m_aLocations.Length);
             foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
-                if (!pLoc.Forbidden && !pLoc.HasOwner<Land>())
+                if (!pLoc.Forbidden && !pLoc.HasOwner())
                 {
                     Land pLand = new Land();
                     pLand.Start(pLoc);
@@ -385,7 +399,7 @@ namespace LandscapeGeneration
                 {
                     iIndex = Rnd.Get(m_aLands.Length);
                 }
-                while (m_aLands[iIndex].HasOwner<LandMass>());
+                while (m_aLands[iIndex].HasOwner());
 
                 LandMass pLandMass = new LandMass();
                 pLandMass.Start(m_aLands[iIndex]);
@@ -412,7 +426,7 @@ namespace LandscapeGeneration
 //            BeginStep("Fixing void landmasses...", m_aLands.Length); 
             foreach (Land pLand in m_aLands)
             {
-                if (!pLand.Forbidden && !pLand.HasOwner<LandMass>())
+                if (!pLand.Forbidden && !pLand.HasOwner())
                 {
                     LandMass pLandMass = new LandMass();
                     pLandMass.Start(pLand);
@@ -578,7 +592,7 @@ namespace LandscapeGeneration
             }
 
             foreach (LandMass pLandMass in m_aLandMasses)
-                if (!pLandMass.HasOwner<Continent>())
+                if (!pLandMass.HasOwner())
                     pLandMass.IsWater = true;
         }
 
@@ -594,7 +608,7 @@ namespace LandscapeGeneration
             {
                 if (pLand.LandType == LandTypes.Ocean || pLand.LandType == LandTypes.Coastral)
                 {
-                    LandMass pLM1 = pLand.GetOwner<LandMass>();
+                    LandMass pLM1 = pLand.GetOwner();
 
                     float fMinCollision = float.MaxValue;
                     Land pBestLand = null;
@@ -608,7 +622,7 @@ namespace LandscapeGeneration
                         if (pLink.LandType != null)
                             continue;
 
-                        LandMass pLM2 = pLink.GetOwner<LandMass>();
+                        LandMass pLM2 = pLink.GetOwner();
 
                         if (pLM1 != null && pLM2 != null && pLM1 != pLM2)
                         {
@@ -672,7 +686,7 @@ namespace LandscapeGeneration
             {
                 if (pLand.LandType == null)
                 {
-                    LandMass pLM1 = pLand.GetOwner<LandMass>();
+                    LandMass pLM1 = pLand.GetOwner();
 
                     float fMaxCollision = float.MinValue;
                     Land pBestLand = null;
@@ -683,7 +697,7 @@ namespace LandscapeGeneration
 
                         Land pLink = pTerr as Land;
 
-                        LandMass pLM2 = pLink.GetOwner<LandMass>();
+                        LandMass pLM2 = pLink.GetOwner();
 
                         if (pLM1 != null && pLM2 != null && pLM1 != pLM2)
                         {
@@ -855,7 +869,7 @@ namespace LandscapeGeneration
             //Make seas
             foreach (Land pLand in m_aLands)
             {
-                if (!pLand.HasOwner<LandMass>() || pLand.GetOwner<LandMass>().IsWater)
+                if (!pLand.HasOwner() || pLand.GetOwner().IsWater)
                     pLand.LandType = LandTypes.Ocean;
                 else
                     pLand.LandType = null;
@@ -956,17 +970,17 @@ namespace LandscapeGeneration
 
                         foreach (Location pLink in pLoc.m_aBorderWith)
                         {
-                            if (pLink.Forbidden || !pLink.HasOwner<Land>() || pLink.GetOwner<Land>() == pLand)
+                            if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
                                 continue;
 
-                            if (pLink.GetOwner<Land>().LandType == LandTypes.Ocean)
+                            if (pLink.GetOwner().LandType == LandTypes.Ocean)
                             {
                                 if (!cOcean.Contains(pLink))
                                     cOcean.Add(pLink);
                             }
                             else
                             {
-                                if (pLink.GetOwner<Land>().LandType != LandTypes.Coastral && !cLand.Contains(pLink))
+                                if (pLink.GetOwner().LandType != LandTypes.Coastral && !cLand.Contains(pLink))
                                     cLand.Add(pLink);
                             }
                         }
@@ -981,11 +995,11 @@ namespace LandscapeGeneration
                     {
                         foreach (Location pLink in pLoc.m_aBorderWith)
                         {
-                            if (pLink.Forbidden || !pLink.HasOwner<Land>() || pLink.GetOwner<Land>() == pLand)
+                            if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
                                 continue;
 
-                            if (pLink.GetOwner<Land>().LandType != LandTypes.Ocean &&
-                                pLink.GetOwner<Land>().LandType != LandTypes.Coastral)
+                            if (pLink.GetOwner().LandType != LandTypes.Ocean &&
+                                pLink.GetOwner().LandType != LandTypes.Coastral)
                             {
                                 if (!cOcean.Contains(pLoc))
                                     cOcean.Add(pLoc);
@@ -1011,13 +1025,13 @@ namespace LandscapeGeneration
 
                     foreach (Location pLink in pLoc.m_aBorderWith)
                     {
-                        if (pLink.Forbidden || !pLink.HasOwner<Land>() || !float.IsNaN(pLink.H))
+                        if (pLink.Forbidden || !pLink.HasOwner() || !float.IsNaN(pLink.H))
                             continue;
 
                         //if (cWaveFront.Contains(pLink))
                         //    continue;
 
-                        if (pLink.GetOwner<Land>().LandType == LandTypes.Ocean)
+                        if (pLink.GetOwner().LandType == LandTypes.Ocean)
                         {
                             cWaveFront.Add(pLink);
                             pLink.H = -1;
@@ -1043,7 +1057,7 @@ namespace LandscapeGeneration
                     float fNewHeight;
                     do
                     {
-                        float fLinkElevation = GetElevationRnd(pLoc.GetOwner<Land>().LandType);
+                        float fLinkElevation = GetElevationRnd(pLoc.GetOwner().LandType);
                         fNewHeight = m_fMaxHeight + fLinkElevation;
                     }
                     while (cUnfinished.ContainsKey(fNewHeight));
@@ -1062,7 +1076,7 @@ namespace LandscapeGeneration
 
                     foreach (Location pLink in pLoc.m_aBorderWith)
                     {
-                        if (pLink.Forbidden || !pLink.HasOwner<Land>() || !float.IsNaN(pLink.H))
+                        if (pLink.Forbidden || !pLink.HasOwner() || !float.IsNaN(pLink.H))
                             continue;
 
                         cLand.Add(pLink);
@@ -1095,7 +1109,7 @@ namespace LandscapeGeneration
 
             foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
-                if (pLoc.Forbidden || !pLoc.HasOwner<Land>())
+                if (pLoc.Forbidden || !pLoc.HasOwner())
                     continue;
 
                 if (pLoc.H < 0)
@@ -1205,20 +1219,20 @@ namespace LandscapeGeneration
         {
             foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
-                if (pLoc.Forbidden || !pLoc.HasOwner<Land>())
+                if (pLoc.Forbidden || !pLoc.HasOwner())
                     continue;
 
-                float fLokElevation = pLoc.GetOwner<Land>().LandType.m_fElevation;
+                float fLokElevation = pLoc.GetOwner().LandType.m_fElevation;
                 if (fLokElevation <= fMaxElevation)
                 {
                     float fTotal = pLoc.H;
                     float fTotalWeight = 1;
                     foreach (Location pLink in pLoc.m_aBorderWith)
                     {
-                        if (pLink.Forbidden || !pLink.HasOwner<Land>())
+                        if (pLink.Forbidden || !pLink.HasOwner())
                             continue;
 
-                        float fLinkElevation = pLink.GetOwner<Land>().LandType.m_fElevation;
+                        float fLinkElevation = pLink.GetOwner().LandType.m_fElevation;
                         float fWeight = 1;
                         if (fLinkElevation > fMaxElevation)
                             fWeight = 0.5f;
@@ -1312,9 +1326,9 @@ namespace LandscapeGeneration
         /// <param name="pNode2">вторая локация</param>
         protected TransportationLinkBase SetLink(TransportationNode pNode1, TransportationNode pNode2)
         {
-            if (!pNode1.m_cLinks.ContainsKey(pNode2))
+            if (!pNode1.Links.ContainsKey(pNode2))
             {
-                if (!pNode2.m_cLinks.ContainsKey(pNode1))
+                if (!pNode2.Links.ContainsKey(pNode1))
                 {
                     TransportationLinkBase pLink = null;
                     if (pNode1 is Location && pNode2 is Location)
@@ -1327,8 +1341,8 @@ namespace LandscapeGeneration
                     if (pLink == null)
                         throw new Exception("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
 
-                    pNode1.m_cLinks[pNode2] = pLink;
-                    pNode2.m_cLinks[pNode1] = pLink;
+                    pNode1.Links[pNode2] = pLink;
+                    pNode2.Links[pNode1] = pLink;
                     if (pNode1 is Location && pNode2 is Location)
                         m_cTransportGrid.Add(pLink);
                     if (pNode1 is Land && pNode2 is Land)
@@ -1340,28 +1354,28 @@ namespace LandscapeGeneration
                 }
                 else
                 {
-                    pNode1.m_cLinks[pNode2] = pNode2.m_cLinks[pNode1];
-                    return pNode1.m_cLinks[pNode2];
+                    pNode1.Links[pNode2] = pNode2.Links[pNode1];
+                    return pNode1.Links[pNode2];
                 }
             }
             else
-                if (!pNode2.m_cLinks.ContainsKey(pNode1))
+                if (!pNode2.Links.ContainsKey(pNode1))
                 {
-                    pNode2.m_cLinks[pNode1] = pNode1.m_cLinks[pNode2];
-                    return pNode2.m_cLinks[pNode1];
+                    pNode2.Links[pNode1] = pNode1.Links[pNode2];
+                    return pNode2.Links[pNode1];
                 }
 
-            return pNode2.m_cLinks[pNode1];
+            return pNode2.Links[pNode1];
         }
 
         protected TransportationLinkBase SetLink(TransportationNode pNode1, TransportationNode pNode2, TransportationLinkBase pLink)
         {
-            if (!pNode1.m_cLinks.ContainsKey(pNode2))
+            if (!pNode1.Links.ContainsKey(pNode2))
             {
-                if (!pNode2.m_cLinks.ContainsKey(pNode1))
+                if (!pNode2.Links.ContainsKey(pNode1))
                 {
-                    pNode1.m_cLinks[pNode2] = pLink;
-                    pNode2.m_cLinks[pNode1] = pLink;
+                    pNode1.Links[pNode2] = pLink;
+                    pNode2.Links[pNode1] = pLink;
                     if (pNode1 is Location && pNode2 is Location)
                         m_cTransportGrid.Add(pLink);
                     if (pNode1 is Land && pNode2 is Land)
@@ -1373,18 +1387,18 @@ namespace LandscapeGeneration
                 }
                 else
                 {
-                    pNode1.m_cLinks[pNode2] = pNode2.m_cLinks[pNode1];
-                    return pNode1.m_cLinks[pNode2];
+                    pNode1.Links[pNode2] = pNode2.Links[pNode1];
+                    return pNode1.Links[pNode2];
                 }
             }
             else
-                if (!pNode2.m_cLinks.ContainsKey(pNode1))
+                if (!pNode2.Links.ContainsKey(pNode1))
                 {
-                    pNode2.m_cLinks[pNode1] = pNode1.m_cLinks[pNode2];
-                    return pNode2.m_cLinks[pNode1];
+                    pNode2.Links[pNode1] = pNode1.Links[pNode2];
+                    return pNode2.Links[pNode1];
                 }
 
-            return pNode2.m_cLinks[pNode1];
+            return pNode2.Links[pNode1];
         }
 
         private void BuildTransportGrid(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
@@ -1393,18 +1407,18 @@ namespace LandscapeGeneration
 
             foreach (Location pLoc in m_pLocationsGrid.Locations)
             {
-                if (pLoc.Forbidden || !pLoc.HasOwner<Land>())// || pLoc.m_bBorder)
+                if (pLoc.Forbidden || !pLoc.HasOwner())// || pLoc.m_bBorder)
                     continue;
 
 
                 foreach (Location pLink in pLoc.m_aBorderWith)
                 {
-                    if (pLink.Forbidden || !pLink.HasOwner<Land>())// || pLink.m_bBorder)
+                    if (pLink.Forbidden || !pLink.HasOwner())// || pLink.m_bBorder)
                         continue;
 
                     TransportationLinkBase pTransLink = SetLink(pLoc, pLink);
-                    pTransLink.Sea = pLink.GetOwner<Land>().IsWater && pLoc.GetOwner<Land>().IsWater;
-                    pTransLink.Embark = pLink.GetOwner<Land>().IsWater != pLoc.GetOwner<Land>().IsWater;
+                    pTransLink.Sea = pLink.GetOwner().IsWater && pLoc.GetOwner().IsWater;
+                    pTransLink.Embark = pLink.GetOwner().IsWater != pLoc.GetOwner().IsWater;
                 }
 
                 ProgressStep();
@@ -1412,18 +1426,18 @@ namespace LandscapeGeneration
 
             foreach (Land pLand in m_aLands)
             {
-                if (pLand.Forbidden || !pLand.HasOwner<LandMass>())// || pLoc.m_bBorder)
+                if (pLand.Forbidden || !pLand.HasOwner())// || pLoc.m_bBorder)
                     continue;
 
-                foreach (Territory pTerr in pLand.m_aBorderWith)
+                foreach (Land pTerr in pLand.m_aBorderWith)
                 {
-                    if (pTerr.Forbidden || !pTerr.HasOwner<LandMass>())// || pLink.m_bBorder)
+                    if (pTerr.Forbidden || !pTerr.HasOwner())// || pLink.m_bBorder)
                         continue;
 
                     Land pLinked = pTerr as Land;
                     TransportationLinkBase pLink = SetLink(pLand, pLinked);
-                    pLink.Sea = pLinked.GetOwner<LandMass>().IsWater && pLand.GetOwner<LandMass>().IsWater;
-                    pLink.Embark = pLinked.GetOwner<LandMass>().IsWater != pLand.GetOwner<LandMass>().IsWater;
+                    pLink.Sea = pLinked.GetOwner().IsWater && pLand.GetOwner().IsWater;
+                    pLink.Embark = pLinked.GetOwner().IsWater != pLand.GetOwner().IsWater;
                 }
 
                 ProgressStep();
@@ -1440,15 +1454,15 @@ namespace LandscapeGeneration
 
                     LandMass pLinked = pTerr as LandMass;
                     TransportationLinkBase pLink = SetLink(pLandMass, pLinked);
-                    pLink.Sea = !pLinked.HasOwner<Continent>() && !pLandMass.HasOwner<Continent>();
-                    pLink.Embark = (pLinked.HasOwner<Continent>()) != (pLandMass.HasOwner<Continent>());
+                    pLink.Sea = !pLinked.HasOwner() && !pLandMass.HasOwner();
+                    pLink.Embark = (pLinked.HasOwner()) != (pLandMass.HasOwner());
                 }
 
                 ProgressStep();
             }
         }
 
-        private static int m_iPassword = 0;
+        private static new int m_iPassword = 0;
 
         public static ShortestPath FindReallyBestPath(Location pStart, Location pFinish, float fCycleShift, bool bNavalOnly)
         {
@@ -1468,7 +1482,7 @@ namespace LandscapeGeneration
         public static ShortestPath FindBestPath(Location pStart, Location pFinish, float fCycleShift, bool bNavalOnly)
         {
             m_iPassword++;
-            ShortestPath pLMPath = new ShortestPath(pStart.GetOwner<Land>().GetOwner<LandMass>(), pFinish.GetOwner<Land>().GetOwner<LandMass>(), fCycleShift, -1, bNavalOnly);
+            ShortestPath pLMPath = new ShortestPath(pStart.GetOwner().GetOwner(), pFinish.GetOwner().GetOwner(), fCycleShift, -1, bNavalOnly);
             foreach (TransportationNode pNode in pLMPath.m_aNodes)
             {
                 LandMass pLandMass = pNode as LandMass;
@@ -1487,7 +1501,7 @@ namespace LandscapeGeneration
                 }
             }
 
-            ShortestPath pLandsPath = new ShortestPath(pStart.GetOwner<Land>(), pFinish.GetOwner<Land>(), fCycleShift, m_iPassword, bNavalOnly);
+            ShortestPath pLandsPath = new ShortestPath(pStart.GetOwner(), pFinish.GetOwner(), fCycleShift, m_iPassword, bNavalOnly);
             foreach (TransportationNode pNode in pLandsPath.m_aNodes)
             {
                 Land pLand = pNode as Land;

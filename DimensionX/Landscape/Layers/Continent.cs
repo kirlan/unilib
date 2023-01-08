@@ -7,9 +7,9 @@ using Random;
 namespace LandscapeGeneration
 {
     /// <summary>
-    /// Континент - группа сопредельных надводных тектонических плит.
+    /// Континент - группа сопредельных надводных тектонических плит (<see cref="LandMass"/>).
     /// </summary>
-    public class Continent : TerritoryCluster<Continent, LandMass>
+    public class Continent : TerritoryCluster<Continent, Landscape, LandMass>
     {
         private bool m_bIsland = false;
 
@@ -41,12 +41,12 @@ namespace LandscapeGeneration
 
                 LandMass pLM = pLandMass.Key as LandMass;
 
-                if (!pLM.HasOwner<Continent>() && !pLM.IsWater)
+                if (!pLM.HasOwner() && !pLM.IsWater)
                 {
                     bool bFree = true;
-                    foreach (Territory pLink in pLM.BorderWith.Keys)
+                    foreach (LandMass pLink in pLM.BorderWith.Keys)
                     {
-                        if (pLink.HasOwner<Continent>() && pLink.GetOwner<Continent>() != this)
+                        if (pLink.HasOwner() && pLink.GetOwner() != this)
                             bFree = false;
                     }
                     if (bFree)

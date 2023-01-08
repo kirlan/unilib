@@ -6,16 +6,27 @@ using System.Threading.Tasks;
 
 namespace LandscapeGeneration
 {
+    /// <summary>
+    /// Информационный слой - содержит методы для взаимодействия с другими слоями той же территории
+    /// </summary>
     public interface IInfoLayer
     {
-        void SetOwner<T>(T value) where T : class, IInfoLayer;
-        T GetOwner<T>() where T : class, IInfoLayer;
-        bool HasOwner<T>() where T : class, IInfoLayer;
-        void ClearOwner();
-
         void AddLayer<T>(T value) where T : class, IInfoLayer;
         T As<T>() where T : class, IInfoLayer;
         bool Is<T>() where T : class, IInfoLayer;
         void ClearLayers();
+    }
+
+    /// <summary>
+    /// Информационный слой, содержащий информацию о слое более высокого уровня - <typeparamref name="OWNER"/>
+    /// </summary>
+    /// <typeparam name="OWNER"></typeparam>
+    public interface IInfoLayer<OWNER> : IInfoLayer
+        where OWNER : class, IInfoLayer
+    {
+        void SetOwner(OWNER value);
+        OWNER GetOwner();
+        bool HasOwner();
+        void ClearOwner();
     }
 }

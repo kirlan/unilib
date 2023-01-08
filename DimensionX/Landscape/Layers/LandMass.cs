@@ -8,11 +8,11 @@ using SimpleVectors;
 namespace LandscapeGeneration
 {
     /// <summary>
-    /// Тектоническая плита, дрейф которых образует горы и впадины. Является объединением группы сопредельных земель.
-    /// Может быть или полностью затоплена океаном, или являться частью какого-то континента.
+    /// Тектоническая плита, дрейф которых образует горы и впадины. Является объединением группы сопредельных земель (<see cref="Land"/>).
+    /// Может быть или полностью затоплена океаном, или являться частью какого-то континента (<see cref="Continent"/>).
     /// </summary>
     /// <typeparam name="LAND"></typeparam>
-    public class LandMass : TerritoryCluster<LandMass, Land>
+    public class LandMass : TerritoryCluster<LandMass, Continent, Land>
     {
         public bool IsWater { get; set; } = false;
 

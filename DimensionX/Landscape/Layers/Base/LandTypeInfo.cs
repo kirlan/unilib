@@ -78,7 +78,7 @@ namespace LandscapeGeneration
             return this;
         }
 
-        public T GetLayer<T>() where T : ILandTypeInfoExt
+        public T Get<T>() where T : ILandTypeInfoExt
         {
             return m_cInfoLayers[typeof(T)];
         }
