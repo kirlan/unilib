@@ -175,15 +175,12 @@ namespace LandscapeGeneration
                         }
                         if (!bGotIt)
                         {
-                            //throw new Exception("Can't chain the border!");
-                            pFirstLine.m_pNext = pFirstLine;
-                            break;
+                            throw new Exception("Can't chain the border!");
                         }
                     }
                     while (pCurrentLine != pFirstLine && bGotIt && iCounter <= iTotalCount);
 
-                    if (bGotIt)
-                        m_cOrdered.Add(cVertexes);
+                    m_cOrdered.Add(cVertexes);
                 }
             }
             while (pFirstLine != null);
