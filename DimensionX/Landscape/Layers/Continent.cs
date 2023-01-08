@@ -20,6 +20,8 @@ namespace LandscapeGeneration
 
  	        base.Start(pSeed);
 
+            pSeed.SetOwner(this);
+
             m_bIsland = pSeed.m_iMaxSize > 0;
         }
 

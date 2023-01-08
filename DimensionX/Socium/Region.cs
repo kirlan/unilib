@@ -86,6 +86,9 @@ namespace Socium
 
             m_pType = pSeed.Origin.LandType;
 
+            if (pSeed.Origin.IsWater)
+                throw new ArgumentException("Region can't be underwater!");
+
             m_iMaxSize = iMaxSize / m_pType.m_iMovementCost;
         }
 

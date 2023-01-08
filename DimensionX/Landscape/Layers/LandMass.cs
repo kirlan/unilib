@@ -32,6 +32,8 @@ namespace LandscapeGeneration
         {
             base.Start(pSeed);
 
+            pSeed.SetOwner(this);
+
             if (Rnd.OneChanceFrom(2))
                 m_iMaxSize = Rnd.Get(5) + 1;
         }

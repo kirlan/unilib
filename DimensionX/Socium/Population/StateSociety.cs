@@ -370,7 +370,7 @@ namespace Socium.Population
                     if (pNation.m_pRace.m_pLanguage == m_pTitularNation.m_pRace.m_pLanguage)
                         cChances[pNation]++;
 
-                    foreach (var pOtherState in m_pState.m_aBorderWith)
+                    foreach (var pOtherState in m_pState.BorderWith.Keys)
                     {
                         if (pOtherState.Forbidden)
                             continue;

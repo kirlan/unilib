@@ -42,7 +42,7 @@ namespace Socium
         {
             foreach (LandMass pLandMass in Origin.Contents)
                 foreach (Land pLand in pLandMass.Contents)
-                    if (!pLand.Forbidden && !pLand.As<LandX>().HasOwner())
+                    if (!pLand.Forbidden && !pLand.IsWater && !pLand.As<LandX>().HasOwner())
                     {
                         Region pRegion = new Region();
                         pRegion.Start(pLand.As<LandX>(), iMaxSize);

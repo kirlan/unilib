@@ -199,7 +199,8 @@ namespace LandscapeGeneration
 
 
         /// <summary>
-        /// Соседние объекты <typeparamref name="LAYER"/>
+        /// Соседние объекты <typeparamref name="LAYER"/>.
+        /// Нельзя использовать до вызова <see cref="Finish(float)"/>
         /// </summary>
         public LAYER[] m_aBorderWith = null;
 

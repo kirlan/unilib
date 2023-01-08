@@ -614,26 +614,26 @@ namespace LandscapeGeneration
             {
                 if (pLand.LandType == LandTypes.Ocean || pLand.LandType == LandTypes.Coastral)
                 {
-                    LandMass pLM1 = pLand.GetOwner();
+                    LandMass pLandMass = pLand.GetOwner();
 
                     float fMinCollision = float.MaxValue;
                     Land pBestLand = null;
-                    foreach (Land pLink in pLand.m_aBorderWith)
+                    foreach (Land pLinkedLand in pLand.m_aBorderWith)
                     {
-                        if (pLink.Forbidden)
+                        if (pLinkedLand.Forbidden)
                             continue;
 
-                        if (pLink.LandType != null)
+                        if (pLinkedLand.LandType != null)
                             continue;
 
-                        LandMass pLM2 = pLink.GetOwner();
+                        LandMass pLinkedLandMass = pLinkedLand.GetOwner();
 
-                        if (pLM1 != null && pLM2 != null && pLM1 != pLM2)
+                        if (pLandMass != null && pLinkedLandMass != null && pLandMass != pLinkedLandMass)
                         {
-                            float fDriftedX1 = pLand.X + (float)pLM1.m_pDrift.X;
-                            float fDriftedY1 = pLand.Y + (float)pLM1.m_pDrift.Y;
-                            float fDriftedX2 = pLink.X + (float)pLM2.m_pDrift.X;
-                            float fDriftedY2 = pLink.Y + (float)pLM2.m_pDrift.Y;
+                            float fDriftedX1 = pLand.X + (float)pLandMass.m_pDrift.X;
+                            float fDriftedY1 = pLand.Y + (float)pLandMass.m_pDrift.Y;
+                            float fDriftedX2 = pLinkedLand.X + (float)pLinkedLandMass.m_pDrift.X;
+                            float fDriftedY2 = pLinkedLand.Y + (float)pLinkedLandMass.m_pDrift.Y;
                             if (Math.Abs(fDriftedX1 - fDriftedX2) > m_pLocationsGrid.CycleShift / 2)
                                 if (fDriftedX1 < 0)
                                     fDriftedX2 -= m_pLocationsGrid.CycleShift;
@@ -642,12 +642,12 @@ namespace LandscapeGeneration
 
                             float fDriftedDist = (float)Math.Sqrt((fDriftedX1 - fDriftedX2) * (fDriftedX1 - fDriftedX2) + (fDriftedY1 - fDriftedY2) * (fDriftedY1 - fDriftedY2));
 
-                            float fCollision = pLand.DistanceTo(pLink, m_pLocationsGrid.CycleShift) - fDriftedDist;
+                            float fCollision = pLand.DistanceTo(pLinkedLand, m_pLocationsGrid.CycleShift) - fDriftedDist;
 
                             if (fCollision < fMinCollision)
                             {
                                 fMinCollision = fCollision;
-                                pBestLand = pLink;
+                                pBestLand = pLinkedLand;
                             }
                         }
                     }
@@ -658,7 +658,7 @@ namespace LandscapeGeneration
                     if (fMinCollision < 1)// || Rnd.OneChanceFrom(2))
                         pLand.LandType = LandTypes.Coastral;
 
-                    if (fMinCollision < -1.25 && pLM1.Contents.Count > 3)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
+                    if (fMinCollision < -1.25 && pLandMass.Contents.Count > 3)// && (bCoast || Rnd.ChooseOne(iMaxElevation - pLM1.m_pDrift, pLM1.m_pDrift)))
                     {
                         foreach (Land pLink in pLand.m_aBorderWith)
                         {

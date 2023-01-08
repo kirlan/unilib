@@ -1018,19 +1018,23 @@ namespace Socium
             //распределяем государства по континентам
             foreach (State pState in m_aStates)
             {
-                ContinentX pConti = null;
-                foreach (Province pProvince in pState.Contents)
-                {
-                    foreach (Region pRegion in pProvince.Contents)
-                    {
-                        pConti = pRegion.Continent.As<ContinentX>();
-                        break;
-                    }
-                    if (pConti != null)
-                        break;
-                }
+                ContinentX pConti = pState.GetOwner();
 
-                pState.SetOwner(pConti);
+                if (pConti == null)
+                {
+                    foreach (Province pProvince in pState.Contents)
+                    {
+                        foreach (Region pRegion in pProvince.Contents)
+                        {
+                            pConti = pRegion.Continent.As<ContinentX>();
+                            break;
+                        }
+                        if (pConti != null)
+                            break;
+                    }
+
+                    pState.SetOwner(pConti);
+                }
                 pConti.Contents.Add(pState);
             }
             //строим столицы, налаживаем дипломатические связи
@@ -1760,7 +1764,7 @@ namespace Socium
 
                 if (pLastNode != null)
                 {
-                    pLastNode.Links[pNode].BuildRoad(eRoadLevel);
+                    pLastNode.Links[pNode.Origin].BuildRoad(eRoadLevel);
                     //pNode.m_cLinks[pLastNode].BuildRoad(iRoadLevel);
 
                     if (pLastNode.Origin.GetOwner() != pNode.Origin.GetOwner())
@@ -1852,22 +1856,24 @@ namespace Socium
                 //разобьем найденный путь на участки от одного населённого пункта до другого
                 List<Road> cRoadsChain = new List<Road>();
                 Road pNewRoad = null;
-                foreach (LocationX pNode in pBestPath.m_aNodes)
+                foreach (Location pNode in pBestPath.m_aNodes)
                 {
+                    LocationX pLocX = pNode.As<LocationX>();
+
                     if (pNewRoad == null)
-                        pNewRoad = new Road(pNode, eRoadLevel);
+                        pNewRoad = new Road(pLocX, eRoadLevel);
                     else
                     {
-                        pNewRoad.BuidTo(pNode);
+                        pNewRoad.BuidTo(pLocX);
 
-                        if (pNode.m_pSettlement != null && 
-                            pNode.m_pSettlement.m_iRuinsAge == 0 &&
-                            (pNode.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
+                        if (pLocX.m_pSettlement != null &&
+                            pLocX.m_pSettlement.m_iRuinsAge == 0 &&
+                            (pLocX.m_pSettlement.m_pInfo.m_eSize > SettlementSize.Village ||
                             pTown1.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village ||
                             pTown2.m_pSettlement.m_pInfo.m_eSize <= SettlementSize.Village))
                         {
                             cRoadsChain.Add(pNewRoad);
-                            pNewRoad = new Road(pNode, eRoadLevel);
+                            pNewRoad = new Road(pLocX, eRoadLevel);
                         }
                     }
                 }
@@ -2119,6 +2125,8 @@ namespace Socium
                     //очищаем список поселений в провинции
                     pProvince.m_pLocalSociety.Settlements.Clear();
                 }//все провинции в каждом государстве
+
+                //pState.ClearOwner();
 
                 //некоторые государства вообще исчезают с лица земли
                 if (!m_aLocalNations.Contains(pState.m_pSociety.m_pTitularNation) || Rnd.OneChanceFrom(2))
