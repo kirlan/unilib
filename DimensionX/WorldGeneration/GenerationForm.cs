@@ -105,6 +105,14 @@ namespace WorldGeneration
                 if (!File.Exists(sPrset))
                     settings.m_cLastUsedPresets.Remove(sPrset);
 
+            groupBox5.Enabled = true;
+            mapProperties1.Enabled = true;
+            StartGenerationButton.Enabled = true;
+            mapProperties1.UpdatePresets(25000, 0);
+            
+            if (AgesView.Items.Count == 0)
+                AddNewAge_Click(this, new EventArgs());
+
             return true;
         }
 
