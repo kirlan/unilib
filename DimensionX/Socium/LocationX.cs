@@ -46,6 +46,9 @@ namespace Socium
             m_cRoads[RoadQuality.Good] = new List<Road>();
         }
 
+        public LocationX()
+        { }
+
         public int GetPopulation()
         {
             int iRes = 0;

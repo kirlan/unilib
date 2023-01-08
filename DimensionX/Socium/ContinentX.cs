@@ -28,6 +28,9 @@ namespace Socium
             m_sName = NameGenerator.GetAbstractName();
         }
 
+        public ContinentX()
+        { }
+
         public override string ToString()
         {
             return m_sName;
@@ -39,7 +42,7 @@ namespace Socium
         {
             foreach (LandMass pLandMass in Origin.Contents)
                 foreach (Land pLand in pLandMass.Contents)
-                    if (!pLand.Forbidden && !pLand.HasOwner())
+                    if (!pLand.Forbidden && !pLand.As<LandX>().HasOwner())
                     {
                         Region pRegion = new Region();
                         pRegion.Start(pLand.As<LandX>(), iMaxSize);

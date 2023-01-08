@@ -42,6 +42,9 @@ namespace Socium
         { 
         }
 
+        public LandX()
+        { }
+
         public Location BuildLair()
         {
             //Теперь в этой земле выберем локацию, желательно не на границе с другой землёй.

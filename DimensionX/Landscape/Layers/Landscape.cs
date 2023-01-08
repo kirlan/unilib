@@ -77,6 +77,9 @@ namespace LandscapeGeneration
             LandTypes.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, "jungle");
         }
 
+        public Landscape()
+        { }
+
         /// <summary>
         /// Генерация мира
         /// </summary>
@@ -163,6 +166,9 @@ namespace LandscapeGeneration
         {
             public LandBiome(Land pLand) : base(pLand)
             { }
+
+            public LandBiome()
+            { }
         }
 
         /// <summary>
@@ -227,6 +233,11 @@ namespace LandscapeGeneration
             foreach (Land pLand in m_aLands)
             {
                 pLand.AddLayer(new LandBiome(pLand));
+            }
+
+            foreach (Land pLand in m_aLands)
+            {
+                pLand.As<LandBiome>().FillBorderWithKeys();
             }
 
             foreach (Continent pCont in Contents)

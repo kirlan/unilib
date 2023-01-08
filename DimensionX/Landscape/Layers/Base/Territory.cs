@@ -13,12 +13,14 @@ namespace LandscapeGeneration
     /// Территория - образование на карте, имеющее замкнутую границу и связанное с 1 или несколькими информационными слоями, известное как <typeparamref name="LAYER"/>
     /// </summary>
     public abstract class Territory<LAYER> : TransportationNode, IInfoLayer
-        where LAYER : Territory<LAYER>
+        where LAYER : Territory<LAYER>, new()
     {
         /// <summary>
         /// Границы с другими <typeparamref name="LAYER"/>
         /// </summary>
         public virtual Dictionary<LAYER, List<VoronoiEdge>> BorderWith { get; } = new Dictionary<LAYER, List<VoronoiEdge>>();
+
+        protected static LAYER m_pForbidden = new LAYER().SetForbidden();
 
         public virtual bool Forbidden { get; private set; } = false;
 
@@ -46,7 +48,7 @@ namespace LandscapeGeneration
                 return this as T;
 
             if (m_cInfoLayers.TryGetValue(typeof(T), out dynamic pResult))
-                return pResult;
+                return pResult as T;
             else
                 return null;
         }
@@ -70,7 +72,7 @@ namespace LandscapeGeneration
     /// </summary>
     /// <typeparam name="OWNER"></typeparam>
     public abstract class TerritoryOf<LAYER, OWNER> : Territory<LAYER>, IInfoLayer<OWNER>
-        where LAYER : TerritoryOf<LAYER, OWNER>
+        where LAYER : TerritoryOf<LAYER, OWNER>, new()
         where OWNER : class, IInfoLayer
     {
         OWNER m_cOwnerInfoLayer = null;
@@ -120,22 +122,15 @@ namespace LandscapeGeneration
     /// <typeparam name="OWNER"></typeparam>
     /// <typeparam name="BASE"></typeparam>
     public abstract class TerritoryExtended<LAYER, OWNER, BASE> : TerritoryOf<LAYER, OWNER>
-        where LAYER : TerritoryExtended<LAYER, OWNER, BASE>
+        where LAYER : TerritoryExtended<LAYER, OWNER, BASE>, new()
         where OWNER : class, IInfoLayer
-        where BASE : Territory<BASE>, IInfoLayer
+        where BASE : Territory<BASE>, IInfoLayer, new()
     {
-        [Obsolete("Use Origin.BorderWith", true)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        /// <summary>
-        /// НЕ ИСПОЛЬЗОВАТЬ!!! Вызывайте <c>Origin::BorderWith</c>
-        /// </summary>
-        public override Dictionary<LAYER, List<VoronoiEdge>> BorderWith => null;
-
         /// <summary>
         /// Переадресует обращение к базовому <typeparamref name="BASE"/>::<c>Forbidden</c><br/>
         /// <inheritdoc/>
         /// </summary>
-        public override bool Forbidden => Origin.Forbidden;
+        public override bool Forbidden => (Origin == null || Origin.Forbidden);
 
         /// <summary>
         /// Переадресует обращение к базовому <typeparamref name="BASE"/>::<c>PerimeterLength</c><br/>
@@ -191,6 +186,23 @@ namespace LandscapeGeneration
         public TerritoryExtended(BASE pBase)
         {
             AddLayer(pBase);
+        }
+
+        public TerritoryExtended()
+        {
+        }
+
+        public void FillBorderWithKeys()
+        {
+            foreach (var pLink in Origin.BorderWith)
+            {
+                LAYER key = pLink.Key.As<LAYER>();
+                if (key == null)
+                {
+                    key = m_pForbidden;
+                }
+                BorderWith[key] = pLink.Value;
+            }
         }
     }
 
@@ -199,16 +211,9 @@ namespace LandscapeGeneration
     /// </summary>
     /// <typeparam name="BASE"></typeparam>
     public abstract class TerritoryExtended<LAYER, BASE> : Territory<LAYER>
-        where LAYER : TerritoryExtended<LAYER, BASE>
-        where BASE : Territory<BASE>, IInfoLayer
+        where LAYER : TerritoryExtended<LAYER, BASE>, new()
+        where BASE : Territory<BASE>, IInfoLayer, new()
     {
-        [Obsolete("Use Origin.BorderWith", true)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        /// <summary>
-        /// НЕ ИСПОЛЬЗОВАТЬ!!! Вызывайте <c>Origin::BorderWith</c>
-        /// </summary>
-        public override Dictionary<LAYER, List<VoronoiEdge>> BorderWith => null;
-
         /// <summary>
         /// Переадресует обращение к базовому <typeparamref name="BASE"/>::<c>Forbidden</c><br/>
         /// <inheritdoc/>
@@ -268,6 +273,22 @@ namespace LandscapeGeneration
         public TerritoryExtended(BASE pBase)
         {
             AddLayer(pBase);
+        }
+
+        public TerritoryExtended()
+        { }
+
+        public void FillBorderWithKeys()
+        {
+            foreach (var pLink in Origin.BorderWith)
+            {
+                LAYER key = pLink.Key.As<LAYER>(); 
+                if (key == null)
+                {
+                    key = m_pForbidden;
+                }
+                BorderWith[key] = pLink.Value;
+            }
         }
     }
 }

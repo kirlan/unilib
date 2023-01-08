@@ -16,7 +16,7 @@ namespace LandscapeGeneration
     public abstract class TerritoryCluster<LAYER, OWNER, INNER> : TerritoryOf<LAYER, OWNER>
         where LAYER: TerritoryCluster<LAYER, OWNER, INNER>, new()
         where OWNER: class, IInfoLayer
-        where INNER: TerritoryOf<INNER, LAYER>
+        where INNER: TerritoryOf<INNER, LAYER>, new()
     {
         #region BorderBuilder
         /// <summary>
@@ -175,19 +175,20 @@ namespace LandscapeGeneration
                         }
                         if (!bGotIt)
                         {
-                            throw new Exception("Can't chain the border!");
+                            //throw new Exception("Can't chain the border!");
+                            pFirstLine.m_pNext = pFirstLine;
+                            break;
                         }
                     }
                     while (pCurrentLine != pFirstLine && bGotIt && iCounter <= iTotalCount);
 
-                    m_cOrdered.Add(cVertexes);
+                    if (bGotIt)
+                        m_cOrdered.Add(cVertexes);
                 }
             }
             while (pFirstLine != null);
         }
         #endregion
-
-        protected static LAYER m_pForbidden = (LAYER)(new LAYER().SetForbidden());
 
         /// <summary>
         /// Список <typeparamref name="INNER"/>, составляющих <typeparamref name="LAYER"/>

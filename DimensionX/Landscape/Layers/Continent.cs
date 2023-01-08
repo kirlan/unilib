@@ -24,7 +24,7 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Присоединяет к континенту сопредельную неприкаянную страну.
+        /// Присоединяет к континенту сопредельную неприкаянную тектоническую плиту.
         /// </summary>
         /// <returns></returns>
         public override LandMass Grow(int iMaxSize)
@@ -39,7 +39,7 @@ namespace LandscapeGeneration
                 if (pLandMass.Key.Forbidden)
                     continue;
 
-                LandMass pLM = pLandMass.Key as LandMass;
+                LandMass pLM = pLandMass.Key;
 
                 if (!pLM.HasOwner() && !pLM.IsWater)
                 {
@@ -76,7 +76,7 @@ namespace LandscapeGeneration
 
             foreach (var pLandMass in pAddon.BorderWith)
             {
-                if (!pLandMass.Key.Forbidden && Contents.Contains(pLandMass.Key as LandMass))
+                if (!pLandMass.Key.Forbidden && Contents.Contains(pLandMass.Key))
                     continue;
 
                 if (!m_cBorder.ContainsKey(pLandMass.Key))

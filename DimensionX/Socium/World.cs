@@ -461,6 +461,24 @@ namespace Socium
                             BeginStepDelegate BeginStep,
                             ProgressStepDelegate ProgressStep)
         {
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
+                pLoc.AddLayer(new LocationX(pLoc));
+
+            foreach (Location pLoc in m_pLocationsGrid.Locations)
+                pLoc.As<LocationX>().FillBorderWithKeys();
+
+            foreach (Land pLand in m_aLands)
+                pLand.AddLayer(new LandX(pLand));
+
+            foreach (Land pLand in m_aLands)
+                pLand.As<LandX>().FillBorderWithKeys();
+
+            foreach (Continent pConti in Contents)
+                pConti.AddLayer(new ContinentX(pConti));
+
+            foreach (Continent pConti in Contents)
+                pConti.As<ContinentX>().FillBorderWithKeys();
+
             BuildRegions(BeginStep, ProgressStep);
 
             foreach (Race pRace in Race.m_cAllRaces)
@@ -495,7 +513,7 @@ namespace Socium
         public void BuildRegions(BeginStepDelegate BeginStep,
                             ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building areas...", Contents.Length);
+            BeginStep("Building regions...", Contents.Length);
             //Gathering areas of the same land type
             foreach (Continent pContinent in Contents)
             {
@@ -670,7 +688,7 @@ namespace Socium
                 Region pSeed = null;
                 do
                 {
-                    int iRegionIndex = Rnd.Get(pContiX.As<ContinentX>().m_cRegions.Count);
+                    int iRegionIndex = Rnd.Get(pContiX.m_cRegions.Count);
                     if (!pContiX.m_cRegions[iRegionIndex].IsWater)
                     {
                         pSeed = pContiX.m_cRegions[iRegionIndex];
