@@ -2185,14 +2185,14 @@ namespace MapDrawEngine
             */
 
             if (bContinent && m_pFocusedContinent != null)
-                sToolTip += m_pFocusedContinent.ToString();
+                sToolTip += m_pFocusedContinent.As<ContinentX>().ToString();
 
             if (m_pFocusedLand != null)
             {
                 if (sToolTip.Length > 0)
                     sToolTip += "\n - ";
 
-                sToolTip += m_pFocusedLand.ToString();
+                sToolTip += m_pFocusedLand.As<LandX>().ToString();
             }
 
             if (bContinent && m_pFocusedState != null)
@@ -2222,15 +2222,15 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip += "\n       - ";
 
-                sToolTip += m_pFocusedLocation.ToString();
+                LocationX pFocusedLocX = m_pFocusedLocation.As<LocationX>();
 
-                LocationX pFocusdLocX = m_pFocusedLocation.As<LocationX>();
+                sToolTip += pFocusedLocX.ToString();
 
-                if (pFocusdLocX.m_pSettlement != null && pFocusdLocX.m_pSettlement.m_cBuildings.Count > 0)
+                if (pFocusedLocX.m_pSettlement != null && pFocusedLocX.m_pSettlement.m_cBuildings.Count > 0)
                 {
                     Dictionary<string, int> cBuildings = new Dictionary<string, int>();
 
-                    foreach (Building pBuilding in pFocusdLocX.m_pSettlement.m_cBuildings)
+                    foreach (Building pBuilding in pFocusedLocX.m_pSettlement.m_cBuildings)
                     {
                         int iCount = 0;
                         cBuildings.TryGetValue(pBuilding.ToString(), out iCount);
@@ -2241,17 +2241,17 @@ namespace MapDrawEngine
                         sToolTip += "\n         - " + vBuilding.Key + "  x" + vBuilding.Value.ToString();
                 }
 
-                if (pFocusdLocX.m_cHaveRoadTo.Count > 0)
+                if (pFocusedLocX.m_cHaveRoadTo.Count > 0)
                 {
                     sToolTip += "\nHave roads to:";
-                    foreach (var pRoad in pFocusdLocX.m_cHaveRoadTo)
+                    foreach (var pRoad in pFocusedLocX.m_cHaveRoadTo)
                         sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_eLevel.ToString() + "]";
                 }
 
-                if (pFocusdLocX.m_cHaveSeaRouteTo.Count > 0)
+                if (pFocusedLocX.m_cHaveSeaRouteTo.Count > 0)
                 {
                     sToolTip += "\nHave sea routes to:";
-                    foreach (LocationX pRoute in pFocusdLocX.m_cHaveSeaRouteTo)
+                    foreach (LocationX pRoute in pFocusedLocX.m_cHaveSeaRouteTo)
                         sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName;
                 }
             }
