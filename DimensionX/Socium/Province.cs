@@ -14,91 +14,65 @@ using Socium.Population;
 
 namespace Socium
 {
-    public class Province : BorderBuilder<LandX>, ITerritory
+    public enum LandResource
+    {
+        Fish,
+        Grain,
+        Game,
+        Wood,
+        Ore
+    }
+
+    /// <summary>
+    /// Провинция - группа сопредельных регионов (<see cref="Region"/>), имеющих общую инфраструктуру и социум, принадлежащих одному государству.
+    /// Провинции объединяются в государства (<see cref="State"/>).
+    /// </summary>
+    public class Province : TerritoryCluster<Province, State, Region>
     {
         /// <summary>
         /// ТОЛКО ДЛЯ ОТЛАДКИ!!!!
         /// </summary>
         public Dictionary<Province, string> m_cConnectionString = new Dictionary<Province,string>();
         
-        private static Province m_pForbidden = new Province(true);
-
-        /// <summary>
-        /// Земли, составляющие провинцию
-        /// </summary>
-        public readonly List<LandX> m_cContents = new List<LandX>();
-
-        #region ITerritory members
-        public Dictionary<object, List<Location.Edge>> BorderWith { get; } = new Dictionary<object, List<Location.Edge>>();
-
-        public bool Forbidden { get; } = false;
-
-        public object Owner { get; set; } = null;
-
-        public float PerimeterLength { get; private set; } = 0;
-        #endregion ITerritory members
-
-        public State OwnerState
+        public bool IsBorder()
         {
-            get
-            {
-                return Owner as State;
-            }
+            foreach (var pRegion in Contents)
+                if (pRegion.IsBorder())
+                    return true;
+
+            return false;
         }
 
-        public object[] m_aBorderWith = null;
-
-        internal void FillBorderWithKeys()
-        {
-            m_aBorderWith = new List<object>(BorderWith.Keys).ToArray();
-
-            PerimeterLength = 0;
-            foreach (var pBorder in BorderWith)
-                foreach (var pLine in pBorder.Value)
-                    PerimeterLength += pLine.m_fLength;
-        }
-
-        public LandX m_pCenter;
+        public Region m_pCenter;
 
         public LocationX m_pAdministrativeCenter = null;
 
         public NationalSociety m_pLocalSociety = null;
 
-        public float m_fFish = 0;
-        public float m_fGrain = 0;
-        public float m_fGame = 0;
-        public float m_fOre = 0;
-        public float m_fWood = 0;
+        public readonly Dictionary<LandResource, float> m_cResources = new Dictionary<LandResource, float>();
+
         public int m_iPopulation = 0;
 
-        public Province(bool bForbidden)
-        {
-            Forbidden = bForbidden;
-        }
-
-        public Province()
-        {}
-
         /// <summary>
-        /// Зарождение провинции в указанной земле
+        /// Зарождение провинции в указанном регионе
         /// </summary>
         /// <param name="pSeed"></param>
-        public override void Start(LandX pSeed)
+        public override void Start(Region pSeed)
         {
-            if (pSeed.m_pProvince != null)
+            if (pSeed.HasOwner())
                 throw new Exception("That land already belongs to province!!!");
 
             BorderWith.Clear();
-            m_cContents.Clear();
+            Contents.Clear();
 
-            base.Start(pSeed);
+            InitBorder(pSeed);
 
             m_pCenter = pSeed;
 
-            m_pLocalSociety = new NationalSociety(pSeed.m_pNation);
+            m_pLocalSociety = new NationalSociety(pSeed.m_pNatives);
 
-            m_cContents.Add(pSeed);
-            pSeed.m_pProvince = this;
+            Contents.Add(pSeed);
+            pSeed.SetOwner(this);
             pSeed.m_iProvincePresence = 1;
 
             m_cGrowCosts.Clear();
@@ -109,14 +83,14 @@ namespace Socium
         /// <summary>
         /// Стоимость присоединения указанной земли к провинции
         /// </summary>
-        /// <param name="pLand"></param>
+        /// <param name="pRegion"></param>
         /// <returns></returns>
-        private int GetGrowCost(LandX pLand)
+        private int GetGrowCost(Region pRegion)
         {
-            if (pLand.IsWater)
+            if (pRegion.IsWater)
                 return -1;
 
-            float fCost = pLand.Type.m_iMovementCost;
+            float fCost = pRegion.m_pType.m_iMovementCost;
 
             //if (pLand.m_pProvince != this)
             //{
@@ -129,7 +103,7 @@ namespace Socium
             //    float fLinkedLandsBorderLength = 0;
             //    foreach (var pLinkTerr in pLand.BorderWith)
             //    {
-            //        if ((pLinkTerr.Key as ITerritory).Forbidden)
+            //        if ((pLinkTerr.Key as Territory).Forbidden)
             //            continue;
 
             //        Line[] cLines = pLinkTerr.Value.ToArray();
@@ -151,23 +125,23 @@ namespace Socium
 
 
 
-            foreach (LandTypeInfoX pType in m_pLocalSociety.m_pTitularNation.m_aPreferredLands)
-                if (pType == pLand.Type)
+            foreach (LandTypeInfo pType in m_pLocalSociety.m_pTitularNation.m_aPreferredLands)
+                if (pType == pRegion.m_pType)
                     fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            foreach (LandTypeInfoX pType in m_pLocalSociety.m_pTitularNation.m_aHatedLands)
-                if (pType == pLand.Type)
+            foreach (LandTypeInfo pType in m_pLocalSociety.m_pTitularNation.m_aHatedLands)
+                if (pType == pRegion.m_pType)
                     fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
 
-            if (pLand.m_pNation != m_pLocalSociety.m_pTitularNation)
+            if (pRegion.m_pNatives != m_pLocalSociety.m_pTitularNation)
             {
-                if (m_pLocalSociety.m_pTitularNation.m_bDying)
+                if (m_pLocalSociety.m_pTitularNation.IsAncient)
                     fCost *= 9999999;
                 else
                     fCost *= 99999;
             }
 
-            if (m_pLocalSociety.m_pTitularNation.m_bHegemon)
+            if (m_pLocalSociety.m_pTitularNation.IsHegemon)
                 fCost /= 2;
 
             if (fCost < 1)
@@ -179,46 +153,44 @@ namespace Socium
             return (int)fCost;
         }
 
-        private Dictionary<LandX, int> m_cGrowCosts = new Dictionary<LandX, int>();
+        private Dictionary<Region, int> m_cGrowCosts = new Dictionary<Region, int>();
 
         /// <summary>
-        /// Усилить претензии провинции на сопредельную ничейную землю
+        /// Усилить претензии провинции на сопредельный ничейный регион
         /// </summary>
-        /// <param name="pLand"></param>
+        /// <param name="pRegion"></param>
         /// <param name="iValue"></param>
         /// <returns></returns>
-        private LandX GrowPresence(LandX pLand, int iValue)
+        private Region GrowPresence(Region pRegion, int iValue)
         {
-            pLand.m_iProvincePresence += iValue;
+            pRegion.m_iProvincePresence += iValue;
 
             int iOwnCost = 0;
-            if (!m_cGrowCosts.TryGetValue(pLand, out iOwnCost))
+            if (!m_cGrowCosts.TryGetValue(pRegion, out iOwnCost))
             {
-                iOwnCost = GetGrowCost(pLand);
-                m_cGrowCosts[pLand] = iOwnCost;
+                iOwnCost = GetGrowCost(pRegion);
+                m_cGrowCosts[pRegion] = iOwnCost;
             }
 
-            if (pLand.m_iProvincePresence > iOwnCost)
+            if (pRegion.m_iProvincePresence > iOwnCost)
             {
                 float fBestValue = float.MaxValue;
                 int iBestCost = 0;
-                LandX pBestLand = null;
+                Region pBestRegion = null;
 
-                foreach (var pLinkTerr in pLand.BorderWith)
+                foreach (Region pLinkedRegion in pRegion.m_aBorderWith)
                 {
-                    if ((pLinkTerr.Key as ITerritory).Forbidden)
+                    if (pLinkedRegion.Forbidden)
                         continue;
 
-                    LandX pLinkedLand = pLinkTerr.Key as LandX;
-
-                    if (pLinkedLand.IsWater || (pLinkedLand.m_pProvince != this && pLinkedLand.m_pProvince != null))
+                    if (pLinkedRegion.IsWater || (pLinkedRegion.HasOwner() && pLinkedRegion.GetOwner() != this))
                         continue;
 
                     int iCost = 0;
-                    if (!m_cGrowCosts.TryGetValue(pLinkedLand, out iCost))
+                    if (!m_cGrowCosts.TryGetValue(pLinkedRegion, out iCost))
                     {
-                        iCost = GetGrowCost(pLinkedLand);
-                        m_cGrowCosts[pLinkedLand] = iCost;
+                        iCost = GetGrowCost(pLinkedRegion);
+                        m_cGrowCosts[pLinkedRegion] = iCost;
                     }
 
                     if (iCost == -1)
@@ -226,13 +198,13 @@ namespace Socium
 
                     float fCostModified = iCost;
 
-                    if (pLinkedLand.m_pProvince == null)
+                    if (!pLinkedRegion.HasOwner())
                     {
-                        //общая граница провинции и новой земли
+                        //общая граница провинции и нового региона
                         float fSharedPerimeter = 1;
-                        Location.Edge[] aBorderLine = m_cBorder[pLinkedLand].ToArray();
+                        VoronoiEdge[] aBorderLine = m_cBorder[pLinkedRegion].ToArray();
                         foreach (var pLine in aBorderLine)
-                            fSharedPerimeter += pLine.m_fLength;
+                            fSharedPerimeter += pLine.Length;
 
                         //fCommonLength /= fTotalLength;
 
@@ -241,39 +213,39 @@ namespace Socium
                         //if (fCommonLength > 0.5f)
                         //    fCommonLength *= 10;
 
-                        fCostModified = iCost * pLinkedLand.PerimeterLength / fSharedPerimeter;
+                        fCostModified = iCost * pLinkedRegion.PerimeterLength / fSharedPerimeter;
 
-                        if (fSharedPerimeter < pLinkedLand.PerimeterLength / 4)
+                        if (fSharedPerimeter < pLinkedRegion.PerimeterLength / 4)
                             fCostModified *= 10;
-                        if (fSharedPerimeter > pLinkedLand.PerimeterLength / 2)
+                        if (fSharedPerimeter > pLinkedRegion.PerimeterLength / 2)
                             fCostModified /= 10;
 
                         fCostModified = Math.Max(1, fCostModified);
                     }
 
-                    if (pLinkedLand.m_iProvincePresence + fCostModified < fBestValue ||
-                        (pLinkedLand.m_iProvincePresence + fCostModified == fBestValue &&
-                         Rnd.OneChanceFrom(pLand.BorderWith.Count)))
+                    if (pLinkedRegion.m_iProvincePresence + fCostModified < fBestValue ||
+                        (pLinkedRegion.m_iProvincePresence + fCostModified == fBestValue &&
+                         Rnd.OneChanceFrom(pRegion.BorderWith.Count)))
                     {
-                        fBestValue = pLinkedLand.m_iProvincePresence + fCostModified;
+                        fBestValue = pLinkedRegion.m_iProvincePresence + fCostModified;
                         iBestCost = iCost;
-                        pBestLand = pLinkedLand;
+                        pBestRegion = pLinkedRegion;
                     }
                 }
 
-                if (pBestLand != null && pBestLand.m_iProvincePresence + iBestCost < pLand.m_iProvincePresence - iBestCost)
+                if (pBestRegion != null && pBestRegion.m_iProvincePresence + iBestCost < pRegion.m_iProvincePresence - iBestCost)
                 {
-                    pLand.m_iProvincePresence -= iBestCost;
-                    if (pBestLand.m_pProvince == null)
+                    pRegion.m_iProvincePresence -= iBestCost;
+                    if (!pBestRegion.HasOwner())
                     {
-                        if(pBestLand.m_pNation != pLand.m_pNation)
-                            GetGrowCost(pBestLand);
-                        pBestLand.m_iProvincePresence += iBestCost;
-                        return pBestLand;
+                        if(pBestRegion.m_pNatives != pRegion.m_pNatives)
+                            GetGrowCost(pBestRegion);
+                        pBestRegion.m_iProvincePresence += iBestCost;
+                        return pBestRegion;
                     }
                     else
                     {
-                        return GrowPresence(pBestLand, iBestCost);
+                        return GrowPresence(pBestRegion, iBestCost);
                     }
                 }
                 else
@@ -289,41 +261,39 @@ namespace Socium
         /// <returns></returns>
         public bool ForcedGrow()
         {
-            object[] aBorder = new List<object>(m_cBorder.Keys).ToArray();
+            Region[] aBorder = new List<Region>(m_cBorder.Keys).ToArray();
 
             m_bFullyGrown = true;
 
-            if (m_pLocalSociety.m_pTitularNation.m_bDying)
+            if (m_pLocalSociety.m_pTitularNation.IsAncient)
                 return !m_bFullyGrown;
 
-            foreach (ITerritory pTerr in aBorder)
+            foreach (Region pRegion in aBorder)
             {
-                if (pTerr.Forbidden)
+                if (pRegion.Forbidden)
                     continue;
 
-                LandX pLand = pTerr as LandX;
-
-                if (pLand.m_pNation != m_pLocalSociety.m_pTitularNation)
+                if (pRegion.m_pNatives != m_pLocalSociety.m_pTitularNation)
                     continue;
 
-                if (pLand.m_pProvince == null && !pLand.IsWater)
+                if (!pRegion.HasOwner() && !pRegion.IsWater)
                 {
-                    m_cContents.Add(pLand);
-                    pLand.m_pProvince = this;
+                    Contents.Add(pRegion);
+                    pRegion.SetOwner(this);
 
-                    m_cBorder[pLand].Clear();
-                    m_cBorder.Remove(pLand);
+                    m_cBorder[pRegion].Clear();
+                    m_cBorder.Remove(pRegion);
 
-                    foreach (var pAddonLinkedLand in pLand.BorderWith)
+                    foreach (var pAddonLinkedRegion in pRegion.BorderWith)
                     {
-                        if (!(pAddonLinkedLand.Key as ITerritory).Forbidden && m_cContents.Contains(pAddonLinkedLand.Key as LandX))
+                        if (!pAddonLinkedRegion.Key.Forbidden && Contents.Contains(pAddonLinkedRegion.Key))
                             continue;
 
-                        if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
-                            m_cBorder[pAddonLinkedLand.Key] = new List<Location.Edge>();
-                        Location.Edge[] cLines = pAddonLinkedLand.Value.ToArray();
+                        if (!m_cBorder.ContainsKey(pAddonLinkedRegion.Key))
+                            m_cBorder[pAddonLinkedRegion.Key] = new List<VoronoiEdge>();
+                        VoronoiEdge[] cLines = pAddonLinkedRegion.Value.ToArray();
                         foreach (var pLine in cLines)
-                            m_cBorder[pAddonLinkedLand.Key].Add(new Location.Edge(pLine));
+                            m_cBorder[pAddonLinkedRegion.Key].Add(new VoronoiEdge(pLine));
                     }
 
                     m_bFullyGrown = false;
@@ -340,60 +310,60 @@ namespace Socium
         /// Чем длиннее общая граница с землёй - тем выше вероятность того, что выбрана будет именно она.
         /// </summary>
         /// <returns></returns>
-        public bool Grow(int iMaxProvinceSize)
+        public override Region Grow(int iMaxSize)
         {
             m_bFullyGrown = false;
             //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
-            if (m_cContents.Count >= iMaxProvinceSize || m_pCenter.m_iProvincePresence > 200 * Math.Sqrt(iMaxProvinceSize / Math.PI))
+            if (Contents.Count >= iMaxSize || m_pCenter.m_iProvincePresence > 200 * Math.Sqrt(iMaxSize / Math.PI))
             {
                 //GrowForce(m_pCenter, 1);
                 m_bFullyGrown = true;
-                return false;
+                return null;
             }
 
-            LandX pAddon = GrowPresence(m_pCenter, 1);
+            Region pAddon = GrowPresence(m_pCenter, 1);
             if (pAddon != null)
             {
-                m_cContents.Add(pAddon);
-                pAddon.m_pProvince = this;
+                Contents.Add(pAddon);
+                pAddon.SetOwner(this);
 
                 m_cBorder[pAddon].Clear();
                 m_cBorder.Remove(pAddon);
 
                 foreach (var pAddonLinkedLand in pAddon.BorderWith)
                 {
-                    if (!(pAddonLinkedLand.Key as ITerritory).Forbidden && m_cContents.Contains(pAddonLinkedLand.Key as LandX))
+                    if (!pAddonLinkedLand.Key.Forbidden && Contents.Contains(pAddonLinkedLand.Key as Region))
                         continue;
 
-                    if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
-                        m_cBorder[pAddonLinkedLand.Key] = new List<Location.Edge>();
-                    Location.Edge[] cLines = pAddonLinkedLand.Value.ToArray();
+                    if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key as Region))
+                        m_cBorder[pAddonLinkedLand.Key as Region] = new List<VoronoiEdge>();
+                    VoronoiEdge[] cLines = pAddonLinkedLand.Value.ToArray();
                     foreach (var pLine in cLines)
-                        m_cBorder[pAddonLinkedLand.Key].Add(new Location.Edge(pLine));
+                        m_cBorder[pAddonLinkedLand.Key as Region].Add(new VoronoiEdge(pLine));
                 }
             }
 
-            return true;
+            return pAddon;
         }
 
         /// <summary>
         /// Заполняет словарь границ с другими провинциями.
         /// </summary>
-        public void Finish(float fCycleShift)
+        public override void Finish(float fCycleShift)
         {
             ChainBorder(fCycleShift);
 
-            foreach (ITerritory pLand in m_cBorder.Keys)
+            foreach (Region pRegion in m_cBorder.Keys)
             {
                 Province pProvince;
-                if (pLand.Forbidden || (pLand as LandX).m_pProvince == null)
-                    pProvince = Province.m_pForbidden;
+                if (pRegion.Forbidden || !pRegion.HasOwner())
+                    pProvince = m_pForbidden;
                 else
-                    pProvince = (pLand as LandX).m_pProvince;
+                    pProvince = pRegion.GetOwner();
 
                 if (!BorderWith.ContainsKey(pProvince))
-                    BorderWith[pProvince] = new List<Location.Edge>();
-                BorderWith[pProvince].AddRange(m_cBorder[pLand]);
+                    BorderWith[pProvince] = new List<VoronoiEdge>();
+                BorderWith[pProvince].AddRange(m_cBorder[pRegion]);
             }
             FillBorderWithKeys();
 
@@ -401,37 +371,39 @@ namespace Socium
             Nation pMaxNation = null;
             Dictionary<Nation, int> cClaims = new Dictionary<Nation, int>();
             
-            foreach (LandX pLand in m_cContents)
+            foreach (Region pRegion in Contents)
             {
                 bool bRestricted = true;
-                foreach (LocationX pLoc in pLand.m_cContents)
-                    if (!pLoc.Forbidden && !pLoc.m_bBorder)
-                        bRestricted = false;
+                foreach (LandX pLand in pRegion.Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
+                        if (!pLoc.Forbidden && !pLoc.m_bBorder)
+                            bRestricted = false;
 
                 if (bRestricted)
                     continue;
 
                 int iCount = 0;
-                cClaims.TryGetValue((pLand.Area as AreaX).m_pNation, out iCount);
-                cClaims[(pLand.Area as AreaX).m_pNation] = iCount + pLand.m_cContents.Count;
-                if (cClaims[(pLand.Area as AreaX).m_pNation] > iMaxPop)
+                cClaims.TryGetValue(pRegion.m_pNatives, out iCount);
+                cClaims[pRegion.m_pNatives] = iCount + pRegion.Contents.Count;
+                if (cClaims[pRegion.m_pNatives] > iMaxPop)
                 {
-                    iMaxPop = cClaims[(pLand.Area as AreaX).m_pNation];
-                    pMaxNation = (pLand.Area as AreaX).m_pNation;
+                    iMaxPop = cClaims[pRegion.m_pNatives];
+                    pMaxNation = pRegion.m_pNatives;
                 }
             }
 
-            if (pMaxNation != null && !m_pLocalSociety.m_pTitularNation.m_bDying)
+            if (pMaxNation != null && !m_pLocalSociety.m_pTitularNation.IsAncient)
                 m_pLocalSociety.UpdateTitularNation(pMaxNation);
 
-            foreach (LandX pLand in m_cContents)
-                pLand.m_pNation = m_pLocalSociety.m_pTitularNation;
+            foreach (Region pRegion in Contents)
+                pRegion.m_pNatives = m_pLocalSociety.m_pTitularNation;
         }
 
         public void BuildLairs(int iScale)
         {
-            foreach (LandX pLand in m_cContents)
-                pLand.BuildLair();
+            foreach (Region pRegion in Contents)
+                foreach (LandX pLand in pRegion.Contents)
+                    pLand.BuildLair();
         }
 
         public void BuildSettlements(SettlementSize eSize, bool bFast)
@@ -442,90 +414,93 @@ namespace Socium
 
             //определим, сколько поселений должно быть.
             //считаем, что каждая третья земля в провинции содержит поселение, 2/3 из них деревни, 2/9 городки и 1/9 - большие города
-            int iMinCount = m_cContents.Count / 3;
+            int iMinCount = Contents.Count / 3;
             switch (eSize)
             {
                 case SettlementSize.City:
-                    iMinCount = m_cContents.Count / 9;
+                    iMinCount = Contents.Count / 9;
                     break;
                 case SettlementSize.Town:
-                    iMinCount = m_cContents.Count / 6;
+                    iMinCount = Contents.Count / 6;
                     break;
             }
 
             //если провинция состоит из единственной земли, увеличиваем там плотность населения вдвое
             int iSingleLandMultiplier = 1;
-            if(m_cContents.Count == 1)
+            if(Contents.Count == 1)
                 iSingleLandMultiplier = 2;
 
             iMinCount *= iSingleLandMultiplier;
 
             //рассчитаем для каждой земли, входящей в провинцию, шанс быть выбранной для поселения заданного размера
             Dictionary<LandX, float> cLandsChances = new Dictionary<LandX, float>();
-            foreach (LandX pLand in m_cContents)
-                cLandsChances[pLand] = (float)pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize];
+            foreach (Region pRegion in Contents)
+                foreach (LandX pLand in pRegion.Contents)
+                    cLandsChances[pLand] = pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(eSize);
 
             //пытаемся построить заданное количество поселений.
             //реально может быть построено меньше, если свободных мест меньше, чем поселений
             for (int i = 0; i < iMinCount; i++)
             {
                 int iChance = Rnd.ChooseOne(cLandsChances.Values, 1);
-
-                foreach (LandX pLand in cLandsChances.Keys)
+                if (iChance >= 0)
                 {
-                    iChance--;
-                    if (iChance < 0)
+                    LandX pLandX = cLandsChances.ElementAt(iChance).Key;
+
+                    LocationX pSettlement = pLandX.BuildSettlement(Settlement.Info[eSize], false, bFast);
+                    if (pSettlement != null)
                     {
+                        m_pLocalSociety.Settlements.Add(pSettlement);
+                        //bHaveOne = true;
+                    }
+                    cLandsChances[pLandX] = cLandsChances[pLandX] / 2;//0;
+                }
+            }
+
+            //закончив "обязательную программу" пройдёмся по всем землям и во всех, где нет ни одного поселения, попытаемся что-нибудь построить.
+            foreach (Region pRegion in Contents)
+            {
+                foreach (LandX pLand in pRegion.Contents)
+                {
+                    int iSettlements = 0;
+                    foreach (Location pLoc in pLand.Origin.Contents)
+                    {
+                        LocationX pLocX = pLoc.As<LocationX>();
+                        if (pLocX.m_pSettlement != null && pLocX.m_pSettlement.m_iRuinsAge == 0)
+                        {
+                            iSettlements++;
+                            //break;
+                        }
+                    }
+                    //if (bHaveOne)
+                    //    continue;
+
+                    //считаем среднее количество поселений в земле исходя из размеров земли и вероятности поселения.
+                    //если количество выходит меньше 1, то считаем вероятность единственного поселения.
+                    //впрочем, больше одного строить всё равно не будем.
+                    int iSettlementsCount = (int)(pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(eSize) * iSingleLandMultiplier);
+                    if (iSettlementsCount == 0)
+                    {
+                        int iSettlementChance = (int)(1 / (pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(eSize) * iSingleLandMultiplier));
+                        if (Rnd.OneChanceFrom(iSettlementChance))
+                            iSettlementsCount = 1;
+                    }
+                    //else
+                    //    iSettlementsCount = 1;
+
+                    iSettlementsCount -= iSettlements;
+
+                    for (int i = 0; i < iSettlementsCount; i++)
+                    {
+                        //if (bHaveOne && !Rnd.OneChanceFrom(3))
+                        //    continue;
+
                         LocationX pSettlement = pLand.BuildSettlement(Settlement.Info[eSize], false, bFast);
                         if (pSettlement != null)
                         {
                             m_pLocalSociety.Settlements.Add(pSettlement);
                             //bHaveOne = true;
                         }
-                        cLandsChances[pLand] = cLandsChances[pLand] / 2;//0;
-                        break;
-                    }
-                }
-            }
-
-            //закончив "обязательную программу" пройдёмся по всем землям и во всех, где нет ни одного поселения, попытаемся что-нибудь построить.
-            foreach (LandX pLand in m_cContents)
-            {
-                int iSettlements = 0;
-                foreach (LocationX pLoc in pLand.m_cContents)
-                    if (pLoc.m_pSettlement != null && pLoc.m_pSettlement.m_iRuinsAge == 0)
-                    {
-                        iSettlements++;
-                        //break;
-                    }
-                //if (bHaveOne)
-                //    continue;
-
-                //считаем среднее количество поселений в земле исходя из размеров земли и вероятности поселения.
-                //если количество выходит меньше 1, то считаем вероятность единственного поселения.
-                //впрочем, больше одного строить всё равно не будем.
-                int iSettlementsCount = (int)(pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize] * iSingleLandMultiplier);
-                if (iSettlementsCount == 0)
-                {
-                    int iSettlementChance = (int)(1 / (pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[eSize] * iSingleLandMultiplier));
-                    if (Rnd.OneChanceFrom(iSettlementChance))
-                        iSettlementsCount = 1;
-                }
-                //else
-                //    iSettlementsCount = 1;
-
-                iSettlementsCount -= iSettlements;
-
-                for (int i = 0; i < iSettlementsCount; i++)
-                {
-                    //if (bHaveOne && !Rnd.OneChanceFrom(3))
-                    //    continue;
-
-                    LocationX pSettlement = pLand.BuildSettlement(Settlement.Info[eSize], false, bFast);
-                    if (pSettlement != null)
-                    {
-                        m_pLocalSociety.Settlements.Add(pSettlement);
-                        //bHaveOne = true;
                     }
                 }
             }
@@ -543,19 +518,20 @@ namespace Socium
             if (eRoadLevel == RoadQuality.None)
                 return;
 
-            foreach (LandX pLand in m_cContents)
-                foreach (LocationX pLoc in pLand.m_cContents)
-                    foreach (TransportationNode pLinked in pLoc.m_cLinks.Keys)
-                    {
-                        if (pLinked is LocationX)
+            foreach (Region pRegion in Contents)
+                foreach (LandX pLand in pRegion.Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
+                        foreach (TransportationNode pLinked in pLoc.Links.Keys)
                         {
-                            LandX pLinkedOwner = (pLinked as LocationX).Owner as LandX;
-                            if (pLinkedOwner.m_pProvince != this)
-                                pLoc.m_cLinks[pLinked].m_bClosed = true;
+                            if (pLinked is Location)
+                            {
+                                Land pLinkedOwner = (pLinked as Location).GetOwner();
+                                if (!pLinkedOwner.As<LandX>().HasOwner() || pLinkedOwner.As<LandX>().GetOwner().GetOwner() != this)
+                                    pLoc.Links[pLinked].m_bClosed = true;
+                            }
+                            else
+                                pLoc.Links[pLinked].m_bClosed = true;
                         }
-                        else
-                            pLoc.m_cLinks[pLinked].m_bClosed = true;
-                    }
 
             List<LocationX> cConnected = new List<LocationX>();
             cConnected.Add(m_pAdministrativeCenter);
@@ -625,10 +601,11 @@ namespace Socium
                 }
             }
 
-            foreach (LandX pLand in m_cContents)
-                foreach (LocationX pLoc in pLand.m_cContents)
-                    foreach (TransportationNode pLink in pLoc.m_cLinks.Keys)
-                        pLoc.m_cLinks[pLink].m_bClosed = false;
+            foreach (Region pRegion in Contents)
+                foreach (LandX pLand in pRegion.Contents)
+                    foreach (Location pLoc in pLand.Origin.Contents)
+                        foreach (TransportationNode pLink in pLoc.Links.Keys)
+                            pLoc.Links[pLink].m_bClosed = false;
         }
 
         /// <summary>
@@ -640,43 +617,42 @@ namespace Socium
         {
             int iAverageMagicLimit = 0;
 
-            m_fFish = 0;
-            m_fGrain = 0;
-            m_fGame = 0;
-            m_fWood = 0;
-            m_fOre = 0;
+            foreach (LandResource eRes in Enum.GetValues(typeof(LandResource)))
+                m_cResources[eRes] = 0;
+
             m_iPopulation = 0;
 
-            foreach (LandX pLand in m_cContents)
+            foreach (Region pRegion in Contents)
             {
-                int iCoast = 0;
-                int iBorder = 0;
-                foreach (LocationX pLoc in pLand.m_cContents)
+                foreach (LandX pLand in pRegion.Contents)
                 {
-                    foreach (LocationX pLink in pLoc.m_aBorderWith)
+                    int iCoast = 0;
+                    int iBorder = 0;
+                    foreach (Location pLoc in pLand.Origin.Contents)
                     {
-                        if (pLink.Owner != pLoc.Owner)
-                            iBorder++;
-                        if (pLink.Owner != null && (pLink.Owner as LandX).IsWater)
-                            iCoast++;
+                        foreach (Location pLink in pLoc.m_aBorderWith)
+                        {
+                            if (pLink.GetOwner() != pLoc.GetOwner())
+                                iBorder++;
+                            if (pLink.HasOwner() && pLink.GetOwner().IsWater)
+                                iCoast++;
+                        }
                     }
+
+                    m_cResources[LandResource.Fish] += iCoast * 3 / pLand.Origin.MovementCost;
+                    m_cResources[LandResource.Grain] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Grain);
+                    m_cResources[LandResource.Game] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Game);
+                    m_cResources[LandResource.Wood] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Wood);
+                    m_cResources[LandResource.Ore] += pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<ResourcesInfo>().GetAmount(LandResource.Ore);
+
+                    m_iPopulation += pLand.Origin.Contents.Count;
+                    iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pProtoSociety.m_iMagicLimit * pLand.Origin.Contents.Count;
                 }
-
-                m_fFish += iCoast*3/pLand.MovementCost;
-                m_fGrain += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Grain];
-                m_fGame += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Game];
-                m_fWood += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Wood];
-                m_fOre += pLand.m_cContents.Count * pLand.Type.m_cResources[LandTypeInfoX.Resource.Ore];
-
-                m_iPopulation += pLand.m_cContents.Count;
-                iAverageMagicLimit += m_pLocalSociety.m_pTitularNation.m_pProtoSociety.m_iMagicLimit * pLand.m_cContents.Count;
             }
 
             iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
 
-            float fFood = m_pLocalSociety.GetAvailableFood(m_fWood, m_fOre, m_fGrain, m_fGame, m_fFish, m_iPopulation);
-
-            m_pLocalSociety.CheckResources(m_fWood, m_fOre, fFood, m_iPopulation, m_cContents.Count);
+            m_pLocalSociety.CheckResources(m_cResources, m_iPopulation, Contents.Count);
 
             SettlementInfo pSettlementInfo = Settlement.Info[SettlementSize.Hamlet];
 
@@ -714,42 +690,43 @@ namespace Socium
         {
             Dictionary<LandX, float> cLandsChances = new Dictionary<LandX, float>();
 
-            foreach (LandX pLand in m_cContents)
+            foreach (Region pRegion in Contents)
             {
-                bool bRestricted = true;
-                foreach (LocationX pLoc in pLand.m_cContents)
-                    if (!pLoc.Forbidden && !pLoc.m_bBorder)
-                        bRestricted = false;
+                foreach (LandX pLand in pRegion.Contents)
+                {
+                    bool bRestricted = true;
+                    foreach (Location pLoc in pLand.Origin.Contents)
+                        if (!pLoc.Forbidden && !pLoc.m_bBorder)
+                            bRestricted = false;
 
-                if (bRestricted)
-                    continue;
-
-                cLandsChances[pLand] = (float)pLand.m_cContents.Count * pLand.Type.m_cSettlementsDensity[pCenter.m_eSize];
-
-                bool bProvinceBorder = false;
-                bool bStateBorder = false;
-                foreach (ITerritory pTerr in pLand.m_aBorderWith)
-                { 
-                    if(pTerr.Forbidden)
+                    if (bRestricted)
                         continue;
 
-                    LandX pLink = pTerr as LandX;
+                    cLandsChances[pLand] = (float)pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(pCenter.m_eSize);
 
-                    if (pLink.IsWater)
-                        continue;
+                    bool bProvinceBorder = false;
+                    bool bStateBorder = false;
+                    foreach (Land pLink in pLand.Origin.m_aBorderWith)
+                    {
+                        if (pLink.Forbidden)
+                            continue;
 
-                    if (pLink.m_pProvince != this)
-                        bProvinceBorder = true;
+                        if (pLink.IsWater)
+                            continue;
 
-                    if (pLink.m_pProvince.Owner != this.Owner)
-                        bStateBorder = true;
+                        if (pLink.As<LandX>().GetOwner().GetOwner() != this)
+                            bProvinceBorder = true;
+
+                        if (pLink.As<LandX>().GetOwner().GetOwner().GetOwner() != GetOwner())
+                            bStateBorder = true;
+                    }
+
+                    if (bProvinceBorder)
+                        cLandsChances[pLand] /= 100.0f;
+
+                    if (bStateBorder)
+                        cLandsChances[pLand] /= 100.0f;
                 }
-
-                if (bProvinceBorder)
-                    cLandsChances[pLand] /= 100.0f;
-
-                if (bStateBorder)
-                    cLandsChances[pLand] /= 100.0f;
             }
 
             if (cLandsChances.Count == 0)

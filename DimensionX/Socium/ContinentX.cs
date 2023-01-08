@@ -9,24 +9,49 @@ using Socium.Nations;
 
 namespace Socium
 {
-    public class ContinentX: Continent<AreaX, LandX, LandTypeInfoX>
+    /// <summary>
+    /// расширение LandscapeGeneration.Continent
+    /// добавлены списки регионов, государств, имя, метод для постройки регионов 
+    /// </summary>
+    public class ContinentX: TerritoryExtended<ContinentX, Continent>
     {
-        public List<State> m_cStates = new List<State>();
+        public List<Region> m_cRegions = new List<Region>();
+
+        public List<State> Contents { get; } = new List<State>();
 
         public string m_sName;
 
-        public override void Start(LandMass<LandX> pCenter)
+        public ContinentX(Continent pOrigin) : base(pOrigin)
         {
-            base.Start(pCenter);
+            m_cRegions.Clear();
 
             m_sName = NameGenerator.GetAbstractName();
         }
+
+        public ContinentX()
+        { }
 
         public override string ToString()
         {
             return m_sName;
         }
 
-        public Dictionary<LandMass<LandX>, List<Nation>> m_cLocalNations = new Dictionary<LandMass<LandX>,List<Nation>>();
+        public Dictionary<LandMass, List<Nation>> m_cLocalNations = new Dictionary<LandMass,List<Nation>>();
+
+        public void BuildRegions(float fCycleShift, int iMaxSize)
+        {
+            foreach (LandMass pLandMass in Origin.Contents)
+                foreach (Land pLand in pLandMass.Contents)
+                    if (!pLand.Forbidden && !pLand.IsWater && !pLand.As<LandX>().HasOwner())
+                    {
+                        Region pRegion = new Region();
+                        pRegion.Start(pLand.As<LandX>(), iMaxSize);
+                        while (pRegion.Grow() != null) { }
+                        m_cRegions.Add(pRegion);
+                    }
+
+            foreach (Region pRegion in m_cRegions)
+                pRegion.Finish(fCycleShift);
+        }
     }
 }

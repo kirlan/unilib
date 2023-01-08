@@ -16,10 +16,12 @@ namespace Socium
         public float m_fCost = 0;
     }
 
-    public class LocationX : Location
+    /// <summary>
+    /// расширение LandscapeGeneration.Location
+    /// добавляет ссылку на поселение, дороги, отдельностоящие постройки (aka логова)
+    /// </summary>
+    public class LocationX : TerritoryExtended<LocationX, Location>
     {
-        public string m_sName = "";
-
         public Settlement m_pSettlement = null;
 
         public BuildingStandAlone m_pBuilding = null;
@@ -37,13 +39,15 @@ namespace Socium
         /// </summary>
         internal Dictionary<LocationX, SeaRouteBuilderInfo> m_cSeaRouteBuildInfo = new Dictionary<LocationX, SeaRouteBuilderInfo>();
 
-        public LocationX()
-            :base()
+        public LocationX(Location pLoc) : base(pLoc)
         {
             m_cRoads[RoadQuality.Country] = new List<Road>();
             m_cRoads[RoadQuality.Normal] = new List<Road>();
             m_cRoads[RoadQuality.Good] = new List<Road>();
         }
+
+        public LocationX()
+        { }
 
         public int GetPopulation()
         {
@@ -61,8 +65,8 @@ namespace Socium
         {
             get
             {
-                LandX pLand = Owner as LandX;
-                return pLand.m_pProvince;
+                LandX pLand = Origin.GetOwner().As<LandX>();
+                return pLand.GetOwner().GetOwner();
             }
         }
 
@@ -70,7 +74,7 @@ namespace Socium
         {
             get
             {
-                return OwnerProvince.Owner as State;
+                return OwnerProvince.GetOwner();
             }
         }
 
@@ -120,25 +124,24 @@ namespace Socium
             if (m_pBuilding != null)
                 return string.Format("{0} {1}", m_pBuilding.ToString(), base.ToString());
 
-            return string.Format("{0} {1} {2}", m_eType, m_sName, base.ToString());
+            return string.Format("{0} {1}", Origin.m_eType, base.ToString());
         }
 
-        public override void Reset()
-        {
-            m_sName = "";
-            m_pSettlement = null;
-            m_pBuilding = null;
-            m_cRoads.Clear();
-            m_cRoads[RoadQuality.Country] = new List<Road>();
-            m_cRoads[RoadQuality.Normal] = new List<Road>();
-            m_cRoads[RoadQuality.Good] = new List<Road>();
+        //public void Reset()
+        //{
+        //    m_pSettlement = null;
+        //    m_pBuilding = null;
+        //    m_cRoads.Clear();
+        //    m_cRoads[RoadQuality.Country] = new List<Road>();
+        //    m_cRoads[RoadQuality.Normal] = new List<Road>();
+        //    m_cRoads[RoadQuality.Good] = new List<Road>();
 
-            m_cHaveRoadTo.Clear();
-            m_cHaveSeaRouteTo.Clear();
+        //    m_cHaveRoadTo.Clear();
+        //    m_cHaveSeaRouteTo.Clear();
 
-            m_cSeaRouteBuildInfo.Clear();
+        //    m_cSeaRouteBuildInfo.Clear();
 
-            base.Reset();
-        }
+        //    //base.Reset();
+        //}
     }
 }

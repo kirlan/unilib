@@ -1243,5 +1243,18 @@ namespace Socium.Psychology
 
             return true;
         }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            foreach (var custom in m_cCustoms)
+                hash.Add(custom);
+
+            if (Has(BodyModifications.Body_Modifications_Mandatory))
+                foreach (var bodyModification in m_cMandatoryModifications)
+                    hash.Add(bodyModification);
+            
+            return hash.ToHashCode();
+        }
     }
 }

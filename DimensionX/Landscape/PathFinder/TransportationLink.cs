@@ -275,9 +275,9 @@ namespace LandscapeGeneration.PathFind
             }
         }
 
-        public IPointF[] m_aPoints = new IPointF[3];
+        public VoronoiVertex[] m_aPoints = new VoronoiVertex[3];
 
-        private static float GetDist(IPointF pPoint1, IPointF pPoint2)
+        private static float GetDist(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
         {
             return (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
         }
@@ -287,7 +287,7 @@ namespace LandscapeGeneration.PathFind
             m_aPoints[0] = pLoc1;
             m_aPoints[2] = pLoc2;
 
-            IPointF point2 = new VoronoiVertex(pLoc2.X, pLoc2.Y);
+            VoronoiVertex point2 = new VoronoiVertex(pLoc2.X, pLoc2.Y);
             if (Math.Abs(pLoc1.X - pLoc2.X) > fCycleShift / 2)
             {
                 if (pLoc1.X < 0)
@@ -296,7 +296,7 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Location.Edge pLine = pLoc1.BorderWith[pLoc2][0];
+            VoronoiEdge pLine = pLoc1.BorderWith[pLoc2][0];
 
             m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
 
@@ -338,12 +338,12 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLinkBase(ILand pLand1, ILand pLand2, float fCycleShift)
+        public TransportationLinkBase(Land pLand1, Land pLand2, float fCycleShift)
         {
             m_aPoints[0] = pLand1;
             m_aPoints[2] = pLand2;
 
-            IPointF point2 = new VoronoiVertex(pLand2.X, pLand2.Y);
+            VoronoiVertex point2 = new VoronoiVertex(pLand2.X, pLand2.Y);
             if (Math.Abs(pLand1.X - pLand2.X) > fCycleShift / 2)
             {
                 if (pLand1.X < 0)
@@ -352,9 +352,9 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Location.Edge pBestLine = null;
+            VoronoiEdge pBestLine = null;
             float fShortest = float.MaxValue;
-            Location.Edge[] cLines = pLand1.BorderWith[pLand2].ToArray();
+            VoronoiEdge[] cLines = pLand1.BorderWith[pLand2].ToArray();
             foreach (var pLine in cLines)
             {
                 m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
@@ -377,12 +377,12 @@ namespace LandscapeGeneration.PathFind
             RecalcFinalCost();
         }
 
-        public TransportationLinkBase(ILandMass pLandMass1, ILandMass pLandMass2, float fCycleShift)
+        public TransportationLinkBase(LandMass pLandMass1, LandMass pLandMass2, float fCycleShift)
         {
             m_aPoints[0] = pLandMass1;
             m_aPoints[2] = pLandMass2;
 
-            IPointF point2 = new VoronoiVertex(pLandMass2.X, pLandMass2.Y);
+            VoronoiVertex point2 = new VoronoiVertex(pLandMass2.X, pLandMass2.Y);
             if (Math.Abs(pLandMass1.X - pLandMass2.X) > fCycleShift / 2)
             {
                 if (pLandMass1.X < 0)
@@ -391,9 +391,9 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            Location.Edge pBestLine = null;
+            VoronoiEdge pBestLine = null;
             float fShortest = float.MaxValue;
-            Location.Edge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
+            VoronoiEdge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
             foreach (var pLine in cLines)
             {
                 m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
@@ -418,7 +418,7 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(TransportationNode[] aPath)
         {
-            List<IPointF> cPoints = new List<IPointF>();
+            List<VoronoiVertex> cPoints = new List<VoronoiVertex>();
             cPoints.Add(aPath[0]);
 
             m_fBaseCost = 0;
@@ -428,7 +428,7 @@ namespace LandscapeGeneration.PathFind
             {
                 if (pLastNode != null)
                 {
-                    TransportationLinkBase pLink = pLastNode.m_cLinks[pNode];
+                    TransportationLinkBase pLink = pLastNode.Links[pNode];
                     if (pLink.m_aPoints[0] == pLastNode)
                     {
                         for (int i = 1; i < pLink.m_aPoints.Length; i++)

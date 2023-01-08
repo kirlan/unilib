@@ -327,6 +327,13 @@ namespace Random
             return cBests[Get(cBests.Count)];
         }
 
+        /// <summary>
+        /// Возвращает индекс случайного элемента в коллекции в соответствии с их весами.
+        /// ВНИМАНИЕ: Если коллекция пустая - возвращает -1
+        /// </summary>
+        /// <param name="cChances">коллекция весов</param>
+        /// <param name="iPow">степень в которую возводится вес при сравнении</param>
+        /// <returns></returns>
         public static int ChooseOne(ICollection<float> cChances, int iPow)
         {
             if (cChances.Count == 0)

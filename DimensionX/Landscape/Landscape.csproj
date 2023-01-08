@@ -45,36 +45,31 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Area.cs" />
-    <Compile Include="IGrid.cs" />
-    <Compile Include="ILandMass.cs" />
-    <Compile Include="Interfaces\ILand.cs" />
-    <Compile Include="Interfaces\IPointF.cs" />
-    <Compile Include="LandTypeInfo.cs" />
-    <Compile Include="LocationsGrid.cs" />
+    <Compile Include="Grids\Perlin.cs" />
+    <Compile Include="Grids\Poisson.cs" />
+    <Compile Include="Grids\VoronoiEdge.cs" />
+    <Compile Include="Grids\VoronoiVertex.cs" />
+    <Compile Include="Layers\Base\Territory.cs" />
+    <Compile Include="Grids\GenerationDelegates.cs" />
+    <Compile Include="Layers\Base\IInfoLayer.cs" />
+    <Compile Include="Layers\Base\LandTypeInfo.cs" />
     <Compile Include="PathFinder\BasicHeap.cs" />
-    <Compile Include="PathFinder\ITransportationNode.cs" />
     <Compile Include="PathFinder\Path.cs" />
     <Compile Include="PathFinder\PriorityQueue.cs" />
     <Compile Include="PathFinder\TransportationLink.cs" />
     <Compile Include="PathFinder\TransportationNode.cs" />
-    <Compile Include="Perlin.cs" />
-    <Compile Include="FastGrid\CellCH.cs" />
-    <Compile Include="FastGrid\Chunk.cs" />
-    <Compile Include="FastGrid\ChunksGrid.cs" />
-    <Compile Include="FastGrid\VertexCH.cs" />
-    <Compile Include="Poisson.cs" />
-    <Compile Include="Territory.cs" />
-    <Compile Include="Continent.cs" />
-    <Compile Include="Interfaces\ITerritory.cs" />
-    <Compile Include="Land.cs" />
-    <Compile Include="LandMass.cs" />
-    <Compile Include="Landscape.cs" />
-    <Compile Include="Location.cs" />
+    <Compile Include="Grids\FastGrid\CellCH.cs" />
+    <Compile Include="Grids\FastGrid\Chunk.cs" />
+    <Compile Include="Grids\FastGrid\LocationsGrid.cs" />
+    <Compile Include="Grids\FastGrid\VertexCH.cs" />
+    <Compile Include="Layers\Base\TerritoryCluster.cs" />
+    <Compile Include="Layers\Continent.cs" />
+    <Compile Include="Layers\Land.cs" />
+    <Compile Include="Layers\LandMass.cs" />
+    <Compile Include="Layers\Landscape.cs" />
+    <Compile Include="Layers\Location.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PathFinder\ShortestPath.cs" />
-    <Compile Include="BorderBuilder.cs" />
-    <Compile Include="VoronoiVertex.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Zipp\Zipp.csproj">
@@ -98,6 +93,7 @@
       <Name>MIConvexHull</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

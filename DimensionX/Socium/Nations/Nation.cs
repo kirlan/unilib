@@ -1,5 +1,6 @@
 ﻿using GeneLab;
 using GeneLab.Genetix;
+using LandscapeGeneration;
 using Random;
 using Socium.Population;
 using Socium.Psychology;
@@ -19,12 +20,12 @@ namespace Socium.Nations
 
     public class Nation 
     {
-        public Phenotype<LandTypeInfoX> m_pPhenotypeM;
-        public Phenotype<LandTypeInfoX> m_pPhenotypeF;
+        public Phenotype m_pPhenotypeM;
+        public Phenotype m_pPhenotypeF;
 
         public Society m_pProtoSociety = null;
         
-        public Phenotype<LandTypeInfoX> DominantPhenotype
+        public Phenotype DominantPhenotype
         {
             get
             {
@@ -38,7 +39,7 @@ namespace Socium.Nations
         /// <summary>
         /// Культура "слабого" пола
         /// </summary>
-        public Phenotype<LandTypeInfoX> InferiorFenotype
+        public Phenotype InferiorFenotype
         {
             get
             {
@@ -49,16 +50,39 @@ namespace Socium.Nations
             }
         }
 
+
         public Race m_pRace = null;
 
-        public LandTypeInfoX[] m_aPreferredLands;
-        public LandTypeInfoX[] m_aHatedLands;
+        public LandTypeInfo[] m_aPreferredLands;
+        public LandTypeInfo[] m_aHatedLands;
 
-        public bool m_bDying = false;
-        public bool m_bHegemon = false;
-        public bool m_bInvader = false;
+        public bool IsAncient { get; private set; }
+        public bool IsHegemon { get; private set; }
+        public bool IsInvader { get; private set; }
+
+        /// <summary>
+        /// Пометить как "древнюю". Древние расы не могут быть гегемонами!
+        /// </summary>
+        public void Age()
+        {
+            IsAncient = true;
+            IsHegemon = false;
+        }
+
+        /// <summary>
+        /// Сделать гегемоном
+        /// </summary>
+        public void Grow()
+        {
+            IsHegemon = true;
+        }
 
         public Epoch m_pEpoch = null;
+
+        public Nation(Race pRace, Epoch pEpoch, bool bInvader) : this(pRace, pEpoch)
+        {
+            IsInvader = bInvader;
+        }
 
         public Nation(Race pRace, Epoch pEpoch)
         {
@@ -69,11 +93,11 @@ namespace Socium.Nations
             bool bNew = false;
             do
             {
-                m_pPhenotypeM = (Phenotype<LandTypeInfoX>)m_pRace.m_pPhenotypeM.MutateNation();
+                m_pPhenotypeM = (Phenotype)m_pRace.m_pPhenotypeM.MutateNation();
 
                 var pExpectedPhenotypeF = Phenotype.Combine(m_pPhenotypeM, m_pRace.m_pGenderDiffFemale);
 
-                m_pPhenotypeF = (Phenotype<LandTypeInfoX>)pExpectedPhenotypeF.MutateGender();
+                m_pPhenotypeF = (Phenotype)pExpectedPhenotypeF.MutateGender();
 
                 bNew = !m_pPhenotypeM.IsIdentical(m_pRace.m_pPhenotypeM) &&
                        !m_pPhenotypeF.IsIdentical(m_pRace.m_pPhenotypeF);
@@ -117,7 +141,7 @@ namespace Socium.Nations
         /// <param name="pWorld">мир</param>
         public void Accommodate(Epoch pEpoch)
         {
-            if (m_bInvader)
+            if (IsInvader)
             {
                 //m_iTechLevel = Math.Min(pEpoch.m_iInvadersMaxTechLevel, pEpoch.m_iInvadersMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
                 //m_iMagicLimit = Math.Min(pEpoch.m_iInvadersMaxMagicLevel, pEpoch.m_iInvadersMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
@@ -155,7 +179,7 @@ namespace Socium.Nations
             }
             else
             {
-                if (!m_bDying)
+                if (!IsAncient)
                 {
                     //m_iTechLevel = Math.Min(pEpoch.m_iNativesMaxTechLevel, pEpoch.m_iNativesMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
                     //m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
@@ -188,7 +212,7 @@ namespace Socium.Nations
                 else
                     m_pProtoSociety.m_iTechLevel -= iTechLevel;
 
-                if (!m_bDying)
+                if (!IsAncient)
                 {
                     if (m_pProtoSociety.m_iMagicLimit < pEpoch.m_iNativesMinMagicLevel)
                         m_pProtoSociety.m_iMagicLimit = pEpoch.m_iNativesMinMagicLevel;
@@ -236,6 +260,74 @@ namespace Socium.Nations
             //        m_pCulture.Degrade();
             //        m_pCustoms.Degrade();
             //    }
+        }
+        
+        /// <summary>
+        /// Вычисляет условную стоимость заселения территории указанной расой, в соответсвии с ландшафтом и фенотипом расы.
+        /// Возвращает значение в диапазоне 1-100. 
+        /// 1 - любая территория, идеально подходящая указанной расе (горы для гномов). Так же - простая для заселения территория, просто подходящая указанной расе.
+        /// 10 - простая для заселения территория (равнины), но совсем не подходящая указанной расе (горы для эльфов). Так же - максимально сложная для заселения территория, просто подходящая указанной расе (горы для людей).
+        /// 100 - максимально сложная для заселения территория (непроходимые горы), совсем не подходящая указанной расе.
+        /// </summary>
+        /// <param name="pNation"></param>
+        /// <returns></returns>
+        public int GetClaimingCost(LandTypeInfo pLandType)
+        {
+            if (pLandType == null)
+                return -1;
+
+            if (!pLandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                return -1;
+
+            float fCost = pLandType.m_iMovementCost; // 1 - 10
+
+            if (m_aPreferredLands.Contains(pLandType))
+                fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            if (m_aHatedLands.Contains(pLandType))
+                fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
+
+            if (IsHegemon)
+                fCost /= 2;
+
+            if (fCost < 1)
+                fCost = 1;
+
+            if (fCost > int.MaxValue)
+                fCost = int.MaxValue - 1;
+
+            return (int)fCost;
+        }
+
+        public float GetAvailableFood(Dictionary<LandResource, float> cResources, int iPrey)
+        {
+            switch (DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType)
+            {
+                case NutritionType.Eternal:
+                    return float.MaxValue;
+                case NutritionType.Mineral:
+                    return cResources[LandResource.Ore];
+                case NutritionType.Organic:
+                    return cResources[LandResource.Grain] + cResources[LandResource.Game] + cResources[LandResource.Fish];
+                case NutritionType.ParasitismBlood:
+                    return iPrey; //TODO: нyжно учитывать размеры и телосложение жертв - в гигантах и толстяках крови больше, чем в карликах и худышках
+                case NutritionType.ParasitismEmote:
+                    return iPrey; //TODO: нужно учитывать темперамент жертв 
+                case NutritionType.ParasitismEnergy:
+                    return iPrey; //TODO: нужно учитывать... хз что именно, но что-то точно нужно :)
+                case NutritionType.ParasitismMeat:
+                    return iPrey; //TODO: нyжно учитывать размеры и телосложение жертв - в гигантах и толстяках мяса больше, чем в карликах и худышках
+                case NutritionType.Photosynthesis:
+                    return float.MaxValue; //TODO: нужно учитывать климат и расстояние до экватора
+                case NutritionType.Thermosynthesis:
+                    return float.MaxValue; //TODO: нужно учитывать наличие вулканов и расстояние до экватора
+                case NutritionType.Vegetarian:
+                    return cResources[LandResource.Grain];
+                case NutritionType.Carnivorous:
+                    return cResources[LandResource.Game] + cResources[LandResource.Fish];
+                default:
+                    throw new Exception(string.Format("Unknown Nutrition type: {0}", DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType));
+            }
         }
     }
 }

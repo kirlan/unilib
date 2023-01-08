@@ -102,6 +102,28 @@ namespace VQMapTest2
             if (radioButton4.Checked)
                 fScale = 32.0f;
 
+            LandTypes.Coastral.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0x27, 0x67, 0x71)));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+
+            LandTypes.Ocean.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0x1e, 0x5e, 0x69)));//(0x2a, 0x83, 0x93);//(0x36, 0xa9, 0xbd);//FromArgb(0xa2, 0xed, 0xfa);//LightSkyBlue;//LightCyan;
+
+            LandTypes.Plains.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0xd3, 0xfa, 0x5f)));//(0xdc, 0xfa, 0x83);//LightGreen;
+
+            LandTypes.Savanna.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0xf0, 0xff, 0x8a)));//(0xbd, 0xb0, 0x6b);//PaleGreen;
+
+            LandTypes.Tundra.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0xc9, 0xff, 0xff)));//(0xc9, 0xe0, 0xff);//PaleGreen;
+
+            LandTypes.Desert.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0xfa, 0xdc, 0x36)));//(0xf9, 0xfa, 0x8a);//LightYellow;
+
+            LandTypes.Forest.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0x56, 0x78, 0x34)));//(0x63, 0x78, 0x4e);//LightGreen;//ForestGreen;
+
+            LandTypes.Taiga.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0x63, 0x78, 0x4e)));//LightGreen;//ForestGreen;
+
+            LandTypes.Swamp.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0xa7, 0xbd, 0x6b)));// DarkKhaki;
+
+            LandTypes.Mountains.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0xbd, 0x6d, 0x46)));//Tan;
+
+            LandTypes.Jungle.AddLayer(new LandTypeDrawInfo(Color.FromArgb(0x8d, 0xb7, 0x31)));//(0x72, 0x94, 0x28);//PaleGreen;
+
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
@@ -264,8 +286,8 @@ namespace VQMapTest2
                 pPhenotypeF = pNation.m_pPhenotypeF;
             }
 
-            richTextBox1.AppendText(sRaceName + (pNation.m_bDying ? " is an ancient race." : " is a young race. "));
-            if (pNation.m_bInvader)
+            richTextBox1.AppendText(sRaceName + (pNation.IsAncient ? " is an ancient race." : " is a young race. "));
+            if (pNation.IsInvader)
                 richTextBox1.AppendText("They are not from this world. ");
             richTextBox1.AppendText("\n");
 
@@ -390,7 +412,7 @@ namespace VQMapTest2
                 richTextBox1.AppendText(string.Format("Magic users: none, {0} [M0]\n\n", sMagicAttitude));
             }
 
-            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_iWood, e.m_pState.m_iOre, e.m_pState.m_iPopulation));
+            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_cResources[LandResource.Wood], e.m_pState.m_cResources[LandResource.Ore], e.m_pState.m_iPopulation));
 
             richTextBox1.AppendText("Estates: \n");
 
@@ -617,7 +639,6 @@ namespace VQMapTest2
                 Properties.Settings.Default.preset4 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[3];
             if (m_pGenerationForm.m_pSettings.m_cLastUsedPresets.Count > 4)
                 Properties.Settings.Default.preset5 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[4];
-            Properties.Settings.Default.WorkingPath = m_pGenerationForm.m_pSettings.m_sWorkingDir;
 
             Properties.Settings.Default.Save();
         }
@@ -651,11 +672,8 @@ namespace VQMapTest2
             if (sPreset != "" && !settings.m_cLastUsedPresets.Contains(sPreset))
                 settings.m_cLastUsedPresets.Add(sPreset);
 
-            settings.m_sWorkingDir = Properties.Settings.Default.WorkingPath;
-
             if (m_pGenerationForm.Preload(settings))
             {
-                Properties.Settings.Default.WorkingPath = m_pGenerationForm.m_pSettings.m_sWorkingDir;
                 Properties.Settings.Default.Save();
             }
             else
@@ -763,35 +781,35 @@ namespace VQMapTest2
             timer1.Enabled = false;
         }
 
-        LocationX m_pTPFStart = null;
-        LocationX m_pTPFFinish = null;
+        Location m_pTPFStart = null;
+        Location m_pTPFFinish = null;
 
         private void ToolStripMenuItem_TestPathFinding1_Click(object sender, EventArgs e)
         {
             do
             {
-                m_pTPFStart = m_pWorld.m_pGrid.Locations[Rnd.Get(m_pWorld.m_pGrid.Locations.Length)];
+                m_pTPFStart = m_pWorld.m_pLocationsGrid.Locations[Rnd.Get(m_pWorld.m_pLocationsGrid.Locations.Length)];
             }
             while (m_pTPFStart.Forbidden || 
-                   (m_pTPFStart.Owner as LandX).IsWater || 
-                   m_pTPFStart.m_pSettlement == null || 
-                   m_pTPFStart.m_pSettlement.m_iRuinsAge > 0);
+                   m_pTPFStart.GetOwner().IsWater || 
+                   m_pTPFStart.As<LocationX>().m_pSettlement == null || 
+                   m_pTPFStart.As<LocationX>().m_pSettlement.m_iRuinsAge > 0);
 
             do
             {
-                m_pTPFFinish = m_pWorld.m_pGrid.Locations[Rnd.Get(m_pWorld.m_pGrid.Locations.Length)];
+                m_pTPFFinish = m_pWorld.m_pLocationsGrid.Locations[Rnd.Get(m_pWorld.m_pLocationsGrid.Locations.Length)];
             }
             while (m_pTPFFinish.Forbidden || 
                    m_pTPFFinish == m_pTPFStart || 
-                   (m_pTPFFinish.Owner as LandX).IsWater || 
-                   ((m_pTPFFinish.m_pBuilding == null || 
-                     (m_pTPFFinish.m_pBuilding.m_eType != BuildingType.Hideout && 
-                      m_pTPFFinish.m_pBuilding.m_eType != BuildingType.Lair)) && 
-                    m_pTPFFinish.m_pSettlement == null));
+                   m_pTPFFinish.GetOwner().IsWater || 
+                   ((m_pTPFFinish.As<LocationX>().m_pBuilding == null || 
+                     (m_pTPFFinish.As<LocationX>().m_pBuilding.m_eType != BuildingType.Hideout && 
+                      m_pTPFFinish.As<LocationX>().m_pBuilding.m_eType != BuildingType.Lair)) && 
+                    m_pTPFFinish.As<LocationX>().m_pSettlement == null));
 
             mapDraw1.ClearPath();
 
-            ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_pGrid.CycleShift, false);
+            ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_pLocationsGrid.CycleShift, false);
             mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
         }
 
