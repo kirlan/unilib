@@ -34,3 +34,11 @@ QuickFilter/ReleaseMinSize
 hyboria0.jpg
 sphere_voronoi.f90.txt
 NodaTime/Portable
+packages
+*.suo
+*.user
+*_i.c
+*_p.c
+*.aps
+*.tlb
+BraveNewWorld/Libraries/FortuneVoronoi.dll
