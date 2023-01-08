@@ -124,19 +124,19 @@ namespace MapDrawEngine
         /// Контуры конкретных тектонических плит - для определения, над какой из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<LandMass<LandX>, GraphicsPath> m_cLandMassBorders = new Dictionary<LandMass<LandX>, GraphicsPath>();
+        private Dictionary<LandMass, GraphicsPath> m_cLandMassBorders = new Dictionary<LandMass, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных земель - для определения, над какой из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<LandX, GraphicsPath> m_cLandBorders = new Dictionary<LandX, GraphicsPath>();
+        private Dictionary<Land, GraphicsPath> m_cLandBorders = new Dictionary<Land, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных локаций - для определения, над какой из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<LocationX, GraphicsPath> m_cLocationBorders = new Dictionary<LocationX, GraphicsPath>();
+        private Dictionary<Location, GraphicsPath> m_cLocationBorders = new Dictionary<Location, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных государств - для определения, над каким из них находится мышь.
@@ -415,14 +415,14 @@ namespace MapDrawEngine
         /// <summary>
         /// Континент, над которым находится указатель мыши.
         /// </summary>
-        private ContinentX m_pFocusedContinent = null;
+        private Continent m_pFocusedContinent = null;
 
-        private LandMass<LandX> m_pFocusedLandMass = null;
+        private LandMass m_pFocusedLandMass = null;
 
         /// <summary>
         /// Континент, над которым находится указатель мыши.
         /// </summary>
-        public ContinentX ContinentInFocus
+        public Continent ContinentInFocus
         {
             get { return m_pFocusedContinent; }
         }
@@ -440,12 +440,12 @@ namespace MapDrawEngine
         /// <summary>
         /// Земля, над которой находится указатель мыши.
         /// </summary>
-        private LandX m_pFocusedLand = null;
+        private Land m_pFocusedLand = null;
 
         /// <summary>
         /// Земля, над которой находится указатель мыши.
         /// </summary>
-        public LandX LandInFocus
+        public Land LandInFocus
         {
             get { return m_pFocusedLand; }
         }
@@ -453,12 +453,12 @@ namespace MapDrawEngine
         /// <summary>
         /// Локация, над которой находится указатель мыши.
         /// </summary>
-        private LocationX m_pFocusedLocation = null;
+        private Location m_pFocusedLocation = null;
 
         /// <summary>
         /// Локация, над которой находится указатель мыши.
         /// </summary>
-        public LocationX LocationInFocus
+        public Location LocationInFocus
         {
             get { return m_pFocusedLocation; }
         }
@@ -834,7 +834,7 @@ namespace MapDrawEngine
             MapQuadrant[] aQuads;
 
             //вычислим контуры тектонических плит
-            foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
+            foreach (LandMass pLandMass in m_pWorld.m_aLandMasses)
             {
                 aPoints = BuildPath(pLandMass.m_cFirstLines, true, out aQuads);
                 pPath = new GraphicsPath();
@@ -853,7 +853,7 @@ namespace MapDrawEngine
                 //запомним общий рисунок контура тектонической плиты - чтобы потом определять вхождение указателя мыши в него.
                 m_cLandMassBorders[pLandMass] = pPath;
                 //вычислим контуры земель
-                foreach (LandX pLand in pLandMass.m_cContents)
+                foreach (Land pLand in pLandMass.Contents)
                 {
                     aPoints = BuildPath(pLand.m_cFirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
@@ -862,7 +862,7 @@ namespace MapDrawEngine
                         pPath.AddPolygon(aPts);
 
                         //определим, каким цветом эта земля должна закрашиваться на карте влажностей
-                        Brush pBrush = pLand.IsWater ? pLand.Type.m_pBrush : m_aHumidity[pLand.Humidity];
+                        Brush pBrush = pLand.IsWater ? pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush : m_aHumidity[pLand.Humidity];
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
@@ -873,18 +873,18 @@ namespace MapDrawEngine
                                 pQuad.m_cModes[MapMode.Humidity][pBrush] = new GraphicsPath();
                             pQuad.m_cModes[MapMode.Humidity][pBrush].AddPolygon(aPts);
 
-                            if (pLand.Type == LandTypes.Coastral)
+                            if (pLand.LandType == LandTypes.Coastral)
                             {
-                                if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pLand.Type.m_pBrush))
-                                    pQuad.m_cModes[MapMode.Areas][pLand.Type.m_pBrush] = new GraphicsPath();
-                                pQuad.m_cModes[MapMode.Areas][pLand.Type.m_pBrush].AddPolygon(aPts);
+                                if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush))
+                                    pQuad.m_cModes[MapMode.Areas][pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
+                                pQuad.m_cModes[MapMode.Areas][pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
                             }
                         }
                     }
                     m_cLandBorders[pLand] = pPath;
 
                     //вычислим контуры локаций
-                    foreach (LocationX pLoc in pLand.m_cContents)
+                    foreach (Location pLoc in pLand.Contents)
                     {
                         aPoints = BuildPath(pLoc.m_pFirstLine, true, out aQuads);
                         pPath = new GraphicsPath();
@@ -914,7 +914,7 @@ namespace MapDrawEngine
             }
             
             //вычислим контуры континентов
-            foreach (ContinentX pContinent in m_pWorld.m_aContinents)
+            foreach (Continent pContinent in m_pWorld.Contents)
             {
                 aPoints = BuildPath(pContinent.m_cFirstLines, true, out aQuads);
                 foreach (var aPts in aPoints)
@@ -925,7 +925,7 @@ namespace MapDrawEngine
                     }
 
                 //вычислим контуры государств
-                foreach (State pState in pContinent.m_cStates)
+                foreach (State pState in pContinent.As<ContinentX>().Contents)
                 {
                     aPoints = BuildPath(pState.m_cFirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
@@ -956,7 +956,7 @@ namespace MapDrawEngine
                 }
 
                 //вычислим контуры географических регионов
-                foreach (Socium.Region pArea in pContinent.m_cRegions)
+                foreach (Socium.Region pArea in pContinent.As<ContinentX>().m_cRegions)
                 {
                     aPoints = BuildPath(pArea.m_cFirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
@@ -967,9 +967,9 @@ namespace MapDrawEngine
                         foreach (MapQuadrant pQuad in aQuads)
                         {
                             //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
-                            if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pArea.m_pType.m_pBrush))
-                                pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush] = new GraphicsPath();
-                            pQuad.m_cModes[MapMode.Areas][pArea.m_pType.m_pBrush].AddPolygon(aPts);
+                            if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush))
+                                pQuad.m_cModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
+                            pQuad.m_cModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
 
                             //если регион обитаем
                             if (pArea.m_pNatives != null)
@@ -1040,8 +1040,8 @@ namespace MapDrawEngine
             for (int i = 0; i < QUADRANTS_COUNT; i++)
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
                 {
-                    float fQuadX = m_pWorld.m_pGrid.RX * i * 2 / QUADRANTS_COUNT;
-                    float fQuadY = m_pWorld.m_pGrid.RY * j * 2 / QUADRANTS_COUNT;
+                    float fQuadX = m_pWorld.m_pLocationsGrid.RX * i * 2 / QUADRANTS_COUNT;
+                    float fQuadY = m_pWorld.m_pLocationsGrid.RY * j * 2 / QUADRANTS_COUNT;
                     m_aQuadrants[i, j].Normalize(fQuadX, fQuadY);
                 }
 
@@ -1122,13 +1122,13 @@ namespace MapDrawEngine
         /// <param name="bMirror">Строить ли отражения для зацикленного мира. Нужно при отрисовке, но нельзя при определении описывающего прямоугольника.</param>
         /// <param name="aQuadrants">список квадрантов, в которые входит этот контур</param>
         /// <returns></returns>
-        private PointF[][] BuildPath(List<Location.Edge> cFirstLines, bool bMirror, out MapQuadrant[] aQuadrants)
+        private PointF[][] BuildPath(List<VoronoiEdge> cFirstLines, bool bMirror, out MapQuadrant[] aQuadrants)
         {
             bool[,] aQuadsAll = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
             List<PointF[]> cPath = new List<PointF[]>();
 
             //пробежимся по всем затравкам
-            foreach (Location.Edge pFirstLine in cFirstLines)
+            foreach (VoronoiEdge pFirstLine in cFirstLines)
             {
                 bool bCross;
                 bool[,] aQuads;
@@ -1144,13 +1144,13 @@ namespace MapDrawEngine
 
                 //если карта зациклена по горизонтали, нужно строить отражения и 
                 //контур пересекает нулевой меридиан, то строим отражение!
-                if (m_pWorld.m_pGrid.CycleShift != 0 && bMirror && bCross)
+                if (m_pWorld.m_pLocationsGrid.CycleShift != 0 && bMirror && bCross)
                 {
                     //определяем, на западе или на востоке будем строить отражение
                     if (pFirstLine.m_pPoint1.X > 0)
-                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
                     else
-                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
 
                     //определяем, через какие квадранты оно проходит
                     for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1178,7 +1178,7 @@ namespace MapDrawEngine
         /// <param name="bMirror">Строить ли отражения для зацикленного мира. Нужно при отрисовке, но нельзя при определении описывающего прямоугольника.</param>
         /// <param name="aQuadrants">список квадрантов, в которые входит этот контур</param>
         /// <returns></returns>
-        private PointF[][] BuildPath(Location.Edge pFirstLine, bool bMirror, out MapQuadrant[] aQuadrants)
+        private PointF[][] BuildPath(VoronoiEdge pFirstLine, bool bMirror, out MapQuadrant[] aQuadrants)
         {
             bool[,] aQuadsAll = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
             List<PointF[]> cPath = new List<PointF[]>();
@@ -1197,13 +1197,13 @@ namespace MapDrawEngine
 
             //если карта зациклена по горизонтали, нужно строить отражения и 
             //контур пересекает нулевой меридиан, то строим отражение!
-            if (m_pWorld.m_pGrid.CycleShift != 0 && bMirror && bCross)
+            if (m_pWorld.m_pLocationsGrid.CycleShift != 0 && bMirror && bCross)
             {
                 //определяем, на западе или на востоке будем строить отражение
                 if (pFirstLine.m_pPoint1.X > 0)
-                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
                 else
-                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
 
                 //определяем, через какие квадранты оно проходит
                 for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1231,46 +1231,46 @@ namespace MapDrawEngine
         /// <param name="bCross">признак того, что контур пересекает нулевой меридиан</param>
         /// <param name="aQuadrants">массив, в котором указано, в каких квадрантах лежит контур</param>
         /// <returns></returns>
-        private PointF[] BuildBorder(Location.Edge pFirstLine, float fShift, out bool bCross, out bool[,] aQuadrants)
+        private PointF[] BuildBorder(VoronoiEdge pFirstLine, float fShift, out bool bCross, out bool[,] aQuadrants)
         {
             bCross = false;
 
             aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
 
             List<PointF> cBorder = new List<PointF>();
-            Location.Edge pLine = pFirstLine;
+            VoronoiEdge pLine = pFirstLine;
             cBorder.Add(ShiftPoint(pLine.m_pPoint1, fShift));
             float fLastPointX = pLine.m_pPoint1.X + fShift;
             //последовательно перебирает все связанные линии, пока круг не замкнётся.
             do
             {
                 //в каком квадранте лежит первая точка линии
-                int iQuad1X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-                int iQuad1Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+                int iQuad1X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
+                int iQuad1Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
 
                 if (iQuad1X >= 0 && iQuad1X < QUADRANTS_COUNT && iQuad1Y >= 0 && iQuad1Y < QUADRANTS_COUNT)
                     aQuadrants[iQuad1X, iQuad1Y] = true;
 
                 //в каком квадранте лежит вторая точка линии
-                int iQuad2X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-                int iQuad2Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+                int iQuad2X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
+                int iQuad2Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
 
                 if (iQuad2X >= 0 && iQuad2X < QUADRANTS_COUNT && iQuad2Y >= 0 && iQuad2Y < QUADRANTS_COUNT)
                     aQuadrants[iQuad2X, iQuad2Y] = true;
 
                 //пересекает-ли линия нулевой меридиан?
                 float fDX = fShift;
-                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pWorld.m_pGrid.RX)
+                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pWorld.m_pLocationsGrid.RX)
                 {
                     //определимся, где у нас была предыдущая часть контура - на западе или на востоке?
                     //в зависимости от этого вычислим смещение для оставшейся части контура, чтобы 
                     //не было разрыва
-                    fDX += fLastPointX < fShift ? -m_pWorld.m_pGrid.RX * 2 : m_pWorld.m_pGrid.RX * 2;
+                    fDX += fLastPointX < fShift ? -m_pWorld.m_pLocationsGrid.RX * 2 : m_pWorld.m_pLocationsGrid.RX * 2;
                     bCross = true;
                 }
 
-                if (pLine.m_pPoint2.X > m_pWorld.m_pGrid.RX ||
-                    pLine.m_pPoint2.X < -m_pWorld.m_pGrid.RX)
+                if (pLine.m_pPoint2.X > m_pWorld.m_pLocationsGrid.RX ||
+                    pLine.m_pPoint2.X < -m_pWorld.m_pLocationsGrid.RX)
                     bCross = true;
 
                 cBorder.Add(ShiftPoint(pLine.m_pPoint2, fDX));
@@ -1296,20 +1296,20 @@ namespace MapDrawEngine
         /// <returns>смещённая точка</returns>
         private PointF ShiftPoint(VoronoiVertex pPoint, float fDX)
         {
-            return new PointF(m_pWorld.m_pGrid.RX + pPoint.X + fDX, m_pWorld.m_pGrid.RY + pPoint.Y);
+            return new PointF(m_pWorld.m_pLocationsGrid.RX + pPoint.X + fDX, m_pWorld.m_pLocationsGrid.RY + pPoint.Y);
         }
 
         /// <summary>
         /// добавляет в соответствующий квадрант информацию о метке на карте
         /// </summary>
         /// <param name="pLoc">локация, содержащая метку</param>
-        private void AddLocationSign(LocationX pLoc)
+        private void AddLocationSign(Location pLoc)
         {
-            float fPointX = m_pWorld.m_pGrid.RX + pLoc.X;
-            float fPointY = m_pWorld.m_pGrid.RY + pLoc.Y;
+            float fPointX = m_pWorld.m_pLocationsGrid.RX + pLoc.X;
+            float fPointY = m_pWorld.m_pLocationsGrid.RY + pLoc.Y;
 
-            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
+            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
 
             if (iQuadX < 0 || iQuadX >= QUADRANTS_COUNT || iQuadY < 0 || iQuadY >= QUADRANTS_COUNT)
                 return;
@@ -1317,55 +1317,57 @@ namespace MapDrawEngine
             switch (pLoc.m_eType)
             {
                 case LandmarkType.Peak:
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignPeak(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
+                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignPeak(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
                     break;
                 case LandmarkType.Volcano:
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVolkano(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
+                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVolkano(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
                     break;
             }
 
-            if (pLoc.m_pSettlement != null)
+            LocationX pLocX = pLoc.As<LocationX>();
+
+            if (pLocX.m_pSettlement != null)
             {
-                if (pLoc.m_pSettlement.m_iRuinsAge > 0)
+                if (pLocX.m_pSettlement.m_iRuinsAge > 0)
                 {
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignRuin(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
+                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignRuin(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
                 }
                 else
                 {
-                    switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                    switch (pLocX.m_pSettlement.m_pInfo.m_eSize)
                     {
                         case SettlementSize.Capital:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCapital(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCapital(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.City:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCity(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCity(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Town:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignTown(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignTown(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Village:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
                             break;
                         case SettlementSize.Hamlet:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName, (pLoc.Owner as LandX).Type.m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
                             break;
                         case SettlementSize.Fort:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignFort(fPointX, fPointY, m_pWorld.m_pGrid.RX, pLoc.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignFort(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                     }
                 }
             }
             else
             {
-                if (pLoc.m_pBuilding != null)
+                if (pLocX.m_pBuilding != null)
                 {
-                    switch (pLoc.m_pBuilding.m_eType)
+                    switch (pLocX.m_pBuilding.m_eType)
                     {
                         case BuildingType.Lair:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignLair(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignLair(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
                             break;
                         case BuildingType.Hideout:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignHideout(fPointX, fPointY, m_pWorld.m_pGrid.RX, ""));
+                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignHideout(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
                             break;
                     }
                 }
@@ -1447,15 +1449,15 @@ namespace MapDrawEngine
 
             //если мир закольцован и построенная линия пересекает нулевой меридиан,
             //то построим для неё отражение
-            if (m_pWorld.m_pGrid.CycleShift != 0 && bCross)
+            if (m_pWorld.m_pLocationsGrid.CycleShift != 0 && bCross)
             {
                 if (pRoad.m_aPoints[0].X > 0)
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
                 }
                 else
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.m_pGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
                 }
             }
 
@@ -1487,24 +1489,24 @@ namespace MapDrawEngine
             {
                 //пересекает-ли линия от предыдущей точки к текущей нулевой меридиан?
                 float fDX = fShift;
-                if (Math.Abs(fLastPointX - pPoint.X - fShift) > m_pWorld.m_pGrid.RX)
+                if (Math.Abs(fLastPointX - pPoint.X - fShift) > m_pWorld.m_pLocationsGrid.RX)
                 {
                     //определимся, где у нас была предыдущая часть линии - на западе или на востоке?
                     //в зависимости от этого вычислим смещение для оставшейся части линии, чтобы 
                     //не было разрыва
-                    fDX += fLastPointX < fShift ? -m_pWorld.m_pGrid.RX * 2 : m_pWorld.m_pGrid.RX * 2;
+                    fDX += fLastPointX < fShift ? -m_pWorld.m_pLocationsGrid.RX * 2 : m_pWorld.m_pLocationsGrid.RX * 2;
                     bCross = true;
                 }
                 
-                if (pPoint.X > m_pWorld.m_pGrid.RX ||
-                    pPoint.X < -m_pWorld.m_pGrid.RX)
+                if (pPoint.X > m_pWorld.m_pLocationsGrid.RX ||
+                    pPoint.X < -m_pWorld.m_pLocationsGrid.RX)
                     bCross = true;
                 
                 cRoadLine.Add(ShiftPoint(pPoint, fDX));
 
                 //в каком квадранте лежит новая точка линии
-                int iQuadX = (int)(QUADRANTS_COUNT * (pPoint.X + m_pWorld.m_pGrid.RX) / (2*m_pWorld.m_pGrid.RX));
-                int iQuadY = (int)(QUADRANTS_COUNT * (pPoint.Y + m_pWorld.m_pGrid.RY) / (2*m_pWorld.m_pGrid.RY));
+                int iQuadX = (int)(QUADRANTS_COUNT * (pPoint.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
+                int iQuadY = (int)(QUADRANTS_COUNT * (pPoint.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
 
                 if (iQuadX >= 0 && iQuadX < QUADRANTS_COUNT && iQuadY >= 0 && iQuadY < QUADRANTS_COUNT)
                     aQuadrants[iQuadX, iQuadY] = true;
@@ -1540,7 +1542,7 @@ namespace MapDrawEngine
             //соотношение высоты и ширины координатной сетки мира
             float fK = 1;
             if (m_pWorld != null)
-                fK = (float)m_pWorld.m_pGrid.RY / m_pWorld.m_pGrid.RX;
+                fK = (float)m_pWorld.m_pLocationsGrid.RY / m_pWorld.m_pLocationsGrid.RX;
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 980 пикселей
@@ -1554,9 +1556,9 @@ namespace MapDrawEngine
 
             //коэффициент для перевода координат из абсолютной системы координат в экранную
             if (m_pWorld != null)
-                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.m_pGrid.RX * 2 - m_pWorld.m_pGrid.FrameWidth * 2);
+                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.m_pLocationsGrid.RX * 2 - m_pWorld.m_pLocationsGrid.FrameWidth * 2);
 
-            m_fFrameWidth = (float)m_pWorld.m_pGrid.FrameWidth * m_fActualScale;
+            m_fFrameWidth = (float)m_pWorld.m_pLocationsGrid.FrameWidth * m_fActualScale;
 
             //если холст уже окна рисования, вычислим смещение для центрирования холста
             m_iShiftX = (ClientRectangle.Width - m_pCanvas.Width) / 2;
@@ -1569,8 +1571,8 @@ namespace MapDrawEngine
             m_pDrawFrame.Height = m_pCanvas.Height;
 
             //размеры одного квадранта в экранных координатах из рассчёта сетки квадрантов 8х8
-            m_fOneQuadWidth = m_fActualScale * m_pWorld.m_pGrid.RX * 2 / QUADRANTS_COUNT;
-            m_fOneQuadHeight = m_fActualScale * m_pWorld.m_pGrid.RY * 2 / QUADRANTS_COUNT;
+            m_fOneQuadWidth = m_fActualScale * m_pWorld.m_pLocationsGrid.RX * 2 / QUADRANTS_COUNT;
+            m_fOneQuadHeight = m_fActualScale * m_pWorld.m_pLocationsGrid.RY * 2 / QUADRANTS_COUNT;
 
             //размеры отображаемого участка карты в квадрантах
             //+2 потому что 1 квадрант мы отображаем всегда и нужно ещё иметь запас в 1 квадрант на случай, 
@@ -1637,7 +1639,7 @@ namespace MapDrawEngine
             if (m_pWorld == null)
                 return;
 
-            if (m_pWorld.m_pGrid.CycleShift != 0)
+            if (m_pWorld.m_pLocationsGrid.CycleShift != 0)
                 m_pDrawFrame.X = iX;
             else
                 m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth));
@@ -1713,7 +1715,7 @@ namespace MapDrawEngine
             gr.FillRectangle(new SolidBrush(LandTypes.Ocean.Get<LandTypeDrawInfo>().m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
-            if (m_pWorld == null || m_pWorld.m_pGrid.Locations.Length == 0)
+            if (m_pWorld == null || m_pWorld.m_pLocationsGrid.Locations.Length == 0)
                 return;
 
             //координаты квадранта, в котором находится левый верхний угол отображаемого участка карты
@@ -2014,7 +2016,7 @@ namespace MapDrawEngine
                 m_pFocusedLand = null;
                 m_pFocusedLocation = null;
 
-                foreach (LandMass<LandX> pLandMass in m_pWorld.m_aLandMasses)
+                foreach (LandMass pLandMass in m_pWorld.m_aLandMasses)
                 {
                     GraphicsPath pLandMassPath = m_cLandMassBorders[pLandMass];
 
@@ -2030,7 +2032,7 @@ namespace MapDrawEngine
             {
                 bContinent = !m_pFocusedLandMass.IsWater;
                 if (bContinent)
-                    m_pFocusedContinent = m_pFocusedLandMass.Owner as ContinentX;
+                    m_pFocusedContinent = m_pFocusedLandMass.GetOwner();
             }
 
             if(m_pFocusedContinent != null)
@@ -2039,7 +2041,7 @@ namespace MapDrawEngine
                     m_pFocusedState = null;
                     m_pFocusedProvince = null;
 
-                    foreach (State pState in m_pFocusedContinent.m_cStates)
+                    foreach (State pState in m_pFocusedContinent.As<ContinentX>().Contents)
                     {
                         GraphicsPath pStatePath = m_cStateBorders[pState];
 
@@ -2056,7 +2058,7 @@ namespace MapDrawEngine
                 {
                     m_pFocusedProvince = null;
 
-                    foreach (Province pProvince in m_pFocusedState.m_cContents)
+                    foreach (Province pProvince in m_pFocusedState.Contents)
                     {
                         GraphicsPath pProvincePath = m_cProvinceBorders[pProvince];
 
@@ -2074,7 +2076,7 @@ namespace MapDrawEngine
                 {
                     m_pFocusedLocation = null;
 
-                    foreach (LandX pLand in m_pFocusedLandMass.m_cContents)
+                    foreach (Land pLand in m_pFocusedLandMass.Contents)
                     {
                         GraphicsPath pLandPath = m_cLandBorders[pLand];
 
@@ -2091,7 +2093,7 @@ namespace MapDrawEngine
                 {
                     m_pFocusedLocation = null;
 
-                    foreach (LocationX pLoc in m_pFocusedLand.m_cContents)
+                    foreach (Location pLoc in m_pFocusedLand.Contents)
                     {
                         GraphicsPath pLocationPath = m_cLocationBorders[pLoc];
 
@@ -2222,11 +2224,13 @@ namespace MapDrawEngine
 
                 sToolTip += m_pFocusedLocation.ToString();
 
-                if (m_pFocusedLocation.m_pSettlement != null && m_pFocusedLocation.m_pSettlement.m_cBuildings.Count > 0)
+                LocationX pFocusdLocX = m_pFocusedLocation.As<LocationX>();
+
+                if (pFocusdLocX.m_pSettlement != null && pFocusdLocX.m_pSettlement.m_cBuildings.Count > 0)
                 {
                     Dictionary<string, int> cBuildings = new Dictionary<string, int>();
 
-                    foreach (Building pBuilding in m_pFocusedLocation.m_pSettlement.m_cBuildings)
+                    foreach (Building pBuilding in pFocusdLocX.m_pSettlement.m_cBuildings)
                     {
                         int iCount = 0;
                         cBuildings.TryGetValue(pBuilding.ToString(), out iCount);
@@ -2237,17 +2241,17 @@ namespace MapDrawEngine
                         sToolTip += "\n         - " + vBuilding.Key + "  x" + vBuilding.Value.ToString();
                 }
 
-                if (m_pFocusedLocation.m_cHaveRoadTo.Count > 0)
+                if (pFocusdLocX.m_cHaveRoadTo.Count > 0)
                 {
                     sToolTip += "\nHave roads to:";
-                    foreach (var pRoad in m_pFocusedLocation.m_cHaveRoadTo)
+                    foreach (var pRoad in pFocusdLocX.m_cHaveRoadTo)
                         sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_eLevel.ToString() + "]";
                 }
 
-                if (m_pFocusedLocation.m_cHaveSeaRouteTo.Count > 0)
+                if (pFocusdLocX.m_cHaveSeaRouteTo.Count > 0)
                 {
                     sToolTip += "\nHave sea routes to:";
-                    foreach (LocationX pRoute in m_pFocusedLocation.m_cHaveSeaRouteTo)
+                    foreach (LocationX pRoute in pFocusdLocX.m_cHaveSeaRouteTo)
                         sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName;
                 }
             }

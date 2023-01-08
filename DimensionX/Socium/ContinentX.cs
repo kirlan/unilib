@@ -17,7 +17,7 @@ namespace Socium
     {
         public List<Region> m_cRegions = new List<Region>();
 
-        public List<State> m_cStates = new List<State>();
+        public List<State> Contents { get; } = new List<State>();
 
         public string m_sName;
 

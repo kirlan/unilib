@@ -179,7 +179,7 @@ namespace LandscapeGeneration.FastGrid
             {
                 var pInnerLoc = m_aBorderLocations[i];
                 //Перебираем всех соседей граничной локации
-                Dictionary<Territory, List<VoronoiEdge>> cEdges = new Dictionary<Territory, List<VoronoiEdge>>(pInnerLoc.BorderWith);
+                Dictionary<Location, List<VoronoiEdge>> cEdges = new Dictionary<Location, List<VoronoiEdge>>(pInnerLoc.BorderWith);
                 foreach (var pEdge in cEdges)
                 {
                     //Нас интересуют только призрачные соседи

@@ -149,7 +149,7 @@ namespace Socium
             {
                 //убедимся, что эта раса ещё нигде не живёт
                 bool bHomeless = true;
-                foreach (Continent pConti in m_aContinents)
+                foreach (Continent pConti in Contents)
                 {
                     ContinentX pContiX = pConti.As<ContinentX>();
                     if (pContiX != null)
@@ -171,7 +171,7 @@ namespace Socium
 
                 //рассчитаем вероятности для всех регионов стать прародиной этой расы
                 Dictionary<Region, float> cRegionChances = new Dictionary<Region, float>();
-                foreach (Continent pContinent in m_aContinents)
+                foreach (Continent pContinent in Contents)
                 {
                     ContinentX pContiX = pContinent.As<ContinentX>();
                     if (pContiX != null)
@@ -252,7 +252,7 @@ namespace Socium
             }
 
             //Позаботимся о том, чтобы на каждом континенте жила бы хоть одна раса
-            foreach (Continent pConti in m_aContinents)
+            foreach (Continent pConti in Contents)
             {
                 //если континент уже обитаем, пропускаем его
                 int iPop = 0;
@@ -322,7 +322,7 @@ namespace Socium
 
         private void PopulateAreas()
         {
-            foreach (Continent pConti in m_aContinents)
+            foreach (Continent pConti in Contents)
             {
                 List<Nation> cHegemonNations = new List<Nation>();
                 //список рас, способных свободно расселяться по континенту
@@ -495,9 +495,9 @@ namespace Socium
         public void BuildRegions(BeginStepDelegate BeginStep,
                             ProgressStepDelegate ProgressStep)
         {
-            BeginStep("Building areas...", m_aContinents.Length);
+            BeginStep("Building areas...", Contents.Length);
             //Gathering areas of the same land type
-            foreach (Continent pContinent in m_aContinents)
+            foreach (Continent pContinent in Contents)
             {
                 pContinent.As<ContinentX>().BuildRegions(m_pLocationsGrid.CycleShift, m_aLands.Length / 100);
                 ProgressStep();
@@ -562,9 +562,9 @@ namespace Socium
 
             BeginStep("Renaming provinces...", m_aStates.Length);
             //ProgressStep();
-            foreach (Continent pConti in m_aContinents)
+            foreach (Continent pConti in Contents)
             {
-                foreach (State pState in pConti.As<ContinentX>().m_cStates)
+                foreach (State pState in pConti.As<ContinentX>().Contents)
                 {
                     //если какой-то регион занимает больше половины провинции - переименовываем провинцию по его имени.
                     foreach (Province pProvince in pState.Contents)
@@ -639,7 +639,7 @@ namespace Socium
             
             List<Province> cFinished = new List<Province>();
             //Позаботимся о том, чтобы на каждом континенте была хотя бы одна провинция
-            foreach (Continent pConti in m_aContinents)
+            foreach (Continent pConti in Contents)
             {
                 int iUsed = 0;
 
@@ -776,7 +776,7 @@ namespace Socium
             do
             {
                 bAlreadyFinished = true;
-                foreach (Continent pConti in m_aContinents)
+                foreach (Continent pConti in Contents)
                 {
                     foreach (Region pRegion in pConti.As<ContinentX>().m_cRegions)
                     {
@@ -803,7 +803,7 @@ namespace Socium
             while (iCnt++ < m_aLands.Length);
 
             //если всё равно остались пыстые земли (это возможно, т.к. провинции вымирающих рас принудительно не приращиваются), создадим там новые провинции
-            foreach (Continent pConti in m_aContinents)
+            foreach (Continent pConti in Contents)
             {
                 foreach (Region pRegion in pConti.As<ContinentX>().m_cRegions)
                 {
@@ -882,7 +882,7 @@ namespace Socium
             ProgressStep();
 
             //Позаботимся о том, чтобы на каждом континенте было хотя бы одно государство
-            foreach (Continent pConti in m_aContinents)
+            foreach (Continent pConti in Contents)
             {
                 ContinentX pContiX = pConti.As<ContinentX>();
 
@@ -1013,7 +1013,7 @@ namespace Socium
                 }
 
                 pState.SetOwner(pConti);
-                pConti.m_cStates.Add(pState);
+                pConti.Contents.Add(pState);
             }
             //строим столицы, налаживаем дипломатические связи
             foreach (State pState in m_aStates)
@@ -1952,7 +1952,7 @@ namespace Socium
             //foreach (Race pRace in cEraseRace)
             //    cRaces.Remove(pRace);
 
-            foreach (Continent pConti in m_aContinents)
+            foreach (Continent pConti in Contents)
             {
                 //foreach (var pLandMass in pConti.m_cLocalRaces)
                 //{
@@ -2121,8 +2121,8 @@ namespace Socium
             m_aProvinces = cProvinces.ToArray();
 
             //очищаем поконтинентные списки государств
-            foreach (Continent pConti in m_aContinents)
-                pConti.As<ContinentX>().m_cStates.Clear();
+            foreach (Continent pConti in Contents)
+                pConti.As<ContinentX>().Contents.Clear();
 
             //уничтожаем все дороги
             foreach (TransportationLinkBase pRoad in m_cTransportGrid)

@@ -412,7 +412,7 @@ namespace VQMapTest2
                 richTextBox1.AppendText(string.Format("Magic users: none, {0} [M0]\n\n", sMagicAttitude));
             }
 
-            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_iWood, e.m_pState.m_iOre, e.m_pState.m_iPopulation));
+            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.m_pState.m_iFood, e.m_pState.m_cResources[LandResource.Wood], e.m_pState.m_cResources[LandResource.Ore], e.m_pState.m_iPopulation));
 
             richTextBox1.AppendText("Estates: \n");
 
@@ -639,7 +639,6 @@ namespace VQMapTest2
                 Properties.Settings.Default.preset4 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[3];
             if (m_pGenerationForm.m_pSettings.m_cLastUsedPresets.Count > 4)
                 Properties.Settings.Default.preset5 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[4];
-            Properties.Settings.Default.WorkingPath = m_pGenerationForm.m_pSettings.m_sWorkingDir;
 
             Properties.Settings.Default.Save();
         }
@@ -673,11 +672,8 @@ namespace VQMapTest2
             if (sPreset != "" && !settings.m_cLastUsedPresets.Contains(sPreset))
                 settings.m_cLastUsedPresets.Add(sPreset);
 
-            settings.m_sWorkingDir = Properties.Settings.Default.WorkingPath;
-
             if (m_pGenerationForm.Preload(settings))
             {
-                Properties.Settings.Default.WorkingPath = m_pGenerationForm.m_pSettings.m_sWorkingDir;
                 Properties.Settings.Default.Save();
             }
             else
@@ -785,35 +781,35 @@ namespace VQMapTest2
             timer1.Enabled = false;
         }
 
-        LocationX m_pTPFStart = null;
-        LocationX m_pTPFFinish = null;
+        Location m_pTPFStart = null;
+        Location m_pTPFFinish = null;
 
         private void ToolStripMenuItem_TestPathFinding1_Click(object sender, EventArgs e)
         {
             do
             {
-                m_pTPFStart = m_pWorld.m_pGrid.Locations[Rnd.Get(m_pWorld.m_pGrid.Locations.Length)];
+                m_pTPFStart = m_pWorld.m_pLocationsGrid.Locations[Rnd.Get(m_pWorld.m_pLocationsGrid.Locations.Length)];
             }
             while (m_pTPFStart.Forbidden || 
-                   (m_pTPFStart.Owner as LandX).IsWater || 
-                   m_pTPFStart.m_pSettlement == null || 
-                   m_pTPFStart.m_pSettlement.m_iRuinsAge > 0);
+                   m_pTPFStart.GetOwner().IsWater || 
+                   m_pTPFStart.As<LocationX>().m_pSettlement == null || 
+                   m_pTPFStart.As<LocationX>().m_pSettlement.m_iRuinsAge > 0);
 
             do
             {
-                m_pTPFFinish = m_pWorld.m_pGrid.Locations[Rnd.Get(m_pWorld.m_pGrid.Locations.Length)];
+                m_pTPFFinish = m_pWorld.m_pLocationsGrid.Locations[Rnd.Get(m_pWorld.m_pLocationsGrid.Locations.Length)];
             }
             while (m_pTPFFinish.Forbidden || 
                    m_pTPFFinish == m_pTPFStart || 
-                   (m_pTPFFinish.Owner as LandX).IsWater || 
-                   ((m_pTPFFinish.m_pBuilding == null || 
-                     (m_pTPFFinish.m_pBuilding.m_eType != BuildingType.Hideout && 
-                      m_pTPFFinish.m_pBuilding.m_eType != BuildingType.Lair)) && 
-                    m_pTPFFinish.m_pSettlement == null));
+                   m_pTPFFinish.GetOwner().IsWater || 
+                   ((m_pTPFFinish.As<LocationX>().m_pBuilding == null || 
+                     (m_pTPFFinish.As<LocationX>().m_pBuilding.m_eType != BuildingType.Hideout && 
+                      m_pTPFFinish.As<LocationX>().m_pBuilding.m_eType != BuildingType.Lair)) && 
+                    m_pTPFFinish.As<LocationX>().m_pSettlement == null));
 
             mapDraw1.ClearPath();
 
-            ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_pGrid.CycleShift, false);
+            ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.m_pLocationsGrid.CycleShift, false);
             mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
         }
 

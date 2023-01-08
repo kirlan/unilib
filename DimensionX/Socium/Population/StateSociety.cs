@@ -341,7 +341,7 @@ namespace Socium.Population
                     {
                         // World - не Territory!
                         var pWorld = pContinent.Origin.GetOwner();
-                        foreach (var pOtherContinent in pWorld.m_aContinents)
+                        foreach (var pOtherContinent in pWorld.Contents)
                         {
                             if (pOtherContinent.As<ContinentX>() == pContinent)
                                 continue;

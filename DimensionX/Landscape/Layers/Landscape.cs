@@ -19,7 +19,7 @@ namespace LandscapeGeneration
 
         public LandMass[] m_aLandMasses = null;
 
-        public Continent[] m_aContinents = null;
+        public Continent[] Contents { get; private set; } = null;
 
         public override float GetMovementCost()
         {
@@ -229,7 +229,7 @@ namespace LandscapeGeneration
                 pLand.AddLayer(new LandBiome(pLand));
             }
 
-            foreach (Continent pCont in m_aContinents)
+            foreach (Continent pCont in Contents)
             {
                 Dictionary<LandTypeInfo, List<Biome>> cBiomes = new Dictionary<LandTypeInfo, List<Biome>>();
                 foreach (var pLandType in LandTypes.m_pInstance.m_pLandTypes)
@@ -576,10 +576,10 @@ namespace LandscapeGeneration
                 ProgressStep();
             }
 
-            m_aContinents = cContinents.ToArray();
+            Contents = cContinents.ToArray();
 
-            BeginStep("Recalculating continents edges...", m_aContinents.Length);
-            foreach (Continent pCont in m_aContinents)
+            BeginStep("Recalculating continents edges...", Contents.Length);
+            foreach (Continent pCont in Contents)
             {
                 pCont.Finish(m_pLocationsGrid.CycleShift);
                 pCont.SetOwner(this);

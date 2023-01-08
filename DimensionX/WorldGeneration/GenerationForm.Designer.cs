@@ -237,7 +237,6 @@
             this.mapProperties1.LandMassesDiversity = 15;
             this.mapProperties1.LandsDiversity = 30;
             this.mapProperties1.Location = new System.Drawing.Point(9, 12);
-            this.mapProperties1.LocationsGrid = null;
             this.mapProperties1.Name = "mapProperties1";
             this.mapProperties1.PartialMap = false;
             this.mapProperties1.PoleDistance = 45;
