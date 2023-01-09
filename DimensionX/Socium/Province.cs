@@ -60,7 +60,7 @@ namespace Socium
         public override void Start(Region pSeed)
         {
             if (pSeed.HasOwner())
-                throw new Exception("That land already belongs to province!!!");
+                throw new InvalidOperationException("That land already belongs to province!!!");
 
             BorderWith.Clear();
             Contents.Clear();
@@ -127,11 +127,11 @@ namespace Socium
 
             foreach (LandTypeInfo pType in m_pLocalSociety.m_pTitularNation.m_aPreferredLands)
                 if (pType == pRegion.m_pType)
-                    fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
+                    fCost /= 10;
 
             foreach (LandTypeInfo pType in m_pLocalSociety.m_pTitularNation.m_aHatedLands)
                 if (pType == pRegion.m_pType)
-                    fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
+                    fCost *= 10;
 
             if (pRegion.m_pNatives != m_pLocalSociety.m_pTitularNation)
             {
@@ -205,13 +205,6 @@ namespace Socium
                         VoronoiEdge[] aBorderLine = m_cBorder[pLinkedRegion].ToArray();
                         foreach (var pLine in aBorderLine)
                             fSharedPerimeter += pLine.Length;
-
-                        //fCommonLength /= fTotalLength;
-
-                        //if (fCommonLength < 0.25f)
-                        //    fCommonLength /= 10;
-                        //if (fCommonLength > 0.5f)
-                        //    fCommonLength *= 10;
 
                         fCostModified = iCost * pLinkedRegion.PerimeterLength / fSharedPerimeter;
 
@@ -313,7 +306,6 @@ namespace Socium
         public override Region Grow(int iMaxSize)
         {
             m_bFullyGrown = false;
-            //if (m_pCenter.m_iProvinceForce > 20*Math.Sqrt(iMaxProvinceSize/Math.PI))
             if (Contents.Count >= iMaxSize || m_pCenter.m_iProvincePresence > 200 * Math.Sqrt(iMaxSize / Math.PI))
             {
                 //GrowForce(m_pCenter, 1);
@@ -332,14 +324,14 @@ namespace Socium
 
                 foreach (var pAddonLinkedLand in pAddon.BorderWith)
                 {
-                    if (!pAddonLinkedLand.Key.Forbidden && Contents.Contains(pAddonLinkedLand.Key as Region))
+                    if (!pAddonLinkedLand.Key.Forbidden && Contents.Contains(pAddonLinkedLand.Key))
                         continue;
 
-                    if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key as Region))
-                        m_cBorder[pAddonLinkedLand.Key as Region] = new List<VoronoiEdge>();
+                    if (!m_cBorder.ContainsKey(pAddonLinkedLand.Key))
+                        m_cBorder[pAddonLinkedLand.Key] = new List<VoronoiEdge>();
                     VoronoiEdge[] cLines = pAddonLinkedLand.Value.ToArray();
                     foreach (var pLine in cLines)
-                        m_cBorder[pAddonLinkedLand.Key as Region].Add(new VoronoiEdge(pLine));
+                        m_cBorder[pAddonLinkedLand.Key].Add(new VoronoiEdge(pLine));
                 }
             }
 
@@ -546,7 +538,6 @@ namespace Socium
 
             while (cConnected.Count < aSettlements.Length)
             {
-                //Road pBestRoad = null;
                 LocationX pBestTown1 = null;
                 LocationX pBestTown2 = null;
                 float fMinLength = float.MaxValue;
@@ -558,14 +549,13 @@ namespace Socium
 
                     foreach (LocationX pOtherTown in cConnected)
                     {
-                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);
 
                         if (fDist < fMinLength &&
                             (fMinLength == float.MaxValue ||
                              Rnd.OneChanceFrom(2)))
                         {
                             fMinLength = fDist;
-                            //pBestRoad = pRoad;
 
                             pBestTown1 = pTown;
                             pBestTown2 = pOtherTown;
@@ -580,7 +570,7 @@ namespace Socium
                     LocationX pBestTown3 = null;
                     foreach (LocationX pOtherTown in cConnected)
                     {
-                        float fDist = pBestTown1.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
+                        float fDist = pBestTown1.DistanceTo(pOtherTown, fCycleShift);
 
                         if (pOtherTown != pBestTown2 &&
                             fDist < fMinLength &&
@@ -588,7 +578,6 @@ namespace Socium
                              Rnd.OneChanceFrom(2)))
                         {
                             fMinLength = fDist;
-                            //pBestRoad = pRoad;
 
                             pBestTown3 = pOtherTown;
                         }
@@ -674,7 +663,7 @@ namespace Socium
                 m_pLocalSociety.Settlements.Add(m_pAdministrativeCenter);
             }
             else
-                throw new Exception("Can't build capital!");
+                throw new InvalidOperationException("Can't build capital!");
 
             return m_pAdministrativeCenter;
         }
@@ -754,10 +743,7 @@ namespace Socium
 
         public override string ToString()
         {
-            //if (m_pAdministrativeCenter != null)
-                return string.Format("province {0} ({2}, {1})", m_pLocalSociety.m_sName, m_pAdministrativeCenter == null ? "-" : m_pAdministrativeCenter.ToString(), m_pLocalSociety.m_pTitularNation);
-            //else
-            //    return "province " + m_sName + " [" + m_pRace.ToString() + "]";
+            return string.Format("province {0} ({2}, {1})", m_pLocalSociety.m_sName, m_pAdministrativeCenter == null ? "-" : m_pAdministrativeCenter.ToString(), m_pLocalSociety.m_pTitularNation);
         }
 
         public override float GetMovementCost()
@@ -794,10 +780,10 @@ namespace Socium
             //    iHostility++;
 
             if (pOpponent.m_pLocalSociety.m_iInfrastructureLevel > m_pLocalSociety.m_iInfrastructureLevel)
-                iHostility++;//= pOpponent.m_iLifeLevel - m_iLifeLevel;
+                iHostility++;
             else
                 if (pOpponent.m_pLocalSociety.m_iInfrastructureLevel < m_pLocalSociety.m_iInfrastructureLevel)
-                    iHostility++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
+                    iHostility++;
 
             float iMentalityDifference = m_pLocalSociety.DominantCulture.GetMentalityDifference(pOpponent.m_pLocalSociety.DominantCulture);
             if (iMentalityDifference < -0.75)

@@ -101,8 +101,6 @@ namespace Socium
             if (Contents.Count > m_iMaxSize && Rnd.OneChanceFrom(Contents.Count - m_iMaxSize))
                 return null;
 
-            //List<LAND> cBorder = new List<LAND>();
-
             Dictionary<LandX, float> cBorderLength = new Dictionary<LandX, float>();
 
             LandX[] aBorderLands = new List<LandX>(m_cBorder.Keys).ToArray();
@@ -120,12 +118,12 @@ namespace Socium
                     foreach (var pLine in aBorderLine)
                         fWholeLength += pLine.Length;
 
-                    foreach (var pLinkTerr in pLand.Origin.BorderWith)
+                    foreach (var pLinkTerr in pLand.Origin.BorderWith.Keys)
                     {
-                        if (pLinkTerr.Key.Forbidden)
+                        if (pLinkTerr.Forbidden)
                             continue;
 
-                        if (pLinkTerr.Key.As<Land>().LandType == m_pType && !pLinkTerr.Key.As<Land>().HasOwner())
+                        if (pLinkTerr.LandType == m_pType && !pLinkTerr.HasOwner())
                             bHavePotential = true;
                     }
 
@@ -151,6 +149,9 @@ namespace Socium
             if (iChoice >= 0)
                 pAddon = cBorderLength.ElementAt(iChoice).Key;
 
+            if (pAddon == null)
+                return null;
+
             Contents.Add(pAddon);
             pAddon.SetOwner(this);
 
@@ -169,8 +170,6 @@ namespace Socium
                     m_cBorder[pBorderLand.Key].Add(new VoronoiEdge(pLine));
             }
 
-            //ChainBorder();
-
             return pAddon;
         }
 
@@ -180,7 +179,6 @@ namespace Socium
         /// <param name="fCycleShift">Величина смещения X-координаты для закольцованной карты</param>
         public override void Finish(float fCycleShift)
         {
-            //base.Finish();
             ChainBorder(fCycleShift);
 
             foreach (LandX pLand in m_cBorder.Keys)
@@ -200,7 +198,7 @@ namespace Socium
 
         public override float GetMovementCost()
         {
-            return m_pType == null ? 100 : m_pType.m_iMovementCost;
+            return m_pType == null ? 100.0f : m_pType.m_iMovementCost;
         }
 
         public void SetRace(List<Nation> cPossibleNations)
@@ -208,22 +206,21 @@ namespace Socium
             Dictionary<Nation, float> cChances = new Dictionary<Nation, float>();
             foreach (Nation pNation in cPossibleNations)
             {
-                cChances[pNation] = 1.0f;// / pRace.m_iRank;
+                cChances[pNation] = 1.0f;
 
                 if (pNation.IsAncient)
-                    cChances[pNation] /= 10 / m_pType.m_iMovementCost;
-                    //cChances[pRace] /= 10000 / (m_pType.m_iMovementCost * m_pType.m_iMovementCost);
+                    cChances[pNation] /= 10.0f / m_pType.m_iMovementCost;
 
                 if (pNation.IsHegemon)
-                    cChances[pNation] *= 10;
+                    cChances[pNation] *= 10.0f;
 
                 foreach (LandTypeInfo pType in pNation.m_aPreferredLands)
                     if (m_pType == pType)
-                        cChances[pNation] *= 10;
+                        cChances[pNation] *= 10.0f;
 
                 foreach (LandTypeInfo pType in pNation.m_aHatedLands)
                     if (m_pType == pType)
-                        cChances[pNation] /= 100;
+                        cChances[pNation] /= 100.0f;
             }
 
             int iChance = Rnd.ChooseOne(cChances.Values, 3);

@@ -36,7 +36,7 @@ namespace Socium
             }
         }
 
-        public static Infrastructure[] InfrastructureLevels = 
+        public static readonly Infrastructure[] InfrastructureLevels = 
         {
             // 0 - только не соединённые дорогами поселения
             new Infrastructure(RoadQuality.None, RoadQuality.None, 0, new SettlementSize[]{SettlementSize.Hamlet}),
@@ -72,7 +72,7 @@ namespace Socium
         public override void Start(Province pSeed)
         {
             if (pSeed.HasOwner())
-                throw new Exception("This province already belongs to state!!!");
+                throw new InvalidOperationException("This province already belongs to state!!!");
 
             BorderWith.Clear();
             Contents.Clear();
@@ -102,7 +102,7 @@ namespace Socium
                 if (pProvince.Forbidden)
                     continue;
 
-                if (pProvince != null && !pProvince.HasOwner() && !pProvince.m_pCenter.IsWater && 
+                if (!pProvince.HasOwner() && !pProvince.m_pCenter.IsWater && 
                     m_pMethropoly.m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage == pProvince.m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage)
                 {
                     AddProvince(pProvince);
@@ -128,14 +128,12 @@ namespace Socium
 
             Dictionary<Province, float> cChances = new Dictionary<Province, float>();
 
-            foreach (Province pTerr in m_cBorder.Keys)
+            foreach (Province pProvince in m_cBorder.Keys)
             {
-                if (pTerr.Forbidden)
+                if (pProvince.Forbidden)
                     continue;
 
-                Province pProvince = pTerr as Province;
-
-                if (pProvince != null && !pProvince.HasOwner() && !pProvince.m_pCenter.IsWater)
+                if (!pProvince.HasOwner() && !pProvince.m_pCenter.IsWater)
                 {
                     if (m_pMethropoly.m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage != pProvince.m_pLocalSociety.m_pTitularNation.m_pRace.m_pLanguage)
                         continue;
@@ -203,20 +201,15 @@ namespace Socium
             Contents.Add(pAddon);
             pAddon.SetOwner(this);
 
-            //List<Line> cListLine = m_cBorder[pAddon];
             m_cBorder[pAddon].Clear();
             m_cBorder.Remove(pAddon);
 
-            //List<Line> cNewBorder = new List<Line>();
-            //List<Line> cFalseBorder = new List<Line>();
             foreach (var pLink in pAddon.BorderWith)
             {
                 Province pLinkedProvince = pLink.Key;
 
                 if (!pLinkedProvince.Forbidden && Contents.Contains(pLinkedProvince))
                 {
-                    //foreach (Line pLine in pLand.Value)
-                    //    cFalseBorder.Add(new Line(pLine));
                     continue;
                 }
 
@@ -226,49 +219,11 @@ namespace Socium
                 foreach (var pLine in cLines)
                 {
                     m_cBorder[pLinkedProvince].Add(new VoronoiEdge(pLine));
-                    //cNewBorder.Add(new Line(pLine));
                 }
             }
 
             //TestChain();
-
-            //if (cListLine.Count != cFalseBorder.Count && cFalseBorder.Count > 0)
-            //{
-            //    Line[] aListLine = SortLines(cListLine);
-            //    Line[] aListLine2 = SortLines(cNewBorder);
-            //    Line[] aListLine3 = SortLines(cFalseBorder);
-            //}
         }
-
-        //private Location.Edge[] SortLines(List<Location.Edge> cListLine)
-        //{
-        //    Location.Edge[] aListLine = new Location.Edge[cListLine.Count];
-        //    int iIndex = -1;
-        //    do
-        //    {
-        //        foreach (Location.Edge pLine in cListLine)
-        //        {
-        //            if (iIndex < 0)
-        //            {
-        //                bool bPrevious = false;
-        //                foreach (Location.Edge pLine2 in cListLine)
-        //                    if (pLine2.m_pPoint2.Y == pLine.m_pPoint1.Y)
-        //                        bPrevious = true;
-
-        //                if (!bPrevious)
-        //                    aListLine[++iIndex] = pLine;
-        //            }
-        //            else
-        //            {
-        //                if (pLine.m_pPoint1.Y == aListLine[iIndex].m_pPoint2.Y)
-        //                    aListLine[++iIndex] = pLine;
-        //            }
-        //        }
-        //    }
-        //    while (iIndex < cListLine.Count - 1);
-
-        //    return aListLine;
-        //}
 
         /// <summary>
         /// Заполняет словарь границ с другими странами и гарантирует принадлежность государства той расе, которая доминирует на его территории.
@@ -368,7 +323,6 @@ namespace Socium
                     }
                 }
 
-                //m_iFood += (int)(pProvince.m_fGrain + pProvince.m_fFish + pProvince.m_fGame);
                 foreach (LandResource eRes in Enum.GetValues(typeof(LandResource)))
                     m_cResources[eRes] += pProvince.m_cResources[eRes];
 
@@ -386,8 +340,8 @@ namespace Socium
             m_iPopulation = iMethropolyPopulation + iProvincialPopulation;
 
             //TODO: нужно учитывать размеры и телосложение - гиганты и толстяки едят больше, чем карлики и худышки
-            float fMethropolySatiety = (float)m_pSociety.m_pTitularNation.GetAvailableFood(m_cResources, iProvincialPopulation) / iMethropolyPopulation;
-            float fProvincialSatiety = (float)m_pSociety.m_pHostNation.GetAvailableFood(m_cResources, iProvincialPopulation) / iProvincialPopulation;
+            float fMethropolySatiety = m_pSociety.m_pTitularNation.GetAvailableFood(m_cResources, iProvincialPopulation) / iMethropolyPopulation;
+            float fProvincialSatiety = m_pSociety.m_pHostNation.GetAvailableFood(m_cResources, iProvincialPopulation) / iProvincialPopulation;
 
             if (fMethropolySatiety > 2)
                 fMethropolySatiety = 2;
@@ -612,7 +566,6 @@ namespace Socium
 
             while (cConnected.Count < Contents.Count)
             {
-                //Road pBestRoad = null;
                 LocationX pBestTown1 = null;
                 LocationX pBestTown2 = null;
                 float fMinLength = float.MaxValue;
@@ -626,14 +579,13 @@ namespace Socium
 
                     foreach (LocationX pOtherTown in cConnected)
                     {
-                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+                        float fDist = pTown.DistanceTo(pOtherTown, fCycleShift);
 
                         if (fDist < fMinLength &&
                             (fMinLength == float.MaxValue ||
                              Rnd.OneChanceFrom(2)))
                         {
                             fMinLength = fDist;
-                            //pBestRoad = pRoad;
 
                             pBestTown1 = pTown;
                             pBestTown2 = pOtherTown;
@@ -648,7 +600,7 @@ namespace Socium
                     LocationX pBestTown3 = null;
                     foreach (LocationX pOtherTown in cConnected)
                     {
-                        float fDist = pBestTown1.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
+                        float fDist = pBestTown1.DistanceTo(pOtherTown, fCycleShift);
 
                         if (pOtherTown != pBestTown2 &&
                             fDist < fMinLength &&
@@ -656,7 +608,6 @@ namespace Socium
                              Rnd.OneChanceFrom(2)))
                         {
                             fMinLength = fDist;
-                            //pBestRoad = pRoad;
 
                             pBestTown3 = pOtherTown;
                         }
@@ -700,7 +651,7 @@ namespace Socium
 
                 foreach (LocationX pOtherTown in cConnected)
                 {
-                    float fDist = pFort.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pTown.X - pOtherTown.X) * (pTown.X - pOtherTown.X) + (pTown.Y - pOtherTown.Y) * (pTown.Y - pOtherTown.Y));
+                    float fDist = pFort.DistanceTo(pOtherTown, fCycleShift);
 
                     if (fDist < fMinLength &&
                         (fMinLength == float.MaxValue ||
@@ -718,7 +669,7 @@ namespace Socium
                     LocationX pBestTown2 = null;
                     foreach (LocationX pOtherTown in cConnected)
                     {
-                        float fDist = pFort.DistanceTo(pOtherTown, fCycleShift);// (float)Math.Sqrt((pBestTown1.X - pOtherTown.X) * (pBestTown1.X - pOtherTown.X) + (pBestTown1.Y - pOtherTown.Y) * (pBestTown1.Y - pOtherTown.Y));
+                        float fDist = pFort.DistanceTo(pOtherTown, fCycleShift);
 
                         if (pOtherTown != pBestTown &&
                             fDist < fMinLength &&

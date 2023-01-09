@@ -8,7 +8,7 @@ namespace Socium
 {
     public class Road
     {
-        private List<LocationX> m_cRoad = new List<LocationX>();
+        private readonly List<LocationX> m_cRoad = new List<LocationX>();
 
         public LocationX[] Locations
         {

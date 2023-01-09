@@ -64,7 +64,7 @@ namespace Socium
             //Добавляем необходимое количесто новых рас.
             while (cNations.Count - iDyingRaces < pEpoch.m_iNativesCount)
             {
-                int iChance = Rnd.Get(pEpoch.m_cNatives.Count);//Rnd.ChooseOne(cRaceChances.Values, 1);
+                int iChance = Rnd.Get(pEpoch.m_cNatives.Count);
                 //foreach (RaceTemplate pRaceTemplate in cRaceChances.Keys)
                 //{
                     //iChance--;
@@ -103,7 +103,7 @@ namespace Socium
                         if (pNation.m_pRace == pRace && !pNation.IsAncient)
                             bAlreadyHave = true;
 
-                cInvadersRaceChances[pRace] = bAlreadyHave ? 10 : 100;// / pRaceTemplate.m_iRank;
+                cInvadersRaceChances[pRace] = bAlreadyHave ? 10 : 100;
             }
 
             for (int i = 0; i < pEpoch.m_iInvadersCount; i++)
@@ -184,7 +184,7 @@ namespace Socium
                                 pRegion.IsWater)
                                 continue;
 
-                            cRegionChances[pRegion] = 1.0f;// / pRace.m_iRank;
+                            cRegionChances[pRegion] = 1.0f;
 
                             //рассчитываем шансы, исходя из предпочтений и антипатий расы
                             foreach (LandTypeInfo pType in pNation.m_aPreferredLands)
@@ -288,7 +288,7 @@ namespace Socium
                     if (pNation.IsAncient || pNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
                         continue;
 
-                    cNationChances[pNation] = 1.0f;// / pRace.m_pTemplate.m_iRank;
+                    cNationChances[pNation] = 1.0f;
 
                     foreach (LandTypeInfo pType in pNation.m_aPreferredLands)
                         if (cLandTypesCount.ContainsKey(pType))
@@ -403,7 +403,7 @@ namespace Socium
                         {
                             cAvailableNations.Add(pNation);
                             if (!m_aLocalNations.Contains(pNation))
-                                throw new Exception();
+                                throw new InvalidOperationException();
                         }
                     }
                 //else
@@ -711,7 +711,7 @@ namespace Socium
                 cProvinces.Add(pProvince);
 
                 if (!m_aLocalNations.Contains(pProvince.m_pLocalSociety.m_pTitularNation))
-                    throw new Exception();
+                    throw new InvalidOperationException();
 
                 cUsed.Add(pConti);
             }
@@ -766,7 +766,7 @@ namespace Socium
                 cProvinces.Add(pProvince);
 
                 if (!m_aLocalNations.Contains(pProvince.m_pLocalSociety.m_pTitularNation))
-                    throw new Exception();
+                    throw new InvalidOperationException();
             }
 
             //наращиваем территорию всем созданным провинциям до вычисленного максимума
@@ -830,7 +830,7 @@ namespace Socium
                         Province pProvince = new Province();
                         pProvince.Start(pRegion);
                         cProvinces.Add(pProvince);
-                        while (pProvince.Grow(iMaxProvinceSize) != null) { };
+                        while (pProvince.Grow(iMaxProvinceSize) != null) { }
                     }
                 }
             }

@@ -274,9 +274,9 @@ namespace Socium
             cSkillPreferences[Skill.Charm] = 0;
 
             if (pCulture.GetTrait(Trait.Agression) > 1)
-                cSkillPreferences[Person.Skill.Body]++;
+                cSkillPreferences[Skill.Body]++;
             if (pCulture.GetTrait(Trait.Agression) > 1.5)
-                cSkillPreferences[Person.Skill.Body]++;
+                cSkillPreferences[Skill.Body]++;
 
             //if (m_pCulture.MentalityValues[Mentality.Rudeness][m_iCultureLevel] < 1)
             //    cSkillPreferences[CPerson.Skill.Mind]++;
@@ -289,28 +289,28 @@ namespace Socium
             //    cSkillPreferences[CPerson.Skill.Mind]++;
 
             if (pCulture.m_pCustoms.Has(Customs.MindSet.Emotions))
-                cSkillPreferences[Person.Skill.Mind]--;
+                cSkillPreferences[Skill.Mind]--;
             if (pCulture.m_pCustoms.Has(Customs.MindSet.Logic))
-                cSkillPreferences[Person.Skill.Mind]++;
+                cSkillPreferences[Skill.Mind]++;
 
             if (pCulture.m_pCustoms.Has(Customs.Magic.Magic_Praised))
-                cSkillPreferences[Person.Skill.Mind]++;
+                cSkillPreferences[Skill.Mind]++;
 
             if (pCulture.m_pCustoms.Has(Customs.Science.Technophobia))
-                cSkillPreferences[Person.Skill.Mind]--;
+                cSkillPreferences[Skill.Mind]--;
             if (pCulture.m_pCustoms.Has(Customs.Science.Ingenuity))
-                cSkillPreferences[Person.Skill.Mind]++;
+                cSkillPreferences[Skill.Mind]++;
 
             if (pCulture.m_pCustoms.Has(Customs.Sexuality.Puritan))
-                cSkillPreferences[Person.Skill.Charm]--;
+                cSkillPreferences[Skill.Charm]--;
             if (pCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
-                cSkillPreferences[Person.Skill.Charm]++;
+                cSkillPreferences[Skill.Charm]++;
 
             if (pCulture.m_pCustoms.Has(Customs.MarriageType.Polyamory))
-                cSkillPreferences[Person.Skill.Charm]++;
+                cSkillPreferences[Skill.Charm]++;
 
-            eMostRespectedSkill = Person.Skill.Body;
-            eLeastRespectedSkill = Person.Skill.Charm;
+            eMostRespectedSkill = Skill.Body;
+            eLeastRespectedSkill = Skill.Charm;
 
             int iMax = int.MinValue;
             int iMin = int.MaxValue;
@@ -605,8 +605,7 @@ namespace Socium
             if (m_pBuilding.m_pInfo.m_eOwnership == FamilyOwnership.Owners && m_pProfession != m_pBuilding.m_pInfo.m_pOwnerProfession)
                 return true;
 
-            List<Person> cBloodRelatives = new List<Person>();
-            cBloodRelatives.Add(this);
+            List<Person> cBloodRelatives = new List<Person>() { this };
             bool bUpdate;
             do
             {
@@ -771,60 +770,6 @@ namespace Socium
         }
 
         /// <summary>
-        /// Находит строение в выбранной локации, которое может принять нового жильца, принадлежащего к выбранному сословию.
-        /// Перед вызовом функции должны быть заданы поля m_pHome и m_eEstate!
-        /// </summary>
-        /// <param name="pRelative">Персонаж, с которым мы связаны - вляяет на доступность вселения в строения с ограничениями на семейные связи жильцов.</param>
-        /// <returns></returns>
-        private Building FindSuitableBuilding(Person pRelative)
-        {
-            List<Building> cPossibleBuildings = new List<Building>();
-            foreach (Building pBuilding in m_pHomeLocation.m_pSettlement.m_cBuildings)
-            {
-                if (pRelative != null &&
-                    pBuilding.m_pInfo.m_eOwnership == FamilyOwnership.Full &&
-                    pBuilding.m_cPersons.Count > 0)
-                {
-                    if (!pBuilding.m_cPersons.Contains(pRelative) ||
-                        !IsFamily(m_cRelations[pRelative]))
-                        continue;
-                }
-
-                if (m_pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pOwnerProfession))
-                {
-                    List<Person> cOwners = new List<Person>();
-                    foreach (Person pDweller in pBuilding.m_cPersons)
-                        if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pOwnerProfession)
-                            cOwners.Add(pDweller);
-
-                    if (cOwners.Count < pBuilding.m_pInfo.OwnersCount)
-                    {
-                        if (pBuilding.m_pInfo.m_eOwnership != FamilyOwnership.Owners || 
-                            cOwners.Count == 0 ||
-                            (pRelative != null && cOwners.Contains(pRelative)))
-                            cPossibleBuildings.Add(pBuilding);
-                    }
-                }
-
-                if (m_pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pWorkersProfession))
-                {
-                    List<Person> cWorkers = new List<Person>();
-                    foreach (Person pDweller in pBuilding.m_cPersons)
-                        if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pWorkersProfession)
-                            cWorkers.Add(pDweller);
-
-                    if (cWorkers.Count < pBuilding.m_pInfo.WorkersCount)
-                        cPossibleBuildings.Add(pBuilding);
-                }
-            }
-
-            if (cPossibleBuildings.Count > 0)
-                return cPossibleBuildings[Rnd.Get(cPossibleBuildings.Count)];
-
-            return null;
-        }
-
-        /// <summary>
         /// Создаёт случайного персонажа в заданном поселении. Если локация не задана (null) - то в случайном поселении.
         /// С вероятностью 1/4 может оказаться членом семьи (родитель, ребёнок, брат/сестра или муж/жена) одного из уже имеющихся персонажей.
         /// Может выбрасывать эксепшен, если не срастается!
@@ -853,37 +798,37 @@ namespace Socium
                 Relation eChoice = Relation.Associate;
                 //do
                 //{
-                    switch (Rnd.Get(3))
-                    {
-                        case 0:
-                            eChoice = Relation.ChildOf;
-                            break;
-                        case 1:
-                            eChoice = Relation.Sibling;
-                            break;
-                        case 2:
-                            eChoice = Relation.Spouse;
-                            break;
-                    }
-                    //eChoice = (Relation)Rnd.Get(typeof(Relation));
+                switch (Rnd.Get(3))
+                {
+                    case 0:
+                        eChoice = Relation.ChildOf;
+                        break;
+                    case 1:
+                        eChoice = Relation.Sibling;
+                        break;
+                    case 2:
+                        eChoice = Relation.Spouse;
+                        break;
+                }
+                //eChoice = (Relation)Rnd.Get(typeof(Relation));
 
-                    //if (eChoice == Relation.ParentOf)
-                    //{
-                    //    // Could pRelative have a new parent? If no - will select other relation type...
-                    //    //CPerson pParent = pRelative.GetParent();
-                    //    //if (pParent != null)// && m_pHome.Owner.m_pCustoms.m_eFamilySize == Customs.FamilySize.Monogamy)
-                    //        eChoice = Relation.Associate; // Set not a family!
-                    //}
+                //if (eChoice == Relation.ParentOf)
+                //{
+                //    // Could pRelative have a new parent? If no - will select other relation type...
+                //    //CPerson pParent = pRelative.GetParent();
+                //    //if (pParent != null)// && m_pHome.Owner.m_pCustoms.m_eFamilySize == Customs.FamilySize.Monogamy)
+                //        eChoice = Relation.Associate; // Set not a family!
+                //}
 
-                    if (eChoice == Relation.Spouse)
-                    {
-                        // Could pRelative have a spouse? If no - will select other relation type...
-                        Person pSpouse = pRelative.GetSpouse();
-                        if (pSpouse == null)
-                            eChoice = Relation.Sibling; // Set not a family!
-                        else
-                            pRelative = pSpouse;
-                    }
+                if (eChoice == Relation.Spouse)
+                {
+                    // Could pRelative have a spouse? If no - will select other relation type...
+                    Person pSpouse = pRelative.GetSpouse();
+                    if (pSpouse == null)
+                        eChoice = Relation.Sibling; // Set not a family!
+                    else
+                        pRelative = pSpouse;
+                }
                 //}
                 //while(!IsFamily(eChoice));
 
@@ -996,7 +941,7 @@ namespace Socium
                 m_pNation = pRelative.m_pNation;
 
             #region Fix gender for selected nation genetix
-            if (pRelative == null || 
+            if (pRelative == null ||
                 (!IsSexualRelation(m_cRelations[pRelative]) &&
                 m_cRelations[pRelative] != Relation.ParentOf))
             {
@@ -1068,7 +1013,7 @@ namespace Socium
                     m_pBuilding = pRelative.m_pBuilding;
                 else
                 {
-                    m_pBuilding = FindSuitableBuilding(pRelative); 
+                    m_pBuilding = FindSuitableBuilding(pRelative);
                     throw new InvalidOperationException("Can't find home building for choosen estate");
                 }
             }
@@ -1211,6 +1156,60 @@ namespace Socium
         }
 
         /// <summary>
+        /// Находит строение в выбранной локации, которое может принять нового жильца, принадлежащего к выбранному сословию.
+        /// Перед вызовом функции должны быть заданы поля m_pHome и m_eEstate!
+        /// </summary>
+        /// <param name="pRelative">Персонаж, с которым мы связаны - вляяет на доступность вселения в строения с ограничениями на семейные связи жильцов.</param>
+        /// <returns></returns>
+        private Building FindSuitableBuilding(Person pRelative)
+        {
+            List<Building> cPossibleBuildings = new List<Building>();
+            foreach (Building pBuilding in m_pHomeLocation.m_pSettlement.m_cBuildings)
+            {
+                if (pRelative != null &&
+                    pBuilding.m_pInfo.m_eOwnership == FamilyOwnership.Full &&
+                    pBuilding.m_cPersons.Count > 0)
+                {
+                    if (!pBuilding.m_cPersons.Contains(pRelative) ||
+                        !IsFamily(m_cRelations[pRelative]))
+                        continue;
+                }
+
+                if (m_pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pOwnerProfession))
+                {
+                    List<Person> cOwners = new List<Person>();
+                    foreach (Person pDweller in pBuilding.m_cPersons)
+                        if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pOwnerProfession)
+                            cOwners.Add(pDweller);
+
+                    if (cOwners.Count < pBuilding.m_pInfo.OwnersCount)
+                    {
+                        if (pBuilding.m_pInfo.m_eOwnership != FamilyOwnership.Owners || 
+                            cOwners.Count == 0 ||
+                            (pRelative != null && cOwners.Contains(pRelative)))
+                            cPossibleBuildings.Add(pBuilding);
+                    }
+                }
+
+                if (m_pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pWorkersProfession))
+                {
+                    List<Person> cWorkers = new List<Person>();
+                    foreach (Person pDweller in pBuilding.m_cPersons)
+                        if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pWorkersProfession)
+                            cWorkers.Add(pDweller);
+
+                    if (cWorkers.Count < pBuilding.m_pInfo.WorkersCount)
+                        cPossibleBuildings.Add(pBuilding);
+                }
+            }
+
+            if (cPossibleBuildings.Count > 0)
+                return cPossibleBuildings[Rnd.Get(cPossibleBuildings.Count)];
+
+            return null;
+        }
+
+         /// <summary>
         /// ДЛЯ ОТЛАДКИ!!!
         /// Проверяет, правильно ли выставлен пол персонажа для выбранного типа взаимоотношений.
         /// </summary>

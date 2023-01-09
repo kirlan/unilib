@@ -55,7 +55,7 @@ namespace Socium
 
             if (m_pSettlement != null)
             {
-                iRes = m_pSettlement.m_pInfo.m_iMinPop;// *((LandX)Owner).m_pProvince.m_iInfrastructureLevel;
+                iRes = m_pSettlement.m_pInfo.m_iMinPop;
             }
 
             return iRes;

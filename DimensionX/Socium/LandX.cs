@@ -245,8 +245,8 @@ namespace Socium
             var pTownX = pTown.As<LocationX>();
 
             //Построим город в выбранной локации.
-            //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
             pTownX.m_pSettlement = new Settlement(pInfo, m_pDominantNation, GetOwner().GetOwner().m_pLocalSociety.m_iTechLevel, GetOwner().GetOwner().m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
+            //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
             //        pLoc.m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
