@@ -116,7 +116,7 @@ namespace Socium.Settlements
 
         public static readonly ProfessionInfo Elder = new ProfessionInfo("elder", true, SkillLevel.None, SkillLevel.Bad, SkillLevel.Bad);
         public static readonly ProfessionInfo Mayor = new ProfessionInfo("mayor", true, SkillLevel.None, SkillLevel.Good, SkillLevel.Good);
-        
+
         public static readonly ProfessionInfo Scribe = new ProfessionInfo("scribe", false, SkillLevel.None, SkillLevel.Bad, SkillLevel.None);
         public static readonly ProfessionInfo Administrator = new ProfessionInfo("administrator", true, SkillLevel.None, SkillLevel.Good, SkillLevel.None);
         public static readonly ProfessionInfo Clerk = new ProfessionInfo("clerk", false, SkillLevel.None, SkillLevel.Bad, SkillLevel.None);
@@ -416,23 +416,23 @@ namespace Socium.Settlements
 
         #endregion
 
-        public string m_sNameM;
-        public string m_sNameF;
+        public string NameMasculine { get; }
+        public string NameFeminine { get; }
 
         /// <summary>
         /// Является ли эта профессия руководящей или подчинённой?
         /// В патриархальном обществе руководитель/начальник/хозяин может быть только мужчиной, а вот подчинёнными могут быть и женщины...
         /// </summary>
-        public bool m_bMaster;
+        public bool IsMaster { get; }
         /// <summary>
         /// Если значение задано, то член этой профессии может принадлежать только к указанной касте
         /// </summary>
-        public Caste? m_eCasteRestriction = null;
+        public Caste? CasteRestricted { get; }
 
         /// <summary>
         /// Минимальный требуемый уровеь скилла для этой профессии
         /// </summary>
-        public Dictionary<Person.Skill, SkillLevel> m_cSkills = new Dictionary<Person.Skill, SkillLevel>();
+        public Dictionary<Person.Skill, SkillLevel> Skills { get; } = new Dictionary<Person.Skill, SkillLevel>();
 
         public ProfessionInfo(string sName, bool bMaster, SkillLevel eBody, SkillLevel eMind, SkillLevel eCharm)
             : this(sName, sName, bMaster, null, eBody, eMind, eCharm)
@@ -457,27 +457,27 @@ namespace Socium.Settlements
         public ProfessionInfo(string sNameM, string sNameF, bool bMaster, Caste? eRestriction, SkillLevel eBody, SkillLevel eMind, SkillLevel eCharm)
             : this(sNameM, sNameF, bMaster, eRestriction)
         {
-            m_cSkills[Person.Skill.Body] = eBody;
-            m_cSkills[Person.Skill.Mind] = eMind;
-            m_cSkills[Person.Skill.Charm] = eCharm;
+            Skills[Person.Skill.Body] = eBody;
+            Skills[Person.Skill.Mind] = eMind;
+            Skills[Person.Skill.Charm] = eCharm;
         }
 
         public ProfessionInfo(string sNameM, string sNameF, bool bMaster, Caste? eRestriction)
         {
             foreach (Person.Skill eSkill in Enum.GetValues(typeof(Person.Skill)))
-                m_cSkills[eSkill] = SkillLevel.Good;
+                Skills[eSkill] = SkillLevel.Good;
 
-            m_sNameM = sNameM;
-            m_sNameF = sNameF;
-            m_eCasteRestriction = eRestriction;
-            m_bMaster = bMaster;
+            NameMasculine = sNameM;
+            NameFeminine = sNameF;
+            CasteRestricted = eRestriction;
+            IsMaster = bMaster;
 
             s_cAllProfessions.Add(this);
         }
 
         public override string ToString()
         {
-            return m_sNameM;
+            return NameMasculine;
         }
     }
 }

@@ -500,7 +500,7 @@ namespace Socium.Psychology
         public string GetCustomsDescription()
         {
             string sGenderPriority = "";
-            string sResult = "";
+            StringBuilder sResult = new StringBuilder();
 
             if (Has(GenderPriority.Patriarchy))
             {
@@ -515,81 +515,68 @@ namespace Socium.Psychology
                 sGenderPriority = "gender equality";
             }
 
+            void addLine(string str)
+            {
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
+                sResult.Append(str);
+            }
+
             if (Has(MindSet.Emotions))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "are guided mostly by emotions";
+                addLine("are guided mostly by emotions");
             }
             else if (Has(MindSet.Logic))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "are guided mostly by pure logic";
+                addLine("are guided mostly by pure logic");
             }
 
             if (Has(Magic.Magic_Feared))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "denies any form of magic";
+                addLine("denies any form of magic");
             }
             else if (Has(Magic.Magic_Praised))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "accepts any form of magic";
+                addLine("accepts any form of magic");
             }
 
             if (Has(BodyModifications.Body_Modifications_Blamed))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "condemns any tatoo or pierceing";
+                addLine("condemns any tatoo or pierceing");
             }
             else if (Has(BodyModifications.Body_Modifications_Mandatory))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "should have ";
+                addLine("should have ");
                 bool bFirst2 = true;
                 foreach (BodyModificationsTypes eMod in MandatoryBodyModifications)
                 {
                     if (!bFirst2)
                     {
-                        sResult += " and ";
+                        sResult.Append(" and ");
                     }
-                    sResult += eMod.ToString().Replace('_', ' ').ToLower();
+                    sResult.Append(eMod.ToString().Replace('_', ' ').ToLower());
                     bFirst2 = false;
                 }
             }
 
             if (Has(Clothes.Minimal_Clothes))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "wears minimal clothes";
+                addLine("wears minimal clothes");
             }
             else if (Has(Clothes.Covering_Clothes))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "wears clothes hiding entire body";
+                addLine("wears clothes hiding entire body");
             }
 
             if (!m_bNoHair)
             {
                 if (Has(Hairstyle.Bald_Heads))
                 {
-                    if (!string.IsNullOrEmpty(sResult))
-                        sResult += ", ";
-                    sResult += "shave their heads";
+                    addLine("shave their heads");
                 }
                 else if (Has(Hairstyle.Gorgeous_Hairstyles))
                 {
-                    if (!string.IsNullOrEmpty(sResult))
-                        sResult += ", ";
-                    sResult += "spends a lot of effort on hair care";
+                    addLine("spends a lot of effort on hair care");
                 }
             }
 
@@ -597,148 +584,128 @@ namespace Socium.Psychology
             {
                 if (Has(Beard.Shaved_Faces))
                 {
-                    if (!string.IsNullOrEmpty(sResult))
-                        sResult += ", ";
-                    sResult += "have no beard or moustaches";
+                    addLine("have no beard or moustaches");
                 }
                 else if (Has(Beard.Groomed_Beards))
                 {
-                    if (!string.IsNullOrEmpty(sResult))
-                        sResult += ", ";
-                    sResult += "carefully grooms their beards";
+                    addLine("carefully grooms their beards");
                 }
             }
 
             if (Has(Adornments.No_Adornments))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "uses no jewelry";
+                addLine("uses no jewelry");
             }
             else if (Has(Adornments.Lavish_Adornments))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "uses a lot of jewelry";
+                addLine("uses a lot of jewelry");
             }
 
             if (Has(Science.Technophobia))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "are afraid of new technologies";
+                addLine("are afraid of new technologies");
             }
             else if (Has(Science.Ingenuity))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "are pretty creative";
+                addLine("are pretty creative");
             }
 
             if (Has(FamilyValues.Praised_Family_Values))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "highly appreciates family values";
+                addLine("highly appreciates family values");
             }
             else if (Has(FamilyValues.No_Family_Values))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "not paying much attention to family ties";
+                addLine("not paying much attention to family ties");
             }
 
             if (Has(Sexuality.Puritan))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "uses sex only for reproduction";
+                addLine("uses sex only for reproduction");
             }
             else if (Has(Sexuality.Lecherous))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += ", ";
-                sResult += "makes sex a lot";
+                addLine("makes sex a lot");
             }
 
             if (Has(MarriageType.Monogamy))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += " and ";
-                sResult += "have one";
+                if (sResult.Length > 0)
+                    sResult.Append(" and ");
+                sResult.Append("have one");
 
                 if (Has(SexualOrientation.Heterosexual))
                 {
                     if (Has(GenderPriority.Patriarchy))
                     {
-                        sResult += " wife";
+                        sResult.Append(" wife");
                     }
                     else if (Has(GenderPriority.Matriarchy))
                     {
-                        sResult += " husband";
+                        sResult.Append(" husband");
                     }
                     else if (Has(GenderPriority.Genders_equality))
                     {
-                        sResult += " spouse";
+                        sResult.Append(" spouse");
                     }
                 }
                 else if (Has(SexualOrientation.Homosexual))
                 {
                     if (Has(Sexuality.Puritan))
-                        sResult += " companion of the same gender";
+                        sResult.Append(" partner of the same gender");
                     else
-                        sResult += " spouse of the same gender";
+                        sResult.Append(" spouse of the same gender");
                 }
                 else if (Has(SexualOrientation.Bisexual))
                 {
                     if (Has(Sexuality.Puritan))
-                        sResult += " companion of any gender";
+                        sResult.Append(" partner of any gender");
                     else
-                        sResult += " spouse (of any gender)";
+                        sResult.Append(" spouse (of any gender)");
                 }
             }
             else if (Has(MarriageType.Polyamory))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += " and ";
-                sResult += "denies wedlock";
+                if (sResult.Length > 0)
+                    sResult.Append(" and ");
+                sResult.Append("denies wedlock");
 
                 if (Has(Sexuality.Puritan))
-                    sResult += ", but may be in platonic relations with persons";
+                    sResult.Append(", but may be in platonic relations with persons");
                 else
-                    sResult += ", but have a number of lovers";
+                    sResult.Append(", but have a number of lovers");
 
                 if (Has(SexualOrientation.Heterosexual))
                 {
-                    sResult += " of opposite gender";
+                    sResult.Append(" of opposite gender");
                 }
                 else if (Has(SexualOrientation.Homosexual))
                 {
-                    sResult += " of the same gender";
+                    sResult.Append(" of the same gender");
                 }
                 else if (Has(SexualOrientation.Bisexual))
                 {
-                    sResult += " of both genders";
+                    sResult.Append(" of both genders");
                 }
             }
             else if (Has(MarriageType.Polygamy))
             {
-                if (!string.IsNullOrEmpty(sResult))
-                    sResult += " and ";
+                if (sResult.Length > 0)
+                    sResult.Append(" and ");
 
                 if (Has(SexualOrientation.Heterosexual))
                 {
                     if (Has(GenderPriority.Patriarchy))
                     {
-                        sResult += "have many wifes";
+                        sResult.Append("have many wifes");
                     }
                     else if (Has(GenderPriority.Matriarchy))
                     {
-                        sResult += "have many husbands";
+                        sResult.Append("have many husbands");
                     }
                     else if (Has(GenderPriority.Genders_equality))
                     {
-                        sResult += "lives in big heterosexual families";
+                        sResult.Append("lives in big heterosexual families");
                     }
                 }
                 else if (Has(SexualOrientation.Homosexual))
@@ -747,30 +714,30 @@ namespace Socium.Psychology
                     {
                         if (Has(GenderPriority.Patriarchy))
                         {
-                            sResult += "lives in large brotherhoods";
+                            sResult.Append("lives in large brotherhoods");
                         }
                         else if (Has(GenderPriority.Matriarchy))
                         {
-                            sResult += "lives in large sisterhoods";
+                            sResult.Append("lives in large sisterhoods");
                         }
                         else if (Has(GenderPriority.Genders_equality))
                         {
-                            sResult += "lives in large communes with persons of the same gender";
+                            sResult.Append("lives in large communes with persons of the same gender");
                         }
                     }
                     else
-                        sResult += "lives in big homosexual families";
+                        sResult.Append("lives in big homosexual families");
                 }
                 else if (Has(SexualOrientation.Bisexual))
                 {
                     if (Has(Sexuality.Puritan))
-                        sResult += "lives in large communes with persons of both genders";
+                        sResult.Append("lives in large communes with persons of both genders");
                     else
-                        sResult += "lives in big bisexual families";
+                        sResult.Append("lives in big bisexual families");
                 }
             }
 
-            return "This is a " + sGenderPriority + " society, which members " + sResult + ".";
+            return "This is a " + sGenderPriority + " society, which members " + sResult.ToString() + ".";
         }
 
         public static bool ListsEqual(IList pList1, IList pList2)
@@ -797,51 +764,51 @@ namespace Socium.Psychology
 
         public string GetCustomsDiffString2(Customs pOther)
         {
-            string sResult = "";
+            StringBuilder sResult = new StringBuilder();
 
             if (!HasIdentical<GenderPriority>(pOther))
             {
                 if (Has(GenderPriority.Patriarchy))
-                    sResult += "proclaims males supremacy";
+                    sResult.Append("proclaims males supremacy");
                 else if (Has(GenderPriority.Matriarchy))
-                    sResult += "proclaims females supremacy";
+                    sResult.Append("proclaims females supremacy");
                 else if (Has(GenderPriority.Genders_equality))
-                    sResult += "has no gender prevalence";
+                    sResult.Append("has no gender prevalence");
             }
 
             if (!HasIdentical<MindSet>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(MindSet.Emotions))
-                    sResult += "shows a lot of emotions";
+                    sResult.Append("shows a lot of emotions");
                 else if (Has(MindSet.Logic))
-                    sResult += "supppresses their emotions";
+                    sResult.Append("supppresses their emotions");
                 else if (Has(MindSet.Balanced_mind))
-                    sResult += "combines emotions and logic";
+                    sResult.Append("combines emotions and logic");
             }
 
             if (!HasIdentical<Magic>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
                 
                 if (Has(Magic.Magic_Feared))
-                    sResult += "fears all magic";
+                    sResult.Append("fears all magic");
                 else if (Has(Magic.Magic_Praised))
-                    sResult += "praises any form of magic";
+                    sResult.Append("praises any form of magic");
                 else if (Has(Magic.Magic_Allowed))
-                    sResult += pOther.Has(Magic.Magic_Feared) ? "has no fear for magic" : "doesn't like magic too much";
+                    sResult.Append(pOther.Has(Magic.Magic_Feared) ? "has no fear for magic" : "doesn't like magic too much");
             }
 
             if (!HasIdentical<BodyModifications>(pOther) || !ListsEqual(MandatoryBodyModifications, pOther.MandatoryBodyModifications))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(BodyModifications.Body_Modifications_Blamed))
-                    sResult += "condemns any tatoo or pierceing";
+                    sResult.Append("condemns any tatoo or pierceing");
                 else if (Has(BodyModifications.Body_Modifications_Mandatory))
                 {
                     List<BodyModificationsTypes> cOthers = new List<BodyModificationsTypes>();
@@ -854,11 +821,11 @@ namespace Socium.Psychology
                         if(cOthers.Contains(eMod))
                             continue;
                         if (bFirst2)
-                            sResult += "should have ";
+                            sResult.Append("should have ");
                         else
-                            sResult += " and ";
+                            sResult.Append(" and ");
 
-                        sResult += eMod.ToString().Replace('_', ' ').ToLower();
+                        sResult.Append(eMod.ToString().Replace('_', ' ').ToLower());
                         bFirst2 = false;
                     }
 
@@ -870,185 +837,182 @@ namespace Socium.Psychology
                         if (bFirst3)
                         {
                             if (bFirst2)
-                                sResult += "should not have ";
+                                sResult.Append("should not have ");
                             else
-                                sResult += ", but should not have ";
-                        }
-                        else
-                        { 
+                                sResult.Append(", but should not have ");
                         }
 
-                        sResult += eMod.ToString().Replace('_', ' ').ToLower();
+                        sResult.Append(eMod.ToString().Replace('_', ' ').ToLower());
                         bFirst3 = false;
                     }
                 }
                 else if (Has(BodyModifications.Body_Modifications_Allowed))
-                    sResult += pOther.Has(BodyModifications.Body_Modifications_Blamed) ? "allowed to have some tatoo or pierceing" : "could have tatoo or pierceing on their choice";
+                    sResult.Append(pOther.Has(BodyModifications.Body_Modifications_Blamed) ? "allowed to have some tatoo or pierceing" : "could have tatoo or pierceing on their choice");
             }
 
             if (!HasIdentical<Clothes>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(Clothes.Covering_Clothes))
-                    sResult += "hides their entire bodies by clothes";
+                    sResult.Append("wears extremely covering clothes");
                 else if (Has(Clothes.Minimal_Clothes))
-                    sResult += "wears only minimal clothes";
+                    sResult.Append("wears extremely revealing clothes");
                 else if (Has(Clothes.Revealing_Clothes))
-                    sResult += pOther.Has(Clothes.Covering_Clothes) ? "wears revealing clothes" : "wears covering clothes";
+                    sResult.Append(pOther.Has(Clothes.Covering_Clothes) ? "wears revealing clothes" : "wears covering clothes");
             }
 
             if (!HasIdentical<Hairstyle>(pOther) && !m_bNoHair)
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(Hairstyle.Bald_Heads))
-                    sResult += "shaves their heads completely bald";
+                    sResult.Append("shaves their heads completely bald");
                 else if (Has(Hairstyle.Gorgeous_Hairstyles))
-                    sResult += "makes complex hairsyles";
+                    sResult.Append("makes complex hairsyles");
                 else if (Has(Hairstyle.Practical_Hairsyles))
-                    sResult += pOther.Has(Hairstyle.Bald_Heads) ? "not shaves their heads" : "not spends much efforts on their hairs";
+                    sResult.Append(pOther.Has(Hairstyle.Bald_Heads) ? "not shaves their heads" : "not spends much efforts on their hairs");
             }
 
             if (!HasIdentical<Beard>(pOther) && !m_bNoBeard)
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(Beard.Shaved_Faces))
-                    sResult += "has nor beard, neither moustaches";
+                    sResult.Append("has nor beard, neither moustaches");
                 else if (Has(Beard.Groomed_Beards))
-                    sResult += "has perfectly groomed beards";
+                    sResult.Append("has perfectly groomed beards");
                 else if (Has(Beard.Common_Beards))
-                    sResult += pOther.Has(Beard.Shaved_Faces) ? "has hairs on their faces" : "not grooming their beards much";
+                    sResult.Append(pOther.Has(Beard.Shaved_Faces) ? "has hairs on their faces" : "not grooming their beards much");
             }
 
             if (!HasIdentical<Adornments>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(Adornments.No_Adornments))
-                    sResult += "uses no jevelry";
+                    sResult.Append("uses no jevelry");
                 else if (Has(Adornments.Lavish_Adornments))
-                    sResult += "uses a lot of jevelry";
+                    sResult.Append("uses a lot of jevelry");
                 else if (Has(Adornments.Some_Adornments))
-                    sResult += pOther.Has(Adornments.No_Adornments) ? "could use some jevelry" : "uses not so much jevelry";
+                    sResult.Append(pOther.Has(Adornments.No_Adornments) ? "could use some jevelry" : "uses not so much jevelry");
             }
 
             if (!HasIdentical<Science>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(Science.Technophobia))
-                    sResult += "rejects any novelties";
+                    sResult.Append("rejects any novelties");
                 else if (Has(Science.Ingenuity))
-                    sResult += "likes any novelties";
+                    sResult.Append("likes any novelties");
                 else if (Has(Science.Moderate_Science))
-                    sResult += pOther.Has(Science.Technophobia) ? "have no fear of novelties" : "doesn't like novelties so much";
+                    sResult.Append(pOther.Has(Science.Technophobia) ? "have no fear of novelties" : "doesn't like novelties so much");
             }
 
             if (!HasIdentical<FamilyValues>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(FamilyValues.Praised_Family_Values))
-                    sResult += "are very bound to family";
+                    sResult.Append("are very bound to family");
                 else if (Has(FamilyValues.No_Family_Values))
-                    sResult += "not bound to family at all";
+                    sResult.Append("not bound to family at all");
                 else if (Has(FamilyValues.Moderate_Family_Values))
-                    sResult += "not so bound to family";
+                    sResult.Append("not so bound to family");
             }
 
             if (!HasIdentical<Sexuality>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(Sexuality.Puritan))
-                    sResult += "not interested in sex, except for reproduction";
+                    sResult.Append("not interested in sex, except for reproduction");
                 else if (Has(Sexuality.Lecherous))
-                    sResult += "has insatiable libido";
+                    sResult.Append("has insatiable libido");
                 else if (Has(Sexuality.Moderate_sexuality))
-                    sResult += pOther.Has(Sexuality.Puritan) ? "likes to have sex for fun and pleasure" : "less interested in sex";
+                    sResult.Append(pOther.Has(Sexuality.Puritan) ? "likes to have sex for fun and pleasure" : "less interested in sex");
             }
 
             if (!HasIdentical<SexualOrientation>(pOther))
             {
-                if (sResult != "")
-                    sResult += ", ";
+                if (sResult.Length > 0)
+                    sResult.Append(", ");
 
                 if (Has(SexualOrientation.Heterosexual))
-                    sResult += "prefers heterosexual relations";
+                    sResult.Append("prefers heterosexual relations");
                 else if (Has(SexualOrientation.Homosexual))
-                    sResult += "prefers homosexual relations";
+                    sResult.Append("prefers homosexual relations");
                 else if (Has(SexualOrientation.Bisexual))
-                    sResult += pOther.Has(SexualOrientation.Heterosexual) ? "allows homosexual relations" : "allows heterosexual relations";
+                    sResult.Append(pOther.Has(SexualOrientation.Heterosexual) ? "allows homosexual relations" : "allows heterosexual relations");
             }
 
             if (!HasIdentical<MarriageType>(pOther))
             {
-                if (sResult != "")
-                    sResult += " and ";
+                if (sResult.Length > 0)
+                    sResult.Append(" and ");
 
                 if (Has(MarriageType.Monogamy))
                 {
-                    sResult += pOther.Has(MarriageType.Polygamy) ? "could have only one" : "could have one";
+                    sResult.Append(pOther.Has(MarriageType.Polygamy) ? "could have only one" : "could have one");
 
                     if (Has(SexualOrientation.Heterosexual))
                     {
                         if (Has(GenderPriority.Patriarchy))
                         {
-                            sResult += " wife";
+                            sResult.Append(" wife");
                         }
                         else if (Has(GenderPriority.Matriarchy))
                         {
-                            sResult += " husband";
+                            sResult.Append(" husband");
                         }
                         else if (Has(GenderPriority.Genders_equality))
                         {
-                            sResult += " spouse of opposite gender";
+                            sResult.Append(" spouse of opposite gender");
                         }
                     }
                     else if (Has(SexualOrientation.Homosexual))
                     {
                         if (Has(Sexuality.Puritan))
-                            sResult += " companion of the same gender";
+                            sResult.Append(" partner of the same gender");
                         else
-                            sResult += " spouse of the same gender";
+                            sResult.Append(" spouse of the same gender");
                     }
                     else if (Has(SexualOrientation.Bisexual))
                     {
                         if (Has(Sexuality.Puritan))
-                            sResult += " companion of any gender";
+                            sResult.Append(" partner of any gender");
                         else
-                            sResult += " spouse of any gender";
+                            sResult.Append(" spouse of any gender");
                     }
                 }
                 else if (Has(MarriageType.Polyamory))
                 {
-                    sResult += "rejects marriage";
+                    sResult.Append("rejects marriage");
 
                     if (Has(Sexuality.Puritan))
-                        sResult += ", but may be in platonic relations with persons";
+                        sResult.Append(", but may be in platonic relations with persons");
                     else
-                        sResult += ", but could have a number of lovers";
+                        sResult.Append(", but could have a number of lovers");
 
                     if (Has(SexualOrientation.Heterosexual))
                     {
-                        sResult += " of opposite gender";
+                        sResult.Append(" of opposite gender");
                     }
                     else if (Has(SexualOrientation.Homosexual))
                     {
-                        sResult += " of the same gender";
+                        sResult.Append(" of the same gender");
                     }
                     else if (Has(SexualOrientation.Bisexual))
                     {
-                        sResult += " of both genders";
+                        sResult.Append(" of both genders");
                     }
                 }
                 else if (Has(MarriageType.Polygamy))
@@ -1057,15 +1021,15 @@ namespace Socium.Psychology
                     {
                         if (Has(GenderPriority.Patriarchy))
                         {
-                            sResult += "could have many wifes";
+                            sResult.Append("could have many wifes");
                         }
                         else if (Has(GenderPriority.Matriarchy))
                         {
-                            sResult += "could have many husbands";
+                            sResult.Append("could have many husbands");
                         }
                         else if (Has(GenderPriority.Genders_equality))
                         {
-                            sResult += "lives in big heterosexual families";
+                            sResult.Append("lives in big heterosexual families");
                         }
                     }
                     else if (Has(SexualOrientation.Homosexual))
@@ -1074,31 +1038,31 @@ namespace Socium.Psychology
                         {
                             if (Has(GenderPriority.Patriarchy))
                             {
-                                sResult += "lives in large brotherhoods";
+                                sResult.Append("lives in large brotherhoods");
                             }
                             else if (Has(GenderPriority.Matriarchy))
                             {
-                                sResult += "lives in large sisterhoods";
+                                sResult.Append("lives in large sisterhoods");
                             }
                             else if (Has(GenderPriority.Genders_equality))
                             {
-                                sResult += "lives in large communes with persons of the same gender";
+                                sResult.Append("lives in large communes with persons of the same gender");
                             }
                         }
                         else
-                            sResult += "lives in big homosexual families";
+                            sResult.Append("lives in big homosexual families");
                     }
                     else if (Has(SexualOrientation.Bisexual))
                     {
                         if (Has(Sexuality.Puritan))
-                            sResult += "lives in large communes with persons of both genders";
+                            sResult.Append("lives in large communes with persons of both genders");
                         else
-                            sResult += "lives in big bisexual families";
+                            sResult.Append("lives in big bisexual families");
                     }
                 }
             }
 
-            return sResult;
+            return sResult.ToString();
         }
 
         private void CheckDifference<T>(Customs pOpponent, T middleValue, ref int iHostility, ref StringBuilder sPositiveReasons, ref StringBuilder sNegativeReasons) where T : Enum, IComparable

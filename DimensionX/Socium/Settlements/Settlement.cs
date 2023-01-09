@@ -19,7 +19,7 @@ namespace Socium.Settlements
     }
 
     public enum SettlementSpeciality
-    { 
+    {
         None,
         Fishers,
         Lumberjacks,
@@ -47,55 +47,55 @@ namespace Socium.Settlements
 
     public class SettlementInfo
     {
-        public string m_sName;
-        public int m_iMinPop;
-        public int m_iDeltaPop;
-        public int m_iMinBuildingsCount;
-        public int m_iDeltaBuildingsCount;
-        public BuildingInfo m_pMainBuilding;
-        public SettlementSize m_eSize;
+        public string Name { get; }
+        public int MinPop { get; }
+        public int DeltaPop { get; }
+        public int MinBuildingsCount { get; }
+        public int DeltaBuildingsCount { get; }
+        public BuildingInfo MainBuilding { get; }
+        public SettlementSize Size { get; }
 
         public SettlementInfo(SettlementSize eSize, string sName, int iMinPop, int iDeltaPop, BuildingInfo pMainBuilding)
         {
-            m_eSize = eSize;
-            m_sName = sName;
-            m_iMinPop = iMinPop;
-            m_iDeltaPop = iDeltaPop;
+            Size = eSize;
+            Name = sName;
+            MinPop = iMinPop;
+            DeltaPop = iDeltaPop;
 
-            switch (m_eSize)
+            switch (Size)
             {
                 case SettlementSize.Hamlet:
-                    m_iMinBuildingsCount = 5;
-                    m_iDeltaBuildingsCount = 1;
+                    MinBuildingsCount = 5;
+                    DeltaBuildingsCount = 1;
                     break;
                 case SettlementSize.Village:
-                    m_iMinBuildingsCount = 7;
-                    m_iDeltaBuildingsCount = 2;
+                    MinBuildingsCount = 7;
+                    DeltaBuildingsCount = 2;
                     break;
                 case SettlementSize.Town:
-                    m_iMinBuildingsCount = 15;
-                    m_iDeltaBuildingsCount = 2;
+                    MinBuildingsCount = 15;
+                    DeltaBuildingsCount = 2;
                     break;
                 case SettlementSize.City:
-                    m_iMinBuildingsCount = 20;
-                    m_iDeltaBuildingsCount = 2;
+                    MinBuildingsCount = 20;
+                    DeltaBuildingsCount = 2;
                     break;
                 case SettlementSize.Capital:
-                    m_iMinBuildingsCount = 30;
-                    m_iDeltaBuildingsCount = 2;
+                    MinBuildingsCount = 30;
+                    DeltaBuildingsCount = 2;
                     break;
                 case SettlementSize.Fort:
-                    m_iMinBuildingsCount = 10;
-                    m_iDeltaBuildingsCount = 1;
+                    MinBuildingsCount = 10;
+                    DeltaBuildingsCount = 1;
                     break;
             }
-            m_pMainBuilding = pMainBuilding;
+            MainBuilding = pMainBuilding;
         }
     }
 
     public class Settlement
     {
-        private static Dictionary<SettlementSize, SettlementInfo> m_cInfo = new Dictionary<SettlementSize, SettlementInfo>();
+        private static readonly Dictionary<SettlementSize, SettlementInfo> m_cInfo = new Dictionary<SettlementSize, SettlementInfo>();
 
         internal static Dictionary<SettlementSize, SettlementInfo> Info
         {
@@ -110,68 +110,69 @@ namespace Socium.Settlements
                     m_cInfo[SettlementSize.Capital] = new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("City hall", ProfessionInfo.Mayor, ProfessionInfo.Mayor, BuildingSize.Unique));
                     m_cInfo[SettlementSize.Fort] = new SettlementInfo(SettlementSize.Fort, "Fort", 7, 5, new BuildingInfo("Headquarters", ProfessionInfo.General, ProfessionInfo.General, BuildingSize.Unique));
                 }
-                return Settlement.m_cInfo;
+                return m_cInfo;
             }
         }
 
-        public SettlementInfo m_pInfo;
-        public SettlementSpeciality m_eSpeciality = SettlementSpeciality.None;
+        public SettlementInfo Profile { get; }
+        public SettlementSpeciality Speciality { get; set; } = SettlementSpeciality.None;
 
-        public string m_sName;
+        public string Name { get; }
 
         /// <summary>
         /// Возраст руин. Если 0, значит ещё не руины.
         /// </summary>
-        public int m_iRuinsAge = 0;
-        private Nation m_pNation;
+        public int RuinsAge { get; private set; } = 0;
+        private Nation Nation { get; }
 
-        public int m_iTechLevel;
-        public int m_iMagicLimit;
+        public int TechLevel { get; }
+        public int MagicLimit { get; }
 
-        public bool m_bCapital;
+        public bool Capital { get; }
 
-        public List<Building> m_cBuildings = new List<Building>();
+        public List<Building> Buildings { get; } = new List<Building>();
 
         public Settlement(SettlementInfo pInfo, Nation pNation, int iTech, int iMagic, bool bCapital, bool bFast)
         {
-            // TODO: Complete member initialization
-            m_pInfo = pInfo;
-            m_pNation = pNation;
+            Profile = pInfo;
+            Nation = pNation;
 
             if (bFast)
-                m_sName = "Noname";
+            {
+                Name = "Noname";
+            }
             else
             {
-                if (pInfo.m_eSize == SettlementSize.Hamlet || pInfo.m_eSize == SettlementSize.Village)
-                    m_sName = m_pNation.Race.Language.RandomVillageName();
+                if (pInfo.Size == SettlementSize.Hamlet || pInfo.Size == SettlementSize.Village)
+                    Name = Nation.Race.Language.RandomVillageName();
                 else
-                    m_sName = m_pNation.Race.Language.RandomTownName();
+                    Name = Nation.Race.Language.RandomTownName();
             }
 
-            m_iTechLevel = iTech;
-            m_iMagicLimit = iMagic;
+            TechLevel = iTech;
+            MagicLimit = iMagic;
 
-            m_bCapital = bCapital;
+            Capital = bCapital;
         }
 
         public bool Ruin()
         {
-            m_iRuinsAge++;
+            RuinsAge++;
 
-            var aBuildings = m_cBuildings.ToArray();
+            var aBuildings = Buildings.ToArray();
             foreach (var pBuilding in aBuildings)
             {
                 if (Rnd.OneChanceFrom(2))
-                    m_cBuildings.Remove(pBuilding);
+                    Buildings.Remove(pBuilding);
             }
 
-            return m_cBuildings.Count == 0;
+            return Buildings.Count == 0;
         }
 
         public override string ToString()
         {
             string sRuinsAge = "";
-            switch (m_iRuinsAge)
+            switch (RuinsAge)
             {
                 case 0:
                     break;
@@ -186,11 +187,11 @@ namespace Socium.Settlements
                     break;
             }
 
-            string sRuinsName = string.Format("{2} {0} {1}", m_pInfo.m_sName, m_sName, m_eSpeciality);
-            if (m_iRuinsAge > 0)
-                sRuinsName = string.Format("{2} ({0}) {1}", m_pNation.ProtoSociety.Name, m_pInfo.m_sName, m_pNation.Race.Name).ToLower();
+            string sRuinsName = string.Format("{2} {0} {1}", Profile.Name, Name, Speciality);
+            if (RuinsAge > 0)
+                sRuinsName = string.Format("{2} ({0}) {1}", Nation.ProtoSociety.Name, Profile.Name, Nation.Race.Name).ToLower();
 
-            return string.Format("{1}{0} (T{2}M{3})", sRuinsName, sRuinsAge, m_iTechLevel, m_iMagicLimit);
+            return string.Format("{1}{0} (T{2}M{3})", sRuinsName, sRuinsAge, TechLevel, MagicLimit);
         }
     }
 }

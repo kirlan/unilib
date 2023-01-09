@@ -850,7 +850,7 @@ namespace MapDrawEngine
                 }
 
                 //вычислим контуры географических регионов
-                foreach (Socium.Region pArea in pContinent.As<ContinentX>().m_cRegions)
+                foreach (Socium.Region pArea in pContinent.As<ContinentX>().Regions)
                 {
                     aPoints = BuildPath(pArea.FirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
@@ -1241,42 +1241,42 @@ namespace MapDrawEngine
 
             LocationX pLocX = pLoc.As<LocationX>();
 
-            if (pLocX.m_pSettlement != null)
+            if (pLocX.Settlement != null)
             {
-                if (pLocX.m_pSettlement.m_iRuinsAge > 0)
+                if (pLocX.Settlement.RuinsAge > 0)
                 {
                     m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignRuin(fPointX, fPointY, m_pWorld.LocationsGrid.RX, ""));
                 }
                 else
                 {
-                    switch (pLocX.m_pSettlement.m_pInfo.m_eSize)
+                    switch (pLocX.Settlement.Profile.Size)
                     {
                         case SettlementSize.Capital:
-                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignCapital(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignCapital(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.Settlement.Name));
                             break;
                         case SettlementSize.City:
-                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignCity(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignCity(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.Settlement.Name));
                             break;
                         case SettlementSize.Town:
-                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignTown(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignTown(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.Settlement.Name));
                             break;
                         case SettlementSize.Village:
-                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.Settlement.Name, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
                             break;
                         case SettlementSize.Hamlet:
-                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.Settlement.Name, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
                             break;
                         case SettlementSize.Fort:
-                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignFort(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignFort(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.Settlement.Name));
                             break;
                     }
                 }
             }
             else
             {
-                if (pLocX.m_pBuilding != null)
+                if (pLocX.Building != null)
                 {
-                    switch (pLocX.m_pBuilding.m_eType)
+                    switch (pLocX.Building.Type)
                     {
                         case BuildingType.Lair:
                             m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignLair(fPointX, fPointY, m_pWorld.LocationsGrid.RX, ""));
@@ -2138,11 +2138,11 @@ namespace MapDrawEngine
 
                 sToolTip.Append(pFocusedLocX.ToString());
 
-                if (pFocusedLocX.m_pSettlement != null && pFocusedLocX.m_pSettlement.m_cBuildings.Count > 0)
+                if (pFocusedLocX.Settlement != null && pFocusedLocX.Settlement.Buildings.Count > 0)
                 {
                     Dictionary<string, int> cBuildings = new Dictionary<string, int>();
 
-                    foreach (Building pBuilding in pFocusedLocX.m_pSettlement.m_cBuildings)
+                    foreach (Building pBuilding in pFocusedLocX.Settlement.Buildings)
                     {
                         int iCount = 0;
                         cBuildings.TryGetValue(pBuilding.ToString(), out iCount);
@@ -2153,18 +2153,18 @@ namespace MapDrawEngine
                         sToolTip.Append("\n         - ").Append(vBuilding.Key).Append("  x").Append(vBuilding.Value.ToString());
                 }
 
-                if (pFocusedLocX.m_cHaveRoadTo.Count > 0)
+                if (pFocusedLocX.HaveRoadTo.Count > 0)
                 {
                     sToolTip.Append("\nHave roads to:");
-                    foreach (var pRoad in pFocusedLocX.m_cHaveRoadTo)
-                        sToolTip.Append("\n - ").Append(pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString()).Append(' ').Append(pRoad.Key.m_pSettlement.m_sName).Append(" [").Append(pRoad.Value.m_eLevel.ToString()).Append(']');
+                    foreach (var pRoad in pFocusedLocX.HaveRoadTo)
+                        sToolTip.Append("\n - ").Append(pRoad.Key.Settlement.Profile.Size.ToString()).Append(' ').Append(pRoad.Key.Settlement.Name).Append(" [").Append(pRoad.Value.m_eLevel.ToString()).Append(']');
                 }
 
-                if (pFocusedLocX.m_cHaveSeaRouteTo.Count > 0)
+                if (pFocusedLocX.HaveSeaRouteTo.Count > 0)
                 {
                     sToolTip.Append("\nHave sea routes to:");
-                    foreach (Settlement pHarbour in pFocusedLocX.m_cHaveSeaRouteTo.Select(x => x.m_pSettlement))
-                        sToolTip.Append("\n - ").Append(pHarbour.m_pInfo.m_eSize.ToString()).Append(' ').Append(pHarbour.m_sName);
+                    foreach (Settlement pHarbour in pFocusedLocX.HaveSeaRouteTo.Select(x => x.Settlement))
+                        sToolTip.Append("\n - ").Append(pHarbour.Profile.Size.ToString()).Append(' ').Append(pHarbour.Name);
                 }
             }
 

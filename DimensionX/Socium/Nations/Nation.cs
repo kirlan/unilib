@@ -150,11 +150,11 @@ namespace Socium.Nations
         {
             if (IsInvader)
             {
-                ProtoSociety.TechLevel = pEpoch.m_iInvadersMinTechLevel + Rnd.Get(pEpoch.m_iInvadersMaxTechLevel - pEpoch.m_iInvadersMinTechLevel + 1);
-                ProtoSociety.MagicLimit = pEpoch.m_iInvadersMinMagicLevel + Rnd.Get(pEpoch.m_iInvadersMaxMagicLevel - pEpoch.m_iInvadersMinMagicLevel + 1);
+                ProtoSociety.TechLevel = pEpoch.InvadersMinTechLevel + Rnd.Get(pEpoch.InvadersMaxTechLevel - pEpoch.InvadersMinTechLevel + 1);
+                ProtoSociety.MagicLimit = pEpoch.InvadersMinMagicLevel + Rnd.Get(pEpoch.InvadersMaxMagicLevel - pEpoch.InvadersMinMagicLevel + 1);
 
                 if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
-                    ProtoSociety.TechLevel = pEpoch.m_iInvadersMinTechLevel;
+                    ProtoSociety.TechLevel = pEpoch.InvadersMinTechLevel;
 
                 int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
                 if (Rnd.OneChanceFrom(10))
@@ -171,30 +171,30 @@ namespace Socium.Nations
                 else
                     ProtoSociety.TechLevel -= iTechLevel;
 
-                if (ProtoSociety.MagicLimit < pEpoch.m_iInvadersMinMagicLevel)
-                    ProtoSociety.MagicLimit = pEpoch.m_iInvadersMinMagicLevel;
-                if (ProtoSociety.MagicLimit > pEpoch.m_iInvadersMaxMagicLevel)
-                    ProtoSociety.MagicLimit = pEpoch.m_iInvadersMaxMagicLevel;
+                if (ProtoSociety.MagicLimit < pEpoch.InvadersMinMagicLevel)
+                    ProtoSociety.MagicLimit = pEpoch.InvadersMinMagicLevel;
+                if (ProtoSociety.MagicLimit > pEpoch.InvadersMaxMagicLevel)
+                    ProtoSociety.MagicLimit = pEpoch.InvadersMaxMagicLevel;
 
-                if (ProtoSociety.TechLevel < pEpoch.m_iInvadersMinTechLevel)
-                    ProtoSociety.TechLevel = pEpoch.m_iInvadersMinTechLevel;
-                if (ProtoSociety.TechLevel > pEpoch.m_iInvadersMaxTechLevel)
-                    ProtoSociety.TechLevel = pEpoch.m_iInvadersMaxTechLevel;
+                if (ProtoSociety.TechLevel < pEpoch.InvadersMinTechLevel)
+                    ProtoSociety.TechLevel = pEpoch.InvadersMinTechLevel;
+                if (ProtoSociety.TechLevel > pEpoch.InvadersMaxTechLevel)
+                    ProtoSociety.TechLevel = pEpoch.InvadersMaxTechLevel;
             }
             else
             {
                 if (!IsAncient)
                 {
-                    int iNewTechLevel = pEpoch.m_iNativesMinTechLevel + Rnd.Get(pEpoch.m_iNativesMaxTechLevel - pEpoch.m_iNativesMinTechLevel + 1);
-                    int iNewMagicLimit = pEpoch.m_iNativesMinMagicLevel + Rnd.Get(pEpoch.m_iNativesMaxMagicLevel - pEpoch.m_iNativesMinMagicLevel + 1);
+                    int iNewTechLevel = pEpoch.NativesMinTechLevel + Rnd.Get(pEpoch.NativesMaxTechLevel - pEpoch.NativesMinTechLevel + 1);
+                    int iNewMagicLimit = pEpoch.NativesMinMagicLevel + Rnd.Get(pEpoch.NativesMaxMagicLevel - pEpoch.NativesMinMagicLevel + 1);
 
-                    if (ProtoSociety.MagicLimit <= pEpoch.m_iNativesMinMagicLevel)
-                        ProtoSociety.MagicLimit = pEpoch.m_iNativesMinMagicLevel;
+                    if (ProtoSociety.MagicLimit <= pEpoch.NativesMinMagicLevel)
+                        ProtoSociety.MagicLimit = pEpoch.NativesMinMagicLevel;
                     else
                         ProtoSociety.MagicLimit = (ProtoSociety.MagicLimit + iNewMagicLimit + 1) / 2;
 
-                    if (ProtoSociety.TechLevel <= pEpoch.m_iNativesMinTechLevel || DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
-                        ProtoSociety.TechLevel = pEpoch.m_iNativesMinTechLevel;
+                    if (ProtoSociety.TechLevel <= pEpoch.NativesMinTechLevel || DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
+                        ProtoSociety.TechLevel = pEpoch.NativesMinTechLevel;
                     else
                         ProtoSociety.TechLevel = (ProtoSociety.TechLevel + iNewTechLevel + 1) / 2;
                 }
@@ -216,15 +216,15 @@ namespace Socium.Nations
 
                 if (!IsAncient)
                 {
-                    if (ProtoSociety.MagicLimit < pEpoch.m_iNativesMinMagicLevel)
-                        ProtoSociety.MagicLimit = pEpoch.m_iNativesMinMagicLevel;
-                    if (ProtoSociety.MagicLimit > pEpoch.m_iNativesMaxMagicLevel)
-                        ProtoSociety.MagicLimit = pEpoch.m_iNativesMaxMagicLevel;
+                    if (ProtoSociety.MagicLimit < pEpoch.NativesMinMagicLevel)
+                        ProtoSociety.MagicLimit = pEpoch.NativesMinMagicLevel;
+                    if (ProtoSociety.MagicLimit > pEpoch.NativesMaxMagicLevel)
+                        ProtoSociety.MagicLimit = pEpoch.NativesMaxMagicLevel;
 
-                    if (ProtoSociety.TechLevel < pEpoch.m_iNativesMinTechLevel)
-                        ProtoSociety.TechLevel = pEpoch.m_iNativesMinTechLevel;
-                    if (ProtoSociety.TechLevel > pEpoch.m_iNativesMaxTechLevel)
-                        ProtoSociety.TechLevel = pEpoch.m_iNativesMaxTechLevel;
+                    if (ProtoSociety.TechLevel < pEpoch.NativesMinTechLevel)
+                        ProtoSociety.TechLevel = pEpoch.NativesMinTechLevel;
+                    if (ProtoSociety.TechLevel > pEpoch.NativesMaxTechLevel)
+                        ProtoSociety.TechLevel = pEpoch.NativesMaxTechLevel;
                 }
                 else
                 {

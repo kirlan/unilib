@@ -294,11 +294,11 @@ namespace Socium
 
                     LocationX pLocX = pLoc.As<LocationX>();
 
-                    if (pLocX.m_pSettlement != null)
+                    if (pLocX.Settlement != null)
                         iChances = 0;
 
-                    if (pLocX.m_pBuilding != null)
-                        iChances = pLocX.m_pBuilding.m_eType == BuildingType.Farm || pLocX.m_pBuilding.m_eType == BuildingType.HuntingFields ? 1 : 0;
+                    if (pLocX.Building != null)
+                        iChances = pLocX.Building.Type == BuildingType.Farm || pLocX.Building.Type == BuildingType.HuntingFields ? 1 : 0;
 
                     if (pLoc.IsBorder || pLoc.Landmark != LandmarkType.Empty)
                         iChances = 0;
@@ -344,17 +344,17 @@ namespace Socium
             //Построим форт в выбранной локации.
             //Все локации на 1 шаг вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
 
-            if (pChoosenLocationX.m_pSettlement == null && pChoosenLocationX.m_pBuilding == null)
+            if (pChoosenLocationX.Settlement == null && pChoosenLocationX.Building == null)
             {
                 LandX pChoosenLandX = pChoosenLocation.GetOwner().As<LandX>();
-                pChoosenLocationX.m_pSettlement = new Settlement(Settlement.Info[SettlementSize.Fort], pChoosenLandX.m_pDominantNation, GetOwner().GetOwner().m_pSociety.TechLevel, GetOwner().m_pLocalSociety.MagicLimit, false, bFast);
+                pChoosenLocationX.Settlement = new Settlement(Settlement.Info[SettlementSize.Fort], pChoosenLandX.DominantNation, GetOwner().GetOwner().m_pSociety.TechLevel, GetOwner().m_pLocalSociety.MagicLimit, false, bFast);
 
                 foreach (Location pLoc in pChoosenLocation.BorderWithKeys)
-                    if (pLoc.As<LocationX>().m_pBuilding == null)
-                        pLoc.As<LocationX>().m_pBuilding = new BuildingStandAlone(BuildingType.Farm);
+                    if (pLoc.As<LocationX>().Building == null)
+                        pLoc.As<LocationX>().Building = new BuildingStandAlone(BuildingType.Farm);
 
                 List<Road> cRoads = new List<Road>();
-                foreach (var pRoads in pChoosenLocationX.m_cRoads)
+                foreach (var pRoads in pChoosenLocationX.Roads)
                     cRoads.AddRange(pRoads.Value);
 
                 Road[] aRoads = cRoads.ToArray();

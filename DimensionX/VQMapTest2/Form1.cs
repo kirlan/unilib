@@ -127,10 +127,10 @@ namespace VQMapTest2
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
-            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", Society.GetTechString(m_pWorld.m_aEpoches.Last().m_iNativesMaxTechLevel, Socium.Psychology.Customs.Science.Moderate_Science), m_pWorld.m_aEpoches.Last().m_iNativesMaxTechLevel);
-            if (m_pWorld.m_aEpoches.Last().m_iNativesMaxMagicLevel > 0)
+            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", Society.GetTechString(m_pWorld.m_aEpoches.Last().NativesMaxTechLevel, Socium.Psychology.Customs.Science.Moderate_Science), m_pWorld.m_aEpoches.Last().NativesMaxTechLevel);
+            if (m_pWorld.m_aEpoches.Last().NativesMaxMagicLevel > 0)
             {
-                label8.Text = string.Format("Magic users: up to {0} [M{1}]", Society.GetMagicString(m_pWorld.m_aEpoches.Last().m_iNativesMaxMagicLevel), m_pWorld.m_aEpoches.Last().m_iNativesMaxMagicLevel);
+                label8.Text = string.Format("Magic users: up to {0} [M{1}]", Society.GetMagicString(m_pWorld.m_aEpoches.Last().NativesMaxMagicLevel), m_pWorld.m_aEpoches.Last().NativesMaxMagicLevel);
                 label2.Text = "";
             }
             else
@@ -453,7 +453,7 @@ namespace VQMapTest2
                 {
                     richTextBox1.AppendText("\n    Prevalent professions:");
                     foreach (var pGenderPreference in pEstate.GenderProfessionPreferences)
-                        richTextBox1.AppendText("\n         - " + (pGenderPreference.Value == Customs.GenderPriority.Matriarchy ? pGenderPreference.Key.m_sNameF : pGenderPreference.Key.m_sNameM));
+                        richTextBox1.AppendText("\n         - " + (pGenderPreference.Value == Customs.GenderPriority.Matriarchy ? pGenderPreference.Key.NameFeminine : pGenderPreference.Key.NameMasculine));
                 }
                 richTextBox1.AppendText("\n\n");
             }
@@ -522,7 +522,7 @@ namespace VQMapTest2
 
                 richTextBox1.AppendText("\n    Prevalent professions:");
                 foreach (var pGenderPreference in pEstate.Value.GenderProfessionPreferences)
-                    richTextBox1.AppendText("\n         - " + (pGenderPreference.Value == Customs.GenderPriority.Matriarchy ? pGenderPreference.Key.m_sNameF : pGenderPreference.Key.m_sNameM));
+                    richTextBox1.AppendText("\n         - " + (pGenderPreference.Value == Customs.GenderPriority.Matriarchy ? pGenderPreference.Key.NameFeminine : pGenderPreference.Key.NameMasculine));
                 richTextBox1.AppendText("\n\n");
             }
 
@@ -568,18 +568,18 @@ namespace VQMapTest2
             {
                 listBox1.Items.Add(pLoc);
 
-                foreach (Building pBuilding in pLoc.m_pSettlement.m_cBuildings)
+                foreach (Building pBuilding in pLoc.Settlement.Buildings)
                 {
-                    if (pBuilding.m_pInfo.m_eSize == BuildingSize.Unique)
+                    if (pBuilding.Info.Size == BuildingSize.Unique)
                         continue;
 
                     int iPop = 0;
-                    cPop.TryGetValue(pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM, out iPop);
-                    cPop[pBuilding.m_pInfo.m_pOwnerProfession.m_sNameM] = iPop + pBuilding.m_pInfo.OwnersCount;
+                    cPop.TryGetValue(pBuilding.Info.OwnerProfession.NameMasculine, out iPop);
+                    cPop[pBuilding.Info.OwnerProfession.NameMasculine] = iPop + pBuilding.Info.OwnersCount;
 
                     iPop = 0;
-                    cPop.TryGetValue(pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM, out iPop);
-                    cPop[pBuilding.m_pInfo.m_pWorkersProfession.m_sNameM] = iPop + pBuilding.m_pInfo.WorkersCount;
+                    cPop.TryGetValue(pBuilding.Info.WorkersProfession.NameMasculine, out iPop);
+                    cPop[pBuilding.Info.WorkersProfession.NameMasculine] = iPop + pBuilding.Info.WorkersCount;
                 }
             }
 
@@ -792,8 +792,8 @@ namespace VQMapTest2
             }
             while (m_pTPFStart.Forbidden || 
                    m_pTPFStart.GetOwner().IsWater || 
-                   m_pTPFStart.As<LocationX>().m_pSettlement == null || 
-                   m_pTPFStart.As<LocationX>().m_pSettlement.m_iRuinsAge > 0);
+                   m_pTPFStart.As<LocationX>().Settlement == null || 
+                   m_pTPFStart.As<LocationX>().Settlement.RuinsAge > 0);
 
             do
             {
@@ -802,10 +802,10 @@ namespace VQMapTest2
             while (m_pTPFFinish.Forbidden || 
                    m_pTPFFinish == m_pTPFStart || 
                    m_pTPFFinish.GetOwner().IsWater || 
-                   ((m_pTPFFinish.As<LocationX>().m_pBuilding == null || 
-                     (m_pTPFFinish.As<LocationX>().m_pBuilding.m_eType != BuildingType.Hideout && 
-                      m_pTPFFinish.As<LocationX>().m_pBuilding.m_eType != BuildingType.Lair)) && 
-                    m_pTPFFinish.As<LocationX>().m_pSettlement == null));
+                   ((m_pTPFFinish.As<LocationX>().Building == null || 
+                     (m_pTPFFinish.As<LocationX>().Building.Type != BuildingType.Hideout && 
+                      m_pTPFFinish.As<LocationX>().Building.Type != BuildingType.Lair)) && 
+                    m_pTPFFinish.As<LocationX>().Settlement == null));
 
             mapDraw1.ClearPath();
 

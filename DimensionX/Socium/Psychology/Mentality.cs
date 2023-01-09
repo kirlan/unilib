@@ -2,6 +2,9 @@
 using Random;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Text;
 
 namespace Socium.Psychology
 {
@@ -40,38 +43,28 @@ namespace Socium.Psychology
         /// </summary>
         Simplicity//Exploitation
     };
-    
+
     /// <summary>
     /// Менталитет - набор черт характера, сопутствующих друг-другу
     /// </summary>
     public class Mentality
     {
-        public static Array AllTraits = Enum.GetValues(typeof(Trait));
+        public static ImmutableArray<Trait> AllTraits { get; } = Enum.GetValues(typeof(Trait)).Cast<Trait>().ToImmutableArray();
 
-        private Dictionary<Trait, float[]> m_cTraits = new Dictionary<Trait, float[]>();
+        public static Mentality IdealSociety { get; } = new Mentality(0);
+
         /// <summary>
         /// Моральные качества - в диапазоне 0..2
         /// </summary>
-        public Dictionary<Trait, float[]> Traits
-        {
-            get { return m_cTraits; }
-        }
-
-        private static Mentality s_pIdeal = new Mentality(0);
-
-        public static Mentality IdealSociety
-        {
-            get { return s_pIdeal; }
-        }
+        public Dictionary<Trait, float[]> Traits { get; } = new Dictionary<Trait, float[]>();
 
         public Mentality(MentalityTemplate cTemplate)
         {
             foreach (Trait prop in AllTraits)
             {
-                m_cTraits[prop] = new float[9];
+                Traits[prop] = new float[9];
                 float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
                 float fSum = 0;
-
 
                 AdvancementRate eRate = cTemplate[prop];
                 if (eRate == AdvancementRate.Random)
@@ -110,9 +103,6 @@ namespace Socium.Psychology
                             else
                                 aDerivative[i] = 0.5f * (i - 4) / 4 + Rnd.Get(0.03f);
                             break;
-                        //case 5:
-                        //    aDerivative[i] = 0.7f * (float)Math.Pow((float)i / 8, 4) + Rnd.Get(0.01f);
-                        //    break;
                     }
                     fSum += aDerivative[i];
                 }
@@ -120,8 +110,8 @@ namespace Socium.Psychology
                 float fCurrent = 2;
                 for (int i = 0; i < 9; i++)
                 {
-                    fCurrent -= aDerivative[i]*2 / fSum; 
-                    m_cTraits[prop][i] = Math.Max(0, fCurrent);
+                    fCurrent -= aDerivative[i]*2 / fSum;
+                    Traits[prop][i] = Math.Max(0, fCurrent);
                 }
             }
         }
@@ -130,9 +120,9 @@ namespace Socium.Psychology
         {
             foreach (Trait prop in AllTraits)
             {
-                m_cTraits[prop] = new float[9];
-                for (int i = 0; i < 9; i++) 
-                    m_cTraits[prop][i] = Math.Min(2.0f, Math.Max(0, fValue));
+                Traits[prop] = new float[9];
+                for (int i = 0; i < 9; i++)
+                    Traits[prop][i] = Math.Min(2.0f, Math.Max(0, fValue));
             }
         }
 
@@ -142,15 +132,15 @@ namespace Socium.Psychology
             {
                 if (bMutate)
                 {
-                    m_cTraits[eTrait] = new float[9];
+                    Traits[eTrait] = new float[9];
                     float[] aDerivative = new float[9];//произвдных на 1 больше, чем уровней, чтобы последний уровень был меньше 2.0
                     float fSum = 2;
                     for (int i = 0; i < 9; i++)
                     {
-                        aDerivative[i] = fSum - pAncestorMentality.m_cTraits[eTrait][i];
+                        aDerivative[i] = fSum - pAncestorMentality.Traits[eTrait][i];
                         fSum -= aDerivative[i];
                     }
-                    //aDerivative[9] = fSum;
+
                     fSum = 0;
                     for (int i = 0; i < 9; i++)
                     {
@@ -162,14 +152,14 @@ namespace Socium.Psychology
                     for (int i = 0; i < 9; i++)
                     {
                         fCurrent -= aDerivative[i] * 2 / fSum;
-                        m_cTraits[eTrait][i] = Math.Max(0, fCurrent);
+                        Traits[eTrait][i] = Math.Max(0, fCurrent);
                     }
                 }
                 else
                 {
-                    m_cTraits[eTrait] = new float[9];
+                    Traits[eTrait] = new float[9];
                     for (int i = 0; i < 9; i++)
-                        m_cTraits[eTrait][i] = pAncestorMentality.m_cTraits[eTrait][i];
+                        Traits[eTrait][i] = pAncestorMentality.Traits[eTrait][i];
                 }
             }
         }
@@ -207,11 +197,10 @@ namespace Socium.Psychology
             BTVector culture2 = new BTVector(AllTraits.Length);
             foreach (Trait prop in AllTraits)
             {
-                culture1.Set((int)prop, m_cTraits[prop][iOwnProgress] - 1.0f);
-                culture2.Set((int)prop, different.m_cTraits[prop][iOpponentProgress] - 1.0f);
+                culture1.Set((int)prop, Traits[prop][iOwnProgress] - 1.0f);
+                culture2.Set((int)prop, different.Traits[prop][iOpponentProgress] - 1.0f);
             }
             return (float)Math.Sqrt(BTVector.Dist(culture1, culture2)) - 1f;
-            //return -(float)(culture1 * culture2) / Mentalities.Length;
         }
 
         /// <summary>
@@ -234,8 +223,8 @@ namespace Socium.Psychology
 
             public bool Check(Mentality pMentality, int iLevel)
             {
-                return pMentality.m_cTraits[m_eTrait][iLevel] >= m_fMinValue &&
-                    pMentality.m_cTraits[m_eTrait][iLevel] <= m_fMaxValue;
+                return pMentality.Traits[m_eTrait][iLevel] >= m_fMinValue &&
+                    pMentality.Traits[m_eTrait][iLevel] <= m_fMaxValue;
             }
         }
 
@@ -249,60 +238,57 @@ namespace Socium.Psychology
         {
             get
             {
-                if (s_cTraitPhases == null)
-                {
-                    s_cTraitPhases = new Dictionary<Trait, TraitPhase[]>();
-                    s_cTraitPhases[Trait.Agression] = new TraitPhase[] 
+                return s_cTraitPhases ?? (s_cTraitPhases = new Dictionary<Trait, TraitPhase[]>
+                    {
+                        [Trait.Agression] = new TraitPhase[]
                         {   new TraitPhase(Trait.Agression, 0.0f, 0.33f, "(+3) completely pacifistic"),
                             new TraitPhase(Trait.Agression, 0.33f, 0.66f, "(+2) quite amiable"),
                             new TraitPhase(Trait.Agression, 0.66f, 1.0f, "(+1) peaceful"),
                             new TraitPhase(Trait.Agression, 1.0f, 1.33f, "(-1) hot-tempered"),
                             new TraitPhase(Trait.Agression, 1.33f, 1.66f, "(-2) agressive"),
                             new TraitPhase(Trait.Agression, 1.66f, 2.0f, "(-3) extremely agressive"),
-
-                        };
-                    s_cTraitPhases[Trait.Selfishness] = new TraitPhase[] 
+                        },
+                        [Trait.Selfishness] = new TraitPhase[]
                         {   new TraitPhase(Trait.Selfishness, 0.0f, 0.33f, "(+3) completely selfless"),
                             new TraitPhase(Trait.Selfishness, 0.33f, 0.66f, "(+2) quite selfless"),
                             new TraitPhase(Trait.Selfishness, 0.66f, 1.0f, "(+1) not so egoistic"),
                             new TraitPhase(Trait.Selfishness, 1.0f, 1.33f, "(-1) quite egoistic"),
                             new TraitPhase(Trait.Selfishness, 1.33f, 1.66f, "(-2) very selfish"),
                             new TraitPhase(Trait.Selfishness, 1.66f, 2.0f, "(-3) completely selfish"),
-                        };
-                    s_cTraitPhases[Trait.Simplicity] = new TraitPhase[] 
+                        },
+                        [Trait.Simplicity] = new TraitPhase[]
                         {   new TraitPhase(Trait.Simplicity, 0.0f, 0.33f, "(+3) creativity as a supreme value"),
                             new TraitPhase(Trait.Simplicity, 0.33f, 0.66f, "(+2) true art"),
                             new TraitPhase(Trait.Simplicity, 0.66f, 1.0f, "(+1) pop art"),
                             new TraitPhase(Trait.Simplicity, 1.0f, 1.33f, "(-1) applied art"),
                             new TraitPhase(Trait.Simplicity, 1.33f, 1.66f, "(-2) primitive pleasures"),
                             new TraitPhase(Trait.Simplicity, 1.66f, 2.0f, "(-3) only natural needs satisfaction"),
-                        };
-                    s_cTraitPhases[Trait.Fanaticism] = new TraitPhase[] 
+                        },
+                        [Trait.Fanaticism] = new TraitPhase[]
                         {   new TraitPhase(Trait.Fanaticism, 0.0f, 0.33f, "(+3) fully tolerant"),
                             new TraitPhase(Trait.Fanaticism, 0.33f, 0.66f, "(+2) liberal"),
                             new TraitPhase(Trait.Fanaticism, 0.66f, 1.0f, "(+1) open-minded"),
                             new TraitPhase(Trait.Fanaticism, 1.0f, 1.33f, "(-1) narrow-minded"),
                             new TraitPhase(Trait.Fanaticism, 1.33f, 1.66f, "(-2) intolerant"),
                             new TraitPhase(Trait.Fanaticism, 1.66f, 2.0f, "(-3) fanatical"),
-                        };
-                    s_cTraitPhases[Trait.Piety] = new TraitPhase[] 
+                        },
+                        [Trait.Piety] = new TraitPhase[]
                         {   new TraitPhase(Trait.Piety, 0.0f, 0.33f, "(+3) atheism"),
                             new TraitPhase(Trait.Piety, 0.33f, 0.66f, "(+2) syntheism"),
                             new TraitPhase(Trait.Piety, 0.66f, 1.0f, "(+1) pantheism"),
                             new TraitPhase(Trait.Piety, 1.0f, 1.33f, "(-1) monotheism"),
                             new TraitPhase(Trait.Piety, 1.33f, 1.66f, "(-2) polytheism"),
                             new TraitPhase(Trait.Piety, 1.66f, 2.0f, "(-3) animism"),
-                        };
-                    s_cTraitPhases[Trait.Treachery] = new TraitPhase[] 
+                        },
+                        [Trait.Treachery] = new TraitPhase[]
                         {   new TraitPhase(Trait.Treachery, 0.0f, 0.33f, "(+3) righteous"),
                             new TraitPhase(Trait.Treachery, 0.33f, 0.66f, "(+2) honest"),
                             new TraitPhase(Trait.Treachery, 0.66f, 1.0f, "(+1) lawful"),
                             new TraitPhase(Trait.Treachery, 1.0f, 1.33f, "(-1) dishonest"),
                             new TraitPhase(Trait.Treachery, 1.33f, 1.66f, "(-2) criminal"),
                             new TraitPhase(Trait.Treachery, 1.66f, 2.0f, "(-3) anarchist"),
-                        };
-                }
-                return s_cTraitPhases;
+                        }
+                    });
             }
         }
 
@@ -313,12 +299,12 @@ namespace Socium.Psychology
                 if (pPhase.Check(this, iLevel))
                     return pPhase.m_sName;
             }
-            return "error (" + m_cTraits[eTrait][iLevel].ToString() + ")";
+            return "error (" + Traits[eTrait][iLevel].ToString() + ")";
         }
 
         public string GetDiffString(int iLevel, Mentality pOther, int iOtherlevel)
         {
-            string sResult = "";
+            StringBuilder sResult = new StringBuilder();
             bool bFirst = true;
             Trait eLastDefferentTrait = Trait.Agression;
             foreach (Trait eTrait in AllTraits)
@@ -339,43 +325,43 @@ namespace Socium.Psychology
                 if (sTrait1 != sTrait2)
                 {
                     if (!bFirst)
-                        sResult += eTrait == eLastDefferentTrait ? " and " : ", ";
+                        sResult.Append(eTrait == eLastDefferentTrait ? " and " : ", ");
 
                     bool bReverse = false;
-                    if (m_cTraits[eTrait][iLevel] > pOther.m_cTraits[eTrait][iOtherlevel] + 0.33)
-                        sResult += "much more ";
-                    else if (m_cTraits[eTrait][iLevel] > pOther.m_cTraits[eTrait][iOtherlevel])
-                        sResult += "more ";
-                    else if (m_cTraits[eTrait][iLevel] < pOther.m_cTraits[eTrait][iOtherlevel] - 0.33)
+                    if (Traits[eTrait][iLevel] > pOther.Traits[eTrait][iOtherlevel] + 0.33)
+                        sResult.Append("much more ");
+                    else if (Traits[eTrait][iLevel] > pOther.Traits[eTrait][iOtherlevel])
+                        sResult.Append("more ");
+                    else if (Traits[eTrait][iLevel] < pOther.Traits[eTrait][iOtherlevel] - 0.33)
                     {
-                        sResult += "much more ";
+                        sResult.Append("much more ");
                         bReverse = true;
                     }
                     else
                     {
-                        sResult += "more ";
+                        sResult.Append("more ");
                         bReverse = true;
                     }
 
                     switch (eTrait)
                     {
                         case Trait.Agression:
-                            sResult += bReverse ? "peaceful" : "agressive";
+                            sResult.Append(bReverse ? "peaceful" : "agressive");
                             break;
                         case Trait.Fanaticism:
-                            sResult += bReverse ? "tolerant" : "fanatical";
+                            sResult.Append(bReverse ? "tolerant" : "fanatical");
                             break;
                         case Trait.Piety:
-                            sResult += bReverse ? "rational" : "religious";
+                            sResult.Append(bReverse ? "rational" : "religious");
                             break;
                         case Trait.Simplicity:
-                            sResult += bReverse ? "refined" : "simple";
+                            sResult.Append(bReverse ? "refined" : "simple");
                             break;
                         case Trait.Selfishness:
-                            sResult += bReverse ? "generous" : "selfish";
+                            sResult.Append(bReverse ? "generous" : "selfish");
                             break;
                         case Trait.Treachery:
-                            sResult += bReverse ? "honorable" : "treacherous";
+                            sResult.Append(bReverse ? "honorable" : "treacherous");
                             break;
                     }
 
@@ -383,18 +369,17 @@ namespace Socium.Psychology
                 }
             }
 
-            return sResult;
+            return sResult.ToString();
         }
 
         public override bool Equals(object obj)
         {
-            var pOther = obj as Mentality;
-            if (pOther == null)
+            if (!(obj is Mentality pOther))
                 return false;
 
             foreach (Trait eTrait in AllTraits)
             {
-                if (m_cTraits[eTrait] != pOther.m_cTraits[eTrait])
+                if (Traits[eTrait] != pOther.Traits[eTrait])
                     return false;
             }
 
@@ -406,7 +391,7 @@ namespace Socium.Psychology
             HashCode hash = new HashCode();
 
             foreach (Trait eTrait in AllTraits)
-                hash.Add(m_cTraits[eTrait]);
+                hash.Add(Traits[eTrait]);
 
             return hash.ToHashCode();
         }

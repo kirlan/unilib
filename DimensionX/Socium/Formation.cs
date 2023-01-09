@@ -9,8 +9,6 @@ namespace Socium
 {
     public class Formation
     {
-        public Dictionary<Estate.SocialRank, string[]> m_cEstates = new Dictionary<Estate.SocialRank, string[]>();
-
         public static readonly Formation Primitive = new Formation(new string[] {"Firstborn"}, new string[] {"Seers"}, new string[] {"Tribesman"}, new string[] {"Servant"}, new string[] {"Outsider"});
         public static readonly Formation MedievalSlavic = new Formation(new string[] { "Dvoryan", "Kmet" }, new string[] {"Volkhv"}, new string[] { "Meshchan", "Smerd", "Batrak" }, new string[] { "Kholop" }, new string[] { "Izgoi" });
         public static readonly Formation MedievalEurope = new Formation(new string[] { "Knight", "Esquare" }, new string[] { "Cleric" }, new string[] { "Commoner", "Freeholder", "Villein" }, new string[] { "Serf" }, new string[] { "Rogue" });
@@ -27,33 +25,35 @@ namespace Socium
         public static readonly Formation Modern = new Formation(new string[] { "Elite", "Oligarch" }, new string[] { "Cleric" }, new string[] { "Specialist", "Bourgeois" }, new string[] { "Proletarian", "Lumpen" }, new string[] { "Gangster" });
         public static readonly Formation Future = new Formation(new string[] {"Citizen"}, new string[] { "Citizen" }, new string[] {"Citizen"}, new string[] {"Morlock"}, new string[] {"Outsider"});
 
+        public Dictionary<Estate.SocialRank, string[]> Estates { get; } = new Dictionary<Estate.SocialRank, string[]>();
+
         public Formation(string[] aElite, string[] aCleregy, string[] aMiddle, string[] aLow, string[] aOutlaw)
         {
-            m_cEstates[Estate.SocialRank.Elite] = aElite;
-            m_cEstates[Estate.SocialRank.Clergy] = aCleregy;
-            m_cEstates[Estate.SocialRank.Commoners] = aMiddle;
-            m_cEstates[Estate.SocialRank.Lowlifes] = aLow;
-            m_cEstates[Estate.SocialRank.Outlaws] = aOutlaw;
+            Estates[Estate.SocialRank.Elite] = aElite;
+            Estates[Estate.SocialRank.Clergy] = aCleregy;
+            Estates[Estate.SocialRank.Commoners] = aMiddle;
+            Estates[Estate.SocialRank.Lowlifes] = aLow;
+            Estates[Estate.SocialRank.Outlaws] = aOutlaw;
 
-            if (m_cEstates[Estate.SocialRank.Elite] == null || m_cEstates[Estate.SocialRank.Elite].Length == 0)
-                m_cEstates[Estate.SocialRank.Elite] = new string[] { "Elite" };
+            if (Estates[Estate.SocialRank.Elite] == null || Estates[Estate.SocialRank.Elite].Length == 0)
+                Estates[Estate.SocialRank.Elite] = new string[] { "Elite" };
 
-            if (m_cEstates[Estate.SocialRank.Clergy] == null || m_cEstates[Estate.SocialRank.Clergy].Length == 0)
-                m_cEstates[Estate.SocialRank.Clergy] = new string[] { "Clergy" };
+            if (Estates[Estate.SocialRank.Clergy] == null || Estates[Estate.SocialRank.Clergy].Length == 0)
+                Estates[Estate.SocialRank.Clergy] = new string[] { "Clergy" };
 
-            if (m_cEstates[Estate.SocialRank.Commoners] == null || m_cEstates[Estate.SocialRank.Commoners].Length == 0)
-                m_cEstates[Estate.SocialRank.Commoners] = new string[] { "Commoner" };
+            if (Estates[Estate.SocialRank.Commoners] == null || Estates[Estate.SocialRank.Commoners].Length == 0)
+                Estates[Estate.SocialRank.Commoners] = new string[] { "Commoner" };
 
-            if (m_cEstates[Estate.SocialRank.Lowlifes] == null || m_cEstates[Estate.SocialRank.Lowlifes].Length == 0)
-                m_cEstates[Estate.SocialRank.Lowlifes] = new string[] { "Servant" };
+            if (Estates[Estate.SocialRank.Lowlifes] == null || Estates[Estate.SocialRank.Lowlifes].Length == 0)
+                Estates[Estate.SocialRank.Lowlifes] = new string[] { "Servant" };
 
-            if (m_cEstates[Estate.SocialRank.Outlaws] == null || m_cEstates[Estate.SocialRank.Outlaws].Length == 0)
-                m_cEstates[Estate.SocialRank.Outlaws] = new string[] { "Outlaw" };
+            if (Estates[Estate.SocialRank.Outlaws] == null || Estates[Estate.SocialRank.Outlaws].Length == 0)
+                Estates[Estate.SocialRank.Outlaws] = new string[] { "Outlaw" };
         }
 
         public string GetEstateName(Estate.SocialRank ePosition)
         {
-            return m_cEstates[ePosition][Rnd.Get(m_cEstates[ePosition].Length)];
+            return Estates[ePosition][Rnd.Get(Estates[ePosition].Length)];
         }
     }
 }

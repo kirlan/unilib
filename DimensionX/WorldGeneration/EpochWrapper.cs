@@ -32,8 +32,8 @@ namespace WorldGeneration
 
         public int Length
         {
-            get { return m_pEpoch.m_iLength; }
-            set { m_pEpoch.m_iLength = value; }
+            get { return m_pEpoch.Length; }
+            set { m_pEpoch.Length = value; }
         }
 
         private ProgressPreset m_pNativesPreset = null;
@@ -47,25 +47,25 @@ namespace WorldGeneration
 
                 if (m_pNativesPreset != null)
                 {
-                    m_pEpoch.m_iNativesMinTechLevel = m_pNativesPreset.m_iMinTechLevel;
-                    m_pEpoch.m_iNativesMaxTechLevel = m_pNativesPreset.m_iMaxTechLevel;
-                    m_pEpoch.m_iNativesMinMagicLevel = m_pNativesPreset.m_iMinMagicLevel;
-                    m_pEpoch.m_iNativesMaxMagicLevel = m_pNativesPreset.m_iMaxMagicLevel;
+                    m_pEpoch.NativesMinTechLevel = m_pNativesPreset.m_iMinTechLevel;
+                    m_pEpoch.NativesMaxTechLevel = m_pNativesPreset.m_iMaxTechLevel;
+                    m_pEpoch.NativesMinMagicLevel = m_pNativesPreset.m_iMinMagicLevel;
+                    m_pEpoch.NativesMaxMagicLevel = m_pNativesPreset.m_iMaxMagicLevel;
                 }
             }
         }
 
         public int NativesMinTechLevel
         {
-            get { return m_pEpoch.m_iNativesMinTechLevel; }
+            get { return m_pEpoch.NativesMinTechLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iNativesMinTechLevel = value;
+                    m_pEpoch.NativesMinTechLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMinTechLevel)
                     {
-                        m_pEpoch.m_iNativesMinTechLevel = value;
+                        m_pEpoch.NativesMinTechLevel = value;
                         m_pNativesPreset = null;
                     }
             }
@@ -73,15 +73,15 @@ namespace WorldGeneration
 
         public int NativesMaxTechLevel
         {
-            get { return m_pEpoch.m_iNativesMaxTechLevel; }
+            get { return m_pEpoch.NativesMaxTechLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iNativesMaxTechLevel = value;
+                    m_pEpoch.NativesMaxTechLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMaxTechLevel)
                     {
-                        m_pEpoch.m_iNativesMaxTechLevel = value;
+                        m_pEpoch.NativesMaxTechLevel = value;
                         m_pNativesPreset = null;
                     }
             }
@@ -89,15 +89,15 @@ namespace WorldGeneration
 
         public int NativesMinMagicLevel
         {
-            get { return m_pEpoch.m_iNativesMinMagicLevel; }
+            get { return m_pEpoch.NativesMinMagicLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iNativesMinMagicLevel = value;
+                    m_pEpoch.NativesMinMagicLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMinMagicLevel)
                     {
-                        m_pEpoch.m_iNativesMinMagicLevel = value;
+                        m_pEpoch.NativesMinMagicLevel = value;
                         m_pNativesPreset = null;
                     }
             }
@@ -105,15 +105,15 @@ namespace WorldGeneration
 
         public int NativesMaxMagicLevel
         {
-            get { return m_pEpoch.m_iNativesMaxMagicLevel; }
+            get { return m_pEpoch.NativesMaxMagicLevel; }
             set
             {
                 if (m_pNativesPreset == null)
-                    m_pEpoch.m_iNativesMaxMagicLevel = value;
+                    m_pEpoch.NativesMaxMagicLevel = value;
                 else
                     if (value != m_pNativesPreset.m_iMaxMagicLevel)
                     {
-                        m_pEpoch.m_iNativesMaxMagicLevel = value;
+                        m_pEpoch.NativesMaxMagicLevel = value;
                         m_pNativesPreset = null;
                     }
             }
@@ -126,7 +126,7 @@ namespace WorldGeneration
                 if (m_pNativesPreset != null)
                     return m_pNativesPreset.m_sName;
                 else
-                    return string.Format("Custom (T[{0}-{1}]M[{2}-{3}])", m_pEpoch.m_iNativesMinTechLevel, m_pEpoch.m_iNativesMaxTechLevel, m_pEpoch.m_iNativesMinMagicLevel, m_pEpoch.m_iNativesMaxMagicLevel);
+                    return string.Format("Custom (T[{0}-{1}]M[{2}-{3}])", m_pEpoch.NativesMinTechLevel, m_pEpoch.NativesMaxTechLevel, m_pEpoch.NativesMinMagicLevel, m_pEpoch.NativesMaxMagicLevel);
             }
         }
 
@@ -141,25 +141,25 @@ namespace WorldGeneration
 
                 if (m_pInvadersPreset != null)
                 {
-                    m_pEpoch.m_iInvadersMinTechLevel = m_pInvadersPreset.m_iMinTechLevel;
-                    m_pEpoch.m_iInvadersMaxTechLevel = m_pInvadersPreset.m_iMaxTechLevel;
-                    m_pEpoch.m_iInvadersMinMagicLevel = m_pInvadersPreset.m_iMinMagicLevel;
-                    m_pEpoch.m_iInvadersMaxMagicLevel = m_pInvadersPreset.m_iMaxMagicLevel;
+                    m_pEpoch.InvadersMinTechLevel = m_pInvadersPreset.m_iMinTechLevel;
+                    m_pEpoch.InvadersMaxTechLevel = m_pInvadersPreset.m_iMaxTechLevel;
+                    m_pEpoch.InvadersMinMagicLevel = m_pInvadersPreset.m_iMinMagicLevel;
+                    m_pEpoch.InvadersMaxMagicLevel = m_pInvadersPreset.m_iMaxMagicLevel;
                 }
             }
         }
 
         public int InvadersMinTechLevel
         {
-            get { return m_pEpoch.m_iInvadersMinTechLevel; }
+            get { return m_pEpoch.InvadersMinTechLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
-                    m_pEpoch.m_iInvadersMinTechLevel = value;
+                    m_pEpoch.InvadersMinTechLevel = value;
                 else
                     if (value != m_pInvadersPreset.m_iMinTechLevel)
                     {
-                        m_pEpoch.m_iInvadersMinTechLevel = value;
+                        m_pEpoch.InvadersMinTechLevel = value;
                         m_pInvadersPreset = null;
                     }
             }
@@ -167,15 +167,15 @@ namespace WorldGeneration
 
         public int InvadersMaxTechLevel
         {
-            get { return m_pEpoch.m_iInvadersMaxTechLevel; }
+            get { return m_pEpoch.InvadersMaxTechLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
-                    m_pEpoch.m_iInvadersMaxTechLevel = value;
+                    m_pEpoch.InvadersMaxTechLevel = value;
                 else
                     if (value != m_pInvadersPreset.m_iMaxTechLevel)
                     {
-                        m_pEpoch.m_iInvadersMaxTechLevel = value;
+                        m_pEpoch.InvadersMaxTechLevel = value;
                         m_pInvadersPreset = null;
                     }
             }
@@ -183,15 +183,15 @@ namespace WorldGeneration
 
         public int InvadersMinMagicLevel
         {
-            get { return m_pEpoch.m_iInvadersMinMagicLevel; }
+            get { return m_pEpoch.InvadersMinMagicLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
-                    m_pEpoch.m_iInvadersMinMagicLevel = value;
+                    m_pEpoch.InvadersMinMagicLevel = value;
                 else
                     if (value != m_pInvadersPreset.m_iMinMagicLevel)
                     {
-                        m_pEpoch.m_iInvadersMinMagicLevel = value;
+                        m_pEpoch.InvadersMinMagicLevel = value;
                         m_pInvadersPreset = null;
                     }
             }
@@ -199,15 +199,15 @@ namespace WorldGeneration
 
         public int InvadersMaxMagicLevel
         {
-            get { return m_pEpoch.m_iInvadersMaxMagicLevel; }
+            get { return m_pEpoch.InvadersMaxMagicLevel; }
             set
             {
                 if (m_pInvadersPreset == null)
-                    m_pEpoch.m_iInvadersMaxMagicLevel = value;
+                    m_pEpoch.InvadersMaxMagicLevel = value;
                 else
                     if (value != m_pInvadersPreset.m_iMaxMagicLevel)
                     {
-                        m_pEpoch.m_iInvadersMaxMagicLevel = value;
+                        m_pEpoch.InvadersMaxMagicLevel = value;
                         m_pInvadersPreset = null;
                     }
             }
@@ -242,19 +242,19 @@ namespace WorldGeneration
                         cRaces.Add(pRace);
                 }
 
-                m_pEpoch.m_cNatives.Clear();
-                m_pEpoch.m_cNatives.AddRange(cRaces);
+                m_pEpoch.Natives.Clear();
+                m_pEpoch.Natives.AddRange(cRaces);
             }
         }
 
         public List<Race> NativesRaces
         {
-            get { return new List<Race>(m_pEpoch.m_cNatives); }
+            get { return new List<Race>(m_pEpoch.Natives); }
             set
             {
                 m_aNativesRacesSets = new RacesSet[] { };
-                m_pEpoch.m_cNatives.Clear();
-                m_pEpoch.m_cNatives.AddRange(value);
+                m_pEpoch.Natives.Clear();
+                m_pEpoch.Natives.AddRange(value);
             }
         }
 
@@ -276,7 +276,7 @@ namespace WorldGeneration
                 }
                 else
                 {
-                    foreach (Race pRace in m_pEpoch.m_cNatives)
+                    foreach (Race pRace in m_pEpoch.Natives)
                     {
                         if (sResult.Length > 0)
                             sResult += ", ";
@@ -291,8 +291,8 @@ namespace WorldGeneration
 
         public int NativesCount
         {
-            get { return m_pEpoch.m_iNativesCount; }
-            set { m_pEpoch.m_iNativesCount = value; }
+            get { return m_pEpoch.NativesCount; }
+            set { m_pEpoch.NativesCount = value; }
         }
 
         private RacesSet[] m_aInvadersRacesSets = { };
@@ -324,19 +324,19 @@ namespace WorldGeneration
                         cRaces.Add(pRace);
                 }
 
-                m_pEpoch.m_cInvaders.Clear();
-                m_pEpoch.m_cInvaders.AddRange(cRaces);
+                m_pEpoch.Invaders.Clear();
+                m_pEpoch.Invaders.AddRange(cRaces);
             }
         }
 
         public List<Race> InvadersRaces
         {
-            get { return new List<Race>(m_pEpoch.m_cInvaders); }
+            get { return new List<Race>(m_pEpoch.Invaders); }
             set
             {
                 m_aInvadersRacesSets = new RacesSet[] { };
-                m_pEpoch.m_cInvaders.Clear();
-                m_pEpoch.m_cInvaders.AddRange(value);
+                m_pEpoch.Invaders.Clear();
+                m_pEpoch.Invaders.AddRange(value);
             }
         }
 
@@ -358,7 +358,7 @@ namespace WorldGeneration
                 }
                 else
                 {
-                    foreach (Race pRace in m_pEpoch.m_cInvaders)
+                    foreach (Race pRace in m_pEpoch.Invaders)
                     {
                         if (sResult.Length > 0)
                             sResult += ", ";
@@ -373,8 +373,8 @@ namespace WorldGeneration
         
         public int InvadersCount
         {
-            get { return m_pEpoch.m_iInvadersCount; }
-            set { m_pEpoch.m_iInvadersCount = value; }
+            get { return m_pEpoch.InvadersCount; }
+            set { m_pEpoch.InvadersCount = value; }
         }
     }
 }

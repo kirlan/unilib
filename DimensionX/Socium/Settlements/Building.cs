@@ -47,7 +47,7 @@ namespace Socium.Settlements
         /// </summary>
         Full
     }
-    
+
     /// <summary>
     /// Информация о строении - размер, количество владельцев и работников, их профессии, тип владения (семейный/коммерческий)
     /// </summary>
@@ -63,7 +63,7 @@ namespace Socium.Settlements
 
         public static readonly BuildingInfo SlaveMarketMedium = new BuildingInfo("Slave Market", ProfessionInfo.Slaver, ProfessionInfo.WorkingSlave, BuildingSize.Medium);
         public static readonly BuildingInfo SlaveMarketMedium2 = new BuildingInfo("Slave Market", ProfessionInfo.Slaver, ProfessionInfo.PleasureSlave, BuildingSize.Medium);
-        
+
         public static readonly BuildingInfo WarriorsHutSmall    = new BuildingInfo("Warriors Hut", ProfessionInfo.Warrior, ProfessionInfo.Warrior, BuildingSize.Small);
 
         public static readonly BuildingInfo RaidersHutSmall = new BuildingInfo("Raiders Hut", ProfessionInfo.Raider, ProfessionInfo.Raider, BuildingSize.Small);
@@ -244,7 +244,7 @@ namespace Socium.Settlements
         public static readonly BuildingInfo MedicineLarge       = new BuildingInfo("Hospital", ProfessionInfo.Doctor, ProfessionInfo.Nurce, BuildingSize.Large);
 
         public static readonly BuildingInfo AlchemyShopSmall    = new BuildingInfo("Alchemy Shop", ProfessionInfo.Alchemist, ProfessionInfo.Alchemist, BuildingSize.Small);
-      
+
         public static readonly BuildingInfo MagicSmall          = new BuildingInfo("Mage Tower", ProfessionInfo.Mage, ProfessionInfo.Mage, BuildingSize.Small);
         public static readonly BuildingInfo MagicMedium         = new BuildingInfo("Magic University", ProfessionInfo.Mage, ProfessionInfo.Mage, BuildingSize.Medium);
         public static readonly BuildingInfo MagicLarge          = new BuildingInfo("Magic Academy", ProfessionInfo.Mage, ProfessionInfo.Mage, BuildingSize.Large);
@@ -254,25 +254,25 @@ namespace Socium.Settlements
         /// <summary>
         /// Название строение
         /// </summary>
-        public string m_sName;
+        public string Name { get; }
         /// <summary>
         /// Профессия владельца
         /// </summary>
-        public ProfessionInfo m_pOwnerProfession;
+        public ProfessionInfo OwnerProfession { get; }
         /// <summary>
         /// Профессия работников/прислуги
         /// </summary>
-        public ProfessionInfo m_pWorkersProfession;
+        public ProfessionInfo WorkersProfession { get; }
 
         /// <summary>
         /// Размер строения - определяет численность владельцев и работников
         /// </summary>
-        public BuildingSize m_eSize;
+        public BuildingSize Size { get; }
 
         /// <summary>
         /// Требования к семейным связям обитателей здания
         /// </summary>
-        public FamilyOwnership m_eOwnership;
+        public FamilyOwnership Ownership { get; }
 
         public BuildingInfo(string sName, ProfessionInfo pOwner, ProfessionInfo pWorkers, BuildingSize eSize)
             :this(sName, pOwner, pWorkers, eSize, FamilyOwnership.None)
@@ -280,37 +280,32 @@ namespace Socium.Settlements
 
         public BuildingInfo(string sName, ProfessionInfo pOwnerProfession, ProfessionInfo pWorkersProfession, BuildingSize eSize, FamilyOwnership eOwnership)
         {
-            m_sName = sName;
-            m_pOwnerProfession = pOwnerProfession;
-            m_pWorkersProfession = pWorkersProfession;
+            Name = sName;
+            OwnerProfession = pOwnerProfession;
+            WorkersProfession = pWorkersProfession;
 
-            m_eSize = eSize;
+            Size = eSize;
 
-            m_eOwnership = eOwnership;
+            Ownership = eOwnership;
         }
 
         public int OwnersCount
         {
             get
             {
-                int iOwnersCount = 1;
-                switch (m_eSize)
+                switch (Size)
                 {
                     case BuildingSize.Small:
-                        iOwnersCount = 1;
-                        break;
+                        return 1;
                     case BuildingSize.Medium:
-                        iOwnersCount = 3;
-                        break;
+                        return 3;
                     case BuildingSize.Large:
-                        iOwnersCount = 5;
-                        break;
+                        return 5;
                     case BuildingSize.Huge:
-                        iOwnersCount = 10;
-                        break;
+                        return 10;
                 }
 
-                return iOwnersCount;
+                return 1;
             }
         }
 
@@ -318,30 +313,25 @@ namespace Socium.Settlements
         {
             get
             {
-                int iWorkersCount = 0;
-                switch (m_eSize)
+                switch (Size)
                 {
                     case BuildingSize.Small:
-                        iWorkersCount = 3;
-                        break;
+                        return 3;
                     case BuildingSize.Medium:
-                        iWorkersCount = 15;
-                        break;
+                        return 15;
                     case BuildingSize.Large:
-                        iWorkersCount = 50;
-                        break;
+                        return 50;
                     case BuildingSize.Huge:
-                        iWorkersCount = 200;
-                        break;
+                        return 200;
                 }
 
-                return iWorkersCount;
+                return 0;
             }
         }
 
         public override string ToString()
         {
-            return m_sName + " (" + m_eSize.ToString() + ")";
+            return Name + " (" + Size.ToString() + ")";
         }
     }
     public class Building
@@ -349,27 +339,27 @@ namespace Socium.Settlements
         /// <summary>
         /// Селение, к которому принадлежит строение
         /// </summary>
-        public Settlement m_pSettlement;
+        public Settlement Settlement { get; }
 
         /// <summary>
         /// Информация о строении - размер, количество владельцев и работников, их профессии, тип владения (семейный/коммерческий)
         /// </summary>
-        public BuildingInfo m_pInfo;
+        public BuildingInfo Info { get; }
 
         /// <summary>
         /// Обитатели - жители, владельцы, работники...
         /// </summary>
-        public List<Person> m_cPersons = new List<Person>();
+        public List<Person> Persons { get; } = new List<Person>();
 
         public Building(Settlement pSettlement, BuildingInfo pInfo)
         {
-            m_pSettlement = pSettlement;
-            m_pInfo = pInfo;
+            Settlement = pSettlement;
+            Info = pInfo;
         }
 
         public override string ToString()
         {
-            return m_pInfo.m_sName;
+            return Info.Name;
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Socium
 {
     public class Epoch
     {
-        private static string[] s_cNames =
-        { 
+        private static readonly string[] s_cNames =
+        {
             "Age of Destruction",
             "Age of Legends",
             "Dark Age",
@@ -42,52 +42,78 @@ namespace Socium
             "Age of Destiny",
         };
 
-        public static List<string> s_cUsedNames = new List<string>();
+        private static readonly List<string> s_cUsedNames = new List<string>();
 
-        public string m_sName;
+        public static void ResetUsedList()
+        {
+            s_cUsedNames.Clear();
+        }
 
-        public int m_iNativesMinTechLevel;
-        public int m_iNativesMaxTechLevel;
-        public int m_iNativesMinMagicLevel;
-        public int m_iNativesMaxMagicLevel;
-        
-        public List<Race> m_cNatives = new List<Race>();
+        //can't make them auto-implement properties, since they are needed to be passed as ref parameters
+#pragma warning disable S2292 // Trivial properties should be auto-implemented
+        private readonly string m_sName;
+        public string Name => m_sName;
 
-        public int m_iInvadersMinTechLevel;
-        public int m_iInvadersMaxTechLevel;
-        public int m_iInvadersMinMagicLevel;
-        public int m_iInvadersMaxMagicLevel;
-        
-        public List<Race> m_cInvaders = new List<Race>();
+        private int m_iNativesMinTechLevel;
+        public int NativesMinTechLevel { get => m_iNativesMinTechLevel; set => m_iNativesMinTechLevel = value; }
 
-        public int m_iNativesCount;
-        public int m_iInvadersCount;
+        private int m_iNativesMaxTechLevel;
+        public int NativesMaxTechLevel { get => m_iNativesMaxTechLevel; set => m_iNativesMaxTechLevel = value; }
 
-        public int m_iLength;
+        private int m_iNativesMinMagicLevel;
+        public int NativesMinMagicLevel { get => m_iNativesMinMagicLevel; set => m_iNativesMinMagicLevel = value; }
+
+        private int m_iNativesMaxMagicLevel;
+        public int NativesMaxMagicLevel { get => m_iNativesMaxMagicLevel; set => m_iNativesMaxMagicLevel = value; }
+
+        private int m_iInvadersMinTechLevel;
+        public int InvadersMinTechLevel { get => m_iInvadersMinTechLevel; set => m_iInvadersMinTechLevel = value; }
+
+        private int m_iInvadersMaxTechLevel;
+        public int InvadersMaxTechLevel { get => m_iInvadersMaxTechLevel; set => m_iInvadersMaxTechLevel = value; }
+
+        private int m_iInvadersMinMagicLevel;
+        public int InvadersMinMagicLevel { get => m_iInvadersMinMagicLevel; set => m_iInvadersMinMagicLevel = value; }
+
+        private int m_iInvadersMaxMagicLevel;
+        public int InvadersMaxMagicLevel { get => m_iInvadersMaxMagicLevel; set => m_iInvadersMaxMagicLevel = value; }
+
+        private int m_iNativesCount;
+        public int NativesCount { get => m_iNativesCount; set => m_iNativesCount = value; }
+
+        private int m_iInvadersCount;
+        public int InvadersCount { get => m_iInvadersCount; set => m_iInvadersCount = value; }
+
+        private int m_iLength;
+        public int Length { get => m_iLength; set => m_iLength = value; }
+#pragma warning restore S2292 // Trivial properties should be auto-implemented
+
+        public List<Race> Natives { get; } = new List<Race>();
+
+        public List<Race> Invaders { get; } = new List<Race>();
 
         public Epoch()
         {
-            m_iNativesMinTechLevel = 1;
-            m_iNativesMaxTechLevel = 3;
+            NativesMinTechLevel = 1;
+            NativesMaxTechLevel = 3;
 
-            m_iNativesMinMagicLevel = 1;
-            m_iNativesMaxMagicLevel = 3;
+            NativesMinMagicLevel = 1;
+            NativesMaxMagicLevel = 3;
 
-            
-            m_iInvadersMinTechLevel = 5;
-            m_iInvadersMaxTechLevel = 8;
+            InvadersMinTechLevel = 5;
+            InvadersMaxTechLevel = 8;
 
-            m_iInvadersMinMagicLevel = 5;
-            m_iInvadersMaxMagicLevel = 8;
+            InvadersMinMagicLevel = 5;
+            InvadersMaxMagicLevel = 8;
 
-            m_cNatives.AddRange(Race.m_cAllRaces);
-            m_cInvaders.AddRange(Race.m_cAllRaces);
+            Natives.AddRange(Race.m_cAllRaces);
+            Invaders.AddRange(Race.m_cAllRaces);
 
-            m_iNativesCount = 60;
+            NativesCount = 60;
 
-            m_iInvadersCount = 0;
+            InvadersCount = 0;
 
-            m_iLength = 3;
+            Length = 3;
 
             do
             {
@@ -104,7 +130,7 @@ namespace Socium
             pXml.GetIntAttribute(pEpochNode, "length", ref m_iLength);
 
             pXml.GetIntAttribute(pEpochNode, "natives", ref m_iNativesCount);
-            
+
             pXml.GetIntAttribute(pEpochNode, "nativesTLmin", ref m_iNativesMinTechLevel);
             pXml.GetIntAttribute(pEpochNode, "nativesTLmax", ref m_iNativesMaxTechLevel);
 
@@ -127,11 +153,13 @@ namespace Socium
                     pXml.GetStringAttribute(pSubNode, "name", ref sRaceName);
 
                     foreach (Race pRace in Race.m_cAllRaces)
+                    {
                         if (pRace.Name == sRaceName)
                         {
-                            m_cNatives.Add(pRace);
+                            Natives.Add(pRace);
                             break;
                         }
+                    }
                 }
                 if (pSubNode.Name == "Invader")
                 {
@@ -139,11 +167,13 @@ namespace Socium
                     pXml.GetStringAttribute(pSubNode, "name", ref sRaceName);
 
                     foreach (Race pRace in Race.m_cAllRaces)
+                    {
                         if (pRace.Name == sRaceName)
                         {
-                            m_cInvaders.Add(pRace);
+                            Invaders.Add(pRace);
                             break;
                         }
+                    }
                 }
             }
         }
@@ -151,31 +181,31 @@ namespace Socium
         public void Write(UniLibXML pXml, XmlNode pEpochNode)
         {
             pXml.AddAttribute(pEpochNode, "name", m_sName);
-            pXml.AddAttribute(pEpochNode, "length", m_iLength);
+            pXml.AddAttribute(pEpochNode, "length", Length);
 
-            pXml.AddAttribute(pEpochNode, "natives", m_iNativesCount);
+            pXml.AddAttribute(pEpochNode, "natives", NativesCount);
 
             pXml.AddAttribute(pEpochNode, "nativesTLmin", m_iNativesMinTechLevel);
-            pXml.AddAttribute(pEpochNode, "nativesTLmax", m_iNativesMaxTechLevel);
+            pXml.AddAttribute(pEpochNode, "nativesTLmax", NativesMaxTechLevel);
 
-            pXml.AddAttribute(pEpochNode, "nativesMLmin", m_iNativesMinMagicLevel);
-            pXml.AddAttribute(pEpochNode, "nativesMLmax", m_iNativesMaxMagicLevel);
+            pXml.AddAttribute(pEpochNode, "nativesMLmin", NativesMinMagicLevel);
+            pXml.AddAttribute(pEpochNode, "nativesMLmax", NativesMaxMagicLevel);
 
-            pXml.AddAttribute(pEpochNode, "invaders", m_iInvadersCount);
+            pXml.AddAttribute(pEpochNode, "invaders", InvadersCount);
 
-            pXml.AddAttribute(pEpochNode, "invadersTLmin", m_iInvadersMinTechLevel);
-            pXml.AddAttribute(pEpochNode, "invadersTLmax", m_iInvadersMaxTechLevel);
+            pXml.AddAttribute(pEpochNode, "invadersTLmin", InvadersMinTechLevel);
+            pXml.AddAttribute(pEpochNode, "invadersTLmax", InvadersMaxTechLevel);
 
-            pXml.AddAttribute(pEpochNode, "invadersMLmin", m_iInvadersMinMagicLevel);
-            pXml.AddAttribute(pEpochNode, "invadersMLmax", m_iInvadersMaxMagicLevel);
+            pXml.AddAttribute(pEpochNode, "invadersMLmin", InvadersMinMagicLevel);
+            pXml.AddAttribute(pEpochNode, "invadersMLmax", InvadersMaxMagicLevel);
 
-            foreach (Race pRace in m_cNatives)
+            foreach (Race pRace in Natives)
             {
                 XmlNode pRaceNode = pXml.CreateNode(pEpochNode, "Native");
                 pXml.AddAttribute(pRaceNode, "name", pRace.Name);
             }
 
-            foreach (Race pRace in m_cInvaders)
+            foreach (Race pRace in Invaders)
             {
                 XmlNode pRaceNode = pXml.CreateNode(pEpochNode, "Invader");
                 pXml.AddAttribute(pRaceNode, "name", pRace.Name);

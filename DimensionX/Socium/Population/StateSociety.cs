@@ -325,7 +325,7 @@ namespace Socium.Population
             {
                 List<Nation> cAccessableNations = new List<Nation>();
                 ContinentX pContinent = m_pState.GetOwner();
-                foreach (var pNations in pContinent.m_cLocalNations)
+                foreach (var pNations in pContinent.LocalNations)
                 {
                     cAccessableNations.AddRange(pNations.Value);
                 }
@@ -340,7 +340,7 @@ namespace Socium.Population
                             if (pOtherContinent.As<ContinentX>() == pContinent)
                                 continue;
 
-                            foreach (var pNations in pOtherContinent.As<ContinentX>().m_cLocalNations)
+                            foreach (var pNations in pOtherContinent.As<ContinentX>().LocalNations)
                             {
                                 cAccessableNations.AddRange(pNations.Value);
                             }
@@ -411,19 +411,19 @@ namespace Socium.Population
 
         public override void AddBuildings(Settlement pSettlement)
         {
-            pSettlement.m_cBuildings.Clear();
+            pSettlement.Buildings.Clear();
 
-            int iBuildingsCount = pSettlement.m_pInfo.m_iMinBuildingsCount + Rnd.Get(pSettlement.m_pInfo.m_iDeltaBuildingsCount + 1);
+            int iBuildingsCount = pSettlement.Profile.MinBuildingsCount + Rnd.Get(pSettlement.Profile.DeltaBuildingsCount + 1);
             for (int i = 0; i < iBuildingsCount; i++)
             {
                 Building pNewBuilding = new Building(pSettlement, ChooseNewBuilding(pSettlement));
-                pSettlement.m_cBuildings.Add(pNewBuilding);
+                pSettlement.Buildings.Add(pNewBuilding);
             }
 
-            if (pSettlement.m_pInfo.m_pMainBuilding != null)
+            if (pSettlement.Profile.MainBuilding != null)
             {
-                Building pNewBuilding = new Building(pSettlement, pSettlement.m_pInfo.m_pMainBuilding);
-                pSettlement.m_cBuildings.Add(pNewBuilding);
+                Building pNewBuilding = new Building(pSettlement, pSettlement.Profile.MainBuilding);
+                pSettlement.Buildings.Add(pNewBuilding);
             }
         }
 
@@ -494,24 +494,24 @@ namespace Socium.Population
             Estates[Estate.SocialRank.Outlaws].UpdateTitularNation(Rnd.OneChanceFrom(3) ? TitularNation : Rnd.OneChanceFrom(2) ? HostNation : SlavesNation);
 
             // перебираем все поселения, где присутсвует сообщество
-            foreach (Settlement pSettlement in Settlements.Select(x => x.m_pSettlement))
+            foreach (Settlement pSettlement in Settlements.Select(x => x.Settlement))
             {
                 if (pSettlement == null)
                     continue;
 
-                if (pSettlement.m_cBuildings.Count > 0)
+                if (pSettlement.Buildings.Count > 0)
                 {
                     // перебираем все строения в поселениях
-                    foreach (BuildingInfo pBuildingInfo in pSettlement.m_cBuildings.Select(x => x.m_pInfo))
+                    foreach (BuildingInfo pBuildingInfo in pSettlement.Buildings.Select(x => x.Info))
                     {
                         int iOwnersCount = pBuildingInfo.OwnersCount;
                         int iWorkersCount = pBuildingInfo.WorkersCount;
 
-                        var pOwner = pBuildingInfo.m_pOwnerProfession;
+                        var pOwner = pBuildingInfo.OwnerProfession;
                         Professions.TryGetValue(pOwner, out int iCount);
                         Professions[pOwner] = iCount + iOwnersCount;
 
-                        var pWorkers = pBuildingInfo.m_pWorkersProfession;
+                        var pWorkers = pBuildingInfo.WorkersProfession;
                         Professions.TryGetValue(pWorkers, out iCount);
                         Professions[pWorkers] = iCount + iWorkersCount;
                     }
@@ -552,7 +552,7 @@ namespace Socium.Population
 
                 int iPreference = GetProfessionSkillPreference(pProfession.Key);
 
-                if (pProfession.Key.m_bMaster)
+                if (pProfession.Key.IsMaster)
                     iPreference += 4;
 
                 int iDiscrimination = (int)(DominantCulture.GetTrait(Trait.Fanaticism) + 0.5);
@@ -586,11 +586,11 @@ namespace Socium.Population
 
             void addCasteRestrictedProfessionToEstate(ProfessionInfo pProfession)
             {
-                if (pProfession.m_eCasteRestriction.HasValue)
+                if (pProfession.CasteRestricted.HasValue)
                 {
                     var pEstate = Estates[Estate.SocialRank.Elite];
                     Professions.TryGetValue(pProfession, out int iCount);
-                    switch (pProfession.m_eCasteRestriction)
+                    switch (pProfession.CasteRestricted)
                     {
                         case ProfessionInfo.Caste.Elite:
                             pEstate = Estates[Estate.SocialRank.Elite];
@@ -612,9 +612,9 @@ namespace Socium.Population
                 }
             }
 
-            addCasteRestrictedProfessionToEstate(Polity.StateCapital.m_pMainBuilding.m_pOwnerProfession);
-            addCasteRestrictedProfessionToEstate(Polity.StateCapital.m_pMainBuilding.m_pWorkersProfession);
-            addCasteRestrictedProfessionToEstate(Polity.ProvinceCapital.m_pMainBuilding.m_pOwnerProfession);
+            addCasteRestrictedProfessionToEstate(Polity.StateCapital.MainBuilding.OwnerProfession);
+            addCasteRestrictedProfessionToEstate(Polity.StateCapital.MainBuilding.WorkersProfession);
+            addCasteRestrictedProfessionToEstate(Polity.ProvinceCapital.MainBuilding.OwnerProfession);
 
             foreach (var pProfession in Professions)
             {
@@ -635,7 +635,7 @@ namespace Socium.Population
                     int iBestFit = int.MinValue;
                     foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                     {
-                        if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
+                        if (pProfession.CasteRestricted != ProfessionInfo.Caste.MiddleOrUp &&
                             Professions[pProfession] < iLowEstateCount && Professions[pProfession] > iBestFit)
                         {
                             pBestFit = pProfession;
@@ -647,7 +647,7 @@ namespace Socium.Population
                         iBestFit = int.MaxValue;
                         foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                         {
-                            if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
+                            if (pProfession.CasteRestricted != ProfessionInfo.Caste.MiddleOrUp &&
                                 Professions[pProfession] < iBestFit)
                             {
                                 pBestFit = pProfession;
@@ -794,11 +794,11 @@ namespace Socium.Population
             int iControl = Control * 2;
 
             Dictionary<BuildingInfo, float> cChances = new Dictionary<BuildingInfo, float>();
-            switch (pSettlement.m_pInfo.m_eSize)
+            switch (pSettlement.Profile.Size)
             {
                 case SettlementSize.Hamlet:
                     {
-                        if (pSettlement.m_cBuildings.Count > 0)
+                        if (pSettlement.Buildings.Count > 0)
                         {
                             if (iInfrastructureLevel < 2)
                                 cChances[BuildingInfo.WarriorsHutSmall] = DominantCulture.GetTrait(Trait.Agression) / 2;
@@ -813,7 +813,7 @@ namespace Socium.Population
                         }
 
                         BuildingInfo pProfile;
-                        switch (pSettlement.m_eSpeciality)
+                        switch (pSettlement.Speciality)
                         {
                             case SettlementSpeciality.Fishers:
                                 pProfile = SocialEquality == 0 ? BuildingInfo.FishingBoatSlvMedium : BuildingInfo.FishingBoatMedium;
@@ -843,7 +843,7 @@ namespace Socium.Population
                     break;
                 case SettlementSize.Village:
                     {
-                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
+                        if (pSettlement.Buildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 2)
@@ -912,7 +912,7 @@ namespace Socium.Population
                         }
 
                         BuildingInfo pProfile;
-                        switch (pSettlement.m_eSpeciality)
+                        switch (pSettlement.Speciality)
                         {
                             case SettlementSpeciality.Fishers:
                                 pProfile = SocialEquality == 0 ? BuildingInfo.FishingBoatSlvMedium : BuildingInfo.FishingBoatMedium;
@@ -942,7 +942,7 @@ namespace Socium.Population
                     break;
                 case SettlementSize.Town:
                     {
-                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
+                        if (pSettlement.Buildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 4)
@@ -1016,7 +1016,7 @@ namespace Socium.Population
                             if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
-                            if (pSettlement.m_bCapital)
+                            if (pSettlement.Capital)
                                 fBureaucracy *= 2;
 
                             fBureaucracy *= (float)iControl / 2;
@@ -1077,11 +1077,11 @@ namespace Socium.Population
                             }
 
                             if (Polity.HasDinasty)
-                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.Capital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                         }
 
                         BuildingInfo pProfile;
-                        switch (pSettlement.m_eSpeciality)
+                        switch (pSettlement.Speciality)
                         {
                             case SettlementSpeciality.Fishers:
                                 pProfile = SocialEquality == 0 ? BuildingInfo.FishingBoatSlvLarge : BuildingInfo.FishingBoatLarge;
@@ -1120,7 +1120,7 @@ namespace Socium.Population
                     break;
                 case SettlementSize.City:
                     {
-                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
+                        if (pSettlement.Buildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 4)
@@ -1205,7 +1205,7 @@ namespace Socium.Population
                             if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
-                            if (pSettlement.m_bCapital)
+                            if (pSettlement.Capital)
                                 fBureaucracy *= 2;
 
                             fBureaucracy *= (float)iControl / 2;
@@ -1269,13 +1269,13 @@ namespace Socium.Population
 
                             if (Polity.HasDinasty)
                             {
-                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
-                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.Capital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.Capital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                             }
                         }
 
                         BuildingInfo pProfile;
-                        switch (pSettlement.m_eSpeciality)
+                        switch (pSettlement.Speciality)
                         {
                             case SettlementSpeciality.NavalAcademy:
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : (SocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge);
@@ -1326,7 +1326,7 @@ namespace Socium.Population
                     break;
                 case SettlementSize.Capital:
                     {
-                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
+                        if (pSettlement.Buildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 4)
@@ -1411,7 +1411,7 @@ namespace Socium.Population
                             if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
-                            if (pSettlement.m_bCapital)
+                            if (pSettlement.Capital)
                                 fBureaucracy *= 2;
 
                             fBureaucracy *= (float)iControl / 2;
@@ -1475,13 +1475,13 @@ namespace Socium.Population
 
                             if (Polity.HasDinasty)
                             {
-                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
-                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.Capital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.Capital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                             }
                         }
 
                         BuildingInfo pProfile;
-                        switch (pSettlement.m_eSpeciality)
+                        switch (pSettlement.Speciality)
                         {
                             case SettlementSpeciality.NavalAcademy:
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : (SocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge);
@@ -1532,7 +1532,7 @@ namespace Socium.Population
                     break;
                 case SettlementSize.Fort:
                     {
-                        if (pSettlement.m_cBuildings.Count > 0)// && Rnd.OneChanceFrom(2))
+                        if (pSettlement.Buildings.Count > 0)// && Rnd.OneChanceFrom(2))
                         {
                             cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
                             cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
@@ -1565,7 +1565,7 @@ namespace Socium.Population
                         }
 
                         BuildingInfo pProfile;
-                        switch (pSettlement.m_eSpeciality)
+                        switch (pSettlement.Speciality)
                         {
                             case SettlementSpeciality.Pirates:
                                 pProfile = BuildingInfo.PirateShip;
@@ -1589,12 +1589,12 @@ namespace Socium.Population
                     break;
             }
 
-            foreach (BuildingInfo pBuildingInfo in pSettlement.m_cBuildings.Select(x => x.m_pInfo))
+            foreach (BuildingInfo pBuildingInfo in pSettlement.Buildings.Select(x => x.Info))
             {
                 if (cChances.ContainsKey(pBuildingInfo))
                 {
                     float fKoeff = 1;
-                    switch (pBuildingInfo.m_eSize)
+                    switch (pBuildingInfo.Size)
                     {
                         case BuildingSize.Small:
                             fKoeff = 0.75f;

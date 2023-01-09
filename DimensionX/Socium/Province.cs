@@ -458,7 +458,7 @@ namespace Socium
                     foreach (Location pLoc in pLand.Origin.Contents)
                     {
                         LocationX pLocX = pLoc.As<LocationX>();
-                        if (pLocX.m_pSettlement != null && pLocX.m_pSettlement.m_iRuinsAge == 0)
+                        if (pLocX.Settlement != null && pLocX.Settlement.RuinsAge == 0)
                         {
                             iSettlements++;
                             //break;
@@ -532,7 +532,7 @@ namespace Socium
 
             foreach (LocationX pTown in aSettlements)
             {
-                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[RoadQuality.Normal].Count > 0 || pTown.m_cRoads[RoadQuality.Good].Count > 1))
+                if (!cConnected.Contains(pTown) && (pTown.Roads[RoadQuality.Normal].Count > 0 || pTown.Roads[RoadQuality.Good].Count > 1))
                     cConnected.Add(pTown);
             }
 
@@ -691,7 +691,7 @@ namespace Socium
                     if (bRestricted)
                         continue;
 
-                    cLandsChances[pLand] = (float)pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(pCenter.m_eSize);
+                    cLandsChances[pLand] = (float)pLand.Origin.Contents.Count * pLand.Origin.LandType.Get<SettlementsInfo>().GetDensity(pCenter.Size);
 
                     bool bProvinceBorder = false;
                     bool bStateBorder = false;

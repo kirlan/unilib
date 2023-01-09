@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Socium.Psychology
@@ -40,8 +41,9 @@ namespace Socium.Psychology
         /// </summary>
         Random // должен обязательно быть последним в списке!
     }
-    
-    public class MentalityTemplate: Dictionary<Trait, AdvancementRate>
+
+    [Serializable]
+    public class MentalityTemplate : Dictionary<Trait, AdvancementRate>
     {
         public MentalityTemplate(AdvancementRate eValue)
         {
@@ -61,6 +63,10 @@ namespace Socium.Psychology
             this[Trait.Treachery] = eTreachery;
             this[Trait.Selfishness] = eSelfishness;
             this[Trait.Simplicity] = eRudeness;
+        }
+
+        protected MentalityTemplate(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }

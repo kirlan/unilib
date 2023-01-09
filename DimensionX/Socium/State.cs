@@ -253,7 +253,7 @@ namespace Socium
             foreach (Province pProvince in Contents)
             {
                 foreach (LocationX pLoc in pProvince.m_pLocalSociety.Settlements)
-                    foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
+                    foreach (LocationX pOtherLoc in pLoc.HaveSeaRouteTo)
                     { 
                         State pState = pOtherLoc.OwnerState;
                         if(pState != this && !BorderWith.ContainsKey(pState))
@@ -282,7 +282,7 @@ namespace Socium
             m_pMethropoly.m_pLocalSociety.UpdateTitularNation(m_pSociety.TitularNation);
             foreach (Region pRegion in m_pMethropoly.Contents)
                 foreach (LandX pLand in pRegion.Contents)
-                    pLand.m_pDominantNation = m_pSociety.TitularNation;
+                    pLand.DominantNation = m_pSociety.TitularNation;
 
             // если у нас нация паразитов или пришельцев, то они сами живут только в метрополии, а во всей остальной империи коренное население - местное
             if (m_pSociety.TitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pSociety.TitularNation.IsInvader)
@@ -293,8 +293,8 @@ namespace Socium
                     {
                         foreach (LandX pLand in pRegion.Contents)
                         {
-                            if (pLand.m_pDominantNation == m_pSociety.TitularNation)
-                                pLand.m_pDominantNation = m_pSociety.HostNation;
+                            if (pLand.DominantNation == m_pSociety.TitularNation)
+                                pLand.DominantNation = m_pSociety.HostNation;
                         }
                     }
                 }
@@ -315,7 +315,7 @@ namespace Socium
             {
                 foreach (LocationX pLoc in pProvince.m_pLocalSociety.Settlements)
                 {
-                    foreach (LocationX pOtherLoc in pLoc.m_cHaveSeaRouteTo)
+                    foreach (LocationX pOtherLoc in pLoc.HaveSeaRouteTo)
                     {
                         State pState = pOtherLoc.OwnerState;
                         if (pState != this && !BorderWith.ContainsKey(pState))
@@ -366,7 +366,7 @@ namespace Socium
             m_pSociety.CalculateSocietyFeatures(iEmpireTreshold);
 
             #region Build capital and regional centers
-            m_pMethropoly.m_pAdministrativeCenter.m_pSettlement = new Settlement(m_pSociety.Polity.StateCapital, 
+            m_pMethropoly.m_pAdministrativeCenter.Settlement = new Settlement(m_pSociety.Polity.StateCapital, 
                 m_pMethropoly.m_pLocalSociety.TitularNation, 
                 m_pSociety.TechLevel, 
                 m_pSociety.MagicLimit, 
@@ -380,7 +380,7 @@ namespace Socium
                 if (pProvince == m_pMethropoly)
                     continue;
 
-                pProvince.m_pAdministrativeCenter.m_pSettlement = new Settlement(m_pSociety.Polity.ProvinceCapital, 
+                pProvince.m_pAdministrativeCenter.Settlement = new Settlement(m_pSociety.Polity.ProvinceCapital, 
                     m_pMethropoly.m_pLocalSociety.TitularNation, 
                     m_pSociety.TechLevel, 
                     m_pSociety.MagicLimit, 
@@ -636,10 +636,10 @@ namespace Socium
             List<LocationX> cForts = new List<LocationX>();
             foreach (LocationX pTown in aSettlements)
             {
-                if (!cConnected.Contains(pTown) && (pTown.m_cRoads[RoadQuality.Normal].Count > 0 || pTown.m_cRoads[RoadQuality.Good].Count > 0))
+                if (!cConnected.Contains(pTown) && (pTown.Roads[RoadQuality.Normal].Count > 0 || pTown.Roads[RoadQuality.Good].Count > 0))
                     cConnected.Add(pTown);
                 else
-                    if (pTown.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Fort)
+                    if (pTown.Settlement.Profile.Size == SettlementSize.Fort)
                         cForts.Add(pTown);
             }
             LocationX[] aForts = cForts.ToArray();
@@ -703,7 +703,7 @@ namespace Socium
             {
                 foreach (LocationX pLoc in pProvince.m_pLocalSociety.Settlements)
                 {
-                    if (pLoc.m_pSettlement.m_eSpeciality != SettlementSpeciality.None)
+                    if (pLoc.Settlement.Speciality != SettlementSpeciality.None)
                         continue;
 
                     bool bCoast = false;
@@ -715,13 +715,13 @@ namespace Socium
 
                     LandX pLandX = pLoc.As<Location>().GetOwner().As<LandX>();
 
-                    switch (pLoc.m_pSettlement.m_pInfo.m_eSize)
+                    switch (pLoc.Settlement.Profile.Size)
                     {
                         #region case SettlementSize.Hamlet
                         case SettlementSize.Hamlet:
                             if (bCoast)
                             {
-                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                                pLoc.Settlement.Speciality = SettlementSpeciality.Fishers;
                             }
                             else
                             {
@@ -747,16 +747,16 @@ namespace Socium
                                 switch (iChoosen)
                                 {
                                     case 0:
-                                        pLoc.m_pSettlement.m_eSpeciality = m_pSociety.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                        pLoc.Settlement.Speciality = m_pSociety.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
                                         break;
                                     case 1:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Hunters;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Hunters;
                                         break;
                                     case 2:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Miners;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Miners;
                                         break;
                                     case 3:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Lumberjacks;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Lumberjacks;
                                         break;
                                 }
                             }
@@ -766,7 +766,7 @@ namespace Socium
                         case SettlementSize.Village:
                             if (bCoast)
                             {
-                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                                pLoc.Settlement.Speciality = SettlementSpeciality.Fishers;
                             }
                             else
                             {
@@ -788,16 +788,16 @@ namespace Socium
                                 switch (iChoosen)
                                 {
                                     case 0:
-                                        pLoc.m_pSettlement.m_eSpeciality = m_pSociety.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                        pLoc.Settlement.Speciality = m_pSociety.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
                                         break;
                                     case 1:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Hunters;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Hunters;
                                         break;
                                     case 2:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Miners;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Miners;
                                         break;
                                     case 3:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Lumberjacks;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Lumberjacks;
                                         break;
                                 }
                             }
@@ -808,9 +808,9 @@ namespace Socium
                             if (bCoast && !Rnd.OneChanceFrom(3))
                             {
                                 if (Rnd.OneChanceFrom(2))
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Naval;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Naval;
                                 else
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Fishers;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Fishers;
                             }
                             else
                             {
@@ -835,13 +835,13 @@ namespace Socium
                                 switch (iChoosen)
                                 {
                                     case 0:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Tailors;
                                         break;
                                     case 1:
-                                        pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                        pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
                                         break;
                                     case 2:
-                                        pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                        pLoc.Settlement.Speciality = SettlementSpeciality.Artisans;
                                         break;
                                 }
                             }
@@ -850,11 +850,11 @@ namespace Socium
                         #region case SettlementSize.City
                         case SettlementSize.City:
                             if (bCoast && Rnd.OneChanceFrom(2))
-                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
+                                pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
                             else
                             {
                                 if (bCoast && m_pSociety.InfrastructureLevel > 2 && m_pSociety.DominantCulture.GetTrait(Trait.Simplicity) > 1 + Rnd.Get(1f))
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Resort;
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
@@ -884,19 +884,19 @@ namespace Socium
                                         switch (iChoosen)
                                         {
                                             case 0:
-                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
+                                                pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
                                                 break;
                                             case 1:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Religious;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Religious;
                                                 break;
                                             case 2:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.MilitaryAcademy;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.MilitaryAcademy;
                                                 break;
                                             case 3:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Gambling;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Gambling;
                                                 break;
                                             case 4:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.SciencesAcademy;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.SciencesAcademy;
                                                 break;
                                         }
                                     }
@@ -923,13 +923,13 @@ namespace Socium
                                         switch (iChoosen)
                                         {
                                             case 0:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Tailors;
                                                 break;
                                             case 1:
-                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
                                                 break;
                                             case 2:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Artisans;
                                                 break;
                                         }
                                     }
@@ -940,11 +940,11 @@ namespace Socium
                         #region case SettlementSize.Capital
                         case SettlementSize.Capital:
                             if (bCoast && Rnd.OneChanceFrom(2))
-                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
+                                pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
                             else
                             {
                                 if (bCoast && m_pSociety.InfrastructureLevel > 2 && m_pSociety.DominantCulture.GetTrait(Trait.Simplicity) > 1 + Rnd.Get(1f))
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Resort;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Resort;
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
@@ -974,19 +974,19 @@ namespace Socium
                                         switch (iChoosen)
                                         {
                                             case 0:
-                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
+                                                pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Cultural : SettlementSpeciality.ArtsAcademy;
                                                 break;
                                             case 1:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Religious;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Religious;
                                                 break;
                                             case 2:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.MilitaryAcademy;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.MilitaryAcademy;
                                                 break;
                                             case 3:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Gambling;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Gambling;
                                                 break;
                                             case 4:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.SciencesAcademy;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.SciencesAcademy;
                                                 break;
                                         }
                                     }
@@ -1013,13 +1013,13 @@ namespace Socium
                                         switch (iChoosen)
                                         {
                                             case 0:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Tailors;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Tailors;
                                                 break;
                                             case 1:
-                                                pLoc.m_pSettlement.m_eSpeciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
+                                                pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.Jevellers : SettlementSpeciality.Factory;
                                                 break;
                                             case 2:
-                                                pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Artisans;
+                                                pLoc.Settlement.Speciality = SettlementSpeciality.Artisans;
                                                 break;
                                         }
                                     }
@@ -1033,17 +1033,17 @@ namespace Socium
                             {
                                 if (m_pSociety.DominantCulture.GetTrait(Trait.Agression) > 1.5 &&
                                     m_pSociety.DominantCulture.GetTrait(Trait.Treachery) > 1.5)
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Pirates;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Pirates;
                                 else
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Naval;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Naval;
                             }
                             else
                             {
                                 if (m_pSociety.DominantCulture.GetTrait(Trait.Agression) > 1.5 &&
                                     m_pSociety.DominantCulture.GetTrait(Trait.Treachery) > 1.5)
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Raiders;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Raiders;
                                 else
-                                    pLoc.m_pSettlement.m_eSpeciality = SettlementSpeciality.Military;
+                                    pLoc.Settlement.Speciality = SettlementSpeciality.Military;
                             }
                             break;
                         #endregion

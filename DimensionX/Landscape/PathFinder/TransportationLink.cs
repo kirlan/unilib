@@ -6,6 +6,9 @@ using System.Drawing;
 
 namespace LandscapeGeneration.PathFind
 {
+    /// <summary>
+    /// None, Country, Normal, Good
+    /// </summary>
     public enum RoadQuality
     {
         /// <summary>

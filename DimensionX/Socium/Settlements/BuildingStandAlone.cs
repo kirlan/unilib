@@ -16,16 +16,16 @@ namespace Socium.Settlements
 
     public class BuildingStandAlone
     {
-        public BuildingType m_eType;
+        public BuildingType Type { get; }
 
         public BuildingStandAlone(BuildingType eType)
         {
-            m_eType = eType;
+            Type = eType;
         }
 
         public override string ToString()
         {
-            return m_eType.ToString();
+            return Type.ToString();
         }
     }
 }

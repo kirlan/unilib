@@ -46,8 +46,8 @@ namespace Socium.Population
             TitularNation = pNation;
             Name = TitularNation.Race.Language.RandomCountryName();
 
-            TechLevel = pEpoch.m_iNativesMaxTechLevel;
-            MagicLimit = pEpoch.m_iNativesMaxMagicLevel;
+            TechLevel = pEpoch.NativesMaxTechLevel;
+            MagicLimit = pEpoch.NativesMaxMagicLevel;
 
             var pRaceMentality = new Mentality(pRace.MentalityTemplate);
             var pRaceCustoms = new Customs();
@@ -82,17 +82,17 @@ namespace Socium.Population
 
             if (TitularNation.IsInvader)
             {
-                if (TechLevel < TitularNation.Epoch.m_iInvadersMinTechLevel)
-                    TechLevel = TitularNation.Epoch.m_iInvadersMinTechLevel;
-                if (TechLevel > TitularNation.Epoch.m_iInvadersMaxTechLevel)
-                    TechLevel = TitularNation.Epoch.m_iInvadersMaxTechLevel;
+                if (TechLevel < TitularNation.Epoch.InvadersMinTechLevel)
+                    TechLevel = TitularNation.Epoch.InvadersMinTechLevel;
+                if (TechLevel > TitularNation.Epoch.InvadersMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.InvadersMaxTechLevel;
             }
             else
             {
-                if (TechLevel < TitularNation.Epoch.m_iNativesMinTechLevel)
-                    TechLevel = TitularNation.Epoch.m_iNativesMinTechLevel;
-                if (TechLevel > TitularNation.Epoch.m_iNativesMaxTechLevel)
-                    TechLevel = TitularNation.Epoch.m_iNativesMaxTechLevel;
+                if (TechLevel < TitularNation.Epoch.NativesMinTechLevel)
+                    TechLevel = TitularNation.Epoch.NativesMinTechLevel;
+                if (TechLevel > TitularNation.Epoch.NativesMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.NativesMaxTechLevel;
             }
 
             //m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety, m_iTechLevel, m_iTechLevel) * 4);
@@ -128,13 +128,13 @@ namespace Socium.Population
 
             if (TitularNation.IsInvader)
             {
-                if (TechLevel > TitularNation.Epoch.m_iInvadersMaxTechLevel)
-                    TechLevel = TitularNation.Epoch.m_iInvadersMaxTechLevel;
+                if (TechLevel > TitularNation.Epoch.InvadersMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.InvadersMaxTechLevel;
             }
             else
             {
-                if (TechLevel > TitularNation.Epoch.m_iNativesMaxTechLevel)
-                    TechLevel = TitularNation.Epoch.m_iNativesMaxTechLevel;
+                if (TechLevel > TitularNation.Epoch.NativesMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.NativesMaxTechLevel;
             }
         }
 

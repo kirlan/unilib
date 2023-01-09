@@ -237,7 +237,7 @@ namespace Socium.Population
         {
             int iPreference = 0;
 
-            switch (pProfession.m_cSkills[m_eMostRespectedSkill])
+            switch (pProfession.Skills[m_eMostRespectedSkill])
             {
                 case ProfessionInfo.SkillLevel.Bad:
                     iPreference++;
@@ -249,7 +249,7 @@ namespace Socium.Population
                     iPreference += 3;
                     break;
             }
-            switch (pProfession.m_cSkills[m_eLeastRespectedSkill])
+            switch (pProfession.Skills[m_eLeastRespectedSkill])
             {
                 case ProfessionInfo.SkillLevel.Bad:
                     iPreference--;
@@ -271,10 +271,10 @@ namespace Socium.Population
             var eGenderPriority = DominantCulture.Customs.ValueOf<Customs.GenderPriority>();
 
             // но, если это подчинённая должность...
-            if (!pProfession.m_bMaster)
+            if (!pProfession.IsMaster)
             {
                 // ...связанная с тем, чтобы нравиться клиенту...
-                if (pProfession.m_cSkills[Person.Skill.Charm] != ProfessionInfo.SkillLevel.None)
+                if (pProfession.Skills[Person.Skill.Charm] != ProfessionInfo.SkillLevel.None)
                 {
                     // ...то в гетеросексуальном обществе она считается более подходящей противоположному полу
                     if (Culture[Gender.Male].Customs.Has(Customs.SexualOrientation.Heterosexual))

@@ -14,7 +14,7 @@ namespace Socium
 {
     /// <summary>
     /// расширение LandscapeGeneration.Land
-    /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя, 
+    /// добавляет ссылку на регион, к которому принадлежит земля, доминирующую нацию, имя,
     /// а так же методы для строительства логова, поселения или форта
     /// </summary>
     public class LandX: TerritoryExtended<LandX, Region, Land>
@@ -24,7 +24,7 @@ namespace Socium
         /// <summary>
         /// доминирующая нация в локации, может отличаться от коренного населения региона
         /// </summary>
-        public Nation m_pDominantNation;
+        public Nation DominantNation { get; set; }
 
         public ContinentX Continent
         {
@@ -39,7 +39,7 @@ namespace Socium
         }
 
         public LandX(Land pLand) : base(pLand)
-        { 
+        {
         }
 
         public LandX()
@@ -68,16 +68,20 @@ namespace Socium
 
                 LocationX pLocX = pLoc.As<LocationX>();
 
-                if (pLocX.m_pSettlement != null || 
-                    pLocX.m_pBuilding != null ||
-                    pLocX.m_cRoads[RoadQuality.Country].Count > 0 ||
-                    pLocX.m_cRoads[RoadQuality.Normal].Count > 0 ||
-                    pLocX.m_cRoads[RoadQuality.Good].Count > 0 ||
+                if (pLocX.Settlement != null ||
+                    pLocX.Building != null ||
+                    pLocX.Roads[RoadQuality.Country].Count > 0 ||
+                    pLocX.Roads[RoadQuality.Normal].Count > 0 ||
+                    pLocX.Roads[RoadQuality.Good].Count > 0 ||
                     pLoc.IsBorder ||
                     bMapBorder)
+                {
                     iChances = 0;
+                }
                 else
+                {
                     bNoChances = false;
+                }
 
                 cChances.Add(iChances);
             }
@@ -100,14 +104,14 @@ namespace Socium
 
             var pLair = Origin.Contents.ElementAt(iLair);
 
-            pLair.As<LocationX>().m_pBuilding = new BuildingStandAlone(eSize);
+            pLair.As<LocationX>().Building = new BuildingStandAlone(eSize);
             //m_cLocations[iLair].m_sName = NameGenerator.GetAbstractName();
 
             foreach (Location pLoc in pLair.BorderWithKeys)
             {
-                if (pLoc.As<LocationX>().m_pBuilding == null)
+                if (pLoc.As<LocationX>().Building == null)
                 {
-                    pLoc.As<LocationX>().m_pBuilding = new BuildingStandAlone(BuildingType.HuntingFields);
+                    pLoc.As<LocationX>().Building = new BuildingStandAlone(BuildingType.HuntingFields);
                 }
             }
 
@@ -155,7 +159,7 @@ namespace Socium
 
                 //сколько дорог проходит через этй локацию?
                 int iRoadsCount = 0;
-                foreach(var pRoads in pLocX.m_cRoads)
+                foreach(var pRoads in pLocX.Roads)
                     iRoadsCount += pRoads.Value.Count;
 
                 //в пограничных локациях строим только если это побережье или есть дороги, во внутренних - отдаём предпочтение локациям с дорогами.
@@ -165,11 +169,11 @@ namespace Socium
                     iChances = 0;
 
                 //если в локации уже есть поселение - ловить нечего. На руинах, однако, строить можно.
-                if (pLocX.m_pSettlement != null && pLocX.m_pSettlement.m_iRuinsAge == 0)
+                if (pLocX.Settlement != null && pLocX.Settlement.RuinsAge == 0)
                     iChances = 0;
 
                 //если в локации есть какая-то одиночная постройка (монстрячье логово, например), опять ловить нечего.
-                if (pLocX.m_pBuilding != null)
+                if (pLocX.Building != null)
                     iChances = 0;
 
                 //если это край карты или географическая аномалия (горный пик, вулкан...) - тоже пролетаем.
@@ -211,13 +215,13 @@ namespace Socium
 
                         //сколько дорог проходит через этй локацию?
                         int iRoadsCount = 0;
-                        foreach (var pRoads in pLocX.m_cRoads)
+                        foreach (var pRoads in pLocX.Roads)
                             iRoadsCount += pRoads.Value.Count;
 
                         //в пограничных локациях строим только если это побережье или есть дороги, во внутренних - отдаём предпочтение локациям с дорогами.
                         int iChances = (bBorder ? ((bCoast || iRoadsCount > 0) ? 50 : 1) : (iRoadsCount > 0 ? 50 : 10));
 
-                        if (pLocX.m_pSettlement != null || pLocX.m_pBuilding != null)
+                        if (pLocX.Settlement != null || pLocX.Building != null)
                             iChances = 1;
 
                         //если это край карты - тоже пролетаем.
@@ -234,7 +238,9 @@ namespace Socium
                         return null;
                 }
                 else
+                {
                     return null;
+                }
             }
 
             int iTown = Rnd.ChooseOne(cChances, 2);
@@ -245,7 +251,7 @@ namespace Socium
             var pTownX = pTown.As<LocationX>();
 
             //Построим город в выбранной локации.
-            pTownX.m_pSettlement = new Settlement(pInfo, m_pDominantNation, GetOwner().GetOwner().m_pLocalSociety.TechLevel, GetOwner().GetOwner().m_pLocalSociety.MagicLimit, bCapital, bFast);
+            pTownX.Settlement = new Settlement(pInfo, DominantNation, GetOwner().GetOwner().m_pLocalSociety.TechLevel, GetOwner().GetOwner().m_pLocalSociety.MagicLimit, bCapital, bFast);
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
@@ -253,9 +259,9 @@ namespace Socium
 
             //обновим все дороги, проходящие через новое поселение, чтобы на дорожных указателях появилось имя нового поселения.
             List<Road> cRoads = new List<Road>();
-            cRoads.AddRange(pTownX.m_cRoads[RoadQuality.Country]);
-            cRoads.AddRange(pTownX.m_cRoads[RoadQuality.Normal]);
-            cRoads.AddRange(pTownX.m_cRoads[RoadQuality.Good]);
+            cRoads.AddRange(pTownX.Roads[RoadQuality.Country]);
+            cRoads.AddRange(pTownX.Roads[RoadQuality.Normal]);
+            cRoads.AddRange(pTownX.Roads[RoadQuality.Good]);
 
             Road[] aRoads = cRoads.ToArray();
             foreach(Road pRoad in aRoads)
@@ -266,10 +272,10 @@ namespace Socium
 
         public string GetMajorRaceString()
         {
-            if (m_pDominantNation == null)
+            if (DominantNation == null)
                 return "unpopulated";
             else
-                return m_pDominantNation.ToString();
+                return DominantNation.ToString();
         }
 
         public string GetLesserRaceString()
@@ -286,14 +292,12 @@ namespace Socium
 
         public void Populate(Nation pNation, string sName)
         {
-            m_pDominantNation = pNation;
+            DominantNation = pNation;
             m_sName = sName;
         }
 
         public override string ToString()
         {
-            //return GetLandsString();
-
             string sRace = GetMajorRaceString();
             if (sRace != GetLesserRaceString())
                 sRace = sRace + "/" + GetLesserRaceString();

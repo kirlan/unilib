@@ -22,17 +22,17 @@ namespace Socium
     /// </summary>
     public class LocationX : TerritoryExtended<LocationX, Location>
     {
-        public Settlement m_pSettlement = null;
+        public Settlement Settlement { get; set; } = null;
 
-        public BuildingStandAlone m_pBuilding = null;
+        public BuildingStandAlone Building { get; set; } = null;
 
         /// <summary>
         /// Список дорог по типам. Ключи: 1 - просёлок, 2- обычная, 3 - трасса
         /// </summary>
-        public Dictionary<RoadQuality, List<Road>> m_cRoads = new Dictionary<RoadQuality, List<Road>>();
+        public Dictionary<RoadQuality, List<Road>> Roads { get; } = new Dictionary<RoadQuality, List<Road>>();
 
-        public Dictionary<LocationX, Road> m_cHaveRoadTo = new Dictionary<LocationX,Road>();
-        public List<LocationX> m_cHaveSeaRouteTo = new List<LocationX>();
+        public Dictionary<LocationX, Road> HaveRoadTo { get; } = new Dictionary<LocationX, Road>();
+        public List<LocationX> HaveSeaRouteTo { get; } = new List<LocationX>();
 
         /// <summary>
         /// ТОЛЬКО для построения морских путей
@@ -41,9 +41,9 @@ namespace Socium
 
         public LocationX(Location pLoc) : base(pLoc)
         {
-            m_cRoads[RoadQuality.Country] = new List<Road>();
-            m_cRoads[RoadQuality.Normal] = new List<Road>();
-            m_cRoads[RoadQuality.Good] = new List<Road>();
+            Roads[RoadQuality.Country] = new List<Road>();
+            Roads[RoadQuality.Normal] = new List<Road>();
+            Roads[RoadQuality.Good] = new List<Road>();
         }
 
         public LocationX()
@@ -53,9 +53,9 @@ namespace Socium
         {
             int iRes = 0;
 
-            if (m_pSettlement != null)
+            if (Settlement != null)
             {
-                iRes = m_pSettlement.m_pInfo.m_iMinPop;
+                iRes = Settlement.Profile.MinPop;
             }
 
             return iRes;
@@ -82,47 +82,50 @@ namespace Socium
         {
             StateSociety pOwnerSociety = OwnerState.m_pSociety;
 
-            if (m_pSettlement != null && pOwnerSociety.Estates.ContainsKey(eEstate))
+            if (Settlement != null && pOwnerSociety.Estates.ContainsKey(eEstate))
             {
                 Estate pEstate = pOwnerSociety.Estates[eEstate];
 
-                foreach (Building pBuilding in m_pSettlement.m_cBuildings)
+                foreach (Building pBuilding in Settlement.Buildings)
                 {
-                    if (pEstate.GenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pOwnerProfession))
+                    if (pEstate.GenderProfessionPreferences.ContainsKey(pBuilding.Info.OwnerProfession))
                     {
                         List<Person> cOwners = new List<Person>();
-                        foreach (Person pDweller in pBuilding.m_cPersons)
-                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pOwnerProfession)
+                        foreach (Person pDweller in pBuilding.Persons)
+                        {
+                            if (pDweller.Profession == pBuilding.Info.OwnerProfession)
                                 cOwners.Add(pDweller);
+                        }
 
-                        if (cOwners.Count < pBuilding.m_pInfo.OwnersCount)
+                        if (cOwners.Count < pBuilding.Info.OwnersCount)
                             return true;
                     }
 
-                    if (pEstate.GenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pWorkersProfession))
+                    if (pEstate.GenderProfessionPreferences.ContainsKey(pBuilding.Info.WorkersProfession))
                     {
                         List<Person> cWorkers = new List<Person>();
-                        foreach (Person pDweller in pBuilding.m_cPersons)
-                            if (pDweller.m_pProfession == pBuilding.m_pInfo.m_pWorkersProfession)
+                        foreach (Person pDweller in pBuilding.Persons)
+                        {
+                            if (pDweller.Profession == pBuilding.Info.WorkersProfession)
                                 cWorkers.Add(pDweller);
+                        }
 
-                        if (cWorkers.Count < pBuilding.m_pInfo.WorkersCount)
+                        if (cWorkers.Count < pBuilding.Info.WorkersCount)
                             return true;
                     }
                 }
             }
 
             return false;
-
         }
 
         public override string ToString()
         {
-            if (m_pSettlement != null)
-                return string.Format("{0} {1}", m_pSettlement.ToString(), base.ToString());
-            
-            if (m_pBuilding != null)
-                return string.Format("{0} {1}", m_pBuilding.ToString(), base.ToString());
+            if (Settlement != null)
+                return string.Format("{0} {1}", Settlement.ToString(), base.ToString());
+
+            if (Building != null)
+                return string.Format("{0} {1}", Building.ToString(), base.ToString());
 
             return string.Format("{0} {1}", Origin.Landmark, base.ToString());
         }
