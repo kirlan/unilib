@@ -12,50 +12,50 @@ namespace Socium.Population
 {
     /// <summary>
     /// Сообщество, объединённое по национальному признаку.
-    /// Кроме титульной нации, хранит информацию о культуре, обычаях, доступном уровне жизни, технологическом уровне, 
+    /// Кроме титульной нации, хранит информацию о культуре, обычаях, доступном уровне жизни, технологическом уровне,
     /// владении магическими способностями, название сообщества и список поселений, где сообщество представлено
     /// </summary>
     public class NationalSociety : Society
     {
-        public Nation m_pTitularNation = null;
+        public Nation TitularNation { get; private set; } = null;
 
         /// <summary>
         /// Доступный жителям уровень жизни.
         /// Зависит от технического и магического развития, определяет доступные формы государственного правления
         /// </summary>
-        public int m_iInfrastructureLevel = 0;
+        public int InfrastructureLevel { get; protected set; } = 0;
 
         public NationalSociety(Nation pNation)
         {
-            m_pTitularNation = pNation;
-            m_sName = m_pTitularNation.m_pRace.m_pLanguage.RandomCountryName();
+            TitularNation = pNation;
+            Name = TitularNation.Race.Language.RandomCountryName();
 
-            m_iTechLevel = m_pTitularNation.m_pProtoSociety.m_iTechLevel;
-            m_iMagicLimit = m_pTitularNation.m_pProtoSociety.m_iMagicLimit;
+            TechLevel = TitularNation.ProtoSociety.TechLevel;
+            MagicLimit = TitularNation.ProtoSociety.MagicLimit;
 
-            m_cCulture[Gender.Male] = new Culture(m_pTitularNation.m_pProtoSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
-            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
-            m_cCulture[Gender.Female] = new Culture(m_pTitularNation.m_pProtoSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
-            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
+            Culture[Gender.Male] = new Culture(TitularNation.ProtoSociety.Culture[Gender.Male], Customs.Mutation.Possible);
+            Culture[Gender.Male].Customs.ApplyFenotype(TitularNation.PhenotypeMale);
+            Culture[Gender.Female] = new Culture(TitularNation.ProtoSociety.Culture[Gender.Female], Customs.Mutation.Possible);
+            Culture[Gender.Female].Customs.ApplyFenotype(TitularNation.PhenotypeFemale);
 
             FixSexCustoms();
         }
 
         public NationalSociety(Race pRace, Epoch pEpoch, Nation pNation)
         {
-            m_pTitularNation = pNation;
-            m_sName = m_pTitularNation.m_pRace.m_pLanguage.RandomCountryName();
+            TitularNation = pNation;
+            Name = TitularNation.Race.Language.RandomCountryName();
 
-            m_iTechLevel = pEpoch.m_iNativesMaxTechLevel;
-            m_iMagicLimit = pEpoch.m_iNativesMaxMagicLevel;
+            TechLevel = pEpoch.m_iNativesMaxTechLevel;
+            MagicLimit = pEpoch.m_iNativesMaxMagicLevel;
 
-            var pRaceMentality = new Mentality(pRace.m_pMentalityTemplate);
+            var pRaceMentality = new Mentality(pRace.MentalityTemplate);
             var pRaceCustoms = new Customs();
 
-            m_cCulture[Gender.Male] = new Culture(pRaceMentality, m_iTechLevel, pRaceCustoms);
-            m_cCulture[Gender.Female] = new Culture(pRaceMentality, m_iTechLevel, new Customs(pRaceCustoms, Customs.Mutation.Possible));
+            Culture[Gender.Male] = new Culture(pRaceMentality, TechLevel, pRaceCustoms);
+            Culture[Gender.Female] = new Culture(pRaceMentality, TechLevel, new Customs(pRaceCustoms, Customs.Mutation.Possible));
 
-            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
+            Culture[Gender.Female].Customs.ApplyFenotype(TitularNation.PhenotypeFemale);
 
             FixSexCustoms();
         }
@@ -71,79 +71,79 @@ namespace Socium.Population
         }
         internal void CheckResources(Dictionary<LandResource, float> cResources, int iPopulation, int iSize)
         {
-            float fFood = m_pTitularNation.GetAvailableFood(cResources, iPopulation);
+            float fFood = TitularNation.GetAvailableFood(cResources, iPopulation);
 
             if (cResources[LandResource.Wood] * 2 < Rnd.Get(iPopulation) && cResources[LandResource.Ore] * 2 < Rnd.Get(iPopulation))// && Rnd.OneChanceFrom(2))
-                m_iTechLevel -= 2;
+                TechLevel -= 2;
             else if (cResources[LandResource.Wood] + cResources[LandResource.Ore] < Rnd.Get(iPopulation))// && Rnd.OneChanceFrom(2))
-                m_iTechLevel--;
-            else if ((cResources[LandResource.Wood] > Rnd.Get(iPopulation) * 2 && cResources[LandResource.Ore] > Rnd.Get(iPopulation) * 2))// || Rnd.OneChanceFrom(4))
-                m_iTechLevel++;
+                TechLevel--;
+            else if (cResources[LandResource.Wood] > Rnd.Get(iPopulation) * 2 && cResources[LandResource.Ore] > Rnd.Get(iPopulation) * 2)// || Rnd.OneChanceFrom(4))
+                TechLevel++;
 
-            if (m_pTitularNation.IsInvader)
+            if (TitularNation.IsInvader)
             {
-                if (m_iTechLevel < m_pTitularNation.m_pEpoch.m_iInvadersMinTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMinTechLevel;
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel;
+                if (TechLevel < TitularNation.Epoch.m_iInvadersMinTechLevel)
+                    TechLevel = TitularNation.Epoch.m_iInvadersMinTechLevel;
+                if (TechLevel > TitularNation.Epoch.m_iInvadersMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.m_iInvadersMaxTechLevel;
             }
             else
             {
-                if (m_iTechLevel < m_pTitularNation.m_pEpoch.m_iNativesMinTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iNativesMinTechLevel;
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel;
+                if (TechLevel < TitularNation.Epoch.m_iNativesMinTechLevel)
+                    TechLevel = TitularNation.Epoch.m_iNativesMinTechLevel;
+                if (TechLevel > TitularNation.Epoch.m_iNativesMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.m_iNativesMaxTechLevel;
             }
 
             //m_iInfrastructureLevel = 4 - (int)(m_pCulture.GetDifference(Culture.IdealSociety, m_iTechLevel, m_iTechLevel) * 4);
-            m_iInfrastructureLevel = m_iTechLevel;// -(int)(m_iTechLevel * Math.Pow(Rnd.Get(1f), 3));
+            InfrastructureLevel = TechLevel;// -(int)(m_iTechLevel * Math.Pow(Rnd.Get(1f), 3));
 
-            if (iSize == 1 && m_iInfrastructureLevel > 4)
-                m_iInfrastructureLevel /= 2;
+            if (iSize == 1 && InfrastructureLevel > 4)
+                InfrastructureLevel /= 2;
 
-            if (m_iTechLevel == 0 && m_pTitularNation.m_pProtoSociety.m_iMagicLimit == 0)
-                m_iInfrastructureLevel = 0;
+            if (TechLevel == 0 && TitularNation.ProtoSociety.MagicLimit == 0)
+                InfrastructureLevel = 0;
 
             //TODO: нужно учитывать размеры и телосложение - гиганты и толстяки едят больше, чем карлики и худышки
             if (fFood * 2 < iPopulation)
-                m_iInfrastructureLevel--;            
+                InfrastructureLevel--;            
             if (fFood < iPopulation || Rnd.OneChanceFrom(10))
-                m_iInfrastructureLevel--;
+                InfrastructureLevel--;
             if (fFood > iPopulation * 2 && Rnd.OneChanceFrom(10))
-                m_iInfrastructureLevel++;
+                InfrastructureLevel++;
 
-            if (m_iInfrastructureLevel < 0)
-                m_iInfrastructureLevel = 0;
-            if (m_iInfrastructureLevel > m_iTechLevel + 1)
-                m_iInfrastructureLevel = m_iTechLevel + 1;
-            if (m_iInfrastructureLevel > 8)
-                m_iInfrastructureLevel = 8;
+            if (InfrastructureLevel < 0)
+                InfrastructureLevel = 0;
+            if (InfrastructureLevel > TechLevel + 1)
+                InfrastructureLevel = TechLevel + 1;
+            if (InfrastructureLevel > 8)
+                InfrastructureLevel = 8;
 
             // Adjusting TL due to infrastructure level
-            while (GetEffectiveTech() > m_iInfrastructureLevel * 2)
-                m_iTechLevel--;
+            while (GetEffectiveTech() > InfrastructureLevel * 2)
+                TechLevel--;
 
-            if (m_iTechLevel < 0)
-                m_iTechLevel = 0;
+            if (TechLevel < 0)
+                TechLevel = 0;
 
-            if (m_pTitularNation.IsInvader)
+            if (TitularNation.IsInvader)
             {
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iInvadersMaxTechLevel;
+                if (TechLevel > TitularNation.Epoch.m_iInvadersMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.m_iInvadersMaxTechLevel;
             }
             else
             {
-                if (m_iTechLevel > m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel)
-                    m_iTechLevel = m_pTitularNation.m_pEpoch.m_iNativesMaxTechLevel;
+                if (TechLevel > TitularNation.Epoch.m_iNativesMaxTechLevel)
+                    TechLevel = TitularNation.Epoch.m_iNativesMaxTechLevel;
             }
         }
 
         public void UpdateTitularNation(Nation pNewTitularNation)
         {
-            m_pTitularNation = pNewTitularNation;
+            TitularNation = pNewTitularNation;
 
-            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
-            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
+            Culture[Gender.Male].Customs.ApplyFenotype(TitularNation.PhenotypeMale);
+            Culture[Gender.Female].Customs.ApplyFenotype(TitularNation.PhenotypeFemale);
         }
     }
 }

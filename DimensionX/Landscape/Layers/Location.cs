@@ -25,77 +25,77 @@ namespace LandscapeGeneration
         /// <summary>
         /// Соседние объекты <see cref="Location"/>
         /// </summary>
-        public Location[] m_aBorderWith = null;
+        public Location[] BorderWithKeys { get; private set; } = null;
 
         internal void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<Location>(BorderWith.Keys).ToArray();
+            BorderWithKeys = new List<Location>(BorderWith.Keys).ToArray();
         }
 
-        public bool m_bUnclosed = false;
+        private bool m_bUnclosed = false;
 
         #region Territory Members
 
         public override bool Forbidden
         {
-            get { return m_bUnclosed || m_bBorder; }
+            get { return m_bUnclosed || IsBorder; }
         }
 
         #endregion
 
-        public LandmarkType m_eType = LandmarkType.Empty;
+        public LandmarkType Landmark { get; set; } = LandmarkType.Empty;
 
         public override float GetMovementCost()
         {
-            if (!HasOwner() || Forbidden || m_bBorder)
+            if (!HasOwner() || Forbidden || IsBorder)
                 return 100;
 
             foreach (var pEdge in BorderWith)
             {
-                if (pEdge.Key.m_bBorder)
+                if (pEdge.Key.IsBorder)
                     return 100;
             }
 
             Land pLand = GetOwner();
-            return pLand.MovementCost * (m_eType == LandmarkType.Empty ? 1 : 10);
+            return pLand.MovementCost * (Landmark == LandmarkType.Empty ? 1 : 10);
         }
 
         /// <summary>
         /// Для "призрачных" локаций - ссылка на оригинал.
         /// </summary>
-        internal Location m_pOrigin = null;
+        //internal Location m_pOrigin = null;
 
         /// <summary>
         /// Для "призрачной" локации - направление, в котором следует искать "настоящую" локацию.
         /// Если локация не "призрачная", то CenterNone
         /// </summary>
-        public VertexCH.Direction m_eShadowDir;
+        public VertexCH.Direction ShadowDir { get; set; }
 
         /// <summary>
         /// Является ли локация "тенью" какой-то локации, принадлежащей на самом деле соседнему квадрату
         /// </summary>
         public bool IsShaded
         {
-            get { return m_eShadowDir != VertexCH.Direction.CenterNone; }
+            get { return ShadowDir != VertexCH.Direction.CenterNone; }
         }
 
         /// <summary>
         /// Координаты центра локации нельзя смещать при вычислении сетки, т.к. она используется для формирования ровного края плоской карты
         /// </summary>
-        public bool m_bFixed = false;
+        //public bool m_bFixed = false;
 
         /// <summary>
         /// Локация расположена за краем карты, здесь нельзя размещать постройки или прокладывать дороги.
         /// </summary>
-        public bool m_bBorder = false;
+        public bool IsBorder { get; set; } = false;
 
         /// <summary>
         /// Уникальный номер локации. Пока нужен только для отладки, в будущем возможно ещё понадобится для чего-нибудь...
         /// </summary>
-        public long m_iID = 0;
+        private long m_iID = 0;
 
-        public int m_iGridX = -1;
-        public int m_iGridY = -1;
+        private int m_iGridX = -1;
+        private int m_iGridY = -1;
 
         /// <summary>
         /// Конструктор без параметров, чтобы класс можно было передавать параметром в шаблоны.
@@ -153,7 +153,7 @@ namespace LandscapeGeneration
             Y = y;
             m_iID = iID;
 
-            m_pOrigin = pOrigin;
+            //m_pOrigin = pOrigin;
         }
 
         /// <summary>
@@ -169,17 +169,17 @@ namespace LandscapeGeneration
             Y = y;
             m_iID = iID;
 
-            m_eShadowDir = eShadowDir;
+            ShadowDir = eShadowDir;
         }
 
-        public uint m_iShadow;
+        public uint ShadowID { get; private set; }
 
-        public void SetShadow(uint stright)
+        public void SetShadow(uint iShadowID)
         {
-            m_iShadow = stright;
+            ShadowID = iShadowID;
         }
 
-        public VoronoiEdge m_pFirstLine = null;
+        public VoronoiEdge FirstLine { get; private set; } = null;
 
         /// <summary>
         /// Во всех границах локации заменяет ссылку на "плохую" вершину ссылкой на "хорошую".
@@ -190,25 +190,25 @@ namespace LandscapeGeneration
         /// <param name="pGood"></param>
         public void ReplaceVertex(VoronoiVertex pBad, VoronoiVertex pGood)
         {
-            foreach (var pEdge in BorderWith)
+            foreach (var pEdge in BorderWith.Values)
             {
                 bool bGotIt = false;
-                if (pEdge.Value[0].m_pPoint1 == pBad)
+                if (pEdge[0].Point1 == pBad)
                 {
-                    pEdge.Value[0].m_pPoint1 = pGood;
+                    pEdge[0].Point1 = pGood;
                     bGotIt = true;
                 }
-                if (pEdge.Value[0].m_pPoint2 == pBad)
+                if (pEdge[0].Point2 == pBad)
                 {
-                    pEdge.Value[0].m_pPoint2 = pGood;
+                    pEdge[0].Point2 = pGood;
                     bGotIt = true;
                 }
 
                 if (bGotIt)
                 {
-                    if (!pGood.m_cLocations.Contains(this))
-                        pGood.m_cLocations.Add(this);
-                    pBad.m_cLocations.Remove(this);
+                    if (!pGood.Locations.Contains(this))
+                        pGood.Locations.Add(this);
+                    pBad.Locations.Remove(this);
                 }
             }
         }
@@ -218,10 +218,10 @@ namespace LandscapeGeneration
         /// </summary>
         public void BuildBorder(float fCycleShift)
         {
-            if (m_bUnclosed || m_bBorder || BorderWith.Count == 0 || IsShaded)
+            if (m_bUnclosed || IsBorder || BorderWith.Count == 0 || IsShaded)
                 return;
 
-            m_pFirstLine = BorderWith[m_aBorderWith[0]][0];
+            FirstLine = BorderWith[BorderWithKeys[0]][0];
 
             List<VoronoiEdge> cTotalBorder = new List<VoronoiEdge>();
 
@@ -231,8 +231,8 @@ namespace LandscapeGeneration
                 cTotalBorder.AddRange(cEdges);
                 foreach (VoronoiEdge pEdge in cEdges)
                     PerimeterLength += pEdge.Length;
-            } 
-            
+            }
+
             List<VoronoiEdge> cSequence = new List<VoronoiEdge>();
 
             VoronoiEdge pLast = BorderWith.Values.First()[0];
@@ -245,10 +245,10 @@ namespace LandscapeGeneration
                         continue;
 
                     if (!cSequence.Contains(pEdge.Value[0]) &&
-                        (pEdge.Value[0].m_pPoint1 == pLast.m_pPoint2 ||
-                         (pEdge.Value[0].m_pPoint1.Y == pLast.m_pPoint2.Y &&
-                          (pEdge.Value[0].m_pPoint1.X == pLast.m_pPoint2.X ||
-                           Math.Abs(pEdge.Value[0].m_pPoint1.X - pLast.m_pPoint2.X) == fCycleShift))))
+                        (pEdge.Value[0].Point1 == pLast.Point2 ||
+                         (pEdge.Value[0].Point1.Y == pLast.Point2.Y &&
+                          (pEdge.Value[0].Point1.X == pLast.Point2.X ||
+                           Math.Abs(pEdge.Value[0].Point1.X - pLast.Point2.X) == fCycleShift))))
                     {
                         pLast = pEdge.Value[0];
                         cSequence.Add(pLast);
@@ -266,7 +266,7 @@ namespace LandscapeGeneration
             pLast = cSequence.Last();
             foreach (var pEdge in cSequence)
             {
-                pLast.m_pNext = pEdge;
+                pLast.Next = pEdge;
                 pLast = pEdge;
             }
         }
@@ -276,24 +276,24 @@ namespace LandscapeGeneration
         /// </summary>
         public void CorrectCenter()
         {
-            if (m_pFirstLine == null)
+            if (FirstLine == null)
                 m_bUnclosed = true;
 
-            if (m_bUnclosed || m_bBorder)
+            if (m_bUnclosed || IsBorder)
                 return;
 
             float fX = 0, fY = 0, fLength = 0;
 
-            VoronoiEdge pLine = m_pFirstLine;
+            VoronoiEdge pLine = FirstLine;
             do
             {
-                fX += pLine.Length * (pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2;
-                fY += pLine.Length * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
+                fX += pLine.Length * (pLine.Point1.X + pLine.Point2.X) / 2;
+                fY += pLine.Length * (pLine.Point1.Y + pLine.Point2.Y) / 2;
                 fLength += pLine.Length;
 
-                pLine = pLine.m_pNext;
+                pLine = pLine.Next;
             }
-            while (pLine != m_pFirstLine);
+            while (pLine != FirstLine);
 
             X = fX / fLength;
             Y = fY / fLength;
@@ -306,7 +306,7 @@ namespace LandscapeGeneration
             binWriter.Write((double)X);
             binWriter.Write((double)Y);
 
-            binWriter.Write(m_bBorder ? 1 : 0);
+            binWriter.Write(IsBorder ? 1 : 0);
             binWriter.Write(m_bUnclosed ? 1 : 0);
 
             //TODO: зачем здесь эта проверка???
@@ -329,7 +329,7 @@ namespace LandscapeGeneration
         /// Временный список соседей с границами. Используется ТОЛЬКО при считывании списка локаций из файла.
         /// После синхронизации с m_cBorderWith может быть очищен.
         /// </summary>
-        public Dictionary<long, List<VoronoiEdge>> m_cBorderWithID = new Dictionary<long, List<VoronoiEdge>>();
+        private readonly Dictionary<long, List<VoronoiEdge>> m_cBorderWithID = new Dictionary<long, List<VoronoiEdge>>();
 
         /// <summary>
         /// Считывает локацию из файла.
@@ -342,7 +342,7 @@ namespace LandscapeGeneration
         {
             Links.Clear();
             BorderWith.Clear();
-            m_eType = LandmarkType.Empty;
+            Landmark = LandmarkType.Empty;
             ClearOwner();
 
             m_iID = binReader.ReadInt64();
@@ -350,7 +350,7 @@ namespace LandscapeGeneration
             X = (float)binReader.ReadDouble();
             Y = (float)binReader.ReadDouble();
 
-            m_bBorder = binReader.ReadInt32() == 1;
+            IsBorder = binReader.ReadInt32() == 1;
             m_bUnclosed = binReader.ReadInt32() == 1;
 
             int iBorderCount = binReader.ReadInt32();
@@ -367,16 +367,9 @@ namespace LandscapeGeneration
             }
         }
 
-        //public virtual void Reset()
-        //{
-        //    m_cLinks.Clear();
-        //    m_eType = LandmarkType.Empty;
-        //    ClearOwner();
-        //}
-        
         public override string ToString()
         {
-            return string.Format("{0}{3} ({1}, {2})", m_bBorder || m_bUnclosed ? "x" : "", X, Y, GetStringID());
+            return string.Format("{0}{3} ({1}, {2})", IsBorder || m_bUnclosed ? "x" : "", X, Y, GetStringID());
         }
 
         public string GetStringID()
@@ -385,8 +378,7 @@ namespace LandscapeGeneration
             if (m_iGridX != -1 || m_iGridY != -1)
                 sID = string.Format("{0}, {1}", m_iGridX, m_iGridY);
 
-            return string.Format("{1}[{0}]", sID, m_bBorder || m_bUnclosed ? "x" : " ");
+            return string.Format("{1}[{0}]", sID, IsBorder || m_bUnclosed ? "x" : " ");
         }
-
     }
 }

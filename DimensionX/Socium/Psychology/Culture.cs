@@ -14,33 +14,32 @@ namespace Socium.Psychology
     /// </summary>
     public class Culture
     {
-        public int m_iProgressLevel = 0;
-        public Mentality m_pMentality = null;
-        public Customs m_pCustoms = null;
+        public int ProgressLevel { get; set; } = 0;
+        public Mentality Mentality { get; } = null;
+        public Customs Customs { get; } = null;
 
         /// <summary>
         /// Процент реально крутых магов среди всех носителей магических способностей
         /// </summary>
-        public MagicAbilityDistribution m_eMagicAbilityDistribution;
+        public MagicAbilityDistribution MagicAbilityDistribution { get; set; }
 
         public Culture(Mentality pMentality, int iProgressLevel, Customs pCustoms)
         {
-            m_pMentality = pMentality;
-            m_iProgressLevel = iProgressLevel;
-            m_pCustoms = pCustoms;
+            Mentality = pMentality;
+            ProgressLevel = iProgressLevel;
+            Customs = pCustoms;
         }
-
 
         public Culture(Culture pOrigin, Customs.Mutation eCustomsMutation)
         {
-            m_pMentality = new Mentality(pOrigin.m_pMentality, eCustomsMutation != Customs.Mutation.None);
-            m_iProgressLevel = pOrigin.m_iProgressLevel;
-            m_pCustoms = new Customs(pOrigin.m_pCustoms, eCustomsMutation);
+            Mentality = new Mentality(pOrigin.Mentality, eCustomsMutation != Customs.Mutation.None);
+            ProgressLevel = pOrigin.ProgressLevel;
+            Customs = new Customs(pOrigin.Customs, eCustomsMutation);
         }
 
         public float GetTrait(Trait eTrait)
         {
-            return m_pMentality.Traits[eTrait][m_iProgressLevel];
+            return Mentality.Traits[eTrait][ProgressLevel];
         }
 
         /// <summary>
@@ -50,24 +49,22 @@ namespace Socium.Psychology
         /// <returns>скалярное произведение нормализованных векторов культуры / (количество моральных качеств)</returns>
         public float GetMentalityDifference(Culture pOther)
         {
-            return m_pMentality.GetDifference(pOther.m_pMentality, m_iProgressLevel, pOther.m_iProgressLevel);
+            return Mentality.GetDifference(pOther.Mentality, ProgressLevel, pOther.ProgressLevel);
         }
-
 
         public override bool Equals(object obj)
         {
-            Culture pOther = obj as Culture;
-            if (pOther == null)
+            if (!(obj is Culture pOther))
                 return false;
 
-            return m_iProgressLevel == pOther.m_iProgressLevel &&
-                m_pMentality.Equals(pOther.m_pMentality) &&
-                m_pCustoms.Equals(pOther.m_pCustoms);
+            return ProgressLevel == pOther.ProgressLevel &&
+                Mentality.Equals(pOther.Mentality) &&
+                Customs.Equals(pOther.Customs);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(m_pCustoms, m_pMentality, m_iProgressLevel);
+            return HashCode.Combine(Customs, Mentality, ProgressLevel);
         }
     }
 }

@@ -7,24 +7,24 @@ using Random;
 
 namespace Socium.Languages
 {
-    class Asian: Language
+    internal class Asian: Language
     {
-        private Confluxer m_pNations;
+        private readonly Confluxer m_pNations;
 
-        private Confluxer m_pFemale;
+        private readonly Confluxer m_pFemale;
 
-        private Confluxer m_pMale;
+        private readonly Confluxer m_pMale;
 
         public Asian()
             :base(NameGenerator.Language.NONE)
         {
-            string sNation = "han canton shandong hunanese xiang hakka kejia gan jiangxi min nan hoklo hainan teochew chaozhou dong bei zhong xinghua wu ningbo wenzhou tanka ngai fuzhou hui dungan bamar achang zaiwa yi lisu hani akha lahu jino cong naxi monpa tamang tani adi nishi tani ao lotha chin mizo karbi magar qiang pumi mishmi lhoba drung nung tujia bai";
+            const string sNation = "han canton shandong hunanese xiang hakka kejia gan jiangxi min nan hoklo hainan teochew chaozhou dong bei zhong xinghua wu ningbo wenzhou tanka ngai fuzhou hui dungan bamar achang zaiwa yi lisu hani akha lahu jino cong naxi monpa tamang tani adi nishi tani ao lotha chin mizo karbi magar qiang pumi mishmi lhoba drung nung tujia bai";
             m_pNations = new Confluxer(sNation, 2);
 
-            string sFemale = "akazome akiko ayame chika chizu cho fuji hamako hana hanazono hiromusi hisae hisayo imako inoe ishi izuko jun kagami kame-hime kameko kaneko kawa kawanomu keiko kenshi kiku kimiko kogin kogo komachi kozakura kumiko kusuriko machi mariko masago masako masuko matsukaze midori mineko miwa miyako miyoko mura nari ochobo oki onshi reiko renshi rin ruri sachi sadako sakura seki sen-hime senshi setsuko shikibu shina shizue shizuyo siki sugi taka takara tamako teika tokiwa tokuko tomoe towika tsukinoyo umeko umeno wakana yasuko yoshiko yukinoyo yukio";
+            const string sFemale = "akazome akiko ayame chika chizu cho fuji hamako hana hanazono hiromusi hisae hisayo imako inoe ishi izuko jun kagami kame-hime kameko kaneko kawa kawanomu keiko kenshi kiku kimiko kogin kogo komachi kozakura kumiko kusuriko machi mariko masago masako masuko matsukaze midori mineko miwa miyako miyoko mura nari ochobo oki onshi reiko renshi rin ruri sachi sadako sakura seki sen-hime senshi setsuko shikibu shina shizue shizuyo siki sugi taka takara tamako teika tokiwa tokuko tomoe towika tsukinoyo umeko umeno wakana yasuko yoshiko yukinoyo yukio";
             m_pFemale = new Confluxer(sFemale, 2);
 
-            string sMale = "agatamori akimitsu akira arinori azumabito bakin benkei buntaro chikafusa chikayo chomei chuemon dosan emishi emon fuhito fujifusa fujitaka fususaki gekkai gennai gidayu gongoro hakatoko hamanari haruhisa hideharu hideo hidetanda hideyoshi hirohito hirotsugu hitomaru iemitsu ienobu ieyasu ieyoshi imoko issai iwao iwazumi jikkyo jozen junkei jussai kageharu kagemasa kagemusha kahei kanemitsu katsumi katsuyori kazan kazunori keisuke kintaro kiyomori kiyosuke kmako komaro koremasa koreyasu kuronushi kyuso mabuchi maro masahide masamitsu michifusa mitsukane miyamoto mochiyo morinaga munetaka murashige nagafusa nagate nakahira nambo naoshige narihiro oguromaro okimoto okura omaro otondo razan rikyu rokuemon ryokai sadakata sanehira sanetomo sanzo saru shigenobu shigeuji shingen shoetsu shozen sukemasa tadabumi tadashiro takatoshi tameyori taneo taneyoshi tensui togama tomomasa toshifusa toyonari tsunayoshi tsunetane uchimaro ujihiro umakai watamaro yakamochi yasumori yoriie yoritomo yoshiie yoshisune yoshitane yoshizumi yukihira zuiken";
+            const string sMale = "agatamori akimitsu akira arinori azumabito bakin benkei buntaro chikafusa chikayo chomei chuemon dosan emishi emon fuhito fujifusa fujitaka fususaki gekkai gennai gidayu gongoro hakatoko hamanari haruhisa hideharu hideo hidetanda hideyoshi hirohito hirotsugu hitomaru iemitsu ienobu ieyasu ieyoshi imoko issai iwao iwazumi jikkyo jozen junkei jussai kageharu kagemasa kagemusha kahei kanemitsu katsumi katsuyori kazan kazunori keisuke kintaro kiyomori kiyosuke kmako komaro koremasa koreyasu kuronushi kyuso mabuchi maro masahide masamitsu michifusa mitsukane miyamoto mochiyo morinaga munetaka murashige nagafusa nagate nakahira nambo naoshige narihiro oguromaro okimoto okura omaro otondo razan rikyu rokuemon ryokai sadakata sanehira sanetomo sanzo saru shigenobu shigeuji shingen shoetsu shozen sukemasa tadabumi tadashiro takatoshi tameyori taneo taneyoshi tensui togama tomomasa toshifusa toyonari tsunayoshi tsunetane uchimaro ujihiro umakai watamaro yakamochi yasumori yoriie yoritomo yoshiie yoshisune yoshitane yoshizumi yukihira zuiken";
             m_pMale = new Confluxer(sMale, 2);
         }
 

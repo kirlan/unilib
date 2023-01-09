@@ -15,13 +15,29 @@ namespace LandscapeGeneration.FastGrid
 
         public VertexCH(VertexCH pOrigin)
         {
-            m_iID = pOrigin.m_iID;
+            ID = pOrigin.ID;
 
             Position = new double[] { pOrigin.Position[0], pOrigin.Position[1] };
             m_eShadowDir = pOrigin.m_eShadowDir;
             m_eSide = pOrigin.m_eSide;
 
-            m_bBorder = pOrigin.m_bBorder;
+            IsBorder = pOrigin.IsBorder;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VoronoiVertex"/> class.
+        /// </summary>
+        /// <param name="x">The x position.</param>
+        /// <param name="y">The y position.</param>
+        public VertexCH(double x, double y, Direction eShadowDir, EdgeSide eSide, bool bBorder)
+        {
+            ID = ID_counter++;
+
+            Position = new double[] { x, y };
+            m_eShadowDir = eShadowDir;
+            m_eSide = eSide;
+
+            IsBorder = bBorder;
         }
 
         public enum EdgeSide
@@ -41,21 +57,25 @@ namespace LandscapeGeneration.FastGrid
             CornerBottomRight
         }
 
-        public EdgeSide m_eSide;
+        private readonly EdgeSide m_eSide;
 
-        public VertexCH m_pShadow = null;
+        public VertexCH Shadow { get; private set; } = null;
 
         public void SetShadows(VertexCH stright)
         {
-            m_pShadow = stright;
+            Shadow = stright;
 
             if (Position[0] != stright.Position[0] &&
                 Math.Abs(Position[0] - stright.Position[0]) != 20000f)
+            {
                 throw new InvalidOperationException("Wrong shadow coordinates!");
+            }
 
             if (Position[1] != stright.Position[1] &&
                 Math.Abs(Position[1] - stright.Position[1]) != 20000f)
+            {
                 throw new InvalidOperationException("Wrong shadow coordinates!");
+            }
         }
 
         public enum Direction
@@ -71,30 +91,14 @@ namespace LandscapeGeneration.FastGrid
             DownRight
         }
 
-        public Direction m_eShadowDir;
+        public Direction m_eShadowDir { get; }
 
-        public object m_pTag = null;
+        public object Tag { get; set; } = null;
 
-        public bool m_bBorder = false;
+        public bool IsBorder { get; } = false;
 
-        public static uint ID_counter = 0;
-        public uint m_iID = 0;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VoronoiVertex"/> class.
-        /// </summary>
-        /// <param name="x">The x position.</param>
-        /// <param name="y">The y position.</param>
-        public VertexCH(double x, double y, Direction eShadowDir, EdgeSide eSide, bool bBorder)
-        {
-            m_iID = ID_counter++;
-
-            Position = new double[] { x, y };
-            m_eShadowDir = eShadowDir;
-            m_eSide = eSide;
-
-            m_bBorder = bBorder;
-        }
+        private static uint ID_counter = 0;
+        public uint ID { get; } = 0;
 
         public Point ToPoint()
         {
@@ -115,29 +119,29 @@ namespace LandscapeGeneration.FastGrid
 
         public class Edge
         {
-            public CellCH m_pFrom;
-            public CellCH m_pTo;
+            public CellCH From { get; set; }
+            public CellCH To { get; set; }
 
             public Edge(CellCH pFrom, CellCH pTo)
             {
-                m_pFrom = pFrom;
-                m_pTo = pTo;
+                From = pFrom;
+                To = pTo;
             }
 
             public override string ToString()
             {
-                return string.Format("{0} - {1}", m_pFrom, m_pTo);
+                return string.Format("{0} - {1}", From, To);
             }
         }
 
         /// <summary>
         /// Заполняется в Cube::RebuildEdges()
         /// </summary>
-        public Dictionary<VertexCH, Edge> m_cEdges = new Dictionary<VertexCH, Edge>();
+        public Dictionary<VertexCH, Edge> Edges { get; } = new Dictionary<VertexCH, Edge>();
 
         public override string ToString()
         {
-            return string.Format("{0}{4} ({1}, {2}, {3})", m_eShadowDir != Direction.CenterNone ? "x" : "", Position[0], Position[1], m_bBorder, m_iID);
+            return string.Format("{0}{4} ({1}, {2}, {3})", m_eShadowDir != Direction.CenterNone ? "x" : "", Position[0], Position[1], IsBorder, ID);
         }
     }
 }

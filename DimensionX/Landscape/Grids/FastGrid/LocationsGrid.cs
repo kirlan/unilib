@@ -30,7 +30,7 @@ namespace LandscapeGeneration.FastGrid
 
     public class LocationsGrid
     {
-        public Chunk[,] m_cChunk;
+        private readonly Chunk[,] m_cChunk;
 
         static int IsLeft(Point a, Point b, Point c)
         {
@@ -43,7 +43,7 @@ namespace LandscapeGeneration.FastGrid
             return ((bx - ax) * (cy - ay) - (by - ay) * (cx - ax)) > 0 ? 1 : -1;
         }
 
-        System.Random r = new System.Random();
+        private readonly System.Random rnd = new System.Random();
 
         /// <summary>
         /// Строим периметр для диаграммы Вороного, который бы позволял мостить сферу как нам угодно
@@ -58,18 +58,18 @@ namespace LandscapeGeneration.FastGrid
 
             int quanticSize = (int)(size / k);
 
-            float fDeltaX = 0.1f;//0.25f;
-            float fDeltaY = 0.25f;//0.25f;
+            float fDeltaX = 0.1f;
+            float fDeltaY = 0.25f;
 
             iInnerCount = 0;
 
             for (int i = 0; i <= quanticSize / 2; i++)
             {
-                var x1 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * r.NextDouble());
-                var y1 = k * 0.5 + k * (fDeltaY - fDeltaY * 2 * r.NextDouble());
+                var x1 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * rnd.NextDouble());
+                var y1 = k * 0.5 + k * (fDeltaY - fDeltaY * 2 * rnd.NextDouble());
 
-                var x2 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * r.NextDouble());
-                var y2 = k * 0.5 + k * (fDeltaY - fDeltaY * 2 * r.NextDouble());
+                var x2 = k * 0.5 + i * k + k * (fDeltaX - fDeltaX * 2 * rnd.NextDouble());
+                var y2 = k * 0.5 + k * (fDeltaY - fDeltaY * 2 * rnd.NextDouble());
 
                 //Внутренние точки квадрата. Сначала - по часовой стрелке.
                 //Важно: в XNA используется правая координатная система, а значит ось Y должна быть направлена ВВЕРХ
@@ -264,23 +264,21 @@ namespace LandscapeGeneration.FastGrid
                 var from = edge.Source;
                 var to = edge.Target;
 
-                double fMinDist = 1;//0.0000001;
+                const double fMinDist = 1;
 
                 //сливаем близко расположенные вершины
                 if (Point.Subtract(from.Circumcenter, to.Circumcenter).Length < fMinDist)
                 {
                     //если from и to расположены слишком близко
                     //добавляем to в список вершин, сливаемых с from
-                    List<CellCH> cFromList;
-                    if (!m_cZeroEdges.TryGetValue(from, out cFromList))
+                    if (!m_cZeroEdges.TryGetValue(from, out List<CellCH> cFromList))
                     {
                         cFromList = new List<CellCH>();
                         m_cZeroEdges[from] = cFromList;
                     }
                     cFromList.Add(to);
                     //добавляем from в список вершин, сливаемых с to
-                    List<CellCH> cToList;
-                    if (!m_cZeroEdges.TryGetValue(to, out cToList))
+                    if (!m_cZeroEdges.TryGetValue(to, out List<CellCH> cToList))
                     {
                         cToList = new List<CellCH>();
                         m_cZeroEdges[to] = cToList;
@@ -303,7 +301,9 @@ namespace LandscapeGeneration.FastGrid
                         if (n == nnn)
                         {
                             if (pLeft == null)
+                            {
                                 pLeft = n;
+                            }
                             else
                             {
                                 if (pRight == null)
@@ -331,8 +331,8 @@ namespace LandscapeGeneration.FastGrid
                 CellCH pInnerRight = new CellCH(pMiddle, pRight);
 
                 //пропишем ссылки на ребро в найденных локациях
-                pLeft.m_cEdges[pRight] = new VertexCH.Edge(from, to);
-                pRight.m_cEdges[pLeft] = new VertexCH.Edge(to, from);
+                pLeft.Edges[pRight] = new VertexCH.Edge(from, to);
+                pRight.Edges[pLeft] = new VertexCH.Edge(to, from);
 
                 m_cNewCells.Add(pMiddle);
                 m_cNewCells.Add(pInnerLeft);
@@ -353,19 +353,19 @@ namespace LandscapeGeneration.FastGrid
 
             foreach (var pLoc in locations)
             {
-                foreach (VertexCH.Edge pEdge in pLoc.m_cEdges.Values)
+                foreach (VertexCH.Edge pEdge in pLoc.Edges.Values)
                 {
-                    if (m_cZeroEdges.ContainsKey(pEdge.m_pFrom))
-                        pEdge.m_pFrom = SkipZero(pEdge.m_pFrom);
-                    if (m_cZeroEdges.ContainsKey(pEdge.m_pTo))
-                        pEdge.m_pTo = SkipZero(pEdge.m_pTo);
+                    if (m_cZeroEdges.ContainsKey(pEdge.From))
+                        pEdge.From = SkipZero(pEdge.From);
+                    if (m_cZeroEdges.ContainsKey(pEdge.To))
+                        pEdge.To = SkipZero(pEdge.To);
                 }
             }
 
             return new Rect(fMinX, fMinY, fMaxX - fMinX, fMaxY - fMinY);
         }
 
-        readonly Dictionary<CellCH, CellCH> m_cReplacements = new Dictionary<CellCH, CellCH>();
+        private readonly Dictionary<CellCH, CellCH> m_cReplacements = new Dictionary<CellCH, CellCH>();
 
         /// <summary>
         /// Игнорируем слишком короткие рёбра
@@ -418,21 +418,19 @@ namespace LandscapeGeneration.FastGrid
                 return m_iChunkSize * Resolution / 2;
             }
         }
-        public int FrameWidth 
-        { 
-            get { return m_iChunkSize / 100;  } 
+        public int FrameWidth
+        {
+            get { return m_iChunkSize / 100;  }
         }
 
-        public WorldShape m_eShape = WorldShape.Plain;
+        public WorldShape Shape { get; private set; } = WorldShape.Plain;
 
         public float CycleShift
         {
-            get { return m_eShape == WorldShape.Ringworld ? RX * 2 : 0; }
+            get { return Shape == WorldShape.Ringworld ? RX * 2 : 0; }
         }
 
-        public VoronoiVertex[] m_aVertexes;
-
-        public Location[] Locations { get; private set; } = null;
+        public Location[] Locations { get; } = null;
 
         public LocationsGrid(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
@@ -440,15 +438,13 @@ namespace LandscapeGeneration.FastGrid
 
             var kHR = 1.2 * m_iChunkSize / Math.Sqrt(locationsCount);
 
-            if (BeginStep != null)
-                BeginStep("Building grid...", 5);
+            BeginStep?.Invoke("Building grid...", 5);
 
             int iInnerCount;
             List<VertexCH> border = BuildBorder(out iInnerCount, kHR, m_iChunkSize);
             List<VertexCH> locationsHR = new List<VertexCH>(border);
 
-            if (ProgressStep != null)
-                ProgressStep();
+            ProgressStep?.Invoke();
 
             //Территорию внутри построенной границы заполним случайными точками с распределением по Поиссону (чтобы случайно, но в общем равномерно).
             List<SimpleVector3d> cPointsHR = BuildPoisson(m_iChunkSize, locationsCount - iInnerCount, kHR);
@@ -460,14 +456,12 @@ namespace LandscapeGeneration.FastGrid
                 locationsHR.Add(vi);
             }
 
-            if (ProgressStep != null)
-                ProgressStep();
+            ProgressStep?.Invoke();
 
             //Наконец, строим диаграмму Вороного.
             VoronoiMesh<VertexCH, CellCH, VoronoiEdge<VertexCH, CellCH>> voronoiMeshHR = VoronoiMesh.Create<VertexCH, CellCH>(locationsHR);
 
-            if (ProgressStep != null)
-                ProgressStep();
+            ProgressStep?.Invoke();
 
             //Переведём результат в удобный нам формат.
             //Для каждого найденного ребра диаграммы Вороного найдём локации, которые оно разделяет
@@ -479,57 +473,44 @@ namespace LandscapeGeneration.FastGrid
 
             foreach (var ploc in locsHR)
             {
-                if (!ploc.m_bBorder)
+                if (!ploc.IsBorder)
                 {
-                    foreach (var pedge in ploc.m_cEdges)
+                    foreach (var pedge in ploc.Edges)
                         if (pedge.Key.m_eShadowDir != VertexCH.Direction.CenterNone)
                             throw new InvalidOperationException();
                 }
 
             }
 
-            if (ProgressStep != null)
-                ProgressStep();
+            ProgressStep?.Invoke();
 
-            if (BeginStep != null)
-                BeginStep("Forming grid...", 15);
+            BeginStep?.Invoke("Forming grid...", 15);
 
             m_cChunk = new Chunk[iFaceSize, iFaceSize];
 
             for (int x = 0; x < iFaceSize; x++)
                 for (int y = 0; y < iFaceSize; y++)
                     m_cChunk[x, y] = new Chunk(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX * 2);
-            
+
             LinkNeighbours();
-            
-            if (ProgressStep != null)
-                ProgressStep();
+
+            ProgressStep?.Invoke();
 
             foreach (var pChunk in m_cChunk)
                 pChunk.Ghostbusters();
 
-            if (ProgressStep != null)
-                ProgressStep();
+            ProgressStep?.Invoke();
 
             foreach (var pChunk in m_cChunk)
-            {
                 pChunk.Final(CycleShift);
-            }
 
-            if (ProgressStep != null)
-                ProgressStep();
+            ProgressStep?.Invoke();
 
             List<Location> cLocations = new List<Location>();
             foreach (var pChunk in m_cChunk)
-                cLocations.AddRange(pChunk.m_aLocations);
+                cLocations.AddRange(pChunk.Locations);
 
             Locations = cLocations.ToArray();
-
-            List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
-            foreach (var pChunk in m_cChunk)
-                cVertexes.AddRange(pChunk.m_aVertexes);
-
-            m_aVertexes = cVertexes.ToArray();
         }
 
         public void LinkNeighbours()
@@ -539,37 +520,41 @@ namespace LandscapeGeneration.FastGrid
                 for (int y = 0; y < Resolution; y++)
                 {
                     if (x > 0 && y > 0)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownLeft] = m_cChunk[x - 1, y - 1];
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.DownLeft] = m_cChunk[x - 1, y - 1];
 
                     if (y > 0)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Down] = m_cChunk[x, y - 1];
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.Down] = m_cChunk[x, y - 1];
 
                     if (x < Resolution - 1 && y > 0)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.DownRight] = m_cChunk[x + 1, y - 1];
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.DownRight] = m_cChunk[x + 1, y - 1];
 
                     if (x < Resolution - 1)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Right] = m_cChunk[x + 1, y];
+                    {
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.Right] = m_cChunk[x + 1, y];
+                    }
                     else
                     {
-                        if (m_eShape == WorldShape.Ringworld)
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Right] = m_cChunk[0, y];
+                        if (Shape == WorldShape.Ringworld)
+                            m_cChunk[x, y].Neighbours[VertexCH.Direction.Right] = m_cChunk[0, y];
                     }
 
                     if (x < Resolution - 1 && y < Resolution - 1)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpRight] = m_cChunk[x + 1, y + 1];
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.UpRight] = m_cChunk[x + 1, y + 1];
 
                     if (y < Resolution - 1)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Up] = m_cChunk[x, y + 1];
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.Up] = m_cChunk[x, y + 1];
 
                     if (x > 0 && y < Resolution - 1)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.UpLeft] = m_cChunk[x - 1, y + 1];
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.UpLeft] = m_cChunk[x - 1, y + 1];
 
                     if (x > 0)
-                        m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Left] = m_cChunk[x - 1, y];
+                    {
+                        m_cChunk[x, y].Neighbours[VertexCH.Direction.Left] = m_cChunk[x - 1, y];
+                    }
                     else
                     {
-                        if (m_eShape == WorldShape.Ringworld)
-                            m_cChunk[x, y].m_cNeighbours[VertexCH.Direction.Left] = m_cChunk[Resolution - 1, y];
+                        if (Shape == WorldShape.Ringworld)
+                            m_cChunk[x, y].Neighbours[VertexCH.Direction.Left] = m_cChunk[Resolution - 1, y];
                     }
                 }
             }

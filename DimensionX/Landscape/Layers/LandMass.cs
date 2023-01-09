@@ -16,16 +16,15 @@ namespace LandscapeGeneration
     {
         public bool IsWater { get; set; } = false;
 
-        public SimpleVector3d m_pDrift;
+        public SimpleVector3d Drift { get; }
 
-        public int m_iMaxSize = -1;
+        public int MaxSize { get; private set; } = -1;
 
         public LandMass()
             : base()
         {
-            m_pDrift = new SimpleVector3d(1.0 - Rnd.Get(2.0f), 1.0 - Rnd.Get(2.0f), 0);
-            m_pDrift = m_pDrift / !m_pDrift;
-            //m_iElevation = (int)(Math.Tan(1.2f - Rnd.Get(2.22f)));
+            Drift = new SimpleVector3d(1.0 - Rnd.Get(2.0f), 1.0 - Rnd.Get(2.0f), 0);
+            Drift = Drift / !Drift;
         }
 
         public override void Start(Land pSeed)
@@ -35,12 +34,12 @@ namespace LandscapeGeneration
             pSeed.SetOwner(this);
 
             if (Rnd.OneChanceFrom(2))
-                m_iMaxSize = Rnd.Get(5) + 1;
+                MaxSize = Rnd.Get(5) + 1;
         }
 
         public override Land Grow(int iMaxSize)
         {
-            if (m_iMaxSize > 0 && Contents.Count >= m_iMaxSize)
+            if (MaxSize > 0 && Contents.Count >= MaxSize)
                 return null;
 
             return base.Grow(iMaxSize);
@@ -48,9 +47,11 @@ namespace LandscapeGeneration
 
         public bool HaveForbiddenBorders()
         {
-            foreach (var pLand in m_cBorder)
+            foreach (var pLand in Border)
+            {
                 if (pLand.Key.Forbidden)
                     return true;
+            }
 
             return false;
         }
@@ -74,7 +75,7 @@ namespace LandscapeGeneration
 
         public override float GetMovementCost()
         {
-            return (IsWater ? 10 : 1);// *Contents.Count;
+            return IsWater ? 10 : 1;
         }
     }
 }

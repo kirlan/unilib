@@ -25,7 +25,7 @@ namespace LandscapeGeneration
         public virtual bool Forbidden { get; private set; } = false;
 
         /// <summary>
-        /// Суммарная длина всех линий в <see cref="BorderWith"/> 
+        /// Суммарная длина всех линий в <see cref="BorderWith"/>
         /// </summary>
         public virtual float PerimeterLength { get; protected set; } = 0;
 
@@ -75,7 +75,7 @@ namespace LandscapeGeneration
         where LAYER : TerritoryOf<LAYER, OWNER>, new()
         where OWNER : class, IInfoLayer
     {
-        OWNER m_cOwnerInfoLayer = null;
+        private OWNER m_cOwnerInfoLayer = null;
 
         /// <summary>
         /// Маркирует эту территорию как часть указанного <typeparamref name="OWNER"/>
@@ -116,6 +116,8 @@ namespace LandscapeGeneration
         }
     }
 
+    //TODO: подумать, как не писать один и тот же код в 2 классах?
+
     /// <summary>
     /// Дополнительный информационный слой для <typeparamref name="BASE"/>, сам являющаяся частью <typeparamref name="OWNER"/>
     /// </summary>
@@ -130,7 +132,7 @@ namespace LandscapeGeneration
         /// Переадресует обращение к базовому <typeparamref name="BASE"/>::<c>Forbidden</c><br/>
         /// <inheritdoc/>
         /// </summary>
-        public override bool Forbidden => (Origin == null || Origin.Forbidden);
+        public override bool Forbidden => Origin == null || Origin.Forbidden;
 
         /// <summary>
         /// Переадресует обращение к базовому <typeparamref name="BASE"/>::<c>PerimeterLength</c><br/>
@@ -176,7 +178,6 @@ namespace LandscapeGeneration
 
         #endregion
 
-
         /// <summary>
         /// Базовый объект <typeparamref name="BASE"/>, расширением которого является <typeparamref name="LAYER"/>
         /// <inheritdoc/>
@@ -196,11 +197,7 @@ namespace LandscapeGeneration
         {
             foreach (var pLink in Origin.BorderWith)
             {
-                LAYER key = pLink.Key.As<LAYER>();
-                if (key == null)
-                {
-                    key = m_pForbidden;
-                }
+                LAYER key = pLink.Key.As<LAYER>() ?? m_pForbidden;
                 BorderWith[key] = pLink.Value;
             }
         }
@@ -282,11 +279,7 @@ namespace LandscapeGeneration
         {
             foreach (var pLink in Origin.BorderWith)
             {
-                LAYER key = pLink.Key.As<LAYER>(); 
-                if (key == null)
-                {
-                    key = m_pForbidden;
-                }
+                LAYER key = pLink.Key.As<LAYER>() ?? m_pForbidden;
                 BorderWith[key] = pLink.Value;
             }
         }

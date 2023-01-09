@@ -29,7 +29,7 @@ namespace Socium.Population
         /// 7 - Квантовая эра. Ограниченная телепортация, материализация, дезинтеграция. GURPS TL11-12
         /// 8 - Переход. Полная и неограниченная власть человека над пространственно-временным континуумом. GURPS TL12+
         /// </summary>
-        public int m_iTechLevel = 0;
+        public int TechLevel { get; set; } = 0;
         /// <summary>
         /// 1 - Мистика. Ритуальная магия, требующая длительной предварительной подготовки. Используя психотропные вещества, гипноз и йогические практики, мистики могут общаться с миром духов, получая из него информацию или заключая сделки с его обитателями.
         /// 2 - Псионика. Познание окружающего мира силой собственной мысли. Эмпатия, телепатия, ясновиденье, дальновиденье.
@@ -40,14 +40,14 @@ namespace Socium.Population
         /// 7 - Трансцендентность. Отсутствие привязки к физическом телу. Разум способен существовать  в нематериальной форме, при этом сохраняя все свои возможности воспринимать окружающую среду и воздействать на неё.
         /// 8 - Единое. Границы между индивидуальностями стираются, фактически всё сообщество является единым разумным существом, неизмеримо более могущественным, чем составляющие его отдельные личности сами по себе.
         /// </summary>
-        public int m_iMagicLimit = 0;
+        public int MagicLimit { get; set; } = 0;
 
         /// <summary>
         /// В обществе могут быть определены различные культурные нормы и обычаи для мужчини женщин.
         /// Важно: значения обычаев, ругулирующих отношения между полами (m_eGenderPriority, m_eSexRelations и m_eMarriage)
         /// должно обязательно совпадать во всех вариантах культуры независимо от пола.
         /// </summary>
-        public readonly Dictionary<Gender, Culture> m_cCulture = new Dictionary<Gender, Culture>();
+        public Dictionary<Gender, Culture> Culture { get; } = new Dictionary<Gender, Culture>();
 
         /// <summary>
         /// Культура "сильного" пола
@@ -56,10 +56,10 @@ namespace Socium.Population
         {
             get
             {
-                if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
-                    return m_cCulture[Gender.Female];
+                if (Culture[Gender.Male].Customs.Has(Customs.GenderPriority.Matriarchy))
+                    return Culture[Gender.Female];
 
-                return m_cCulture[Gender.Male];
+                return Culture[Gender.Male];
             }
         }
 
@@ -70,28 +70,23 @@ namespace Socium.Population
         {
             get
             {
-                if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
-                    return m_cCulture[Gender.Male];
+                if (Culture[Gender.Male].Customs.Has(Customs.GenderPriority.Matriarchy))
+                    return Culture[Gender.Male];
 
-                return m_cCulture[Gender.Female];
+                return Culture[Gender.Female];
             }
         }
 
         protected void FixSexCustoms()
         {
-            InferiorCulture.m_pCustoms.Accept(DominantCulture.m_pCustoms.ValueOf<Customs.MarriageType>());
-            InferiorCulture.m_pCustoms.Accept(DominantCulture.m_pCustoms.ValueOf<Customs.GenderPriority>());
-            InferiorCulture.m_pCustoms.Accept(DominantCulture.m_pCustoms.ValueOf<Customs.SexualOrientation>());
+            InferiorCulture.Customs.Accept(DominantCulture.Customs.ValueOf<Customs.MarriageType>());
+            InferiorCulture.Customs.Accept(DominantCulture.Customs.ValueOf<Customs.GenderPriority>());
+            InferiorCulture.Customs.Accept(DominantCulture.Customs.ValueOf<Customs.SexualOrientation>());
         }
 
-        public string m_sName = "Nameless";
+        public string Name { get; set; } = "Nameless";
 
-        protected List<LocationX> m_cSettlements = new List<LocationX>();
-
-        public List<LocationX> Settlements
-        {
-            get { return m_cSettlements; }
-        }
+        public List<LocationX> Settlements { get; } = new List<LocationX>();
 
         /// <summary>
         /// Returns most common weapon, used on that TL
@@ -101,39 +96,29 @@ namespace Socium.Population
         /// <returns></returns>
         public static string GetTechString(int iLevel, Customs.Science eProgress)
         {
-            string sTech = "stone weapons";
             switch (iLevel)
             {
                 case 0:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "obsidian weapons" : "stone weapons";
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "obsidian weapons" : "stone weapons";
                 case 1:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "bronze weapons" : eProgress == Customs.Science.Technophobia ? "stone weapons, rare iron weapons" : "iron weapons";
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "bronze weapons" : eProgress == Customs.Science.Technophobia ? "stone weapons, rare iron weapons" : "iron weapons";
                 case 2:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "repeating crossbows" : eProgress == Customs.Science.Technophobia ? "iron weapons, rare steel weapons" : "steel weapons";
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "repeating crossbows" : eProgress == Customs.Science.Technophobia ? "iron weapons, rare steel weapons" : "steel weapons";
                 case 3:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "multibarrel guns" : eProgress == Customs.Science.Technophobia ? "steel weapons, rare muskets" : "muskets";
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "multibarrel guns" : eProgress == Customs.Science.Technophobia ? "steel weapons, rare muskets" : "muskets";
                 case 4:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "lightning guns" : eProgress == Customs.Science.Technophobia ? "muskets, rare rifles" : "rifles";//railroads
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "lightning guns" : eProgress == Customs.Science.Technophobia ? "muskets, rare rifles" : "rifles";//railroads
                 case 5:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "smartguns" : eProgress == Customs.Science.Technophobia ? "rifles, rare submachine guns" : "submachine guns";//aviation
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "smartguns" : eProgress == Customs.Science.Technophobia ? "rifles, rare submachine guns" : "submachine guns";//aviation
                 case 6:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "mecha suits" : eProgress == Customs.Science.Technophobia ? "submachine guns, rare beam guns" : "beam guns";
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "mecha suits" : eProgress == Customs.Science.Technophobia ? "submachine guns, rare beam guns" : "beam guns";
                 case 7:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "nanites" : eProgress == Customs.Science.Technophobia ? "beam guns, rare desintegrators" : "desintegrators";//limited teleportation
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "nanites" : eProgress == Customs.Science.Technophobia ? "beam guns, rare desintegrators" : "desintegrators";//limited teleportation
                 case 8:
-                    sTech = eProgress == Customs.Science.Ingenuity ? "desintegrators, rare reality destructors" : "reality destructors";//unlimited teleportation
-                    break;
+                    return eProgress == Customs.Science.Ingenuity ? "desintegrators, rare reality destructors" : "reality destructors";//unlimited teleportation
             }
 
-            return sTech;
+            return "stone weapons";
         }
 
         /// <summary>
@@ -143,36 +128,27 @@ namespace Socium.Population
         /// <returns></returns>
         public static string GetMagicString(int iLevel)
         {
-            string sMagic = "none";
             switch (iLevel)
             {
                 case 1:
-                    sMagic = "mediums";
-                    break;
+                    return "mediums";
                 case 2:
-                    sMagic = "psionics";
-                    break;
+                    return "psionics";
                 case 3:
-                    sMagic = "supers";//animal empower?
-                    break;
+                    return "supers";//animal empower?
                 case 4:
-                    sMagic = "wizards";//portals
-                    break;
+                    return "wizards";//portals
                 case 5:
-                    sMagic = "demons";
-                    break;
+                    return "demons";
                 case 6:
-                    sMagic = "gods";//limited teleportation
-                    break;
+                    return "gods";//limited teleportation
                 case 7:
-                    sMagic = "ethereals";//unlimited teleportation
-                    break;
+                    return "ethereals";//unlimited teleportation
                 case 8:
-                    sMagic = "the One";
-                    break;
+                    return "the One";
             }
 
-            return sMagic;
+            return "none";
         }
 
         /// <summary>
@@ -182,23 +158,18 @@ namespace Socium.Population
         /// <returns></returns>
         public static string GetControlString(int iControl)
         {
-            string sControl = "Anarchic";
             switch (iControl)
             {
                 case 1:
-                    sControl = "Liberal";
-                    break;
+                    return "Liberal";
                 case 2:
-                    sControl = "Lawful";
-                    break;
+                    return "Lawful";
                 case 3:
-                    sControl = "Autocratic";
-                    break;
+                    return "Autocratic";
                 case 4:
-                    sControl = "Despotic";
-                    break;
+                    return "Despotic";
             }
-            return sControl;
+            return "Anarchic";
         }
 
         /// <summary>
@@ -207,11 +178,11 @@ namespace Socium.Population
         /// <returns></returns>
         public int GetEffectiveTech()
         {
-            int iMaxTech = m_iTechLevel;
+            int iMaxTech = TechLevel;
 
-            if (DominantCulture.m_pCustoms.Has(Customs.Science.Ingenuity))
+            if (DominantCulture.Customs.Has(Customs.Science.Ingenuity))
                 iMaxTech++;
-            else if (DominantCulture.m_pCustoms.Has(Customs.Science.Technophobia))
+            else if (DominantCulture.Customs.Has(Customs.Science.Technophobia))
                 iMaxTech--;
 
             if (iMaxTech > 8)
@@ -224,7 +195,7 @@ namespace Socium.Population
 
         public override string ToString()
         {
-            return string.Format("(C{1}/{2}T{3}M{4}) - {0}", m_sName, m_cCulture[Gender.Male].m_iProgressLevel, m_cCulture[Gender.Female].m_iProgressLevel, m_iTechLevel, m_iMagicLimit);
+            return string.Format("(C{1}/{2}T{3}M{4}) - {0}", Name, Culture[Gender.Male].ProgressLevel, Culture[Gender.Female].ProgressLevel, TechLevel, MagicLimit);
         }
 
         protected Person.Skill m_eMostRespectedSkill;
@@ -247,13 +218,13 @@ namespace Socium.Population
             get { return m_eLeastRespectedSkill; }
         }
 
-        public Dictionary<ProfessionInfo, Customs.GenderPriority> m_cGenderProfessionPreferences = new Dictionary<ProfessionInfo, Customs.GenderPriority>();
+        public Dictionary<ProfessionInfo, Customs.GenderPriority> GenderProfessionPreferences { get; } = new Dictionary<ProfessionInfo, Customs.GenderPriority>();
 
         public void CalculateGenderProfessionPreferences()
         {
             foreach (var pProfession in ProfessionInfo.s_cAllProfessions)
             {
-                m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
+                GenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
             }
         }
 
@@ -297,7 +268,7 @@ namespace Socium.Population
         public Customs.GenderPriority GetProfessionGenderPriority(ProfessionInfo pProfession)
         {
             // По умолчанию - гендерные предпочтения профессии совпадают представлениями сообщества о "сильном" поле.
-            var eGenderPriority = DominantCulture.m_pCustoms.ValueOf<Customs.GenderPriority>();
+            var eGenderPriority = DominantCulture.Customs.ValueOf<Customs.GenderPriority>();
 
             // но, если это подчинённая должность...
             if (!pProfession.m_bMaster)
@@ -306,7 +277,7 @@ namespace Socium.Population
                 if (pProfession.m_cSkills[Person.Skill.Charm] != ProfessionInfo.SkillLevel.None)
                 {
                     // ...то в гетеросексуальном обществе она считается более подходящей противоположному полу
-                    if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.SexualOrientation.Heterosexual))
+                    if (Culture[Gender.Male].Customs.Has(Customs.SexualOrientation.Heterosexual))
                     {
                         if (eGenderPriority == Customs.GenderPriority.Patriarchy)
                             eGenderPriority = Customs.GenderPriority.Matriarchy;
@@ -314,8 +285,10 @@ namespace Socium.Population
                             eGenderPriority = Customs.GenderPriority.Patriarchy;
                     }
                     // ...а в бисексуальном обществе - такая профессия так же бисексуальна
-                    else if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.SexualOrientation.Bisexual))
+                    else if (Culture[Gender.Male].Customs.Has(Customs.SexualOrientation.Bisexual))
+                    {
                         eGenderPriority = Customs.GenderPriority.Genders_equality;
+                    }
                 }
                 else
                 {
@@ -342,15 +315,14 @@ namespace Socium.Population
         /// <returns></returns>
         internal virtual Customs.GenderPriority GetMinorGender()
         {
-            var eGenderPriority = m_cCulture[Gender.Male].m_pCustoms.ValueOf<Customs.GenderPriority>();
+            var eGenderPriority = Culture[Gender.Male].Customs.ValueOf<Customs.GenderPriority>();
 
             if (eGenderPriority == Customs.GenderPriority.Patriarchy)
-                eGenderPriority = Customs.GenderPriority.Matriarchy;
+                return Customs.GenderPriority.Matriarchy;
             else if (eGenderPriority == Customs.GenderPriority.Matriarchy)
-                eGenderPriority = Customs.GenderPriority.Patriarchy;
+                return Customs.GenderPriority.Patriarchy;
 
-            return eGenderPriority;
-
+            return Customs.GenderPriority.Genders_equality;
         }
 
         protected abstract BuildingInfo ChooseNewBuilding(Settlement pSettlement);

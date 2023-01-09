@@ -41,7 +41,7 @@ namespace GeneLab.Genetix
         /// </summary>
         Facetted
     }
-    
+
     public class EyesGenetix : GenetixBase
     {
         /// <summary>
@@ -148,9 +148,7 @@ namespace GeneLab.Genetix
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            EyesGenetix pAnother = pOther as EyesGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is EyesGenetix pAnother))
                 return false;
 
             return EyesPlacement == pAnother.EyesPlacement &&
@@ -174,7 +172,7 @@ namespace GeneLab.Genetix
             EyesType = eEyesType;
             EyesCount = iEyesCount;
         }
-        
+
         public GenetixBase MutateRace()
         {
             if (Rnd.OneChanceFrom(10))

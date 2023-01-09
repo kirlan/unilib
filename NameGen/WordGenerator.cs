@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace NameGen
 {
-    public class WordGenerator
+    public static class WordGenerator
     {
         public enum Language
         {
@@ -29,7 +29,7 @@ namespace NameGen
 
         internal static Dictionary<Language, Dictionary<char, string[]>> Rules
         {
-            get 
+            get
             {
                 if (s_cRules == null)
                 {

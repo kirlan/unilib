@@ -127,7 +127,7 @@ namespace Socium
                     pXml.GetStringAttribute(pSubNode, "name", ref sRaceName);
 
                     foreach (Race pRace in Race.m_cAllRaces)
-                        if (pRace.m_sName == sRaceName)
+                        if (pRace.Name == sRaceName)
                         {
                             m_cNatives.Add(pRace);
                             break;
@@ -139,7 +139,7 @@ namespace Socium
                     pXml.GetStringAttribute(pSubNode, "name", ref sRaceName);
 
                     foreach (Race pRace in Race.m_cAllRaces)
-                        if (pRace.m_sName == sRaceName)
+                        if (pRace.Name == sRaceName)
                         {
                             m_cInvaders.Add(pRace);
                             break;
@@ -172,13 +172,13 @@ namespace Socium
             foreach (Race pRace in m_cNatives)
             {
                 XmlNode pRaceNode = pXml.CreateNode(pEpochNode, "Native");
-                pXml.AddAttribute(pRaceNode, "name", pRace.m_sName);
+                pXml.AddAttribute(pRaceNode, "name", pRace.Name);
             }
 
             foreach (Race pRace in m_cInvaders)
             {
                 XmlNode pRaceNode = pXml.CreateNode(pEpochNode, "Invader");
-                pXml.AddAttribute(pRaceNode, "name", pRace.m_sName);
+                pXml.AddAttribute(pRaceNode, "name", pRace.Name);
             }
         }
     }

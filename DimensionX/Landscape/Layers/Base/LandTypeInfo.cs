@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Collections.Immutable;
 
 namespace LandscapeGeneration
 {
@@ -64,12 +65,12 @@ namespace LandscapeGeneration
     }
 
     public interface ILandTypeInfoExt
-    { 
+    {
     }
 
     public class LandTypeInfo
     {
-        public readonly Dictionary<Type, dynamic> m_cInfoLayers = new Dictionary<Type, dynamic>();
+        private readonly Dictionary<Type, dynamic> m_cInfoLayers = new Dictionary<Type, dynamic>();
 
         public LandTypeInfo AddLayer<T>(T value) where T : ILandTypeInfoExt
         {
@@ -83,93 +84,99 @@ namespace LandscapeGeneration
             return m_cInfoLayers[typeof(T)];
         }
 
-        public LandType m_eType;
+        public LandType Type { get; }
 
-        public int m_iMovementCost = 100;
+        public int MovementCost { get; private set; }  = 100;
 
-        public Environment m_eEnvironment = Environment.None;
+        public Environment Environment { get; private set; } = Environment.None;
 
-        public string m_sName;
+        public string Name { get; private set; }
 
-        public float m_fElevation = 0;
+        public float Elevation { get; private set; } = 0;
+
+        public LandTypeInfo(LandType eType)
+        {
+            Type = eType;
+        }
 
         public void Init(int iMovementCost, float fElevation, Environment eEnvironment, string sName)
         {
-            m_iMovementCost = iMovementCost;
-            m_fElevation = fElevation;
-            m_eEnvironment = eEnvironment;
-            m_sName = sName;
+            MovementCost = iMovementCost;
+            Elevation = fElevation;
+            Environment = eEnvironment;
+            Name = sName;
         }
     }
 
-    public class LandTypes
+    public sealed class LandTypes
     {
-        public Dictionary<LandType, LandTypeInfo> m_pLandTypes = new Dictionary<LandType, LandTypeInfo>();
+        public ImmutableDictionary<LandType, LandTypeInfo> Lands { get; }
 
-        public static LandTypes m_pInstance = new LandTypes();
+        public static LandTypes Instance { get; } = new LandTypes();
 
         private LandTypes()
         {
+            Dictionary<LandType, LandTypeInfo> cLands = new Dictionary<LandType, LandTypeInfo>();
             foreach (LandType eType in Enum.GetValues(typeof(LandType)))
             {
-                m_pLandTypes[eType] = new LandTypeInfo();
-                m_pLandTypes[eType].m_eType = eType;
+                cLands[eType] = new LandTypeInfo(eType);
             }
+            Lands = cLands.ToImmutableDictionary();
         }
 
         public static LandTypeInfo Desert
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Desert]; }
+            get { return Instance.Lands[LandType.Desert]; }
         }
 
         public static LandTypeInfo Forest
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Forest]; }
+            get { return Instance.Lands[LandType.Forest]; }
         }
 
         public static LandTypeInfo Jungle
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Jungle]; }
+            get { return Instance.Lands[LandType.Jungle]; }
         }
 
         public static LandTypeInfo Mountains
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Mountains]; }
+            get { return Instance.Lands[LandType.Mountains]; }
         }
 
         public static LandTypeInfo Plains
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Plains]; }
+            get { return Instance.Lands[LandType.Plains]; }
         }
 
         public static LandTypeInfo Savanna
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Savanna]; }
+            get { return Instance.Lands[LandType.Savanna]; }
         }
 
         public static LandTypeInfo Ocean
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Ocean]; }
+            get { return Instance.Lands[LandType.Ocean]; }
         }
 
         public static LandTypeInfo Coastral
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Coastral]; }
+            get { return Instance.Lands[LandType.Coastral]; }
         }
 
         public static LandTypeInfo Swamp
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Swamp]; }
+            get { return Instance.Lands[LandType.Swamp]; }
         }
 
         public static LandTypeInfo Taiga
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Taiga]; }
+            get { return Instance.Lands[LandType.Taiga]; }
         }
 
         public static LandTypeInfo Tundra
         {
-            get { return m_pInstance.m_pLandTypes[LandType.Tundra]; }
+            get { return Instance.Lands[LandType.Tundra]; }
         }
     }
 }

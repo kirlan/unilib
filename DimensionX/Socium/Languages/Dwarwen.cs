@@ -6,16 +6,16 @@ using NameGen;
 
 namespace Socium.Languages
 {
-    class Dwarwen:Language
+    internal class Dwarwen: Language
     {
-        private Confluxer m_pNations;
+        private readonly Confluxer m_pNations;
 
         #region ILanguage Members
 
         public Dwarwen()
             : base(NameGenerator.Language.Dwarven)
-        { 
-            string sNation = "grumdek kajulg ugun lamak tangit azkag ilraz khaz tarag baraz zahag tarak karar khavit varak marag dornat hringr jordukat isakaz vanag brizagul kurzr drakhaz gedag nomak khuzd dekhaz taud talenag varlosag khazat brizag kheled gabild dekhum hunkaz kestaz rasuh dornat duzkak tarkaz varak gedat danaz zarag karak zongag marnag keluz khuz";
+        {
+            const string sNation = "grumdek kajulg ugun lamak tangit azkag ilraz khaz tarag baraz zahag tarak karar khavit varak marag dornat hringr jordukat isakaz vanag brizagul kurzr drakhaz gedag nomak khuzd dekhaz taud talenag varlosag khazat brizag kheled gabild dekhum hunkaz kestaz rasuh dornat duzkak tarkaz varak gedat danaz zarag karak zongag marnag keluz khuz";
             m_pNations = new Confluxer(sNation, 2);
         }
         

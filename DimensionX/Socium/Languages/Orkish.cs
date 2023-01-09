@@ -6,7 +6,7 @@ using NameGen;
 
 namespace Socium.Languages
 {
-    class Orkish:Language
+    internal class Orkish:Language
     {
         public Orkish()
             : base(NameGenerator.Language.Orcish)

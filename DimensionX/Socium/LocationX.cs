@@ -78,17 +78,17 @@ namespace Socium
             }
         }
 
-        public bool HaveEstate(Estate.Position eEstate)
+        public bool HaveEstate(Estate.SocialRank eEstate)
         {
             StateSociety pOwnerSociety = OwnerState.m_pSociety;
 
-            if (m_pSettlement != null && pOwnerSociety.m_cEstates.ContainsKey(eEstate))
+            if (m_pSettlement != null && pOwnerSociety.Estates.ContainsKey(eEstate))
             {
-                Estate pEstate = pOwnerSociety.m_cEstates[eEstate];
+                Estate pEstate = pOwnerSociety.Estates[eEstate];
 
                 foreach (Building pBuilding in m_pSettlement.m_cBuildings)
                 {
-                    if (pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pOwnerProfession))
+                    if (pEstate.GenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pOwnerProfession))
                     {
                         List<Person> cOwners = new List<Person>();
                         foreach (Person pDweller in pBuilding.m_cPersons)
@@ -99,7 +99,7 @@ namespace Socium
                             return true;
                     }
 
-                    if (pEstate.m_cGenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pWorkersProfession))
+                    if (pEstate.GenderProfessionPreferences.ContainsKey(pBuilding.m_pInfo.m_pWorkersProfession))
                     {
                         List<Person> cWorkers = new List<Person>();
                         foreach (Person pDweller in pBuilding.m_cPersons)
@@ -124,7 +124,7 @@ namespace Socium
             if (m_pBuilding != null)
                 return string.Format("{0} {1}", m_pBuilding.ToString(), base.ToString());
 
-            return string.Format("{0} {1}", Origin.m_eType, base.ToString());
+            return string.Format("{0} {1}", Origin.Landmark, base.ToString());
         }
 
         //public void Reset()

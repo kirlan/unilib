@@ -7,7 +7,7 @@ using System.Drawing;
 namespace LandscapeGeneration.PathFind
 {
     public enum RoadQuality
-    { 
+    {
         /// <summary>
         /// Дороги нет
         /// </summary>
@@ -28,7 +28,7 @@ namespace LandscapeGeneration.PathFind
 
     //Вообще надо это делать отдельным классом, ИМХО
     public enum Transport
-    { 
+    {
         /// <summary>
         /// Пешком. 3,5 км/ч, 8 часов идти, итого ~25 км. в день.
         /// </summary>
@@ -96,7 +96,7 @@ namespace LandscapeGeneration.PathFind
         /// <summary>
         /// Океанское парусное судно, так же первые пароходы. 30 км/ч, 24 часа = ~600 км. в сутки
         /// </summary>
-        Oceanship, 
+        Oceanship,
         /// <summary>
         /// Современный океанский лайнер. 60 км/ч, 24 часа = ~1500 км. в сутки
         /// </summary>
@@ -112,40 +112,12 @@ namespace LandscapeGeneration.PathFind
     /// </summary>
     public class TransportationLinkBase
     {
-        private float m_fBaseCost;
-
-        private float m_fFinalCost;
-
-        //private float m_fMoveCostModifer = 1;
-
-        //public float MoveCostModifer
-        //{
-        //    get { return m_fMoveCostModifer; }
-        //}
-
-        private RoadQuality m_eRoadLevel = RoadQuality.None;
+        private readonly float m_fBaseCost;
 
         /// <summary>
         /// Уровень построенной дороги. Используется только при отрисовке карты.
         /// </summary>
-        public RoadQuality RoadLevel
-        {
-            get 
-            {
-                return m_eRoadLevel;
-                //switch (m_eRoadLevel)
-                //{ 
-                //    case 1:
-                //        return RoadQuality.Country;
-                //    case 2:
-                //        return RoadQuality.Normal;
-                //    case 3:
-                //        return RoadQuality.Good;
-                //    default:
-                //        return RoadQuality.None;
-                //}
-            }
-        }
+        public RoadQuality RoadLevel { get; private set; } = RoadQuality.None;
 
         /// <summary>
         /// Построить дорогу на этом участке
@@ -153,99 +125,82 @@ namespace LandscapeGeneration.PathFind
         /// <param name="eLevel">Уровень дороги: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
         public void BuildRoad(RoadQuality eLevel)
         {
-            if (eLevel <= m_eRoadLevel)
+            if (eLevel <= RoadLevel)
                 return;
 
-            m_eRoadLevel = eLevel;
-            //switch (iLevel)
-            //{
-            //    case 1:
-            //        m_fMoveCostModifer = 0.25f;
-            //        break;
-            //    case 2:
-            //        m_fMoveCostModifer = 0.10f;
-            //        break;
-            //    case 3:
-            //        m_fMoveCostModifer = 0.01f;
-            //        break;
-            //}
-
-            //if (m_bSea)
-            //    m_fMoveCostModifer *= m_fMoveCostModifer;
+            RoadLevel = eLevel;
 
             RecalcFinalCost();
         }
 
         public void ClearRoad()
         {
-            m_eRoadLevel = 0;
-            //m_fMoveCostModifer = 1;
+            RoadLevel = 0;
             RecalcFinalCost();
         }
 
         private void RecalcFinalCost()
         {
             if (m_bEmbark)
-//                m_fFinalCost = (float)Math.Pow(m_fBaseCost + 20000, 1.0 / (m_eRoadLevel + 1));
-                switch(m_eRoadLevel)
+            {
+                const float fEmbarkCost = 20000;
+                switch (RoadLevel)
                 {
                     case RoadQuality.None:
-                        m_fFinalCost = m_fBaseCost + 20000;
+                        MovementCost = m_fBaseCost + fEmbarkCost;
                         break;
                     case RoadQuality.Country:
-                        m_fFinalCost = (float)((m_fBaseCost + 20000) * 0.8f);
+                        MovementCost = (m_fBaseCost + fEmbarkCost) * 0.8f;
                         break;
                     case RoadQuality.Normal:
-                        m_fFinalCost = (float)((m_fBaseCost + 20000) * 0.5f);
+                        MovementCost = (m_fBaseCost + fEmbarkCost) * 0.5f;
                         break;
                     case RoadQuality.Good:
-                        m_fFinalCost = (float)((m_fBaseCost + 20000) * 0.2f);
+                        MovementCost = (m_fBaseCost + fEmbarkCost) * 0.2f;
                         break;
                 }
+            }
+            else if (m_bSea)
+            {
+                MovementCost = RoadLevel > 0 ? m_fBaseCost * 0.8f : m_fBaseCost;
+            }
             else
-                if(m_bSea)
-                    m_fFinalCost = m_eRoadLevel > 0 ? m_fBaseCost * 0.8f : m_fBaseCost;
-                else
-                    switch (m_eRoadLevel)
-                    {
-                        case RoadQuality.None:
-                            m_fFinalCost = m_fBaseCost;
-                            break;
-                        case RoadQuality.Country:
-                            m_fFinalCost = (float)(m_fBaseCost * 0.8f);
-                            break;
-                        case RoadQuality.Normal:
-                            m_fFinalCost = (float)(m_fBaseCost * 0.5f);
-                            break;
-                        case RoadQuality.Good:
-                            m_fFinalCost = (float)(m_fBaseCost * 0.2f);
-                            break;
-                    }
+            {
+                switch (RoadLevel)
+                {
+                    case RoadQuality.None:
+                        MovementCost = m_fBaseCost;
+                        break;
+                    case RoadQuality.Country:
+                        MovementCost = m_fBaseCost * 0.8f;
+                        break;
+                    case RoadQuality.Normal:
+                        MovementCost = m_fBaseCost * 0.5f;
+                        break;
+                    case RoadQuality.Good:
+                        MovementCost = m_fBaseCost * 0.2f;
+                        break;
+                }
+            }
 
             if (m_bRuins)
-                m_fFinalCost *= 10;
+                MovementCost *= 10;
         }
 
-        public float MovementCost
-        {
-            get
-            {
-                return m_fFinalCost;
-            }
-        }
+        public float MovementCost { get; private set; }
 
         /// <summary>
         /// Дорога перекрыта. Нужно ТОЛЬКО для постройки внутригосударственных дорог.
         /// </summary>
-        public bool m_bClosed = false;
+        public bool IsClosed { get; set; } = false;
 
         private bool m_bSea = false;
 
         public bool Sea
         {
             get { return m_bSea; }
-            set 
-            { 
+            set
+            {
                 m_bSea = value;
                 RecalcFinalCost();
             }
@@ -256,8 +211,8 @@ namespace LandscapeGeneration.PathFind
         public bool Embark
         {
             get { return m_bEmbark; }
-            set 
-            { 
+            set
+            {
                 m_bEmbark = value;
                 RecalcFinalCost();
             }
@@ -268,14 +223,14 @@ namespace LandscapeGeneration.PathFind
         public bool Ruins
         {
             get { return m_bRuins; }
-            set 
-            { 
+            set
+            {
                 m_bRuins = value;
                 RecalcFinalCost();
             }
         }
 
-        public VoronoiVertex[] m_aPoints = new VoronoiVertex[3];
+        public VoronoiVertex[] Points { get; } = new VoronoiVertex[3];
 
         private static float GetDist(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
         {
@@ -284,8 +239,8 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(Location pLoc1, Location pLoc2, float fCycleShift)
         {
-            m_aPoints[0] = pLoc1;
-            m_aPoints[2] = pLoc2;
+            Points[0] = pLoc1;
+            Points[2] = pLoc2;
 
             VoronoiVertex point2 = new VoronoiVertex(pLoc2.X, pLoc2.Y);
             if (Math.Abs(pLoc1.X - pLoc2.X) > fCycleShift / 2)
@@ -298,41 +253,39 @@ namespace LandscapeGeneration.PathFind
 
             VoronoiEdge pLine = pLoc1.BorderWith[pLoc2][0];
 
-            m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+            Points[1] = new VoronoiVertex((pLine.Point1.X + pLine.Point2.X) / 2, (pLine.Point1.Y + pLine.Point2.Y) / 2);
 
-            float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
-            float fDist2 = GetDist(point2, m_aPoints[1]);
+            float fDist1 = GetDist(Points[0], Points[1]);
+            float fDist2 = GetDist(point2, Points[1]);
 
-            float fDist11 = GetDist(m_aPoints[0], pLine.m_pPoint1);
-            float fDist21 = GetDist(point2, pLine.m_pPoint1);
+            float fDist11 = GetDist(Points[0], pLine.Point1);
+            float fDist21 = GetDist(point2, pLine.Point1);
 
-            float fDist12 = GetDist(m_aPoints[0], pLine.m_pPoint2);
-            float fDist22 = GetDist(point2, pLine.m_pPoint2);
+            float fDist12 = GetDist(Points[0], pLine.Point2);
+            float fDist22 = GetDist(point2, pLine.Point2);
 
             if (fDist1 + fDist2 < fDist11 + fDist21 &&
                 fDist1 + fDist2 < fDist12 + fDist22)
             {
-                {
-                    m_aPoints[1].X = (m_aPoints[0].X + point2.X) / 2;
-                    m_aPoints[1].Y = (m_aPoints[0].Y + point2.Y) / 2;
-                }
+                Points[1].X = (Points[0].X + point2.X) / 2;
+                Points[1].Y = (Points[0].Y + point2.Y) / 2;
             }
             else
             {
                 if (fDist11 + fDist21 < fDist12 + fDist22)
                 {
-                    m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint1.X) / 3;
-                    m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint1.Y) / 3;
+                    Points[1].X = (Points[1].X + 2 * pLine.Point1.X) / 3;
+                    Points[1].Y = (Points[1].Y + 2 * pLine.Point1.Y) / 3;
                 }
                 else
                 {
-                    m_aPoints[1].X = (m_aPoints[1].X + 2 * pLine.m_pPoint2.X) / 3;
-                    m_aPoints[1].Y = (m_aPoints[1].Y + 2 * pLine.m_pPoint2.Y) / 3;
+                    Points[1].X = (Points[1].X + 2 * pLine.Point2.X) / 3;
+                    Points[1].Y = (Points[1].Y + 2 * pLine.Point2.Y) / 3;
                 }
             }
 
-            float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
-            float fDist2final = GetDist(point2, m_aPoints[1]);
+            float fDist1final = GetDist(Points[0], Points[1]);
+            float fDist2final = GetDist(point2, Points[1]);
 
             m_fBaseCost = fDist1final * pLoc1.GetMovementCost() + fDist2final * pLoc2.GetMovementCost();
             RecalcFinalCost();
@@ -340,8 +293,8 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(Land pLand1, Land pLand2, float fCycleShift)
         {
-            m_aPoints[0] = pLand1;
-            m_aPoints[2] = pLand2;
+            Points[0] = pLand1;
+            Points[2] = pLand2;
 
             VoronoiVertex point2 = new VoronoiVertex(pLand2.X, pLand2.Y);
             if (Math.Abs(pLand1.X - pLand2.X) > fCycleShift / 2)
@@ -352,26 +305,26 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            VoronoiEdge pBestLine = null;
-            float fShortest = float.MaxValue;
+            float fMinDist = float.MaxValue;
             VoronoiEdge[] cLines = pLand1.BorderWith[pLand2].ToArray();
+            VoronoiEdge pBestLine = cLines[0];
             foreach (var pLine in cLines)
             {
-                m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+                Points[1] = new VoronoiVertex((pLine.Point1.X + pLine.Point2.X) / 2, (pLine.Point1.Y + pLine.Point2.Y) / 2);
 
-                float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
-                float fDist2 = GetDist(point2, m_aPoints[1]);
+                float fDist1 = GetDist(Points[0], Points[1]);
+                float fDist2 = GetDist(point2, Points[1]);
 
-                if (fDist1 + fDist2 < fShortest)
+                if (fDist1 + fDist2 < fMinDist)
                 {
-                    fShortest = fDist1 + fDist2;
+                    fMinDist = fDist1 + fDist2;
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new VoronoiVertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
+            Points[1] = new VoronoiVertex((pBestLine.Point1.X + pBestLine.Point2.X) / 2, (pBestLine.Point1.Y + pBestLine.Point2.Y) / 2);
 
-            float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
-            float fDist2final = GetDist(point2, m_aPoints[1]); 
+            float fDist1final = GetDist(Points[0], Points[1]);
+            float fDist2final = GetDist(point2, Points[1]);
 
             m_fBaseCost = fDist1final * pLand1.GetMovementCost() + fDist2final * pLand2.GetMovementCost();
             RecalcFinalCost();
@@ -379,8 +332,8 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(LandMass pLandMass1, LandMass pLandMass2, float fCycleShift)
         {
-            m_aPoints[0] = pLandMass1;
-            m_aPoints[2] = pLandMass2;
+            Points[0] = pLandMass1;
+            Points[2] = pLandMass2;
 
             VoronoiVertex point2 = new VoronoiVertex(pLandMass2.X, pLandMass2.Y);
             if (Math.Abs(pLandMass1.X - pLandMass2.X) > fCycleShift / 2)
@@ -391,15 +344,15 @@ namespace LandscapeGeneration.PathFind
                     point2.X += fCycleShift;
             }
 
-            VoronoiEdge pBestLine = null;
             float fShortest = float.MaxValue;
             VoronoiEdge[] cLines = pLandMass1.BorderWith[pLandMass2].ToArray();
+            VoronoiEdge pBestLine = cLines[0];
             foreach (var pLine in cLines)
             {
-                m_aPoints[1] = new VoronoiVertex((pLine.m_pPoint1.X + pLine.m_pPoint2.X) / 2, (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2);
+                Points[1] = new VoronoiVertex((pLine.Point1.X + pLine.Point2.X) / 2, (pLine.Point1.Y + pLine.Point2.Y) / 2);
 
-                float fDist1 = GetDist(m_aPoints[0], m_aPoints[1]);
-                float fDist2 = GetDist(point2, m_aPoints[1]); 
+                float fDist1 = GetDist(Points[0], Points[1]);
+                float fDist2 = GetDist(point2, Points[1]);
 
                 if (fDist1 + fDist2 < fShortest)
                 {
@@ -407,10 +360,10 @@ namespace LandscapeGeneration.PathFind
                     pBestLine = pLine;
                 }
             }
-            m_aPoints[1] = new VoronoiVertex((pBestLine.m_pPoint1.X + pBestLine.m_pPoint2.X) / 2, (pBestLine.m_pPoint1.Y + pBestLine.m_pPoint2.Y) / 2);
+            Points[1] = new VoronoiVertex((pBestLine.Point1.X + pBestLine.Point2.X) / 2, (pBestLine.Point1.Y + pBestLine.Point2.Y) / 2);
 
-            float fDist1final = GetDist(m_aPoints[0], m_aPoints[1]);
-            float fDist2final = GetDist(point2, m_aPoints[1]);
+            float fDist1final = GetDist(Points[0], Points[1]);
+            float fDist2final = GetDist(point2, Points[1]);
 
             m_fBaseCost = fDist1final * pLandMass1.GetMovementCost() + fDist2final * pLandMass2.GetMovementCost();
             RecalcFinalCost();
@@ -418,8 +371,7 @@ namespace LandscapeGeneration.PathFind
 
         public TransportationLinkBase(TransportationNode[] aPath)
         {
-            List<VoronoiVertex> cPoints = new List<VoronoiVertex>();
-            cPoints.Add(aPath[0]);
+            List<VoronoiVertex> cPoints = new List<VoronoiVertex> { aPath[0] };
 
             m_fBaseCost = 0;
 
@@ -429,15 +381,15 @@ namespace LandscapeGeneration.PathFind
                 if (pLastNode != null)
                 {
                     TransportationLinkBase pLink = pLastNode.Links[pNode];
-                    if (pLink.m_aPoints[0] == pLastNode)
+                    if (pLink.Points[0] == pLastNode)
                     {
-                        for (int i = 1; i < pLink.m_aPoints.Length; i++)
-                            cPoints.Add(pLink.m_aPoints[i]);
+                        for (int i = 1; i < pLink.Points.Length; i++)
+                            cPoints.Add(pLink.Points[i]);
                     }
                     else
                     {
-                        for (int i = pLink.m_aPoints.Length - 2; i >= 0; i--)
-                            cPoints.Add(pLink.m_aPoints[i]);
+                        for (int i = pLink.Points.Length - 2; i >= 0; i--)
+                            cPoints.Add(pLink.Points[i]);
                     }
 
                     m_fBaseCost += pLink.m_fBaseCost;
@@ -446,10 +398,8 @@ namespace LandscapeGeneration.PathFind
                 pLastNode = pNode;
             }
 
-            m_aPoints = cPoints.ToArray();
+            Points = cPoints.ToArray();
             RecalcFinalCost();
         }
-
     }
-
 }

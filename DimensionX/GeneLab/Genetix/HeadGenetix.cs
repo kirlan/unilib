@@ -55,7 +55,7 @@ namespace GeneLab.Genetix
     }
 
     public enum Horns
-    { 
+    {
         /// <summary>
         /// без рогов
         /// </summary>
@@ -192,15 +192,14 @@ namespace GeneLab.Genetix
         {
             get { return new HeadGenetix(1, NeckLength.ShortRotary, HeadForm.Hammer, Horns.None); }
         }
-        
 
-        public int HeadsCount { get; private set; } = 1;
+        public int HeadsCount { get; } = 1;
 
         public NeckLength NeckLength { get; private set; } = NeckLength.Short;
 
         public HeadForm HeadForm { get; private set; } = HeadForm.Human;
 
-        public Horns Horns { get; private set; } = Horns.None; 
+        public Horns Horns { get; private set; } = Horns.None;
 
         public bool IsIdentical(GenetixBase pOther)
         {

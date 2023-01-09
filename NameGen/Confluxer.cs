@@ -16,7 +16,7 @@ namespace NameGen
     /// </summary>
     public class Confluxer
     {
-        class Voxel
+        private sealed class Voxel
         {
             public string m_sPair;
             public char m_sNext;
@@ -36,13 +36,13 @@ namespace NameGen
             }
         }
 
-        private Dictionary<char, List<Voxel>> m_cDictionary = new Dictionary<char, List<Voxel>>();
-        private Dictionary<char, List<Voxel>> m_cDictionaryStart = new Dictionary<char, List<Voxel>>();
-        private Dictionary<char, List<Voxel>> m_cDictionaryFinish = new Dictionary<char, List<Voxel>>();
+        private readonly Dictionary<char, List<Voxel>> m_cDictionary = new Dictionary<char, List<Voxel>>();
+        private readonly Dictionary<char, List<Voxel>> m_cDictionaryStart = new Dictionary<char, List<Voxel>>();
+        private readonly Dictionary<char, List<Voxel>> m_cDictionaryFinish = new Dictionary<char, List<Voxel>>();
 
-        private Dictionary<int, int> m_cLengthProbability = new Dictionary<int,int>();
+        private readonly Dictionary<int, int> m_cLengthProbability = new Dictionary<int,int>();
 
-        private int m_iSize = 2;
+        private readonly int m_iSize;
 
         public Confluxer(string sDictionary, int iSize)
         {
@@ -119,7 +119,7 @@ namespace NameGen
 
             char iKey = Rnd.Get(m_cDictionaryStart.Keys);
             Voxel pVoxel = m_cDictionaryStart[iKey][Rnd.Get(m_cDictionaryStart[iKey].Count)];
-            string sWord = pVoxel.m_sPair;
+            StringBuilder sWord = new StringBuilder(pVoxel.m_sPair);
             while (sWord.Length < iLength - m_iSize || !m_cDictionaryFinish.ContainsKey(pVoxel.m_sNext))
             {
                 if (!m_cDictionary.ContainsKey(pVoxel.m_sNext))
@@ -132,7 +132,7 @@ namespace NameGen
                 }
                 while (pNextVoxel.m_sPair == pVoxel.m_sPair);
 
-                sWord += pNextVoxel.m_sPair;
+                sWord.Append(pNextVoxel.m_sPair);
                 
                 pVoxel = pNextVoxel;
             }
@@ -140,10 +140,10 @@ namespace NameGen
             if (m_cDictionaryFinish.ContainsKey(pVoxel.m_sNext))
             {
                 Voxel pNextVoxel = m_cDictionaryFinish[pVoxel.m_sNext][Rnd.Get(m_cDictionaryFinish[pVoxel.m_sNext].Count)];
-                sWord += pNextVoxel.m_sPair;
+                sWord.Append(pNextVoxel.m_sPair);
             }
 
-            return Capitalize(sWord);
+            return Capitalize(sWord.ToString());
         }
     }
 }

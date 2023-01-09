@@ -7,7 +7,7 @@ using Random;
 namespace GeneLab.Genetix
 {
     public enum WingsCount
-    { 
+    {
         /// <summary>
         /// безкрылый
         /// </summary>
@@ -23,7 +23,7 @@ namespace GeneLab.Genetix
     }
 
     public enum WingsType
-    { 
+    {
         /// <summary>
         /// оперённые крылья как у птиц
         /// </summary>
@@ -101,7 +101,7 @@ namespace GeneLab.Genetix
 
             return (WingsCount == WingsCount.Dipterous ? "pair" : "2 pairs") + " of " + sWings;
         }
-        
+
         /// <summary>
         /// no wings
         /// </summary>
@@ -155,17 +155,17 @@ namespace GeneLab.Genetix
         public WingsType WingsType { get; private set; } = WingsType.Feathered;
 
         public WingsForce WingsForce { get; private set; } = WingsForce.Flying;
-        
+
         public bool IsIdentical(GenetixBase pOther)
         {
-            WingsGenetix pAnother = pOther as WingsGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is WingsGenetix pAnother))
                 return false;
 
             if (WingsCount == WingsCount.None &&
                 pAnother.WingsCount == WingsCount.None)
+            {
                 return true;
+            }
 
             return WingsCount == pAnother.WingsCount &&
                 WingsType == pAnother.WingsType &&
@@ -191,7 +191,7 @@ namespace GeneLab.Genetix
             if (WingsType == WingsType.Tentacles || WingsCount == WingsCount.None)
                 WingsForce = WingsForce.None;
         }
-        
+
         public GenetixBase MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
@@ -204,7 +204,7 @@ namespace GeneLab.Genetix
                 int iChance = Rnd.Get(4);
                 if (WingsForce != WingsForce.None)
                     iChance = Rnd.Get(3);
-                    
+
                 switch (iChance)
                 {
                     case 0:
@@ -302,9 +302,7 @@ namespace GeneLab.Genetix
         {
             if (Rnd.OneChanceFrom(50))
             {
-                WingsGenetix pMutant = new WingsGenetix(this);
-
-                pMutant.WingsForce = (WingsForce)Rnd.Get(typeof(WingsForce));
+                WingsGenetix pMutant = new WingsGenetix(this) { WingsForce = (WingsForce)Rnd.Get(typeof(WingsForce)) };
 
                 if (pMutant.WingsType == WingsType.Tentacles || pMutant.WingsCount == WingsCount.None)
                     pMutant.WingsForce = WingsForce.None;

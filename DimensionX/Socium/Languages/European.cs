@@ -6,14 +6,14 @@ using NameGen;
 
 namespace Socium.Languages
 {
-    class European: Language
+    internal class European: Language
     {
-        private Confluxer m_pNations;
+        private readonly Confluxer m_pNations;
 
         public European()
             : base(NameGenerator.Language.European)
         {
-            string sNation = "italian faliscan latinish brython british french breton dalmatish corsican iberish spanish galician ligurish venetish catalan german cimbrish austrish bavarish octish albion belgish beron hobitish arnorish gondor elenian";
+            const string sNation = "italian faliscan latinish brython british french breton dalmatish corsican iberish spanish galician ligurish venetish catalan german cimbrish austrish bavarish octish albion belgish beron hobitish arnorish gondor elenian";
             m_pNations = new Confluxer(sNation, 2);
         }
 

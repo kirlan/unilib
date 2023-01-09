@@ -55,12 +55,12 @@ namespace Socium
             {
                 bool bBorder = false;
                 bool bMapBorder = false;
-                foreach (Location pLink in pLoc.m_aBorderWith)
+                foreach (Location pLink in pLoc.BorderWithKeys)
                 {
                     if (pLink.GetOwner() != pLoc.GetOwner())
                         bBorder = true;
 
-                    if (pLink.m_bBorder)
+                    if (pLink.IsBorder)
                         bMapBorder = true;
                 }
 
@@ -73,7 +73,7 @@ namespace Socium
                     pLocX.m_cRoads[RoadQuality.Country].Count > 0 ||
                     pLocX.m_cRoads[RoadQuality.Normal].Count > 0 ||
                     pLocX.m_cRoads[RoadQuality.Good].Count > 0 ||
-                    pLoc.m_bBorder ||
+                    pLoc.IsBorder ||
                     bMapBorder)
                     iChances = 0;
                 else
@@ -103,7 +103,7 @@ namespace Socium
             pLair.As<LocationX>().m_pBuilding = new BuildingStandAlone(eSize);
             //m_cLocations[iLair].m_sName = NameGenerator.GetAbstractName();
 
-            foreach (Location pLoc in pLair.m_aBorderWith)
+            foreach (Location pLoc in pLair.BorderWithKeys)
             {
                 if (pLoc.As<LocationX>().m_pBuilding == null)
                 {
@@ -136,7 +136,7 @@ namespace Socium
                 bool bBorder = false;
                 bool bMapBorder = false;
                 //определим, является ли эта локация пограничной с другой землёй или побережьем.
-                foreach (Location pLink in pLoc.m_aBorderWith)
+                foreach (Location pLink in pLoc.BorderWithKeys)
                 {
                     if (pLink.GetOwner() != pLoc.GetOwner())
                     {
@@ -145,7 +145,7 @@ namespace Socium
                             bCoast = true;
                     }
 
-                    if (pLink.m_bBorder)
+                    if (pLink.IsBorder)
                     {
                         bMapBorder = true;
                     }
@@ -173,7 +173,7 @@ namespace Socium
                     iChances = 0;
 
                 //если это край карты или географическая аномалия (горный пик, вулкан...) - тоже пролетаем.
-                if (pLoc.m_bBorder || pLoc.m_eType != LandmarkType.Empty)
+                if (pLoc.IsBorder || pLoc.Landmark != LandmarkType.Empty)
                     iChances = 0;
 
                 if(iChances > 0)
@@ -197,7 +197,7 @@ namespace Socium
                         bool bCoast = false;
                         bool bBorder = false;
                         //определим, является ли эта локация пограничной с другой землёй или побережьем.
-                        foreach (Location pLink in pLoc.m_aBorderWith)
+                        foreach (Location pLink in pLoc.BorderWithKeys)
                         {
                             if (pLink.GetOwner() != pLoc.GetOwner())
                             {
@@ -221,7 +221,7 @@ namespace Socium
                             iChances = 1;
 
                         //если это край карты - тоже пролетаем.
-                        if (pLoc.m_bBorder)
+                        if (pLoc.IsBorder)
                             iChances = 0;
 
                         if (iChances > 0)
@@ -245,7 +245,7 @@ namespace Socium
             var pTownX = pTown.As<LocationX>();
 
             //Построим город в выбранной локации.
-            pTownX.m_pSettlement = new Settlement(pInfo, m_pDominantNation, GetOwner().GetOwner().m_pLocalSociety.m_iTechLevel, GetOwner().GetOwner().m_pLocalSociety.m_iMagicLimit, bCapital, bFast);
+            pTownX.m_pSettlement = new Settlement(pInfo, m_pDominantNation, GetOwner().GetOwner().m_pLocalSociety.TechLevel, GetOwner().GetOwner().m_pLocalSociety.MagicLimit, bCapital, bFast);
             //Все локации на 2 шага вокруг пометим как поля, чтобы там не возникало никаких новых поселений.
             //foreach (LocationX pLoc in m_cContents[iTown].m_aBorderWith)
             //    if (pLoc.m_pBuilding == null)
@@ -298,7 +298,7 @@ namespace Socium
             if (sRace != GetLesserRaceString())
                 sRace = sRace + "/" + GetLesserRaceString();
 
-            return string.Format("{0} {1} ({2}, {3}) (H:{4}%)", m_sName, Origin.LandType.m_sName, Origin.Contents.Count, sRace, Origin.Humidity);
+            return string.Format("{0} {1} ({2}, {3}) (H:{4}%)", m_sName, Origin.LandType.Name, Origin.Contents.Count, sRace, Origin.Humidity);
         }
 
         /// <summary>
@@ -317,11 +317,11 @@ namespace Socium
         {
             double fCost = pNation.GetClaimingCost(Origin.LandType);
 
-            foreach (var pLink in Origin.m_cBorder)
+            foreach (var pLink in Origin.Border)
             {
                 Land pOtherLand = pLink.Key.GetOwner();
-                if (!pOtherLand.HasOwner() && pOtherLand.LandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
-                    fCost += (double)pNation.GetClaimingCost(pOtherLand.LandType) / Origin.m_cBorder.Count;
+                if (!pOtherLand.HasOwner() && pOtherLand.LandType.Environment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                    fCost += (double)pNation.GetClaimingCost(pOtherLand.LandType) / Origin.Border.Count;
             }
 
             if (fCost < 2)

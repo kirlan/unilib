@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace NameGen
 {
-    public class NameGenerator2
+    public static class NameGenerator2
     {
         public enum Language
         {
@@ -61,7 +61,7 @@ namespace NameGen
                 case 4:
                     return BuildName(noun_2) + " and " + BuildName(noun_2);
             }
-            throw new Exception("Wrong name type!");
+            throw new InvalidOperationException("Wrong name type!");
         }
 
         public static string GetHeroName(Language eLanguage)
@@ -70,7 +70,7 @@ namespace NameGen
                 eLanguage = (Language)Rnd.Get(typeof(Language));
 
             switch (eLanguage)
-            { 
+            {
                 case Language.Dwarf:
                     return DwarfNames();
                 case Language.Elf:
@@ -205,7 +205,7 @@ namespace NameGen
             string[] syllable_4 = new string[] {"", "n"};
             string[] syllable_5 = new string[] {"d", "j", "q", "l"};
             string[] syllable_6 = new string[] {"a", "ai", "iu", "ao", "i"};
-            
+
             string sName = BuildName(syllable_1, syllable_2);
             int nameType = Rnd.Get(3);
             switch(nameType)
@@ -291,7 +291,6 @@ namespace NameGen
             string[] nameParts = new string[] {"dip", "pan", "jit", "parm", "dit", "gur", "preet", "san", "pra", "mit", "harm", "deep", "nav", "ak", "am", "far", "meen", "amar", "rik", "bal", "war", "gurd", "inder", "man", "suk"};
             int pos1 = 0;
             int pos2 = 0;
-            string hinduName = "";
 
             //make sure they're not all the same
             while (pos1 == pos2)
@@ -299,7 +298,7 @@ namespace NameGen
                 pos1 = Rnd.Get(nameParts.Length);
                 pos2 = Rnd.Get(nameParts.Length);
             }
-            hinduName = nameParts[pos1] + nameParts[pos2];
+            string hinduName = nameParts[pos1] + nameParts[pos2];
 
             return Capitalize(hinduName);
         }

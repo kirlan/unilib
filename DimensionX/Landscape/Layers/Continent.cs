@@ -22,7 +22,7 @@ namespace LandscapeGeneration
 
             pSeed.SetOwner(this);
 
-            m_bIsland = pSeed.m_iMaxSize > 0;
+            m_bIsland = pSeed.MaxSize > 0;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace LandscapeGeneration
 
             Dictionary<LandMass, float> cBorderLength = new Dictionary<LandMass, float>();
 
-            foreach (var pLandMass in m_cBorder)
+            foreach (var pLandMass in Border)
             {
                 if (pLandMass.Key.Forbidden)
                     continue;
@@ -60,7 +60,6 @@ namespace LandscapeGeneration
                 }
             }
 
-
             if (cBorderLength.Count == 0)
                 return null;
 
@@ -73,18 +72,18 @@ namespace LandscapeGeneration
             Contents.Add(pAddon);
             pAddon.SetOwner(this);
 
-            m_cBorder[pAddon].Clear();
-            m_cBorder.Remove(pAddon);
+            Border[pAddon].Clear();
+            Border.Remove(pAddon);
 
             foreach (var pLandMass in pAddon.BorderWith)
             {
                 if (!pLandMass.Key.Forbidden && Contents.Contains(pLandMass.Key))
                     continue;
 
-                if (!m_cBorder.ContainsKey(pLandMass.Key))
-                    m_cBorder[pLandMass.Key] = new List<VoronoiEdge>();
+                if (!Border.ContainsKey(pLandMass.Key))
+                    Border[pLandMass.Key] = new List<VoronoiEdge>();
                 foreach (var pLine in pLandMass.Value)
-                    m_cBorder[pLandMass.Key].Add(new VoronoiEdge(pLine));
+                    Border[pLandMass.Key].Add(new VoronoiEdge(pLine));
             }
 
             return pAddon;

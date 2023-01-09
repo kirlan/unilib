@@ -143,9 +143,9 @@ namespace Socium.Settlements
             else
             {
                 if (pInfo.m_eSize == SettlementSize.Hamlet || pInfo.m_eSize == SettlementSize.Village)
-                    m_sName = m_pNation.m_pRace.m_pLanguage.RandomVillageName();
+                    m_sName = m_pNation.Race.Language.RandomVillageName();
                 else
-                    m_sName = m_pNation.m_pRace.m_pLanguage.RandomTownName();
+                    m_sName = m_pNation.Race.Language.RandomTownName();
             }
 
             m_iTechLevel = iTech;
@@ -188,7 +188,7 @@ namespace Socium.Settlements
 
             string sRuinsName = string.Format("{2} {0} {1}", m_pInfo.m_sName, m_sName, m_eSpeciality);
             if (m_iRuinsAge > 0)
-                sRuinsName = string.Format("{2} ({0}) {1}", m_pNation.m_pProtoSociety.m_sName, m_pInfo.m_sName, m_pNation.m_pRace.m_sName).ToLower();
+                sRuinsName = string.Format("{2} ({0}) {1}", m_pNation.ProtoSociety.Name, m_pInfo.m_sName, m_pNation.Race.Name).ToLower();
 
             return string.Format("{1}{0} (T{2}M{3})", sRuinsName, sRuinsAge, m_iTechLevel, m_iMagicLimit);
         }

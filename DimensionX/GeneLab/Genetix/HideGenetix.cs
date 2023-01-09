@@ -9,7 +9,7 @@ using nsUniLibControls;
 namespace GeneLab.Genetix
 {
     public enum HideType
-    { 
+    {
         /// <summary>
         /// просто кожа
         /// </summary>
@@ -76,7 +76,7 @@ namespace GeneLab.Genetix
 
             return HideColorStr + " " + sHide + (Spots ? (" with " + SpotsColorStr + " spots") : "");
         }
-        
+
         /// <summary>
         /// pink skin
         /// </summary>
@@ -181,8 +181,6 @@ namespace GeneLab.Genetix
             get { return new HideGenetix(HideType.FurShort, Color.Brown, Color.Black); }
         }
 
-
-
         public HideType HideType { get; private set; } = HideType.BareSkin;
 
         public Color HideColor { get; private set; } = Color.AntiqueWhite;
@@ -195,19 +193,19 @@ namespace GeneLab.Genetix
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            HideGenetix pAnother = pOther as HideGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is HideGenetix pAnother))
                 return false;
 
             if (!Spots && !pAnother.Spots)
+            {
                 return HideType == pAnother.HideType &&
-                HideColorStr == pAnother.HideColorStr;
+                       HideColorStr == pAnother.HideColorStr;
+            }
 
             return HideType == pAnother.HideType &&
-                HideColorStr == pAnother.HideColorStr &&
-                Spots == pAnother.Spots &&
-                SpotsColorStr == pAnother.SpotsColorStr;
+                   HideColorStr == pAnother.HideColorStr &&
+                   Spots == pAnother.Spots &&
+                   SpotsColorStr == pAnother.SpotsColorStr;
         }
         
         public HideGenetix()
@@ -417,8 +415,7 @@ namespace GeneLab.Genetix
 
         private string GetPredefinedColor(Color eColor)
         {
-            KColor pColor = new KColor();
-            pColor.RGB = eColor;
+            KColor pColor = new KColor { RGB = eColor };
 
             return GetPredefinedColor(pColor);
         }
@@ -572,7 +569,7 @@ namespace GeneLab.Genetix
 
             if (Rnd.OneChanceFrom(20))
                 pMutant.MutateHideType();
-                
+
             if (HideType != HideType.BareSkin || Rnd.OneChanceFrom(10))
                 pMutant.MutateHideColor();
 

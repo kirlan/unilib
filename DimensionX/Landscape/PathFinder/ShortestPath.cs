@@ -18,7 +18,7 @@ namespace LandscapeGeneration.PathFind
             TransportationNode start,
             TransportationNode destination,
             float fCycleShift,
-            int iPassword,
+            int iGreenLightCode,
             bool bNavalOnly)
         {
             var closed = new HashSet<TransportationNode>();
@@ -44,7 +44,7 @@ namespace LandscapeGeneration.PathFind
                     TransportationNode pLinkedNode = pLinked.Key;
 
                     //ограничиваем доступную территорию только теми нодами, которые ходят в уже найденный путь на более высоком уровне
-                    if (iPassword != -1 && pLinkedNode.m_iPassword != iPassword)
+                    if (iGreenLightCode != -1 && pLinkedNode.GreenLightCode != iGreenLightCode)
                         continue;
 
                     //грузиться на корабли и высаживаться с них можно только в портах
@@ -52,7 +52,7 @@ namespace LandscapeGeneration.PathFind
                         continue;
 
                     //ограничиваем доступную территорию по государственному признаку
-                    if (pLinked.Value.m_bClosed)
+                    if (pLinked.Value.IsClosed)
                         continue;
 
                     if (bNavalOnly && !pLinked.Value.Sea && !pLinked.Value.Embark)
@@ -75,7 +75,7 @@ namespace LandscapeGeneration.PathFind
             return null;
         }
 
-        public ShortestPath(TransportationNode pFrom, TransportationNode pTo, float fCycleShift, int iPassword, bool bNavalOnly)
+        public ShortestPath(TransportationNode pFrom, TransportationNode pTo, float fCycleShift, int iGreenLightCode, bool bNavalOnly)
         {
             List<TransportationNode> cResult = new List<TransportationNode>();
 
@@ -85,7 +85,7 @@ namespace LandscapeGeneration.PathFind
                 return;
             }
 
-            Path<TransportationNode> pPath = FindPath(pFrom, pTo, fCycleShift, iPassword, bNavalOnly);
+            Path<TransportationNode> pPath = FindPath(pFrom, pTo, fCycleShift, iGreenLightCode, bNavalOnly);
 
             if (pPath != null)
             {

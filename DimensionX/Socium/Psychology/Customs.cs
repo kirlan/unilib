@@ -101,7 +101,7 @@ namespace Socium.Psychology
             Bald_Heads
         }
 
-        public bool m_bNoHair = false;
+        private bool m_bNoHair = false;
 
         public enum Beard
         {
@@ -110,7 +110,7 @@ namespace Socium.Psychology
             Shaved_Faces
         }
 
-        public bool m_bNoBeard = false;
+        private bool m_bNoBeard = false;
 
         public enum Adornments
         {
@@ -119,7 +119,7 @@ namespace Socium.Psychology
             Lavish_Adornments
         }
 
-        private Dictionary<Type, dynamic> m_cCustoms = new Dictionary<Type, dynamic>();
+        private readonly Dictionary<Type, dynamic> m_cCustoms = new Dictionary<Type, dynamic>();
 
         public void Accept<T>(T value) where T : Enum
         {
@@ -133,8 +133,7 @@ namespace Socium.Psychology
 
         public bool Has<T>(T value) where T : Enum
         {
-            dynamic storedValue;
-            if (!m_cCustoms.TryGetValue(typeof(T), out storedValue))
+            if (!m_cCustoms.TryGetValue(typeof(T), out dynamic storedValue))
                 return false;
 
             return storedValue == value;
@@ -150,53 +149,16 @@ namespace Socium.Psychology
             if (pOther == null)
                 return false;
 
-            dynamic storedValue;
-            if (!m_cCustoms.TryGetValue(customType, out storedValue))
+            if (!m_cCustoms.TryGetValue(customType, out dynamic storedValue))
                 return false;
 
-            dynamic storedValueOther;
-            if (!pOther.m_cCustoms.TryGetValue(customType, out storedValueOther))
+            if (!pOther.m_cCustoms.TryGetValue(customType, out dynamic storedValueOther))
                 return false;
 
             return storedValue == storedValueOther;
         }
 
-        public List<BodyModificationsTypes> m_cMandatoryModifications = new List<BodyModificationsTypes>();
-
-        public Customs()
-        {
-            Accept(Rnd.OneChanceFrom(5) ? GenderPriority.Genders_equality : Rnd.OneChanceFrom(2) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy);
-
-            Accept(!Rnd.OneChanceFrom(3) ? MindSet.Balanced_mind : Rnd.OneChanceFrom(2) ? MindSet.Logic : MindSet.Emotions);
-
-            Accept(!Rnd.OneChanceFrom(3) ? Sexuality.Moderate_sexuality : Rnd.OneChanceFrom(5) ? Sexuality.Puritan : Sexuality.Lecherous);
-
-            if (Has(GenderPriority.Matriarchy))
-                Accept(Rnd.OneChanceFrom(3) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(2) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual);
-            else
-                Accept(Rnd.OneChanceFrom(5) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(9) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual);
-
-            Accept(Rnd.OneChanceFrom(3) ? MarriageType.Polygamy : Rnd.OneChanceFrom(2) ? MarriageType.Polyamory : MarriageType.Monogamy);
-
-            Accept(Rnd.OneChanceFrom(5) ? BodyModifications.Body_Modifications_Allowed : Rnd.OneChanceFrom(3) ? BodyModifications.Body_Modifications_Mandatory : BodyModifications.Body_Modifications_Blamed);
-
-            if (Has(BodyModifications.Body_Modifications_Mandatory))
-                m_cMandatoryModifications.Add((BodyModificationsTypes)Rnd.Get(typeof(BodyModificationsTypes)));
-
-            Accept(Rnd.OneChanceFrom(3) ? Clothes.Revealing_Clothes : Rnd.OneChanceFrom(3) ? Clothes.Minimal_Clothes : Clothes.Covering_Clothes);
-
-            Accept(Rnd.OneChanceFrom(3) ? Hairstyle.Gorgeous_Hairstyles : Rnd.OneChanceFrom(3) ? Hairstyle.Practical_Hairsyles : Hairstyle.Bald_Heads);
-
-            Accept(Rnd.OneChanceFrom(3) ? Beard.Groomed_Beards : Rnd.OneChanceFrom(3) ? Beard.Common_Beards : Beard.Shaved_Faces);
-
-            Accept(Rnd.OneChanceFrom(3) ? Adornments.Some_Adornments : Rnd.OneChanceFrom(3) ? Adornments.No_Adornments : Adornments.Lavish_Adornments);
-
-            Accept(Rnd.OneChanceFrom(2) ? FamilyValues.Moderate_Family_Values : Rnd.OneChanceFrom(2) ? FamilyValues.Praised_Family_Values : FamilyValues.No_Family_Values);
-
-            Accept(Rnd.OneChanceFrom(2) ? Science.Moderate_Science : Rnd.OneChanceFrom(2) ? Science.Ingenuity : Science.Technophobia);
-
-            Accept(Rnd.OneChanceFrom(2) ? Magic.Magic_Allowed : Rnd.OneChanceFrom(2) ? Magic.Magic_Praised : Magic.Magic_Feared);
-        }
+        public List<BodyModificationsTypes> MandatoryBodyModifications { get; } = new List<BodyModificationsTypes>();
 
         // Находит все отличия между pBaseSample и pDifferencesSample и затем накладывает их на pBase
         public static Customs ApplyDifferences(Customs pBase, Customs pBaseSample, Customs pDifferencesSample)
@@ -209,13 +171,13 @@ namespace Socium.Psychology
                     pNew.Accept(pDifferencesSample.m_cCustoms[custom.Key]);
             }
 
-            foreach (BodyModificationsTypes eMod in pDifferencesSample.m_cMandatoryModifications)
-                if (!pBaseSample.m_cMandatoryModifications.Contains(eMod) && !pNew.m_cMandatoryModifications.Contains(eMod))
-                    pNew.m_cMandatoryModifications.Add(eMod);
+            foreach (BodyModificationsTypes eMod in pDifferencesSample.MandatoryBodyModifications)
+                if (!pBaseSample.MandatoryBodyModifications.Contains(eMod) && !pNew.MandatoryBodyModifications.Contains(eMod))
+                    pNew.MandatoryBodyModifications.Add(eMod);
 
-            foreach (BodyModificationsTypes eMod in pBaseSample.m_cMandatoryModifications)
-                if (!pDifferencesSample.m_cMandatoryModifications.Contains(eMod) && pNew.m_cMandatoryModifications.Contains(eMod))
-                    pNew.m_cMandatoryModifications.Remove(eMod);
+            foreach (BodyModificationsTypes eMod in pBaseSample.MandatoryBodyModifications)
+                if (!pDifferencesSample.MandatoryBodyModifications.Contains(eMod) && pNew.MandatoryBodyModifications.Contains(eMod))
+                    pNew.MandatoryBodyModifications.Remove(eMod);
 
             return pNew;
         }
@@ -240,6 +202,41 @@ namespace Socium.Psychology
             return true;
         }
 
+        public Customs()
+        {
+            Accept(Rnd.OneChanceFrom(5) ? GenderPriority.Genders_equality : Rnd.OneChanceFrom(2) ? GenderPriority.Matriarchy : GenderPriority.Patriarchy);
+
+            Accept(!Rnd.OneChanceFrom(3) ? MindSet.Balanced_mind : Rnd.OneChanceFrom(2) ? MindSet.Logic : MindSet.Emotions);
+
+            Accept(!Rnd.OneChanceFrom(3) ? Sexuality.Moderate_sexuality : Rnd.OneChanceFrom(5) ? Sexuality.Puritan : Sexuality.Lecherous);
+
+            if (Has(GenderPriority.Matriarchy))
+                Accept(Rnd.OneChanceFrom(3) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(2) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual);
+            else
+                Accept(Rnd.OneChanceFrom(5) ? SexualOrientation.Bisexual : Rnd.OneChanceFrom(9) ? SexualOrientation.Homosexual : SexualOrientation.Heterosexual);
+
+            Accept(Rnd.OneChanceFrom(3) ? MarriageType.Polygamy : Rnd.OneChanceFrom(2) ? MarriageType.Polyamory : MarriageType.Monogamy);
+
+            Accept(Rnd.OneChanceFrom(5) ? BodyModifications.Body_Modifications_Allowed : Rnd.OneChanceFrom(3) ? BodyModifications.Body_Modifications_Mandatory : BodyModifications.Body_Modifications_Blamed);
+
+            if (Has(BodyModifications.Body_Modifications_Mandatory))
+                MandatoryBodyModifications.Add((BodyModificationsTypes)Rnd.Get(typeof(BodyModificationsTypes)));
+
+            Accept(Rnd.OneChanceFrom(3) ? Clothes.Revealing_Clothes : Rnd.OneChanceFrom(3) ? Clothes.Minimal_Clothes : Clothes.Covering_Clothes);
+
+            Accept(Rnd.OneChanceFrom(3) ? Hairstyle.Gorgeous_Hairstyles : Rnd.OneChanceFrom(3) ? Hairstyle.Practical_Hairsyles : Hairstyle.Bald_Heads);
+
+            Accept(Rnd.OneChanceFrom(3) ? Beard.Groomed_Beards : Rnd.OneChanceFrom(3) ? Beard.Common_Beards : Beard.Shaved_Faces);
+
+            Accept(Rnd.OneChanceFrom(3) ? Adornments.Some_Adornments : Rnd.OneChanceFrom(3) ? Adornments.No_Adornments : Adornments.Lavish_Adornments);
+
+            Accept(Rnd.OneChanceFrom(2) ? FamilyValues.Moderate_Family_Values : Rnd.OneChanceFrom(2) ? FamilyValues.Praised_Family_Values : FamilyValues.No_Family_Values);
+
+            Accept(Rnd.OneChanceFrom(2) ? Science.Moderate_Science : Rnd.OneChanceFrom(2) ? Science.Ingenuity : Science.Technophobia);
+
+            Accept(Rnd.OneChanceFrom(2) ? Magic.Magic_Allowed : Rnd.OneChanceFrom(2) ? Magic.Magic_Praised : Magic.Magic_Feared);
+        }
+
         public Customs(Customs pAncestorCustoms, Mutation eDifference)
         {
             foreach (var custom in pAncestorCustoms.m_cCustoms)
@@ -247,7 +244,7 @@ namespace Socium.Psychology
                 Accept(custom.Value);
             }
 
-            m_cMandatoryModifications.AddRange(pAncestorCustoms.m_cMandatoryModifications);
+            MandatoryBodyModifications.AddRange(pAncestorCustoms.MandatoryBodyModifications);
 
             if (eDifference == Mutation.None)
                 return;
@@ -302,17 +299,19 @@ namespace Socium.Psychology
 
                     if (Has(BodyModifications.Body_Modifications_Mandatory))
                     {
-                        if (m_cMandatoryModifications.Count > 1 && Rnd.OneChanceFrom(3))
-                            m_cMandatoryModifications.RemoveAt(Rnd.Get(m_cMandatoryModifications.Count));
-                        else if (m_cMandatoryModifications.Count > 0 && Rnd.OneChanceFrom(2))
+                        if (MandatoryBodyModifications.Count > 1 && Rnd.OneChanceFrom(3))
+                        {
+                            MandatoryBodyModifications.RemoveAt(Rnd.Get(MandatoryBodyModifications.Count));
+                        }
+                        else if (MandatoryBodyModifications.Count > 0 && Rnd.OneChanceFrom(2))
                         {
                             BodyModificationsTypes eNewValue;
                             do
                             {
                                 eNewValue = (BodyModificationsTypes)Rnd.Get(typeof(BodyModificationsTypes));
                             }
-                            while (m_cMandatoryModifications.Contains(eNewValue));
-                            m_cMandatoryModifications[Rnd.Get(m_cMandatoryModifications.Count)] = eNewValue;
+                            while (MandatoryBodyModifications.Contains(eNewValue));
+                            MandatoryBodyModifications[Rnd.Get(MandatoryBodyModifications.Count)] = eNewValue;
                         }
                         else
                         {
@@ -321,8 +320,8 @@ namespace Socium.Psychology
                             {
                                 eNewValue = (BodyModificationsTypes)Rnd.Get(typeof(BodyModificationsTypes));
                             }
-                            while (m_cMandatoryModifications.Contains(eNewValue));
-                            m_cMandatoryModifications.Add(eNewValue);
+                            while (MandatoryBodyModifications.Contains(eNewValue));
+                            MandatoryBodyModifications.Add(eNewValue);
                         }
                     }
                 }
@@ -336,15 +335,15 @@ namespace Socium.Psychology
         {
             if (pFenotype.m_pValues.Get<EarsGenetix>().EarsType == EarsType.None)
             {
-                if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Small_Ear_Rings))
-                    m_cMandatoryModifications.Remove(BodyModificationsTypes.Small_Ear_Rings);
-                if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Huge_Ear_Rings))
-                    m_cMandatoryModifications.Remove(BodyModificationsTypes.Huge_Ear_Rings);
+                if (MandatoryBodyModifications.Contains(BodyModificationsTypes.Small_Ear_Rings))
+                    MandatoryBodyModifications.Remove(BodyModificationsTypes.Small_Ear_Rings);
+                if (MandatoryBodyModifications.Contains(BodyModificationsTypes.Huge_Ear_Rings))
+                    MandatoryBodyModifications.Remove(BodyModificationsTypes.Huge_Ear_Rings);
             }
             if (pFenotype.m_pValues.Get<FaceGenetix>().NoseType == NoseType.None)
             {
-                if (m_cMandatoryModifications.Contains(BodyModificationsTypes.Nose_Ring))
-                    m_cMandatoryModifications.Remove(BodyModificationsTypes.Nose_Ring);
+                if (MandatoryBodyModifications.Contains(BodyModificationsTypes.Nose_Ring))
+                    MandatoryBodyModifications.Remove(BodyModificationsTypes.Nose_Ring);
             }
 
             if (pFenotype.m_pValues.Get<HairsGenetix>().Hairs == HairsAmount.None)
@@ -361,159 +360,138 @@ namespace Socium.Psychology
 
         public string GetCustomsList()
         {
-            string sResult = "";
+            StringBuilder sResult = new StringBuilder();
+
+            void addLine(string str)
+            {
+                sResult.AppendLine().Append("   ").Append(str);
+            }
 
             if (Has(GenderPriority.Patriarchy))
             {
-                sResult += "\n   ";
-                sResult += "manhood";
+                addLine("manhood");
             }
             else if (Has(GenderPriority.Matriarchy))
             {
-                sResult += "\n   ";
-                sResult += "womanhood";
+                addLine("womanhood");
             }
 
             if (Has(MindSet.Emotions))
             {
-                sResult += "\n   ";
-                sResult += "emotions";
+                addLine("emotions");
             }
             else if (Has(MindSet.Logic))
             {
-                sResult += "\n   ";
-                sResult += "pure logic";
+                addLine("pure logic");
             }
 
             if (Has(Sexuality.Puritan))
             {
-                sResult += "\n   ";
-                sResult += "chastity";
+                addLine("chastity");
             }
             else if (Has(Sexuality.Lecherous))
             {
-                sResult += "\n   ";
-                sResult += "unlimited sexuality";
+                addLine("unlimited sexuality");
             }
 
             if (Has(SexualOrientation.Heterosexual))
             {
-                sResult += "\n   ";
-                sResult += "cross sex relations";
+                addLine("cross sex relations");
             }
             else if (Has(SexualOrientation.Homosexual))
             {
-                sResult += "\n   ";
-                sResult += "same sex relations";
+                addLine("same sex relations");
             }
 
             if (Has(MarriageType.Monogamy))
             {
-                sResult += "\n   ";
-                sResult += "monogamy";
+                addLine("monogamy");
             }
             else if (Has(MarriageType.Polyamory))
             {
-                sResult += "\n   ";
-                sResult += "wedlock denial";
+                addLine("wedlock denial");
             }
 
             if (Has(BodyModifications.Body_Modifications_Blamed))
             {
-                sResult += "\n   ";
-                sResult += "unmodified body";
+                addLine("unmodified body");
             }
             else if (Has(BodyModifications.Body_Modifications_Mandatory))
             {
-                sResult += "\n   ";
-                sResult += "modified body: ";
+                addLine("modified body: ");
                 bool bFirst = true;
-                foreach (BodyModificationsTypes eMod in m_cMandatoryModifications)
+                foreach (BodyModificationsTypes eMod in MandatoryBodyModifications)
                 {
                     if (!bFirst)
                     {
-                        sResult += ", ";
+                        sResult.Append(", ");
                     }
-                    sResult += eMod.ToString().Replace('_', ' ').ToLower();
+                    sResult.Append(eMod.ToString().Replace('_', ' ').ToLower());
                     bFirst = false;
                 }
             }
 
             if (Has(Clothes.Minimal_Clothes))
             {
-                sResult += "\n   ";
-                sResult += "common nudity";
+                addLine("common nudity");
             }
             else if (Has(Clothes.Covering_Clothes))
             {
-                sResult += "\n   ";
-                sResult += "restricted nudity";
+                addLine("restricted nudity");
             }
 
             if (Has(Hairstyle.Bald_Heads))
             {
-                sResult += "\n   ";
-                sResult += "bald heads";
+                addLine("bald heads");
             }
             else if (Has(Hairstyle.Gorgeous_Hairstyles))
             {
-                sResult += "\n   ";
-                sResult += "long hairs";
+                addLine("long hairs");
             }
 
             if (Has(Beard.Shaved_Faces))
             {
-                sResult += "\n   ";
-                sResult += "no beards";
+                addLine("no beards");
             }
             else if (Has(Beard.Groomed_Beards))
             {
-                sResult += "\n   ";
-                sResult += "long beards";
+                addLine("long beards");
             }
 
             if (Has(Adornments.No_Adornments))
             {
-                sResult += "\n   ";
-                sResult += "no jewelry";
+                addLine("no jewelry");
             }
             else if (Has(Adornments.Lavish_Adornments))
             {
-                sResult += "\n   ";
-                sResult += "lavish jewelry";
+                addLine("lavish jewelry");
             }
 
             if (Has(FamilyValues.Praised_Family_Values))
             {
-                sResult += "\n   ";
-                sResult += "family relations";
+                addLine("family relations");
             }
             else if (Has(FamilyValues.No_Family_Values))
             {
-                sResult += "\n   ";
-                sResult += "no family ties";
+                addLine("no family ties");
             }
 
             if (Has(Science.Technophobia))
             {
-                sResult += "\n   ";
-                sResult += "traditions";
+                addLine("traditions");
             }
             else if (Has(Science.Ingenuity))
             {
-                sResult += "\n   ";
-                sResult += "technical progress";
+                addLine("technical progress");
             }
 
             if (Has(Magic.Magic_Feared))
             {
-                sResult += "\n   ";
-                sResult += "magic denial";
+                addLine("magic denial");
             }
             else if (Has(Magic.Magic_Praised))
             {
-                sResult += "\n   ";
-                sResult += "magic";
+                addLine("magic");
             }
 
             return "Praises: " + sResult + "\n";
@@ -575,7 +553,7 @@ namespace Socium.Psychology
                     sResult += ", ";
                 sResult += "should have ";
                 bool bFirst2 = true;
-                foreach (BodyModificationsTypes eMod in m_cMandatoryModifications)
+                foreach (BodyModificationsTypes eMod in MandatoryBodyModifications)
                 {
                     if (!bFirst2)
                     {
@@ -857,7 +835,7 @@ namespace Socium.Psychology
                     sResult += pOther.Has(Magic.Magic_Feared) ? "has no fear for magic" : "doesn't like magic too much";
             }
 
-            if (!HasIdentical<BodyModifications>(pOther) || !ListsEqual(m_cMandatoryModifications, pOther.m_cMandatoryModifications))
+            if (!HasIdentical<BodyModifications>(pOther) || !ListsEqual(MandatoryBodyModifications, pOther.MandatoryBodyModifications))
             {
                 if (sResult != "")
                     sResult += ", ";
@@ -868,10 +846,10 @@ namespace Socium.Psychology
                 {
                     List<BodyModificationsTypes> cOthers = new List<BodyModificationsTypes>();
                     if(pOther.Has(BodyModifications.Body_Modifications_Mandatory))
-                        cOthers.AddRange(pOther.m_cMandatoryModifications);
+                        cOthers.AddRange(pOther.MandatoryBodyModifications);
 
                     bool bFirst2 = true;
-                    foreach (BodyModificationsTypes eMod in m_cMandatoryModifications)
+                    foreach (BodyModificationsTypes eMod in MandatoryBodyModifications)
                     {
                         if(cOthers.Contains(eMod))
                             continue;
@@ -887,7 +865,7 @@ namespace Socium.Psychology
                     bool bFirst3 = true;
                     foreach (BodyModificationsTypes eMod in cOthers)
                     {
-                        if(m_cMandatoryModifications.Contains(eMod))
+                        if(MandatoryBodyModifications.Contains(eMod))
                             continue;
                         if (bFirst3)
                         {
@@ -1123,24 +1101,24 @@ namespace Socium.Psychology
             return sResult;
         }
 
-        private void CheckDifference<T>(Customs pOpponent, T middleValue, ref int iHostility, ref string sPositiveReasons, ref string sNegativeReasons) where T : Enum, IComparable
+        private void CheckDifference<T>(Customs pOpponent, T middleValue, ref int iHostility, ref StringBuilder sPositiveReasons, ref StringBuilder sNegativeReasons) where T : Enum, IComparable
         {
             if (HasIdentical<T>(pOpponent))
             {
                 iHostility--;
-                sPositiveReasons += " (+1) " + pOpponent.ValueOf<T>().ToString().Replace('_', ' ') + "\n";
+                sPositiveReasons.Append(" (+1) ").AppendLine(pOpponent.ValueOf<T>().ToString().Replace('_', ' '));
             }
             else
             {
                 if (!Has(middleValue) && !pOpponent.Has(middleValue))
                 {
                     iHostility += 2;
-                    sNegativeReasons += " (-2) " + pOpponent.ValueOf<T>().ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons.Append(" (-2) ").AppendLine(pOpponent.ValueOf<T>().ToString().Replace('_', ' '));
                 }
                 else
                 {
                     iHostility++;
-                    sNegativeReasons += " (-1) " + pOpponent.ValueOf<T>().ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons.Append(" (-1) ").AppendLine(pOpponent.ValueOf<T>().ToString().Replace('_', ' '));
                 }
             }
         }
@@ -1151,7 +1129,7 @@ namespace Socium.Psychology
         /// </summary>
         public int GetDifference(Customs pOpponent)
         {
-            string s1 = "", s2 = "";
+            StringBuilder s1 = new StringBuilder(), s2 = new StringBuilder();
             return GetDifference(pOpponent, ref s1, ref s2);
         }
 
@@ -1162,7 +1140,7 @@ namespace Socium.Psychology
         /// <param name="pOpponent">обычаи другого сообщества</param>
         /// <param name="sReasons">мотивация враждебности</param>
         /// <returns></returns>
-        public int GetDifference(Customs pOpponent, ref string sPositiveReasons, ref string sNegativeReasons)
+        public int GetDifference(Customs pOpponent, ref StringBuilder sPositiveReasons, ref StringBuilder sNegativeReasons)
         {
             int iHostility = 0;
 
@@ -1192,10 +1170,10 @@ namespace Socium.Psychology
 
             if (HasIdentical<BodyModifications>(pOpponent))
             {
-                if (!Has(BodyModifications.Body_Modifications_Mandatory) || ListsEqual(m_cMandatoryModifications, pOpponent.m_cMandatoryModifications))
+                if (!Has(BodyModifications.Body_Modifications_Mandatory) || ListsEqual(MandatoryBodyModifications, pOpponent.MandatoryBodyModifications))
                 {
                     iHostility--;
-                    sPositiveReasons += " (+1) " + pOpponent.ValueOf<BodyModifications>().ToString().Replace('_', ' ') + "\n";
+                    sPositiveReasons.Append(" (+1) ").AppendLine(pOpponent.ValueOf<BodyModifications>().ToString().Replace('_', ' '));
                 }
             }
             else
@@ -1204,12 +1182,12 @@ namespace Socium.Psychology
                     !pOpponent.Has(BodyModifications.Body_Modifications_Allowed))
                 {
                     iHostility += 2;
-                    sNegativeReasons += " (-2) " + pOpponent.ValueOf<BodyModifications>().ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons.Append(" (-2) ").AppendLine(pOpponent.ValueOf<BodyModifications>().ToString().Replace('_', ' '));
                 }
                 else
                 {
                     iHostility++;
-                    sNegativeReasons += " (-1) " + pOpponent.ValueOf<BodyModifications>().ToString().Replace('_', ' ') + "\n";
+                    sNegativeReasons.Append(" (-1) ").AppendLine(pOpponent.ValueOf<BodyModifications>().ToString().Replace('_', ' '));
                 }
             }
 
@@ -1232,7 +1210,7 @@ namespace Socium.Psychology
             }
 
             if (Has(BodyModifications.Body_Modifications_Mandatory) && 
-                !ListsEqual(m_cMandatoryModifications, pOther.m_cMandatoryModifications))
+                !ListsEqual(MandatoryBodyModifications, pOther.MandatoryBodyModifications))
                 return false;
 
             return true;
@@ -1245,7 +1223,7 @@ namespace Socium.Psychology
                 hash.Add(custom);
 
             if (Has(BodyModifications.Body_Modifications_Mandatory))
-                foreach (var bodyModification in m_cMandatoryModifications)
+                foreach (var bodyModification in MandatoryBodyModifications)
                     hash.Add(bodyModification);
             
             return hash.ToHashCode();

@@ -13,18 +13,18 @@ namespace GeneLab
     {
         public class PhensStorage
         {
-            public readonly Dictionary<Type, dynamic> m_cInternal = new Dictionary<Type, dynamic>();
+            public Dictionary<Type, dynamic> Internal { get; } = new Dictionary<Type, dynamic>();
 
             public PhensStorage Set<T>(T value) where T : GenetixBase
             {
-                m_cInternal[typeof(T)] = value;
-                
+                Internal[typeof(T)] = value;
+
                 return this;
             }
 
             public T Get<T>() where T : GenetixBase
             {
-                return m_cInternal[typeof(T)];
+                return Internal[typeof(T)];
             }
 
             public bool HasIdentical<T>(PhensStorage pOther) where T : GenetixBase
@@ -37,12 +37,10 @@ namespace GeneLab
                 if (pOther == null)
                     return false;
 
-                dynamic storedValue;
-                if (!m_cInternal.TryGetValue(phenType, out storedValue))
+                if (!Internal.TryGetValue(phenType, out dynamic storedValue))
                     return false;
 
-                dynamic storedValueOther;
-                if (!pOther.m_cInternal.TryGetValue(phenType, out storedValueOther))
+                if (!pOther.Internal.TryGetValue(phenType, out dynamic storedValueOther))
                     return false;
 
                 return storedValue.IsIdentical(storedValueOther);
@@ -53,10 +51,10 @@ namespace GeneLab
                 if (pOther == null)
                     return false;
 
-                if (pOther.m_cInternal.Count != m_cInternal.Count)
+                if (pOther.Internal.Count != Internal.Count)
                     return false;
 
-                foreach (var phen in m_cInternal)
+                foreach (var phen in Internal)
                 {
                     if (!HasIdentical(phen.Key, pOther))
                         return false;
@@ -77,7 +75,7 @@ namespace GeneLab
             {
                 if (pDifferences != null)
                 {
-                    foreach (var phen in pDifferences.m_cInternal)
+                    foreach (var phen in pDifferences.Internal)
                     {
                         Set(phen.Value);
                     }
@@ -87,7 +85,7 @@ namespace GeneLab
             {
                 PhensStorage pDifference = new PhensStorage();
 
-                foreach (var phen in pOther.m_cInternal)
+                foreach (var phen in pOther.Internal)
                 {
                     if (!pOther.HasIdentical(phen.Key, pBase))
                         pDifference.Set(phen.Value);
@@ -95,7 +93,6 @@ namespace GeneLab
 
                 return pDifference;
             }
-
         }
 
         public readonly PhensStorage m_pValues = new PhensStorage();
@@ -103,16 +100,16 @@ namespace GeneLab
         protected Phenotype()
         {
             var pBaseHuman = GetBaseHuman();
-            foreach (var phen in pBaseHuman.m_cInternal)
+            foreach (var phen in pBaseHuman.Internal)
                 m_pValues.Set(phen.Value);
         }
 
         public Phenotype(PhensStorage cValues)
             : this()
         {
-            foreach (var value in cValues.m_cInternal)
+            foreach (var value in cValues.Internal)
                 m_pValues.Set(value.Value);
-            
+
             m_pValues.Get<HairsGenetix>().CheckHairColors();
         }
 
@@ -140,7 +137,6 @@ namespace GeneLab
         {
             return gender == Gender.Male ? s_WhiteManEtalon : s_WhiteManEtalon + s_WhiteWomanDiff;
         }
-
 
         public Phenotype Clone()
         {
@@ -189,24 +185,24 @@ namespace GeneLab
             if (pOriginalValues.IsIdentical(m_pValues))
                 return "";
 
-            string sResult = "";
+            StringBuilder sResult = new StringBuilder();
 
             if (!pOriginalValues.HasIdentical<BrainGenetix>(m_pValues))
-                sResult += m_pValues.Get<BrainGenetix>().GetDescription() + ".";
+                sResult.Append(m_pValues.Get<BrainGenetix>().GetDescription()).Append('.');
 
             if (!pOriginalValues.HasIdentical<HeadGenetix>(m_pValues))
             {
-                if (sResult != "")
-                    sResult += " They ";
+                if (sResult.Length > 0)
+                    sResult.Append(" They ");
 
-                sResult += "have ";
+                sResult.Append("have ");
 
                 if (!pOriginalValues.HasIdentical<HeadGenetix>(m_pValues))
                 {
-                    sResult += m_pValues.Get<HeadGenetix>().GetDescription();
+                    sResult.Append(m_pValues.Get<HeadGenetix>().GetDescription());
                 }
 
-                sResult += ".";
+                sResult.Append(".");
             }
 
             if (!pOriginalValues.HasIdentical<BodyGenetix>(m_pValues) ||
@@ -216,10 +212,10 @@ namespace GeneLab
                 !pOriginalValues.HasIdentical<WingsGenetix>(m_pValues) ||
                 !pOriginalValues.HasIdentical<TailGenetix>(m_pValues))
             {
-                if (sResult != "")
-                    sResult += " They ";
+                if (sResult.Length > 0)
+                    sResult.Append(" They ");
 
-                sResult += "have ";
+                sResult.Append("have ");
 
                 List<string> cBodyDescription = new List<string>();
 
@@ -278,27 +274,27 @@ namespace GeneLab
 
                 foreach (string part in cBodyDescription)
                 {
-                    if (part != cBodyDescription.First())
+                    if (part != cBodyDescription[0])
                     {
                         if (bBody)
                         {
-                            sResult += " with ";
+                            sResult.Append(" with ");
                             bBody = false;
                         }
                         else if (part == cBodyDescription.Last())
                         {
-                            sResult += " and ";
+                            sResult.Append(" and ");
                         }
                         else
                         {
-                            sResult += ", ";
+                            sResult.Append(", ");
                         }
                     }
 
-                    sResult += part;
+                    sResult.Append(part);
                 }
 
-                sResult += ".";
+                sResult.Append(".");
             }
 
             if (!pOriginalValues.HasIdentical<NutritionGenetix>(m_pValues) ||
@@ -320,12 +316,12 @@ namespace GeneLab
 
                 if (sBody2 != "")
                 {
-                    if (sResult != "")
-                        sResult += " They ";
+                    if (sResult.Length > 0)
+                        sResult.Append(" They ");
 
-                    sResult += sBody2;
+                    sResult.Append(sBody2);
 
-                    sResult += ".";
+                    sResult.Append(".");
                 }
             }
 
@@ -333,10 +329,10 @@ namespace GeneLab
                 !pOriginalValues.HasIdentical<EarsGenetix>(m_pValues) ||
                 !pOriginalValues.HasIdentical<FaceGenetix>(m_pValues))
             {
-                if (sResult != "")
-                    sResult += " They ";
+                if (sResult.Length > 0)
+                    sResult.Append(" They ");
 
-                sResult += "have ";
+                sResult.Append("have ");
 
                 bool bSemicolon = false;
                 if (!pOriginalValues.HasIdentical<EyesGenetix>(m_pValues) ||
@@ -344,65 +340,62 @@ namespace GeneLab
                 {
                     if (!pOriginalValues.HasIdentical<EyesGenetix>(m_pValues))
                     {
-                        sResult += m_pValues.Get<EyesGenetix>().GetDescription();
+                        sResult.Append(m_pValues.Get<EyesGenetix>().GetDescription());
                         bSemicolon = true;
                     }
 
                     if (!pOriginalValues.HasIdentical<EarsGenetix>(m_pValues))
                     {
                         if (bSemicolon)
-                            sResult += " and ";
+                            sResult.Append(" and ");
 
-                        sResult += m_pValues.Get<EarsGenetix>().GetDescription() + " of a ";
+                        sResult.Append(m_pValues.Get<EarsGenetix>().GetDescription()).Append(" of a ");
                     }
                     else
                     {
                         if (bSemicolon && !pOriginalValues.HasIdentical<FaceGenetix>(m_pValues))
-                            sResult += " at the ";
+                            sResult.Append(" at the ");
                     }
                 }
 
                 if (!pOriginalValues.HasIdentical<FaceGenetix>(m_pValues))
-                    sResult += m_pValues.Get<FaceGenetix>().GetDescription();
-                else
-                    if (!pOriginalValues.HasIdentical<EarsGenetix>(m_pValues))
-                    sResult += "head";// m_pFace.m_eNoseType == NoseType.Normal ? "face" : "muzzle";
+                    sResult.Append(m_pValues.Get<FaceGenetix>().GetDescription());
+                else if (!pOriginalValues.HasIdentical<EarsGenetix>(m_pValues))
+                    sResult.Append("head");// m_pFace.m_eNoseType == NoseType.Normal ? "face" : "muzzle";
 
-                sResult += ".";
+                sResult.Append(".");
             }
 
             if (!pOriginalValues.HasIdentical<HairsGenetix>(m_pValues))
             {
-                if (sResult != "")
-                    sResult += " They ";
+                if (sResult.Length > 0)
+                    sResult.Append(" They ");
 
                 if (m_pValues.Get<HairsGenetix>().GetDescription() != "")
-                    sResult += m_pValues.Get<HairsGenetix>().GetDescription();
+                    sResult.Append(m_pValues.Get<HairsGenetix>().GetDescription());
                 else
-                    sResult = "are bald, and have no beard or moustache.";
+                    sResult.Append("are bald, and have no beard or moustache.");
             }
 
             if (!pOriginalValues.HasIdentical<LifeCycleGenetix>(m_pValues))
             {
-                if (sResult != "")
-                    sResult += " They ";
+                if (sResult.Length > 0)
+                    sResult.Append(" They ");
 
-                sResult += "usually " + m_pValues.Get<LifeCycleGenetix>().GetDescription() + ".";
+                sResult.Append("usually ").Append(m_pValues.Get<LifeCycleGenetix>().GetDescription()).Append('.');
             }
 
-            if (sResult == "")
+            if (sResult.Length == 0)
                 return GetComparsion(pOriginalValues);
 
-            return sResult;
+            return sResult.ToString();
         }
 
         #endregion
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            Phenotype pAnother = pOther as Phenotype;
-
-            if (pAnother == null)
+            if (!(pOther is Phenotype pAnother))
                 return false;
 
             return m_pValues.IsIdentical(pAnother.m_pValues);
@@ -414,7 +407,7 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_pValues.m_cInternal)
+            foreach (var phen in m_pValues.Internal)
             {
                 pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateRace(), phen.Key));
             }
@@ -428,7 +421,6 @@ namespace GeneLab
                 pMutant.m_pValues.Set(pNutritionMutation);
             }
 
-
             pMutant.m_pValues.Get<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
@@ -441,7 +433,7 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_pValues.m_cInternal)
+            foreach (var phen in m_pValues.Internal)
             {
                 pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateGender(), phen.Key));
             }
@@ -455,7 +447,6 @@ namespace GeneLab
                 pMutant.m_pValues.Set(pNutritionMutation);
             }
 
-
             pMutant.m_pValues.Get<HairsGenetix>().CheckHairColors();
 
             if (!pMutant.IsIdentical(this))
@@ -468,7 +459,7 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_pValues.m_cInternal)
+            foreach (var phen in m_pValues.Internal)
             {
                 pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateNation(), phen.Key));
             }
@@ -485,7 +476,7 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_pValues.m_cInternal)
+            foreach (var phen in m_pValues.Internal)
             {
                 pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateFamily(), phen.Key));
             }
@@ -502,7 +493,7 @@ namespace GeneLab
         {
             Phenotype pMutant = Clone();
 
-            foreach (var phen in m_pValues.m_cInternal)
+            foreach (var phen in m_pValues.Internal)
             {
                 pMutant.m_pValues.Set(Convert.ChangeType(phen.Value.MutateIndividual(), phen.Key));
             }
@@ -640,12 +631,13 @@ namespace GeneLab
         private LandTypeInfo[] GetLands(LandscapeGeneration.Environment eAllowedProp, LandscapeGeneration.Environment eForbiddenProp)
         {
             List<LandTypeInfo> cResult = new List<LandTypeInfo>();
-            foreach (var pLand in LandTypes.m_pInstance.m_pLandTypes)
+            foreach (LandTypeInfo pLand in LandTypes.Instance.Lands.Values)
             {
-                if ((eAllowedProp == LandscapeGeneration.Environment.None || pLand.Value.m_eEnvironment.HasFlag(eAllowedProp)) && 
-                    (eForbiddenProp == LandscapeGeneration.Environment.None || !pLand.Value.m_eEnvironment.HasFlag(eForbiddenProp)))
-                    cResult.Add(pLand.Value);
-
+                if ((eAllowedProp == LandscapeGeneration.Environment.None || pLand.Environment.HasFlag(eAllowedProp)) &&
+                    (eForbiddenProp == LandscapeGeneration.Environment.None || !pLand.Environment.HasFlag(eForbiddenProp)))
+                {
+                    cResult.Add(pLand);
+                }
             }
 
             return cResult.ToArray();
@@ -679,17 +671,16 @@ namespace GeneLab
                     break;
             }
 
-
             if (m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneBlob &&
-               m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneHover &&
-               m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneTail)
+                m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneHover &&
+                m_pValues.Get<LegsGenetix>().LegsCount != LegsCount.NoneTail)
             {
                 switch (m_pValues.Get<LegsGenetix>().LegsType)
                 {
                     //копыта дают премущества на равнинах и в горах
                     case LegsType.Hoofs:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Open, LandscapeGeneration.Environment.Soft))
-                            cLandTypes[pLand.m_eType] += iMultiplier;
+                            cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //case LegsType.Foots:
                     //    cLandTypes[LandType.Plains] += iMultiplier;
@@ -699,22 +690,22 @@ namespace GeneLab
                     //звериные лапы с когтями - на равнинах и в лесах
                     case LegsType.Paws:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Soft))
-                            cLandTypes[pLand.m_eType] += iMultiplier;
+                            cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //птичьи лапы с когтями - в лесах и в горах
                     case LegsType.Claws:
                         foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
-                            cLandTypes[pLand.m_eType] += iMultiplier;
+                            cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //паучьи лапы - в песках и горах
                     case LegsType.Spidery:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Wet))
-                            cLandTypes[pLand.m_eType] += iMultiplier;
+                            cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //щупальца - в болотах
                     case LegsType.Tentacles:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft | LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.Cold))
-                            cLandTypes[pLand.m_eType] += iMultiplier;
+                            cLandTypes[pLand.Type] += iMultiplier;
                         break;
                 }
             }
@@ -722,7 +713,7 @@ namespace GeneLab
             {
                 //безногие расы более комфортно себя чувствуют в пустынях и болотах
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft, LandscapeGeneration.Environment.None))
-                    cLandTypes[pLand.m_eType] += iMultiplier;
+                    cLandTypes[pLand.Type] += iMultiplier;
             }
 
             if (m_pValues.Get<TailGenetix>().TailLength == TailLength.Long)
@@ -732,12 +723,12 @@ namespace GeneLab
                     //длинный плохоуправляемый хвост помогает удерживать равновесие, что важно в лесах и горах
                     case TailControl.Crude:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
-                            cLandTypes[pLand.m_eType] *= 2;
+                            cLandTypes[pLand.Type] *= 2;
                         break;
                     //длинный и ловкий хвост помогает скакать по веткам деревьев
                     case TailControl.Skillful:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat | LandscapeGeneration.Environment.Open))
-                            cLandTypes[pLand.m_eType] *= 2;
+                            cLandTypes[pLand.Type] *= 2;
                         break;
                 }
             }
@@ -749,19 +740,21 @@ namespace GeneLab
                     //слабые крылья хороши там, где есть высокие места, откуда можно планировать - в лесах и горах
                     case WingsForce.Gliding:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
-                            cLandTypes[pLand.m_eType] *= 2;
+                            cLandTypes[pLand.Type] *= 2;
                         break;
                     //сильные крылья хороши так же и на равнинах, где можно высоко взлететь и получить дополнительный обзор
                     case WingsForce.Flying:
                         foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Soft))
-                            cLandTypes[pLand.m_eType] *= 2;
+                            cLandTypes[pLand.Type] *= 2;
                         break;
                 }
 
                 //в болотах живут крылатые только с кожистыми или насекомыми крыльями
                 if (m_pValues.Get<WingsGenetix>().WingsType == WingsType.Feathered)
+                {
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft | LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] = 0;
+                        cLandTypes[pLand.Type] = 0;
+                }
             }
 
             switch (m_pValues.Get<HideGenetix>().HideType)
@@ -772,140 +765,143 @@ namespace GeneLab
                     //cLandTypes[LandType.Savanna] *= 2;
 
                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft | LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] = 0;
+                        cLandTypes[pLand.Type] = 0;
                     break;
                 //длинный мех подходит для холодных регионов и не подходит для жарких и влажных
                 case HideType.FurLong:
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] *= 2;
+                        cLandTypes[pLand.Type] *= 2;
 
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] = 0;
+                        cLandTypes[pLand.Type] = 0;
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] = 0;
+                        cLandTypes[pLand.Type] = 0;
                     break;
                 //хитин, наоборот, подходит для жарких и влажных мест, но не подходит для холодных
                 case HideType.Chitin:
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] *= 2;
+                        cLandTypes[pLand.Type] *= 2;
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] *= 2;
+                        cLandTypes[pLand.Type] *= 2;
 
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] = 0;
+                        cLandTypes[pLand.Type] = 0;
                     break;
                 //аналогично чешуя
                 case HideType.Scales:
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] *= 2;
+                        cLandTypes[pLand.Type] *= 2;
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] *= 2;
+                        cLandTypes[pLand.Type] *= 2;
 
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] = 0;
+                        cLandTypes[pLand.Type] = 0;
                     break;
                 //костяные панцири хороши для болота и не подходят для холодных регионов
                 case HideType.Shell:
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet | LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] *= 2;
+                        cLandTypes[pLand.Type] *= 2;
 
                     foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
-                        cLandTypes[pLand.m_eType] = 0;
+                        cLandTypes[pLand.Type] = 0;
                     break;
             }
 
-            KColor pColor = new KColor();
-            pColor.RGB = m_pValues.Get<HideGenetix>().HideColor;
+            KColor pColor = new KColor { RGB = m_pValues.Get<HideGenetix>().HideColor };
 
             //светлая кожа не подходит для жарких регионов
             if (pColor.Lightness > 0.75)
             {
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                    cLandTypes[pLand.m_eType] = 0;
+                    cLandTypes[pLand.Type] = 0;
             }
 
             //тёмная кожа не подходит для холодных регионов и даёт бонусы в особо жарких местах
             if (pColor.Lightness < 0.25)
             {
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                    cLandTypes[pLand.m_eType] *= 2;
+                    cLandTypes[pLand.Type] *= 2;
 
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
-                    cLandTypes[pLand.m_eType] = 0;
+                    cLandTypes[pLand.Type] = 0;
             }
 
             int iPigmented = 0;
             int iPigmentless = 0;
-            foreach (HairsColor eColor in m_pValues.Get<HairsGenetix>().m_cHairColors)
+            foreach (HairsColor eColor in m_pValues.Get<HairsGenetix>().HairColors)
             {
                 if (eColor == HairsColor.Albino ||
                     eColor == HairsColor.Blonde ||
                     eColor == HairsColor.Red)
+                {
                     iPigmentless++;
+                }
 
                 if (eColor == HairsColor.Black ||
                     eColor == HairsColor.Brunette ||
                     eColor == HairsColor.Blue)
+                {
                     iPigmented++;
+                }
             }
 
             //светловолосые расы не живут в жарких странах
             if (iPigmentless > iPigmented * 2)
             {
-                //cLandTypes[LandType.Tundra] *= 2;
-                //cLandTypes[LandType.Taiga] *= 2;
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                    cLandTypes[pLand.m_eType] = 0;
+                    cLandTypes[pLand.Type] = 0;
             }
 
             //с другой стороны, тёмные волосы более свойственны жителям жарких стран
             if (iPigmented > iPigmentless * 2)
             {
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
-                    cLandTypes[pLand.m_eType] *= 2;
+                    cLandTypes[pLand.Type] *= 2;
             }
 
             //ловкость и стройность отлично подходит для лесов, но плохо сочетается с горами
             if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Skinny)
             {
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Open))
-                    cLandTypes[pLand.m_eType] *= 2;
+                    cLandTypes[pLand.Type] *= 2;
 
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Open, LandscapeGeneration.Environment.Flat))
-                    cLandTypes[pLand.m_eType] = 0;
+                    cLandTypes[pLand.Type] = 0;
             }
 
             //склонность к тучности мешает выживанию на пересечённой местности
             if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Fat)
             {
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
-                    cLandTypes[pLand.m_eType] = 0;
+                    cLandTypes[pLand.Type] = 0;
             }
 
             //повышенная мускулистость отлично сочетается с горами
             if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Muscular)
             {
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Open, LandscapeGeneration.Environment.Flat))
-                    cLandTypes[pLand.m_eType] *= 2;
+                    cLandTypes[pLand.Type] *= 2;
             }
 
             foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Habitable))
-                cLandTypes[pLand.m_eType] = 0;
+                cLandTypes[pLand.Type] = 0;
 
             //ищем наиболее предпочтительные регионы
             int iMax = 0;
-            foreach (var pLand in cLandTypes)
-                if (iMax < pLand.Value)
-                    iMax = pLand.Value;
+            foreach (var pLand in cLandTypes.Values)
+            {
+                if (iMax < pLand)
+                    iMax = pLand;
+            }
 
             //если предпочтительных вообще нет, то все пригодные для жизни регионы одинаково предпочтительны
             if (iMax == 0)
             {
                 foreach (LandTypeInfo pLand in Enum.GetValues(typeof(LandType)))
-                    cLandTypes[pLand.m_eType] = 1;
+                    cLandTypes[pLand.Type] = 1;
 
                 foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Habitable))
-                    cLandTypes[pLand.m_eType] = 0;
+                    cLandTypes[pLand.Type] = 0;
 
                 iMax = 1;
             }
@@ -917,9 +913,9 @@ namespace GeneLab
             foreach (LandType eLand in Enum.GetValues(typeof(LandType)))
             {
                 if (cLandTypes[eLand] == iMax)
-                    cPreferred.Add(LandTypes.m_pInstance.m_pLandTypes[eLand]);
+                    cPreferred.Add(LandTypes.Instance.Lands[eLand]);
                 if (cLandTypes[eLand] == 0 && eLand != LandType.Ocean && eLand != LandType.Coastral)
-                    cHated.Add(LandTypes.m_pInstance.m_pLandTypes[eLand]);
+                    cHated.Add(LandTypes.Instance.Lands[eLand]);
             }
 
             aPreferred = cPreferred.ToArray();

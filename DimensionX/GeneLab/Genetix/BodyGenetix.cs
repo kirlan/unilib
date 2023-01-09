@@ -56,11 +56,10 @@ namespace GeneLab.Genetix
         Female
     }
 
-
     public class BodyGenetix: GenetixBase
     {
         /// <summary>
-        /// small and agile bodies 
+        /// small and agile bodies
         /// </summary>
         /// <returns></returns>
         public string GetDescription()
@@ -118,33 +117,28 @@ namespace GeneLab.Genetix
             if (sSize != "" && sComplexion != "")
                 sSize += " ";
 
-            string sResult = sSize + sComplexion;
+            StringBuilder sResult = new StringBuilder(sSize).Append(sComplexion);
             if (bFull)
             {
                 if (eGender.HasValue)
-                    return sResult + (eGender == Gender.Male ? " man" : " woman") + ".";
+                    sResult.Append(eGender == Gender.Male ? " man" : " woman").Append(".");
                 else
-                    return sResult + " bodies";
+                    sResult.Append(" bodies");
+            }
+            else if (eGender.HasValue)
+            {
+                if (sResult.Length > 0)
+                    sResult.Append(" ");
+
+                sResult.Append(eGender == Gender.Male ? "man" : "woman");
             }
             else
             {
-                if (eGender.HasValue)
-                {
-                    if (sResult != "")
-                        sResult += " ";
-                    return sResult + (eGender == Gender.Male ? "man" : "woman");
-                }
-                else
-                {
-                    if (sResult != "")
-                        sResult += " ";
-
-                    if (sResult != "")
-                        return sResult + "bodies";
-                    else
-                        return "";
-                }
+                if (sResult.Length > 0)
+                    sResult.Append(" bodies");
             }
+
+            return sResult.ToString();
         }
 
         /// <summary>
@@ -225,12 +219,10 @@ namespace GeneLab.Genetix
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            BodyGenetix pAnother = pOther as BodyGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is BodyGenetix pAnother))
                 return false;
 
-            return BodySize == pAnother.BodySize && 
+            return BodySize == pAnother.BodySize &&
                 BodyBuild == pAnother.BodyBuild;
         }
 

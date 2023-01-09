@@ -10,34 +10,32 @@ using System.Text;
 using static Socium.State;
 using Socium.Languages;
 using LandscapeGeneration.PathFind;
+using LandscapeGeneration;
 
 namespace Socium.Population
 {
     public class StateSociety: NationalSociety
     {
-        #region State Models Array
-        public class StateModel
+        #region Polity Infos Array
+        public class PolityInfo
         {
-            public string m_sName;
-            public int m_iRank;
+            public string Name { get; }
+            public int Rank { get; }
 
-            public string m_sHeirM;
-            public string m_sHeirF;
+            public SettlementInfo StateCapital { get; }
+            public SettlementInfo ProvinceCapital { get; }
 
-            public SettlementInfo m_pStateCapital;
-            public SettlementInfo m_pProvinceCapital;
+            public int MinGovernmentLevel { get; }
 
-            public int m_iMinGovernmentLevel;
+            public int MaxGovernmentLevel { get; }
 
-            public int m_iMaxGovernmentLevel;
+            public bool HasDinasty { get; }
 
-            public bool m_bDinasty;
+            public bool IsEmpire { get; }
 
-            public bool m_bBig;
+            public List<Language> Languages { get; } = new List<Language>();
 
-            public List<Language> m_cLanguages = new List<Language>();
-
-            public SocialOrder m_pSocial = null;
+            public Formation Formation { get; } = null;
 
             /// <summary>
             /// Информация о государственном устройстве
@@ -50,147 +48,147 @@ namespace Socium.Population
             /// <param name="iMinGovernmentLevel">Минимальный возможный уровень государственности</param>
             /// <param name="iMaxGovernmentLevel">Максимальный возможный уровень государственности</param>
             /// <param name="cLanguages">Языки, носители которых могут иметь государство такого типа</param>
-            public StateModel(string sName, int iRank, SettlementInfo pStateCapital, SettlementInfo pProvinceCapital, bool bDinasty, int iMinGovernmentLevel, int iMaxGovernmentLevel, bool bBig, SocialOrder pSocial, Language[] cLanguages)
+            public PolityInfo(string sName, int iRank, SettlementInfo pStateCapital, SettlementInfo pProvinceCapital, bool bDinasty, int iMinGovernmentLevel, int iMaxGovernmentLevel, bool bBig, Formation pSocial, Language[] cLanguages)
             {
-                m_sName = sName;
-                m_iRank = iRank;
+                Name = sName;
+                Rank = iRank;
 
-                m_bDinasty = bDinasty;
+                HasDinasty = bDinasty;
 
-                m_pStateCapital = pStateCapital;
-                m_pProvinceCapital = pProvinceCapital;
+                StateCapital = pStateCapital;
+                ProvinceCapital = pProvinceCapital;
 
-                m_pSocial = pSocial;
+                Formation = pSocial;
 
-                m_iMinGovernmentLevel = iMinGovernmentLevel;
-                m_iMaxGovernmentLevel = iMaxGovernmentLevel;
+                MinGovernmentLevel = iMinGovernmentLevel;
+                MaxGovernmentLevel = iMaxGovernmentLevel;
 
-                m_bBig = bBig;
+                IsEmpire = bBig;
 
                 if (cLanguages != null)
-                    m_cLanguages.AddRange(cLanguages);
+                    Languages.AddRange(cLanguages);
             }
 
             public override string ToString()
             {
-                return m_sName;
+                return Name;
             }
         }
 
-        internal static StateModel[] s_aModels =
+        private static readonly PolityInfo[] s_aPolityInfo =
         {
-            new StateModel("Land", 1,
+            new PolityInfo("Land", 1,
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, new BuildingInfo("Elder's hut", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, new BuildingInfo("Elder's hut", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
-                true, 0, 0, false, SocialOrder.Primitive, null),
-            new StateModel("Lands", 1,
+                true, 0, 0, false, Formation.Primitive, null),
+            new PolityInfo("Lands", 1,
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, new BuildingInfo("Elder's hut", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Hamlet, "Hamlet", 5, 10, new BuildingInfo("Elder's hut", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
-                true, 0, 0, true, SocialOrder.Primitive, null),
-            new StateModel("Tribes", 1,
+                true, 0, 0, true, Formation.Primitive, null),
+            new PolityInfo("Tribes", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, new BuildingInfo("Clans hall", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, new BuildingInfo("Village hall", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
-                true, 1, 1, false, SocialOrder.Primitive, null),
-            new StateModel("Clans", 1,
+                true, 1, 1, false, Formation.Primitive, null),
+            new PolityInfo("Clans", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, new BuildingInfo("Clans hall", ProfessionInfo.RulerPrimitive, ProfessionInfo.HeirPrimitive, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, new BuildingInfo("Village hall", ProfessionInfo.GovernorPrimitive, ProfessionInfo.GovernorPrimitive, BuildingSize.Unique)),
-                true, 1, 1, true, SocialOrder.Primitive, null),
-            new StateModel("Kingdom", 1,
+                true, 1, 1, true, Formation.Primitive, null),
+            new PolityInfo("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro, ProfessionInfo.GovernorEuro, BuildingSize.Unique)),
-                true, 2, 6, false, SocialOrder.MedievalEurope, new Language[] {Language.Dwarwen, Language.European, Language.Highlander}),
-            new StateModel("Kingdom", 1,
+                true, 2, 6, false, Formation.MedievalEurope, new Language[] {Language.Dwarwen, Language.European, Language.Highlander}),
+            new PolityInfo("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro2, ProfessionInfo.GovernorEuro2, BuildingSize.Unique)),
-                true, 2, 6, false, SocialOrder.MedievalEurope2, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Highlander}),
-            new StateModel("Empire", 2,
+                true, 2, 6, false, Formation.MedievalEurope2, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Highlander}),
+            new PolityInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro3, ProfessionInfo.GovernorEuro3, BuildingSize.Unique)),
-                true, 2, 6, true, SocialOrder.MedievalEurope2, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Dwarwen}),
-            new StateModel("Kingdom", 1,
+                true, 2, 6, true, Formation.MedievalEurope2, new Language[] {Language.Drow, Language.Elven, Language.European, Language.Dwarwen}),
+            new PolityInfo("Kingdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingEuro, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorEuro4, ProfessionInfo.GovernorEuro4, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalEurope3, new Language[] {Language.Dwarwen, Language.European, Language.Highlander}),
-            new StateModel("Reich", 1,
+                true, 1, 6, false, Formation.MedievalEurope3, new Language[] {Language.Dwarwen, Language.European, Language.Highlander}),
+            new PolityInfo("Reich", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingNorth, ProfessionInfo.KingHeirNorth, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorNorth, ProfessionInfo.GovernorNorth, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalNorth, new Language[] {Language.Dwarwen, Language.Northman}),
-            new StateModel("Kaiserreich", 1,
+                true, 1, 6, false, Formation.MedievalNorth, new Language[] {Language.Dwarwen, Language.Northman}),
+            new PolityInfo("Kaiserreich", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorNorth, ProfessionInfo.EmperorHeirNorth, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorNorth2, ProfessionInfo.GovernorNorth2, BuildingSize.Unique)),
-                true, 2, 6, true, SocialOrder.MedievalNorth, new Language[] {Language.Dwarwen, Language.Northman}),
-            new StateModel("Regnum", 1,
+                true, 2, 6, true, Formation.MedievalNorth, new Language[] {Language.Dwarwen, Language.Northman}),
+            new PolityInfo("Regnum", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingLatin, ProfessionInfo.KingHeirLatin, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorLatin, ProfessionInfo.GovernorLatin, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalLatin, new Language[] {Language.Latin}),
-            new StateModel("Imperium", 2,
+                true, 1, 6, false, Formation.MedievalLatin, new Language[] {Language.Latin}),
+            new PolityInfo("Imperium", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorLatin, ProfessionInfo.KingHeirLatin, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.KingLatin, ProfessionInfo.KingHeirLatin, BuildingSize.Small)),
-                true, 2, 6, true, SocialOrder.MedievalLatin, new Language[] {Language.Latin}),
-            new StateModel("Shogunate", 1,
+                true, 2, 6, true, Formation.MedievalLatin, new Language[] {Language.Latin}),
+            new PolityInfo("Shogunate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingAsian, ProfessionInfo.KingHeirAsian, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorAsian, ProfessionInfo.GovernorAsian, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalAsian, new Language[] {Language.Asian}),
-            new StateModel("Empire", 2,
+                true, 1, 6, false, Formation.MedievalAsian, new Language[] {Language.Asian}),
+            new PolityInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorAsian, ProfessionInfo.EmperorHeirAsian, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorAsian2, ProfessionInfo.GovernorAsian2, BuildingSize.Unique)),
-                true, 2, 6, true, SocialOrder.MedievalAsian, new Language[] {Language.Asian}),
-            new StateModel("Shahdom", 1,
+                true, 2, 6, true, Formation.MedievalAsian, new Language[] {Language.Asian}),
+            new PolityInfo("Shahdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingArabian, ProfessionInfo.KingHeirArabian, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorArabian, ProfessionInfo.GovernorArabian, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalArabian, new Language[] {Language.Arabian}),
-            new StateModel("Sultanate", 1,
+                true, 1, 6, false, Formation.MedievalArabian, new Language[] {Language.Arabian}),
+            new PolityInfo("Sultanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingArabian2, ProfessionInfo.KingHeirArabian2, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorArabian, ProfessionInfo.GovernorArabian, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalArabian, new Language[] {Language.Arabian, Language.African}),
-            new StateModel("Caliphate", 2,
+                true, 1, 6, false, Formation.MedievalArabian, new Language[] {Language.Arabian, Language.African}),
+            new PolityInfo("Caliphate", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorArabian, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorArabian, ProfessionInfo.GovernorArabian, BuildingSize.Unique)),
-                true, 2, 6, true, SocialOrder.MedievalArabian, new Language[] {Language.Arabian, Language.African}),
-            new StateModel("Khanate", 1,
+                true, 2, 6, true, Formation.MedievalArabian, new Language[] {Language.Arabian, Language.African}),
+            new PolityInfo("Khanate", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingMongol, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorMongol, ProfessionInfo.GovernorMongol, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalMongol, new Language[] {Language.Orkish, Language.Eskimoid}),
-            new StateModel("Khaganate", 2,
+                true, 1, 6, false, Formation.MedievalMongol, new Language[] {Language.Orkish, Language.Eskimoid}),
+            new PolityInfo("Khaganate", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorMongol, ProfessionInfo.KingHeirEuro, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.KingMongol, ProfessionInfo.KingHeirEuro, BuildingSize.Small)),
-                true, 2, 6, true, SocialOrder.MedievalMongol, new Language[] {Language.Orkish, Language.Eskimoid}),
-            new StateModel("Knyazdom", 1,
+                true, 2, 6, true, Formation.MedievalMongol, new Language[] {Language.Orkish, Language.Eskimoid}),
+            new PolityInfo("Knyazdom", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingSlavic, ProfessionInfo.KingHeirSlavic, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorSlavic, ProfessionInfo.GovernorSlavic, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalSlavic, new Language[] {Language.Slavic}),
-            new StateModel("Tsardom", 2,
+                true, 1, 6, false, Formation.MedievalSlavic, new Language[] {Language.Slavic}),
+            new PolityInfo("Tsardom", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorSlavic, ProfessionInfo.EmperorHeirSlavic, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.KingSlavic, ProfessionInfo.KingHeirSlavic, BuildingSize.Small)),
-                true, 2, 6, true, SocialOrder.MedievalSlavic, new Language[] {Language.Slavic}),
-            new StateModel("Basileia", 1,
+                true, 2, 6, true, Formation.MedievalSlavic, new Language[] {Language.Slavic}),
+            new PolityInfo("Basileia", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingGreek, ProfessionInfo.KingHeirGreek, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorGreek, ProfessionInfo.GovernorGreek, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalGreek, new Language[] {Language.Greek}),
-            new StateModel("Autokratoria", 2,
+                true, 1, 6, false, Formation.MedievalGreek, new Language[] {Language.Greek}),
+            new PolityInfo("Autokratoria", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorGreek, ProfessionInfo.KingHeirGreek, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorGreek2, ProfessionInfo.GovernorGreek2, BuildingSize.Unique)),
-                true, 2, 6, true, SocialOrder.MedievalGreek, new Language[] {Language.Greek}),
-            new StateModel("Raj", 1,
+                true, 2, 6, true, Formation.MedievalGreek, new Language[] {Language.Greek}),
+            new PolityInfo("Raj", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingHindu, ProfessionInfo.KingHeirHindu, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorHindu, ProfessionInfo.GovernorHindu, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalHindu, new Language[] {Language.Hindu}),
-            new StateModel("Empire", 2,
+                true, 1, 6, false, Formation.MedievalHindu, new Language[] {Language.Hindu}),
+            new PolityInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorHindu, ProfessionInfo.EmperorHeirHindu, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.KingHindu, ProfessionInfo.KingHeirHindu, BuildingSize.Small)),
-                true, 2, 6, true, SocialOrder.MedievalHindu, new Language[] {Language.Hindu}),
-            new StateModel("Altepetl", 1,
+                true, 2, 6, true, Formation.MedievalHindu, new Language[] {Language.Hindu}),
+            new PolityInfo("Altepetl", 1,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.KingAztec, ProfessionInfo.KingHeirAztec, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorAztec, ProfessionInfo.GovernorAztec, BuildingSize.Unique)),
-                true, 1, 6, false, SocialOrder.MedievalAztec, new Language[] {Language.Aztec}),
-            new StateModel("Empire", 2,
+                true, 1, 6, false, Formation.MedievalAztec, new Language[] {Language.Aztec}),
+            new PolityInfo("Empire", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Castle", ProfessionInfo.EmperorEuro, ProfessionInfo.KingHeirAztec, BuildingSize.Small, FamilyOwnership.Full)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Castle", ProfessionInfo.GovernorAztec, ProfessionInfo.GovernorAztec, BuildingSize.Unique)),
-                true, 2, 6, true, SocialOrder.MedievalAztec, new Language[] {Language.Aztec}),
-            new StateModel("Republic", 2,
+                true, 2, 6, true, Formation.MedievalAztec, new Language[] {Language.Aztec}),
+            new PolityInfo("Republic", 2,
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern, ProfessionInfo.AdvisorModern, BuildingSize.Small)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern, ProfessionInfo.GovernorModern, BuildingSize.Unique)),
-                false, 3, 7, false, SocialOrder.Modern, null),
+                false, 3, 7, false, Formation.Modern, null),
             //new StateInfo("Republic", 16,
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Dictator", "Dictator", 16)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Governor", "Governor", 14)), 
@@ -199,46 +197,46 @@ namespace Socium.Population
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "General", "General", 16)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 14, 5, 7, new BuildingInfo("Palace", "Colonel", "Colonel", 14)), 
             //    "Officer", "Officer", false, 2, 6, 3, 4),
-            new StateModel("Federation", 2,
+            new PolityInfo("Federation", 2,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern2, ProfessionInfo.AdvisorModern2, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
-                false, 4, 7, false, SocialOrder.Modern, null),
-            new StateModel("League", 3,
+                false, 4, 7, false, Formation.Modern, null),
+            new PolityInfo("League", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("Palace", ProfessionInfo.RulerModern3, ProfessionInfo.AdvisorModern3, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Palace", ProfessionInfo.GovernorModern, ProfessionInfo.GovernorModern, BuildingSize.Unique)),
-                false, 4, 7, true, SocialOrder.Modern, null),
-            new StateModel("Union", 3,
+                false, 4, 7, true, Formation.Modern, null),
+            new PolityInfo("Union", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern2, ProfessionInfo.AdvisorModern2, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
-                false, 5, 7, true, SocialOrder.Modern, null),
-            new StateModel("Alliance", 3,
+                false, 5, 7, true, Formation.Modern, null),
+            new PolityInfo("Alliance", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("Palace", ProfessionInfo.RulerModern4, ProfessionInfo.AdvisorModern, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
-                false, 5, 7, true, SocialOrder.Modern, null),
-            new StateModel("Coalition", 3,
+                false, 5, 7, true, Formation.Modern, null),
+            new PolityInfo("Coalition", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern3, ProfessionInfo.AdvisorModern, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern2, ProfessionInfo.GovernorModern2, BuildingSize.Unique)),
-                false, 5, 7, true, SocialOrder.Modern, null),
-            new StateModel("Association", 3,
+                false, 5, 7, true, Formation.Modern, null),
+            new PolityInfo("Association", 3,
                 new SettlementInfo(SettlementSize.Capital, "City", 40, 80, new BuildingInfo("Statehouse", ProfessionInfo.RulerModern2, ProfessionInfo.AdvisorModern4, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.City, "City", 40, 80, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern, ProfessionInfo.GovernorModern, BuildingSize.Unique)),
-                false, 5, 7, true, SocialOrder.Modern, null),
+                false, 5, 7, true, Formation.Modern, null),
             //new StateInfo("Realm", 17,
             //    new SettlementInfo(SettlementSize.Capital, "City", 40, 80, 16, 5, 10, new BuildingInfo("Citadel", "God-King", "Goddess-Queen", 17)), 
             //    new SettlementInfo(SettlementSize.City, "City", 40, 80, 15, 5, 10, new BuildingInfo("Palace", "Father", "Mother", 15)), 
             //    "Brother", "Sister", false, 5, 8, null),
-            new StateModel("Commonwealth", 1,
+            new PolityInfo("Commonwealth", 1,
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Town hall", ProfessionInfo.RulerModern3, ProfessionInfo.AdvisorModern5, BuildingSize.Unique)),
                 new SettlementInfo(SettlementSize.Town, "Town", 20, 40, new BuildingInfo("Town hall", ProfessionInfo.GovernorModern3, ProfessionInfo.GovernorModern3, BuildingSize.Unique)),
-                false, 7, 8, false, SocialOrder.Future, null),
-            new StateModel("Society", 1,
+                false, 7, 8, false, Formation.Future, null),
+            new PolityInfo("Society", 1,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, null),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, null),
-                false, 7, 8, false, SocialOrder.Future, null),
-            new StateModel("Collective", 2,
+                false, 7, 8, false, Formation.Future, null),
+            new PolityInfo("Collective", 2,
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, null),
                 new SettlementInfo(SettlementSize.Village, "Village", 10, 20, null),
-                false, 7, 8, true, SocialOrder.Future, null),
+                false, 7, 8, true, Formation.Future, null),
         };
         #endregion
 
@@ -249,7 +247,7 @@ namespace Socium.Population
         /// 3 - Законы крайне строги, широко используется смертная казнь.
         /// 4 - Тоталитарная диктатура. Все граждане, кроме правящей верхушки, попадают под презумпцию виновности.
         /// </summary>
-        public int m_iControl = 0;
+        public int Control { get; private set; } = 0;
         /// <summary>
         /// Уровень социального (не)равенства.
         /// 0 - рабство
@@ -258,71 +256,70 @@ namespace Socium.Population
         /// 3 - социализм
         /// 4 - коммунизм
         /// </summary>
-        public int m_iSocialEquality = 0;
+        public int SocialEquality { get; set; } = 0;
 
-        public StateModel m_pStateModel = null;
+        public PolityInfo Polity { get; private set; } = null;
 
-        private State m_pState = null;
+        private readonly State m_pState = null;
 
-        public Dictionary<Estate.Position, Estate> m_cEstates = new Dictionary<Estate.Position, Estate>();
+        public Dictionary<Estate.SocialRank, Estate> Estates { get; } = new Dictionary<Estate.SocialRank, Estate>();
 
-        public Nation m_pHostNation = null;
-        
-        public Nation m_pSlavesNation = null;
+        public Nation HostNation { get; private set; } = null;
+
+        public Nation SlavesNation { get; private set; } = null;
 
         public StateSociety(State pState)
-            : base(pState.m_pMethropoly.m_pLocalSociety.m_pTitularNation)
+            : base(pState.m_pMethropoly.m_pLocalSociety.TitularNation)
         {
             m_pState = pState;
 
-            m_iTechLevel = 0;
-            m_iInfrastructureLevel = 0;
+            TechLevel = 0;
+            InfrastructureLevel = 0;
 
-            m_cCulture[Gender.Male] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Male], Customs.Mutation.Possible);
-            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
-            m_cCulture[Gender.Female] = new Culture(pState.m_pMethropoly.m_pLocalSociety.m_cCulture[Gender.Female], Customs.Mutation.Possible);
-            m_cCulture[Gender.Female].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
+            Culture[Gender.Male] = new Culture(pState.m_pMethropoly.m_pLocalSociety.Culture[Gender.Male], Customs.Mutation.Possible);
+            Culture[Gender.Male].Customs.ApplyFenotype(TitularNation.PhenotypeMale);
+            Culture[Gender.Female] = new Culture(pState.m_pMethropoly.m_pLocalSociety.Culture[Gender.Female], Customs.Mutation.Possible);
+            Culture[Gender.Female].Customs.ApplyFenotype(TitularNation.PhenotypeFemale);
 
             FixSexCustoms();
         }
 
         public void CalculateTitularNation()
-        { 
+        {
             Dictionary<Nation, int> cNationsCount = new Dictionary<Nation, int>();
 
             foreach (Province pProvince in m_pState.Contents)
             {
-                int iCount = 0;
-                if (!cNationsCount.TryGetValue(pProvince.m_pLocalSociety.m_pTitularNation, out iCount))
-                    cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] = 0;
-                cNationsCount[pProvince.m_pLocalSociety.m_pTitularNation] = iCount + pProvince.m_iPopulation;
+                if (!cNationsCount.TryGetValue(pProvince.m_pLocalSociety.TitularNation, out int iCount))
+                    cNationsCount[pProvince.m_pLocalSociety.TitularNation] = 0;
+                cNationsCount[pProvince.m_pLocalSociety.TitularNation] = iCount + pProvince.m_iPopulation;
 
-                if (pProvince.m_pLocalSociety.m_iTechLevel > m_iTechLevel)
-                    m_iTechLevel = pProvince.m_pLocalSociety.m_iTechLevel;
+                if (pProvince.m_pLocalSociety.TechLevel > TechLevel)
+                    TechLevel = pProvince.m_pLocalSociety.TechLevel;
 
-                if (pProvince.m_pLocalSociety.m_iInfrastructureLevel > m_iInfrastructureLevel)
-                    m_iInfrastructureLevel = pProvince.m_pLocalSociety.m_iInfrastructureLevel;
+                if (pProvince.m_pLocalSociety.InfrastructureLevel > InfrastructureLevel)
+                    InfrastructureLevel = pProvince.m_pLocalSociety.InfrastructureLevel;
             }
 
             Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
-            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pTitularNation.IsInvader)
+            if (TitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || TitularNation.IsInvader)
             {
-                cNationsCount.Remove(m_pTitularNation);
+                cNationsCount.Remove(TitularNation);
                 if (cNationsCount.Count > 0)
                     pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
             }
             else
             {
                 UpdateTitularNation(pMostCommonNation);
-                cNationsCount.Remove(m_pTitularNation);
+                cNationsCount.Remove(TitularNation);
             }
-            m_pHostNation = pMostCommonNation;
+            HostNation = pMostCommonNation;
             if (cNationsCount.ContainsKey(pMostCommonNation))
                 cNationsCount.Remove(pMostCommonNation);
             if (cNationsCount.Count > 0)
                 pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseOne(cNationsCount.Values, 1)];
 
-            m_pSlavesNation = pMostCommonNation;
+            SlavesNation = pMostCommonNation;
 
             Nation getAccessableNation(bool bCanBeDying, bool bCanBeParasite, bool bOnlyLocals, Nation pDefault)
             {
@@ -334,8 +331,8 @@ namespace Socium.Population
                 }
                 if (!bOnlyLocals)
                 {
-                    if (InfrastructureLevels[m_iInfrastructureLevel].m_eMaxNavalPath == RoadQuality.Good ||
-                        InfrastructureLevels[m_iInfrastructureLevel].m_iAerialAvailability > 1)
+                    if (InfrastructureLevels[InfrastructureLevel].m_eMaxNavalPath == RoadQuality.Good ||
+                        InfrastructureLevels[InfrastructureLevel].m_iAerialAvailability > 1)
                     {
                         var pWorld = pContinent.Origin.GetOwner();
                         foreach (var pOtherContinent in pWorld.Contents)
@@ -364,7 +361,7 @@ namespace Socium.Population
                         cChances[pNation] = 0;
                     cChances[pNation]++;
 
-                    if (pNation.m_pRace.m_pLanguage == m_pTitularNation.m_pRace.m_pLanguage)
+                    if (pNation.Race.Language == TitularNation.Race.Language)
                         cChances[pNation]++;
 
                     foreach (var pOtherState in m_pState.BorderWith.Keys)
@@ -372,11 +369,11 @@ namespace Socium.Population
                         if (pOtherState.Forbidden)
                             continue;
 
-                        if (pOtherState.m_pSociety.m_pTitularNation == pNation)
+                        if (pOtherState.m_pSociety.TitularNation == pNation)
                             cChances[pNation]++;
                     }
 
-                    int iHostility = m_pTitularNation.DominantPhenotype.GetFenotypeDifference(pNation.DominantPhenotype);
+                    int iHostility = TitularNation.DominantPhenotype.GetFenotypeDifference(pNation.DominantPhenotype);
                     if (iHostility > 0)
                         cChances[pNation]++;
                     if (iHostility > 3)
@@ -402,15 +399,13 @@ namespace Socium.Population
                 return pDefault;
             }
 
-            if (m_pTitularNation == m_pHostNation && (m_pTitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || (m_pTitularNation.IsInvader /*&& m_iControl >= 3*/)))
+            if (TitularNation == HostNation && (TitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || (TitularNation.IsInvader /*&& m_iControl >= 3*/)))
             {
-                m_pHostNation = getAccessableNation(false, false, true, m_pHostNation);
+                HostNation = getAccessableNation(false, false, true, HostNation);
             }
-            if (m_pTitularNation == m_pSlavesNation && Rnd.OneChanceFrom(3))
+            if (TitularNation == SlavesNation && Rnd.OneChanceFrom(3))
             {
-                //TODO: вообще рабы могут быть не только местные, но сейчас у нас нет механики как получить список рас живущих на других континентах,
-                //поэтому при вызове getAccessableNation передаём bOnlyLocals как true
-                m_pSlavesNation = getAccessableNation(true, false, true, m_pSlavesNation);
+                SlavesNation = getAccessableNation(true, false, false, SlavesNation);
             }
         }
 
@@ -432,94 +427,93 @@ namespace Socium.Population
             }
         }
 
-
-        public Dictionary<ProfessionInfo, int> m_cProfessions = new Dictionary<ProfessionInfo, int>();
-        public Dictionary<Estate.Position, int> m_cEstatesCounts = new Dictionary<Estate.Position, int>();
+        public Dictionary<ProfessionInfo, int> Professions { get; } = new Dictionary<ProfessionInfo, int>();
+        public Dictionary<Estate.SocialRank, int> EstatesCounts { get; } = new Dictionary<Estate.SocialRank, int>();
 
         /// <summary>
-        /// Распределяет население государства по сословиям. 
+        /// Распределяет население государства по сословиям.
         /// Вызывается в CWorld.PopulateMap после того, как созданы и застроены все поселения в государстве - т.е. после того, как сформировано собственно население.
         /// </summary>
         public void SetEstates()
         {
             // Базовые настройки культуры и обычаев для сообщества
-            Estate pBase = new Estate(this, Estate.Position.Commoners, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Commoners), true);
+            Estate pBase = new Estate(this, Estate.SocialRank.Commoners, Polity.Formation.GetEstateName(Estate.SocialRank.Commoners), true);
 
             // Элита может немного отличаться от среднего класса
-            m_cEstates[Estate.Position.Elite] = new Estate(pBase, Estate.Position.Elite, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Elite), false);
+            Estates[Estate.SocialRank.Elite] = new Estate(pBase, Estate.SocialRank.Elite, Polity.Formation.GetEstateName(Estate.SocialRank.Elite), false);
 
             // духовенство - его обычаи должны отличаться не только от среднего класса, но и от элиты
             do
             {
-                m_cEstates[Estate.Position.Clergy] = new Estate(pBase, Estate.Position.Clergy, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Clergy), false);
+                Estates[Estate.SocialRank.Clergy] = new Estate(pBase, Estate.SocialRank.Clergy, Polity.Formation.GetEstateName(Estate.SocialRank.Clergy), false);
             }
-            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female]));
+            while (Estates[Estate.SocialRank.Elite].Culture[Gender.Male].Equals(Estates[Estate.SocialRank.Clergy].Culture[Gender.Male]) ||
+                   Estates[Estate.SocialRank.Elite].Culture[Gender.Female].Equals(Estates[Estate.SocialRank.Clergy].Culture[Gender.Female]));
             if (Rnd.OneChanceFrom(2))
-                m_cEstates[Estate.Position.Clergy].UpdateTitularNation(m_pHostNation);
+                Estates[Estate.SocialRank.Clergy].UpdateTitularNation(HostNation);
 
             // средний класс - это и есть основа всего сообщества
-            m_cEstates[Estate.Position.Commoners] = pBase;
-            m_cEstates[Estate.Position.Commoners].UpdateTitularNation(m_pHostNation);
+            Estates[Estate.SocialRank.Commoners] = pBase;
+            Estates[Estate.SocialRank.Commoners].UpdateTitularNation(HostNation);
             // TODO: насколько сильно родная культура порабощённой нации должна влиять на культуру образованного ей сословия?
             // Сейчас она не влияет вообще, порабощённые расы полностью ассимилируются. Но правильно ли это?
 
             // низший класс - его обычаи должны отличаться не только от среднего класса, но и от элиты
             do
             {
-                m_cEstates[Estate.Position.Lowlifes] = new Estate(pBase, Estate.Position.Lowlifes, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Lowlifes), false);
+                Estates[Estate.SocialRank.Lowlifes] = new Estate(pBase, Estate.SocialRank.Lowlifes, Polity.Formation.GetEstateName(Estate.SocialRank.Lowlifes), false);
             }
-            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]) ||
-                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female]));
-            m_cEstates[Estate.Position.Lowlifes].UpdateTitularNation(m_pSlavesNation);
+            while (Estates[Estate.SocialRank.Elite].Culture[Gender.Male].Equals(Estates[Estate.SocialRank.Lowlifes].Culture[Gender.Male]) ||
+                   Estates[Estate.SocialRank.Elite].Culture[Gender.Female].Equals(Estates[Estate.SocialRank.Lowlifes].Culture[Gender.Female]) ||
+                   Estates[Estate.SocialRank.Clergy].Culture[Gender.Male].Equals(Estates[Estate.SocialRank.Lowlifes].Culture[Gender.Male]) ||
+                   Estates[Estate.SocialRank.Clergy].Culture[Gender.Female].Equals(Estates[Estate.SocialRank.Lowlifes].Culture[Gender.Female]));
 
+            Estates[Estate.SocialRank.Lowlifes].UpdateTitularNation(SlavesNation);
 
             // аутсайдеры - строим либо на базе среднего класса, либо на базе низшего - и следим, чтобы тоже отличалось от всех других сословий
             do
             {
-                if (!Rnd.OneChanceFrom(3) && m_iSocialEquality != 0)
+                if (!Rnd.OneChanceFrom(3) && SocialEquality != 0)
                 {
-                    m_cEstates[Estate.Position.Outlaws] = new Estate(m_cEstates[Estate.Position.Lowlifes], Estate.Position.Outlaws, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Outlaws), false);
+                    Estates[Estate.SocialRank.Outlaws] = new Estate(Estates[Estate.SocialRank.Lowlifes], Estate.SocialRank.Outlaws, Polity.Formation.GetEstateName(Estate.SocialRank.Outlaws), false);
                 }
                 else
                 {
-                    m_cEstates[Estate.Position.Outlaws] = new Estate(pBase, Estate.Position.Outlaws, m_pStateModel.m_pSocial.GetEstateName(Estate.Position.Outlaws), false);
+                    Estates[Estate.SocialRank.Outlaws] = new Estate(pBase, Estate.SocialRank.Outlaws, Polity.Formation.GetEstateName(Estate.SocialRank.Outlaws), false);
                 }
             }
-            while (m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Elite].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
-                   m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Lowlifes].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
-                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
-                   m_cEstates[Estate.Position.Clergy].m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]) ||
-                   pBase.m_cCulture[Gender.Male].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Male]) ||
-                   pBase.m_cCulture[Gender.Female].Equals(m_cEstates[Estate.Position.Outlaws].m_cCulture[Gender.Female]));
-            m_cEstates[Estate.Position.Outlaws].UpdateTitularNation(Rnd.OneChanceFrom(3) ? m_pTitularNation : Rnd.OneChanceFrom(2) ? m_pHostNation : m_pSlavesNation);
+            while (Estates[Estate.SocialRank.Elite].Culture[Gender.Male].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Male]) ||
+                   Estates[Estate.SocialRank.Elite].Culture[Gender.Female].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Female]) ||
+                   Estates[Estate.SocialRank.Lowlifes].Culture[Gender.Male].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Male]) ||
+                   Estates[Estate.SocialRank.Lowlifes].Culture[Gender.Female].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Female]) ||
+                   Estates[Estate.SocialRank.Clergy].Culture[Gender.Male].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Male]) ||
+                   Estates[Estate.SocialRank.Clergy].Culture[Gender.Female].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Female]) ||
+                   pBase.Culture[Gender.Male].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Male]) ||
+                   pBase.Culture[Gender.Female].Equals(Estates[Estate.SocialRank.Outlaws].Culture[Gender.Female]));
+
+            Estates[Estate.SocialRank.Outlaws].UpdateTitularNation(Rnd.OneChanceFrom(3) ? TitularNation : Rnd.OneChanceFrom(2) ? HostNation : SlavesNation);
 
             // перебираем все поселения, где присутсвует сообщество
-            foreach (LocationX pLocation in Settlements)
+            foreach (Settlement pSettlement in Settlements.Select(x => x.m_pSettlement))
             {
-                if (pLocation.m_pSettlement == null)
+                if (pSettlement == null)
                     continue;
 
-                if (pLocation.m_pSettlement.m_cBuildings.Count > 0)
+                if (pSettlement.m_cBuildings.Count > 0)
                 {
                     // перебираем все строения в поселениях
-                    foreach (Building pBuilding in pLocation.m_pSettlement.m_cBuildings)
+                    foreach (BuildingInfo pBuildingInfo in pSettlement.m_cBuildings.Select(x => x.m_pInfo))
                     {
-                        int iCount = 0;
-                        int iOwnersCount = pBuilding.m_pInfo.OwnersCount;
-                        int iWorkersCount = pBuilding.m_pInfo.WorkersCount;
+                        int iOwnersCount = pBuildingInfo.OwnersCount;
+                        int iWorkersCount = pBuildingInfo.WorkersCount;
 
-                        var pOwner = pBuilding.m_pInfo.m_pOwnerProfession;
-                        m_cProfessions.TryGetValue(pOwner, out iCount);
-                        m_cProfessions[pOwner] = iCount + iOwnersCount;
+                        var pOwner = pBuildingInfo.m_pOwnerProfession;
+                        Professions.TryGetValue(pOwner, out int iCount);
+                        Professions[pOwner] = iCount + iOwnersCount;
 
-                        var pWorkers = pBuilding.m_pInfo.m_pWorkersProfession;
-                        m_cProfessions.TryGetValue(pWorkers, out iCount);
-                        m_cProfessions[pWorkers] = iCount + iWorkersCount;
+                        var pWorkers = pBuildingInfo.m_pWorkersProfession;
+                        Professions.TryGetValue(pWorkers, out iCount);
+                        Professions[pWorkers] = iCount + iWorkersCount;
                     }
                 }
             }
@@ -552,7 +546,7 @@ namespace Socium.Population
             int iTotalPopulation = 0;
 
             // заполняем таблицу предпочтительных профессий - с точки зрения общих культурных норм сообщества
-            foreach (var pProfession in m_cProfessions)
+            foreach (var pProfession in Professions)
             {
                 iTotalPopulation += pProfession.Value;
 
@@ -565,12 +559,17 @@ namespace Socium.Population
 
                 var eProfessionGenderPriority = GetProfessionGenderPriority(pProfession.Key);
 
-                if (DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Patriarchy) &&
+                if (DominantCulture.Customs.Has(Customs.GenderPriority.Patriarchy) &&
                     eProfessionGenderPriority == Customs.GenderPriority.Matriarchy)
+                {
                     iPreference -= iDiscrimination;
-                if (DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy) &&
+                }
+
+                if (DominantCulture.Customs.Has(Customs.GenderPriority.Matriarchy) &&
                     eProfessionGenderPriority == Customs.GenderPriority.Patriarchy)
+                {
                     iPreference -= iDiscrimination;
+                }
 
                 if (!cProfessionPreference.ContainsKey(iPreference))
                     cProfessionPreference[iPreference] = new List<ProfessionInfo>();
@@ -582,49 +581,48 @@ namespace Socium.Population
             //При рабовладельческом строе (0) элита должна составлять порядка 1% населения, низшее сословие - 90-95%
             //При коммунизме - численность сословий равна. Или может наоборот, должна быть элита 90+%
 
-            int iLowEstateCount = iTotalPopulation * (92 - m_iSocialEquality * 23) / 100;
-            int iEliteEstateCount = iTotalPopulation * (10 + m_iSocialEquality * 5) / 100;
+            int iLowEstateCount = iTotalPopulation * (92 - SocialEquality * 23) / 100;
+            int iEliteEstateCount = iTotalPopulation * (10 + SocialEquality * 5) / 100;
 
             void addCasteRestrictedProfessionToEstate(ProfessionInfo pProfession)
             {
                 if (pProfession.m_eCasteRestriction.HasValue)
                 {
-                    var pEstate = m_cEstates[Estate.Position.Elite];
-                    var iCount = 0;
-                    m_cProfessions.TryGetValue(pProfession, out iCount);
+                    var pEstate = Estates[Estate.SocialRank.Elite];
+                    Professions.TryGetValue(pProfession, out int iCount);
                     switch (pProfession.m_eCasteRestriction)
                     {
                         case ProfessionInfo.Caste.Elite:
-                            pEstate = m_cEstates[Estate.Position.Elite];
+                            pEstate = Estates[Estate.SocialRank.Elite];
                             iEliteEstateCount -= iCount;
                             break;
                         case ProfessionInfo.Caste.Cleregy:
-                            pEstate = m_cEstates[Estate.Position.Clergy];
+                            pEstate = Estates[Estate.SocialRank.Clergy];
                             break;
                         case ProfessionInfo.Caste.Low:
-                            pEstate = m_cEstates[Estate.Position.Lowlifes];
+                            pEstate = Estates[Estate.SocialRank.Lowlifes];
                             iLowEstateCount -= iCount;
                             break;
                         case ProfessionInfo.Caste.Outlaw:
-                            pEstate = m_cEstates[Estate.Position.Outlaws];
+                            pEstate = Estates[Estate.SocialRank.Outlaws];
                             break;
                     }
-                    pEstate.m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
+                    pEstate.GenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
                     removeProfessionPreference(pProfession);
                 }
             }
 
-            addCasteRestrictedProfessionToEstate(m_pStateModel.m_pStateCapital.m_pMainBuilding.m_pOwnerProfession);
-            addCasteRestrictedProfessionToEstate(m_pStateModel.m_pStateCapital.m_pMainBuilding.m_pWorkersProfession);
-            addCasteRestrictedProfessionToEstate(m_pStateModel.m_pProvinceCapital.m_pMainBuilding.m_pOwnerProfession);
+            addCasteRestrictedProfessionToEstate(Polity.StateCapital.m_pMainBuilding.m_pOwnerProfession);
+            addCasteRestrictedProfessionToEstate(Polity.StateCapital.m_pMainBuilding.m_pWorkersProfession);
+            addCasteRestrictedProfessionToEstate(Polity.ProvinceCapital.m_pMainBuilding.m_pOwnerProfession);
 
-            foreach (var pProfession in m_cProfessions)
+            foreach (var pProfession in Professions)
             {
                 addCasteRestrictedProfessionToEstate(pProfession.Key);
             }
 
             int iMinCommonersProfessionsCount = cProfessionPreference.Count - 2 * cProfessionPreference.Count / 3;
-            if (m_iSocialEquality != 0 || m_cEstates[Estate.Position.Lowlifes].m_cGenderProfessionPreferences.Count == 0)
+            if (SocialEquality != 0 || Estates[Estate.SocialRank.Lowlifes].GenderProfessionPreferences.Count == 0)
             {
                 while (iLowEstateCount > 0)
                 {
@@ -638,10 +636,10 @@ namespace Socium.Population
                     foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                     {
                         if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
-                            m_cProfessions[pProfession] < iLowEstateCount && m_cProfessions[pProfession] > iBestFit)
+                            Professions[pProfession] < iLowEstateCount && Professions[pProfession] > iBestFit)
                         {
                             pBestFit = pProfession;
-                            iBestFit = m_cProfessions[pProfession];
+                            iBestFit = Professions[pProfession];
                         }
                     }
                     if (pBestFit == null)
@@ -650,16 +648,16 @@ namespace Socium.Population
                         foreach (ProfessionInfo pProfession in cProfessionPreference[iLowestPreference])
                         {
                             if (pProfession.m_eCasteRestriction != ProfessionInfo.Caste.MiddleOrUp &&
-                                m_cProfessions[pProfession] < iBestFit)
+                                Professions[pProfession] < iBestFit)
                             {
                                 pBestFit = pProfession;
-                                iBestFit = m_cProfessions[pProfession];
+                                iBestFit = Professions[pProfession];
                             }
                         }
                     }
                     if (pBestFit != null)
                     {
-                        m_cEstates[Estate.Position.Lowlifes].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit);
+                        Estates[Estate.SocialRank.Lowlifes].GenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit);
                         iLowEstateCount -= iBestFit;
                         removeProfessionPreference(pBestFit);
                     }
@@ -682,15 +680,15 @@ namespace Socium.Population
                 int iBestFit = iEliteEstateCount;
                 foreach (ProfessionInfo pStrata in cProfessionPreference[iHighestPreference])
                 {
-                    if (m_cProfessions[pStrata] < iBestFit)
+                    if (Professions[pStrata] < iBestFit)
                     {
                         pBestFit = pStrata;
-                        iBestFit = m_cProfessions[pStrata];
+                        iBestFit = Professions[pStrata];
                     }
                 }
                 if (pBestFit != null)
                 {
-                    m_cEstates[Estate.Position.Elite].m_cGenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit);
+                    Estates[Estate.SocialRank.Elite].GenderProfessionPreferences[pBestFit] = GetProfessionGenderPriority(pBestFit);
                     iEliteEstateCount -= iBestFit;
                     removeProfessionPreference(pBestFit);
                 }
@@ -704,18 +702,17 @@ namespace Socium.Population
             {
                 foreach (ProfessionInfo pProfession in pPreference.Value)
                 {
-                    m_cEstates[Estate.Position.Commoners].m_cGenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
+                    Estates[Estate.SocialRank.Commoners].GenderProfessionPreferences[pProfession] = GetProfessionGenderPriority(pProfession);
                 }
             }
 
-            foreach (var pEstate in m_cEstates)
+            foreach (var pEstate in Estates)
             {
-                m_cEstatesCounts[pEstate.Key] = 0;
-                foreach (var pProfession in pEstate.Value.m_cGenderProfessionPreferences)
+                EstatesCounts[pEstate.Key] = 0;
+                foreach (var pProfession in pEstate.Value.GenderProfessionPreferences)
                 {
-                    int iCount = 0;
-                    if (m_cProfessions.TryGetValue(pProfession.Key, out iCount))
-                        m_cEstatesCounts[pEstate.Key] += iCount;
+                    if (Professions.TryGetValue(pProfession.Key, out int iCount))
+                        EstatesCounts[pEstate.Key] += iCount;
                 }
             }
         }
@@ -727,32 +724,27 @@ namespace Socium.Population
         /// <returns></returns>
         public static string GetEqualityString(int iEquality)
         {
-            string sEquality = "Slavery";
             switch (iEquality)
             {
                 case 1:
-                    sEquality = "Serfdom";
-                    break;
+                    return "Serfdom";
                 case 2:
-                    sEquality = "Hired labour";
-                    break;
+                    return "Hired labour";
                 case 3:
-                    sEquality = "Social equality";
-                    break;
+                    return "Social equality";
                 case 4:
-                    sEquality = "Utopia";
-                    break;
+                    return "Utopia";
             }
-            return sEquality;
+            return "Slavery";
         }
 
         public int GetImportedTech()
         {
-            if (m_pTitularNation.IsAncient)
+            if (TitularNation.IsAncient)
                 return -1;
 
             int iMaxTech = GetEffectiveTech();
-            foreach (State pState in m_pState.m_aBorderWith)
+            foreach (State pState in m_pState.BorderWithKeys)
             {
                 if (pState.Forbidden)
                     continue;
@@ -769,12 +761,12 @@ namespace Socium.Population
 
         public string GetImportedTechString()
         {
-            if (m_pTitularNation.IsAncient)
+            if (TitularNation.IsAncient)
                 return "";
 
             int iMaxTech = GetEffectiveTech();
             State pExporter = null;
-            foreach (State pState in m_pState.m_aBorderWith)
+            foreach (State pState in m_pState.BorderWithKeys)
             {
                 if (pState.Forbidden)
                     continue;
@@ -789,17 +781,17 @@ namespace Socium.Population
             if (pExporter == null)
                 return "";
 
-            return GetTechString(pExporter.m_pSociety.m_iTechLevel, pExporter.m_pSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Science>());
+            return GetTechString(pExporter.m_pSociety.TechLevel, pExporter.m_pSociety.DominantCulture.Customs.ValueOf<Customs.Science>());
         }
         public override string ToString()
         {
-            return string.Format("{2} (C{1}T{3}M{5}) - {0} {4}", m_sName, DominantCulture.m_iProgressLevel, m_pTitularNation, m_iTechLevel, m_pStateModel.m_sName, m_iMagicLimit);
+            return string.Format("{2} (C{1}T{3}M{5}) - {0} {4}", Name, DominantCulture.ProgressLevel, TitularNation, TechLevel, Polity.Name, MagicLimit);
         }
 
         protected override BuildingInfo ChooseNewBuilding(Settlement pSettlement)
         {
-            int iInfrastructureLevel = m_iInfrastructureLevel;
-            int iControl = m_iControl * 2;
+            int iInfrastructureLevel = InfrastructureLevel;
+            int iControl = Control * 2;
 
             Dictionary<BuildingInfo, float> cChances = new Dictionary<BuildingInfo, float>();
             switch (pSettlement.m_pInfo.m_eSize)
@@ -814,7 +806,7 @@ namespace Socium.Population
                             if (iInfrastructureLevel < 2)
                                 cChances[BuildingInfo.ShamansHutSmall] = DominantCulture.GetTrait(Trait.Piety) / 2;
 
-                            if (m_iSocialEquality == 0)
+                            if (SocialEquality == 0)
                                 cChances[BuildingInfo.SlavePensMedium] = (float)cChances.Count / 2 + 1;
 
                             cChances[BuildingInfo.RaidersHutSmall] = DominantCulture.GetTrait(Trait.Treachery) / 2;
@@ -824,22 +816,22 @@ namespace Socium.Population
                         switch (pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.Fishers:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.FishingBoatSlvMedium : BuildingInfo.FishingBoatMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.FishingBoatSlvMedium : BuildingInfo.FishingBoatMedium;
                                 break;
                             case SettlementSpeciality.Farmers:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.FarmSlvMedium : BuildingInfo.FarmMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.FarmSlvMedium : BuildingInfo.FarmMedium;
                                 break;
                             case SettlementSpeciality.Peasants:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.PeasantsHutSlvMedium : BuildingInfo.PeasantsHutMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.PeasantsHutSlvMedium : BuildingInfo.PeasantsHutMedium;
                                 break;
                             case SettlementSpeciality.Hunters:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.HuntersHutSlvMedium : BuildingInfo.HuntersHutMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.HuntersHutSlvMedium : BuildingInfo.HuntersHutMedium;
                                 break;
                             case SettlementSpeciality.Miners:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.MineSlvMedium : BuildingInfo.MineMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.MineSlvMedium : BuildingInfo.MineMedium;
                                 break;
                             case SettlementSpeciality.Lumberjacks:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.LumberjacksHutSlvMedium : BuildingInfo.LumberjacksHutMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.LumberjacksHutSlvMedium : BuildingInfo.LumberjacksHutMedium;
                                 break;
                             default:
                                 pProfile = BuildingInfo.LoafersHut;
@@ -877,13 +869,13 @@ namespace Socium.Population
                             {
                                 if (iInfrastructureLevel < 4)
                                 {
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                    cChances[SocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                    cChances[SocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
                                 }
                                 else
                                 {
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvSmall : BuildingInfo.HotelSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                    cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                    cChances[SocialEquality == 0 ? BuildingInfo.HotelSlvSmall : BuildingInfo.HotelSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                    cChances[SocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
                                 }
                             }
 
@@ -892,14 +884,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
+                                if (DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
+                                if (DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.SchoolSmall] = fScience / 4;
@@ -912,10 +904,10 @@ namespace Socium.Population
 
                             cChances[BuildingInfo.MarketSmall] = (float)cChances.Count / 2;
 
-                            if (m_pStateModel.m_bDinasty)
+                            if (Polity.HasDinasty)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.EstateSlvSmall : BuildingInfo.EstateSmall] = (float)cChances.Count / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.CastleSlvSmall : BuildingInfo.CastleSmall] = (float)cChances.Count / 12;
+                                cChances[SocialEquality == 0 ? BuildingInfo.EstateSlvSmall : BuildingInfo.EstateSmall] = (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.CastleSlvSmall : BuildingInfo.CastleSmall] = (float)cChances.Count / 12;
                             }
                         }
 
@@ -923,22 +915,22 @@ namespace Socium.Population
                         switch (pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.Fishers:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.FishingBoatSlvMedium : BuildingInfo.FishingBoatMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.FishingBoatSlvMedium : BuildingInfo.FishingBoatMedium;
                                 break;
                             case SettlementSpeciality.Farmers:
-                                pProfile = Rnd.OneChanceFrom(2) ? (m_iSocialEquality == 0 ? BuildingInfo.FarmSlvMedium : BuildingInfo.FarmMedium) : (m_iSocialEquality == 0 ? BuildingInfo.FarmSlvLarge : BuildingInfo.FarmLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? (SocialEquality == 0 ? BuildingInfo.FarmSlvMedium : BuildingInfo.FarmMedium) : (SocialEquality == 0 ? BuildingInfo.FarmSlvLarge : BuildingInfo.FarmLarge);
                                 break;
                             case SettlementSpeciality.Peasants:
-                                pProfile = Rnd.OneChanceFrom(2) ? (m_iSocialEquality == 0 ? BuildingInfo.PeasantsHutSlvMedium : BuildingInfo.PeasantsHutMedium) : (m_iSocialEquality == 0 ? BuildingInfo.PeasantsHutSlvLarge : BuildingInfo.PeasantsHutLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? (SocialEquality == 0 ? BuildingInfo.PeasantsHutSlvMedium : BuildingInfo.PeasantsHutMedium) : (SocialEquality == 0 ? BuildingInfo.PeasantsHutSlvLarge : BuildingInfo.PeasantsHutLarge);
                                 break;
                             case SettlementSpeciality.Hunters:
-                                pProfile = Rnd.OneChanceFrom(2) ? (m_iSocialEquality == 0 ? BuildingInfo.HuntersHutSlvMedium : BuildingInfo.HuntersHutMedium) : (m_iSocialEquality == 0 ? BuildingInfo.HuntersHutSlvLarge : BuildingInfo.HuntersHutLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? (SocialEquality == 0 ? BuildingInfo.HuntersHutSlvMedium : BuildingInfo.HuntersHutMedium) : (SocialEquality == 0 ? BuildingInfo.HuntersHutSlvLarge : BuildingInfo.HuntersHutLarge);
                                 break;
                             case SettlementSpeciality.Miners:
-                                pProfile = Rnd.OneChanceFrom(2) ? (m_iSocialEquality == 0 ? BuildingInfo.MineSlvMedium : BuildingInfo.MineMedium) : (m_iSocialEquality == 0 ? BuildingInfo.MineSlvLarge : BuildingInfo.MineLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? (SocialEquality == 0 ? BuildingInfo.MineSlvMedium : BuildingInfo.MineMedium) : (SocialEquality == 0 ? BuildingInfo.MineSlvLarge : BuildingInfo.MineLarge);
                                 break;
                             case SettlementSpeciality.Lumberjacks:
-                                pProfile = Rnd.OneChanceFrom(2) ? (m_iSocialEquality == 0 ? BuildingInfo.LumberjacksHutSlvMedium : BuildingInfo.LumberjacksHutMedium) : (m_iSocialEquality == 0 ? BuildingInfo.LumberjacksHutSlvLarge : BuildingInfo.LumberjacksHutLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? (SocialEquality == 0 ? BuildingInfo.LumberjacksHutSlvMedium : BuildingInfo.LumberjacksHutMedium) : (SocialEquality == 0 ? BuildingInfo.LumberjacksHutSlvLarge : BuildingInfo.LumberjacksHutLarge);
                                 break;
                             default:
                                 pProfile = BuildingInfo.LoafersHut;
@@ -976,17 +968,17 @@ namespace Socium.Population
                             cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
                             cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
-                            BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
-                            BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
+                            BuildingInfo pBrothelProfile = SocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
+                            BuildingInfo pStripClubProfile = SocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+                            if (DominantCulture.Customs.Has(Customs.Sexuality.Moderate_sexuality))
                             {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
                                 if (iInfrastructureLevel >= 4)
                                     cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
-                            else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
-                            { 
+                            else if (DominantCulture.Customs.Has(Customs.Sexuality.Lecherous))
+                            {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                                 if (iInfrastructureLevel >= 4)
                                     cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
@@ -994,13 +986,13 @@ namespace Socium.Population
 
                             if (iInfrastructureLevel < 4)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
                             }
                             else
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
                             }
 
                             cChances[BuildingInfo.TheatreMedium] = 1f - DominantCulture.GetTrait(Trait.Simplicity) / 2;
@@ -1014,14 +1006,14 @@ namespace Socium.Population
                                 cChances[BuildingInfo.MedicineMedium] = (float)cChances.Count / 12;
 
                             float fBureaucracy = 0.05f;
-                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
+                            if (DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                 fBureaucracy = 0.25f;
-                            else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
+                            else if (DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                            if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
+                            if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1043,14 +1035,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
+                                if (DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
+                                else if (DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1059,15 +1051,15 @@ namespace Socium.Population
                                 cChances[BuildingInfo.SchoolMedium] = fScience / 2;
                             }
 
-                            if (m_iSocialEquality == 0)
+                            if (SocialEquality == 0)
                             {
                                 cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 6 + 1;
-                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+                                if (DominantCulture.Customs.Has(Customs.Sexuality.Moderate_sexuality))
                                 {
                                     cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
                                 }
-                                else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
-                                { 
+                                else if (DominantCulture.Customs.Has(Customs.Sexuality.Lecherous))
+                                {
                                     cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
                                 }
                                 //cChances[BuildingInfo.SlavePensLarge] = (float)cChances.Count;// / 2 + 1;
@@ -1084,39 +1076,39 @@ namespace Socium.Population
                                 cChances[BuildingInfo.OfficeMedium] = (float)cChances.Count / 4;
                             }
 
-                            if (m_pStateModel.m_bDinasty)
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                            if (Polity.HasDinasty)
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                         }
 
                         BuildingInfo pProfile;
                         switch (pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.Fishers:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.FishingBoatSlvLarge : BuildingInfo.FishingBoatLarge;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.FishingBoatSlvLarge : BuildingInfo.FishingBoatLarge;
                                 break;
                             case SettlementSpeciality.Naval:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.TraderSlvMedium : BuildingInfo.TraderMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.TraderSlvMedium : BuildingInfo.TraderMedium;
                                 break;
                             case SettlementSpeciality.Tailors:
                                 if (iInfrastructureLevel < 4)
-                                    pProfile = m_iSocialEquality == 0 ? BuildingInfo.TailorWorkshopSlvSmall : BuildingInfo.TailorWorkshopSmall;
+                                    pProfile = SocialEquality == 0 ? BuildingInfo.TailorWorkshopSlvSmall : BuildingInfo.TailorWorkshopSmall;
                                 else
-                                    pProfile = m_iSocialEquality == 0 ? BuildingInfo.ClothesFactorySlvSmall : BuildingInfo.ClothesFactorySmall;
+                                    pProfile = SocialEquality == 0 ? BuildingInfo.ClothesFactorySlvSmall : BuildingInfo.ClothesFactorySmall;
                                 break;
                             case SettlementSpeciality.Jevellers:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvSmall : BuildingInfo.JevellerWorkshopSmall;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvSmall : BuildingInfo.JevellerWorkshopSmall;
                                 break;
                             case SettlementSpeciality.Factory:
                                 if (iInfrastructureLevel < 4)
-                                    pProfile = m_iSocialEquality == 0 ? BuildingInfo.SmithySlvSmall : BuildingInfo.SmithySmall;
+                                    pProfile = SocialEquality == 0 ? BuildingInfo.SmithySlvSmall : BuildingInfo.SmithySmall;
                                 else
-                                    pProfile = m_iSocialEquality == 0 ? BuildingInfo.IronworksSlvSmall : BuildingInfo.IronworksSmall;
+                                    pProfile = SocialEquality == 0 ? BuildingInfo.IronworksSlvSmall : BuildingInfo.IronworksSmall;
                                 break;
                             case SettlementSpeciality.Artisans:
                                 if (iInfrastructureLevel < 4)
-                                    pProfile = m_iSocialEquality == 0 ? BuildingInfo.CarpentrySlvSmall : BuildingInfo.CarpentrySmall;
+                                    pProfile = SocialEquality == 0 ? BuildingInfo.CarpentrySlvSmall : BuildingInfo.CarpentrySmall;
                                 else
-                                    pProfile = m_iSocialEquality == 0 ? BuildingInfo.FurnitureSlvSmall : BuildingInfo.FurnitureSmall;
+                                    pProfile = SocialEquality == 0 ? BuildingInfo.FurnitureSlvSmall : BuildingInfo.FurnitureSmall;
                                 break;
                             default:
                                 pProfile = BuildingInfo.LoafersHut;
@@ -1158,17 +1150,17 @@ namespace Socium.Population
                             cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
                             cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
-                            BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
-                            BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
+                            BuildingInfo pBrothelProfile = SocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
+                            BuildingInfo pStripClubProfile = SocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+                            if (DominantCulture.Customs.Has(Customs.Sexuality.Moderate_sexuality))
                             {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
                                 if (iInfrastructureLevel >= 4)
                                     cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
-                            else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
-                            { 
+                            else if (DominantCulture.Customs.Has(Customs.Sexuality.Lecherous))
+                            {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                                 if (iInfrastructureLevel >= 4)
                                     cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
@@ -1176,15 +1168,15 @@ namespace Socium.Population
 
                             if (iInfrastructureLevel < 4)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
                                 cChances[BuildingInfo.CircusMedium] = DominantCulture.GetTrait(Trait.Simplicity) * DominantCulture.GetTrait(Trait.Agression) / 2;
                             }
                             else
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = DominantCulture.GetTrait(Trait.Simplicity);
                             }
 
                             cChances[BuildingInfo.TheatreMedium] = 1f - DominantCulture.GetTrait(Trait.Simplicity) / 2;
@@ -1193,7 +1185,9 @@ namespace Socium.Population
                             cChances[BuildingInfo.GamblingSmall] = DominantCulture.GetTrait(Trait.Treachery) / 2;
 
                             if (iInfrastructureLevel < 3)
+                            {
                                 cChances[BuildingInfo.MedicineSmall] = (float)cChances.Count / 12;
+                            }
                             else
                             {
                                 cChances[BuildingInfo.MedicineMedium] = (float)cChances.Count / 12;
@@ -1201,14 +1195,14 @@ namespace Socium.Population
                             }
 
                             float fBureaucracy = 0.05f;
-                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
+                            if (DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                 fBureaucracy = 0.25f;
-                            else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
+                            else if (DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                            if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
+                            if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1230,14 +1224,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
+                                if (DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
+                                else if (DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1247,15 +1241,15 @@ namespace Socium.Population
                                 cChances[BuildingInfo.SchoolMedium] = fScience / 2;
                             }
 
-                            if (m_iSocialEquality == 0)
+                            if (SocialEquality == 0)
                             {
                                 cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 6 + 1;
-                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+                                if (DominantCulture.Customs.Has(Customs.Sexuality.Moderate_sexuality))
                                 {
                                     cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
                                 }
-                                else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
-                                { 
+                                else if (DominantCulture.Customs.Has(Customs.Sexuality.Lecherous))
+                                {
                                     cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 4 + 1;
                                 }
                                 //cChances[BuildingInfo.SlavePensHuge] = (float)cChances.Count;// / 2 + 1;
@@ -1273,10 +1267,10 @@ namespace Socium.Population
                                 cChances[BuildingInfo.OfficeLarge] = (float)cChances.Count / 4;// / 2 + 1;
                             }
 
-                            if (m_pStateModel.m_bDinasty)
+                            if (Polity.HasDinasty)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                             }
                         }
 
@@ -1284,13 +1278,13 @@ namespace Socium.Population
                         switch (pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.NavalAcademy:
-                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : (m_iSocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : (SocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge);
                                 break;
                             case SettlementSpeciality.Naval:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge;
                                 break;
                             case SettlementSpeciality.Resort:
-                                pProfile = Rnd.OneChanceFrom(2) ? (m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium) : (m_iSocialEquality == 0 ? BuildingInfo.HotelSlvLarge : BuildingInfo.HotelLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? (SocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium) : (SocialEquality == 0 ? BuildingInfo.HotelSlvLarge : BuildingInfo.HotelLarge);
                                 break;
                             case SettlementSpeciality.Cultural:
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.CultureMeduim : BuildingInfo.CultureLarge;
@@ -1311,16 +1305,16 @@ namespace Socium.Population
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.ScienceMedium : BuildingInfo.ScienceLarge;
                                 break;
                             case SettlementSpeciality.Tailors:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.ClothesFactorySlvMedium : BuildingInfo.ClothesFactoryMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.ClothesFactorySlvMedium : BuildingInfo.ClothesFactoryMedium;
                                 break;
                             case SettlementSpeciality.Jevellers:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvMedium : BuildingInfo.JevellerWorkshopMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvMedium : BuildingInfo.JevellerWorkshopMedium;
                                 break;
                             case SettlementSpeciality.Factory:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.IronworksSlvMedium : BuildingInfo.IronworksMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.IronworksSlvMedium : BuildingInfo.IronworksMedium;
                                 break;
                             case SettlementSpeciality.Artisans:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.FurnitureSlvMedium : BuildingInfo.FurnitureMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.FurnitureSlvMedium : BuildingInfo.FurnitureMedium;
                                 break;
                             default:
                                 pProfile = BuildingInfo.LoafersHut;
@@ -1362,16 +1356,16 @@ namespace Socium.Population
                             cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
                             cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
-                            BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
-                            BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
+                            BuildingInfo pBrothelProfile = SocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
+                            BuildingInfo pStripClubProfile = SocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+                            if (DominantCulture.Customs.Has(Customs.Sexuality.Moderate_sexuality))
                             {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
                                 if (iInfrastructureLevel >= 4)
                                     cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
-                            else if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                            else if (DominantCulture.Customs.Has(Customs.Sexuality.Lecherous))
                             {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                                 if (iInfrastructureLevel >= 4)
@@ -1380,15 +1374,15 @@ namespace Socium.Population
 
                             if (iInfrastructureLevel < 4)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.InnSlvSmall : BuildingInfo.InnSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity);
                                 cChances[BuildingInfo.CircusMedium] = DominantCulture.GetTrait(Trait.Simplicity) * DominantCulture.GetTrait(Trait.Agression) / 2;
                             }
                             else
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity);
+                                cChances[SocialEquality == 0 ? BuildingInfo.NightClubSlvMedium : BuildingInfo.NightClubMedium] = DominantCulture.GetTrait(Trait.Simplicity);
                             }
 
                             cChances[BuildingInfo.TheatreMedium] = 1f - DominantCulture.GetTrait(Trait.Simplicity) / 2;
@@ -1397,7 +1391,9 @@ namespace Socium.Population
                             cChances[BuildingInfo.GamblingSmall] = DominantCulture.GetTrait(Trait.Treachery) / 2;
 
                             if (iInfrastructureLevel < 3)
+                            {
                                 cChances[BuildingInfo.MedicineSmall] = (float)cChances.Count / 12;
+                            }
                             else
                             {
                                 cChances[BuildingInfo.MedicineMedium] = (float)cChances.Count / 12;
@@ -1405,14 +1401,14 @@ namespace Socium.Population
                             }
 
                             float fBureaucracy = 0.05f;
-                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
+                            if (DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                 fBureaucracy = 0.25f;
-                            if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
+                            if (DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                 fBureaucracy = 0.5f;
 
-                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                            if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                 fBureaucracy *= 2;
-                            if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
+                            if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
                                 fBureaucracy *= 4;
 
                             if (pSettlement.m_bCapital)
@@ -1434,14 +1430,14 @@ namespace Socium.Population
                             if (iInfrastructureLevel >= 3)
                             {
                                 float fScience = 0.05f;
-                                if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Balanced_mind))
+                                if (DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                     fScience = 0.25f;
-                                else if (DominantCulture.m_pCustoms.Has(Customs.MindSet.Logic))
+                                else if (DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                     fScience = 0.5f;
 
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                     fScience *= 2;
-                                if (m_pTitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
+                                if (TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                     fScience *= 4;
 
                                 cChances[BuildingInfo.ScienceSmall] = fScience / 4;
@@ -1451,15 +1447,15 @@ namespace Socium.Population
                                 cChances[BuildingInfo.SchoolMedium] = fScience / 2;
                             }
 
-                            if (m_iSocialEquality == 0)
+                            if (SocialEquality == 0)
                             {
                                 cChances[BuildingInfo.SlaveMarketMedium] = (float)cChances.Count / 6 + 1;
-                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+                                if (DominantCulture.Customs.Has(Customs.Sexuality.Moderate_sexuality))
                                 {
                                     cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 6 + 1;
                                 }
-                                if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
-                                { 
+                                if (DominantCulture.Customs.Has(Customs.Sexuality.Lecherous))
+                                {
                                     cChances[BuildingInfo.SlaveMarketMedium2] = (float)cChances.Count / 4 + 1;
                                 }
                                 //cChances[BuildingInfo.SlavePensHuge] = (float)cChances.Count;// / 2 + 1;
@@ -1477,10 +1473,10 @@ namespace Socium.Population
                                 cChances[BuildingInfo.OfficeLarge] = (float)cChances.Count / 4;// / 2 + 1;
                             }
 
-                            if (m_pStateModel.m_bDinasty)
+                            if (Polity.HasDinasty)
                             {
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvSmall : BuildingInfo.MansionSmall] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
+                                cChances[SocialEquality == 0 ? BuildingInfo.MansionSlvMedium : BuildingInfo.MansionMedium] = pSettlement.m_bCapital ? (float)cChances.Count / 2 : (float)cChances.Count / 4;
                             }
                         }
 
@@ -1488,13 +1484,13 @@ namespace Socium.Population
                         switch (pSettlement.m_eSpeciality)
                         {
                             case SettlementSpeciality.NavalAcademy:
-                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : (m_iSocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.NavalAcademyHuge : (SocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge);
                                 break;
                             case SettlementSpeciality.Naval:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.TraderSlvLarge : BuildingInfo.TraderLarge;
                                 break;
                             case SettlementSpeciality.Resort:
-                                pProfile = Rnd.OneChanceFrom(2) ? (m_iSocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium) : (m_iSocialEquality == 0 ? BuildingInfo.HotelSlvLarge : BuildingInfo.HotelLarge);
+                                pProfile = Rnd.OneChanceFrom(2) ? (SocialEquality == 0 ? BuildingInfo.HotelSlvMedium : BuildingInfo.HotelMedium) : (SocialEquality == 0 ? BuildingInfo.HotelSlvLarge : BuildingInfo.HotelLarge);
                                 break;
                             case SettlementSpeciality.Cultural:
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.CultureMeduim : BuildingInfo.CultureLarge;
@@ -1515,16 +1511,16 @@ namespace Socium.Population
                                 pProfile = Rnd.OneChanceFrom(2) ? BuildingInfo.ScienceMedium : BuildingInfo.ScienceLarge;
                                 break;
                             case SettlementSpeciality.Tailors:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.ClothesFactorySlvMedium : BuildingInfo.ClothesFactoryMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.ClothesFactorySlvMedium : BuildingInfo.ClothesFactoryMedium;
                                 break;
                             case SettlementSpeciality.Jevellers:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvMedium : BuildingInfo.JevellerWorkshopMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.JevellerWorkshopSlvMedium : BuildingInfo.JevellerWorkshopMedium;
                                 break;
                             case SettlementSpeciality.Factory:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.IronworksSlvSmall : BuildingInfo.IronworksMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.IronworksSlvSmall : BuildingInfo.IronworksMedium;
                                 break;
                             case SettlementSpeciality.Artisans:
-                                pProfile = m_iSocialEquality == 0 ? BuildingInfo.FurnitureSlvMedium : BuildingInfo.FurnitureMedium;
+                                pProfile = SocialEquality == 0 ? BuildingInfo.FurnitureSlvMedium : BuildingInfo.FurnitureMedium;
                                 break;
                             default:
                                 pProfile = BuildingInfo.LoafersHut;
@@ -1541,16 +1537,16 @@ namespace Socium.Population
                             cChances[BuildingInfo.TempleMedium] = DominantCulture.GetTrait(Trait.Piety) / 5;
                             cChances[BuildingInfo.TempleSmall] = DominantCulture.GetTrait(Trait.Piety);
 
-                            BuildingInfo pBrothelProfile = m_iSocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
-                            BuildingInfo pStripClubProfile = m_iSocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
+                            BuildingInfo pBrothelProfile = SocialEquality == 0 ? BuildingInfo.BrothelSlvMedium : BuildingInfo.BrothelMedium;
+                            BuildingInfo pStripClubProfile = SocialEquality == 0 ? BuildingInfo.StripClubSlvSmall : BuildingInfo.StripClubSmall;
 
-                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Moderate_sexuality))
+                            if (DominantCulture.Customs.Has(Customs.Sexuality.Moderate_sexuality))
                             {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 4;
                                 if (iInfrastructureLevel >= 4)
                                     cChances[pStripClubProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             }
-                            if (DominantCulture.m_pCustoms.Has(Customs.Sexuality.Lecherous))
+                            if (DominantCulture.Customs.Has(Customs.Sexuality.Lecherous))
                             {
                                 cChances[pBrothelProfile] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                                 if (iInfrastructureLevel >= 4)
@@ -1558,9 +1554,9 @@ namespace Socium.Population
                             }
 
                             if (iInfrastructureLevel < 4)
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                                cChances[SocialEquality == 0 ? BuildingInfo.TavernSlvSmall : BuildingInfo.TavernSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
                             else
-                                cChances[m_iSocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
+                                cChances[SocialEquality == 0 ? BuildingInfo.BarSlvSmall : BuildingInfo.BarSmall] = DominantCulture.GetTrait(Trait.Simplicity) / 2;
 
                             //if (pState.m_iSocialEquality == 0)
                             //{
@@ -1593,11 +1589,12 @@ namespace Socium.Population
                     break;
             }
 
-            foreach (Building pBuilding in pSettlement.m_cBuildings)
-                if (cChances.ContainsKey(pBuilding.m_pInfo))
+            foreach (BuildingInfo pBuildingInfo in pSettlement.m_cBuildings.Select(x => x.m_pInfo))
+            {
+                if (cChances.ContainsKey(pBuildingInfo))
                 {
                     float fKoeff = 1;
-                    switch (pBuilding.m_pInfo.m_eSize)
+                    switch (pBuildingInfo.m_eSize)
                     {
                         case BuildingSize.Small:
                             fKoeff = 0.75f;
@@ -1612,8 +1609,9 @@ namespace Socium.Population
                             fKoeff = 0.125f;
                             break;
                     }
-                    cChances[pBuilding.m_pInfo] *= fKoeff;
+                    cChances[pBuildingInfo] *= fKoeff;
                 }
+            }
 
             int iChance = Rnd.ChooseOne(cChances.Values);
             return cChances.ElementAt(iChance).Key;
@@ -1638,30 +1636,30 @@ namespace Socium.Population
 
         private void SelectGovernmentSystem(int iEmpireTreshold)
         {
-            List<StateModel> cInfos = new List<StateModel>();
+            List<PolityInfo> cInfos = new List<PolityInfo>();
 
-            foreach (StateModel pInfo in s_aModels)
+            foreach (PolityInfo pInfo in s_aPolityInfo)
             {
-                if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
-                    m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
-                    (pInfo.m_cLanguages.Count == 0 ||
-                     pInfo.m_cLanguages.Contains(m_pTitularNation.m_pRace.m_pLanguage)) &&
-                    (m_pState.m_iPopulation > iEmpireTreshold * 80) == pInfo.m_bBig)
+                if (InfrastructureLevel >= pInfo.MinGovernmentLevel &&
+                    InfrastructureLevel <= pInfo.MaxGovernmentLevel &&
+                    (pInfo.Languages.Count == 0 ||
+                     pInfo.Languages.Contains(TitularNation.Race.Language)) &&
+                    (m_pState.m_iPopulation > iEmpireTreshold * 80) == pInfo.IsEmpire)
                 {
-                    for (int i = 0; i < pInfo.m_iRank; i++)
+                    for (int i = 0; i < pInfo.Rank; i++)
                         cInfos.Add(pInfo);
                 }
             }
 
             if (cInfos.Count == 0)
             {
-                foreach (StateModel pInfo in s_aModels)
+                foreach (PolityInfo pInfo in s_aPolityInfo)
                 {
-                    if (m_iInfrastructureLevel >= pInfo.m_iMinGovernmentLevel &&
-                        m_iInfrastructureLevel <= pInfo.m_iMaxGovernmentLevel &&
-                        (m_pState.m_iPopulation > iEmpireTreshold * 80) == pInfo.m_bBig)
+                    if (InfrastructureLevel >= pInfo.MinGovernmentLevel &&
+                        InfrastructureLevel <= pInfo.MaxGovernmentLevel &&
+                        (m_pState.m_iPopulation > iEmpireTreshold * 80) == pInfo.IsEmpire)
                     {
-                        for (int i = 0; i < pInfo.m_iRank; i++)
+                        for (int i = 0; i < pInfo.Rank; i++)
                             cInfos.Add(pInfo);
                     }
                 }
@@ -1682,116 +1680,122 @@ namespace Socium.Population
             //        m_pCustoms.Degrade();
             //    }
 
-            m_pStateModel = cInfos[Rnd.Get(cInfos.Count)];
+            Polity = cInfos[Rnd.Get(cInfos.Count)];
 
-            m_cCulture[Gender.Male].m_iProgressLevel = (m_iInfrastructureLevel + m_pStateModel.m_iMinGovernmentLevel) / 2;
-            m_cCulture[Gender.Female].m_iProgressLevel = (m_iInfrastructureLevel + m_pStateModel.m_iMinGovernmentLevel) / 2;
+            Culture[Gender.Male].ProgressLevel = (InfrastructureLevel + Polity.MinGovernmentLevel) / 2;
+            Culture[Gender.Female].ProgressLevel = (InfrastructureLevel + Polity.MinGovernmentLevel) / 2;
         }
 
         private void SetSocialEquality()
         {
-            m_iSocialEquality = 2;
+            SocialEquality = 2;
 
             if (DominantCulture.GetTrait(Trait.Agression) > 1.66)
-                m_iSocialEquality--;
+                SocialEquality--;
 
             if (DominantCulture.GetTrait(Trait.Fanaticism) > 1.66)
-                m_iSocialEquality--;
+                SocialEquality--;
             if (DominantCulture.GetTrait(Trait.Fanaticism) > 1.33)
-                m_iSocialEquality--;
+                SocialEquality--;
 
             if (DominantCulture.GetTrait(Trait.Selfishness) > 1.66)
-                m_iSocialEquality--;
+                SocialEquality--;
             if (DominantCulture.GetTrait(Trait.Selfishness) > 1.33)
-                m_iSocialEquality--;
+                SocialEquality--;
 
             if (DominantCulture.GetTrait(Trait.Treachery) > 1.66)
-                m_iSocialEquality--;
+                SocialEquality--;
             if (DominantCulture.GetTrait(Trait.Treachery) > 1.33)
-                m_iSocialEquality--;
+                SocialEquality--;
 
-            if (m_pStateModel.m_bDinasty)
-                m_iSocialEquality--;
+            if (Polity.HasDinasty)
+                SocialEquality--;
 
-            if (m_iSocialEquality < 0)
-                m_iSocialEquality = 0;
+            if (SocialEquality < 0)
+                SocialEquality = 0;
 
             if (DominantCulture.GetTrait(Trait.Agression) < 1)
-                m_iSocialEquality++;
+                SocialEquality++;
 
             if (DominantCulture.GetTrait(Trait.Fanaticism) < 1)
-                m_iSocialEquality++;
+                SocialEquality++;
 
-            if (m_iSocialEquality > 0 && m_pState.m_iFood < m_pState.m_iPopulation)
-                m_iSocialEquality--;
-            if (m_pState.m_iFood > m_pState.m_iPopulation && 
-                m_pState.m_cResources[LandResource.Ore] > m_pState.m_iPopulation && 
+            if (SocialEquality > 0 && m_pState.m_iFood < m_pState.m_iPopulation)
+                SocialEquality--;
+            if (m_pState.m_iFood > m_pState.m_iPopulation &&
+                m_pState.m_cResources[LandResource.Ore] > m_pState.m_iPopulation &&
                 m_pState.m_cResources[LandResource.Wood] > m_pState.m_iPopulation)
-                m_iSocialEquality++;
+            {
+                SocialEquality++;
+            }
 
             //в либеральном обществе (фанатизм < 2/3) не может быть рабства (0) или крепостного права (1), т.е. только 2 и выше
             if (DominantCulture.GetTrait(Trait.Fanaticism) < 0.66)
-                m_iSocialEquality = Math.Max(2, m_iSocialEquality);
+                SocialEquality = Math.Max(2, SocialEquality);
             //в обществе абсолютных пацифистов (агрессивность < 1/3) не может быть даже капитализма (2), т.е. только 3 и выше
             if (DominantCulture.GetTrait(Trait.Agression) < 0.33)
-                m_iSocialEquality = Math.Max(3, m_iSocialEquality);
+                SocialEquality = Math.Max(3, SocialEquality);
             //в обществе абсолютного самоотречения (эгоизм < 1/3) не может быть капитализма (2) - только или социализм, или феодализм
             if (DominantCulture.GetTrait(Trait.Selfishness) < 0.33)
-                if (m_pStateModel.m_bDinasty)
-                    m_iSocialEquality = Math.Min(1, m_iSocialEquality);
+            {
+                if (Polity.HasDinasty)
+                    SocialEquality = Math.Min(1, SocialEquality);
                 else
-                    m_iSocialEquality = Math.Max(3, m_iSocialEquality);
+                    SocialEquality = Math.Max(3, SocialEquality);
+            }
             //эгоизм и коммунизм не совместимы
             if (DominantCulture.GetTrait(Trait.Selfishness) > 1)
-                m_iSocialEquality = Math.Min(3, m_iSocialEquality);
+                SocialEquality = Math.Min(3, SocialEquality);
             //преступный склад ума и социализм не совместимы
             if (DominantCulture.GetTrait(Trait.Treachery) > 0.66)
-                m_iSocialEquality = Math.Min(2, m_iSocialEquality);
+                SocialEquality = Math.Min(2, SocialEquality);
 
             //коммунизм возможен только в условиях изобилия ресурсов
-            if (m_pState.m_iFood < m_pState.m_iPopulation * 2 || 
-                m_pState.m_cResources[LandResource.Ore] < m_pState.m_iPopulation * 2 || 
+            if (m_pState.m_iFood < m_pState.m_iPopulation * 2 ||
+                m_pState.m_cResources[LandResource.Ore] < m_pState.m_iPopulation * 2 ||
                 m_pState.m_cResources[LandResource.Wood] < m_pState.m_iPopulation * 2)
-                m_iSocialEquality = Math.Min(3, m_iSocialEquality);
+            {
+                SocialEquality = Math.Min(3, SocialEquality);
+            }
 
             //при всём уважении - какой нафиг социализм/коммунизм при наследственной власти???
-            if (m_pStateModel.m_bDinasty)
-                m_iSocialEquality = Math.Min(2, m_iSocialEquality);
+            if (Polity.HasDinasty)
+                SocialEquality = Math.Min(2, SocialEquality);
 
-            if (m_iSocialEquality > 4)
-                m_iSocialEquality = 4;
+            if (SocialEquality > 4)
+                SocialEquality = 4;
         }
 
         private void SetStateControl()
         {
-            m_iControl = 2;
+            Control = 2;
 
-            if (m_pStateModel.m_bDinasty)
-                m_iControl++;
+            if (Polity.HasDinasty)
+                Control++;
             if (DominantCulture.GetTrait(Trait.Fanaticism) > 1.33)
-                m_iControl++;
+                Control++;
             if (DominantCulture.GetTrait(Trait.Fanaticism) > 1.66)
-                m_iControl++;
+                Control++;
             if (DominantCulture.GetTrait(Trait.Fanaticism) < 0.33)
-                m_iControl--;
+                Control--;
 
             if (DominantCulture.GetTrait(Trait.Selfishness) > 1.66)
-                m_iControl--;
+                Control--;
 
-            if (m_iInfrastructureLevel == 0)
-                m_iControl = 0;
-            if (m_iControl == 0 && m_iInfrastructureLevel >= 1 && m_iInfrastructureLevel <= 6)
-                m_iControl = 1;
+            if (InfrastructureLevel == 0)
+                Control = 0;
+            if (Control == 0 && InfrastructureLevel >= 1 && InfrastructureLevel <= 6)
+                Control = 1;
 
-            if (m_iControl < 0)
-                m_iControl = 0;
-            if (m_iControl > 4)
-                m_iControl = 4;
+            if (Control < 0)
+                Control = 0;
+            if (Control > 4)
+                Control = 4;
         }
-        
+
         public void CalculateMagic()
         {
-            m_iMagicLimit = 0;
+            MagicLimit = 0;
 
             Dictionary<Gender, float[]> aDistribution = new Dictionary<Gender, float[]>
             {
@@ -1801,19 +1805,19 @@ namespace Socium.Population
 
             foreach (Province pProvince in m_pState.Contents)
             {
-                if (pProvince.m_pLocalSociety.m_iMagicLimit > m_iMagicLimit)
-                    m_iMagicLimit = pProvince.m_pLocalSociety.m_iMagicLimit;
+                if (pProvince.m_pLocalSociety.MagicLimit > MagicLimit)
+                    MagicLimit = pProvince.m_pLocalSociety.MagicLimit;
 
                 float fPrevalence = 1;
-                if (pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Feared))
+                if (pProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Feared))
                 {
                     fPrevalence = 0.1f;
                 }
-                else if (pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Allowed))
+                else if (pProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Allowed))
                 {
                     fPrevalence = 0.5f;
                 }
-                else if (pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.Has(Customs.Magic.Magic_Praised))
+                else if (pProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Praised))
                 {
                     fPrevalence = 0.9f;
                 }
@@ -1825,14 +1829,14 @@ namespace Socium.Population
                 };
                 foreach (Region pRegion in pProvince.Contents)
                 {
-                    foreach (LandX pLand in pRegion.Contents)
+                    foreach (var pLocationsCount in pRegion.Contents.Select(x => x.Origin.Contents.Count))
                     {
-                        cProvinceMagesCount[Gender.Male] += pLand.Origin.Contents.Count * fPrevalence;
-                        cProvinceMagesCount[Gender.Female] += pLand.Origin.Contents.Count * fPrevalence;
+                        cProvinceMagesCount[Gender.Male] += pLocationsCount * fPrevalence;
+                        cProvinceMagesCount[Gender.Female] += pLocationsCount * fPrevalence;
                     }
                 }
 
-                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                switch (pProvince.m_pLocalSociety.TitularNation.PhenotypeMale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
                     case BirthRate.Low:
                         cProvinceMagesCount[Gender.Male] *= 0.1f;
@@ -1842,7 +1846,7 @@ namespace Socium.Population
                         break;
                 }
 
-                switch (pProvince.m_pLocalSociety.m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                switch (pProvince.m_pLocalSociety.TitularNation.PhenotypeFemale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
                     case BirthRate.Low:
                         cProvinceMagesCount[Gender.Female] *= 0.1f;
@@ -1854,17 +1858,17 @@ namespace Socium.Population
 
                 foreach (var distribution in aDistribution)
                 {
-                    switch (pProvince.m_pLocalSociety.m_cCulture[distribution.Key].m_eMagicAbilityDistribution)
+                    switch (pProvince.m_pLocalSociety.Culture[distribution.Key].MagicAbilityDistribution)
                     {
                         case MagicAbilityDistribution.mostly_weak:
-                            distribution.Value[(1 + pProvince.m_pLocalSociety.m_iMagicLimit) / 2] += cProvinceMagesCount[distribution.Key];
+                            distribution.Value[(1 + pProvince.m_pLocalSociety.MagicLimit) / 2] += cProvinceMagesCount[distribution.Key];
                             break;
                         case MagicAbilityDistribution.mostly_average:
-                            distribution.Value[(1 + pProvince.m_pLocalSociety.m_iMagicLimit) / 2] += cProvinceMagesCount[distribution.Key] / 2;
-                            distribution.Value[1 + pProvince.m_pLocalSociety.m_iMagicLimit] += cProvinceMagesCount[distribution.Key] / 2;
+                            distribution.Value[(1 + pProvince.m_pLocalSociety.MagicLimit) / 2] += cProvinceMagesCount[distribution.Key] / 2;
+                            distribution.Value[1 + pProvince.m_pLocalSociety.MagicLimit] += cProvinceMagesCount[distribution.Key] / 2;
                             break;
                         case MagicAbilityDistribution.mostly_powerful:
-                            distribution.Value[1 + pProvince.m_pLocalSociety.m_iMagicLimit] += cProvinceMagesCount[distribution.Key];
+                            distribution.Value[1 + pProvince.m_pLocalSociety.MagicLimit] += cProvinceMagesCount[distribution.Key];
                             break;
                     }
                 }
@@ -1876,19 +1880,19 @@ namespace Socium.Population
                 float fPowerfulMagesCount = 0;
                 for (int i = 0; i < 10; i++)
                 {
-                    if (i <= (m_iMagicLimit + 1) / 2)
+                    if (i <= (MagicLimit + 1) / 2)
                         fWeakMagesCount += distribution.Value[i];
                     else
                         fPowerfulMagesCount += distribution.Value[i];
                 }
 
-                m_cCulture[distribution.Key].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
+                Culture[distribution.Key].MagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
 
                 if (fWeakMagesCount > fPowerfulMagesCount * 2)
-                    m_cCulture[distribution.Key].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
+                    Culture[distribution.Key].MagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
 
                 if (fPowerfulMagesCount > fWeakMagesCount * 2)
-                    m_cCulture[distribution.Key].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_powerful;
+                    Culture[distribution.Key].MagicAbilityDistribution = MagicAbilityDistribution.mostly_powerful;
             }
         }
 
@@ -1899,8 +1903,7 @@ namespace Socium.Population
         /// <returns></returns>
         public int CalcHostility(State pOpponent)
         {
-            string s;
-            return CalcHostility(pOpponent, out s);
+            return CalcHostility(pOpponent, out _);
         }
 
         /// <summary>
@@ -1912,8 +1915,8 @@ namespace Socium.Population
         {
             int iHostility = 0;
 
-            string sPositiveReasons = "";
-            string sNegativeReasons = "";
+            StringBuilder sPositiveReasons = new StringBuilder();
+            StringBuilder sNegativeReasons = new StringBuilder();
 
             //sReasons = "";
 
@@ -1933,109 +1936,107 @@ namespace Socium.Population
             //    }
             //}
 
-            if (m_pTitularNation != pOpponent.m_pSociety.m_pTitularNation)
+            if (TitularNation != pOpponent.m_pSociety.TitularNation)
             {
                 iHostility++;
-                sNegativeReasons += " (-1) " + pOpponent.m_pSociety.m_pTitularNation.ToString() + "\n";
+                sNegativeReasons.Append(" (-1) ").AppendLine(pOpponent.m_pSociety.TitularNation.ToString());
 
-                if (m_pTitularNation.m_pRace.m_pLanguage != pOpponent.m_pSociety.m_pTitularNation.m_pRace.m_pLanguage)
+                if (TitularNation.Race.Language != pOpponent.m_pSociety.TitularNation.Race.Language)
                 {
                     iHostility++;
-                    sNegativeReasons += " (-1) Different language\n";
+                    sNegativeReasons.AppendLine(" (-1) Different language");
                 }
             }
             else
             {
                 iHostility--;
-                sPositiveReasons += " (+1) " + pOpponent.m_pSociety.m_pTitularNation.ToString() + "\n";
+                sPositiveReasons.Append(" (+1) ").AppendLine(pOpponent.m_pSociety.TitularNation.ToString());
             }
 
-            iHostility += DominantCulture.m_pCustoms.GetDifference(pOpponent.m_pSociety.DominantCulture.m_pCustoms, ref sPositiveReasons, ref sNegativeReasons);
+            iHostility += DominantCulture.Customs.GetDifference(pOpponent.m_pSociety.DominantCulture.Customs, ref sPositiveReasons, ref sNegativeReasons);
 
             if (m_pState.m_iFood < m_pState.m_iPopulation && pOpponent.m_iFood > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
-                sNegativeReasons += " (-1) Envy for food\n";
+                sNegativeReasons.AppendLine(" (-1) Envy for food");
             }
             if (m_pState.m_cResources[LandResource.Wood] < m_pState.m_iPopulation && pOpponent.m_cResources[LandResource.Wood] > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
-                sNegativeReasons += " (-1) Envy for wood\n";
+                sNegativeReasons.AppendLine(" (-1) Envy for wood");
             }
             if (m_pState.m_cResources[LandResource.Ore] < m_pState.m_iPopulation && pOpponent.m_cResources[LandResource.Ore] > pOpponent.m_iPopulation * 2)
             {
                 iHostility++;
-                sNegativeReasons += " (-1) Envy for ore\n";
+                sNegativeReasons.AppendLine(" (-1) Envy for ore");
             }
 
-            int iControlDifference = Math.Abs(pOpponent.m_pSociety.m_iControl - m_iControl);
+            int iControlDifference = Math.Abs(pOpponent.m_pSociety.Control - Control);
             if (iControlDifference != 1)
             {
                 iHostility += iControlDifference - 1;
                 if (iControlDifference > 1)
-                    sNegativeReasons += string.Format(" (-{1}) {0}\n", GetControlString(pOpponent.m_pSociety.m_iControl), iControlDifference - 1);
+                    sNegativeReasons.AppendFormat(" (-{1}) {0}", GetControlString(pOpponent.m_pSociety.Control), iControlDifference - 1).AppendLine();
                 else
-                    sPositiveReasons += string.Format(" (+{1}) {0}\n", GetControlString(pOpponent.m_pSociety.m_iControl), 1);
+                    sPositiveReasons.AppendFormat(" (+{1}) {0}", GetControlString(pOpponent.m_pSociety.Control), 1).AppendLine();
             }
 
-            if (pOpponent.m_pSociety.m_iInfrastructureLevel > m_iInfrastructureLevel + 1)
+            if (pOpponent.m_pSociety.InfrastructureLevel > InfrastructureLevel + 1)
             {
                 iHostility++;
-                sNegativeReasons += string.Format(" (-{0}) Envy for civilization\n", 1);
+                sNegativeReasons.AppendFormat(" (-{0}) Envy for civilization", 1).AppendLine();
             }
             else
             {
-                if (pOpponent.m_pSociety.m_iInfrastructureLevel < m_iInfrastructureLevel - 1)
+                if (pOpponent.m_pSociety.InfrastructureLevel < InfrastructureLevel - 1)
                 {
                     iHostility++;
-                    sNegativeReasons += string.Format(" (-{0}) Scorn for savagery\n", 1);
+                    sNegativeReasons.AppendFormat(" (-{0}) Scorn for savagery", 1).AppendLine();
                 }
             }
 
-            int iEqualityDifference = Math.Abs(pOpponent.m_pSociety.m_iSocialEquality - m_iSocialEquality);
+            int iEqualityDifference = Math.Abs(pOpponent.m_pSociety.SocialEquality - SocialEquality);
             if (iEqualityDifference != 1)
             {
                 iHostility += iEqualityDifference - 1;
                 if (iEqualityDifference > 1)
-                    sNegativeReasons += string.Format(" (-{1}) {0}\n", GetEqualityString(pOpponent.m_pSociety.m_iSocialEquality), iEqualityDifference - 1);
+                    sNegativeReasons.AppendFormat(" (-{1}) {0}", GetEqualityString(pOpponent.m_pSociety.SocialEquality), iEqualityDifference - 1).AppendLine();
                 else
-                    sPositiveReasons += string.Format(" (+{1}) {0}\n", GetEqualityString(pOpponent.m_pSociety.m_iSocialEquality), 1);
+                    sPositiveReasons.AppendFormat(" (+{1}) {0}", GetEqualityString(pOpponent.m_pSociety.SocialEquality), 1).AppendLine();
             }
 
-            float iCultureDifference = DominantCulture.m_pMentality.GetDifference(pOpponent.m_pSociety.DominantCulture.m_pMentality, DominantCulture.m_iProgressLevel, pOpponent.m_pSociety.DominantCulture.m_iProgressLevel);
+            float iCultureDifference = DominantCulture.Mentality.GetDifference(pOpponent.m_pSociety.DominantCulture.Mentality, DominantCulture.ProgressLevel, pOpponent.m_pSociety.DominantCulture.ProgressLevel);
             if (iCultureDifference < -0.75)
             {
                 iHostility -= 2;
-                sPositiveReasons += " (+2) Very close culture\n";
+                sPositiveReasons.AppendLine(" (+2) Very close culture");
             }
-            else
-                if (iCultureDifference < -0.5)
+            else if (iCultureDifference < -0.5)
             {
                 iHostility--;
-                sPositiveReasons += " (+1) Close culture\n";
+                sPositiveReasons.AppendLine(" (+1) Close culture");
             }
-            else
-                    if (iCultureDifference > 0.5)
+            else if (iCultureDifference > 0.5)
             {
                 iHostility += 2;
-                sNegativeReasons += " (-2) Very different culture\n";
+                sNegativeReasons.AppendLine(" (-2) Very different culture");
             }
-            else
-                        if (iCultureDifference > 0)
+            else if (iCultureDifference > 0)
             {
                 iHostility++;
-                sNegativeReasons += " (-1) Different culture\n";
+                sNegativeReasons.AppendLine(" (-1) Different culture");
             }
 
-            sReasons = "Good:\n" + sPositiveReasons + "Bad:\n" + sNegativeReasons + "----\n";
+            StringBuilder sResult = new StringBuilder();
+            sResult.AppendLine("Good:").Append(sPositiveReasons).AppendLine("Bad:").Append(sNegativeReasons).AppendLine("----");
 
             if (iHostility > 0)
             {
                 iHostility = (int)(DominantCulture.GetTrait(Trait.Fanaticism) * iHostility + 0.25);
-                sReasons += string.Format("Fanaticism \t(x{0}%)\n", (int)(DominantCulture.GetTrait(Trait.Fanaticism) * 100));
+                sResult.AppendFormat("Fanaticism \t(x{0}%)", (int)(DominantCulture.GetTrait(Trait.Fanaticism) * 100)).AppendLine();
 
                 iHostility = (int)(DominantCulture.GetTrait(Trait.Agression) * iHostility + 0.25);
-                sReasons += string.Format("Agression \t(x{0}%)\n", (int)(DominantCulture.GetTrait(Trait.Agression) * 100));
+                sResult.AppendFormat("Agression \t(x{0}%)", (int)(DominantCulture.GetTrait(Trait.Agression) * 100)).AppendLine();
 
                 if (iHostility == 0)
                     iHostility = 1;
@@ -2045,10 +2046,10 @@ namespace Socium.Population
                 if (iHostility < 0)
                 {
                     iHostility = (int)((2.0f - DominantCulture.GetTrait(Trait.Fanaticism)) * iHostility - 0.25);
-                    sReasons += string.Format("Tolerance \t(x{0}%)\n", (int)((2.0f - DominantCulture.GetTrait(Trait.Fanaticism)) * 100));
+                    sResult.AppendFormat("Tolerance \t(x{0}%)", (int)((2.0f - DominantCulture.GetTrait(Trait.Fanaticism)) * 100)).AppendLine();
 
                     iHostility = (int)((2.0f - DominantCulture.GetTrait(Trait.Agression)) * iHostility - 0.25);
-                    sReasons += string.Format("Amiability \t(x{0}%)\n", (int)((2.0f - DominantCulture.GetTrait(Trait.Agression)) * 100));
+                    sResult.AppendFormat("Amiability \t(x{0}%)", (int)((2.0f - DominantCulture.GetTrait(Trait.Agression)) * 100)).AppendLine();
 
                     if (iHostility == 0)
                         iHostility = -1;
@@ -2058,7 +2059,9 @@ namespace Socium.Population
             //if (fContact < fBorder / 2)
             //    iHostility = iHostility / 2;
 
-            sReasons += string.Format("----\nTotal \t({0:+#;-#;0})\n", -iHostility);
+            sResult.AppendLine("----").AppendFormat("Total \t({0:+#;-#;0})", -iHostility).AppendLine();
+            sReasons = sResult.ToString();
+
             return iHostility;
         }
 
@@ -2070,18 +2073,18 @@ namespace Socium.Population
         /// <returns></returns>
         internal override Customs.GenderPriority GetMinorGender()
         {
-            if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
+            if (Culture[Gender.Male].Customs.Has(Customs.GenderPriority.Matriarchy))
             {
-                if (m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate >
-                    m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                if (TitularNation.PhenotypeFemale.m_pValues.Get<LifeCycleGenetix>().BirthRate >
+                    TitularNation.PhenotypeMale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                     return Customs.GenderPriority.Genders_equality;
                 else
                     return Customs.GenderPriority.Patriarchy;
             }
-            if (m_cCulture[Gender.Male].m_pCustoms.Has(Customs.GenderPriority.Patriarchy))
+            if (Culture[Gender.Male].Customs.Has(Customs.GenderPriority.Patriarchy))
             {
-                if (m_pTitularNation.m_pPhenotypeM.m_pValues.Get<LifeCycleGenetix>().BirthRate >
-                    m_pTitularNation.m_pPhenotypeF.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                if (TitularNation.PhenotypeMale.m_pValues.Get<LifeCycleGenetix>().BirthRate >
+                    TitularNation.PhenotypeFemale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                     return Customs.GenderPriority.Genders_equality;
                 else
                     return Customs.GenderPriority.Matriarchy;

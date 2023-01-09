@@ -75,7 +75,7 @@ namespace GeneLab.Genetix
 
             return sTail;
         }
-        
+
         /// <summary>
         /// no tail
         /// </summary>
@@ -114,15 +114,13 @@ namespace GeneLab.Genetix
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            TailGenetix pAnother = pOther as TailGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is TailGenetix pAnother))
                 return false;
 
             return TailLength == pAnother.TailLength &&
                 TailControl == pAnother.TailControl;
         }
-        
+
         public TailGenetix()
         { }
 

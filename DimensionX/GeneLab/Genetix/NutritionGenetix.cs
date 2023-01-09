@@ -38,14 +38,17 @@ namespace GeneLab.Genetix
         /// применимо только к разумным существам - вампирам и т.п.
         /// </summary>
         ParasitismBlood,
+        /// <summary>
         /// людоедство - питается мясом других разумных существ
         /// применимо только к разумным существам - вервольфам и т.п.
         /// </summary>
         ParasitismMeat,
+        /// <summary>
         /// эмоциональный вампиризм - питается эмоциями других разумных существ
         /// применимо только к разумным существам - иллитидам и т.п.
         /// </summary>
         ParasitismEmote,
+        /// <summary>
         /// энергетический вампиризм - питается жизненной энергией других существ
         /// применимо только к разумным существам - иллитидам и т.п.
         /// </summary>
@@ -90,7 +93,9 @@ namespace GeneLab.Genetix
                     break;
                 case NutritionType.Organic:
                     if (bFull)
+                    {
                         sMeals = "eats both meat and vegetables";
+                    }
                     break;
                 case NutritionType.ParasitismBlood:
                     sMeals = "drinks blood of " + pronoun + " victims";
@@ -179,7 +184,6 @@ namespace GeneLab.Genetix
             get { return new NutritionGenetix(NutritionType.ParasitismEnergy); }
         }
 
-
         public NutritionType NutritionType { get; private set; } = NutritionType.Organic;
 
         public bool IsParasite()
@@ -215,7 +219,6 @@ namespace GeneLab.Genetix
 
         public void MutateNutritionType(BodyGenetix pBody)
         {
-            int iChance = 0;
             int[] aChances = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
             switch (NutritionType)
             {
@@ -334,9 +337,7 @@ namespace GeneLab.Genetix
                 aChances[10] = Math.Min(1, aChances[10]);//Mineral
             }
 
-            iChance = Rnd.ChooseOne(aChances, 1);
-
-            NutritionType eNutritionType = NutritionType;
+            int iChance = Rnd.ChooseOne(aChances, 1);
 
             switch (iChance)
             {

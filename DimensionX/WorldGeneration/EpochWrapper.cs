@@ -228,7 +228,7 @@ namespace WorldGeneration
                     foreach (RacesSet pSet in m_aNativesRacesSets)
                     {
                         foreach (string sName in pSet.m_aRaces)
-                            if (pRace.m_sName == sName)
+                            if (pRace.Name == sName)
                             {
                                 bPresent = true;
                                 break;
@@ -281,7 +281,7 @@ namespace WorldGeneration
                         if (sResult.Length > 0)
                             sResult += ", ";
 
-                        sResult += pRace.m_sName;
+                        sResult += pRace.Name;
                     }
                 }
 
@@ -310,7 +310,7 @@ namespace WorldGeneration
                     foreach (RacesSet pSet in m_aInvadersRacesSets)
                     {
                         foreach (string sName in pSet.m_aRaces)
-                            if (pRace.m_sName == sName)
+                            if (pRace.Name == sName)
                             {
                                 bPresent = true;
                                 break;
@@ -363,7 +363,7 @@ namespace WorldGeneration
                         if (sResult.Length > 0)
                             sResult += ", ";
 
-                        sResult += pRace.m_sName;
+                        sResult += pRace.Name;
                     }
                 }
 

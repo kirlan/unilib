@@ -6,9 +6,9 @@ using Random;
 
 namespace NameGen
 {
-    public class NameGenerator
+    public static class NameGenerator
     {
-        private static string[] m_aPrefAbstract = {
+        private static readonly string[] m_aPrefAbstract = {
         "A",
         "Ab",
         "Ach",
@@ -251,7 +251,7 @@ namespace NameGen
         "Zhul"
         };
 
-        private static string[] m_aSufAbstract = {
+        private static readonly string[] m_aSufAbstract = {
         "a",
         "ach",
         "aech",
@@ -406,7 +406,7 @@ namespace NameGen
         "zuth"
         };
 
-        private static string[] m_aPrefEscimo = {
+        private static readonly string[] m_aPrefEscimo = {
 "ach",
 "achana",
 "achka",
@@ -477,7 +477,7 @@ namespace NameGen
 "utin",
 "unuchut"};
 
-        private static string[] m_aSufEscimo = {
+        private static readonly string[] m_aSufEscimo = {
 "ach",
 "akan",
 "akya",
@@ -521,7 +521,7 @@ namespace NameGen
 "ukta",
 "utta"};
 
-        private static string[] m_aPrefGreek = {
+        private static readonly string[] m_aPrefGreek = {
 "aer",
 "agamen",
 "agor",
@@ -599,7 +599,7 @@ namespace NameGen
 "troglo",
 "zelot"};
 
-        private static string[] m_aSufGreek = {
+        private static readonly string[] m_aSufGreek = {
 "akos",
 "alizo",
 "alotos",
@@ -624,7 +624,7 @@ namespace NameGen
 "polis",
 "us"};
 
-        private static string[] m_aPrefAztec = {
+        private static readonly string[] m_aPrefAztec = {
 "Acayu",
 "Alar",
 "Apatzin",
@@ -688,7 +688,7 @@ namespace NameGen
 "Zana",
 "Zima"};
 
-        private static string[] m_aSufAztec = {
+        private static readonly string[] m_aSufAztec = {
 "atlan",
 "ixtlan",
 "huas",
@@ -700,7 +700,7 @@ namespace NameGen
 "titlan",
 "zalan"};
 
-        private static string[] m_aPrefDrow = {
+        private static readonly string[] m_aPrefDrow = {
 "Alean",
 "Ale",
 "Arab",
@@ -732,7 +732,7 @@ namespace NameGen
 "Tor",
 "Zau"};
 
-        private static string[] m_aSufDrow = {
+        private static readonly string[] m_aSufDrow = {
 "afin",
 "ana",
 "ani",
@@ -764,7 +764,7 @@ namespace NameGen
 "virr",
 "zynge"};
 
-        private static string[] m_aPrefScotish = {
+        private static readonly string[] m_aPrefScotish = {
 "Aber",
 "Ar",
 "As",
@@ -826,7 +826,7 @@ namespace NameGen
 "Ulla",
 "Wick"};
 
-        private static string[] m_aSufScotish = {
+        private static readonly string[] m_aSufScotish = {
 "aline",
 "an",
 "aray",
@@ -873,7 +873,7 @@ namespace NameGen
 "ster",
 "tow"};
 
-        private static string[] m_aPrefAfrica = {
+        private static readonly string[] m_aPrefAfrica = {
 "Ag",
 "Ahr",
 "Ba",
@@ -937,7 +937,7 @@ namespace NameGen
 "Zu",
 "Zul"};
 
-        private static string[] m_aSufAfrica = {
+        private static readonly string[] m_aSufAfrica = {
 "a",
 "ad",
 "aga",
@@ -1009,7 +1009,7 @@ namespace NameGen
 "zung",
 "zur"};
 
-        private static string[] m_aPrefElven1 = {
+        private static readonly string[] m_aPrefElven1 = {
 "Ama",
 "Ari",
 "Aza",
@@ -1041,7 +1041,7 @@ namespace NameGen
 "Ya",
 "Zy"};
 
-        private static string[] m_aSufElven1 = {
+        private static readonly string[] m_aSufElven1 = {
 "nae",
 "lae",
 "dar",
@@ -1072,7 +1072,7 @@ namespace NameGen
 "wyn",
 "zair"};
 
-        private static string[] m_aPrefElven2 = {
+        private static readonly string[] m_aPrefElven2 = {
 "Aer",
 "Al",
 "Am",
@@ -1113,7 +1113,7 @@ namespace NameGen
 "Tahl",
 "Vil"};
 
-        private static string[] m_aSufElven2 = {
+        private static readonly string[] m_aSufElven2 = {
 "ael",
 "aer",
 "aera",
@@ -1167,7 +1167,7 @@ namespace NameGen
 "avin",
 "azair"};
 
-        private static string[] m_aPrefDwarven = {
+        private static readonly string[] m_aPrefDwarven = {
 "agar",
 "agaz",
 "barak",
@@ -1203,7 +1203,7 @@ namespace NameGen
 "nibin",
 "nukul"};
 
-        private static string[] m_aSufDwarven = {
+        private static readonly string[] m_aSufDwarven = {
 "akar",
 "agul",
 "amen",
@@ -1248,7 +1248,7 @@ namespace NameGen
 "zokh",
 "zukum"};
 
-        private static string[] m_aPrefOrchish = {
+        private static readonly string[] m_aPrefOrchish = {
 "Arg",
 "Az",
 "Bad",
@@ -1269,7 +1269,7 @@ namespace NameGen
 "Vol",
 "Yazh"};
 
-        private static string[] m_aSufOrchish = {
+        private static readonly string[] m_aSufOrchish = {
 "agal",
 "buz",
 "dor",
@@ -1283,7 +1283,7 @@ namespace NameGen
 "waz",
 "ubal"};
 
-        private static string[] m_aPrefArabic = {
+        private static readonly string[] m_aPrefArabic = {
 "Aaza",
 "Abha",
 "Ad",
@@ -1356,7 +1356,7 @@ namespace NameGen
 "Zil",
 "Zou"};
 
-        private static string[] m_aSufArabic = {
+        private static readonly string[] m_aSufArabic = {
 "ada",
 "ah",
 "air",
@@ -1405,7 +1405,7 @@ namespace NameGen
 "yan",
 "yil"};
 
-        private static string[] m_aPrefViking = {
+        private static readonly string[] m_aPrefViking = {
 "al",
 "ber",
 "drammen",
@@ -1432,7 +1432,7 @@ namespace NameGen
 "trond",
 "vin"};
 
-        private static string[] m_aSufViking = {
+        private static readonly string[] m_aSufViking = {
 "fors",
 "gard",
 "heim",
@@ -1444,7 +1444,7 @@ namespace NameGen
 "stad",
 "strom"};
 
-        private static string[] m_aPrefHumans = {
+        private static readonly string[] m_aPrefHumans = {
 "basing",
 "birming",
 "black",
@@ -1494,7 +1494,7 @@ namespace NameGen
 "warring",
 "wind"};
 
-        private static string[] m_aSufHumans = {
+        private static readonly string[] m_aSufHumans = {
 "dare",
 "don",
 "field",
@@ -1509,7 +1509,7 @@ namespace NameGen
 "vil",
 "wood"};
 
-        private static string[] m_aPrefInn = {
+        private static readonly string[] m_aPrefInn = {
 "Bent",
 "Black",
 "Blind",
@@ -1568,7 +1568,7 @@ namespace NameGen
 "Wild",
 "Yawing"};
 
-        private static string[] m_aSufInn = {
+        private static readonly string[] m_aSufInn = {
 " Axe",
 " Anchor",
 " Barrel",
@@ -1621,7 +1621,7 @@ namespace NameGen
 " Wizard",
 " Rain"};
 
-        private static string[] m_aPrefFort = {
+        private static readonly string[] m_aPrefFort = {
 "Mind",
 "Iron",
 "Demention ",
@@ -1656,7 +1656,7 @@ namespace NameGen
 "Glorious ",
 "Infernal "};
 
-        private static string[] m_aSufFort = {
+        private static readonly string[] m_aSufFort = {
 "Storm",
 "Fist",
 "Keep",
@@ -1672,7 +1672,7 @@ namespace NameGen
 "Citadel"
 };
 
-        private static string[] m_aPrefShip = {
+        private static readonly string[] m_aPrefShip = {
 "Absolute",
 "Adventure",
 "Alisa",
@@ -1770,7 +1770,7 @@ namespace NameGen
 "Zodiac"
 };
 
-        private static string[] m_aSufShip = {
+        private static readonly string[] m_aSufShip = {
 " Adventure",
 " Amore",
 " Angel",
@@ -1880,7 +1880,7 @@ namespace NameGen
 " Zebra"
 };
 
-        private static string[] m_aPrefFemale = {
+        private static readonly string[] m_aPrefFemale = {
 "Ail",
 "Ara",
 "Ay",
@@ -1928,7 +1928,7 @@ namespace NameGen
 "Vul"
 };
 
-        private static string[] m_aSufFemale = {
+        private static readonly string[] m_aSufFemale = {
 "ta",
 "alle",
 "ann",
@@ -1992,7 +1992,7 @@ namespace NameGen
 "yth"
 };
 
-        private static string[] m_aPrefMale = {
+        private static readonly string[] m_aPrefMale = {
 "ache",
 "aim",
 "bald",
@@ -2097,7 +2097,7 @@ namespace NameGen
 "yip"
 };
 
-        private static string[] m_aSufMale = {
+        private static readonly string[] m_aSufMale = {
 "os",
 "ard",
 "bald",
@@ -2215,12 +2215,11 @@ namespace NameGen
             h = m_aSufAbstract.Length;
 
             mul = iSeed % (w * h);
-            
+
             first = m_aPrefAbstract[mul % w];
             second = m_aSufAbstract[mul / w];
 
-            char t;
-            t = first[0];
+            char t = first[0];
             if (Char.IsLetter(t))
             {
                 t = Char.ToUpper(t);
@@ -2229,7 +2228,7 @@ namespace NameGen
 
             return first + second;
         }
-        
+
         public enum Language
         {
             Viking,
@@ -2250,7 +2249,7 @@ namespace NameGen
         };
 
         public static string GetEthnicName(Language eRace)
-        { 
+        {
             return GetEthnicName(eRace, Rnd.Get(int.MaxValue));
         }
 
@@ -2445,7 +2444,7 @@ namespace NameGen
         }
 
         public static string GetHeroName(bool bMale)
-        { 
+        {
             return GetHeroName(Rnd.Get(int.MaxValue), bMale);
         }
 

@@ -50,7 +50,6 @@ namespace GeneLab.Genetix
     //    AlmostEveryone
     //}
 
-
     public class BrainGenetix: GenetixBase
     {
         /// <summary>
@@ -469,8 +468,8 @@ namespace GeneLab.Genetix
                             pMutant.Intelligence = Intelligence.Sapient;
                             break;
                     }
-                } 
-                
+                }
+
                 //if (Rnd.OneChanceFrom(2))
                 //{
                 //    pMutant.m_eMagicAbilityPrevalence = (MagicAbilityPrevalence)Rnd.Get(typeof(MagicAbilityPrevalence));
@@ -577,7 +576,6 @@ namespace GeneLab.Genetix
                     if (pMutant.Intelligence == Intelligence.Ingenious)
                         pMutant.MagicAbilityPotential = Math.Max(4, pMutant.MagicAbilityPotential); //высокоразумные расы с лёгкостью осваивают магию до уровня стандартных фэнтезийным магов, дальше как получится
                 }
-
 
                 return pMutant;
             }

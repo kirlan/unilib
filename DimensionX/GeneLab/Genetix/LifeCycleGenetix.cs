@@ -235,7 +235,7 @@ namespace GeneLab.Genetix
             //if (m_eDyingRate == DyingRate.Moderate && m_eBirthRate == BirthRate.Low)
             //    m_eBirthRate = BirthRate.Moderate;
         }
-        
+
         #region GenetixBase Members
 
         public GenetixBase MutateRace()
@@ -347,7 +347,7 @@ namespace GeneLab.Genetix
 
                 //if (pMutant.m_eDyingRate == DyingRate.Moderate && pMutant.m_eBirthRate == BirthRate.Low)
                 //    pMutant.m_eBirthRate = BirthRate.Moderate;
-                
+
                 if (!pMutant.IsIdentical(this))
                     return pMutant;
             }

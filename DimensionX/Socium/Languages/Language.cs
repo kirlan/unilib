@@ -10,7 +10,7 @@ namespace Socium.Languages
     {
         #region Static Members
         private enum Lang
-        { 
+        {
             Arabian,
             Asian,
             Dwarwen,
@@ -29,7 +29,7 @@ namespace Socium.Languages
             Latin
         }
 
-        private static Dictionary<Lang, Language> s_cLanguages = new Dictionary<Lang,Language>();
+        private static readonly Dictionary<Lang, Language> s_cLanguages = new Dictionary<Lang,Language>();
 
         public static void ResetUsedLists()
         {
@@ -213,13 +213,13 @@ namespace Socium.Languages
             }
         }
 
-        private static List<string> UsedNames = new List<string>();
+        private static readonly List<string> UsedNames = new List<string>();
 
         #endregion
 
-        private NameGenerator.Language m_eLanguage;
+        private readonly NameGenerator.Language m_eLanguage;
 
-        public Language(NameGenerator.Language eLanguage)
+        protected Language(NameGenerator.Language eLanguage)
         {
             m_eLanguage = eLanguage;
         }
@@ -245,7 +245,7 @@ namespace Socium.Languages
         }
 
         public string RandomCountryName()
-        { 
+        {
             string sName;
             int iCounter = 0;
             do
@@ -260,7 +260,7 @@ namespace Socium.Languages
         }
 
         public string RandomTownName()
-        { 
+        {
             string sName;
             int iCounter = 0;
             do

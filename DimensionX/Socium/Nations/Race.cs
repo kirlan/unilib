@@ -15,24 +15,24 @@ namespace Socium.Nations
     public class Race
     {
         #region Races
-        public static Race[] m_cAllRaces =
+        public static readonly Race[] m_cAllRaces =
         {
         //rank 1 - usual people
-            new Race("white", 1, Language.European, 
+            new Race("white", 1, Language.European,
                 //new LandTypeInfoX[] {LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Jungle, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BrainGenetix.HumanFantasy),
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(HairsGenetix.HumanWhiteF),
                 new MentalityTemplate(AdvancementRate.UniformlyPrecise, AdvancementRate.Leap, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise)),
-            new Race("latini", 1, Language.Latin, 
+            new Race("latini", 1, Language.Latin,
                 //new LandTypeInfoX[] {LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Jungle, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.Sparse, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.Brunette, HairsColor.DarkBlond, HairsColor.Black })),
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.Brunette, HairsColor.DarkBlond, HairsColor.Black })),
                 new MentalityTemplate(AdvancementRate.Plateau, AdvancementRate.Delayed, AdvancementRate.Plateau, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise)),
-            new Race("slavic", 1, Language.Slavic, 
+            new Race("slavic", 1, Language.Slavic,
                 //new LandTypeInfoX[] {LandTypes.Plains, LandTypes.Forest}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Jungle, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BrainGenetix.HumanFantasy).
@@ -40,7 +40,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.DarkBlond, HairsColor.Red })),
                 new MentalityTemplate(AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Rapid, AdvancementRate.UniformlyModerate, AdvancementRate.UniformlyPrecise)),
-            new Race("hindu", 1, Language.Hindu, 
+            new Race("hindu", 1, Language.Hindu,
                 //new LandTypeInfoX[] {LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Taiga, LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(HideGenetix.HumanTan).
@@ -49,7 +49,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Plateau)),
-            new Race("yellow", 1, Language.Asian, 
+            new Race("yellow", 1, Language.Asian,
                 //new LandTypeInfoX[] {LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Jungle, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(HideGenetix.HumanYellow).
@@ -58,7 +58,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoSmall).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise, AdvancementRate.Leap, AdvancementRate.UniformlyLoose, AdvancementRate.Plateau, AdvancementRate.Plateau)),
-            new Race("red", 1, Language.Aztec, 
+            new Race("red", 1, Language.Aztec,
                 //new LandTypeInfoX[] {LandTypes.Plains, LandTypes.Savanna}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(HideGenetix.HumanRed).
@@ -67,7 +67,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoSmall).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise)),
-            new Race("hellene", 1, Language.Greek, 
+            new Race("hellene", 1, Language.Greek,
                 //new LandTypeInfoX[] {LandTypes.Plains/*, LandTypes.Savanna*/}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Jungle, LandTypes.Tundra, LandTypes.Swamp, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(HideGenetix.HumanTan).
@@ -75,7 +75,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoSmall).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond, HairsColor.Blonde })),
                 new MentalityTemplate(AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Plateau)),
-            new Race("dervish", 1, Language.Arabian, 
+            new Race("dervish", 1, Language.Arabian,
                 //new LandTypeInfoX[] {LandTypes.Desert/*, LandTypes.Savanna*/}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Swamp, LandTypes.Jungle, LandTypes.Forest, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(HideGenetix.HumanTan).
@@ -84,7 +84,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Plateau)),
-            new Race("barb", 1, Language.Northman, 
+            new Race("barb", 1, Language.Northman,
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Taiga}, 
                 //new LandTypeInfoX[] {LandTypes.Swamp, LandTypes.Desert, LandTypes.Jungle, LandTypes.Savanna},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -93,7 +93,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Blonde, HairsColor.Albino, HairsColor.DarkBlond, HairsColor.Red })),
                 new MentalityTemplate(AdvancementRate.Leap, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.Delayed)),
-            new Race("nomad", 1, Language.Eskimoid, 
+            new Race("nomad", 1, Language.Eskimoid,
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Jungle, LandTypes.Mountains, LandTypes.Forest, LandTypes.Swamp, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(HideGenetix.HumanYellow).
@@ -102,7 +102,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Leap, AdvancementRate.UniformlyPrecise, AdvancementRate.UniformlyPrecise, AdvancementRate.Delayed, AdvancementRate.Plateau, AdvancementRate.Delayed)),
-            new Race("black", 1, Language.African, 
+            new Race("black", 1, Language.African,
                 //new LandTypeInfoX[] {LandTypes.Jungle/*, LandTypes.Desert*/, LandTypes.Savanna}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Forest, LandTypes.Plains, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(HideGenetix.HumanBlack).
@@ -112,7 +112,7 @@ namespace Socium.Nations
                                              Set(HairsGenetix.HumanBlackF),
                 new MentalityTemplate(AdvancementRate.Leap, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Plateau)),
         //rank 10 - common non-humans
-            new Race("orc", 10, Language.Orkish, 
+            new Race("orc", 10, Language.Orkish,
                 //new LandTypeInfoX[] {LandTypes.Plains, /*LandTypes.Mountains, */LandTypes.Savanna}, 
                 //new LandTypeInfoX[] {LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -126,7 +126,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(LifeCycleGenetix.OrcF),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.UniformlyLoose, AdvancementRate.Random, AdvancementRate.Plateau, AdvancementRate.Delayed, AdvancementRate.Delayed)),
-            new Race("goblin", 10, Language.Orkish, 
+            new Race("goblin", 10, Language.Orkish,
                 //new LandTypeInfoX[] {LandTypes.Plains, /*LandTypes.Mountains, */LandTypes.Savanna}, 
                 //new LandTypeInfoX[] {LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Goblin).
@@ -138,7 +138,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(LifeCycleGenetix.OrcF),
                 new MentalityTemplate(AdvancementRate.Delayed)),
-            new Race("centaur", 10, Language.Greek, 
+            new Race("centaur", 10, Language.Greek,
                 //new LandTypeInfoX[] {LandTypes.Plains, LandTypes.Savanna}, 
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Swamp, LandTypes.Mountains, LandTypes.Forest},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -149,7 +149,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Leap)),
-            new Race("ogre", 10, Language.Orkish, 
+            new Race("ogre", 10, Language.Orkish,
                 //new LandTypeInfoX[] {LandTypes.Savanna, LandTypes.Mountains, LandTypes.Forest}, 
                 //new LandTypeInfoX[] {LandTypes.Jungle},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Giant).
@@ -160,14 +160,14 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(LifeCycleGenetix.OrcF),
                 new MentalityTemplate(AdvancementRate.Plateau, AdvancementRate.Rapid, AdvancementRate.Random, AdvancementRate.Rapid, AdvancementRate.Plateau, AdvancementRate.Delayed)),
-            new Race("halfling", 10, Language.European, 
+            new Race("halfling", 10, Language.European,
                 //new LandTypeInfoX[] {LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Desert, LandTypes.Jungle, LandTypes.Mountains},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Hobbit),
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(HairsGenetix.HumanWhiteF),
                 new MentalityTemplate(AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed)),
-            new Race("minotaur", 10, Language.Greek, 
+            new Race("minotaur", 10, Language.Greek,
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Swamp, LandTypes.Mountains}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -185,7 +185,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond, HairsColor.Red })),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.Delayed, AdvancementRate.Delayed)),
-            new Race("elf", 10, Language.Elven, 
+            new Race("elf", 10, Language.Elven,
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Mountains, LandTypes.Desert, LandTypes.Swamp, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Elf).
@@ -195,7 +195,7 @@ namespace Socium.Nations
                                              Set(HairsGenetix.Elf),
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoSmall),
                 new MentalityTemplate(AdvancementRate.Rapid, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid)),
-            new Race("dwarf", 10, Language.Dwarwen, 
+            new Race("dwarf", 10, Language.Dwarwen,
                 //new LandTypeInfoX[] {LandTypes.Mountains}, 
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Jungle, LandTypes.Swamp, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Dwarf).
@@ -204,7 +204,7 @@ namespace Socium.Nations
                                              Set(LifeCycleGenetix.DwarfF).
                                              Set(HairsGenetix.HumanWhiteF),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Delayed, AdvancementRate.Plateau)),
-            new Race("vampire", 10, Language.European, 
+            new Race("vampire", 10, Language.European,
                 //new LandTypeInfoX[] {LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Jungle, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Elf).
@@ -216,7 +216,7 @@ namespace Socium.Nations
                                              Set(HairsGenetix.HumanWhiteF),
                 new MentalityTemplate(AdvancementRate.Plateau, AdvancementRate.Rapid, AdvancementRate.Delayed, AdvancementRate.Plateau, AdvancementRate.Delayed, AdvancementRate.Rapid)),
         //rank 20 - not so common non-humans
-            new Race("cobold", 20, Language.Dwarwen, 
+            new Race("cobold", 20, Language.Dwarwen,
                 //new LandTypeInfoX[] {LandTypes.Mountains}, 
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Jungle, LandTypes.Swamp, LandTypes.Desert, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Dwarf).
@@ -228,7 +228,7 @@ namespace Socium.Nations
                                              Set(LifeCycleGenetix.OrcF).
                                              Set(HairsGenetix.HumanWhiteF),
                 new MentalityTemplate(AdvancementRate.UniformlyLoose, AdvancementRate.Delayed, AdvancementRate.Random, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed)),
-            new Race("gnoll", 20, Language.Orkish, 
+            new Race("gnoll", 20, Language.Orkish,
                 //new LandTypeInfoX[] {LandTypes.Savanna, LandTypes.Swamp}, 
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Tundra, LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Goblin).
@@ -245,7 +245,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.FourSmall).
                                              Set(LifeCycleGenetix.OrcF),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.Delayed)),
-            new Race("satyr", 20, Language.Greek, 
+            new Race("satyr", 20, Language.Greek,
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Jungle}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(HeadGenetix.DemonM).
@@ -258,7 +258,7 @@ namespace Socium.Nations
                                              Set(HeadGenetix.DemonF).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Leap, AdvancementRate.Rapid, AdvancementRate.Leap, AdvancementRate.Delayed, AdvancementRate.UniformlyLoose, AdvancementRate.Rapid)),
-            new Race("werewolf", 20, Language.European, 
+            new Race("werewolf", 20, Language.European,
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Jungle, LandTypes.Swamp}, 
                 //new LandTypeInfoX[] {LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -274,7 +274,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(LifeCycleGenetix.OrcF),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Leap, AdvancementRate.Leap, AdvancementRate.Rapid, AdvancementRate.Leap, AdvancementRate.Plateau)),
-            new Race("feline", 20, Language.African, 
+            new Race("feline", 20, Language.African,
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Savanna, LandTypes.Forest}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Taiga, LandTypes.Swamp, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Elf).
@@ -296,7 +296,7 @@ namespace Socium.Nations
             //new RaceTemplate("littlefolk ", 20, Language.Elven, 
             //    new LandTypeInfoX[] {LandTypes.Forest}, 
             //    new LandTypeInfoX[] {LandTypes.Swamp, LandTypes.Tundra, LandTypes.Desert, LandTypes.Plains}),
-            new Race("lizard", 20, Language.Aztec, 
+            new Race("lizard", 20, Language.Aztec,
                 //new LandTypeInfoX[] {LandTypes.Swamp}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Tundra, LandTypes.Plains, LandTypes.Mountains},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Elf).
@@ -311,7 +311,7 @@ namespace Socium.Nations
                                              Set(HairsGenetix.None),
                 null,
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.Delayed)),
-            new Race("reptile", 20, Language.Aztec, 
+            new Race("reptile", 20, Language.Aztec,
                 //new LandTypeInfoX[] {LandTypes.Swamp, LandTypes.Desert, LandTypes.Jungle}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Forest, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -334,7 +334,7 @@ namespace Socium.Nations
             //    new LandTypeInfoX[] {LandTypes.Plains, LandTypes.Mountains, LandTypes.Forest}, 
             //    new LandTypeInfoX[] {LandTypes.Tundra}),
         //rank 30 - exotic non-humans
-            new Race("ratling", 30, Language.Asian, 
+            new Race("ratling", 30, Language.Asian,
                 //new LandTypeInfoX[] {LandTypes.Plains}, 
                 //new LandTypeInfoX[] {LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Goblin).
@@ -349,7 +349,7 @@ namespace Socium.Nations
                                              Set(HairsGenetix.AnimalWhiskers),
                 new Phenotype.PhensStorage().Set(BreastsGenetix.EightSmall),
                 new MentalityTemplate(AdvancementRate.Plateau, AdvancementRate.Delayed, AdvancementRate.Plateau, AdvancementRate.Delayed, AdvancementRate.Plateau, AdvancementRate.Plateau)),
-            new Race("ursan", 30, Language.Slavic, 
+            new Race("ursan", 30, Language.Slavic,
                 //new LandTypeInfoX[] {LandTypes.Forest}, 
                 //new LandTypeInfoX[] {LandTypes.Desert},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -374,7 +374,7 @@ namespace Socium.Nations
             //new RaceTemplate("golem ", 30, NameGenerator.Language.Aztec, 
             //    new LandTypeInfoX[] {LandTypes.Savanna, }, 
             //    new LandTypeInfoX[] {LandTypes.Mountains}),
-            new Race("naga", 30, Language.Hindu, 
+            new Race("naga", 30, Language.Hindu,
                 //new LandTypeInfoX[] {LandTypes.Swamp, LandTypes.Jungle}, 
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Mountains, LandTypes.Tundra, LandTypes.Savanna, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(LegsGenetix.Snake).
@@ -386,7 +386,7 @@ namespace Socium.Nations
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage),
                 new MentalityTemplate(AdvancementRate.Leap, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid)),
-            new Race("harpy", 30, Language.Greek, 
+            new Race("harpy", 30, Language.Greek,
                 //new LandTypeInfoX[] {LandTypes.Mountains}, 
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Jungle, LandTypes.Tundra, LandTypes.Taiga, LandTypes.Swamp},
                 new Phenotype.PhensStorage().Set(NutritionGenetix.Predator).
@@ -400,7 +400,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(LifeCycleGenetix.HarpyF),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed)),
-            new Race("faery", 30, Language.Elven, 
+            new Race("faery", 30, Language.Elven,
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Jungle}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Swamp, LandTypes.Tundra, LandTypes.Mountains},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Pixie).
@@ -415,7 +415,7 @@ namespace Socium.Nations
                                              Set(HeadGenetix.DemonF).
                                              Set(LifeCycleGenetix.HarpyF),
                 new MentalityTemplate(AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Random, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid)),
-            new Race("pixie", 30, Language.Elven, 
+            new Race("pixie", 30, Language.Elven,
                 //new LandTypeInfoX[] {LandTypes.Forest, LandTypes.Swamp, LandTypes.Jungle}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Tundra, LandTypes.Mountains},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Pixie).
@@ -431,7 +431,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoSmall).
                                              Set(LifeCycleGenetix.HarpyF),
                 new MentalityTemplate(AdvancementRate.Rapid, AdvancementRate.Random, AdvancementRate.Random, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.Rapid)),
-            new Race("drow", 30, Language.Drow, 
+            new Race("drow", 30, Language.Drow,
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Desert, LandTypes.Mountains}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(HideGenetix.Drow).
@@ -442,7 +442,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoAverage),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid)),
         //rank 40 - powerful mythic creatures
-            new Race("djinn", 40, Language.Arabian, 
+            new Race("djinn", 40, Language.Arabian,
                 //new LandTypeInfoX[] {LandTypes.Desert}, 
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Swamp, LandTypes.Forest, LandTypes.Taiga, LandTypes.Tundra, LandTypes.Plains},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -454,7 +454,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.TwoBig).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.UniformlyLoose)),
-            new Race("rakshasa", 40, Language.Hindu, 
+            new Race("rakshasa", 40, Language.Hindu,
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Mountains}, 
                 //new LandTypeInfoX[] {LandTypes.Tundra, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -468,7 +468,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.FourBig).
                                              Set(HeadGenetix.DemonF),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.Delayed)),
-            new Race("asura", 40, Language.Hindu, 
+            new Race("asura", 40, Language.Hindu,
                 //new LandTypeInfoX[] {LandTypes.Plains, LandTypes.Savanna}, 
                 //new LandTypeInfoX[] {LandTypes.Jungle, LandTypes.Swamp, LandTypes.Forest, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Giant).
@@ -481,7 +481,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BreastsGenetix.FourBig).
                                              Set(new HairsGenetix(HairsAmount.Thick, HairsAmount.None, HairsType.Hair, new HairsColor[] { HairsColor.Brunette, HairsColor.Black, HairsColor.DarkBlond })),
                 new MentalityTemplate(AdvancementRate.Plateau, AdvancementRate.Rapid, AdvancementRate.Plateau, AdvancementRate.Rapid, AdvancementRate.Delayed, AdvancementRate.Plateau)),
-            new Race("drakonid", 40, Language.Drow, 
+            new Race("drakonid", 40, Language.Drow,
                 //new LandTypeInfoX[] {LandTypes.Mountains}, 
                 //new LandTypeInfoX[] {LandTypes.Swamp, LandTypes.Tundra, LandTypes.Forest, LandTypes.Jungle, LandTypes.Taiga},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -498,7 +498,7 @@ namespace Socium.Nations
                 null,
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Rapid, AdvancementRate.UniformlyLoose, AdvancementRate.UniformlyLoose, AdvancementRate.Delayed)),
         //rank 50 - complete aliens
-            new Race("insectoid", 50, Language.African, 
+            new Race("insectoid", 50, Language.African,
                 //new LandTypeInfoX[] {LandTypes.Savanna, LandTypes.Swamp, LandTypes.Desert}, 
                 //new LandTypeInfoX[] {LandTypes.Plains},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Elf).
@@ -520,7 +520,7 @@ namespace Socium.Nations
                                              Set(TailGenetix.Long).
                                              Set(LifeCycleGenetix.InsectF),
                 new MentalityTemplate(AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid)),
-            new Race("tranx", 50, Language.Asian, 
+            new Race("tranx", 50, Language.Asian,
                 //new LandTypeInfoX[] {LandTypes.Savanna, LandTypes.Swamp, LandTypes.Desert}, 
                 //new LandTypeInfoX[] {LandTypes.Plains},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Elf).
@@ -539,7 +539,7 @@ namespace Socium.Nations
                                              Set(HairsGenetix.None),
                 new Phenotype.PhensStorage().Set(LifeCycleGenetix.InsectM),
                 new MentalityTemplate(AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid, AdvancementRate.Rapid)),
-            new Race("arachnid", 50, Language.Drow, 
+            new Race("arachnid", 50, Language.Drow,
                 //new LandTypeInfoX[] {LandTypes.Swamp, LandTypes.Jungle}, 
                 //new LandTypeInfoX[] {LandTypes.Desert, LandTypes.Tundra},
                 new Phenotype.PhensStorage().Set(BodyGenetix.Barbarian).
@@ -560,7 +560,7 @@ namespace Socium.Nations
                 new Phenotype.PhensStorage().Set(BodyGenetix.InsectQueen).
                                              Set(LifeCycleGenetix.InsectF),
                 new MentalityTemplate(AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed, AdvancementRate.Delayed)),
-            new Race("illithid", 50, Language.Aztec, 
+            new Race("illithid", 50, Language.Aztec,
                 //new LandTypeInfoX[] {LandTypes.Mountains, LandTypes.Jungle, LandTypes.Desert}, 
                 //new LandTypeInfoX[] {LandTypes.Taiga, LandTypes.Tundra, LandTypes.Forest, LandTypes.Plains, LandTypes.Savanna},
                 new Phenotype.PhensStorage().Set(NutritionGenetix.EnergyVampire).
@@ -576,54 +576,60 @@ namespace Socium.Nations
         };
         #endregion
 
-        public string m_sName;
-        public int m_iRank;
-        public Language m_pLanguage;
+        public string Name { get; }
 
-        public Phenotype m_pPhenotypeM;
+        public Language Language { get; }
 
-        public Phenotype m_pPhenotypeF;
+        public Phenotype PhenotypeMale { get; }
 
-        public Phenotype.PhensStorage m_pGenderDiffFemale;
+        public Phenotype PhenotypeFemale { get; }
 
-        public List<Nation> m_cNations = new List<Nation>();
+        /// <summary>
+        /// Чем девочки отличаются от мальчиков?
+        /// </summary>
+        public Phenotype.PhensStorage GenderDiffFemale { get; }
 
-        public MentalityTemplate m_pMentalityTemplate;
+        public List<Nation> Nations { get; } = new List<Nation>();
+
+        public MentalityTemplate MentalityTemplate { get; }
 
         public Race(string sName, int iRank, Language pLanguage, Phenotype.PhensStorage pDiffFromWhiteMale, Phenotype.PhensStorage pGenderDiffFemale, MentalityTemplate pCulture)
-        { 
-            m_sName = sName;
-            m_iRank = iRank;
+        {
+            Name = sName;
 
-            m_pLanguage = pLanguage;
+            Language = pLanguage;
 
-            m_pPhenotypeM = (Phenotype)new Phenotype(pDiffFromWhiteMale).MutateRace();
-            if (m_pPhenotypeM.m_pValues.Get<HairsGenetix>().m_cHairColors.Count == 0 &&
-                (m_pPhenotypeM.m_pValues.Get<HairsGenetix>().Hairs != HairsAmount.None ||
-                 m_pPhenotypeM.m_pValues.Get<HairsGenetix>().Beard != HairsAmount.None))
-                throw new Exception();
+            PhenotypeMale = (Phenotype)new Phenotype(pDiffFromWhiteMale).MutateRace();
+            if (PhenotypeMale.m_pValues.Get<HairsGenetix>().HairColors.Count == 0 &&
+                (PhenotypeMale.m_pValues.Get<HairsGenetix>().Hairs != HairsAmount.None ||
+                 PhenotypeMale.m_pValues.Get<HairsGenetix>().Beard != HairsAmount.None))
+            {
+                throw new InvalidOperationException();
+            }
 
-            var pExpectedPhenotypeF = Phenotype.Combine(m_pPhenotypeM, pGenderDiffFemale);
+            var pExpectedPhenotypeF = Phenotype.Combine(PhenotypeMale, pGenderDiffFemale);
 
-            m_pPhenotypeF = (Phenotype)pExpectedPhenotypeF.MutateGender();
-            if (m_pPhenotypeF.m_pValues.Get<HairsGenetix>().m_cHairColors.Count == 0 &&
-                (m_pPhenotypeF.m_pValues.Get<HairsGenetix>().Hairs != HairsAmount.None ||
-                 m_pPhenotypeF.m_pValues.Get<HairsGenetix>().Beard != HairsAmount.None))
-                throw new Exception();
+            PhenotypeFemale = (Phenotype)pExpectedPhenotypeF.MutateGender();
+            if (PhenotypeFemale.m_pValues.Get<HairsGenetix>().HairColors.Count == 0 &&
+                (PhenotypeFemale.m_pValues.Get<HairsGenetix>().Hairs != HairsAmount.None ||
+                 PhenotypeFemale.m_pValues.Get<HairsGenetix>().Beard != HairsAmount.None))
+            {
+                throw new InvalidOperationException();
+            }
 
-            m_pGenderDiffFemale = m_pPhenotypeF.m_pValues - m_pPhenotypeM.m_pValues;
+            GenderDiffFemale = PhenotypeFemale.m_pValues - PhenotypeMale.m_pValues;
 
-            m_pMentalityTemplate = pCulture;
+            MentalityTemplate = pCulture;
         }
 
         public override string ToString()
         {
-            return m_sName.Trim();
+            return Name.Trim();
         }
 
         public void ResetNations()
         {
-            m_cNations.Clear();
+            Nations.Clear();
         }
     }
 }

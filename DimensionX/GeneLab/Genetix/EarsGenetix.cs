@@ -35,7 +35,7 @@ namespace GeneLab.Genetix
     }
 
     public enum EarsPlacement
-    { 
+    {
         /// <summary>
         /// по бокам головы, как у людей и обезьян
         /// </summary>
@@ -45,7 +45,7 @@ namespace GeneLab.Genetix
         /// </summary>
         Top
     }
-    
+
     public class EarsGenetix : GenetixBase
     {
         /// <summary>
@@ -130,19 +130,17 @@ namespace GeneLab.Genetix
 
         public EarsType EarsType { get; private set; } = EarsType.Round;
 
-        public EarsPlacement EarsPlacement { get; private set; } = EarsPlacement.Side;
+        public EarsPlacement EarsPlacement { get; } = EarsPlacement.Side;
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            EarsGenetix pAnother = pOther as EarsGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is EarsGenetix pAnother))
                 return false;
 
             return EarsType == pAnother.EarsType &&
                 EarsPlacement == pAnother.EarsPlacement;
         }
-        
+
         public EarsGenetix()
         { }
 
@@ -157,7 +155,7 @@ namespace GeneLab.Genetix
             EarsType = eEarsType;
             EarsPlacement = eEarsPlacement;
         }
-        
+
         public GenetixBase MutateRace()
         {
             if (Rnd.OneChanceFrom(10))

@@ -78,7 +78,7 @@ namespace GeneLab.Genetix
 
         public ArmsCount ArmsCount { get; private set; } = ArmsCount.Bimanous;
 
-        public ArmsType ArmsType { get; private set; } = ArmsType.Palms;
+        public ArmsType ArmsType { get; } = ArmsType.Palms;
 
         public ArmsGenetix()
         { }

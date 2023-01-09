@@ -9,46 +9,46 @@ namespace LandscapeGeneration
 {
     public class VoronoiEdge
     {
-        public VoronoiVertex m_pPoint1;
-        public VoronoiVertex m_pPoint2;
+        public VoronoiVertex Point1 { get; set; }
+        public VoronoiVertex Point2 { get; set; }
 
-        public float Length { get; private set; }
+        public float Length { get; }
 
-        public VoronoiEdge m_pNext = null;
+        public VoronoiEdge Next { get; set; } = null;
 
         public VoronoiEdge(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
         {
-            m_pPoint1 = pPoint1;
-            m_pPoint2 = pPoint2;
+            Point1 = pPoint1;
+            Point2 = pPoint2;
 
             Length = (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
         }
 
         public VoronoiEdge(VoronoiEdge pOriginal)
         {
-            m_pPoint1 = pOriginal.m_pPoint1;
-            m_pPoint2 = pOriginal.m_pPoint2;
+            Point1 = pOriginal.Point1;
+            Point2 = pOriginal.Point2;
 
             Length = pOriginal.Length;
         }
 
         public VoronoiEdge(BinaryReader binReader, Dictionary<long, VoronoiVertex> cVertexes)
         {
-            m_pPoint1 = cVertexes[binReader.ReadInt64()];
-            m_pPoint2 = cVertexes[binReader.ReadInt64()];
+            Point1 = cVertexes[binReader.ReadInt64()];
+            Point2 = cVertexes[binReader.ReadInt64()];
 
-            Length = (float)Math.Sqrt((m_pPoint1.X - m_pPoint2.X) * (m_pPoint1.X - m_pPoint2.X) + (m_pPoint1.Y - m_pPoint2.Y) * (m_pPoint1.Y - m_pPoint2.Y));
+            Length = (float)Math.Sqrt((Point1.X - Point2.X) * (Point1.X - Point2.X) + (Point1.Y - Point2.Y) * (Point1.Y - Point2.Y));
         }
 
         public void Save(BinaryWriter binWriter)
         {
-            binWriter.Write(m_pPoint1.m_iVertexID);
-            binWriter.Write(m_pPoint2.m_iVertexID);
+            binWriter.Write(Point1.VertexID);
+            binWriter.Write(Point2.VertexID);
         }
 
         public override string ToString()
         {
-            return string.Format("({0}) - ({1}), Length {2}", m_pPoint1, m_pPoint2, Length);
+            return string.Format("({0}) - ({1}), Length {2}", Point1, Point2, Length);
         }
     }
 }

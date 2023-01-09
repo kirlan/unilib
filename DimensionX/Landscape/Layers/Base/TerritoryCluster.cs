@@ -22,21 +22,21 @@ namespace LandscapeGeneration
         /// <summary>
         /// границы с другими <typeparamref name="INNER"/>, т.е. составными частями соседних <typeparamref name="LAYER"/>
         /// </summary>
-        public Dictionary<INNER, List<VoronoiEdge>> m_cBorder = new Dictionary<INNER, List<VoronoiEdge>>();
+        public Dictionary<INNER, List<VoronoiEdge>> Border { get; } = new Dictionary<INNER, List<VoronoiEdge>>();
 
         public void InitBorder(INNER pSeed)
         {
-            m_cBorder.Clear();
+            Border.Clear();
 
             foreach (var pInner in pSeed.BorderWith)
             {
-                m_cBorder[pInner.Key] = new List<VoronoiEdge>();
-                VoronoiEdge[] aLines = pInner.Value.ToArray();
-                foreach (VoronoiEdge pLine in aLines)
-                    m_cBorder[pInner.Key].Add(new VoronoiEdge(pLine));
+                Border[pInner.Key] = new List<VoronoiEdge>();
+                foreach (VoronoiEdge pLine in pInner.Value.ToArray())
+                    Border[pInner.Key].Add(new VoronoiEdge(pLine));
             }
         }
-        public List<VoronoiEdge> m_cFirstLines = new List<VoronoiEdge>();
+
+        public List<VoronoiEdge> FirstLines { get; } = new List<VoronoiEdge>();
 
         /*
         public bool TestChain()
@@ -79,7 +79,7 @@ namespace LandscapeGeneration
         }
         */
 
-        public readonly List<List<VoronoiVertex>> m_cOrdered = new List<List<VoronoiVertex>>();
+        public List<List<VoronoiVertex>> BorderOrdered { get; } = new List<List<VoronoiVertex>>();
 
         /// <summary>
         /// Настраивает связи "следующая"-"предыдущая" среди граней, уже хранящихся в словаре границ с другими локациями.
@@ -88,7 +88,7 @@ namespace LandscapeGeneration
         protected void ChainBorder(float fCycleShift)
         {
             List<VoronoiEdge> cTotalBorder = new List<VoronoiEdge>();
-            foreach (var cLines in m_cBorder)
+            foreach (var cLines in Border)
                 cTotalBorder.AddRange(cLines.Value);
 
             VoronoiEdge[] aTotalBorder = cTotalBorder.ToArray();
@@ -100,31 +100,31 @@ namespace LandscapeGeneration
             float fPerimeter = 0;
             foreach (VoronoiEdge pLine in aTotalBorder)
             {
-                pLine.m_pNext = null;
+                pLine.Next = null;
 
-                float fRelativeX1 = pLine.m_pPoint1.X;
-                if (fRelativeX1 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
+                float fRelativeX1 = pLine.Point1.X;
+                if (fRelativeX1 > aTotalBorder[0].Point1.X + fCycleShift / 2)
                     fRelativeX1 -= fCycleShift;
-                if (fRelativeX1 < aTotalBorder[0].m_pPoint1.X - fCycleShift / 2)
+                if (fRelativeX1 < aTotalBorder[0].Point1.X - fCycleShift / 2)
                     fRelativeX1 += fCycleShift;
 
-                float fRelativeX2 = pLine.m_pPoint2.X;
-                if (fRelativeX2 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
+                float fRelativeX2 = pLine.Point2.X;
+                if (fRelativeX2 > aTotalBorder[0].Point1.X + fCycleShift / 2)
                     fRelativeX2 -= fCycleShift;
-                if (fRelativeX2 < aTotalBorder[0].m_pPoint1.X - fCycleShift / 2)
+                if (fRelativeX2 < aTotalBorder[0].Point1.X - fCycleShift / 2)
                     fRelativeX2 += fCycleShift;
 
                 X += pLine.Length * (fRelativeX1 + fRelativeX2) / 2;
-                Y += pLine.Length * (pLine.m_pPoint1.Y + pLine.m_pPoint2.Y) / 2;
-                H += pLine.Length * (pLine.m_pPoint1.H + pLine.m_pPoint2.H) / 2;
+                Y += pLine.Length * (pLine.Point1.Y + pLine.Point2.Y) / 2;
+                H += pLine.Length * (pLine.Point1.H + pLine.Point2.H) / 2;
                 fPerimeter += pLine.Length;
             }
             X /= fPerimeter;
             Y /= fPerimeter;
             H /= fPerimeter;
 
-            m_cFirstLines.Clear();
-            m_cOrdered.Clear();
+            FirstLines.Clear();
+            BorderOrdered.Clear();
 
             VoronoiEdge pFirstLine;
             do
@@ -133,7 +133,7 @@ namespace LandscapeGeneration
                 for (int i = 0; i < iTotalCount; i++)
                 {
                     VoronoiEdge pLine = aTotalBorder[i];
-                    if (pLine.m_pNext == null)// && pLine.m_pPrevious == null)
+                    if (pLine.Next == null)// && pLine.m_pPrevious == null)
                     {
                         pFirstLine = pLine;
                         break;
@@ -144,7 +144,7 @@ namespace LandscapeGeneration
                 {
                     List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
 
-                    m_cFirstLines.Add(pFirstLine);
+                    FirstLines.Add(pFirstLine);
                     VoronoiEdge pCurrentLine = pFirstLine;
 
                     bool bGotIt;
@@ -155,13 +155,13 @@ namespace LandscapeGeneration
                         for (int i = 0; i < iTotalCount; i++)
                         {
                             VoronoiEdge pLine = aTotalBorder[i];
-                            if (pLine.m_pPoint1 == pCurrentLine.m_pPoint2 ||
-                                (pLine.m_pPoint1.Y == pCurrentLine.m_pPoint2.Y &&
-                                 (pLine.m_pPoint1.X == pCurrentLine.m_pPoint2.X ||
-                                  Math.Abs(pLine.m_pPoint1.X - pCurrentLine.m_pPoint2.X) == fCycleShift)))
+                            if (pLine.Point1 == pCurrentLine.Point2 ||
+                                (pLine.Point1.Y == pCurrentLine.Point2.Y &&
+                                 (pLine.Point1.X == pCurrentLine.Point2.X ||
+                                  Math.Abs(pLine.Point1.X - pCurrentLine.Point2.X) == fCycleShift)))
                             {
-                                pCurrentLine.m_pNext = pLine;
-                                cVertexes.Add(pCurrentLine.m_pPoint1);
+                                pCurrentLine.Next = pLine;
+                                cVertexes.Add(pCurrentLine.Point1);
 
                                 pCurrentLine = pLine;
                                 bGotIt = true;
@@ -176,7 +176,7 @@ namespace LandscapeGeneration
                     }
                     while (pCurrentLine != pFirstLine && bGotIt && iCounter <= iTotalCount);
 
-                    m_cOrdered.Add(cVertexes);
+                    BorderOrdered.Add(cVertexes);
                 }
             }
             while (pFirstLine != null);
@@ -189,14 +189,14 @@ namespace LandscapeGeneration
         public HashSet<INNER> Contents { get; } = new HashSet<INNER>();
 
         /// <summary>
-        /// Соседние объекты <typeparamref name="LAYER"/>.
-        /// Нельзя использовать до вызова <see cref="Finish(float)"/>
+        /// Соседние объекты <typeparamref name="LAYER"/>.<br/>
+        /// Нельзя использовать до вызова <see cref="FillBorderWithKeys()"/> в <see cref="Finish(float)"/>
         /// </summary>
-        public LAYER[] m_aBorderWith = null;
+        public LAYER[] BorderWithKeys { get; set; } = null;
 
         protected void FillBorderWithKeys()
         {
-            m_aBorderWith = new List<LAYER>(BorderWith.Keys).ToArray();
+            BorderWithKeys = new List<LAYER>(BorderWith.Keys).ToArray();
 
             PerimeterLength = 0;
             foreach (var pBorder in BorderWith)
@@ -242,7 +242,7 @@ namespace LandscapeGeneration
 
             Dictionary<INNER, float> cBorderLength = new Dictionary<INNER, float>();
 
-            foreach (var pInner in m_cBorder)
+            foreach (var pInner in Border)
             {
                 INNER pInnerTerritory = pInner.Key;
                 if (!pInnerTerritory.HasOwner() && !pInnerTerritory.Forbidden)
@@ -259,8 +259,8 @@ namespace LandscapeGeneration
                     if (fWholeLength < 0.25f)
                         fWholeLength /= 10;
                     if (fWholeLength > 0.5f)
-                        fWholeLength *= 10; 
-                    
+                        fWholeLength *= 10;
+
                     cBorderLength[pInnerTerritory] = fWholeLength;
                 }
             }
@@ -277,19 +277,19 @@ namespace LandscapeGeneration
             Contents.Add(pAddon);
             pAddon.SetOwner((LAYER)this);
 
-            m_cBorder[pAddon].Clear();
-            m_cBorder.Remove(pAddon);
+            Border[pAddon].Clear();
+            Border.Remove(pAddon);
 
             foreach (var pInner in pAddon.BorderWith)
             {
                 if (Contents.Contains(pInner.Key))
                     continue;
 
-                if (!m_cBorder.ContainsKey(pInner.Key))
-                    m_cBorder[pInner.Key] = new List<VoronoiEdge>();
+                if (!Border.ContainsKey(pInner.Key))
+                    Border[pInner.Key] = new List<VoronoiEdge>();
                 VoronoiEdge[] aBorderLine = pInner.Value.ToArray();
                 foreach (var pLine in aBorderLine)
-                    m_cBorder[pInner.Key].Add(new VoronoiEdge(pLine)); 
+                    Border[pInner.Key].Add(new VoronoiEdge(pLine));
             }
 
             return pAddon;
@@ -303,7 +303,7 @@ namespace LandscapeGeneration
         {
             ChainBorder(fCycleShift);
 
-            foreach (INNER pInner in m_cBorder.Keys)
+            foreach (INNER pInner in Border.Keys)
             {
                 LAYER pBorderCluster = m_pForbidden;
                 if (pInner.HasOwner())
@@ -311,7 +311,7 @@ namespace LandscapeGeneration
 
                 if (!BorderWith.ContainsKey(pBorderCluster))
                     BorderWith[pBorderCluster] = new List<VoronoiEdge>();
-                BorderWith[pBorderCluster].AddRange(m_cBorder[pInner]);
+                BorderWith[pBorderCluster].AddRange(Border[pInner]);
             }
             FillBorderWithKeys();
         }

@@ -45,7 +45,7 @@ namespace GeneLab.Genetix
         /// </summary>
         Tentackles
     }
-    
+
     public class FaceGenetix : GenetixBase
     {
         /// <summary>
@@ -132,19 +132,17 @@ namespace GeneLab.Genetix
 
         public NoseType NoseType { get; private set; } = NoseType.Normal;
 
-        public MouthType MouthType { get; private set; } = MouthType.Normal;
+        public MouthType MouthType { get; } = MouthType.Normal;
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            FaceGenetix pAnother = pOther as FaceGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is FaceGenetix pAnother))
                 return false;
 
             return NoseType == pAnother.NoseType &&
                 MouthType == pAnother.MouthType;
         }
-        
+
         public FaceGenetix()
         { }
 
@@ -159,7 +157,7 @@ namespace GeneLab.Genetix
             NoseType = eNoseType;
             MouthType = eMouthType;
         }
-        
+
         public GenetixBase MutateRace()
         {
             if (Rnd.OneChanceFrom(10))

@@ -9,9 +9,9 @@ namespace LandscapeGeneration.FastGrid
 {
     public class CellCH : TriangulationCell<VertexCH, CellCH>
     {
-        static System.Random rnd = new System.Random();
+        //static System.Random rnd = new System.Random();
 
-        public object m_pTag = null;
+        public object Tag { get; set; } = null;
 
         Point GetCircumcenter()
         {
@@ -33,7 +33,6 @@ namespace LandscapeGeneration.FastGrid
             // size, y, 1
             for (int i = 0; i < 3; i++)
             {
-                //                m[i, 0] = StarMath.norm2(points[i].Position, 2, true);
                 m[i, 0] = StarMath.norm2(points[i].Position, true);
             }
             var dx = -StarMath.determinant(m);
@@ -46,23 +45,23 @@ namespace LandscapeGeneration.FastGrid
             var dy = StarMath.determinant(m);
 
             // size, x, y
-            for (int i = 0; i < 3; i++)
-            {
-                m[i, 2] = points[i].Position[1];
-            }
-            var c = -StarMath.determinant(m);
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    m[i, 2] = points[i].Position[1];
+            //}
+            //var c = -StarMath.determinant(m);
 
             var s = -1.0 / (2.0 * a);
-            var r = System.Math.Abs(s) * System.Math.Sqrt(dx * dx + dy * dy - 4 * a * c);
+            //var r = System.Math.Abs(s) * System.Math.Sqrt(dx * dx + dy * dy - 4 * a * c);
             return new Point(s * dx, s * dy);
         }
 
-        Point GetCentroid()
+        private Point GetCentroid()
         {
             return new Point(Vertices.Select(v => v.Position[0]).Average(), Vertices.Select(v => v.Position[1]).Average());
         }
 
-        Point? circumCenter;
+        private Point? circumCenter;
         public Point Circumcenter
         {
             get
@@ -72,7 +71,7 @@ namespace LandscapeGeneration.FastGrid
             }
         }
 
-        Point? centroid;
+        private Point? centroid;
         public Point Centroid
         {
             get

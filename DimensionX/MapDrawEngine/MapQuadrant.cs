@@ -10,7 +10,7 @@ using Socium;
 namespace MapDrawEngine
 {
     public enum MapLayer
-    { 
+    {
         Continents,
         Locations,
         Lands,
@@ -20,7 +20,7 @@ namespace MapDrawEngine
     }
 
     public enum MapMode
-    { 
+    {
         /// <summary>
         /// физическая карта
         /// </summary>
@@ -31,7 +31,7 @@ namespace MapDrawEngine
         Natives,
         /// <summary>
         /// этническая карта - доминирующая раса
-        /// </summary>    
+        /// </summary>
         Nations,
         /// <summary>
         /// карта влажности
@@ -65,39 +65,39 @@ namespace MapDrawEngine
         SeaRoute2,
         SeaRoute3,
     }
-    
-    class MapQuadrant
-    {
-        internal List<ILandMark> m_cLandmarks = new List<ILandMark>();
 
-        internal Dictionary<MapLayer, GraphicsPath> m_cLayers = new Dictionary<MapLayer,GraphicsPath>();
-        internal Dictionary<MapMode, Dictionary<Brush, GraphicsPath>> m_cModes = new Dictionary<MapMode,Dictionary<Brush,GraphicsPath>>();
-        internal Dictionary<RoadType, GraphicsPath> m_cRoadsMap = new Dictionary<RoadType, GraphicsPath>();
+    internal class MapQuadrant
+    {
+        internal List<ILandMark> Landmarks { get; } = new List<ILandMark>();
+
+        internal Dictionary<MapLayer, GraphicsPath> Layers { get; } = new Dictionary<MapLayer, GraphicsPath>();
+        internal Dictionary<MapMode, Dictionary<Brush, GraphicsPath>> Modes { get; } = new Dictionary<MapMode, Dictionary<Brush, GraphicsPath>>();
+        internal Dictionary<RoadType, GraphicsPath> RoadsMap { get; } = new Dictionary<RoadType, GraphicsPath>();
 
         public MapQuadrant()
         {
             foreach (MapLayer eLayer in Enum.GetValues(typeof(MapLayer)))
-                m_cLayers[eLayer] = new GraphicsPath();
+                Layers[eLayer] = new GraphicsPath();
 
             foreach (MapMode eMode in Enum.GetValues(typeof(MapMode)))
-                m_cModes[eMode] = new Dictionary<Brush,GraphicsPath>();
+                Modes[eMode] = new Dictionary<Brush,GraphicsPath>();
 
             foreach (RoadType eRoadType in Enum.GetValues(typeof(RoadType)))
-                m_cRoadsMap[eRoadType] = new GraphicsPath();
+                RoadsMap[eRoadType] = new GraphicsPath();
         }
 
         internal void Clear()
         {
-            m_cLandmarks.Clear();
+            Landmarks.Clear();
 
-            foreach (var pLayer in m_cLayers)
-                pLayer.Value.Reset();
+            foreach (var pLayer in Layers.Values)
+                pLayer.Reset();
 
-            foreach (var pMode in m_cModes)
-                pMode.Value.Clear();
+            foreach (var pMode in Modes.Values)
+                pMode.Clear();
 
-            foreach (var pRoadType in m_cRoadsMap)
-                pRoadType.Value.Reset();
+            foreach (var pRoadType in RoadsMap.Values)
+                pRoadType.Reset();
         }
 
         /// <summary>
@@ -112,18 +112,18 @@ namespace MapDrawEngine
             Matrix pMatrix = new Matrix();
             pMatrix.Translate(-fStartX, -fStartY);
 
-            foreach (var pLandMark in m_cLandmarks)
+            foreach (var pLandMark in Landmarks)
                 pLandMark.Translate(-fStartX, -fStartY);
 
-            foreach (var pLayer in m_cLayers)
-                pLayer.Value.Transform(pMatrix);
+            foreach (var pLayer in Layers.Values)
+                pLayer.Transform(pMatrix);
 
-            foreach(var pMode in m_cModes)
-                foreach (var pModeLayer in pMode.Value)
-                    pModeLayer.Value.Transform(pMatrix);
+            foreach(var pMode in Modes.Values)
+                foreach (var pModeLayer in pMode.Values)
+                    pModeLayer.Transform(pMatrix);
 
-            foreach (var pRoadType in m_cRoadsMap)
-                pRoadType.Value.Transform(pMatrix);
+            foreach (var pRoadType in RoadsMap.Values)
+                pRoadType.Transform(pMatrix);
 
             DateTime pTime2 = DateTime.Now;
         }
@@ -141,7 +141,7 @@ namespace MapDrawEngine
             Pen pPen = Pens.Black;
 
             switch (eLayer)
-            { 
+            {
                 case MapLayer.Continents:
                     pPen = MapDraw.s_pBlack3Pen;
                     break;
@@ -163,11 +163,8 @@ namespace MapDrawEngine
             pMatrix.Translate(fDX, fDY);
             pMatrix.Scale(fScale, fScale);
 
-            GraphicsPath pPath = (GraphicsPath)m_cLayers[eLayer].Clone();
+            GraphicsPath pPath = (GraphicsPath)Layers[eLayer].Clone();
             pPath.Transform(pMatrix);
-
-            //if (pPath2.PointCount > 0 && fDX > 250)
-            //    throw new Exception();
 
             gr.DrawPath(pPen, pPath);
 
@@ -189,11 +186,11 @@ namespace MapDrawEngine
             pMatrix.Translate(fDX, fDY);
             pMatrix.Scale(fScale, fScale);
 
-            GraphicsPath pPath = (GraphicsPath)m_cRoadsMap[RoadType.Back].Clone();
+            GraphicsPath pPath = (GraphicsPath)RoadsMap[RoadType.Back].Clone();
             pPath.Transform(pMatrix);
             gr.DrawPath(MapDraw.s_pDarkGrey3Pen, pPath);
 
-            pPath = (GraphicsPath)m_cRoadsMap[RoadType.LandRoad3].Clone();
+            pPath = (GraphicsPath)RoadsMap[RoadType.LandRoad3].Clone();
             pPath.Transform(pMatrix);
             gr.DrawPath(MapDraw.s_pBlack2Pen, pPath);
 
@@ -201,7 +198,7 @@ namespace MapDrawEngine
             //pPath.Transform(pMatrix);
             //gr.DrawPath(MapDraw.s_pAqua2Pen, pPath);
 
-            pPath = (GraphicsPath)m_cRoadsMap[RoadType.LandRoad2].Clone();
+            pPath = (GraphicsPath)RoadsMap[RoadType.LandRoad2].Clone();
             pPath.Transform(pMatrix);
             gr.DrawPath(MapDraw.s_pBlack1Pen, pPath);
 
@@ -211,7 +208,7 @@ namespace MapDrawEngine
 
             if (fScaleMultiplier > 2)
             {
-                pPath = (GraphicsPath)m_cRoadsMap[RoadType.LandRoad1].Clone();
+                pPath = (GraphicsPath)RoadsMap[RoadType.LandRoad1].Clone();
                 pPath.Transform(pMatrix);
                 gr.DrawPath(MapDraw.s_pBlack1DotPen, pPath);
 
@@ -231,7 +228,7 @@ namespace MapDrawEngine
         /// <param name="fScale">масштаб (экранные кординаты : абсолютные)</param>
         internal void DrawLandMarks(Graphics gr, float fScaleMultiplier, float fDX, float fDY, float fScale)
         {
-            foreach (ILandMark pLandMark in m_cLandmarks)
+            foreach (ILandMark pLandMark in Landmarks)
                 pLandMark.Draw(gr, fScaleMultiplier, fDX, fDY, fScale);
         }
 
@@ -249,7 +246,7 @@ namespace MapDrawEngine
             pMatrix.Translate(fDX, fDY);
             pMatrix.Scale(fScale, fScale);
 
-            foreach (var pModeLayer in m_cModes[eMode])
+            foreach (var pModeLayer in Modes[eMode])
             {
                 GraphicsPath pPath = (GraphicsPath)pModeLayer.Value.Clone();
                 pPath.Transform(pMatrix);

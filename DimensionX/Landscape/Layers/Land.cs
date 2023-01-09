@@ -20,27 +20,29 @@ namespace LandscapeGeneration
 
         public bool IsWater
         {
-            get { return LandType != null && LandType.m_eEnvironment.HasFlag(Environment.Liquid); }
+            get { return LandType != null && LandType.Environment.HasFlag(Environment.Liquid); }
         }
 
         public bool IsBorder()
         {
             foreach (var pLoc in Contents)
-                if (pLoc.m_bBorder)
+            {
+                if (pLoc.IsBorder)
                     return true;
+            }
 
             return false;
         }
 
         public float MovementCost
         {
-            get { return LandType == null ? 100 : LandType.m_iMovementCost; }
+            get { return LandType == null ? 100 : LandType.MovementCost; }
         }
 
         public override float GetMovementCost()
         {
             return MovementCost;
-        } 
+        }
 
         private int m_iHumidity = 0;
 
@@ -50,8 +52,8 @@ namespace LandscapeGeneration
         public int Humidity
         {
             get { return m_iHumidity; }
-            set 
-            { 
+            set
+            {
                 m_iHumidity = value;
 
                 if (Humidity > 100)
@@ -82,7 +84,7 @@ namespace LandscapeGeneration
 
         public override string ToString()
         {
-            return string.Format("{0} ({1})", LandType.m_sName, Contents.Count);
+            return string.Format("{0} ({1})", LandType.Name, Contents.Count);
         }
     }
 }

@@ -86,7 +86,7 @@
     <Compile Include="Road.cs" />
     <Compile Include="Settlements\Profession.cs" />
     <Compile Include="Settlements\Settlement.cs" />
-    <Compile Include="SocialOrder.cs" />
+    <Compile Include="Formation.cs" />
     <Compile Include="Population\Society.cs" />
     <Compile Include="Population\StateSociety.cs" />
     <Compile Include="State.cs" />
@@ -120,6 +120,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

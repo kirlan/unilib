@@ -133,7 +133,7 @@ namespace GeneLab.Genetix
 
             return sLegs;
         }
-        
+
         /// <summary>
         /// 2 normal legs
         /// </summary>
@@ -238,7 +238,6 @@ namespace GeneLab.Genetix
             get { return new LegsGenetix(LegsCount.NoneTail, LegsType.Tentacles); }
         }
 
-
         public LegsCount LegsCount { get; private set; } = LegsCount.Bipedal;
 
         public LegsType LegsType { get; private set; } = LegsType.Foots;
@@ -253,7 +252,7 @@ namespace GeneLab.Genetix
             return LegsCount == pAnother.LegsCount &&
                 LegsType == pAnother.LegsType;
         }
-        
+
         public LegsGenetix()
         { }
 
@@ -322,7 +321,7 @@ namespace GeneLab.Genetix
                         }
                         break;
                 }
-                
+
                 switch (iChance)
                 {
                     case 0:

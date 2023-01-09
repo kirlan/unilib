@@ -8,11 +8,11 @@ namespace LandscapeGeneration.FastGrid
 {
     public class Chunk
     {
-        public Dictionary<VertexCH.Direction, Chunk> m_cNeighbours = new Dictionary<VertexCH.Direction, Chunk>();
+        public Dictionary<VertexCH.Direction, Chunk> Neighbours { get; } = new Dictionary<VertexCH.Direction, Chunk>();
 
-        public Location[] m_aBorderLocations;
-        public Location[] m_aLocations;
-        public VoronoiVertex[] m_aVertexes;
+        private readonly Location[] m_aBorderLocations;
+        public Location[] Locations { get; private set; }
+        public VoronoiVertex[] Vertexes { get; private set; }
 
         /// <summary>
         /// Выкидывает из списка локаций все "призрачные" локации (которые к этому моменту уже все должны быть "отрезаны" от основной массы).
@@ -25,15 +25,15 @@ namespace LandscapeGeneration.FastGrid
 
             List<VoronoiVertex> cNewVertexes = new List<VoronoiVertex>();
 
-            for (int i = 0; i < m_aLocations.Length; i++)
+            for (int i = 0; i < Locations.Length; i++)
             {
-                var pLoc = m_aLocations[i];
+                var pLoc = Locations[i];
                 if (pLoc.IsShaded)
                     continue;
 
                 cNewLocations.Add(pLoc);
 
-                pLoc.m_pChunkMarker = this;
+                pLoc.ChunkMarker = this;
 
                 foreach (var pEdge in pLoc.BorderWith)
                 {
@@ -42,24 +42,24 @@ namespace LandscapeGeneration.FastGrid
 
                     VoronoiEdge pEdgeValue = pEdge.Value[0];
 
-                    var aLocations1 = pEdgeValue.m_pPoint1.m_cLocations.ToArray();
+                    var aLocations1 = pEdgeValue.Point1.Locations.ToArray();
                     foreach (var pEdgeLoc1 in aLocations1)
                     {
                         if (pEdgeLoc1.IsShaded)
-                            pEdgeValue.m_pPoint1.m_cLocations.Remove(pEdgeLoc1);
+                            pEdgeValue.Point1.Locations.Remove(pEdgeLoc1);
                     }
 
-                    var aLocations2 = pEdgeValue.m_pPoint2.m_cLocations.ToArray();
+                    var aLocations2 = pEdgeValue.Point2.Locations.ToArray();
                     foreach (var pEdgeLoc2 in aLocations2)
                     {
                         if (pEdgeLoc2.IsShaded)
-                            pEdgeValue.m_pPoint2.m_cLocations.Remove(pEdgeLoc2);
+                            pEdgeValue.Point2.Locations.Remove(pEdgeLoc2);
                     }
 
-                    if (pEdgeValue.m_pPoint1.m_pChunkMarker != this)
+                    if (pEdgeValue.Point1.ChunkMarker != this)
                     {
-                        cNewVertexes.Add(pEdgeValue.m_pPoint1);
-                        pEdgeValue.m_pPoint1.m_pChunkMarker = this;
+                        cNewVertexes.Add(pEdgeValue.Point1);
+                        pEdgeValue.Point1.ChunkMarker = this;
                     }
                 }
 
@@ -68,8 +68,8 @@ namespace LandscapeGeneration.FastGrid
                 pLoc.CorrectCenter();
             }
 
-            m_aLocations = cNewLocations.ToArray();
-            m_aVertexes = cNewVertexes.ToArray();
+            Locations = cNewLocations.ToArray();
+            Vertexes = cNewVertexes.ToArray();
         }
 
         public void ReplaceVertexes(VoronoiVertex pBad1, VoronoiVertex pGood1, VoronoiVertex pBad2, VoronoiVertex pGood2)
@@ -90,10 +90,10 @@ namespace LandscapeGeneration.FastGrid
             return string.Format("({0}, {1})", m_fDX, m_fDY);
         }
 
-        public VoronoiVertex m_pBoundTopLeft;
-        public VoronoiVertex m_pBoundTopRight;
-        public VoronoiVertex m_pBoundBottomRight;
-        public VoronoiVertex m_pBoundBottomLeft;
+        private readonly VoronoiVertex m_pBoundTopLeft;
+        private readonly VoronoiVertex m_pBoundTopRight;
+        private readonly VoronoiVertex m_pBoundBottomRight;
+        private readonly VoronoiVertex m_pBoundBottomLeft;
 
         public Chunk(ref VertexCH[] locations, Rect pBounds2D, ref CellCH[] vertices, float fDX, float fDY, float fWholeGridSize)
         {
@@ -107,57 +107,61 @@ namespace LandscapeGeneration.FastGrid
 
             List<Location> cBorders = new List<Location>();
 
-            m_aLocations = new Location[locations.Length];
+            Locations = new Location[locations.Length];
             for (int i = 0; i < locations.Length; i++)
             {
                 var loc = locations[i];
                 Location myLocation = new Location();
-                myLocation.Create(loc.m_iID, (float)loc.Position[0] + fDX - fWholeGridSize / 2, (float)loc.Position[1] + fDY - fWholeGridSize / 2, loc.m_eShadowDir);
-                m_aLocations[i] = myLocation;
-                loc.m_pTag = myLocation;
-                m_cLocations[loc.m_iID] = myLocation;
+                myLocation.Create(loc.ID, (float)loc.Position[0] + fDX - fWholeGridSize / 2, (float)loc.Position[1] + fDY - fWholeGridSize / 2, loc.m_eShadowDir);
+                Locations[i] = myLocation;
+                loc.Tag = myLocation;
+                m_cLocations[loc.ID] = myLocation;
                 if (myLocation.IsShaded)
                 {
-                    myLocation.SetShadow(loc.m_pShadow.m_iID);
+                    myLocation.SetShadow(loc.Shadow.ID);
 
-                    if (loc.Position[0] != loc.m_pShadow.Position[0] &&
-                        Math.Abs(loc.Position[0] - loc.m_pShadow.Position[0]) != 20000f)
+                    if (loc.Position[0] != loc.Shadow.Position[0] &&
+                        Math.Abs(loc.Position[0] - loc.Shadow.Position[0]) != 20000f)
+                    {
                         throw new InvalidOperationException("Wrong shadow coordinates!");
+                    }
 
-                    if (loc.Position[1] != loc.m_pShadow.Position[1] &&
-                        Math.Abs(loc.Position[1] - loc.m_pShadow.Position[1]) != 20000f)
+                    if (loc.Position[1] != loc.Shadow.Position[1] &&
+                        Math.Abs(loc.Position[1] - loc.Shadow.Position[1]) != 20000f)
+                    {
                         throw new InvalidOperationException("Wrong shadow coordinates!");
+                    }
                 }
-                if (loc.m_bBorder && !myLocation.IsShaded)
+                if (loc.IsBorder && !myLocation.IsShaded)
                     cBorders.Add(myLocation);
             }
 
-            m_aVertexes = new VoronoiVertex[vertices.Length];
+            Vertexes = new VoronoiVertex[vertices.Length];
             for (int i = 0; i < vertices.Length; i++)
             {
                 var vertex = vertices[i];
                 VoronoiVertex myVertex = new VoronoiVertex((float)vertex.Circumcenter.X + fDX - fWholeGridSize / 2, (float)vertex.Circumcenter.Y + fDY - fWholeGridSize / 2);
 
-                vertex.m_pTag = myVertex;
-                m_aVertexes[i] = myVertex;
+                vertex.Tag = myVertex;
+                Vertexes[i] = myVertex;
             }
 
             for (int i = 0; i < locations.Length; i++)
             {
                 var loc = locations[i];
-                Location myLocation = (Location)loc.m_pTag;
-                foreach (var edge in loc.m_cEdges)
+                Location myLocation = (Location)loc.Tag;
+                foreach (var edge in loc.Edges)
                 {
-                    VoronoiVertex pVertex1 = (VoronoiVertex)edge.Value.m_pFrom.m_pTag;
-                    VoronoiVertex pVertex2 = (VoronoiVertex)edge.Value.m_pTo.m_pTag;
-                    
-                    myLocation.BorderWith[(Location)edge.Key.m_pTag] = new List<VoronoiEdge>();
-                    myLocation.BorderWith[(Location)edge.Key.m_pTag].Add(new VoronoiEdge(pVertex1, pVertex2));
-                    
-                    if (!pVertex1.m_cLocations.Contains(myLocation))
-                        pVertex1.m_cLocations.Add(myLocation);
-                    if (!pVertex2.m_cLocations.Contains(myLocation))
-                        pVertex2.m_cLocations.Add(myLocation);
+                    VoronoiVertex pVertex1 = (VoronoiVertex)edge.Value.From.Tag;
+                    VoronoiVertex pVertex2 = (VoronoiVertex)edge.Value.To.Tag;
+
+                    myLocation.BorderWith[(Location)edge.Key.Tag] = new List<VoronoiEdge>();
+                    myLocation.BorderWith[(Location)edge.Key.Tag].Add(new VoronoiEdge(pVertex1, pVertex2));
+
+                    if (!pVertex1.Locations.Contains(myLocation))
+                        pVertex1.Locations.Add(myLocation);
+                    if (!pVertex2.Locations.Contains(myLocation))
+                        pVertex2.Locations.Add(myLocation);
                 }
             }
 
@@ -183,12 +187,12 @@ namespace LandscapeGeneration.FastGrid
 
                     bool bMadeIt = false;
 
-                    VertexCH.Direction eDir = pOuterLoc.m_eShadowDir;
-                    if (m_cNeighbours.ContainsKey(eDir))
+                    VertexCH.Direction eDir = pOuterLoc.ShadowDir;
+                    if (Neighbours.ContainsKey(eDir))
                     {
                         //находим реальное отражение призрачной локации
-                        var pNeighbourChunk = m_cNeighbours[eDir];
-                        Location pShadow = pNeighbourChunk.m_cLocations[pOuterLoc.m_iShadow];
+                        var pNeighbourChunk = Neighbours[eDir];
+                        Location pShadow = pNeighbourChunk.m_cLocations[pOuterLoc.ShadowID];
 
                         //найдём среди соседей отражения призрачную локацию, соответствующую граничной
                         foreach (Location pShadowEdge in pShadow.BorderWith.Keys)
@@ -197,26 +201,24 @@ namespace LandscapeGeneration.FastGrid
                             {
                                 var pShadowLine = pShadow.BorderWith[pShadowEdge][0];
 
-                                VertexCH.Direction eShadowDir = pShadowEdge.m_eShadowDir;
-                                if (pNeighbourChunk.m_cNeighbours.ContainsKey(eShadowDir))
+                                VertexCH.Direction eShadowDir = pShadowEdge.ShadowDir;
+                                if (pNeighbourChunk.Neighbours.ContainsKey(eShadowDir))
                                 {
-                                    var pShadowNeighbourChunk = pNeighbourChunk.m_cNeighbours[eShadowDir];
-                                    Location pShadowShadow = pShadowNeighbourChunk.m_cLocations[pShadowEdge.m_iShadow];
+                                    var pShadowNeighbourChunk = pNeighbourChunk.Neighbours[eShadowDir];
+                                    Location pShadowShadow = pShadowNeighbourChunk.m_cLocations[pShadowEdge.ShadowID];
 
                                     if (pShadowShadow == pInnerLoc)
                                     {
                                         //добавляем внутренней локации границу с отражением - такую же, как с его призраком
                                         if (!pInnerLoc.BorderWith.ContainsKey(pShadow))
                                         {
-                                            pInnerLoc.BorderWith[pShadow] = new List<VoronoiEdge>();
-                                            pInnerLoc.BorderWith[pShadow].Add(pLine);
+                                            pInnerLoc.BorderWith[pShadow] = new List<VoronoiEdge>() { pLine };
                                         }
 
                                         //добавляем отражению границу с внутренней локацией
                                         if (!pShadow.BorderWith.ContainsKey(pInnerLoc))
                                         {
-                                            pShadow.BorderWith[pInnerLoc] = new List<VoronoiEdge>();
-                                            pShadow.BorderWith[pInnerLoc].Add(pShadowLine);
+                                            pShadow.BorderWith[pInnerLoc] = new List<VoronoiEdge>() { pShadowLine };
                                         }
 
                                         //убираем у внутренней локации границу с призраком
@@ -224,11 +226,11 @@ namespace LandscapeGeneration.FastGrid
                                         pShadow.BorderWith.Remove(pShadowEdge);
 
                                         //сливаем вершины
-                                        VoronoiVertex pGood1 = new VoronoiVertex(pLine.m_pPoint1);
-                                        VoronoiVertex pGood2 = new VoronoiVertex(pLine.m_pPoint2);
+                                        VoronoiVertex pGood1 = new VoronoiVertex(pLine.Point1);
+                                        VoronoiVertex pGood2 = new VoronoiVertex(pLine.Point2);
 
-                                        ReplaceVertexes(pLine.m_pPoint1, pGood1, pLine.m_pPoint2, pGood2);
-                                        pNeighbourChunk.ReplaceVertexes(pShadowLine.m_pPoint2, pGood1, pShadowLine.m_pPoint1, pGood2);
+                                        ReplaceVertexes(pLine.Point1, pGood1, pLine.Point2, pGood2);
+                                        pNeighbourChunk.ReplaceVertexes(pShadowLine.Point2, pGood1, pShadowLine.Point1, pGood2);
 
                                         bMadeIt = true;
 
@@ -240,8 +242,8 @@ namespace LandscapeGeneration.FastGrid
                     }
                     else
                     {
-                        pOuterLoc.m_bBorder = true;
-                        pOuterLoc.m_eShadowDir = VertexCH.Direction.CenterNone;
+                        pOuterLoc.IsBorder = true;
+                        pOuterLoc.ShadowDir = VertexCH.Direction.CenterNone;
 
                         bMadeIt = true;
                     }

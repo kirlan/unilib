@@ -14,60 +14,60 @@ namespace Socium.Population
     /// </summary>
     public class Estate: NationalSociety
     {
-        public enum Position
+        public enum SocialRank
         {
-            Elite = 3,
-            Clergy = 2,
-            Commoners = 1,
+            Outlaws = -1,
             Lowlifes = 0,
-            Outlaws = -1
+            Commoners = 1,
+            Clergy = 2,
+            Elite = 3
         }
 
-        public Position m_ePosition;
+        public SocialRank Rank { get; }
 
         public bool IsOutlaw()
         {
-            return m_ePosition == Position.Outlaws;
+            return Rank == SocialRank.Outlaws;
         }
 
         public bool IsElite()
         {
-            return m_ePosition == Position.Elite;
+            return Rank == SocialRank.Elite;
         }
 
         public bool IsCleregy()
         {
-            return m_ePosition == Position.Clergy;
+            return Rank == SocialRank.Clergy;
         }
 
         public bool IsMiddleUp()
         {
-            return m_ePosition == Position.Commoners || m_ePosition == Position.Elite;
+            return Rank == SocialRank.Commoners || Rank == SocialRank.Elite;
         }
 
         public bool IsSegregated()
         {
-            return !DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Genders_equality);
+            return !DominantCulture.Customs.Has(Customs.GenderPriority.Genders_equality);
         }
 
-        void UpdateCultureProgress(Culture pCulture)
+        private void UpdateCultureProgress(Culture pCulture)
         {
-            if (m_ePosition == Position.Outlaws)
-                pCulture.m_iProgressLevel--;
-            if (m_ePosition == Position.Elite)
+            if (Rank == SocialRank.Outlaws)
+                pCulture.ProgressLevel--;
+            if (Rank == SocialRank.Elite)
             {
                 if (Rnd.OneChanceFrom(2))
-                    pCulture.m_iProgressLevel++; //progressive
+                    pCulture.ProgressLevel++; //progressive
                 else
-                    pCulture.m_iProgressLevel--; //decadent
+                    pCulture.ProgressLevel--; //decadent
             }
-            if (m_ePosition == Position.Clergy)
-                pCulture.m_iProgressLevel++;
+            if (Rank == SocialRank.Clergy)
+                pCulture.ProgressLevel++;
 
-            if (pCulture.m_iProgressLevel < 0)
-                pCulture.m_iProgressLevel = 0;
-            if (pCulture.m_iProgressLevel > 8)
-                pCulture.m_iProgressLevel = 8;
+            if (pCulture.ProgressLevel < 0)
+                pCulture.ProgressLevel = 0;
+            if (pCulture.ProgressLevel > 8)
+                pCulture.ProgressLevel = 8;
         }
 
         /// <summary>
@@ -77,24 +77,24 @@ namespace Socium.Population
         /// <param name="ePosition"></param>
         /// <param name="sName"></param>
         /// <param name="bMainEstate">если true, то берём культуру базового сообщества без изменений</param>
-        public Estate(NationalSociety pSociety, Position ePosition, string sName, bool bMainEstate)
-            : base(pSociety.m_pTitularNation)
+        public Estate(NationalSociety pSociety, SocialRank ePosition, string sName, bool bMainEstate)
+            : base(pSociety.TitularNation)
         {
-            m_ePosition = ePosition;
+            Rank = ePosition;
 
-            m_cCulture[Gender.Male] = new Culture(pSociety.m_cCulture[Gender.Male], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
-            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeM);
-            UpdateCultureProgress(m_cCulture[Gender.Male]);
+            Culture[Gender.Male] = new Culture(pSociety.Culture[Gender.Male], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
+            Culture[Gender.Male].Customs.ApplyFenotype(TitularNation.PhenotypeMale);
+            UpdateCultureProgress(Culture[Gender.Male]);
 
-            m_cCulture[Gender.Female] = new Culture(pSociety.m_cCulture[Gender.Female], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
-            m_cCulture[Gender.Male].m_pCustoms.ApplyFenotype(m_pTitularNation.m_pPhenotypeF);
-            UpdateCultureProgress(m_cCulture[Gender.Female]);
+            Culture[Gender.Female] = new Culture(pSociety.Culture[Gender.Female], bMainEstate ? Customs.Mutation.None : Customs.Mutation.Mandatory);
+            Culture[Gender.Male].Customs.ApplyFenotype(TitularNation.PhenotypeFemale);
+            UpdateCultureProgress(Culture[Gender.Female]);
 
             FixSexCustoms();
 
             Person.GetSkillPreferences(DominantCulture, ref m_eMostRespectedSkill, ref m_eLeastRespectedSkill);
 
-            m_sName = sName;
+            Name = sName;
         }
     }
 }

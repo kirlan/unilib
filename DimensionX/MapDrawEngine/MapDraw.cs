@@ -27,19 +27,19 @@ namespace MapDrawEngine
     public partial class MapDraw : UserControl
     {
         #region Предопределённые перья для рисования
-        internal static Pen s_pDarkGrey3Pen = new Pen(Color.DarkGray, 3);
-        internal static Pen s_pAqua1Pen = new Pen(Color.Aqua, 1);
-        internal static Pen s_pAqua2Pen = new Pen(Color.Aqua, 2);
-        internal static Pen s_pRed2Pen = new Pen(Color.Red, 2);
-        internal static Pen s_pRed3Pen = new Pen(Color.Red, 3);
-        internal static Pen s_pBlack1Pen = new Pen(Color.Black, 1);
-        internal static Pen s_pBlack2Pen = new Pen(Color.Black, 2);
-        internal static Pen s_pBlack3Pen = new Pen(Color.Black, 3);
-        internal static Pen s_pWhite2Pen = new Pen(Color.White, 2);
+        internal static readonly Pen s_pDarkGrey3Pen = new Pen(Color.DarkGray, 3);
+        internal static readonly Pen s_pAqua1Pen = new Pen(Color.Aqua, 1);
+        internal static readonly Pen s_pAqua2Pen = new Pen(Color.Aqua, 2);
+        internal static readonly Pen s_pRed2Pen = new Pen(Color.Red, 2);
+        internal static readonly Pen s_pRed3Pen = new Pen(Color.Red, 3);
+        internal static readonly Pen s_pBlack1Pen = new Pen(Color.Black, 1);
+        internal static readonly Pen s_pBlack2Pen = new Pen(Color.Black, 2);
+        internal static readonly Pen s_pBlack3Pen = new Pen(Color.Black, 3);
+        internal static readonly Pen s_pWhite2Pen = new Pen(Color.White, 2);
 
-        internal static Pen s_pAqua1DotPen = new Pen(Color.Aqua, 1);
-        internal static Pen s_pBlack1DotPen = new Pen(Color.Black, 1);
-        internal static Pen s_pBlack3DotPen = new Pen(Color.Black, 3);
+        internal static readonly Pen s_pAqua1DotPen = new Pen(Color.Aqua, 1);
+        internal static readonly Pen s_pBlack1DotPen = new Pen(Color.Black, 1);
+        internal static readonly Pen s_pBlack3DotPen = new Pen(Color.Black, 3);
         #endregion
 
         /// <summary>
@@ -50,23 +50,23 @@ namespace MapDrawEngine
             /// <summary>
             /// Выбранное государство
             /// </summary>
-            public State m_pState;
+            public State State { get; }
 
             /// <summary>
             /// X-координата центра государства в экранных координатах
             /// </summary>
-            public int m_iX;
+            public int X { get; }
             /// <summary>
             /// Y-координата центра государства в экранных координатах
             /// </summary>
-            public int m_iY;
+            public int Y { get; }
 
             public SelectedStateChangedEventArgs(State pState, int iX, int iY)
             {
-                m_pState = pState;
+                State = pState;
 
-                m_iX = iX;
-                m_iY = iY;
+                X = iX;
+                Y = iY;
             }
         }
 
@@ -79,27 +79,27 @@ namespace MapDrawEngine
         /// <summary>
         /// матрица квадрантов
         /// </summary>
-        private MapQuadrant[,] m_aQuadrants;
+        private readonly MapQuadrant[,] m_aQuadrants;
 
         /// <summary>
         /// цвета разных зон влажности
         /// </summary>
-        private Brush[] m_aHumidity;
+        private readonly Brush[] m_aHumidity;
 
         /// <summary>
         /// цвета разных уровней технического развития
         /// </summary>
-        private Brush[,] m_aTechLevel = new Brush[9, 9];
+        private readonly Brush[,] m_aTechLevel = new Brush[9, 9];
 
         /// <summary>
         /// цвета разных уровней магического развития
         /// </summary>
-        private Dictionary<int, Dictionary<Customs.Magic, Brush>> m_cPsiLevel = new Dictionary<int, Dictionary<Customs.Magic, Brush>>();
+        private readonly Dictionary<int, Dictionary<Customs.Magic, Brush>> m_cPsiLevel = new Dictionary<int, Dictionary<Customs.Magic, Brush>>();
 
         /// <summary>
         /// цвета разных уровней технического развития
         /// </summary>
-        private Brush[,] m_aCivLevel = new Brush[9, 9];
+        private readonly Brush[,] m_aCivLevel = new Brush[9, 9];
 
         /// <summary>
         /// размерность матрицы квадрантов
@@ -112,37 +112,37 @@ namespace MapDrawEngine
         /// Контуры конкретных географических регионов - для определения, над каким из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<Socium.Region, GraphicsPath> m_cAreaBorders = new Dictionary<Socium.Region, GraphicsPath>();
+        private readonly Dictionary<Socium.Region, GraphicsPath> m_cAreaBorders = new Dictionary<Socium.Region, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных провинций - для определения, над какой из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<Province, GraphicsPath> m_cProvinceBorders = new Dictionary<Province, GraphicsPath>();
+        private readonly Dictionary<Province, GraphicsPath> m_cProvinceBorders = new Dictionary<Province, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных тектонических плит - для определения, над какой из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<LandMass, GraphicsPath> m_cLandMassBorders = new Dictionary<LandMass, GraphicsPath>();
+        private readonly Dictionary<LandMass, GraphicsPath> m_cLandMassBorders = new Dictionary<LandMass, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных земель - для определения, над какой из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<Land, GraphicsPath> m_cLandBorders = new Dictionary<Land, GraphicsPath>();
+        private readonly Dictionary<Land, GraphicsPath> m_cLandBorders = new Dictionary<Land, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных локаций - для определения, над какой из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<Location, GraphicsPath> m_cLocationBorders = new Dictionary<Location, GraphicsPath>();
+        private readonly Dictionary<Location, GraphicsPath> m_cLocationBorders = new Dictionary<Location, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных государств - для определения, над каким из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private Dictionary<State, GraphicsPath> m_cStateBorders = new Dictionary<State, GraphicsPath>();
+        private readonly Dictionary<State, GraphicsPath> m_cStateBorders = new Dictionary<State, GraphicsPath>();
 
         /// <summary>
         /// мир, карту которого мы рисуем
@@ -383,29 +383,29 @@ namespace MapDrawEngine
         /// <summary>
         /// ширина одного квадранта в экранных координатах
         /// </summary>
-        float m_fOneQuadWidth;
+        private float m_fOneQuadWidth;
         /// <summary>
         /// высота одного квадранта в экранных координатах
         /// </summary>
-        float m_fOneQuadHeight;
+        private float m_fOneQuadHeight;
 
         /// <summary>
         /// ширина отображаемого участка карты в квадрантах
         /// </summary>
-        int m_iQuadsWidth;
+        private int m_iQuadsWidth;
         /// <summary>
         /// высота отображаемого участка карты в квадрантах
         /// </summary>
-        int m_iQuadsHeight;
+        private int m_iQuadsHeight;
 
         /// <summary>
         /// ширина всей карты мира в экранных координатах
         /// </summary>
-        public int m_iScaledMapWidth;
+        private int m_iScaledMapWidth;
         /// <summary>
         /// высота всей карты мира в экранных координатах
         /// </summary>
-        public int m_iScaledMapHeight;
+        private int m_iScaledMapHeight;
 
         /// <summary>
         /// связанная миникарта
@@ -496,24 +496,26 @@ namespace MapDrawEngine
         /// <summary>
         /// Маршруты, которые нужно отрисовывать на карте
         /// </summary>
-        private Dictionary<TransportationNode[], Pen> m_cPaths = new Dictionary<TransportationNode[], Pen>();
+        private readonly Dictionary<TransportationNode[], Pen> m_cPaths = new Dictionary<TransportationNode[], Pen>();
 
         #endregion
 
         public MapDraw()
         {
             InitializeComponent();
-        
+
             s_pBlack1DotPen.DashPattern = new float[] { 1, 2 };
             s_pAqua1DotPen.DashPattern = new float[] { 1, 2 };
             s_pBlack3DotPen.DashPattern = new float[] { 2, 4 };
 
             m_aQuadrants = new MapQuadrant[QUADRANTS_COUNT, QUADRANTS_COUNT];
             for (int i = 0; i < QUADRANTS_COUNT; i++)
+            {
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
                 {
                     m_aQuadrants[i, j] = new MapQuadrant();
                 }
+            }
 
             List<Brush> cHumidity = new List<Brush>();
             for (int i = 0; i <= 100; i++)
@@ -521,8 +523,12 @@ namespace MapDrawEngine
             m_aHumidity = cHumidity.ToArray();
 
             for (int i = 0; i <= 8; i++)
+            {
                 for (int j = 0; j <= 8; j++)
+                {
                     m_aTechLevel[i,j] = GetTechLevelColor(i, j);
+                }
+            }
 
             for (int i = 0; i <= 8; i++)
             {
@@ -532,8 +538,10 @@ namespace MapDrawEngine
             }
 
             for (int i = 0; i <= 8; i++)
+            {
                 for (int j = 0; j <= 4; j++)
                     m_aCivLevel[i, j] = GetCultureColor(i, j);
+            }
         }
 
         #region Функции для работы с цветами
@@ -560,15 +568,11 @@ namespace MapDrawEngine
         {
             KColor background = new KColor();
             background.RGB = Color.ForestGreen;
-            //color1.Saturation = (double)iBaseTechLevel / 8;
             background.Lightness = 1.0 - (double)iBaseTechLevel / 10;
 
             KColor foreground = new KColor();
             foreground.RGB = Color.ForestGreen;
-            //color2.Saturation = (double)iUsedTechLevel / 8;
             foreground.Lightness = 1.0 - (double)iUsedTechLevel / 10;
-            //return new HatchBrush(HatchStyle.WideDownwardDiagonal, color2.RGB, color1.RGB);
-            //return new HatchBrush(HatchStyle.LargeCheckerBoard, color2.RGB, color1.RGB);
             return new HatchBrush(HatchStyle.LargeConfetti, foreground.RGB, background.RGB);
         }
         /// <summary>
@@ -577,21 +581,15 @@ namespace MapDrawEngine
         /// <param name="iMaxPsiLevel">максимальный доступный уровень магии (0-8)</param>
         /// <param name="ePrevalence">отношение местных к магии</param>
         /// <returns>цвет</returns>
+        /// <exception cref="ArgumentException"></exception>
         private Brush GetPsiLevelColor(int iMaxPsiLevel, Customs.Magic ePrevalence)
         {
             KColor background = new KColor();
             background.RGB = Color.Orchid;
-            //color2.Saturation = (double)iUsedTechLevel / 8;
             background.Lightness = 0.9 - (double)iMaxPsiLevel / 10;
-            //return new HatchBrush(HatchStyle.WideDownwardDiagonal, color2.RGB, color1.RGB);
-            //return new HatchBrush(HatchStyle.LargeCheckerBoard, color2.RGB, color1.RGB);
 
             KColor foreground = new KColor();
             foreground.RGB = Color.Gray;
-            //color1.Saturation = (double)iBaseTechLevel / 8;
-
-            //if(iMaxPsiLevel == 0)
-            //    return new SolidBrush(background.RGB);
 
             switch (ePrevalence)
             {
@@ -613,19 +611,11 @@ namespace MapDrawEngine
         /// <returns>цвет</returns>
         private Brush GetCultureColor(int iCultureLevel, int iControl)
         {
-            KColor background = new KColor();
-            background.RGB = Color.Red;
-            //color1.Saturation = (double)iBaseTechLevel / 8;
-            //background.Lightness = 0.9-(double)iInfrastructureLevel / 12;
+            KColor background = new KColor { RGB = Color.Red };
             background.Hue += iCultureLevel * 16;
 
-            KColor foreground = new KColor();
-            foreground.RGB = Color.Gray;
-            //color2.Saturation = (double)iUsedTechLevel / 8;
-            //foreground.Lightness = 1.0 - (double)iControl / 10;
-            //return new HatchBrush(HatchStyle.WideDownwardDiagonal, color2.RGB, color1.RGB);
-            //return new HatchBrush(HatchStyle.LargeCheckerBoard, color2.RGB, color1.RGB);
-            
+            KColor foreground = new KColor { RGB = Color.Gray };
+
             // 0 - На преступников и диссидентов власти никакого внимания не обращают, спасение утопающих - дело рук самих утопающих.
             // 1 - Власти занимаются только самыми вопиющими преступлениями.
             // 2 - Есть законы, их надо соблюдать, кто не соблюдает - тот преступник, а вор должен сидеть в тюрьме.
@@ -655,93 +645,7 @@ namespace MapDrawEngine
         private Dictionary<Nation, Brush> m_cAncientNationColorsID = new Dictionary<Nation, Brush>();
         private Dictionary<Nation, Brush> m_cHegemonNationColorsID = new Dictionary<Nation, Brush>();
 
-        /// <summary>
-        /// Заготовка цветов для рас
-        /// </summary>
-        private Color[] m_aRaceColorsTemplate = new Color[] 
-        { 
-            Color.FromArgb(60, 60, 60),
-            Color.FromArgb(120, 60, 60),
-            Color.FromArgb(180, 60, 60),
-            Color.FromArgb(240, 60, 60),
-
-            Color.FromArgb(60, 120, 60),
-            Color.FromArgb(120, 120, 60),
-            Color.FromArgb(180, 120, 60),
-            Color.FromArgb(240, 120, 60),
-            
-            Color.FromArgb(60, 180, 60),
-            Color.FromArgb(120, 180, 60),
-            Color.FromArgb(180, 180, 60),
-            Color.FromArgb(240, 180, 60),
-            
-            Color.FromArgb(60, 240, 60),
-            Color.FromArgb(120, 240, 60),
-            Color.FromArgb(180, 240, 60),
-            Color.FromArgb(240, 240, 60),
-
-            Color.FromArgb(60, 60, 120),
-            Color.FromArgb(120, 60, 120),
-            Color.FromArgb(180, 60, 120),
-            Color.FromArgb(240, 60, 120),
-
-            Color.FromArgb(60, 120, 120),
-            Color.FromArgb(120, 120, 120),
-            Color.FromArgb(180, 120, 120),
-            Color.FromArgb(240, 120, 120),
-            
-            Color.FromArgb(60, 180, 120),
-            Color.FromArgb(120, 180, 120),
-            Color.FromArgb(180, 180, 120),
-            Color.FromArgb(240, 180, 120),
-            
-            Color.FromArgb(60, 240, 120),
-            Color.FromArgb(120, 240, 120),
-            Color.FromArgb(180, 240, 120),
-            Color.FromArgb(240, 240, 120),
-
-            Color.FromArgb(60, 60, 180),
-            Color.FromArgb(120, 60, 180),
-            Color.FromArgb(180, 60, 180),
-            Color.FromArgb(240, 60, 180),
-
-            Color.FromArgb(60, 120, 180),
-            Color.FromArgb(120, 120, 180),
-            Color.FromArgb(180, 120, 180),
-            Color.FromArgb(240, 120, 180),
-            
-            Color.FromArgb(60, 180, 180),
-            Color.FromArgb(120, 180, 180),
-            Color.FromArgb(180, 180, 180),
-            Color.FromArgb(240, 180, 180),
-            
-            Color.FromArgb(60, 240, 180),
-            Color.FromArgb(120, 240, 180),
-            Color.FromArgb(180, 240, 180),
-            Color.FromArgb(240, 240, 180),
-
-            Color.FromArgb(60, 60, 240),
-            Color.FromArgb(120, 60, 240),
-            Color.FromArgb(180, 60, 240),
-            Color.FromArgb(240, 60, 240),
-
-            Color.FromArgb(60, 120, 240),
-            Color.FromArgb(120, 120, 240),
-            Color.FromArgb(180, 120, 240),
-            Color.FromArgb(240, 120, 240),
-            
-            Color.FromArgb(60, 180, 240),
-            Color.FromArgb(120, 180, 240),
-            Color.FromArgb(180, 180, 240),
-            Color.FromArgb(240, 180, 240),
-            
-            Color.FromArgb(60, 240, 240),
-            Color.FromArgb(120, 240, 240),
-            Color.FromArgb(180, 240, 240),
-            Color.FromArgb(240, 240, 240),
-        };
-
-        #endregion
+        #endregion Функции для работы с цветами
 
         /// <summary>
         /// Привязать карту к миру.
@@ -776,42 +680,31 @@ namespace MapDrawEngine
             ClearPath();
 
             m_cNationColorsID.Clear();
-            List<int> cUsedColors = new List<int>();
-
-            //if (m_pWorld.m_aLocalRaces.Length > m_aRaceColorsTemplate.Length)
-            //    throw new Exception("Can't draw more then " + m_aRaceColorsTemplate.Length.ToString() + " races!");
 
             Dictionary<Language, int> cLanguages = new Dictionary<Language, int>();
             Dictionary<Language, int> cLanguageCounter = new Dictionary<Language, int>();
             Dictionary<Language, int> cLanguageIndex = new Dictionary<Language, int>();
             int iCount = 0;
-            foreach (Nation pNation in m_pWorld.m_aLocalNations)
+            foreach (Language pLanguage in m_pWorld.m_aLocalNations.Select(x => x.Race.Language))
             {
-                int ik = 0;
-                if (!cLanguages.TryGetValue(pNation.m_pRace.m_pLanguage, out ik))
+                if (!cLanguages.TryGetValue(pLanguage, out int ik))
                 {
-                    cLanguageCounter[pNation.m_pRace.m_pLanguage] = 1;
-                    cLanguageIndex[pNation.m_pRace.m_pLanguage] = iCount++;
+                    cLanguageCounter[pLanguage] = 1;
+                    cLanguageIndex[pLanguage] = iCount++;
                 }
-                cLanguages[pNation.m_pRace.m_pLanguage] = ik + 1;
+                cLanguages[pLanguage] = ik + 1;
             }
 
-            //Dictionary<Language, Dictionary<Race, KColor>> cColors = new Dictionary<Language, Dictionary<Race, KColor>>();
             foreach (Nation pNation in m_pWorld.m_aLocalNations)
             {
-                KColor color = new KColor();
-                color.Hue = 360 * cLanguageIndex[pNation.m_pRace.m_pLanguage] / cLanguages.Count;
-                float fK = ((float)cLanguageCounter[pNation.m_pRace.m_pLanguage]) / cLanguages[pNation.m_pRace.m_pLanguage];
-                float fF = fK * Rnd.Get(1f);
+                KColor color = new KColor { Hue = 360.0 * cLanguageIndex[pNation.Race.Language] / cLanguages.Count };
+                float fK = ((float)cLanguageCounter[pNation.Race.Language]) / cLanguages[pNation.Race.Language];
                 color.Lightness = 0.2 + 0.7 * fK;
                 color.Saturation = 0.2 + 0.7 * fK;
-                //if (!cColors.ContainsKey(pRace.m_pTemplate.m_pLanguage))
-                //    cColors[pRace.m_pTemplate.m_pLanguage] = new Dictionary<Race, KColor>();
-                //cColors[pRace.m_pTemplate.m_pLanguage][pRace] = color;
                 m_cNationColorsID[pNation] = new SolidBrush(color.RGB);
                 m_cAncientNationColorsID[pNation] = new HatchBrush(HatchStyle.DottedDiamond, Color.Black, color.RGB);
                 m_cHegemonNationColorsID[pNation] = new HatchBrush(HatchStyle.LargeConfetti, Color.Black, color.RGB);
-                cLanguageCounter[pNation.m_pRace.m_pLanguage]++;
+                cLanguageCounter[pNation.Race.Language]++;
             }
 
             //foreach (Race pRace in m_pWorld.m_aLocalRaces)
@@ -834,9 +727,9 @@ namespace MapDrawEngine
             MapQuadrant[] aQuads;
 
             //вычислим контуры тектонических плит
-            foreach (LandMass pLandMass in m_pWorld.m_aLandMasses)
+            foreach (LandMass pLandMass in m_pWorld.LandMasses)
             {
-                aPoints = BuildPath(pLandMass.m_cFirstLines, true, out aQuads);
+                aPoints = BuildPath(pLandMass.FirstLines, true, out aQuads);
                 pPath = new GraphicsPath();
                 //пробежимся по всем простым контурам в вычисленном сложном контуре
                 foreach (var aPts in aPoints)
@@ -844,10 +737,10 @@ namespace MapDrawEngine
                     //добавим вычисленный простой контур к общему рисунку контура тектонической плиты
                     pPath.AddPolygon(aPts);
                     //добавим вычисленный простой контур к рисунку контура тектонической плиты в тех квадрантах, через которые он проходит.
-                    foreach (MapQuadrant pQuad in aQuads)
+                    foreach (var pQuadLayers in aQuads.Select(x => x.Layers))
                     {
-                        pQuad.m_cLayers[MapLayer.LandMasses].StartFigure();
-                        pQuad.m_cLayers[MapLayer.LandMasses].AddLines(aPts);
+                        pQuadLayers[MapLayer.LandMasses].StartFigure();
+                        pQuadLayers[MapLayer.LandMasses].AddLines(aPts);
                     }
                 }
                 //запомним общий рисунок контура тектонической плиты - чтобы потом определять вхождение указателя мыши в него.
@@ -855,7 +748,7 @@ namespace MapDrawEngine
                 //вычислим контуры земель
                 foreach (Land pLand in pLandMass.Contents)
                 {
-                    aPoints = BuildPath(pLand.m_cFirstLines, true, out aQuads);
+                    aPoints = BuildPath(pLand.FirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
                     foreach (var aPts in aPoints)
                     {
@@ -866,18 +759,18 @@ namespace MapDrawEngine
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
-                            pQuad.m_cLayers[MapLayer.Lands].StartFigure();
-                            pQuad.m_cLayers[MapLayer.Lands].AddLines(aPts);
+                            pQuad.Layers[MapLayer.Lands].StartFigure();
+                            pQuad.Layers[MapLayer.Lands].AddLines(aPts);
 
-                            if (!pQuad.m_cModes[MapMode.Humidity].ContainsKey(pBrush))
-                                pQuad.m_cModes[MapMode.Humidity][pBrush] = new GraphicsPath();
-                            pQuad.m_cModes[MapMode.Humidity][pBrush].AddPolygon(aPts);
+                            if (!pQuad.Modes[MapMode.Humidity].ContainsKey(pBrush))
+                                pQuad.Modes[MapMode.Humidity][pBrush] = new GraphicsPath();
+                            pQuad.Modes[MapMode.Humidity][pBrush].AddPolygon(aPts);
 
                             if (pLand.LandType == LandTypes.Coastral)
                             {
-                                if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush))
-                                    pQuad.m_cModes[MapMode.Areas][pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
-                                pQuad.m_cModes[MapMode.Areas][pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
+                                if (!pQuad.Modes[MapMode.Areas].ContainsKey(pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush))
+                                    pQuad.Modes[MapMode.Areas][pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
+                                pQuad.Modes[MapMode.Areas][pLand.LandType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
                             }
                         }
                     }
@@ -886,48 +779,49 @@ namespace MapDrawEngine
                     //вычислим контуры локаций
                     foreach (Location pLoc in pLand.Contents)
                     {
-                        aPoints = BuildPath(pLoc.m_pFirstLine, true, out aQuads);
+                        aPoints = BuildPath(pLoc.FirstLine, true, out aQuads);
                         pPath = new GraphicsPath();
                         foreach (var aPts in aPoints)
                         {
                             pPath.AddPolygon(aPts);
 
                             //определим, каким цветом эта земля должна закрашиваться на карте высот
-                            Brush pBrush = GetElevationColor(pLoc.H, m_pWorld.m_fMaxDepth, m_pWorld.m_fMaxHeight);
+                            Brush pBrush = GetElevationColor(pLoc.H, m_pWorld.MaxDepth, m_pWorld.MaxHeight);
 
                             foreach (MapQuadrant pQuad in aQuads)
                             {
-                                pQuad.m_cLayers[MapLayer.Locations].StartFigure();
-                                pQuad.m_cLayers[MapLayer.Locations].AddLines(aPts);
+                                pQuad.Layers[MapLayer.Locations].StartFigure();
+                                pQuad.Layers[MapLayer.Locations].AddLines(aPts);
 
-                                if (!pQuad.m_cModes[MapMode.Elevation].ContainsKey(pBrush))
-                                    pQuad.m_cModes[MapMode.Elevation][pBrush] = new GraphicsPath();
-                                pQuad.m_cModes[MapMode.Elevation][pBrush].AddPolygon(aPts);
+                                if (!pQuad.Modes[MapMode.Elevation].ContainsKey(pBrush))
+                                    pQuad.Modes[MapMode.Elevation][pBrush] = new GraphicsPath();
+                                pQuad.Modes[MapMode.Elevation][pBrush].AddPolygon(aPts);
                             }
                         }
                         m_cLocationBorders[pLoc] = pPath;
                         //добавим информацию о метке на карте
                         AddLocationSign(pLoc);
                     }
-
                 }
             }
-            
+
             //вычислим контуры континентов
             foreach (Continent pContinent in m_pWorld.Contents)
             {
-                aPoints = BuildPath(pContinent.m_cFirstLines, true, out aQuads);
+                aPoints = BuildPath(pContinent.FirstLines, true, out aQuads);
                 foreach (var aPts in aPoints)
-                    foreach (MapQuadrant pQuad in aQuads)
+                {
+                    foreach (var pQuadLayers in aQuads.Select(x => x.Layers))
                     {
-                        pQuad.m_cLayers[MapLayer.Continents].StartFigure();
-                        pQuad.m_cLayers[MapLayer.Continents].AddLines(aPts);
+                        pQuadLayers[MapLayer.Continents].StartFigure();
+                        pQuadLayers[MapLayer.Continents].AddLines(aPts);
                     }
+                }
 
                 //вычислим контуры государств
                 foreach (State pState in pContinent.As<ContinentX>().Contents)
                 {
-                    aPoints = BuildPath(pState.m_cFirstLines, true, out aQuads);
+                    aPoints = BuildPath(pState.FirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
                     foreach (var aPts in aPoints)
                     {
@@ -936,20 +830,20 @@ namespace MapDrawEngine
                         //определим, каким цветом эта земля должна закрашиваться на карте технологий
                         int iImported = pState.m_pSociety.GetImportedTech();
                         Brush pTechBrush = m_aTechLevel[pState.m_pSociety.GetEffectiveTech(), iImported == -1 ? pState.m_pSociety.GetEffectiveTech() : iImported];
-                        Brush pCivBrush = m_aCivLevel[pState.m_pSociety.DominantCulture.m_iProgressLevel, pState.m_pSociety.m_iControl];
+                        Brush pCivBrush = m_aCivLevel[pState.m_pSociety.DominantCulture.ProgressLevel, pState.m_pSociety.Control];
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
-                            pQuad.m_cLayers[MapLayer.States].StartFigure();
-                            pQuad.m_cLayers[MapLayer.States].AddLines(aPts);
+                            pQuad.Layers[MapLayer.States].StartFigure();
+                            pQuad.Layers[MapLayer.States].AddLines(aPts);
 
-                            if (!pQuad.m_cModes[MapMode.TechLevel].ContainsKey(pTechBrush))
-                                pQuad.m_cModes[MapMode.TechLevel][pTechBrush] = new GraphicsPath();
-                            pQuad.m_cModes[MapMode.TechLevel][pTechBrush].AddPolygon(aPts);
+                            if (!pQuad.Modes[MapMode.TechLevel].ContainsKey(pTechBrush))
+                                pQuad.Modes[MapMode.TechLevel][pTechBrush] = new GraphicsPath();
+                            pQuad.Modes[MapMode.TechLevel][pTechBrush].AddPolygon(aPts);
 
-                            if (!pQuad.m_cModes[MapMode.Infrastructure].ContainsKey(pCivBrush))
-                                pQuad.m_cModes[MapMode.Infrastructure][pCivBrush] = new GraphicsPath();
-                            pQuad.m_cModes[MapMode.Infrastructure][pCivBrush].AddPolygon(aPts);
+                            if (!pQuad.Modes[MapMode.Infrastructure].ContainsKey(pCivBrush))
+                                pQuad.Modes[MapMode.Infrastructure][pCivBrush] = new GraphicsPath();
+                            pQuad.Modes[MapMode.Infrastructure][pCivBrush].AddPolygon(aPts);
                         }
                     }
                     m_cStateBorders[pState] = pPath;
@@ -958,18 +852,20 @@ namespace MapDrawEngine
                 //вычислим контуры географических регионов
                 foreach (Socium.Region pArea in pContinent.As<ContinentX>().m_cRegions)
                 {
-                    aPoints = BuildPath(pArea.m_cFirstLines, true, out aQuads);
+                    aPoints = BuildPath(pArea.FirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
                     foreach (var aPts in aPoints)
                     {
                         pPath.AddPolygon(aPts);
 
-                        foreach (MapQuadrant pQuad in aQuads)
+                        foreach (var pQuadModes in aQuads.Select(x => x.Modes))
                         {
                             //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
-                            if (!pQuad.m_cModes[MapMode.Areas].ContainsKey(pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush))
-                                pQuad.m_cModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
-                            pQuad.m_cModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
+                            if (!pQuadModes[MapMode.Areas].ContainsKey(pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush))
+                            {
+                                pQuadModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
+                            }
+                            pQuadModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
 
                             //если регион обитаем
                             if (pArea.m_pNatives != null)
@@ -981,9 +877,11 @@ namespace MapDrawEngine
                                 if (pArea.m_pNatives.IsHegemon)
                                     pBrush = m_cHegemonNationColorsID[pArea.m_pNatives];
 
-                                if (!pQuad.m_cModes[MapMode.Natives].ContainsKey(pBrush))
-                                    pQuad.m_cModes[MapMode.Natives][pBrush] = new GraphicsPath();
-                                pQuad.m_cModes[MapMode.Natives][pBrush].AddPolygon(aPts);
+                                if (!pQuadModes[MapMode.Natives].ContainsKey(pBrush))
+                                {
+                                    pQuadModes[MapMode.Natives][pBrush] = new GraphicsPath();
+                                }
+                                pQuadModes[MapMode.Natives][pBrush].AddPolygon(aPts);
                             }
                         }
                     }
@@ -994,43 +892,43 @@ namespace MapDrawEngine
             //вычислим контуры провинций
             foreach (Province pProvince in m_pWorld.m_aProvinces)
             {
-                aPoints = BuildPath(pProvince.m_cFirstLines, true, out aQuads);
+                aPoints = BuildPath(pProvince.FirstLines, true, out aQuads);
                 pPath = new GraphicsPath();
                 foreach (var aPts in aPoints)
                 {
                     pPath.AddPolygon(aPts);
 
                     //сохраним информацию о контуре провинции для этнографической карты
-                    Brush pBrush = m_cNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
-                    if (pProvince.m_pLocalSociety.m_pTitularNation.IsAncient)
-                        pBrush = m_cAncientNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
-                    if (pProvince.m_pLocalSociety.m_pTitularNation.IsHegemon)
-                        pBrush = m_cHegemonNationColorsID[pProvince.m_pLocalSociety.m_pTitularNation];
+                    Brush pBrush = m_cNationColorsID[pProvince.m_pLocalSociety.TitularNation];
+                    if (pProvince.m_pLocalSociety.TitularNation.IsAncient)
+                        pBrush = m_cAncientNationColorsID[pProvince.m_pLocalSociety.TitularNation];
+                    if (pProvince.m_pLocalSociety.TitularNation.IsHegemon)
+                        pBrush = m_cHegemonNationColorsID[pProvince.m_pLocalSociety.TitularNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.m_iMagicLimit][pProvince.m_pLocalSociety.DominantCulture.m_pCustoms.ValueOf<Customs.Magic>()];
-                    
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.MagicLimit][pProvince.m_pLocalSociety.DominantCulture.Customs.ValueOf<Customs.Magic>()];
+
                     foreach (MapQuadrant pQuad in aQuads)
                     {
                         if (!pProvince.m_pCenter.IsWater)
                         {
-                            pQuad.m_cLayers[MapLayer.Provincies].StartFigure();
-                            pQuad.m_cLayers[MapLayer.Provincies].AddLines(aPts);
+                            pQuad.Layers[MapLayer.Provincies].StartFigure();
+                            pQuad.Layers[MapLayer.Provincies].AddLines(aPts);
                         }
 
-                        if (!pQuad.m_cModes[MapMode.Nations].ContainsKey(pBrush))
-                            pQuad.m_cModes[MapMode.Nations][pBrush] = new GraphicsPath();
-                        pQuad.m_cModes[MapMode.Nations][pBrush].AddPolygon(aPts);
+                        if (!pQuad.Modes[MapMode.Nations].ContainsKey(pBrush))
+                            pQuad.Modes[MapMode.Nations][pBrush] = new GraphicsPath();
+                        pQuad.Modes[MapMode.Nations][pBrush].AddPolygon(aPts);
 
-                        if (!pQuad.m_cModes[MapMode.PsiLevel].ContainsKey(pPsiBrush))
-                            pQuad.m_cModes[MapMode.PsiLevel][pPsiBrush] = new GraphicsPath();
-                        pQuad.m_cModes[MapMode.PsiLevel][pPsiBrush].AddPolygon(aPts);
+                        if (!pQuad.Modes[MapMode.PsiLevel].ContainsKey(pPsiBrush))
+                            pQuad.Modes[MapMode.PsiLevel][pPsiBrush] = new GraphicsPath();
+                        pQuad.Modes[MapMode.PsiLevel][pPsiBrush].AddPolygon(aPts);
                     }
                 }
                 m_cProvinceBorders[pProvince] = pPath;
             }
 
             //вычислим дорожную сетку
-            foreach (TransportationLinkBase pRoad in m_pWorld.m_cTransportGrid)
+            foreach (TransportationLinkBase pRoad in m_pWorld.TransportGrid)
             {
                 AddRoad(pRoad);
             }
@@ -1038,12 +936,14 @@ namespace MapDrawEngine
             //нормализуем все квадранты таким образом, чтобы внутри каждого квадранта координаты считались от
             //верхнего левого угла самого квадранта, а не от центра оригинальной системы координат
             for (int i = 0; i < QUADRANTS_COUNT; i++)
+            {
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
                 {
-                    float fQuadX = m_pWorld.m_pLocationsGrid.RX * i * 2 / QUADRANTS_COUNT;
-                    float fQuadY = m_pWorld.m_pLocationsGrid.RY * j * 2 / QUADRANTS_COUNT;
+                    float fQuadX = (float)m_pWorld.LocationsGrid.RX * i * 2 / QUADRANTS_COUNT;
+                    float fQuadY = (float)m_pWorld.LocationsGrid.RY * j * 2 / QUADRANTS_COUNT;
                     m_aQuadrants[i, j].Normalize(fQuadX, fQuadY);
                 }
+            }
 
             //смасштабируем используемые для определения положения курсора контуры в ROUGH_SCALE раз - 
             //для ускорения выполнения функции GraphicsPath::IsVisible(x,y)
@@ -1078,7 +978,6 @@ namespace MapDrawEngine
             SetPan(0, 0);
         }
 
-
         private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight)
         {
             if (float.IsNaN(fHeight))
@@ -1094,15 +993,11 @@ namespace MapDrawEngine
 
             if (fHeight < 0)
             {
-                //color.RGB = Color.Navy;
-                //color.Lightness = 0.8 - (double)fHeight / (fMinHeight * 2);
                 color.RGB = Color.Green;
                 color.Hue = 200 + 40 * fHeight / fMinHeight;
             }
-            if (fHeight > 0)
+            else if (fHeight > 0)
             {
-                //color.RGB = Color.Brown;
-                //color.Lightness = 0.2 + (double)fHeight / (fMaxHeight * 2);
                 color.RGB = Color.Goldenrod;
                 color.Hue = 100 * (fMaxHeight - fHeight) * (fMaxHeight - fHeight) / (fMaxHeight * fMaxHeight);
             }
@@ -1130,42 +1025,51 @@ namespace MapDrawEngine
             //пробежимся по всем затравкам
             foreach (VoronoiEdge pFirstLine in cFirstLines)
             {
-                bool bCross;
-                bool[,] aQuads;
-
                 //получаем простой одиночный контур
-                cPath.Add(BuildBorder(pFirstLine, 0, out bCross, out aQuads));
+                cPath.Add(BuildBorder(pFirstLine, 0, out bool bCross, out bool[,] aQuads));
 
                 //определяем, через какие квадранты он проходит
                 for (int i = 0; i < QUADRANTS_COUNT; i++)
+                {
                     for (int j = 0; j < QUADRANTS_COUNT; j++)
+                    {
                         if (aQuads[i, j])
                             aQuadsAll[i, j] = true;
+                    }
+                }
 
                 //если карта зациклена по горизонтали, нужно строить отражения и 
                 //контур пересекает нулевой меридиан, то строим отражение!
-                if (m_pWorld.m_pLocationsGrid.CycleShift != 0 && bMirror && bCross)
+                if (m_pWorld.LocationsGrid.CycleShift != 0 && bMirror && bCross)
                 {
                     //определяем, на западе или на востоке будем строить отражение
-                    if (pFirstLine.m_pPoint1.X > 0)
-                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
+                    if (pFirstLine.Point1.X > 0)
+                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
                     else
-                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
+                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
 
                     //определяем, через какие квадранты оно проходит
                     for (int i = 0; i < QUADRANTS_COUNT; i++)
+                    {
                         for (int j = 0; j < QUADRANTS_COUNT; j++)
+                        {
                             if (aQuads[i, j])
                                 aQuadsAll[i, j] = true;
+                        }
+                    }
                 }
             }
 
             //переносим все квадранты, через которые проходит контур и его отражение, в линейный массив
             List<MapQuadrant> cQuadrants = new List<MapQuadrant>();
             for (int i = 0; i < QUADRANTS_COUNT; i++)
+            {
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
+                {
                     if (aQuadsAll[i, j])
                         cQuadrants.Add(m_aQuadrants[i, j]);
+                }
+            }
             aQuadrants = cQuadrants.ToArray();
 
             return cPath.ToArray();
@@ -1183,41 +1087,50 @@ namespace MapDrawEngine
             bool[,] aQuadsAll = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
             List<PointF[]> cPath = new List<PointF[]>();
 
-            bool bCross;
-            bool[,] aQuads;
-
             //получаем простой одиночный контур
-            cPath.Add(BuildBorder(pFirstLine, 0, out bCross, out aQuads));
+            cPath.Add(BuildBorder(pFirstLine, 0, out bool bCross, out bool[,] aQuads));
 
             //определяем, через какие квадранты он проходит
             for (int i = 0; i < QUADRANTS_COUNT; i++)
+            {
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
+                {
                     if (aQuads[i, j])
                         aQuadsAll[i, j] = true;
+                }
+            }
 
             //если карта зациклена по горизонтали, нужно строить отражения и 
             //контур пересекает нулевой меридиан, то строим отражение!
-            if (m_pWorld.m_pLocationsGrid.CycleShift != 0 && bMirror && bCross)
+            if (m_pWorld.LocationsGrid.CycleShift != 0 && bMirror && bCross)
             {
                 //определяем, на западе или на востоке будем строить отражение
-                if (pFirstLine.m_pPoint1.X > 0)
-                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
+                if (pFirstLine.Point1.X > 0)
+                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
                 else
-                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
+                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
 
                 //определяем, через какие квадранты оно проходит
                 for (int i = 0; i < QUADRANTS_COUNT; i++)
+                {
                     for (int j = 0; j < QUADRANTS_COUNT; j++)
+                    {
                         if (aQuads[i, j])
                             aQuadsAll[i, j] = true;
+                    }
+                }
             }
 
             //переносим все квадранты, через которые проходит контур и его отражение, в линейный массив
             List<MapQuadrant> cQuadrants = new List<MapQuadrant>();
             for (int i = 0; i < QUADRANTS_COUNT; i++)
+            {
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
+                {
                     if (aQuadsAll[i, j])
                         cQuadrants.Add(m_aQuadrants[i, j]);
+                }
+            }
             aQuadrants = cQuadrants.ToArray();
 
             return cPath.ToArray();
@@ -1239,49 +1152,51 @@ namespace MapDrawEngine
 
             List<PointF> cBorder = new List<PointF>();
             VoronoiEdge pLine = pFirstLine;
-            cBorder.Add(ShiftPoint(pLine.m_pPoint1, fShift));
-            float fLastPointX = pLine.m_pPoint1.X + fShift;
+            cBorder.Add(ShiftPoint(pLine.Point1, fShift));
+            float fLastPointX = pLine.Point1.X + fShift;
             //последовательно перебирает все связанные линии, пока круг не замкнётся.
             do
             {
                 //в каком квадранте лежит первая точка линии
-                int iQuad1X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
-                int iQuad1Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint1.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
+                int iQuad1X = (int)(QUADRANTS_COUNT * (pLine.Point1.X + m_pWorld.LocationsGrid.RX) / (2*m_pWorld.LocationsGrid.RX));
+                int iQuad1Y = (int)(QUADRANTS_COUNT * (pLine.Point1.Y + m_pWorld.LocationsGrid.RY) / (2*m_pWorld.LocationsGrid.RY));
 
                 if (iQuad1X >= 0 && iQuad1X < QUADRANTS_COUNT && iQuad1Y >= 0 && iQuad1Y < QUADRANTS_COUNT)
                     aQuadrants[iQuad1X, iQuad1Y] = true;
 
                 //в каком квадранте лежит вторая точка линии
-                int iQuad2X = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
-                int iQuad2Y = (int)(QUADRANTS_COUNT * (pLine.m_pPoint2.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
+                int iQuad2X = (int)(QUADRANTS_COUNT * (pLine.Point2.X + m_pWorld.LocationsGrid.RX) / (2*m_pWorld.LocationsGrid.RX));
+                int iQuad2Y = (int)(QUADRANTS_COUNT * (pLine.Point2.Y + m_pWorld.LocationsGrid.RY) / (2*m_pWorld.LocationsGrid.RY));
 
                 if (iQuad2X >= 0 && iQuad2X < QUADRANTS_COUNT && iQuad2Y >= 0 && iQuad2Y < QUADRANTS_COUNT)
                     aQuadrants[iQuad2X, iQuad2Y] = true;
 
                 //пересекает-ли линия нулевой меридиан?
                 float fDX = fShift;
-                if (Math.Abs(fLastPointX - pLine.m_pPoint2.X - fShift) > m_pWorld.m_pLocationsGrid.RX)
+                if (Math.Abs(fLastPointX - pLine.Point2.X - fShift) > m_pWorld.LocationsGrid.RX)
                 {
                     //определимся, где у нас была предыдущая часть контура - на западе или на востоке?
                     //в зависимости от этого вычислим смещение для оставшейся части контура, чтобы 
                     //не было разрыва
-                    fDX += fLastPointX < fShift ? -m_pWorld.m_pLocationsGrid.RX * 2 : m_pWorld.m_pLocationsGrid.RX * 2;
+                    fDX += fLastPointX < fShift ? -m_pWorld.LocationsGrid.RX * 2 : m_pWorld.LocationsGrid.RX * 2;
                     bCross = true;
                 }
 
-                if (pLine.m_pPoint2.X > m_pWorld.m_pLocationsGrid.RX ||
-                    pLine.m_pPoint2.X < -m_pWorld.m_pLocationsGrid.RX)
+                if (pLine.Point2.X > m_pWorld.LocationsGrid.RX ||
+                    pLine.Point2.X < -m_pWorld.LocationsGrid.RX)
+                {
                     bCross = true;
+                }
 
-                cBorder.Add(ShiftPoint(pLine.m_pPoint2, fDX));
+                cBorder.Add(ShiftPoint(pLine.Point2, fDX));
 
                 if (cBorder.Count > 1000)
                     break;
 
                 //X-координата последней добавленной точки с учётом вычисленного смещения
-                fLastPointX = pLine.m_pPoint2.X + fDX;
+                fLastPointX = pLine.Point2.X + fDX;
 
-                pLine = pLine.m_pNext;
+                pLine = pLine.Next;
             }
             while (pLine != pFirstLine);
 
@@ -1296,7 +1211,7 @@ namespace MapDrawEngine
         /// <returns>смещённая точка</returns>
         private PointF ShiftPoint(VoronoiVertex pPoint, float fDX)
         {
-            return new PointF(m_pWorld.m_pLocationsGrid.RX + pPoint.X + fDX, m_pWorld.m_pLocationsGrid.RY + pPoint.Y);
+            return new PointF(m_pWorld.LocationsGrid.RX + pPoint.X + fDX, m_pWorld.LocationsGrid.RY + pPoint.Y);
         }
 
         /// <summary>
@@ -1305,22 +1220,22 @@ namespace MapDrawEngine
         /// <param name="pLoc">локация, содержащая метку</param>
         private void AddLocationSign(Location pLoc)
         {
-            float fPointX = m_pWorld.m_pLocationsGrid.RX + pLoc.X;
-            float fPointY = m_pWorld.m_pLocationsGrid.RY + pLoc.Y;
+            float fPointX = m_pWorld.LocationsGrid.RX + pLoc.X;
+            float fPointY = m_pWorld.LocationsGrid.RY + pLoc.Y;
 
-            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
-            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
+            int iQuadX = (int)(QUADRANTS_COUNT * (pLoc.X + m_pWorld.LocationsGrid.RX) / (2*m_pWorld.LocationsGrid.RX));
+            int iQuadY = (int)(QUADRANTS_COUNT * (pLoc.Y + m_pWorld.LocationsGrid.RY) / (2*m_pWorld.LocationsGrid.RY));
 
             if (iQuadX < 0 || iQuadX >= QUADRANTS_COUNT || iQuadY < 0 || iQuadY >= QUADRANTS_COUNT)
                 return;
 
-            switch (pLoc.m_eType)
+            switch (pLoc.Landmark)
             {
                 case LandmarkType.Peak:
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignPeak(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
+                    m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignPeak(fPointX, fPointY, m_pWorld.LocationsGrid.RX, ""));
                     break;
                 case LandmarkType.Volcano:
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVolkano(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
+                    m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignVolkano(fPointX, fPointY, m_pWorld.LocationsGrid.RX, ""));
                     break;
             }
 
@@ -1330,29 +1245,29 @@ namespace MapDrawEngine
             {
                 if (pLocX.m_pSettlement.m_iRuinsAge > 0)
                 {
-                    m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignRuin(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
+                    m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignRuin(fPointX, fPointY, m_pWorld.LocationsGrid.RX, ""));
                 }
                 else
                 {
                     switch (pLocX.m_pSettlement.m_pInfo.m_eSize)
                     {
                         case SettlementSize.Capital:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCapital(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignCapital(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.City:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignCity(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignCity(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Town:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignTown(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignTown(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                         case SettlementSize.Village:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
                             break;
                         case SettlementSize.Hamlet:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignVillage(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName, pLoc.GetOwner().LandType.Get<LandTypeDrawInfo>().m_pBrush));
                             break;
                         case SettlementSize.Fort:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignFort(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, pLocX.m_pSettlement.m_sName));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignFort(fPointX, fPointY, m_pWorld.LocationsGrid.RX, pLocX.m_pSettlement.m_sName));
                             break;
                     }
                 }
@@ -1364,10 +1279,10 @@ namespace MapDrawEngine
                     switch (pLocX.m_pBuilding.m_eType)
                     {
                         case BuildingType.Lair:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignLair(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignLair(fPointX, fPointY, m_pWorld.LocationsGrid.RX, ""));
                             break;
                         case BuildingType.Hideout:
-                            m_aQuadrants[iQuadX, iQuadY].m_cLandmarks.Add(new SignHideout(fPointX, fPointY, m_pWorld.m_pLocationsGrid.RX, ""));
+                            m_aQuadrants[iQuadX, iQuadY].Landmarks.Add(new SignHideout(fPointX, fPointY, m_pWorld.LocationsGrid.RX, ""));
                             break;
                     }
                 }
@@ -1411,23 +1326,25 @@ namespace MapDrawEngine
             PointF[][] aLinks = GetTransportationLink(pRoad, out aQuadrants);
 
             for (int i = 0; i < QUADRANTS_COUNT; i++)
+            {
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
+                {
                     if (aQuadrants[i, j])
                     {
                         foreach (var aLink in aLinks)
                         {
-                            m_aQuadrants[i, j].m_cRoadsMap[eRoadType].StartFigure();
-                            //m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddLines(aLink);
-                            m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddCurve(aLink);
+                            m_aQuadrants[i, j].RoadsMap[eRoadType].StartFigure();
+                            m_aQuadrants[i, j].RoadsMap[eRoadType].AddCurve(aLink);
 
                             if (pRoad.RoadLevel == RoadQuality.Good)
                             {
-                                m_aQuadrants[i, j].m_cRoadsMap[RoadType.Back].StartFigure();
-                                //m_aQuadrants[i, j].m_cRoadsMap[RoadType.Back].AddLines(aLink);
-                                m_aQuadrants[i, j].m_cRoadsMap[RoadType.Back].AddCurve(aLink);
+                                m_aQuadrants[i, j].RoadsMap[RoadType.Back].StartFigure();
+                                m_aQuadrants[i, j].RoadsMap[RoadType.Back].AddCurve(aLink);
                             }
                         }
                     }
+                }
+            }
         }
 
         /// <summary>
@@ -1440,33 +1357,35 @@ namespace MapDrawEngine
         {
             aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
 
-            bool[,] aQuads;
             List<PointF[]> cPathLines = new List<PointF[]>();
 
-            bool bCross;
             //получаем линию без отражений
-            cPathLines.Add(BuildPathLine(pRoad, 0, out bCross, out aQuads));
+            cPathLines.Add(BuildPathLine(pRoad, 0, out bool bCross, out bool[,] aQuads));
 
             //если мир закольцован и построенная линия пересекает нулевой меридиан,
             //то построим для неё отражение
-            if (m_pWorld.m_pLocationsGrid.CycleShift != 0 && bCross)
+            if (m_pWorld.LocationsGrid.CycleShift != 0 && bCross)
             {
-                if (pRoad.m_aPoints[0].X > 0)
+                if (pRoad.Points[0].X > 0)
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
                 }
                 else
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.m_pLocationsGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
                 }
             }
 
             //переносим информацию о квадрантах, через которые проходит линия, в общую матрицу
             for (int i = 0; i < QUADRANTS_COUNT; i++)
+            {
                 for (int j = 0; j < QUADRANTS_COUNT; j++)
+                {
                     if (aQuads[i, j])
-                        aQuadrants[i, j] = true; 
-            
+                        aQuadrants[i, j] = true;
+                }
+            }
+
             return cPathLines.ToArray();
         }
 
@@ -1484,29 +1403,31 @@ namespace MapDrawEngine
             aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
 
             List<PointF> cRoadLine = new List<PointF>();
-            float fLastPointX = pPath.m_aPoints[0].X + fShift;
-            foreach (VoronoiVertex pPoint in pPath.m_aPoints)
+            float fLastPointX = pPath.Points[0].X + fShift;
+            foreach (VoronoiVertex pPoint in pPath.Points)
             {
                 //пересекает-ли линия от предыдущей точки к текущей нулевой меридиан?
                 float fDX = fShift;
-                if (Math.Abs(fLastPointX - pPoint.X - fShift) > m_pWorld.m_pLocationsGrid.RX)
+                if (Math.Abs(fLastPointX - pPoint.X - fShift) > m_pWorld.LocationsGrid.RX)
                 {
                     //определимся, где у нас была предыдущая часть линии - на западе или на востоке?
                     //в зависимости от этого вычислим смещение для оставшейся части линии, чтобы 
                     //не было разрыва
-                    fDX += fLastPointX < fShift ? -m_pWorld.m_pLocationsGrid.RX * 2 : m_pWorld.m_pLocationsGrid.RX * 2;
+                    fDX += fLastPointX < fShift ? -m_pWorld.LocationsGrid.RX * 2 : m_pWorld.LocationsGrid.RX * 2;
                     bCross = true;
                 }
-                
-                if (pPoint.X > m_pWorld.m_pLocationsGrid.RX ||
-                    pPoint.X < -m_pWorld.m_pLocationsGrid.RX)
+
+                if (pPoint.X > m_pWorld.LocationsGrid.RX ||
+                    pPoint.X < -m_pWorld.LocationsGrid.RX)
+                {
                     bCross = true;
-                
+                }
+
                 cRoadLine.Add(ShiftPoint(pPoint, fDX));
 
                 //в каком квадранте лежит новая точка линии
-                int iQuadX = (int)(QUADRANTS_COUNT * (pPoint.X + m_pWorld.m_pLocationsGrid.RX) / (2*m_pWorld.m_pLocationsGrid.RX));
-                int iQuadY = (int)(QUADRANTS_COUNT * (pPoint.Y + m_pWorld.m_pLocationsGrid.RY) / (2*m_pWorld.m_pLocationsGrid.RY));
+                int iQuadX = (int)(QUADRANTS_COUNT * (pPoint.X + m_pWorld.LocationsGrid.RX) / (2*m_pWorld.LocationsGrid.RX));
+                int iQuadY = (int)(QUADRANTS_COUNT * (pPoint.Y + m_pWorld.LocationsGrid.RY) / (2*m_pWorld.LocationsGrid.RY));
 
                 if (iQuadX >= 0 && iQuadX < QUADRANTS_COUNT && iQuadY >= 0 && iQuadY < QUADRANTS_COUNT)
                     aQuadrants[iQuadX, iQuadY] = true;
@@ -1542,23 +1463,16 @@ namespace MapDrawEngine
             //соотношение высоты и ширины координатной сетки мира
             float fK = 1;
             if (m_pWorld != null)
-                fK = (float)m_pWorld.m_pLocationsGrid.RY / m_pWorld.m_pLocationsGrid.RX;
+                fK = (float)m_pWorld.LocationsGrid.RY / m_pWorld.LocationsGrid.RX;
 
             //ширина и высота карты мира в экранных координатах
             //из расчёта того, чтобы при единичном масштабе вся карта имела ширину 980 пикселей
             m_iScaledMapWidth = (int)(ClientRectangle.Width * m_fScaleMultiplier);
-            //m_iScaledMapWidth = (int)(980 * m_fScaleMultiplier);
             m_iScaledMapHeight = (int)(m_iScaledMapWidth * fK);
 
             //создадим холст такого же размера, как и окно рисования, но не больше 
             //отмасштабированной карты
             m_pCanvas = new Bitmap(Math.Min(ClientRectangle.Width, m_iScaledMapWidth), Math.Min(ClientRectangle.Height, m_iScaledMapHeight));
-
-            //коэффициент для перевода координат из абсолютной системы координат в экранную
-            if (m_pWorld != null)
-                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.m_pLocationsGrid.RX * 2 - m_pWorld.m_pLocationsGrid.FrameWidth * 2);
-
-            m_fFrameWidth = (float)m_pWorld.m_pLocationsGrid.FrameWidth * m_fActualScale;
 
             //если холст уже окна рисования, вычислим смещение для центрирования холста
             m_iShiftX = (ClientRectangle.Width - m_pCanvas.Width) / 2;
@@ -1570,15 +1484,23 @@ namespace MapDrawEngine
             m_pDrawFrame.Width = m_pCanvas.Width;
             m_pDrawFrame.Height = m_pCanvas.Height;
 
-            //размеры одного квадранта в экранных координатах из рассчёта сетки квадрантов 8х8
-            m_fOneQuadWidth = m_fActualScale * m_pWorld.m_pLocationsGrid.RX * 2 / QUADRANTS_COUNT;
-            m_fOneQuadHeight = m_fActualScale * m_pWorld.m_pLocationsGrid.RY * 2 / QUADRANTS_COUNT;
+            //коэффициент для перевода координат из абсолютной системы координат в экранную
+            if (m_pWorld != null)
+            {
+                m_fActualScale = (float)(m_iScaledMapWidth) / (m_pWorld.LocationsGrid.RX * 2 - m_pWorld.LocationsGrid.FrameWidth * 2);
 
-            //размеры отображаемого участка карты в квадрантах
-            //+2 потому что 1 квадрант мы отображаем всегда и нужно ещё иметь запас в 1 квадрант на случай, 
-            //когда рамка отображаемой области не совпадает с границами квадрантов
-            m_iQuadsWidth = 2 + (int)(m_pDrawFrame.Width / m_fOneQuadWidth);
-            m_iQuadsHeight = 2 + (int)(m_pDrawFrame.Height / m_fOneQuadHeight);
+                m_fFrameWidth = m_pWorld.LocationsGrid.FrameWidth * m_fActualScale;
+
+                //размеры одного квадранта в экранных координатах из рассчёта сетки квадрантов 8х8
+                m_fOneQuadWidth = m_fActualScale * m_pWorld.LocationsGrid.RX * 2 / QUADRANTS_COUNT;
+                m_fOneQuadHeight = m_fActualScale * m_pWorld.LocationsGrid.RY * 2 / QUADRANTS_COUNT;
+
+                //размеры отображаемого участка карты в квадрантах
+                //+2 потому что 1 квадрант мы отображаем всегда и нужно ещё иметь запас в 1 квадрант на случай, 
+                //когда рамка отображаемой области не совпадает с границами квадрантов
+                m_iQuadsWidth = 2 + (int)(m_pDrawFrame.Width / m_fOneQuadWidth);
+                m_iQuadsHeight = 2 + (int)(m_pDrawFrame.Height / m_fOneQuadHeight);
+            }
         }
 
         #region Управление картой - масштабирование и смещение зоны просмотра
@@ -1639,7 +1561,7 @@ namespace MapDrawEngine
             if (m_pWorld == null)
                 return;
 
-            if (m_pWorld.m_pLocationsGrid.CycleShift != 0)
+            if (m_pWorld.LocationsGrid.CycleShift != 0)
                 m_pDrawFrame.X = iX;
             else
                 m_pDrawFrame.X = Math.Max(0, Math.Min(iX, m_iScaledMapWidth - m_pDrawFrame.Width + (int)m_fFrameWidth));
@@ -1678,8 +1600,6 @@ namespace MapDrawEngine
 
             m_pDrawFrame.X = (int)(m_fActualScale * m_pMiniMap.DrawFrame.X / m_pMiniMap.ActualScale) - 1;
             m_pDrawFrame.Y = (int)(m_fActualScale * m_pMiniMap.DrawFrame.Y / m_pMiniMap.ActualScale) - 1;
-            //m_pDrawFrame.Width = (int)(m_fActualScale * m_pMiniMap.DrawFrame.Width / m_pMiniMap.m_fK);
-            //m_pDrawFrame.Height = (int)(m_fActualScale * m_pMiniMap.DrawFrame.Height / m_pMiniMap.m_fK) + 1;
 
             if (m_pDrawFrame.X < (int)m_fFrameWidth)
                 m_pDrawFrame.X = (int)m_fFrameWidth;
@@ -1715,7 +1635,7 @@ namespace MapDrawEngine
             gr.FillRectangle(new SolidBrush(LandTypes.Ocean.Get<LandTypeDrawInfo>().m_pColor), 0, 0, m_pCanvas.Width, m_pCanvas.Height);
 
             //если нет мира или мир вырожденный - больше рисовать нечего
-            if (m_pWorld == null || m_pWorld.m_pLocationsGrid.Locations.Length == 0)
+            if (m_pWorld == null || m_pWorld.LocationsGrid.Locations.Length == 0)
                 return;
 
             //координаты квадранта, в котором находится левый верхний угол отображаемого участка карты
@@ -1749,12 +1669,6 @@ namespace MapDrawEngine
                     aVisibleQuads[i, j] = m_aQuadrants[iQX, iQY];
                 }
             }
-
-            //рисуем контуры континентов и заливаем внутреннее пространство цветом равнин
-            //for (int i = 0; i < m_iQuadsWidth; i++)
-            //    for (int j = 0; j < m_iQuadsHeight; j++)
-            //        if (aVisibleQuads[i, j] != null)
-            //            aVisibleQuads[i, j].DrawPath(gr, MapLayer.Continents, i * m_fOneQuadWidth + iQuadDX + 2, j * m_fOneQuadHeight + iQuadDY + 2, m_fActualScale);
 
             //закрашиваем карту в соответствии с выбранным режимом отображения карты
             for (int i = 0; i < m_iQuadsWidth; i++)
@@ -1878,8 +1792,7 @@ namespace MapDrawEngine
             if (pState == null)
                 return;
 
-            GraphicsPath pPath;
-            if (!m_cStateBorders.TryGetValue(pState, out pPath))
+            if (!m_cStateBorders.TryGetValue(pState, out GraphicsPath pPath))
                 return;
 
             Matrix pMatrix = new Matrix();
@@ -1941,7 +1854,7 @@ namespace MapDrawEngine
                 return;
 
             //полностью пересчитываем все коэффициенты и перерисовываем карту
-            ScaleMultiplier = ScaleMultiplier;
+            SetScale(ScaleMultiplier);
         }
 
         private bool m_bScrolling = false;
@@ -1951,7 +1864,6 @@ namespace MapDrawEngine
         private void MapDraw_MouseDown(object sender, MouseEventArgs e)
         {
             m_bScrolling = true;
-            //m_pLastMouseLocation = new Point(-1, -1);
         }
 
         private void MapDraw_MouseLeave(object sender, EventArgs e)
@@ -2016,7 +1928,7 @@ namespace MapDrawEngine
                 m_pFocusedLand = null;
                 m_pFocusedLocation = null;
 
-                foreach (LandMass pLandMass in m_pWorld.m_aLandMasses)
+                foreach (LandMass pLandMass in m_pWorld.LandMasses)
                 {
                     GraphicsPath pLandMassPath = m_cLandMassBorders[pLandMass];
 
@@ -2035,75 +1947,75 @@ namespace MapDrawEngine
                     m_pFocusedContinent = m_pFocusedLandMass.GetOwner();
             }
 
-            if(m_pFocusedContinent != null)
-                if (m_pFocusedState == null || !m_cStateBorders[m_pFocusedState].IsVisible(iX, iY))
+            if (m_pFocusedContinent != null &&
+                (m_pFocusedState == null || !m_cStateBorders[m_pFocusedState].IsVisible(iX, iY)))
+            {
+                m_pFocusedState = null;
+                m_pFocusedProvince = null;
+
+                foreach (State pState in m_pFocusedContinent.As<ContinentX>().Contents)
                 {
-                    m_pFocusedState = null;
-                    m_pFocusedProvince = null;
+                    GraphicsPath pStatePath = m_cStateBorders[pState];
 
-                    foreach (State pState in m_pFocusedContinent.As<ContinentX>().Contents)
+                    if (pStatePath.IsVisible(iX, iY))
                     {
-                        GraphicsPath pStatePath = m_cStateBorders[pState];
-
-                        if (pStatePath.IsVisible(iX, iY))
-                        {
-                            m_pFocusedState = pState;
-                            break;
-                        }
+                        m_pFocusedState = pState;
+                        break;
                     }
                 }
+            }
 
-            if(m_pFocusedState != null)
-                if (m_pFocusedProvince == null || !m_cProvinceBorders[m_pFocusedProvince].IsVisible(iX, iY))
+            if (m_pFocusedState != null &&
+                (m_pFocusedProvince == null || !m_cProvinceBorders[m_pFocusedProvince].IsVisible(iX, iY)))
+            {
+                m_pFocusedProvince = null;
+
+                foreach (Province pProvince in m_pFocusedState.Contents)
                 {
-                    m_pFocusedProvince = null;
+                    GraphicsPath pProvincePath = m_cProvinceBorders[pProvince];
 
-                    foreach (Province pProvince in m_pFocusedState.Contents)
+                    if (pProvincePath.IsVisible(iX, iY))
                     {
-                        GraphicsPath pProvincePath = m_cProvinceBorders[pProvince];
-
-                        if (pProvincePath.IsVisible(iX, iY))
-                        {
-                            m_pFocusedProvince = pProvince;
-                            break;
-                        }
+                        m_pFocusedProvince = pProvince;
+                        break;
                     }
                 }
+            }
 
 
-            if(m_pFocusedLandMass != null)
-                if (m_pFocusedLand == null || !m_cLandBorders[m_pFocusedLand].IsVisible(iX, iY))
+            if (m_pFocusedLandMass != null &&
+                (m_pFocusedLand == null || !m_cLandBorders[m_pFocusedLand].IsVisible(iX, iY)))
+            {
+                m_pFocusedLocation = null;
+
+                foreach (Land pLand in m_pFocusedLandMass.Contents)
                 {
-                    m_pFocusedLocation = null;
+                    GraphicsPath pLandPath = m_cLandBorders[pLand];
 
-                    foreach (Land pLand in m_pFocusedLandMass.Contents)
+                    if (pLandPath.IsVisible(iX, iY))
                     {
-                        GraphicsPath pLandPath = m_cLandBorders[pLand];
-
-                        if (pLandPath.IsVisible(iX, iY))
-                        {
-                            m_pFocusedLand = pLand;
-                            break;
-                        }
+                        m_pFocusedLand = pLand;
+                        break;
                     }
                 }
+            }
 
-            if(m_pFocusedLand != null)
-                if (m_pFocusedLocation == null || !m_cLocationBorders[m_pFocusedLocation].IsVisible(iX, iY))
+            if (m_pFocusedLand != null &&
+                (m_pFocusedLocation == null || !m_cLocationBorders[m_pFocusedLocation].IsVisible(iX, iY)))
+            {
+                m_pFocusedLocation = null;
+
+                foreach (Location pLoc in m_pFocusedLand.Contents)
                 {
-                    m_pFocusedLocation = null;
+                    GraphicsPath pLocationPath = m_cLocationBorders[pLoc];
 
-                    foreach (Location pLoc in m_pFocusedLand.Contents)
+                    if (pLocationPath.IsVisible(iX, iY))
                     {
-                        GraphicsPath pLocationPath = m_cLocationBorders[pLoc];
-
-                        if (pLocationPath.IsVisible(iX, iY))
-                        {
-                            m_pFocusedLocation = pLoc;
-                            break;
-                        }
+                        m_pFocusedLocation = pLoc;
+                        break;
                     }
                 }
+            }
 
             return bContinent;
         }
@@ -2113,7 +2025,7 @@ namespace MapDrawEngine
             if (m_pWorld == null)
                 return "no world";
 
-            string sToolTip = "";
+            StringBuilder sToolTip = new StringBuilder();
 
             bool bContinent = CheckMousePosition();
 
@@ -2185,30 +2097,30 @@ namespace MapDrawEngine
             */
 
             if (bContinent && m_pFocusedContinent != null)
-                sToolTip += m_pFocusedContinent.As<ContinentX>().ToString();
+                sToolTip.Append(m_pFocusedContinent.As<ContinentX>().ToString());
 
             if (m_pFocusedLand != null)
             {
                 if (sToolTip.Length > 0)
-                    sToolTip += "\n - ";
+                    sToolTip.Append("\n - ");
 
-                sToolTip += m_pFocusedLand.As<LandX>().ToString();
+                sToolTip.Append(m_pFocusedLand.As<LandX>().ToString());
             }
 
             if (bContinent && m_pFocusedState != null)
             {
                 if (sToolTip.Length > 0)
-                    sToolTip += "\n   - ";
+                    sToolTip.Append("\n   - ");
 
-                sToolTip += string.Format("{1} {0} ({2})", m_pFocusedState.m_pSociety.m_pStateModel.m_sName, m_pFocusedState.m_pSociety.m_sName, m_pFocusedState.m_pSociety.m_pTitularNation);
+                sToolTip.AppendFormat("{1} {0} ({2})", m_pFocusedState.m_pSociety.Polity.Name, m_pFocusedState.m_pSociety.Name, m_pFocusedState.m_pSociety.TitularNation);
             }
 
             if (bContinent && m_pFocusedProvince != null)
             {
                 if (sToolTip.Length > 0)
-                    sToolTip += "\n     - ";
+                    sToolTip.Append("\n     - ");
 
-                sToolTip += string.Format("province {0} ({2}, {1})", m_pFocusedProvince.m_pLocalSociety.m_sName, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pLocalSociety.m_pTitularNation);
+                sToolTip.AppendFormat("province {0} ({2}, {1})", m_pFocusedProvince.m_pLocalSociety.Name, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pLocalSociety.TitularNation);
 
                 //sToolTip += "\n          [";
 
@@ -2220,11 +2132,11 @@ namespace MapDrawEngine
             if (m_pFocusedLocation != null)
             {
                 if (sToolTip.Length > 0)
-                    sToolTip += "\n       - ";
+                    sToolTip.Append("\n       - ");
 
                 LocationX pFocusedLocX = m_pFocusedLocation.As<LocationX>();
 
-                sToolTip += pFocusedLocX.ToString();
+                sToolTip.Append(pFocusedLocX.ToString());
 
                 if (pFocusedLocX.m_pSettlement != null && pFocusedLocX.m_pSettlement.m_cBuildings.Count > 0)
                 {
@@ -2238,31 +2150,31 @@ namespace MapDrawEngine
                     }
 
                     foreach (var vBuilding in cBuildings)
-                        sToolTip += "\n         - " + vBuilding.Key + "  x" + vBuilding.Value.ToString();
+                        sToolTip.Append("\n         - ").Append(vBuilding.Key).Append("  x").Append(vBuilding.Value.ToString());
                 }
 
                 if (pFocusedLocX.m_cHaveRoadTo.Count > 0)
                 {
-                    sToolTip += "\nHave roads to:";
+                    sToolTip.Append("\nHave roads to:");
                     foreach (var pRoad in pFocusedLocX.m_cHaveRoadTo)
-                        sToolTip += "\n - " + pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoad.Key.m_pSettlement.m_sName + " [" + pRoad.Value.m_eLevel.ToString() + "]";
+                        sToolTip.Append("\n - ").Append(pRoad.Key.m_pSettlement.m_pInfo.m_eSize.ToString()).Append(' ').Append(pRoad.Key.m_pSettlement.m_sName).Append(" [").Append(pRoad.Value.m_eLevel.ToString()).Append(']');
                 }
 
                 if (pFocusedLocX.m_cHaveSeaRouteTo.Count > 0)
                 {
-                    sToolTip += "\nHave sea routes to:";
-                    foreach (LocationX pRoute in pFocusedLocX.m_cHaveSeaRouteTo)
-                        sToolTip += "\n - " + pRoute.m_pSettlement.m_pInfo.m_eSize.ToString() + " " + pRoute.m_pSettlement.m_sName;
+                    sToolTip.Append("\nHave sea routes to:");
+                    foreach (Settlement pHarbour in pFocusedLocX.m_cHaveSeaRouteTo.Select(x => x.m_pSettlement))
+                        sToolTip.Append("\n - ").Append(pHarbour.m_pInfo.m_eSize.ToString()).Append(' ').Append(pHarbour.m_sName);
                 }
             }
 
-            return sToolTip;
+            return sToolTip.ToString();
         }
 
         private void MapDraw_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             bool bContinent = CheckMousePosition();
-        
+
             if (m_pFocusedState != null)
                 SelectedState = m_pFocusedState;
         }
@@ -2272,17 +2184,14 @@ namespace MapDrawEngine
             if (m_pSelectedState == null)
                 return;
 
-            MapQuadrant[] aQuads;
-            PointF[][] aPoints = BuildPath(m_pSelectedState.m_cFirstLines, false, out aQuads);
+            PointF[][] aPoints = BuildPath(m_pSelectedState.FirstLines, false, out MapQuadrant[] aQuads);
             GraphicsPath pPath = new GraphicsPath();
             foreach (var aPts in aPoints)
                 pPath.AddPolygon(aPts);
             RectangleF pRect = pPath.GetBounds();
 
             // Copy to a temporary variable to be thread-safe.
-            EventHandler<SelectedStateChangedEventArgs> temp = SelectedStateChanged;
-            if (temp != null)
-                temp(this, new SelectedStateChangedEventArgs(m_pSelectedState, (int)(pRect.Left + pRect.Width / 2), (int)(pRect.Top + pRect.Height / 2)));
+            SelectedStateChanged?.Invoke(this, new SelectedStateChangedEventArgs(m_pSelectedState, (int)(pRect.Left + pRect.Width / 2), (int)(pRect.Top + pRect.Height / 2)));
         }
 
         /// <summary>
@@ -2292,8 +2201,7 @@ namespace MapDrawEngine
         /// <returns></returns>
         public Point GetCentralPoint(State pState)
         {
-            MapQuadrant[] aQuads;
-            PointF[][] aPoints = BuildPath(pState.m_cFirstLines, false, out aQuads);
+            PointF[][] aPoints = BuildPath(pState.FirstLines, false, out MapQuadrant[] aQuads);
             GraphicsPath pPath = new GraphicsPath();
             foreach (var aPts in aPoints)
                 pPath.AddPolygon(aPts);

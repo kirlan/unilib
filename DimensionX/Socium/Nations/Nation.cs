@@ -18,47 +18,52 @@ namespace Socium.Nations
         mostly_powerful
     }
 
-    public class Nation 
+    public class Nation
     {
-        public Phenotype m_pPhenotypeM;
-        public Phenotype m_pPhenotypeF;
+        public Phenotype PhenotypeMale { get; }
+        public Phenotype PhenotypeFemale { get; }
 
-        public Society m_pProtoSociety = null;
-        
+        public Society ProtoSociety { get; } = null;
+
+        /// <summary>
+        /// Фенотип "сильного" пола
+        /// </summary>
         public Phenotype DominantPhenotype
         {
             get
             {
-                if (m_pProtoSociety.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
-                    return m_pPhenotypeF;
+                if (ProtoSociety.DominantCulture.Customs.Has(Customs.GenderPriority.Matriarchy))
+                    return PhenotypeFemale;
                 else
-                    return m_pPhenotypeM;
+                    return PhenotypeMale;
             }
         }
 
         /// <summary>
-        /// Культура "слабого" пола
+        /// Фенотип "слабого" пола
         /// </summary>
         public Phenotype InferiorFenotype
         {
             get
             {
-                if (m_pProtoSociety.DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Matriarchy))
-                    return m_pPhenotypeM;
+                if (ProtoSociety.DominantCulture.Customs.Has(Customs.GenderPriority.Matriarchy))
+                    return PhenotypeMale;
                 else
-                    return m_pPhenotypeF;
+                    return PhenotypeFemale;
             }
         }
 
+        public Race Race { get; } = null;
 
-        public Race m_pRace = null;
+        private readonly LandTypeInfo[] m_aPreferredLands;
+        private readonly LandTypeInfo[] m_aHatedLands;
 
-        public LandTypeInfo[] m_aPreferredLands;
-        public LandTypeInfo[] m_aHatedLands;
+        public LandTypeInfo[] PreferredLands { get => m_aPreferredLands; }
+        public LandTypeInfo[] HatedLands { get => m_aHatedLands; }
 
         public bool IsAncient { get; private set; }
         public bool IsHegemon { get; private set; }
-        public bool IsInvader { get; private set; }
+        public bool IsInvader { get; }
 
         /// <summary>
         /// Пометить как "древнюю". Древние расы не могут быть гегемонами!
@@ -77,7 +82,7 @@ namespace Socium.Nations
             IsHegemon = true;
         }
 
-        public Epoch m_pEpoch = null;
+        public Epoch Epoch { get; } = null;
 
         public Nation(Race pRace, Epoch pEpoch, bool bInvader) : this(pRace, pEpoch)
         {
@@ -86,37 +91,39 @@ namespace Socium.Nations
 
         public Nation(Race pRace, Epoch pEpoch)
         {
-            m_pRace = pRace;
+            Race = pRace;
 
-            m_pEpoch = pEpoch;
+            Epoch = pEpoch;
 
             bool bNew = false;
             do
             {
-                m_pPhenotypeM = (Phenotype)m_pRace.m_pPhenotypeM.MutateNation();
+                PhenotypeMale = (Phenotype)Race.PhenotypeMale.MutateNation();
 
-                var pExpectedPhenotypeF = Phenotype.Combine(m_pPhenotypeM, m_pRace.m_pGenderDiffFemale);
+                var pExpectedPhenotypeF = Phenotype.Combine(PhenotypeMale, Race.GenderDiffFemale);
 
-                m_pPhenotypeF = (Phenotype)pExpectedPhenotypeF.MutateGender();
+                PhenotypeFemale = (Phenotype)pExpectedPhenotypeF.MutateGender();
 
-                bNew = !m_pPhenotypeM.IsIdentical(m_pRace.m_pPhenotypeM) &&
-                       !m_pPhenotypeF.IsIdentical(m_pRace.m_pPhenotypeF);
+                bNew = !PhenotypeMale.IsIdentical(Race.PhenotypeMale) &&
+                       !PhenotypeFemale.IsIdentical(Race.PhenotypeFemale);
 
-                foreach (Nation pOtherNation in m_pRace.m_cNations)
+                foreach (Nation pOtherNation in Race.Nations)
                 {
-                    if (m_pPhenotypeM.IsIdentical(pOtherNation.m_pPhenotypeM) &&
-                        m_pPhenotypeF.IsIdentical(pOtherNation.m_pPhenotypeF))
+                    if (PhenotypeMale.IsIdentical(pOtherNation.PhenotypeMale) &&
+                        PhenotypeFemale.IsIdentical(pOtherNation.PhenotypeFemale))
+                    {
                         bNew = false;
+                    }
                 }
             }
             while (!bNew);
 
-            m_pProtoSociety = new NationalSociety(pRace, pEpoch, this);
-            m_pProtoSociety.m_sName = m_pRace.m_pLanguage.RandomNationName();
+            ProtoSociety = new NationalSociety(pRace, pEpoch, this);
+            ProtoSociety.Name = Race.Language.RandomNationName();
 
             DominantPhenotype.GetTerritoryPreferences(out m_aPreferredLands, out m_aHatedLands);
 
-            m_pRace.m_cNations.Add(this);
+            Race.Nations.Add(this);
         }
 
         public override string ToString()
@@ -128,10 +135,10 @@ namespace Socium.Nations
             //        return string.Format("great {1} ({0})", m_sName, m_pRace).ToLower();
             //    else
 
-            if (m_pProtoSociety.m_sName == m_pRace.ToString())
-                return m_pProtoSociety.m_sName;
+            if (ProtoSociety.Name == Race.ToString())
+                return ProtoSociety.Name;
 
-            return string.Format("{1} ({0})", m_pProtoSociety.m_sName, m_pRace).ToLower();
+            return string.Format("{1} ({0})", ProtoSociety.Name, Race).ToLower();
         }
 
         /// <summary>
@@ -143,36 +150,36 @@ namespace Socium.Nations
         {
             if (IsInvader)
             {
-                m_pProtoSociety.m_iTechLevel = pEpoch.m_iInvadersMinTechLevel + Rnd.Get(pEpoch.m_iInvadersMaxTechLevel - pEpoch.m_iInvadersMinTechLevel + 1);
-                m_pProtoSociety.m_iMagicLimit = pEpoch.m_iInvadersMinMagicLevel + Rnd.Get(pEpoch.m_iInvadersMaxMagicLevel - pEpoch.m_iInvadersMinMagicLevel + 1);
+                ProtoSociety.TechLevel = pEpoch.m_iInvadersMinTechLevel + Rnd.Get(pEpoch.m_iInvadersMaxTechLevel - pEpoch.m_iInvadersMinTechLevel + 1);
+                ProtoSociety.MagicLimit = pEpoch.m_iInvadersMinMagicLevel + Rnd.Get(pEpoch.m_iInvadersMaxMagicLevel - pEpoch.m_iInvadersMinMagicLevel + 1);
 
                 if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
-                    m_pProtoSociety.m_iTechLevel = pEpoch.m_iInvadersMinTechLevel;
+                    ProtoSociety.TechLevel = pEpoch.m_iInvadersMinTechLevel;
 
                 int iMagicLimit = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
                 if (Rnd.OneChanceFrom(10))
-                    m_pProtoSociety.m_iMagicLimit += iMagicLimit;
+                    ProtoSociety.MagicLimit += iMagicLimit;
                 else
-                    m_pProtoSociety.m_iMagicLimit -= iMagicLimit;
+                    ProtoSociety.MagicLimit -= iMagicLimit;
 
-                int iOldTechLevel = m_pProtoSociety.m_iTechLevel;
+                int iOldTechLevel = ProtoSociety.TechLevel;
 
                 int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
                 if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence != Intelligence.Primitive &&
                     (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(10)))
-                    m_pProtoSociety.m_iTechLevel += iTechLevel;
+                    ProtoSociety.TechLevel += iTechLevel;
                 else
-                    m_pProtoSociety.m_iTechLevel -= iTechLevel;
+                    ProtoSociety.TechLevel -= iTechLevel;
 
-                if (m_pProtoSociety.m_iMagicLimit < pEpoch.m_iInvadersMinMagicLevel)
-                    m_pProtoSociety.m_iMagicLimit = pEpoch.m_iInvadersMinMagicLevel;
-                if (m_pProtoSociety.m_iMagicLimit > pEpoch.m_iInvadersMaxMagicLevel)
-                    m_pProtoSociety.m_iMagicLimit = pEpoch.m_iInvadersMaxMagicLevel;
+                if (ProtoSociety.MagicLimit < pEpoch.m_iInvadersMinMagicLevel)
+                    ProtoSociety.MagicLimit = pEpoch.m_iInvadersMinMagicLevel;
+                if (ProtoSociety.MagicLimit > pEpoch.m_iInvadersMaxMagicLevel)
+                    ProtoSociety.MagicLimit = pEpoch.m_iInvadersMaxMagicLevel;
 
-                if (m_pProtoSociety.m_iTechLevel < pEpoch.m_iInvadersMinTechLevel)
-                    m_pProtoSociety.m_iTechLevel = pEpoch.m_iInvadersMinTechLevel;
-                if (m_pProtoSociety.m_iTechLevel > pEpoch.m_iInvadersMaxTechLevel)
-                    m_pProtoSociety.m_iTechLevel = pEpoch.m_iInvadersMaxTechLevel;
+                if (ProtoSociety.TechLevel < pEpoch.m_iInvadersMinTechLevel)
+                    ProtoSociety.TechLevel = pEpoch.m_iInvadersMinTechLevel;
+                if (ProtoSociety.TechLevel > pEpoch.m_iInvadersMaxTechLevel)
+                    ProtoSociety.TechLevel = pEpoch.m_iInvadersMaxTechLevel;
             }
             else
             {
@@ -181,64 +188,64 @@ namespace Socium.Nations
                     int iNewTechLevel = pEpoch.m_iNativesMinTechLevel + Rnd.Get(pEpoch.m_iNativesMaxTechLevel - pEpoch.m_iNativesMinTechLevel + 1);
                     int iNewMagicLimit = pEpoch.m_iNativesMinMagicLevel + Rnd.Get(pEpoch.m_iNativesMaxMagicLevel - pEpoch.m_iNativesMinMagicLevel + 1);
 
-                    if (m_pProtoSociety.m_iMagicLimit <= pEpoch.m_iNativesMinMagicLevel)
-                        m_pProtoSociety.m_iMagicLimit = pEpoch.m_iNativesMinMagicLevel;
+                    if (ProtoSociety.MagicLimit <= pEpoch.m_iNativesMinMagicLevel)
+                        ProtoSociety.MagicLimit = pEpoch.m_iNativesMinMagicLevel;
                     else
-                        m_pProtoSociety.m_iMagicLimit = (m_pProtoSociety.m_iMagicLimit + iNewMagicLimit + 1) / 2;
+                        ProtoSociety.MagicLimit = (ProtoSociety.MagicLimit + iNewMagicLimit + 1) / 2;
 
-                    if (m_pProtoSociety.m_iTechLevel <= pEpoch.m_iNativesMinTechLevel || DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
-                        m_pProtoSociety.m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
+                    if (ProtoSociety.TechLevel <= pEpoch.m_iNativesMinTechLevel || DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Primitive)
+                        ProtoSociety.TechLevel = pEpoch.m_iNativesMinTechLevel;
                     else
-                        m_pProtoSociety.m_iTechLevel = (m_pProtoSociety.m_iTechLevel + iNewTechLevel + 1) / 2;
+                        ProtoSociety.TechLevel = (ProtoSociety.TechLevel + iNewTechLevel + 1) / 2;
                 }
 
                 int iMagicLimit = (int)(Math.Pow(Rnd.Get(13), 3) / 1000);
                 if (Rnd.OneChanceFrom(10))
-                    m_pProtoSociety.m_iMagicLimit += iMagicLimit;
+                    ProtoSociety.MagicLimit += iMagicLimit;
                 else
-                    m_pProtoSociety.m_iMagicLimit -= iMagicLimit;
+                    ProtoSociety.MagicLimit -= iMagicLimit;
 
-                int iOldTechLevel = m_pProtoSociety.m_iTechLevel;
+                int iOldTechLevel = ProtoSociety.TechLevel;
 
                 int iTechLevel = (int)(Math.Pow(Rnd.Get(13), 3) / 1000);
                 if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence != Intelligence.Primitive && 
                     (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(5)))
-                    m_pProtoSociety.m_iTechLevel += iTechLevel;
+                    ProtoSociety.TechLevel += iTechLevel;
                 else
-                    m_pProtoSociety.m_iTechLevel -= iTechLevel;
+                    ProtoSociety.TechLevel -= iTechLevel;
 
                 if (!IsAncient)
                 {
-                    if (m_pProtoSociety.m_iMagicLimit < pEpoch.m_iNativesMinMagicLevel)
-                        m_pProtoSociety.m_iMagicLimit = pEpoch.m_iNativesMinMagicLevel;
-                    if (m_pProtoSociety.m_iMagicLimit > pEpoch.m_iNativesMaxMagicLevel)
-                        m_pProtoSociety.m_iMagicLimit = pEpoch.m_iNativesMaxMagicLevel;
+                    if (ProtoSociety.MagicLimit < pEpoch.m_iNativesMinMagicLevel)
+                        ProtoSociety.MagicLimit = pEpoch.m_iNativesMinMagicLevel;
+                    if (ProtoSociety.MagicLimit > pEpoch.m_iNativesMaxMagicLevel)
+                        ProtoSociety.MagicLimit = pEpoch.m_iNativesMaxMagicLevel;
 
-                    if (m_pProtoSociety.m_iTechLevel < pEpoch.m_iNativesMinTechLevel)
-                        m_pProtoSociety.m_iTechLevel = pEpoch.m_iNativesMinTechLevel;
-                    if (m_pProtoSociety.m_iTechLevel > pEpoch.m_iNativesMaxTechLevel)
-                        m_pProtoSociety.m_iTechLevel = pEpoch.m_iNativesMaxTechLevel;
+                    if (ProtoSociety.TechLevel < pEpoch.m_iNativesMinTechLevel)
+                        ProtoSociety.TechLevel = pEpoch.m_iNativesMinTechLevel;
+                    if (ProtoSociety.TechLevel > pEpoch.m_iNativesMaxTechLevel)
+                        ProtoSociety.TechLevel = pEpoch.m_iNativesMaxTechLevel;
                 }
                 else
                 {
-                    if (m_pProtoSociety.m_iMagicLimit < 0)
-                        m_pProtoSociety.m_iMagicLimit = 0;
-                    if (m_pProtoSociety.m_iMagicLimit > 8)
-                        m_pProtoSociety.m_iMagicLimit = 8;
+                    if (ProtoSociety.MagicLimit < 0)
+                        ProtoSociety.MagicLimit = 0;
+                    if (ProtoSociety.MagicLimit > 8)
+                        ProtoSociety.MagicLimit = 8;
 
-                    if (m_pProtoSociety.m_iTechLevel < 0)
-                        m_pProtoSociety.m_iTechLevel = 0;
-                    if (m_pProtoSociety.m_iTechLevel > 8)
-                        m_pProtoSociety.m_iTechLevel = 8;
+                    if (ProtoSociety.TechLevel < 0)
+                        ProtoSociety.TechLevel = 0;
+                    if (ProtoSociety.TechLevel > 8)
+                        ProtoSociety.TechLevel = 8;
                 }
             }
 
-            m_pProtoSociety.m_cCulture[Gender.Male].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
-            m_pProtoSociety.m_cCulture[Gender.Female].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
-            if (DominantPhenotype.m_pValues.Get<BrainGenetix>().MagicAbilityPotential > m_pProtoSociety.m_iMagicLimit + 1)
-                m_pProtoSociety.DominantCulture.m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_powerful;
-            if (DominantPhenotype.m_pValues.Get<BrainGenetix>().MagicAbilityPotential < m_pProtoSociety.m_iMagicLimit - 1)
-                m_pProtoSociety.InferiorCulture.m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
+            ProtoSociety.Culture[Gender.Male].MagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
+            ProtoSociety.Culture[Gender.Female].MagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
+            if (DominantPhenotype.m_pValues.Get<BrainGenetix>().MagicAbilityPotential > ProtoSociety.MagicLimit + 1)
+                ProtoSociety.DominantCulture.MagicAbilityDistribution = MagicAbilityDistribution.mostly_powerful;
+            if (DominantPhenotype.m_pValues.Get<BrainGenetix>().MagicAbilityPotential < ProtoSociety.MagicLimit - 1)
+                ProtoSociety.InferiorCulture.MagicAbilityDistribution = MagicAbilityDistribution.mostly_weak;
 
             //int iNewLevel = Math.Max(m_iTechLevel, m_iMagicLimit);
             //if (iNewLevel > iOldLevel)
@@ -254,10 +261,10 @@ namespace Socium.Nations
             //        m_pCustoms.Degrade();
             //    }
         }
-        
+
         /// <summary>
         /// Вычисляет условную стоимость заселения территории указанной расой, в соответсвии с ландшафтом и фенотипом расы.
-        /// Возвращает значение в диапазоне 1-100. 
+        /// Возвращает значение в диапазоне 1-100.
         /// 1 - любая территория, идеально подходящая указанной расе (горы для гномов). Так же - простая для заселения территория, просто подходящая указанной расе.
         /// 10 - простая для заселения территория (равнины), но совсем не подходящая указанной расе (горы для эльфов). Так же - максимально сложная для заселения территория, просто подходящая указанной расе (горы для людей).
         /// 100 - максимально сложная для заселения территория (непроходимые горы), совсем не подходящая указанной расе.
@@ -269,15 +276,15 @@ namespace Socium.Nations
             if (pLandType == null)
                 return -1;
 
-            if (!pLandType.m_eEnvironment.HasFlag(LandscapeGeneration.Environment.Habitable))
+            if (!pLandType.Environment.HasFlag(LandscapeGeneration.Environment.Habitable))
                 return -1;
 
-            float fCost = pLandType.m_iMovementCost; // 1 - 10
+            float fCost = pLandType.MovementCost; // 1 - 10
 
-            if (m_aPreferredLands.Contains(pLandType))
+            if (PreferredLands.Contains(pLandType))
                 fCost /= 10;
 
-            if (m_aHatedLands.Contains(pLandType))
+            if (HatedLands.Contains(pLandType))
                 fCost *= 10;
 
             if (IsHegemon)
@@ -319,7 +326,7 @@ namespace Socium.Nations
                 case NutritionType.Carnivorous:
                     return cResources[LandResource.Game] + cResources[LandResource.Fish];
                 default:
-                    throw new Exception(string.Format("Unknown Nutrition type: {0}", DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType));
+                    throw new InvalidOperationException(string.Format("Unknown Nutrition type: {0}", DominantPhenotype.m_pValues.Get<NutritionGenetix>().NutritionType));
             }
         }
     }

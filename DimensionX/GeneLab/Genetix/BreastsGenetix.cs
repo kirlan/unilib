@@ -39,7 +39,7 @@ namespace GeneLab.Genetix
 
         /// <summary>
         /// 'have 2 small breasts'
-        /// or - if gender specified - 
+        /// or - if gender specified -
         /// 'He/She have 2 small breasts'
         /// or just '' if no breasts
         /// </summary>
@@ -210,16 +210,13 @@ namespace GeneLab.Genetix
             get { return new BreastsGenetix(BreastsCount.Eight, BreastSize.Small); }
         }
 
-
         public BreastsCount BreastsCount { get; private set; } = BreastsCount.Two;
 
         public BreastSize BreastSize { get; private set; } = BreastSize.None;
 
         public bool IsIdentical(GenetixBase pOther)
         {
-            BreastsGenetix pAnother = pOther as BreastsGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is BreastsGenetix pAnother))
                 return false;
 
             return BreastsCount == pAnother.BreastsCount &&
