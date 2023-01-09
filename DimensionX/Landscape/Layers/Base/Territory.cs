@@ -20,7 +20,7 @@ namespace LandscapeGeneration
         /// </summary>
         public virtual Dictionary<LAYER, List<VoronoiEdge>> BorderWith { get; } = new Dictionary<LAYER, List<VoronoiEdge>>();
 
-        protected static LAYER m_pForbidden = new LAYER().SetForbidden();
+        protected readonly static LAYER m_pForbidden = new LAYER().SetForbidden();
 
         public virtual bool Forbidden { get; private set; } = false;
 
@@ -84,7 +84,7 @@ namespace LandscapeGeneration
         public void SetOwner(OWNER value)
         {
             if (m_cOwnerInfoLayer != null)
-                throw new Exception("Owner InfoLayer already set! Clear it first!");
+                throw new InvalidOperationException("Owner InfoLayer already set! Clear it first!");
 
             m_cOwnerInfoLayer = value;
         }
@@ -183,12 +183,12 @@ namespace LandscapeGeneration
         /// </summary>
         public BASE Origin => this.As<BASE>();
 
-        public TerritoryExtended(BASE pBase)
+        protected TerritoryExtended(BASE pBase)
         {
             AddLayer(pBase);
         }
 
-        public TerritoryExtended()
+        protected TerritoryExtended()
         {
         }
 
@@ -270,12 +270,12 @@ namespace LandscapeGeneration
         /// </summary>
         public BASE Origin => this.As<BASE>();
 
-        public TerritoryExtended(BASE pBase)
+        protected TerritoryExtended(BASE pBase)
         {
             AddLayer(pBase);
         }
 
-        public TerritoryExtended()
+        protected TerritoryExtended()
         { }
 
         public void FillBorderWithKeys()

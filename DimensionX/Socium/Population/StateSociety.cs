@@ -302,8 +302,6 @@ namespace Socium.Population
 
                 if (pProvince.m_pLocalSociety.m_iInfrastructureLevel > m_iInfrastructureLevel)
                     m_iInfrastructureLevel = pProvince.m_pLocalSociety.m_iInfrastructureLevel;
-                //m_iInfrastructureLevel += pProvince.m_iInfrastructureLevel;
-                //fInfrastructureLevel += 1.0f/(pProvince.m_iInfrastructureLevel+1);
             }
 
             Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
@@ -339,7 +337,6 @@ namespace Socium.Population
                     if (InfrastructureLevels[m_iInfrastructureLevel].m_eMaxNavalPath == RoadQuality.Good ||
                         InfrastructureLevels[m_iInfrastructureLevel].m_iAerialAvailability > 1)
                     {
-                        // World - не Territory!
                         var pWorld = pContinent.Origin.GetOwner();
                         foreach (var pOtherContinent in pWorld.Contents)
                         {
@@ -391,7 +388,7 @@ namespace Socium.Population
 
                 int iChoice = Rnd.ChooseOne(cChances.Values, 2);
                 if (iChoice == -1)
-                    throw new Exception("Can't find host nation for a parasite!");
+                    throw new InvalidOperationException("Can't find host nation for a parasite!");
 
                 foreach (var pNation in cChances)
                 {
@@ -812,7 +809,7 @@ namespace Socium.Population
                         if (pSettlement.m_cBuildings.Count > 0)
                         {
                             if (iInfrastructureLevel < 2)
-                                cChances[BuildingInfo.WarriorsHutSmall] = DominantCulture.GetTrait(Trait.Agression) / 2;//(float)iControl / 4;
+                                cChances[BuildingInfo.WarriorsHutSmall] = DominantCulture.GetTrait(Trait.Agression) / 2;
 
                             if (iInfrastructureLevel < 2)
                                 cChances[BuildingInfo.ShamansHutSmall] = DominantCulture.GetTrait(Trait.Piety) / 2;
@@ -859,11 +856,9 @@ namespace Socium.Population
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 2)
                                 pGuard = BuildingInfo.WarriorsHutSmall;
-                            else
-                                if (iInfrastructureLevel < 4)
+                            else if (iInfrastructureLevel < 4)
                                 pGuard = BuildingInfo.GuardTowerSmall;
-                            else
-                                    if (iInfrastructureLevel == 8)
+                            else if (iInfrastructureLevel == 8)
                                 pGuard = BuildingInfo.EmergencyPostSmall;
                             else
                                 pGuard = BuildingInfo.PoliceStationSmall;
@@ -915,7 +910,7 @@ namespace Socium.Population
                             //    cChances[BuildingInfo.SlavePensMedium] = (float)cChances.Count;// / 2 + 1;
                             //}
 
-                            cChances[BuildingInfo.MarketSmall] = (float)cChances.Count / 2;// / 2 + 1;
+                            cChances[BuildingInfo.MarketSmall] = (float)cChances.Count / 2;
 
                             if (m_pStateModel.m_bDinasty)
                             {
@@ -960,8 +955,7 @@ namespace Socium.Population
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 4)
                                 pGuard = BuildingInfo.GuardBarracksSmall;
-                            else
-                                if (iInfrastructureLevel == 8)
+                            else if (iInfrastructureLevel == 8)
                                 pGuard = BuildingInfo.EmergencyPostSmall;
                             else
                                 pGuard = BuildingInfo.PoliceStationSmall;
@@ -971,8 +965,7 @@ namespace Socium.Population
                             BuildingInfo pPrison;
                             if (iInfrastructureLevel < 4)
                                 pPrison = BuildingInfo.PrisonSmall;
-                            else
-                                if (iInfrastructureLevel == 8)
+                            else if (iInfrastructureLevel == 8)
                                 pPrison = BuildingInfo.HoldingSmall;
                             else
                                 pPrison = BuildingInfo.PrisonPoliceSmall;
@@ -1088,7 +1081,7 @@ namespace Socium.Population
                             else
                             {
                                 cChances[BuildingInfo.OfficeSmall] = (float)cChances.Count / 2 + 1;
-                                cChances[BuildingInfo.OfficeMedium] = (float)cChances.Count / 4;// / 2 + 1;
+                                cChances[BuildingInfo.OfficeMedium] = (float)cChances.Count / 4;
                             }
 
                             if (m_pStateModel.m_bDinasty)
@@ -1140,8 +1133,7 @@ namespace Socium.Population
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 4)
                                 pGuard = BuildingInfo.GuardBarracksMedium;
-                            else
-                                if (iInfrastructureLevel == 8)
+                            else if (iInfrastructureLevel == 8)
                                 pGuard = BuildingInfo.EmergencyPostSmall;
                             else
                                 pGuard = BuildingInfo.PoliceStationSmall;
@@ -1154,8 +1146,7 @@ namespace Socium.Population
                             BuildingInfo pPrison;
                             if (iInfrastructureLevel < 4)
                                 pPrison = BuildingInfo.PrisonSmall;
-                            else
-                                if (iInfrastructureLevel == 8)
+                            else if (iInfrastructureLevel == 8)
                                 pPrison = BuildingInfo.HoldingSmall;
                             else
                                 pPrison = BuildingInfo.PrisonPoliceSmall;
@@ -1346,8 +1337,7 @@ namespace Socium.Population
                             BuildingInfo pGuard;
                             if (iInfrastructureLevel < 4)
                                 pGuard = BuildingInfo.GuardBarracksMedium;
-                            else
-                                if (iInfrastructureLevel == 8)
+                            else if (iInfrastructureLevel == 8)
                                 pGuard = BuildingInfo.EmergencyPostSmall;
                             else
                                 pGuard = BuildingInfo.PoliceStationSmall;
@@ -1360,8 +1350,7 @@ namespace Socium.Population
                             BuildingInfo pPrison;
                             if (iInfrastructureLevel < 4)
                                 pPrison = BuildingInfo.PrisonMedium;
-                            else
-                                if (iInfrastructureLevel == 8)
+                            else if (iInfrastructureLevel == 8)
                                 pPrison = BuildingInfo.HoldingMedium;
                             else
                                 pPrison = BuildingInfo.PrisonPoliceMedium;
@@ -1705,31 +1694,21 @@ namespace Socium.Population
 
             if (DominantCulture.GetTrait(Trait.Agression) > 1.66)
                 m_iSocialEquality--;
-            //if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] > 1.33)
-            //    m_iSocialEquality--;
-            //if (m_pCulture.MentalityValues[Mentality.Agression][m_iCultureLevel] > 1)
-            //    m_iSocialEquality--;
 
             if (DominantCulture.GetTrait(Trait.Fanaticism) > 1.66)
                 m_iSocialEquality--;
             if (DominantCulture.GetTrait(Trait.Fanaticism) > 1.33)
                 m_iSocialEquality--;
-            //if (m_pCulture.MentalityValues[Mentality.Fanaticism][m_iTechLevel] > 1)
-            //    m_iSocialEquality--;
 
             if (DominantCulture.GetTrait(Trait.Selfishness) > 1.66)
                 m_iSocialEquality--;
             if (DominantCulture.GetTrait(Trait.Selfishness) > 1.33)
                 m_iSocialEquality--;
-            //if (m_pCulture.MentalityValues[Mentality.Selfishness][m_iCultureLevel] > 1)
-            //    m_iSocialEquality--;
 
             if (DominantCulture.GetTrait(Trait.Treachery) > 1.66)
                 m_iSocialEquality--;
             if (DominantCulture.GetTrait(Trait.Treachery) > 1.33)
                 m_iSocialEquality--;
-            //if (m_pCulture.MentalityValues[Mentality.Treachery][m_iCultureLevel] > 1)
-            //    m_iSocialEquality--;
 
             if (m_pStateModel.m_bDinasty)
                 m_iSocialEquality--;
@@ -1786,9 +1765,6 @@ namespace Socium.Population
         private void SetStateControl()
         {
             m_iControl = 2;
-
-            //if (m_pCulture.Moral[Culture.Morale.Agression] > 1)
-            //    m_iControl++;
 
             if (m_pStateModel.m_bDinasty)
                 m_iControl++;
@@ -2004,15 +1980,15 @@ namespace Socium.Population
 
             if (pOpponent.m_pSociety.m_iInfrastructureLevel > m_iInfrastructureLevel + 1)
             {
-                iHostility++;//= pOpponent.m_iLifeLevel - m_iLifeLevel;
-                sNegativeReasons += string.Format(" (-{0}) Envy for civilization\n", 1);//pOpponent.m_iLifeLevel - m_iLifeLevel);
+                iHostility++;
+                sNegativeReasons += string.Format(" (-{0}) Envy for civilization\n", 1);
             }
             else
             {
                 if (pOpponent.m_pSociety.m_iInfrastructureLevel < m_iInfrastructureLevel - 1)
                 {
-                    iHostility++;//= m_iLifeLevel - pOpponent.m_iLifeLevel;
-                    sNegativeReasons += string.Format(" (-{0}) Scorn for savagery\n", 1);//m_iLifeLevel - pOpponent.m_iLifeLevel);
+                    iHostility++;
+                    sNegativeReasons += string.Format(" (-{0}) Scorn for savagery\n", 1);
                 }
             }
 

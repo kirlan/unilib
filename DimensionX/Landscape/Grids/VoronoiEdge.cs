@@ -24,22 +24,6 @@ namespace LandscapeGeneration
             Length = (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
         }
 
-        private void CalcLength(float fCycle)
-        {
-            float fPoint1X = m_pPoint1.X;
-            float fPoint1Y = m_pPoint1.Y;
-
-            float fPoint2X = m_pPoint2.X;
-            float fPoint2Y = m_pPoint2.Y;
-
-            if (fPoint2X + fCycle / 2 < fPoint1X)
-                fPoint2X += fCycle;
-            if (fPoint2X - fCycle / 2 > fPoint1X)
-                fPoint2X -= fCycle;
-
-            Length = (float)Math.Sqrt((fPoint1X - fPoint2X) * (fPoint1X - fPoint2X) + (fPoint1Y - fPoint2Y) * (fPoint1Y - fPoint2Y));
-        }
-
         public VoronoiEdge(VoronoiEdge pOriginal)
         {
             m_pPoint1 = pOriginal.m_pPoint1;

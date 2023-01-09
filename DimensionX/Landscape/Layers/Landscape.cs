@@ -162,7 +162,7 @@ namespace LandscapeGeneration
             }
         }
 
-        private class LandBiome : TerritoryExtended<LandBiome, Biome, Land>
+        private sealed class LandBiome : TerritoryExtended<LandBiome, Biome, Land>
         {
             public LandBiome(Land pLand) : base(pLand)
             { }
@@ -175,7 +175,7 @@ namespace LandscapeGeneration
         /// Биом - группа ВСЕХ сопредельных земель (<see cref="Land"/>/<see cref="LandBiome"/>) одного типа <see cref="LandTypeInfo"/>.
         /// Используется ТОЛЬКО при сглаживании границ локаций - внутри <see cref="SmoothBiomes"/> 
         /// </summary>
-        private class Biome : TerritoryCluster<Biome, Landscape, LandBiome>
+        private sealed class Biome : TerritoryCluster<Biome, Landscape, LandBiome>
         {
             public Biome()
             { }
@@ -468,8 +468,6 @@ namespace LandscapeGeneration
             Dictionary<LandMass, int> cChances = new Dictionary<LandMass,int>();
             int iTotalChances = 0;
 
-            //string sS = m_aLandMasses[0].GetLandsString();
-
             BeginStep("Building  continents...", m_iContinentsCount + m_iContinentsCount); 
             foreach (LandMass pLandMass in m_aLandMasses)
             {
@@ -526,7 +524,6 @@ namespace LandscapeGeneration
                     {
                         if (pLandMass.Forbidden)
                             continue;
-                        //if (cChances[pLandMass] > 0)
                         cChances[pLandMass] = 0;
                     }
                     iLandGrowActual += pChoosenLM.Contents.Count;
@@ -546,7 +543,7 @@ namespace LandscapeGeneration
                 bContinue = false;
                 foreach (Continent pCont in cContinents)
                 {
-                    LandMass pAddon = pCont.Grow() as LandMass;
+                    LandMass pAddon = pCont.Grow();
                     if (pAddon != null)
                     {
                         bContinue = true;
@@ -557,7 +554,6 @@ namespace LandscapeGeneration
                         {
                             if (pLM.Forbidden)
                                 continue;
-                            //if (cChances[pLandMass] > 0)
                             cChances[pLM] = 0;
                         }
                     }
@@ -580,7 +576,6 @@ namespace LandscapeGeneration
                     {
                         if (pLM.Forbidden)
                             continue;
-                        //if (cChances[pLandMass] > 0)
                         cChances[pLM] = 0;
                     }
                 }
@@ -691,7 +686,6 @@ namespace LandscapeGeneration
                     LandMass pLM1 = pLand.GetOwner();
 
                     float fMaxCollision = float.MinValue;
-                    Land pBestLand = null;
                     foreach (Land pLink in pLand.m_aBorderWith)
                     {
                         if (pLink.Forbidden)
@@ -718,7 +712,6 @@ namespace LandscapeGeneration
                             if (fCollision > fMaxCollision)
                             {
                                 fMaxCollision = fCollision;
-                                pBestLand = pLink;
                             }
                         }
                     }
@@ -773,17 +766,6 @@ namespace LandscapeGeneration
 
         private float GetTemperature(VoronoiVertex pVertex)
         {
-            //float fNorthX = m_pPlanet.R / (float)Math.Sqrt(3);
-            //float fNorthY = m_pPlanet.R / (float)Math.Sqrt(3);
-            //float fNorthZ = m_pPlanet.R / (float)Math.Sqrt(3);
-
-            //float fDistNorth = (float)Math.Sqrt((pVertex.m_fX - fNorthX) * (pVertex.m_fX - fNorthX) + (pVertex.m_fY - fNorthY) * (pVertex.m_fY - fNorthY) + (pVertex.m_fZ - fNorthZ) * (pVertex.m_fZ - fNorthZ));
-            //float fDistSouth = (float)Math.Sqrt((pVertex.m_fX + fNorthX) * (pVertex.m_fX + fNorthX) + (pVertex.m_fY + fNorthY) * (pVertex.m_fY + fNorthY) + (pVertex.m_fZ + fNorthZ) * (pVertex.m_fZ + fNorthZ));
-
-            //if (fDistNorth < fDistSouth)
-            //    return fDistNorth / (m_pPlanet.R * (float)Math.Sqrt(2));
-            //else
-            //    return fDistSouth / (m_pPlanet.R * (float)Math.Sqrt(2));
             return 1 - Math.Abs((m_iEquator - pVertex.Y) / m_iPole);
         }
 
@@ -803,7 +785,7 @@ namespace LandscapeGeneration
                             //удалённость точки от экватора 0..1
                             float fTemperatureMod = 1 - GetTemperature(pLinkedLand); 
 
-                            fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;// *fTemperatureMod;
+                            fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;
                             pLinkedLand.Humidity = (int)(fTemperatureMod - 5 + Rnd.Get(10.0f));
 
                             if (pLinkedLand.LandType != null && pLinkedLand.LandType.m_eEnvironment.HasFlag(Environment.Barrier))
@@ -1022,9 +1004,6 @@ namespace LandscapeGeneration
                     {
                         if (pLink.Forbidden || !pLink.HasOwner() || !float.IsNaN(pLink.H))
                             continue;
-
-                        //if (cWaveFront.Contains(pLink))
-                        //    continue;
 
                         if (pLink.GetOwner().LandType == LandTypes.Ocean)
                         {
@@ -1334,7 +1313,7 @@ namespace LandscapeGeneration
                         pLink = new TransportationLinkBase(pNode1 as LandMass, pNode2 as LandMass, m_pLocationsGrid.CycleShift);
 
                     if (pLink == null)
-                        throw new Exception("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
+                        throw new InvalidOperationException("Can't create transportation link between " + pNode1.ToString() + " and " + pNode2.ToString());
 
                     pNode1.Links[pNode2] = pLink;
                     pNode2.Links[pNode1] = pLink;
@@ -1513,18 +1492,6 @@ namespace LandscapeGeneration
             }
 
             ShortestPath pBestPath = new ShortestPath(pStart, pFinish, fCycleShift, m_iPassword, bNavalOnly);
-
-            //List<TransportationNode> cSucceedPath = new List<TransportationNode>();
-            //if (pBestPath.m_aNodes.Length == 0)
-            //{
-            //    foreach (TransportationNode pNode in pLandsPath.m_aNodes)
-            //    {
-            //        if (!pBestPath.visited.Contains(pNode))
-            //            break;
-            //        cSucceedPath.Add(pNode);
-            //    }
-            //    //pBestPath.m_cPath = cSucceedPath.ToArray();
-            //}
 
             return pBestPath;
         }

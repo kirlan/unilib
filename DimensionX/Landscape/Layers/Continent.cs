@@ -87,8 +87,6 @@ namespace LandscapeGeneration
                     m_cBorder[pLandMass.Key].Add(new VoronoiEdge(pLine));
             }
 
-            //ChainBorder();
-
             return pAddon;
         }
     }

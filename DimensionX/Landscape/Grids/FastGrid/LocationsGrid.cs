@@ -231,25 +231,16 @@ namespace LandscapeGeneration.FastGrid
             R = (R + h) / 2;
             R *= 0.96;
 
-            //Придётся сделать несколько попыток, чтобы добиться оптимального заполнения всей территории
-            int c = 0;
-            List<SimpleVector3d> cPoints = new List<SimpleVector3d>();
-            //do
-            //{
-            cPoints = UniformPoissonDiskSampler.SampleRectangle(new SimpleVector3d(k, k, 0),
+            List<SimpleVector3d> cPoints = UniformPoissonDiskSampler.SampleRectangle(new SimpleVector3d(k, k, 0),
                                                 new SimpleVector3d(k + (size - 2 * k), k + (size - 2 * k), 0),
                                                     (float)R * 2);
-            //    R *= 0.99f;
-            //    c++;
-            //}
-            //while (cPoints.Count < count);
 
             return cPoints;
         }
 
-        private Dictionary<CellCH, List<CellCH>> m_cZeroEdges = new Dictionary<CellCH, List<CellCH>>();
+        private readonly Dictionary<CellCH, List<CellCH>> m_cZeroEdges = new Dictionary<CellCH, List<CellCH>>();
 
-        private List<CellCH> m_cNewCells = new List<CellCH>();
+        private readonly List<CellCH> m_cNewCells = new List<CellCH>();
 
         /// <summary>
         /// Восстанавливаем информацию о смежных гранях по выходным данным MIConvexHull.
@@ -318,14 +309,14 @@ namespace LandscapeGeneration.FastGrid
                                 if (pRight == null)
                                     pRight = n;
                                 else
-                                    throw new Exception("Нашли больше 2 локаций с общей границей!");
+                                    throw new InvalidOperationException("Нашли больше 2 локаций с общей границей!");
                             }
                         }
                     }
                 }
 
                 if (pLeft == null || pRight == null)
-                    throw new Exception("У границы меньше 2 сопредельных локаций!");
+                    throw new InvalidOperationException("У границы меньше 2 сопредельных локаций!");
 
                 //для порядка, определим порядок обхода вершин из локации - по часовой стрелке
                 if (IsLeft(pLeft.ToPoint(), from.Circumcenter, to.Circumcenter) < 0)
@@ -362,19 +353,19 @@ namespace LandscapeGeneration.FastGrid
 
             foreach (var pLoc in locations)
             {
-                foreach (var pEdge in pLoc.m_cEdges)
+                foreach (VertexCH.Edge pEdge in pLoc.m_cEdges.Values)
                 {
-                    if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pFrom))
-                        pEdge.Value.m_pFrom = SkipZero(pEdge.Value.m_pFrom);
-                    if (m_cZeroEdges.ContainsKey(pEdge.Value.m_pTo))
-                        pEdge.Value.m_pTo = SkipZero(pEdge.Value.m_pTo);
+                    if (m_cZeroEdges.ContainsKey(pEdge.m_pFrom))
+                        pEdge.m_pFrom = SkipZero(pEdge.m_pFrom);
+                    if (m_cZeroEdges.ContainsKey(pEdge.m_pTo))
+                        pEdge.m_pTo = SkipZero(pEdge.m_pTo);
                 }
             }
 
             return new Rect(fMinX, fMinY, fMaxX - fMinX, fMaxY - fMinY);
         }
 
-        Dictionary<CellCH, CellCH> m_cReplacements = new Dictionary<CellCH, CellCH>();
+        readonly Dictionary<CellCH, CellCH> m_cReplacements = new Dictionary<CellCH, CellCH>();
 
         /// <summary>
         /// Игнорируем слишком короткие рёбра
@@ -492,7 +483,7 @@ namespace LandscapeGeneration.FastGrid
                 {
                     foreach (var pedge in ploc.m_cEdges)
                         if (pedge.Key.m_eShadowDir != VertexCH.Direction.CenterNone)
-                            throw new Exception();
+                            throw new InvalidOperationException();
                 }
 
             }

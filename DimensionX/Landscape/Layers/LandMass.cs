@@ -57,12 +57,12 @@ namespace LandscapeGeneration
 
         public string GetLandsString()
         {
-            string sLands = "";
+            StringBuilder sLands = new StringBuilder();
 
             foreach (var pLand in Contents)
-                sLands += String.Format("({0}), ", pLand.GetLandsString());
+                sLands.AppendFormat("({0}), ", pLand.GetLandsString());
 
-            return sLands;
+            return sLands.ToString();
         }
 
         public override string ToString()

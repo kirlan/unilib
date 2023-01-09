@@ -143,9 +143,6 @@ namespace Socium.Nations
         {
             if (IsInvader)
             {
-                //m_iTechLevel = Math.Min(pEpoch.m_iInvadersMaxTechLevel, pEpoch.m_iInvadersMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-                //m_iMagicLimit = Math.Min(pEpoch.m_iInvadersMaxMagicLevel, pEpoch.m_iInvadersMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
-
                 m_pProtoSociety.m_iTechLevel = pEpoch.m_iInvadersMinTechLevel + Rnd.Get(pEpoch.m_iInvadersMaxTechLevel - pEpoch.m_iInvadersMinTechLevel + 1);
                 m_pProtoSociety.m_iMagicLimit = pEpoch.m_iInvadersMinMagicLevel + Rnd.Get(pEpoch.m_iInvadersMaxMagicLevel - pEpoch.m_iInvadersMinMagicLevel + 1);
 
@@ -181,8 +178,6 @@ namespace Socium.Nations
             {
                 if (!IsAncient)
                 {
-                    //m_iTechLevel = Math.Min(pEpoch.m_iNativesMaxTechLevel, pEpoch.m_iNativesMinTechLevel + 1 + (int)(Math.Pow(Rnd.Get(20), 3) / 1000));
-                    //m_iMagicLimit = Math.Min(pEpoch.m_iNativesMaxMagicLevel, pEpoch.m_iNativesMinMagicLevel + (int)(Math.Pow(Rnd.Get(21), 3) / 1000));
                     int iNewTechLevel = pEpoch.m_iNativesMinTechLevel + Rnd.Get(pEpoch.m_iNativesMaxTechLevel - pEpoch.m_iNativesMinTechLevel + 1);
                     int iNewMagicLimit = pEpoch.m_iNativesMinMagicLevel + Rnd.Get(pEpoch.m_iNativesMaxMagicLevel - pEpoch.m_iNativesMinMagicLevel + 1);
 
@@ -236,8 +231,6 @@ namespace Socium.Nations
                     if (m_pProtoSociety.m_iTechLevel > 8)
                         m_pProtoSociety.m_iTechLevel = 8;
                 }
-
-                //m_pCustoms = new Customs();
             }
 
             m_pProtoSociety.m_cCulture[Gender.Male].m_eMagicAbilityDistribution = MagicAbilityDistribution.mostly_average;
@@ -282,10 +275,10 @@ namespace Socium.Nations
             float fCost = pLandType.m_iMovementCost; // 1 - 10
 
             if (m_aPreferredLands.Contains(pLandType))
-                fCost /= 10;// (float)pLand.Type.m_iMovementCost;//2;
+                fCost /= 10;
 
             if (m_aHatedLands.Contains(pLandType))
-                fCost *= 10;// (float)pLand.Type.m_iMovementCost;//2;
+                fCost *= 10;
 
             if (IsHegemon)
                 fCost /= 2;

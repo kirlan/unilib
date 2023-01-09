@@ -61,13 +61,7 @@ namespace LandscapeGeneration
             }
         }
 
-        private float m_fTemperature = 0;
-
-        public float Temperature
-        {
-            get { return m_fTemperature; }
-            set { m_fTemperature = value; }
-        }
+        public float Temperature { get; set; } = 0;
 
         public override void Start(Location pSeed)
         {
@@ -83,7 +77,7 @@ namespace LandscapeGeneration
             foreach (var pLoc in Contents)
                 sLands.Add(pLoc.GetStringID());
 
-            return String.Join(", ", sLands); ;
+            return String.Join(", ", sLands);
         }
 
         public override string ToString()

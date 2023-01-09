@@ -35,8 +35,6 @@ namespace LandscapeGeneration
                 foreach (VoronoiEdge pLine in aLines)
                     m_cBorder[pInner.Key].Add(new VoronoiEdge(pLine));
             }
-
-            //ChainBorder();
         }
         public List<VoronoiEdge> m_cFirstLines = new List<VoronoiEdge>();
 
@@ -103,7 +101,6 @@ namespace LandscapeGeneration
             foreach (VoronoiEdge pLine in aTotalBorder)
             {
                 pLine.m_pNext = null;
-                //pLine.m_pPrevious = null;
 
                 float fRelativeX1 = pLine.m_pPoint1.X;
                 if (fRelativeX1 > aTotalBorder[0].m_pPoint1.X + fCycleShift / 2)
@@ -164,7 +161,6 @@ namespace LandscapeGeneration
                                   Math.Abs(pLine.m_pPoint1.X - pCurrentLine.m_pPoint2.X) == fCycleShift)))
                             {
                                 pCurrentLine.m_pNext = pLine;
-                                //pLine.m_pPrevious = pCurrentLine;
                                 cVertexes.Add(pCurrentLine.m_pPoint1);
 
                                 pCurrentLine = pLine;
@@ -175,7 +171,7 @@ namespace LandscapeGeneration
                         }
                         if (!bGotIt)
                         {
-                            throw new Exception("Can't chain the border!");
+                            throw new InvalidOperationException("Can't chain the border!");
                         }
                     }
                     while (pCurrentLine != pFirstLine && bGotIt && iCounter <= iTotalCount);
@@ -191,9 +187,6 @@ namespace LandscapeGeneration
         /// Список <typeparamref name="INNER"/>, составляющих <typeparamref name="LAYER"/>
         /// </summary>
         public HashSet<INNER> Contents { get; } = new HashSet<INNER>();
-
-        //public Location Owner { get; set; } = null;
-
 
         /// <summary>
         /// Соседние объекты <typeparamref name="LAYER"/>.
@@ -251,7 +244,7 @@ namespace LandscapeGeneration
 
             foreach (var pInner in m_cBorder)
             {
-                INNER pInnerTerritory = pInner.Key as INNER;
+                INNER pInnerTerritory = pInner.Key;
                 if (!pInnerTerritory.HasOwner() && !pInnerTerritory.Forbidden)
                 {
                     float fWholeLength = 1;
@@ -268,25 +261,15 @@ namespace LandscapeGeneration
                     if (fWholeLength > 0.5f)
                         fWholeLength *= 10; 
                     
-                    cBorderLength[pInnerTerritory] = fWholeLength;// 0;
-                    //Line[] aBorderLine = m_cBorder[pInner].ToArray();
-                    //foreach (Line pLine in aBorderLine)
-                    //    cBorderLength[pInner] += pLine.m_fLength;
+                    cBorderLength[pInnerTerritory] = fWholeLength;
                 }
             }
 
             INNER pAddon = null;
 
             int iChoice = Rnd.ChooseOne(cBorderLength.Values, 4);
-            foreach (var pInner in cBorderLength)
-            {
-                iChoice--;
-                if (iChoice < 0)
-                {
-                    pAddon = (INNER)pInner.Key;
-                    break;
-                }
-            }
+            if (iChoice >= 0)
+                pAddon = cBorderLength.ElementAt(iChoice).Key;
 
             if (pAddon == null)
                 return null;
@@ -299,17 +282,15 @@ namespace LandscapeGeneration
 
             foreach (var pInner in pAddon.BorderWith)
             {
-                if (Contents.Contains(pInner.Key as INNER))
+                if (Contents.Contains(pInner.Key))
                     continue;
 
-                if (!m_cBorder.ContainsKey((INNER)pInner.Key))
-                    m_cBorder[(INNER)pInner.Key] = new List<VoronoiEdge>();
+                if (!m_cBorder.ContainsKey(pInner.Key))
+                    m_cBorder[pInner.Key] = new List<VoronoiEdge>();
                 VoronoiEdge[] aBorderLine = pInner.Value.ToArray();
                 foreach (var pLine in aBorderLine)
-                    m_cBorder[(INNER)pInner.Key].Add(new VoronoiEdge(pLine)); 
+                    m_cBorder[pInner.Key].Add(new VoronoiEdge(pLine)); 
             }
-
-            //ChainBorder();
 
             return pAddon;
         }

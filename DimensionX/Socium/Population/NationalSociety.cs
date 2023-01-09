@@ -106,16 +106,16 @@ namespace Socium.Population
 
             //TODO: нужно учитывать размеры и телосложение - гиганты и толстяки едят больше, чем карлики и худышки
             if (fFood * 2 < iPopulation)
-                m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);            
+                m_iInfrastructureLevel--;            
             if (fFood < iPopulation || Rnd.OneChanceFrom(10))
-                m_iInfrastructureLevel--;// = Rnd.Get(m_iCultureLevel);
+                m_iInfrastructureLevel--;
             if (fFood > iPopulation * 2 && Rnd.OneChanceFrom(10))
                 m_iInfrastructureLevel++;
 
-            if (m_iInfrastructureLevel < 0)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2)
-                m_iInfrastructureLevel = 0;//Math.Max(m_iTechLevel + 1, iAverageMagicLimit) / 2;
-            if (m_iInfrastructureLevel > m_iTechLevel + 1)//Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1))
-                m_iInfrastructureLevel = m_iTechLevel + 1;// Math.Max(m_iTechLevel + 1, iAverageMagicLimit - 1);
+            if (m_iInfrastructureLevel < 0)
+                m_iInfrastructureLevel = 0;
+            if (m_iInfrastructureLevel > m_iTechLevel + 1)
+                m_iInfrastructureLevel = m_iTechLevel + 1;
             if (m_iInfrastructureLevel > 8)
                 m_iInfrastructureLevel = 8;
 

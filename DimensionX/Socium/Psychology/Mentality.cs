@@ -57,6 +57,13 @@ namespace Socium.Psychology
             get { return m_cTraits; }
         }
 
+        private static Mentality s_pIdeal = new Mentality(0);
+
+        public static Mentality IdealSociety
+        {
+            get { return s_pIdeal; }
+        }
+
         public Mentality(MentalityTemplate cTemplate)
         {
             foreach (Trait prop in AllTraits)
@@ -127,13 +134,6 @@ namespace Socium.Psychology
                 for (int i = 0; i < 9; i++) 
                     m_cTraits[prop][i] = Math.Min(2.0f, Math.Max(0, fValue));
             }
-        }
-
-        private static Mentality s_pIdeal = new Mentality(0);
-
-        public static Mentality IdealSociety
-        {
-            get { return s_pIdeal; }
         }
 
         public Mentality(Mentality pAncestorMentality, bool bMutate)
@@ -217,12 +217,12 @@ namespace Socium.Psychology
         /// <summary>
         /// Именованная фаза развития определённой черты характера
         /// </summary>
-        private class TraitPhase
+        private sealed class TraitPhase
         {
             public float m_fMinValue;
             public float m_fMaxValue;
             public string m_sName;
-            private Trait m_eTrait;
+            private readonly Trait m_eTrait;
 
             public TraitPhase(Trait eTrait, float fMin, float fMax, string sName)
             {

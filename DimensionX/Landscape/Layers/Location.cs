@@ -52,7 +52,7 @@ namespace LandscapeGeneration
 
             foreach (var pEdge in BorderWith)
             {
-                if (((Location)pEdge.Key).m_bBorder)
+                if (pEdge.Key.m_bBorder)
                     return 100;
             }
 
@@ -226,10 +226,10 @@ namespace LandscapeGeneration
             List<VoronoiEdge> cTotalBorder = new List<VoronoiEdge>();
 
             PerimeterLength = 0;
-            foreach (var cEdges in BorderWith)
+            foreach (var cEdges in BorderWith.Values)
             {
-                cTotalBorder.AddRange(cEdges.Value);
-                foreach (VoronoiEdge pEdge in cEdges.Value)
+                cTotalBorder.AddRange(cEdges);
+                foreach (VoronoiEdge pEdge in cEdges)
                     PerimeterLength += pEdge.Length;
             } 
             
@@ -241,7 +241,7 @@ namespace LandscapeGeneration
             {
                 foreach (var pEdge in BorderWith)
                 {
-                    if (((Location)pEdge.Key).IsShaded)
+                    if (pEdge.Key.IsShaded)
                         continue;
 
                     if (!cSequence.Contains(pEdge.Value[0]) &&
@@ -260,7 +260,7 @@ namespace LandscapeGeneration
 
             if (cSequence.Count != BorderWith.Count)
             {
-                throw new Exception();
+                throw new InvalidOperationException();
             }
 
             pLast = cSequence.Last();
@@ -268,9 +268,6 @@ namespace LandscapeGeneration
             {
                 pLast.m_pNext = pEdge;
                 pLast = pEdge;
-
-                //if (pEdge.Value.m_pMidPoint != pEdge.Key.m_cEdges[pLoc].m_pMidPoint)
-                //    throw new Exception();
             }
         }
 
@@ -302,7 +299,7 @@ namespace LandscapeGeneration
             Y = fY / fLength;
         }
 
-        public void Save(BinaryWriter binWriter)
+        public new void Save(BinaryWriter binWriter)
         {
             binWriter.Write(m_iID);
 
@@ -314,12 +311,12 @@ namespace LandscapeGeneration
 
             //TODO: зачем здесь эта проверка???
             if (!HasOwner())
-                throw new Exception("Oops...");
+                throw new InvalidOperationException("Oops...");
 
             binWriter.Write(BorderWith.Count);
             foreach (var pLoc in BorderWith)
             {
-                binWriter.Write((pLoc.Key as Location).m_iID);
+                binWriter.Write(pLoc.Key.m_iID);
                 binWriter.Write(pLoc.Value.Count);
                 foreach (VoronoiEdge pLine in pLoc.Value)
                 {

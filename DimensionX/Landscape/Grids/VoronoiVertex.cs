@@ -133,11 +133,6 @@ namespace LandscapeGeneration
             return string.Format("X: {0}, Y: {1}, H: {2}", X, Y, H);
         }
 
-        //public override float GetMovementCost()
-        //{
-        //    return 100;
-        //}
-
         internal void PointOnCurve(VoronoiVertex p0, VoronoiVertex p1, VoronoiVertex p2, VoronoiVertex p3, float t, float fCycle, float smoothRate)
         {
             for (int i = 0; i < m_cLocations.Count; i++)
@@ -204,7 +199,7 @@ namespace LandscapeGeneration
             }
 
             if (m_fX < -100000) //TODO: здесь должно быть RX*2 !!!
-                throw new Exception();
+                throw new InvalidOperationException();
         }
     }
 }

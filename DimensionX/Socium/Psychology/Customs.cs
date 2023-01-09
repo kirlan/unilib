@@ -329,7 +329,7 @@ namespace Socium.Psychology
             }
 
             if (eDifference == Mutation.Mandatory && this.Equals(pAncestorCustoms))
-                    throw new Exception("Customs not changed!");
+                    throw new InvalidOperationException("Customs not changed!");
         }
 
         public void ApplyFenotype(Phenotype pFenotype)
@@ -527,17 +527,14 @@ namespace Socium.Psychology
             if (Has(GenderPriority.Patriarchy))
             {
                 sGenderPriority = "patriarchal";
-                //sResult += "males";
             }
             else if (Has(GenderPriority.Matriarchy))
             {
                 sGenderPriority = "matriarchal";
-                //sResult += "females";
             }
             else if (Has(GenderPriority.Genders_equality))
             {
                 sGenderPriority = "gender equality";
-                //sResult += "males and females";
             }
 
             if (Has(MindSet.Emotions))
@@ -1123,20 +1120,7 @@ namespace Socium.Psychology
                 }
             }
 
-            //if (bFirst && m_eGenderPriority == pOther.m_eGenderPriority)
-            //    sResult = "";
-
             return sResult;
-        }
-
-        /// <summary>
-        /// Вычисляет враждебность друг сообществ на основании их обычаев.
-        /// Возвращает значение от 22 (полные противоположности) до -11 (полное совпадение).
-        /// </summary>
-        public int GetDifference(Customs pOpponent)
-        {
-            string s1 = "", s2 = "";
-            return GetDifference(pOpponent, ref s1, ref s2);
         }
 
         private void CheckDifference<T>(Customs pOpponent, T middleValue, ref int iHostility, ref string sPositiveReasons, ref string sNegativeReasons) where T : Enum, IComparable
@@ -1159,6 +1143,16 @@ namespace Socium.Psychology
                     sNegativeReasons += " (-1) " + pOpponent.ValueOf<T>().ToString().Replace('_', ' ') + "\n";
                 }
             }
+        }
+
+        /// <summary>
+        /// Вычисляет враждебность друг сообществ на основании их обычаев.
+        /// Возвращает значение от 22 (полные противоположности) до -11 (полное совпадение).
+        /// </summary>
+        public int GetDifference(Customs pOpponent)
+        {
+            string s1 = "", s2 = "";
+            return GetDifference(pOpponent, ref s1, ref s2);
         }
 
         /// <summary>

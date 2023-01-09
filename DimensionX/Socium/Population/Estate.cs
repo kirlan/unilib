@@ -45,11 +45,6 @@ namespace Socium.Population
             return m_ePosition == Position.Commoners || m_ePosition == Position.Elite;
         }
 
-        /// <summary>
-        /// Государство, которому принадлежит сословие
-        /// </summary>
-        //private State m_pState;
-
         public bool IsSegregated()
         {
             return !DominantCulture.m_pCustoms.Has(Customs.GenderPriority.Genders_equality);
