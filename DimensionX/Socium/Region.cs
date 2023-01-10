@@ -16,25 +16,27 @@ namespace Socium
     /// </summary>
     public class Region: TerritoryCluster<Region, Province, LandX>
     {
-        public LandTypeInfo m_pType;
+        public LandTypeInfo Type { get; private set; }
 
         public bool IsWater
         {
-            get { return m_pType != null && m_pType.Environment.HasFlag(LandscapeGeneration.Environment.Liquid); }
+            get { return Type != null && Type.Environment.HasFlag(LandscapeGeneration.Environment.Liquid); }
         }
 
         public bool IsBorder()
         {
             foreach (var pLand in Contents)
+            {
                 if (pLand.Origin.IsBorder())
                     return true;
+            }
 
             return false;
         }
 
         public float MovementCost
         {
-            get { return m_pType == null ? 100 : m_pType.MovementCost; }
+            get { return Type == null ? 100 : Type.MovementCost; }
         }
 
         public Continent Continent
@@ -84,12 +86,12 @@ namespace Socium
             Contents.Add(pSeed);
             pSeed.SetOwner(this);
 
-            m_pType = pSeed.Origin.LandType;
+            Type = pSeed.Origin.LandType;
 
             if (pSeed.Origin.IsWater)
                 throw new ArgumentException("Region can't be underwater!");
 
-            m_iMaxSize = iMaxSize / m_pType.MovementCost;
+            m_iMaxSize = iMaxSize / Type.MovementCost;
         }
 
         /// <summary>
@@ -109,7 +111,7 @@ namespace Socium
                 if (pLand.Forbidden)
                     continue;
 
-                if (!pLand.HasOwner() && pLand.Origin.LandType == m_pType)
+                if (!pLand.HasOwner() && pLand.Origin.LandType == Type)
                 {
                     bool bHavePotential = false;
 
@@ -123,7 +125,7 @@ namespace Socium
                         if (pLinkTerr.Forbidden)
                             continue;
 
-                        if (pLinkTerr.LandType == m_pType && !pLinkTerr.HasOwner())
+                        if (pLinkTerr.LandType == Type && !pLinkTerr.HasOwner())
                             bHavePotential = true;
                     }
 
@@ -198,7 +200,7 @@ namespace Socium
 
         public override float GetMovementCost()
         {
-            return m_pType == null ? 100.0f : m_pType.MovementCost;
+            return Type == null ? 100.0f : Type.MovementCost;
         }
 
         public void SetRace(List<Nation> cPossibleNations)
@@ -209,17 +211,17 @@ namespace Socium
                 cChances[pNation] = 1.0f;
 
                 if (pNation.IsAncient)
-                    cChances[pNation] /= 10.0f / m_pType.MovementCost;
+                    cChances[pNation] /= 10.0f / Type.MovementCost;
 
                 if (pNation.IsHegemon)
                     cChances[pNation] *= 10.0f;
 
                 foreach (LandTypeInfo pType in pNation.PreferredLands)
-                    if (m_pType == pType)
+                    if (Type == pType)
                         cChances[pNation] *= 10.0f;
 
                 foreach (LandTypeInfo pType in pNation.HatedLands)
-                    if (m_pType == pType)
+                    if (Type == pType)
                         cChances[pNation] /= 100.0f;
             }
 
@@ -347,7 +349,7 @@ namespace Socium
             if (pChoosenLocationX.Settlement == null && pChoosenLocationX.Building == null)
             {
                 LandX pChoosenLandX = pChoosenLocation.GetOwner().As<LandX>();
-                pChoosenLocationX.Settlement = new Settlement(Settlement.Info[SettlementSize.Fort], pChoosenLandX.DominantNation, GetOwner().GetOwner().m_pSociety.TechLevel, GetOwner().m_pLocalSociety.MagicLimit, false, bFast);
+                pChoosenLocationX.Settlement = new Settlement(Settlement.Info[SettlementSize.Fort], pChoosenLandX.DominantNation, GetOwner().GetOwner().m_pSociety.TechLevel, GetOwner().LocalSociety.MagicLimit, false, bFast);
 
                 foreach (Location pLoc in pChoosenLocation.BorderWithKeys)
                     if (pLoc.As<LocationX>().Building == null)
@@ -369,7 +371,7 @@ namespace Socium
 
         public override string ToString()
         {
-            return string.Format("{0} {1} ({2}, {3})", m_sName, m_pType.Name, Contents.Count, GetNativeRaceString());
+            return string.Format("{0} {1} ({2}, {3})", m_sName, Type.Name, Contents.Count, GetNativeRaceString());
         }
     }
 }

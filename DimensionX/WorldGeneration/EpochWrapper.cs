@@ -26,8 +26,8 @@ namespace WorldGeneration
 
         public string Name
         {
-            get { return m_pEpoch.m_sName; }
-            set { m_pEpoch.m_sName = value; }
+            get { return m_pEpoch.Name; }
+            set { m_pEpoch.Name = value; }
         }
 
         public int Length

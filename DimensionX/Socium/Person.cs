@@ -343,30 +343,30 @@ namespace Socium
 
         public Gender GetCompatibleSexPartnerGender(bool bOfficial)
         {
-            if (HomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.SexualOrientation.Heterosexual))
+            if (HomeLocation.OwnerProvince.LocalSociety.DominantCulture.Customs.Has(Customs.SexualOrientation.Heterosexual))
             {
                 //В гетеросексуальном обществе - только персонаж другого пола
                 return Gender == Gender.Male ? Gender.Female : Gender.Male;
             }
-            else if (HomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.SexualOrientation.Homosexual))
+            else if (HomeLocation.OwnerProvince.LocalSociety.DominantCulture.Customs.Has(Customs.SexualOrientation.Homosexual))
             {
                 //В гомосексуальном обществе - только персонаж того же пола
                 return Gender;
             }
-            else if (HomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.SexualOrientation.Bisexual))
+            else if (HomeLocation.OwnerProvince.LocalSociety.DominantCulture.Customs.Has(Customs.SexualOrientation.Bisexual))
             {
                 //Официальные браки разрешаем заключать только между персонажами разного пола - просто дань канону (Блейд, Конан, etc.)
                 if (bOfficial)
                     return Gender == Gender.Male ? Gender.Female : Gender.Male;
                 
                 //В патриархальном бисексуальном обществе мужчины могут иметь партнеров любого пола, а женщины - только мужчин
-                if (HomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.GenderPriority.Patriarchy) &&
+                if (HomeLocation.OwnerProvince.LocalSociety.DominantCulture.Customs.Has(Customs.GenderPriority.Patriarchy) &&
                     Gender == Gender.Female)
                 {
                     return Gender.Male;
                 }
                 //В матриархальном бисексуальном обществе - наоборот, женщины свободны в выборе, а мужчины не могут иметь отношения друг с другом
-                if (HomeLocation.OwnerProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.GenderPriority.Matriarchy) &&
+                if (HomeLocation.OwnerProvince.LocalSociety.DominantCulture.Customs.Has(Customs.GenderPriority.Matriarchy) &&
                     Gender == Gender.Male)
                 {
                     return Gender.Female;
@@ -885,37 +885,37 @@ namespace Socium
                         {
                             case Estate.SocialRank.Outlaws:
                                 foreach (Province pProvince in pRelative.HomeLocation.OwnerState.Contents)
-                                    cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
+                                    cPossibleHomes.AddRange(pProvince.LocalSociety.Settlements);
                                 break;
                             case Estate.SocialRank.Lowlifes:
                                 cPossibleHomes.Add(pRelative.HomeLocation);
                                 cPossibleHomes.Add(pRelative.HomeLocation);
                                 cPossibleHomes.Add(pRelative.HomeLocation);
-                                cPossibleHomes.Add(pRelative.HomeLocation.OwnerState.m_pMethropoly.m_pAdministrativeCenter);
+                                cPossibleHomes.Add(pRelative.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter);
                                 break;
                             case Estate.SocialRank.Commoners:
                                 cPossibleHomes.Add(pRelative.HomeLocation);
                                 foreach (State pState in pWorld.m_aStates)
                                 {
                                     cPossibleHomes.Add(pRelative.HomeLocation);
-                                    cPossibleHomes.Add(pState.m_pMethropoly.m_pAdministrativeCenter);
+                                    cPossibleHomes.Add(pState.m_pMethropoly.AdministrativeCenter);
                                 }
                                 break;
                             case Estate.SocialRank.Clergy:
                                 foreach (Province pProvince in pRelative.HomeLocation.OwnerState.Contents)
-                                    cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
+                                    cPossibleHomes.AddRange(pProvince.LocalSociety.Settlements);
                                 foreach (State pState in pWorld.m_aStates)
                                 {
                                     cPossibleHomes.Add(pRelative.HomeLocation);
-                                    cPossibleHomes.Add(pState.m_pMethropoly.m_pAdministrativeCenter);
+                                    cPossibleHomes.Add(pState.m_pMethropoly.AdministrativeCenter);
                                 }
                                 break;
                             case Estate.SocialRank.Elite:
                                 foreach (Province pProvince in pRelative.HomeLocation.OwnerState.Contents)
-                                    cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
+                                    cPossibleHomes.AddRange(pProvince.LocalSociety.Settlements);
                                 foreach (State pState in pWorld.m_aStates)
                                     foreach (Province pProvince in pState.Contents)
-                                        cPossibleHomes.AddRange(pProvince.m_pLocalSociety.Settlements);
+                                        cPossibleHomes.AddRange(pProvince.LocalSociety.Settlements);
                                 break;
                         }
 
@@ -3749,10 +3749,10 @@ namespace Socium
                         else if (pOpponent.Age == _Age.Adult && Age != _Age.Young)
                             iBeauty = 1;
 
-                        if(pOpponent.Appearance == Appearance.Unattractive)
+                        if(pOpponent.Look == Appearance.Unattractive)
                             iBeauty /= 2;
 
-                        if(pOpponent.Appearance == Appearance.Handsome)
+                        if(pOpponent.Look == Appearance.Handsome)
                             iBeauty *= 2;
 
                         if (Culture.Customs.Has(Customs.Sexuality.Lecherous))
@@ -4323,8 +4323,8 @@ namespace Socium
                     pPerson2.Estate.Rank == Estate.SocialRank.Commoners)
                 {
                     //но - только если один из них живёт в столице, да и то связи эти слабые - как другие города для люмпенов
-                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.m_pMethropoly.m_pAdministrativeCenter ||
-                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.m_pMethropoly.m_pAdministrativeCenter)
+                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter ||
+                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter)
                     {
                         iAdd = Math.Max(1, iAdd);
                         pResult.AppendLine(" (+" + iAdd.ToString() + ") Interstate capital residents");
@@ -4336,8 +4336,8 @@ namespace Socium
                     pPerson2.Estate.IsElite())
                 {
                     //жители столиц имеют более сильные связи, как если бы они жили в одном государстве
-                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.m_pMethropoly.m_pAdministrativeCenter ||
-                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.m_pMethropoly.m_pAdministrativeCenter)
+                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter ||
+                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter)
                     {
                         iAdd = Math.Max(2, iAdd);
                         pResult.AppendLine(" (+" + iAdd.ToString() + ") Interstate capital residents (elite)");

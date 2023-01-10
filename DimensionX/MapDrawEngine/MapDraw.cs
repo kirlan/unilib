@@ -899,17 +899,17 @@ namespace MapDrawEngine
                     pPath.AddPolygon(aPts);
 
                     //сохраним информацию о контуре провинции для этнографической карты
-                    Brush pBrush = m_cNationColorsID[pProvince.m_pLocalSociety.TitularNation];
-                    if (pProvince.m_pLocalSociety.TitularNation.IsAncient)
-                        pBrush = m_cAncientNationColorsID[pProvince.m_pLocalSociety.TitularNation];
-                    if (pProvince.m_pLocalSociety.TitularNation.IsHegemon)
-                        pBrush = m_cHegemonNationColorsID[pProvince.m_pLocalSociety.TitularNation];
+                    Brush pBrush = m_cNationColorsID[pProvince.LocalSociety.TitularNation];
+                    if (pProvince.LocalSociety.TitularNation.IsAncient)
+                        pBrush = m_cAncientNationColorsID[pProvince.LocalSociety.TitularNation];
+                    if (pProvince.LocalSociety.TitularNation.IsHegemon)
+                        pBrush = m_cHegemonNationColorsID[pProvince.LocalSociety.TitularNation];
 
-                    Brush pPsiBrush = m_cPsiLevel[pProvince.m_pLocalSociety.MagicLimit][pProvince.m_pLocalSociety.DominantCulture.Customs.ValueOf<Customs.Magic>()];
+                    Brush pPsiBrush = m_cPsiLevel[pProvince.LocalSociety.MagicLimit][pProvince.LocalSociety.DominantCulture.Customs.ValueOf<Customs.Magic>()];
 
                     foreach (MapQuadrant pQuad in aQuads)
                     {
-                        if (!pProvince.m_pCenter.IsWater)
+                        if (!pProvince.Center.IsWater)
                         {
                             pQuad.Layers[MapLayer.Provincies].StartFigure();
                             pQuad.Layers[MapLayer.Provincies].AddLines(aPts);
@@ -2120,7 +2120,7 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip.Append("\n     - ");
 
-                sToolTip.AppendFormat("province {0} ({2}, {1})", m_pFocusedProvince.m_pLocalSociety.Name, m_pFocusedProvince.m_pAdministrativeCenter == null ? "-" : m_pFocusedProvince.m_pAdministrativeCenter.ToString(), m_pFocusedProvince.m_pLocalSociety.TitularNation);
+                sToolTip.AppendFormat("province {0} ({2}, {1})", m_pFocusedProvince.LocalSociety.Name, m_pFocusedProvince.AdministrativeCenter == null ? "-" : m_pFocusedProvince.AdministrativeCenter.ToString(), m_pFocusedProvince.LocalSociety.TitularNation);
 
                 //sToolTip += "\n          [";
 

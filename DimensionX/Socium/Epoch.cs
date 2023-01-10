@@ -51,8 +51,8 @@ namespace Socium
 
         //can't make them auto-implement properties, since they are needed to be passed as ref parameters
 #pragma warning disable S2292 // Trivial properties should be auto-implemented
-        private readonly string m_sName;
-        public string Name => m_sName;
+        private string m_sName;
+        public string Name { get => m_sName; set => m_sName = value; }
 
         private int m_iNativesMinTechLevel;
         public int NativesMinTechLevel { get => m_iNativesMinTechLevel; set => m_iNativesMinTechLevel = value; }

@@ -124,9 +124,9 @@ namespace MapDrawEngine
                     foreach (var aPts in aPoints)
                     {
                         //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
-                        if (!m_cAreas.ContainsKey(pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush))
-                            m_cAreas[pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
-                        m_cAreas[pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
+                        if (!m_cAreas.ContainsKey(pArea.Type.Get<LandTypeDrawInfo>().m_pBrush))
+                            m_cAreas[pArea.Type.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
+                        m_cAreas[pArea.Type.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
                     }
                 }
             }

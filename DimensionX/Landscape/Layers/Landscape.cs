@@ -1443,10 +1443,10 @@ namespace LandscapeGeneration
             ShortestPath pBestPath2 = FindBestPath(pFinish, pStart, fCycleShift, bNavalOnly);
 
             if (pBestPath1 == null ||
-                pBestPath1.m_aNodes.Length == 0 ||
+                pBestPath1.Nodes.Length == 0 ||
                 (pBestPath2 != null &&
-                 pBestPath2.m_aNodes.Length != 0 &&
-                 pBestPath2.m_fLength < pBestPath1.m_fLength))
+                 pBestPath2.Nodes.Length != 0 &&
+                 pBestPath2.Length < pBestPath1.Length))
             {
                 return pBestPath2;
             }
@@ -1458,7 +1458,7 @@ namespace LandscapeGeneration
         {
             s_iGreenLightCode++;
             ShortestPath pLMPath = new ShortestPath(pStart.GetOwner().GetOwner(), pFinish.GetOwner().GetOwner(), fCycleShift, -1, bNavalOnly);
-            foreach (TransportationNode pNode in pLMPath.m_aNodes)
+            foreach (TransportationNode pNode in pLMPath.Nodes)
             {
                 LandMass pLandMass = pNode as LandMass;
                 foreach (Land pLand in pLandMass.Contents)
@@ -1476,7 +1476,7 @@ namespace LandscapeGeneration
             }
 
             ShortestPath pLandsPath = new ShortestPath(pStart.GetOwner(), pFinish.GetOwner(), fCycleShift, s_iGreenLightCode, bNavalOnly);
-            foreach (TransportationNode pNode in pLandsPath.m_aNodes)
+            foreach (TransportationNode pNode in pLandsPath.Nodes)
             {
                 Land pLand = pNode as Land;
                 foreach (Location pLoc in pLand.Contents)

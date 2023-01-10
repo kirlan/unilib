@@ -8,13 +8,13 @@ namespace LandscapeGeneration.PathFind
 {
     public class ShortestPath
     {
-        public TransportationNode[] m_aNodes;
+        public TransportationNode[] Nodes { get; }
 
-        public float m_fLength = 0;
+        public float Length { get; } = 0;
 
         //public HashSet<TransportationNode> visited = new HashSet<TransportationNode>();
 
-        Path<TransportationNode> FindPath(
+        private Path<TransportationNode> FindPath(
             TransportationNode start,
             TransportationNode destination,
             float fCycleShift,
@@ -33,10 +33,10 @@ namespace LandscapeGeneration.PathFind
 
                 if (closed.Contains(path.LastStep))
                     continue;
-                
+
                 if (path.LastStep.Equals(destination))
                     return path;
-                
+
                 closed.Add(path.LastStep);
 
                 foreach (var pLinked in path.LastStep.Links)
@@ -81,7 +81,7 @@ namespace LandscapeGeneration.PathFind
 
             if(pFrom == null || pTo == null)
             {
-                m_aNodes = cResult.ToArray();
+                Nodes = cResult.ToArray();
                 return;
             }
 
@@ -89,7 +89,7 @@ namespace LandscapeGeneration.PathFind
 
             if (pPath != null)
             {
-                m_fLength = (float)pPath.TotalCost;
+                Length = (float)pPath.TotalCost;
 
                 Path<TransportationNode> pStep = pPath;
                 do
@@ -99,9 +99,7 @@ namespace LandscapeGeneration.PathFind
                 }
                 while (pStep != null);
             }
-            m_aNodes = cResult.ToArray();
-
-            return;
+            Nodes = cResult.ToArray();
         }
     }
 }

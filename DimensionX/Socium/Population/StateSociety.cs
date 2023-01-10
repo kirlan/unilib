@@ -269,16 +269,16 @@ namespace Socium.Population
         public Nation SlavesNation { get; private set; } = null;
 
         public StateSociety(State pState)
-            : base(pState.m_pMethropoly.m_pLocalSociety.TitularNation)
+            : base(pState.m_pMethropoly.LocalSociety.TitularNation)
         {
             m_pState = pState;
 
             TechLevel = 0;
             InfrastructureLevel = 0;
 
-            Culture[Gender.Male] = new Culture(pState.m_pMethropoly.m_pLocalSociety.Culture[Gender.Male], Customs.Mutation.Possible);
+            Culture[Gender.Male] = new Culture(pState.m_pMethropoly.LocalSociety.Culture[Gender.Male], Customs.Mutation.Possible);
             Culture[Gender.Male].Customs.ApplyFenotype(TitularNation.PhenotypeMale);
-            Culture[Gender.Female] = new Culture(pState.m_pMethropoly.m_pLocalSociety.Culture[Gender.Female], Customs.Mutation.Possible);
+            Culture[Gender.Female] = new Culture(pState.m_pMethropoly.LocalSociety.Culture[Gender.Female], Customs.Mutation.Possible);
             Culture[Gender.Female].Customs.ApplyFenotype(TitularNation.PhenotypeFemale);
 
             FixSexCustoms();
@@ -290,15 +290,15 @@ namespace Socium.Population
 
             foreach (Province pProvince in m_pState.Contents)
             {
-                if (!cNationsCount.TryGetValue(pProvince.m_pLocalSociety.TitularNation, out int iCount))
-                    cNationsCount[pProvince.m_pLocalSociety.TitularNation] = 0;
-                cNationsCount[pProvince.m_pLocalSociety.TitularNation] = iCount + pProvince.m_iPopulation;
+                if (!cNationsCount.TryGetValue(pProvince.LocalSociety.TitularNation, out int iCount))
+                    cNationsCount[pProvince.LocalSociety.TitularNation] = 0;
+                cNationsCount[pProvince.LocalSociety.TitularNation] = iCount + pProvince.LocationsCount;
 
-                if (pProvince.m_pLocalSociety.TechLevel > TechLevel)
-                    TechLevel = pProvince.m_pLocalSociety.TechLevel;
+                if (pProvince.LocalSociety.TechLevel > TechLevel)
+                    TechLevel = pProvince.LocalSociety.TechLevel;
 
-                if (pProvince.m_pLocalSociety.InfrastructureLevel > InfrastructureLevel)
-                    InfrastructureLevel = pProvince.m_pLocalSociety.InfrastructureLevel;
+                if (pProvince.LocalSociety.InfrastructureLevel > InfrastructureLevel)
+                    InfrastructureLevel = pProvince.LocalSociety.InfrastructureLevel;
             }
 
             Nation pMostCommonNation = cNationsCount.Keys.ToArray()[Rnd.ChooseBest(cNationsCount.Values)];
@@ -1620,7 +1620,7 @@ namespace Socium.Population
         internal void CalculateSocietyFeatures(int iEmpireTreshold)
         {
             // Adjustiong TL due to lack or abundance of resouces
-            CheckResources(m_pState.m_cResources, m_pState.m_iPopulation, m_pState.Contents.Count);
+            CheckResources(m_pState.m_cResources, m_pState.m_iLocationsCount, m_pState.Contents.Count);
 
             // Choose state system
             SelectGovernmentSystem(iEmpireTreshold);
@@ -1644,7 +1644,7 @@ namespace Socium.Population
                     InfrastructureLevel <= pInfo.MaxGovernmentLevel &&
                     (pInfo.Languages.Count == 0 ||
                      pInfo.Languages.Contains(TitularNation.Race.Language)) &&
-                    (m_pState.m_iPopulation > iEmpireTreshold * 80) == pInfo.IsEmpire)
+                    (m_pState.m_iLocationsCount > iEmpireTreshold * 80) == pInfo.IsEmpire)
                 {
                     for (int i = 0; i < pInfo.Rank; i++)
                         cInfos.Add(pInfo);
@@ -1657,7 +1657,7 @@ namespace Socium.Population
                 {
                     if (InfrastructureLevel >= pInfo.MinGovernmentLevel &&
                         InfrastructureLevel <= pInfo.MaxGovernmentLevel &&
-                        (m_pState.m_iPopulation > iEmpireTreshold * 80) == pInfo.IsEmpire)
+                        (m_pState.m_iLocationsCount > iEmpireTreshold * 80) == pInfo.IsEmpire)
                     {
                         for (int i = 0; i < pInfo.Rank; i++)
                             cInfos.Add(pInfo);
@@ -1720,11 +1720,11 @@ namespace Socium.Population
             if (DominantCulture.GetTrait(Trait.Fanaticism) < 1)
                 SocialEquality++;
 
-            if (SocialEquality > 0 && m_pState.m_iFood < m_pState.m_iPopulation)
+            if (SocialEquality > 0 && m_pState.m_iFood < m_pState.m_iLocationsCount)
                 SocialEquality--;
-            if (m_pState.m_iFood > m_pState.m_iPopulation &&
-                m_pState.m_cResources[LandResource.Ore] > m_pState.m_iPopulation &&
-                m_pState.m_cResources[LandResource.Wood] > m_pState.m_iPopulation)
+            if (m_pState.m_iFood > m_pState.m_iLocationsCount &&
+                m_pState.m_cResources[LandResource.Ore] > m_pState.m_iLocationsCount &&
+                m_pState.m_cResources[LandResource.Wood] > m_pState.m_iLocationsCount)
             {
                 SocialEquality++;
             }
@@ -1751,9 +1751,9 @@ namespace Socium.Population
                 SocialEquality = Math.Min(2, SocialEquality);
 
             //коммунизм возможен только в условиях изобилия ресурсов
-            if (m_pState.m_iFood < m_pState.m_iPopulation * 2 ||
-                m_pState.m_cResources[LandResource.Ore] < m_pState.m_iPopulation * 2 ||
-                m_pState.m_cResources[LandResource.Wood] < m_pState.m_iPopulation * 2)
+            if (m_pState.m_iFood < m_pState.m_iLocationsCount * 2 ||
+                m_pState.m_cResources[LandResource.Ore] < m_pState.m_iLocationsCount * 2 ||
+                m_pState.m_cResources[LandResource.Wood] < m_pState.m_iLocationsCount * 2)
             {
                 SocialEquality = Math.Min(3, SocialEquality);
             }
@@ -1805,19 +1805,19 @@ namespace Socium.Population
 
             foreach (Province pProvince in m_pState.Contents)
             {
-                if (pProvince.m_pLocalSociety.MagicLimit > MagicLimit)
-                    MagicLimit = pProvince.m_pLocalSociety.MagicLimit;
+                if (pProvince.LocalSociety.MagicLimit > MagicLimit)
+                    MagicLimit = pProvince.LocalSociety.MagicLimit;
 
                 float fPrevalence = 1;
-                if (pProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Feared))
+                if (pProvince.LocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Feared))
                 {
                     fPrevalence = 0.1f;
                 }
-                else if (pProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Allowed))
+                else if (pProvince.LocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Allowed))
                 {
                     fPrevalence = 0.5f;
                 }
-                else if (pProvince.m_pLocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Praised))
+                else if (pProvince.LocalSociety.DominantCulture.Customs.Has(Customs.Magic.Magic_Praised))
                 {
                     fPrevalence = 0.9f;
                 }
@@ -1836,7 +1836,7 @@ namespace Socium.Population
                     }
                 }
 
-                switch (pProvince.m_pLocalSociety.TitularNation.PhenotypeMale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                switch (pProvince.LocalSociety.TitularNation.PhenotypeMale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
                     case BirthRate.Low:
                         cProvinceMagesCount[Gender.Male] *= 0.1f;
@@ -1846,7 +1846,7 @@ namespace Socium.Population
                         break;
                 }
 
-                switch (pProvince.m_pLocalSociety.TitularNation.PhenotypeFemale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                switch (pProvince.LocalSociety.TitularNation.PhenotypeFemale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
                 {
                     case BirthRate.Low:
                         cProvinceMagesCount[Gender.Female] *= 0.1f;
@@ -1858,17 +1858,17 @@ namespace Socium.Population
 
                 foreach (var distribution in aDistribution)
                 {
-                    switch (pProvince.m_pLocalSociety.Culture[distribution.Key].MagicAbilityDistribution)
+                    switch (pProvince.LocalSociety.Culture[distribution.Key].MagicAbilityDistribution)
                     {
                         case MagicAbilityDistribution.mostly_weak:
-                            distribution.Value[(1 + pProvince.m_pLocalSociety.MagicLimit) / 2] += cProvinceMagesCount[distribution.Key];
+                            distribution.Value[(1 + pProvince.LocalSociety.MagicLimit) / 2] += cProvinceMagesCount[distribution.Key];
                             break;
                         case MagicAbilityDistribution.mostly_average:
-                            distribution.Value[(1 + pProvince.m_pLocalSociety.MagicLimit) / 2] += cProvinceMagesCount[distribution.Key] / 2;
-                            distribution.Value[1 + pProvince.m_pLocalSociety.MagicLimit] += cProvinceMagesCount[distribution.Key] / 2;
+                            distribution.Value[(1 + pProvince.LocalSociety.MagicLimit) / 2] += cProvinceMagesCount[distribution.Key] / 2;
+                            distribution.Value[1 + pProvince.LocalSociety.MagicLimit] += cProvinceMagesCount[distribution.Key] / 2;
                             break;
                         case MagicAbilityDistribution.mostly_powerful:
-                            distribution.Value[1 + pProvince.m_pLocalSociety.MagicLimit] += cProvinceMagesCount[distribution.Key];
+                            distribution.Value[1 + pProvince.LocalSociety.MagicLimit] += cProvinceMagesCount[distribution.Key];
                             break;
                     }
                 }
@@ -1955,17 +1955,17 @@ namespace Socium.Population
 
             iHostility += DominantCulture.Customs.GetDifference(pOpponent.m_pSociety.DominantCulture.Customs, ref sPositiveReasons, ref sNegativeReasons);
 
-            if (m_pState.m_iFood < m_pState.m_iPopulation && pOpponent.m_iFood > pOpponent.m_iPopulation * 2)
+            if (m_pState.m_iFood < m_pState.m_iLocationsCount && pOpponent.m_iFood > pOpponent.m_iLocationsCount * 2)
             {
                 iHostility++;
                 sNegativeReasons.AppendLine(" (-1) Envy for food");
             }
-            if (m_pState.m_cResources[LandResource.Wood] < m_pState.m_iPopulation && pOpponent.m_cResources[LandResource.Wood] > pOpponent.m_iPopulation * 2)
+            if (m_pState.m_cResources[LandResource.Wood] < m_pState.m_iLocationsCount && pOpponent.m_cResources[LandResource.Wood] > pOpponent.m_iLocationsCount * 2)
             {
                 iHostility++;
                 sNegativeReasons.AppendLine(" (-1) Envy for wood");
             }
-            if (m_pState.m_cResources[LandResource.Ore] < m_pState.m_iPopulation && pOpponent.m_cResources[LandResource.Ore] > pOpponent.m_iPopulation * 2)
+            if (m_pState.m_cResources[LandResource.Ore] < m_pState.m_iLocationsCount && pOpponent.m_cResources[LandResource.Ore] > pOpponent.m_iLocationsCount * 2)
             {
                 iHostility++;
                 sNegativeReasons.AppendLine(" (-1) Envy for ore");

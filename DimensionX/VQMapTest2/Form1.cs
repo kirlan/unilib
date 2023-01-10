@@ -359,7 +359,7 @@ namespace VQMapTest2
             richTextBox1.AppendText(string.Format("Social order : {0} [C{1}]\n\n", Society.GetControlString(pSociety.Control), pSociety.DominantCulture.ProgressLevel));
 
             richTextBox1.AppendText(string.Format("Economic system : {0}\n\n", StateSociety.GetEqualityString(pSociety.SocialEquality))); 
-            
+
             richTextBox1.AppendText(string.Format("Culture:\n"));
             foreach (Trait eMentality in Mentality.AllTraits)
             {
@@ -412,7 +412,7 @@ namespace VQMapTest2
                 richTextBox1.AppendText(string.Format("Magic users: none, {0} [M0]\n\n", sMagicAttitude));
             }
 
-            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.State.m_iFood, e.State.m_cResources[LandResource.Wood], e.State.m_cResources[LandResource.Ore], e.State.m_iPopulation));
+            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.State.m_iFood, e.State.m_cResources[LandResource.Wood], e.State.m_cResources[LandResource.Ore], e.State.m_iLocationsCount));
 
             richTextBox1.AppendText("Estates: \n");
 
@@ -810,7 +810,7 @@ namespace VQMapTest2
             mapDraw1.ClearPath();
 
             ShortestPath pPath1 = World.FindReallyBestPath(m_pTPFStart, m_pTPFFinish, m_pWorld.LocationsGrid.CycleShift, false);
-            mapDraw1.AddPath(pPath1.m_aNodes, Color.Fuchsia);
+            mapDraw1.AddPath(pPath1.Nodes, Color.Fuchsia);
         }
 
         private void worldToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
