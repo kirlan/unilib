@@ -14,6 +14,7 @@ namespace MapDrawEngine
         Continents,
         Locations,
         Lands,
+        Regions,
         Provincies,
         LandMasses,
         States
@@ -150,6 +151,9 @@ namespace MapDrawEngine
                     break;
                 case MapLayer.Provincies:
                     pPen = MapDraw.s_pWhite2Pen;
+                    break;
+                case MapLayer.Regions:
+                    pPen = MapDraw.s_pDarkGrey2Pen;
                     break;
                 case MapLayer.States:
                     pPen = MapDraw.s_pBlack3Pen;

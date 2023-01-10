@@ -207,6 +207,7 @@ namespace VQMapTest2
             mapDraw1.ShowProvincies = showProvinciesBordersToolStripMenuItem.Checked;
             mapDraw1.ShowLocationsBorders = showLocationsToolStripMenuItem.Checked;
             mapDraw1.ShowLands = showLandsToolStripMenuItem.Checked;
+            mapDraw1.ShowRegions = showRegionsToolStripMenuItem.Checked;
             mapDraw1.ShowLandMasses = showLandMassesToolStripMenuItem.Checked;
 
             if (toolStripMenuItem3.Checked != showLandmarksToolStripMenuItem.Checked)

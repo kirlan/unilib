@@ -73,6 +73,7 @@
             this.debugToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.showLocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showRegionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLandMassesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -570,6 +571,7 @@
             this.debugToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showLocationsToolStripMenuItem,
             this.showLandsToolStripMenuItem,
+            this.showRegionsToolStripMenuItem,
             this.showLandMassesToolStripMenuItem});
             this.debugToolStripMenuItem1.Name = "debugToolStripMenuItem1";
             this.debugToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
@@ -579,7 +581,7 @@
             // 
             this.showLocationsToolStripMenuItem.CheckOnClick = true;
             this.showLocationsToolStripMenuItem.Name = "showLocationsToolStripMenuItem";
-            this.showLocationsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.showLocationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showLocationsToolStripMenuItem.Text = "Show Locations";
             this.showLocationsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
             // 
@@ -587,15 +589,23 @@
             // 
             this.showLandsToolStripMenuItem.CheckOnClick = true;
             this.showLandsToolStripMenuItem.Name = "showLandsToolStripMenuItem";
-            this.showLandsToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.showLandsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showLandsToolStripMenuItem.Text = "Show Lands";
             this.showLandsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
+            // 
+            // showRegionsToolStripMenuItem
+            // 
+            this.showRegionsToolStripMenuItem.CheckOnClick = true;
+            this.showRegionsToolStripMenuItem.Name = "showRegionsToolStripMenuItem";
+            this.showRegionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showRegionsToolStripMenuItem.Text = "Show Regions";
+            this.showRegionsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
             // 
             // showLandMassesToolStripMenuItem
             // 
             this.showLandMassesToolStripMenuItem.CheckOnClick = true;
             this.showLandMassesToolStripMenuItem.Name = "showLandMassesToolStripMenuItem";
-            this.showLandMassesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.showLandMassesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showLandMassesToolStripMenuItem.Text = "Show LandMasses";
             this.showLandMassesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
             // 
@@ -618,14 +628,14 @@
             // testPathFinding1ToolStripMenuItem
             // 
             this.testPathFinding1ToolStripMenuItem.Name = "testPathFinding1ToolStripMenuItem";
-            this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testPathFinding1ToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.testPathFinding1ToolStripMenuItem.Text = "Build random path";
             this.testPathFinding1ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_TestPathFinding1_Click);
             // 
             // hideMapToolStripMenuItem
             // 
             this.hideMapToolStripMenuItem.Name = "hideMapToolStripMenuItem";
-            this.hideMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideMapToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.hideMapToolStripMenuItem.Text = "Hide map";
             this.hideMapToolStripMenuItem.Click += new System.EventHandler(this.hideMapToolStripMenuItem_Click);
             // 
@@ -763,6 +773,7 @@
             this.mapDraw1.ShowLocations = true;
             this.mapDraw1.ShowLocationsBorders = false;
             this.mapDraw1.ShowProvincies = true;
+            this.mapDraw1.ShowRegions = false;
             this.mapDraw1.ShowRoads = true;
             this.mapDraw1.ShowStates = true;
             this.mapDraw1.Size = new System.Drawing.Size(601, 703);
@@ -873,6 +884,7 @@
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.TabPage tabPage10;
         private System.Windows.Forms.ToolStripMenuItem hideMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showRegionsToolStripMenuItem;
     }
 }
 

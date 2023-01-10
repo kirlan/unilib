@@ -27,6 +27,7 @@ namespace MapDrawEngine
     public partial class MapDraw : UserControl
     {
         #region Предопределённые перья для рисования
+        internal static readonly Pen s_pDarkGrey2Pen = new Pen(Color.DarkGray, 2);
         internal static readonly Pen s_pDarkGrey3Pen = new Pen(Color.DarkGray, 3);
         internal static readonly Pen s_pAqua1Pen = new Pen(Color.Aqua, 1);
         internal static readonly Pen s_pAqua2Pen = new Pen(Color.Aqua, 2);
@@ -112,7 +113,7 @@ namespace MapDrawEngine
         /// Контуры конкретных географических регионов - для определения, над каким из них находится мышь.
         /// В масштабе 1:ROUGH_SCALE для ускорения.
         /// </summary>
-        private readonly Dictionary<Socium.Region, GraphicsPath> m_cAreaBorders = new Dictionary<Socium.Region, GraphicsPath>();
+        private readonly Dictionary<Socium.Region, GraphicsPath> m_cRegionsBorders = new Dictionary<Socium.Region, GraphicsPath>();
 
         /// <summary>
         /// Контуры конкретных провинций - для определения, над какой из них находится мышь.
@@ -312,6 +313,27 @@ namespace MapDrawEngine
                 if (m_bShowLands != value)
                 {
                     m_bShowLands = value;
+                    Draw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы регионов?
+        /// </summary>
+        private bool m_bShowRegions = false;
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы регионов?
+        /// </summary>
+        public bool ShowRegions
+        {
+            get { return m_bShowRegions; }
+            set
+            {
+                if (m_bShowRegions != value)
+                {
+                    m_bShowRegions = value;
                     Draw();
                 }
             }
@@ -665,7 +687,7 @@ namespace MapDrawEngine
             m_pFocusedState = null;
 
             //расчистим рабочее место
-            m_cAreaBorders.Clear();
+            m_cRegionsBorders.Clear();
             m_cProvinceBorders.Clear();
             m_cLandMassBorders.Clear();
             m_cLandBorders.Clear();
@@ -850,42 +872,45 @@ namespace MapDrawEngine
                 }
 
                 //вычислим контуры географических регионов
-                foreach (Socium.Region pArea in pContinent.As<ContinentX>().Regions)
+                foreach (Socium.Region pRegion in pContinent.As<ContinentX>().Regions)
                 {
-                    aPoints = BuildPath(pArea.FirstLines, true, out aQuads);
+                    aPoints = BuildPath(pRegion.FirstLines, true, out aQuads);
                     pPath = new GraphicsPath();
                     foreach (var aPts in aPoints)
                     {
                         pPath.AddPolygon(aPts);
 
-                        foreach (var pQuadModes in aQuads.Select(x => x.Modes))
+                        foreach (MapQuadrant pQuad in aQuads)
                         {
+                            pQuad.Layers[MapLayer.Regions].StartFigure();
+                            pQuad.Layers[MapLayer.Regions].AddLines(aPts);
+
                             //в качестве идентификатора типа региона используем цвет, которым этот регион должен рисоваться
-                            if (!pQuadModes[MapMode.Areas].ContainsKey(pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush))
+                            if (!pQuad.Modes[MapMode.Areas].ContainsKey(pRegion.Type.Get<LandTypeDrawInfo>().m_pBrush))
                             {
-                                pQuadModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
+                                pQuad.Modes[MapMode.Areas][pRegion.Type.Get<LandTypeDrawInfo>().m_pBrush] = new GraphicsPath();
                             }
-                            pQuadModes[MapMode.Areas][pArea.m_pType.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
+                            pQuad.Modes[MapMode.Areas][pRegion.Type.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
 
                             //если регион обитаем
-                            if (pArea.m_pNatives != null)
+                            if (pRegion.m_pNatives != null)
                             {
                                 //сохраним информацию о контуре региона и для этнографической карты
-                                Brush pBrush = m_cNationColorsID[pArea.m_pNatives];
-                                if (pArea.m_pNatives.IsAncient)
-                                    pBrush = m_cAncientNationColorsID[pArea.m_pNatives];
-                                if (pArea.m_pNatives.IsHegemon)
-                                    pBrush = m_cHegemonNationColorsID[pArea.m_pNatives];
+                                Brush pBrush = m_cNationColorsID[pRegion.m_pNatives];
+                                if (pRegion.m_pNatives.IsAncient)
+                                    pBrush = m_cAncientNationColorsID[pRegion.m_pNatives];
+                                if (pRegion.m_pNatives.IsHegemon)
+                                    pBrush = m_cHegemonNationColorsID[pRegion.m_pNatives];
 
-                                if (!pQuadModes[MapMode.Natives].ContainsKey(pBrush))
+                                if (!pQuad.Modes[MapMode.Natives].ContainsKey(pBrush))
                                 {
-                                    pQuadModes[MapMode.Natives][pBrush] = new GraphicsPath();
+                                    pQuad.Modes[MapMode.Natives][pBrush] = new GraphicsPath();
                                 }
-                                pQuadModes[MapMode.Natives][pBrush].AddPolygon(aPts);
+                                pQuad.Modes[MapMode.Natives][pBrush].AddPolygon(aPts);
                             }
                         }
                     }
-                    m_cAreaBorders[pArea] = pPath;
+                    m_cRegionsBorders[pRegion] = pPath;
                 }
             }
 
@@ -950,7 +975,7 @@ namespace MapDrawEngine
             Matrix pScaleMatrix = new Matrix();
             pScaleMatrix.Scale(1f / ROUGH_SCALE, 1f / ROUGH_SCALE);
 
-            foreach (var pPair in m_cAreaBorders)
+            foreach (var pPair in m_cRegionsBorders)
                 pPair.Value.Transform(pScaleMatrix);
 
             foreach (var pPair in m_cProvinceBorders)
@@ -1687,6 +1712,12 @@ namespace MapDrawEngine
                     for (int j = 0; j < m_iQuadsHeight; j++)
                         if (aVisibleQuads[i, j] != null)
                             aVisibleQuads[i, j].DrawPath(gr, MapLayer.Lands, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+
+            if (m_bShowRegions)
+                for (int i = 0; i < m_iQuadsWidth; i++)
+                    for (int j = 0; j < m_iQuadsHeight; j++)
+                        if (aVisibleQuads[i, j] != null)
+                            aVisibleQuads[i, j].DrawPath(gr, MapLayer.Regions, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
 
             if (m_bShowProvincies)
                 for (int i = 0; i < m_iQuadsWidth; i++)
