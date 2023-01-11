@@ -19,9 +19,7 @@ namespace LandscapeGeneration
 
         public long VertexID { get; } = s_iCounter++;
 
-        //public List<VoronoiVertex> m_cVertexes = new List<VoronoiVertex>();
-
-        //public List<long> m_cLinksTmp = new List<long>();
+        public List<VoronoiVertex> LinkedVertexes { get; } = new List<VoronoiVertex>();
 
         /// <summary>
         /// Список локаций, соприкасающихся с вершиной.
@@ -50,6 +48,13 @@ namespace LandscapeGeneration
             //проходим по всем локациям, связанным к "неправильной" вершиной
             foreach (Location pLinkedLoc in cTemp)
                 pLinkedLoc.ReplaceVertex(this, pGood);
+
+            foreach (VoronoiVertex pLinkedVertex in LinkedVertexes)
+            {
+                pLinkedVertex.LinkedVertexes.Remove(this);
+                if (!pLinkedVertex.LinkedVertexes.Contains(pGood))
+                    pLinkedVertex.LinkedVertexes.Add(pGood);
+            }
         }
 
         public VoronoiVertex()
@@ -74,39 +79,6 @@ namespace LandscapeGeneration
         {
             X = pVector.X;
             Y = pVector.Y;
-        }
-
-        public VoronoiVertex(BinaryReader binReader)
-        {
-            VertexID = binReader.ReadInt64();
-
-            X = (float)binReader.ReadDouble();
-            Y = (float)binReader.ReadDouble();
-
-
-            //int iLinksCount = binReader.ReadInt32();
-            //for (int i = 0; i < iLinksCount; i++)
-            //    m_cLinksTmp.Add(binReader.ReadInt64());
-
-            //int iLocationsCount = binReader.ReadInt32();
-            //for (int i = 0; i < iLocationsCount; i++)
-            //    m_cLocationsTmp.Add(binReader.ReadInt64());
-        }
-
-        public void Save(BinaryWriter binWriter)
-        {
-            binWriter.Write(VertexID);
-
-            binWriter.Write((double)X);
-            binWriter.Write((double)Y);
-
-            //binWriter.Write(m_cVertexes.Count);
-            //foreach (VoronoiVertex pVertex in m_cVertexes)
-            //    binWriter.Write(pVertex.VertexID);
-
-            //binWriter.Write(m_cLocationsBuild.Count);
-            //foreach (Location pLocation in m_cLocationsBuild)
-            //    binWriter.Write(pLocation.m_iID);
         }
 
         public override string ToString()

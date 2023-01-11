@@ -1139,58 +1139,63 @@ namespace LandscapeGeneration
                 }
             }
         }
-        //private void CalculateVertexes()
-        //{
-        //    foreach (VoronoiVertex pVertex in m_pGrid.m_aVertexes)
-        //    {
-        //        float fTotalWeight = 0;
-        //        bool bOcean = false;
-        //        bool bLand = false;
-        //        foreach (LOC pLoc in pVertex.m_aLocations)
-        //        {
-        //            if (pLoc.Forbidden || pLoc.Owner == null)
-        //                continue;
 
-        //            float fLinkElevation = (pLoc.Owner as LAND).Type.m_fElevation;
-        //            pVertex.m_fZ += pLoc.m_fHeight / fLinkElevation;
-        //            fTotalWeight += 1 / fLinkElevation;
+        private void CalculateVertexes()
+        {
+            foreach (VoronoiVertex pVertex in LocationsGrid.Vertexes)
+            {
+                float fTotalWeight = 0;
+                bool bOcean = false;
+                bool bLand = false;
 
-        //            if (pLoc.m_fHeight > 0)
-        //                bLand = true;
-        //            if (pLoc.m_fHeight < 0)
-        //                bOcean = true;
-        //        }
+                foreach (Location pLoc in pVertex.Locations)
+                {
+                    if (pLoc.Forbidden || !pLoc.HasOwner())
+                        continue;
 
-        //        if (fTotalWeight > 0)
-        //            pVertex.m_fZ /= fTotalWeight;
+                    if (float.IsNaN(pVertex.H))
+                        pVertex.H = 0;
 
-        //        if (bOcean && bLand)
-        //            pVertex.m_fZ = 0;
-        //    }
-        //}
+                    float fLinkElevation = pLoc.GetOwner().LandType.Elevation;
+                    pVertex.H += pLoc.H / fLinkElevation;
+                    fTotalWeight += 1 / fLinkElevation;
 
-        //private void SmoothVertexes()
-        //{
-        //    foreach (VoronoiVertex pVertex in m_pGrid.m_aVertexes)
-        //    {
-        //        if (float.IsNaN(pVertex.m_fZ))
-        //            continue;
-        //        foreach (VoronoiVertex pLink in pVertex.m_cVertexes)
-        //        {
-        //            if (float.IsNaN(pLink.m_fZ))
-        //                continue;
+                    if (pLoc.H > 0)
+                        bLand = true;
+                    if (pLoc.H < 0)
+                        bOcean = true;
+                }
 
-        //            float fDist = (float)Math.Sqrt((pVertex.m_fX - pLink.m_fX) * (pVertex.m_fX - pLink.m_fX) +
-        //                                          (pVertex.m_fY - pLink.m_fY) * (pVertex.m_fY - pLink.m_fY));
+                if (fTotalWeight > 0)
+                    pVertex.H /= fTotalWeight;
 
-        //            if (fDist < 50)
-        //            {
-        //                pVertex.m_fZ = (pVertex.m_fZ + pLink.m_fZ) / 2;
-        //                pLink.m_fZ = pVertex.m_fZ;
-        //            }
-        //        }
-        //    }
-        //}
+                if (bOcean && bLand)
+                    pVertex.H = 0;
+            }
+        }
+
+        private void SmoothVertexes()
+        {
+            foreach (VoronoiVertex pVertex1 in LocationsGrid.Vertexes)
+            {
+                if (float.IsNaN(pVertex1.H))
+                    continue;
+                foreach (VoronoiVertex pVertex2 in pVertex1.LinkedVertexes)
+                {
+                    if (float.IsNaN(pVertex2.H))
+                        continue;
+
+                    float fDist = (float)Math.Sqrt((pVertex1.X - pVertex2.X) * (pVertex1.X - pVertex2.X) +
+                                                  (pVertex1.Y - pVertex2.Y) * (pVertex1.Y - pVertex2.Y));
+
+                    if (fDist < 50)
+                    {
+                        pVertex1.H = (pVertex1.H + pVertex2.H) / 2;
+                        pVertex2.H = pVertex1.H;
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Сглаживает карту.

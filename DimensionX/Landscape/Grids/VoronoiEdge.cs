@@ -21,6 +21,12 @@ namespace LandscapeGeneration
             Point1 = pPoint1;
             Point2 = pPoint2;
 
+            if (!Point1.LinkedVertexes.Contains(Point2))
+                Point1.LinkedVertexes.Add(Point2);
+
+            if (!Point2.LinkedVertexes.Contains(Point1))
+                Point2.LinkedVertexes.Add(Point1);
+
             Length = (float)Math.Sqrt((pPoint1.X - pPoint2.X) * (pPoint1.X - pPoint2.X) + (pPoint1.Y - pPoint2.Y) * (pPoint1.Y - pPoint2.Y));
         }
 

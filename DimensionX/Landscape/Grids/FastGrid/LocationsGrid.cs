@@ -58,8 +58,8 @@ namespace LandscapeGeneration.FastGrid
 
             int quanticSize = (int)(size / k);
 
-            float fDeltaX = 0.1f;
-            float fDeltaY = 0.25f;
+            const float fDeltaX = 0.1f;
+            const float fDeltaY = 0.25f;
 
             iInnerCount = 0;
 
@@ -431,6 +431,7 @@ namespace LandscapeGeneration.FastGrid
         }
 
         public Location[] Locations { get; } = null;
+        public VoronoiVertex[] Vertexes { get; } = null;
 
         public LocationsGrid(int locationsCount, int iFaceSize, BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
@@ -511,6 +512,12 @@ namespace LandscapeGeneration.FastGrid
                 cLocations.AddRange(pChunk.Locations);
 
             Locations = cLocations.ToArray();
+
+            List<VoronoiVertex> cVertexes = new List<VoronoiVertex>();
+            foreach (var pChunk in m_cChunk)
+                cVertexes.AddRange(pChunk.Vertexes);
+
+            Vertexes = cVertexes.ToArray();
         }
 
         public void LinkNeighbours()
