@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using LandscapeGeneration;
 using Random;
-using NameGen;
-using LandscapeGeneration;
 using Socium.Nations;
 using Socium.Settlements;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Socium
 {
@@ -59,14 +57,14 @@ namespace Socium
         /// Военное присутсвие сил провинции в данной земле.
         /// Нужно только для формирования карты провинций.
         /// </summary>
-        public int m_iProvincePresence = 0;
+        public int ProvincePresence { get; set; } = 0;
 
         /// <summary>
         /// коренное население региона - может отличаться от доминирующего населения локации
         /// </summary>
-        public Nation m_pNatives = null;
+        public Nation Natives { get; set; } = null;
 
-        public string m_sName;
+        public string Name { get; set; }
 
         private int m_iMaxSize = 1;
 
@@ -217,12 +215,16 @@ namespace Socium
                     cChances[pNation] *= 10.0f;
 
                 foreach (LandTypeInfo pType in pNation.PreferredLands)
+                {
                     if (Type == pType)
                         cChances[pNation] *= 10.0f;
+                }
 
                 foreach (LandTypeInfo pType in pNation.HatedLands)
+                {
                     if (Type == pType)
                         cChances[pNation] /= 100.0f;
+                }
             }
 
             int iChance = Rnd.ChooseOne(cChances.Values, 3);
@@ -231,25 +233,25 @@ namespace Socium
                 iChance--;
                 if (iChance < 0)
                 {
-                    m_pNatives = pNation;
+                    Natives = pNation;
                     break;
                 }
             }
 
-            m_sName = m_pNatives.Race.Language.RandomCountryName();
+            Name = Natives.Race.Language.RandomCountryName();
 
             foreach (LandX pLand in Contents)
             {
-                pLand.Populate(m_pNatives, m_sName);
+                pLand.Populate(Natives, Name);
             }
         }
 
         public string GetNativeRaceString()
         {
-            if (m_pNatives == null)
+            if (Natives == null)
                 return "unpopulated";
             else
-                return m_pNatives.ProtoSociety.Name;
+                return Natives.ProtoSociety.Name;
         }
 
         internal Location BuildFort(State pEnemy, bool bFast)
@@ -349,11 +351,13 @@ namespace Socium
             if (pChoosenLocationX.Settlement == null && pChoosenLocationX.Building == null)
             {
                 LandX pChoosenLandX = pChoosenLocation.GetOwner().As<LandX>();
-                pChoosenLocationX.Settlement = new Settlement(Settlement.Info[SettlementSize.Fort], pChoosenLandX.DominantNation, GetOwner().GetOwner().m_pSociety.TechLevel, GetOwner().LocalSociety.MagicLimit, false, bFast);
+                pChoosenLocationX.Settlement = new Settlement(Settlement.Info[SettlementSize.Fort], pChoosenLandX.DominantNation, GetOwner().GetOwner().Society.TechLevel, GetOwner().LocalSociety.MagicLimit, false, bFast);
 
                 foreach (Location pLoc in pChoosenLocation.BorderWithKeys)
+                {
                     if (pLoc.As<LocationX>().Building == null)
                         pLoc.As<LocationX>().Building = new BuildingStandAlone(BuildingType.Farm);
+                }
 
                 List<Road> cRoads = new List<Road>();
                 foreach (var pRoads in pChoosenLocationX.Roads)
@@ -366,12 +370,14 @@ namespace Socium
                 return pChoosenLocation;
             }
             else
+            {
                 return null;
+            }
         }
 
         public override string ToString()
         {
-            return string.Format("{0} {1} ({2}, {3})", m_sName, Type.Name, Contents.Count, GetNativeRaceString());
+            return string.Format("{0} {1} ({2}, {3})", Name, Type.Name, Contents.Count, GetNativeRaceString());
         }
     }
 }

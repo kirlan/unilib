@@ -496,9 +496,9 @@ namespace Socium
             foreach (var pSkill in Profession.Skills)
             {
                 ProfessionInfo.SkillLevel eLevel = pSkill.Value;
-                if (pSkill.Key == HomeLocation.OwnerState.m_pSociety.MostRespectedSkill && Rnd.OneChanceFrom(2))
+                if (pSkill.Key == HomeLocation.OwnerState.Society.MostRespectedSkill && Rnd.OneChanceFrom(2))
                     eLevel++;
-                if (pSkill.Key == HomeLocation.OwnerState.m_pSociety.LeastRespectedSkill && Rnd.OneChanceFrom(2))
+                if (pSkill.Key == HomeLocation.OwnerState.Society.LeastRespectedSkill && Rnd.OneChanceFrom(2))
                     eLevel--;
 
                 if (pSkill.Key == Estate.MostRespectedSkill && Rnd.OneChanceFrom(3))
@@ -635,7 +635,7 @@ namespace Socium
         public Person(World pWorld, LocationX pHomeLocation, Building pBuilding, bool bOwner)
         {
             HomeLocation = pHomeLocation;
-            State = HomeLocation.OwnerState.m_pSociety;
+            State = HomeLocation.OwnerState.Society;
             Nation = State.TitularNation;
             Building = pBuilding;
 
@@ -891,29 +891,29 @@ namespace Socium
                                 cPossibleHomes.Add(pRelative.HomeLocation);
                                 cPossibleHomes.Add(pRelative.HomeLocation);
                                 cPossibleHomes.Add(pRelative.HomeLocation);
-                                cPossibleHomes.Add(pRelative.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter);
+                                cPossibleHomes.Add(pRelative.HomeLocation.OwnerState.Methropoly.AdministrativeCenter);
                                 break;
                             case Estate.SocialRank.Commoners:
                                 cPossibleHomes.Add(pRelative.HomeLocation);
-                                foreach (State pState in pWorld.m_aStates)
+                                foreach (State pState in pWorld.States)
                                 {
                                     cPossibleHomes.Add(pRelative.HomeLocation);
-                                    cPossibleHomes.Add(pState.m_pMethropoly.AdministrativeCenter);
+                                    cPossibleHomes.Add(pState.Methropoly.AdministrativeCenter);
                                 }
                                 break;
                             case Estate.SocialRank.Clergy:
                                 foreach (Province pProvince in pRelative.HomeLocation.OwnerState.Contents)
                                     cPossibleHomes.AddRange(pProvince.LocalSociety.Settlements);
-                                foreach (State pState in pWorld.m_aStates)
+                                foreach (State pState in pWorld.States)
                                 {
                                     cPossibleHomes.Add(pRelative.HomeLocation);
-                                    cPossibleHomes.Add(pState.m_pMethropoly.AdministrativeCenter);
+                                    cPossibleHomes.Add(pState.Methropoly.AdministrativeCenter);
                                 }
                                 break;
                             case Estate.SocialRank.Elite:
                                 foreach (Province pProvince in pRelative.HomeLocation.OwnerState.Contents)
                                     cPossibleHomes.AddRange(pProvince.LocalSociety.Settlements);
-                                foreach (State pState in pWorld.m_aStates)
+                                foreach (State pState in pWorld.States)
                                     foreach (Province pProvince in pState.Contents)
                                         cPossibleHomes.AddRange(pProvince.LocalSociety.Settlements);
                                 break;
@@ -929,7 +929,7 @@ namespace Socium
             HomeLocation = pWorld.GetRandomSettlement(pPreferredHome, eEstate);
             if (HomeLocation == null)
                 throw new InvalidOperationException("Can't find home settlement for choosen estate");
-            State = HomeLocation.OwnerState.m_pSociety;
+            State = HomeLocation.OwnerState.Society;
 
             Estate = State.Estates[eEstate];
 
@@ -1951,9 +1951,9 @@ namespace Socium
 
                 if (Profession.IsMaster)
                 {
-                    foreach (State pState in pWorld.m_aStates)
+                    foreach (State pState in pWorld.States)
                     {
-                        foreach (LocationX pLand in pState.m_pSociety.Settlements)
+                        foreach (LocationX pLand in pState.Society.Settlements)
                         {
                             foreach (Building pBuilding in pLand.Settlement.Buildings)
                             {
@@ -2008,13 +2008,13 @@ namespace Socium
             if (Building.Info == State.Polity.StateCapital.MainBuilding &&
                 Profession.IsMaster)
             {
-                foreach (State pState in pWorld.m_aStates)
+                foreach (State pState in pWorld.States)
                 {
-                    foreach (LocationX pLand in pState.m_pSociety.Settlements)
+                    foreach (LocationX pLand in pState.Society.Settlements)
                     {
                         foreach (Building pBuilding in pLand.Settlement.Buildings)
                         {
-                            if (pBuilding.Info == pState.m_pSociety.Polity.StateCapital.MainBuilding)
+                            if (pBuilding.Info == pState.Society.Polity.StateCapital.MainBuilding)
                             {
                                 foreach (Person pDweller in pBuilding.Persons)
                                 {
@@ -4323,8 +4323,8 @@ namespace Socium
                     pPerson2.Estate.Rank == Estate.SocialRank.Commoners)
                 {
                     //но - только если один из них живёт в столице, да и то связи эти слабые - как другие города для люмпенов
-                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter ||
-                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter)
+                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.Methropoly.AdministrativeCenter ||
+                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.Methropoly.AdministrativeCenter)
                     {
                         iAdd = Math.Max(1, iAdd);
                         pResult.AppendLine(" (+" + iAdd.ToString() + ") Interstate capital residents");
@@ -4336,8 +4336,8 @@ namespace Socium
                     pPerson2.Estate.IsElite())
                 {
                     //жители столиц имеют более сильные связи, как если бы они жили в одном государстве
-                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter ||
-                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.m_pMethropoly.AdministrativeCenter)
+                    if (pPerson1.HomeLocation == pPerson1.HomeLocation.OwnerState.Methropoly.AdministrativeCenter ||
+                        pPerson2.HomeLocation == pPerson2.HomeLocation.OwnerState.Methropoly.AdministrativeCenter)
                     {
                         iAdd = Math.Max(2, iAdd);
                         pResult.AppendLine(" (+" + iAdd.ToString() + ") Interstate capital residents (elite)");

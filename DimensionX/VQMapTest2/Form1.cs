@@ -127,10 +127,10 @@ namespace VQMapTest2
             mapDraw1.Assign(m_pWorld);
             mapDraw1.ScaleMultiplier = fScale;
 
-            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", Society.GetTechString(m_pWorld.m_aEpoches.Last().NativesMaxTechLevel, Socium.Psychology.Customs.Science.Moderate_Science), m_pWorld.m_aEpoches.Last().NativesMaxTechLevel);
-            if (m_pWorld.m_aEpoches.Last().NativesMaxMagicLevel > 0)
+            label7.Text = string.Format("Avrg. tech level: {0} [T{1}]", Society.GetTechString(m_pWorld.Epoches.Last().NativesMaxTechLevel, Socium.Psychology.Customs.Science.Moderate_Science), m_pWorld.Epoches.Last().NativesMaxTechLevel);
+            if (m_pWorld.Epoches.Last().NativesMaxMagicLevel > 0)
             {
-                label8.Text = string.Format("Magic users: up to {0} [M{1}]", Society.GetMagicString(m_pWorld.m_aEpoches.Last().NativesMaxMagicLevel), m_pWorld.m_aEpoches.Last().NativesMaxMagicLevel);
+                label8.Text = string.Format("Magic users: up to {0} [M{1}]", Society.GetMagicString(m_pWorld.Epoches.Last().NativesMaxMagicLevel), m_pWorld.Epoches.Last().NativesMaxMagicLevel);
                 label2.Text = "";
             }
             else
@@ -140,7 +140,7 @@ namespace VQMapTest2
             }
 
             comboBox1.Items.Clear();
-            foreach (State pState in m_pWorld.m_aStates)
+            foreach (State pState in m_pWorld.States)
             {
                 comboBox1.Items.Add(pState);
             }
@@ -264,9 +264,9 @@ namespace VQMapTest2
         private void AddNationInfo(Nation pNation)
         {
             List<Nation> cKnownNations = new List<Nation>();
-            foreach (State pState in m_pWorld.m_aStates)
+            foreach (State pState in m_pWorld.States)
             {
-                foreach (var pEstate in pState.m_pSociety.Estates)
+                foreach (var pEstate in pState.Society.Estates)
                 {
                     if (pEstate.Value.TitularNation.Race == pNation.Race && !cKnownNations.Contains(pEstate.Value.TitularNation))
                     {
@@ -349,11 +349,11 @@ namespace VQMapTest2
         {
             comboBox1.SelectedItem = e.State;
 
-            var pSociety = e.State.m_pSociety;
+            var pSociety = e.State.Society;
 
             richTextBox1.Clear();
 
-            richTextBox1.AppendText(string.Format("{0} {1}\n\n", e.State.m_pSociety.Name, pSociety.Polity.Name));
+            richTextBox1.AppendText(string.Format("{0} {1}\n\n", e.State.Society.Name, pSociety.Polity.Name));
 
             richTextBox1.AppendText(string.Format("Major race: {2} [T{0}M{1}]\n\n", pSociety.TechLevel, pSociety.MagicLimit, pSociety.TitularNation));
 
@@ -413,7 +413,7 @@ namespace VQMapTest2
                 richTextBox1.AppendText(string.Format("Magic users: none, {0} [M0]\n\n", sMagicAttitude));
             }
 
-            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.State.m_iFood, e.State.m_cResources[LandResource.Wood], e.State.m_cResources[LandResource.Ore], e.State.m_iLocationsCount));
+            richTextBox1.AppendText(string.Format("Resources: F:{0}, W:{1}, I:{2} / P:{3}\n\n", e.State.FoodAvailable, e.State.Resources[LandResource.Wood], e.State.Resources[LandResource.Ore], e.State.LocationsCount));
 
             richTextBox1.AppendText("Estates: \n");
 
@@ -536,7 +536,7 @@ namespace VQMapTest2
                 {
                     if(!bFirst)
                         richTextBox1.AppendText(", ");
-                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.m_pSociety.Name, pState.m_pSociety.Polity.Name), comboBox1.Items.IndexOf(pState).ToString());
+                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.Society.Name, pState.Society.Polity.Name), comboBox1.Items.IndexOf(pState).ToString());
                     bFirst = false;
                 }
                 richTextBox1.AppendText("\n\n");
@@ -553,7 +553,7 @@ namespace VQMapTest2
                 {
                     if (!bFirst)
                         richTextBox1.AppendText(", ");
-                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.m_pSociety.Name, pState.m_pSociety.Polity.Name), comboBox1.Items.IndexOf(pState).ToString());
+                    richTextBox1.InsertLink(string.Format("{0} {1}", pState.Society.Name, pState.Society.Polity.Name), comboBox1.Items.IndexOf(pState).ToString());
                     bFirst = false;
                 }
                 richTextBox1.AppendText("\n\n");
@@ -565,7 +565,7 @@ namespace VQMapTest2
 
             Dictionary<string, int> cPop = new Dictionary<string, int>();
 
-            foreach(LocationX pLoc in e.State.m_pSociety.Settlements)
+            foreach(LocationX pLoc in e.State.Society.Settlements)
             {
                 listBox1.Items.Add(pLoc);
 
@@ -752,15 +752,15 @@ namespace VQMapTest2
 
                         State pLinkState = comboBox1.Items[iIndex] as State;
 
-                        string sTip = string.Format("{0} {1} to {2} {3}:\n", mapDraw1.SelectedState.m_pSociety.Name, mapDraw1.SelectedState.m_pSociety.Polity.Name, pLinkState.m_pSociety.Name, pLinkState.m_pSociety.Polity.Name);
+                        string sTip = string.Format("{0} {1} to {2} {3}:\n", mapDraw1.SelectedState.Society.Name, mapDraw1.SelectedState.Society.Polity.Name, pLinkState.Society.Name, pLinkState.Society.Polity.Name);
                         string sRelation;
-                        mapDraw1.SelectedState.m_pSociety.CalcHostility(pLinkState, out sRelation);
+                        mapDraw1.SelectedState.Society.CalcHostility(pLinkState, out sRelation);
 
                         sTip += sRelation;
                         sTip += "\n";
 
-                        sTip += string.Format("{2} {3} to {0} {1}:\n", mapDraw1.SelectedState.m_pSociety.Name, mapDraw1.SelectedState.m_pSociety.Polity.Name, pLinkState.m_pSociety.Name, pLinkState.m_pSociety.Polity.Name);
-                        pLinkState.m_pSociety.CalcHostility(mapDraw1.SelectedState, out sRelation);
+                        sTip += string.Format("{2} {3} to {0} {1}:\n", mapDraw1.SelectedState.Society.Name, mapDraw1.SelectedState.Society.Polity.Name, pLinkState.Society.Name, pLinkState.Society.Polity.Name);
+                        pLinkState.Society.CalcHostility(mapDraw1.SelectedState, out sRelation);
                         sTip += sRelation;
 
                         toolTip1.SetToolTip(richTextBox1, sTip);

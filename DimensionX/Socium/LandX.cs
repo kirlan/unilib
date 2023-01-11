@@ -282,10 +282,10 @@ namespace Socium
         {
             if (HasOwner())
             {
-                if (GetOwner().m_pNatives == null)
+                if (GetOwner().Natives == null)
                     return "unpopulated";
                 else
-                    return GetOwner().m_pNatives.ToString();
+                    return GetOwner().Natives.ToString();
             }
             return "unpopulated";
         }

@@ -22,21 +22,21 @@ namespace Socium
     {
         public class Infrastructure
         {
-            public RoadQuality m_eMaxGroundRoad;
-            public RoadQuality m_eMaxNavalPath;
-            public int m_iAerialAvailability;
-            public List<SettlementSize> m_cAvailableSettlements;
+            public RoadQuality MaxGroundRoad { get; }
+            public RoadQuality MaxNavalPath { get; }
+            public int AerialAvailability { get; }
+            public SettlementSize[] AvailableSettlements { get; }
 
             public Infrastructure(RoadQuality eMaxRoad, RoadQuality eMaxNaval, int iAerial, SettlementSize[] cSettlements)
             {
-                m_eMaxGroundRoad = eMaxRoad;
-                m_eMaxNavalPath = eMaxNaval;
-                m_iAerialAvailability = iAerial;
-                m_cAvailableSettlements = new List<SettlementSize>(cSettlements);
+                MaxGroundRoad = eMaxRoad;
+                MaxNavalPath = eMaxNaval;
+                AerialAvailability = iAerial;
+                AvailableSettlements = cSettlements;
             }
         }
 
-        public static readonly Infrastructure[] InfrastructureLevels = 
+        public static Infrastructure[] InfrastructureLevels { get; } =
         {
             // 0 - только не соединённые дорогами поселения
             new Infrastructure(RoadQuality.None, RoadQuality.None, 0, new SettlementSize[]{SettlementSize.Hamlet}),
@@ -56,14 +56,14 @@ namespace Socium
             new Infrastructure(RoadQuality.Normal, RoadQuality.None, 3, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Town, SettlementSize.Fort}),
             // 8 - деревни, просёлочные дороги, морской транспорт не используется, доступ к воздушному сообщению во всех поселениях
             new Infrastructure(RoadQuality.Country, RoadQuality.None, 3, new SettlementSize[]{SettlementSize.Hamlet, SettlementSize.Village, SettlementSize.Fort}),
-        }; 
-        
+        };
+
         /// <summary>
         /// Центральная провинция государства, в которой расположена столица
         /// </summary>
-        public Province m_pMethropoly = null;
+        public Province Methropoly { get; private set; } = null;
 
-        public StateSociety m_pSociety = null;
+        public StateSociety Society { get; private set; } = null;
 
         /// <summary>
         /// Зарождение государства в указанной провинции
@@ -79,9 +79,9 @@ namespace Socium
 
             InitBorder(pSeed);
 
-            m_pMethropoly = pSeed;
+            Methropoly = pSeed;
 
-            m_pSociety = new StateSociety(this);
+            Society = new StateSociety(this);
 
             Contents.Add(pSeed);
             pSeed.SetOwner(this);
@@ -102,8 +102,8 @@ namespace Socium
                 if (pProvince.Forbidden)
                     continue;
 
-                if (!pProvince.HasOwner() && !pProvince.Center.IsWater && 
-                    m_pMethropoly.LocalSociety.TitularNation.Race.Language == pProvince.LocalSociety.TitularNation.Race.Language)
+                if (!pProvince.HasOwner() && !pProvince.Center.IsWater &&
+                    Methropoly.LocalSociety.TitularNation.Race.Language == pProvince.LocalSociety.TitularNation.Race.Language)
                 {
                     AddProvince(pProvince);
                     bFullyGrown = false;
@@ -135,7 +135,7 @@ namespace Socium
 
                 if (!pProvince.HasOwner() && !pProvince.Center.IsWater)
                 {
-                    if (m_pMethropoly.LocalSociety.TitularNation.Race.Language != pProvince.LocalSociety.TitularNation.Race.Language)
+                    if (Methropoly.LocalSociety.TitularNation.Race.Language != pProvince.LocalSociety.TitularNation.Race.Language)
                         continue;
 
                     //int iHostility = m_pMethropoly.CalcHostility(pProvince);
@@ -167,7 +167,7 @@ namespace Socium
                     //дружественное отношение - для этой провинции шансы выше.
                     //if (iHostility < -1)
                     //    fSharedPerimeter *= -iHostility;
-                    if (m_pMethropoly.LocalSociety.TitularNation == pProvince.LocalSociety.TitularNation)
+                    if (Methropoly.LocalSociety.TitularNation == pProvince.LocalSociety.TitularNation)
                         fSharedPerimeter *= 2;
 
                     cChances[pProvince] = fSharedPerimeter;
@@ -253,20 +253,21 @@ namespace Socium
             foreach (Province pProvince in Contents)
             {
                 foreach (LocationX pLoc in pProvince.LocalSociety.Settlements)
-                    foreach (LocationX pOtherLoc in pLoc.HaveSeaRouteTo)
-                    { 
-                        State pState = pOtherLoc.OwnerState;
-                        if(pState != this && !BorderWith.ContainsKey(pState))
+                {
+                    foreach (State pState in pLoc.HaveSeaRouteTo.Select(x => x.OwnerState))
+                    {
+                        if (pState != this && !BorderWith.ContainsKey(pState))
                             BorderWith[pState] = new List<VoronoiEdge>();
                     }
+                }
             }
 
             FillBorderWithKeys();
         }
 
-        public int m_iFood = 0;
-        public readonly Dictionary<LandResource, float> m_cResources = new Dictionary<LandResource, float>();
-        public int m_iLocationsCount = 0;
+        public int FoodAvailable { get; private set; } = 0;
+        public Dictionary<LandResource, float> Resources { get; } = new Dictionary<LandResource, float>();
+        public int LocationsCount { get; private set; } = 0;
 
         /// <summary>
         /// Строит столицу государства, рассчитывает уровни технического и культурного развития, определяет форму правления...
@@ -277,15 +278,15 @@ namespace Socium
         /// <returns>локация, в которой построена столица</returns>
         public LocationX BuildCapital(int iMinSize, int iEmpireTreshold, bool bFast)
         {
-            m_pSociety.CalculateTitularNation();
+            Society.CalculateTitularNation();
 
-            m_pMethropoly.LocalSociety.UpdateTitularNation(m_pSociety.TitularNation);
-            foreach (Region pRegion in m_pMethropoly.Contents)
+            Methropoly.LocalSociety.UpdateTitularNation(Society.TitularNation);
+            foreach (Region pRegion in Methropoly.Contents)
                 foreach (LandX pLand in pRegion.Contents)
-                    pLand.DominantNation = m_pSociety.TitularNation;
+                    pLand.DominantNation = Society.TitularNation;
 
             // если у нас нация паразитов или пришельцев, то они сами живут только в метрополии, а во всей остальной империи коренное население - местное
-            if (m_pSociety.TitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || m_pSociety.TitularNation.IsInvader)
+            if (Society.TitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite() || Society.TitularNation.IsInvader)
             {
                 foreach (Province pProvince in Contents)
                 {
@@ -293,8 +294,8 @@ namespace Socium
                     {
                         foreach (LandX pLand in pRegion.Contents)
                         {
-                            if (pLand.DominantNation == m_pSociety.TitularNation)
-                                pLand.DominantNation = m_pSociety.HostNation;
+                            if (pLand.DominantNation == Society.TitularNation)
+                                pLand.DominantNation = Society.HostNation;
                         }
                     }
                 }
@@ -302,10 +303,10 @@ namespace Socium
             //int iAverageMagicLimit = 0;
 
             foreach (LandResource eRes in Enum.GetValues(typeof(LandResource)))
-                m_cResources[eRes] = 0;
+                Resources[eRes] = 0;
 
-            m_iFood = 0;
-            m_iLocationsCount = 0;
+            FoodAvailable = 0;
+            LocationsCount = 0;
 
             #region Counting resources production and consumption
             int iMethropolyLocationsCount = 0;
@@ -315,18 +316,17 @@ namespace Socium
             {
                 foreach (LocationX pLoc in pProvince.LocalSociety.Settlements)
                 {
-                    foreach (LocationX pOtherLoc in pLoc.HaveSeaRouteTo)
+                    foreach (State pState in pLoc.HaveSeaRouteTo.Select(x => x.OwnerState))
                     {
-                        State pState = pOtherLoc.OwnerState;
                         if (pState != this && !BorderWith.ContainsKey(pState))
                             BorderWith[pState] = new List<VoronoiEdge>();
                     }
                 }
 
                 foreach (LandResource eRes in Enum.GetValues(typeof(LandResource)))
-                    m_cResources[eRes] += pProvince.Resources[eRes];
+                    Resources[eRes] += pProvince.Resources[eRes];
 
-                if (pProvince == m_pMethropoly)
+                if (pProvince == Methropoly)
                     iMethropolyLocationsCount += pProvince.LocationsCount;
                 else
                     iProvincialLocationsCount += pProvince.LocationsCount;
@@ -337,11 +337,11 @@ namespace Socium
                 //}
             }
 
-            m_iLocationsCount = iMethropolyLocationsCount + iProvincialLocationsCount;
+            LocationsCount = iMethropolyLocationsCount + iProvincialLocationsCount;
 
             //TODO: нужно учитывать размеры и телосложение - гиганты и толстяки едят больше, чем карлики и худышки
-            float fMethropolySatiety = m_pSociety.TitularNation.GetAvailableFood(m_cResources, iProvincialLocationsCount) / iMethropolyLocationsCount;
-            float fProvincialSatiety = m_pSociety.HostNation.GetAvailableFood(m_cResources, iProvincialLocationsCount) / iProvincialLocationsCount;
+            float fMethropolySatiety = Society.TitularNation.GetAvailableFood(Resources, iProvincialLocationsCount) / iMethropolyLocationsCount;
+            float fProvincialSatiety = Society.HostNation.GetAvailableFood(Resources, iProvincialLocationsCount) / iProvincialLocationsCount;
 
             if (fMethropolySatiety > 2)
                 fMethropolySatiety = 2;
@@ -349,63 +349,63 @@ namespace Socium
             if (fProvincialSatiety > 2)
                 fProvincialSatiety = 2;
 
-            if (m_pSociety.TitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
+            if (Society.TitularNation.DominantPhenotype.m_pValues.Get<NutritionGenetix>().IsParasite())
             {
                 // для паразитов качество их питания зависит от качества питания их жертв
-                m_iFood = (int)(fMethropolySatiety * fProvincialSatiety * m_iLocationsCount);
+                FoodAvailable = (int)(fMethropolySatiety * fProvincialSatiety * LocationsCount);
             }
             else
             {
                 // для обычных людей - качество питания в метрополии и в провинции просто дополняют друг-друга
-                m_iFood = (int)((fMethropolySatiety + fProvincialSatiety) * 0.5 * m_iLocationsCount);
+                FoodAvailable = (int)((fMethropolySatiety + fProvincialSatiety) * 0.5 * LocationsCount);
             }
 
             //iAverageMagicLimit = iAverageMagicLimit / m_iPopulation;
             #endregion Counting resources production and consumption
 
-            m_pSociety.CalculateSocietyFeatures(iEmpireTreshold);
+            Society.CalculateSocietyFeatures(iEmpireTreshold);
 
             #region Build capital and regional centers
-            m_pMethropoly.AdministrativeCenter.Settlement = new Settlement(m_pSociety.Polity.StateCapital, 
-                m_pMethropoly.LocalSociety.TitularNation, 
-                m_pSociety.TechLevel, 
-                m_pSociety.MagicLimit, 
-                true, 
+            Methropoly.AdministrativeCenter.Settlement = new Settlement(Society.Polity.StateCapital,
+                Methropoly.LocalSociety.TitularNation,
+                Society.TechLevel,
+                Society.MagicLimit,
+                true,
                 bFast);
 
             foreach (Province pProvince in Contents)
             {
-                m_pSociety.Settlements.AddRange(pProvince.LocalSociety.Settlements);
+                Society.Settlements.AddRange(pProvince.LocalSociety.Settlements);
 
-                if (pProvince == m_pMethropoly)
+                if (pProvince == Methropoly)
                     continue;
 
-                pProvince.AdministrativeCenter.Settlement = new Settlement(m_pSociety.Polity.ProvinceCapital, 
-                    m_pMethropoly.LocalSociety.TitularNation, 
-                    m_pSociety.TechLevel, 
-                    m_pSociety.MagicLimit, 
-                    false, 
+                pProvince.AdministrativeCenter.Settlement = new Settlement(Society.Polity.ProvinceCapital,
+                    Methropoly.LocalSociety.TitularNation,
+                    Society.TechLevel,
+                    Society.MagicLimit,
+                    false,
                     bFast);
             }
             #endregion Build capital and regional centers
 
-            if (m_pMethropoly.Center != null)
-                m_pSociety.Name = m_pSociety.TitularNation.Race.Language.RandomCountryName();
+            if (Methropoly.Center != null)
+                Society.Name = Society.TitularNation.Race.Language.RandomCountryName();
 
-            return m_pMethropoly.AdministrativeCenter;
+            return Methropoly.AdministrativeCenter;
         }
 
         public State[] GetEnemiesList()
         {
             List<State> cList = new List<State>();
- 
+
             foreach (State pState in BorderWithKeys)
             {
                 if (pState.Forbidden)
                     continue;
 
-                int iHostility = m_pSociety.CalcHostility(pState);
-                int iHostility2 = pState.m_pSociety.CalcHostility(this);
+                int iHostility = Society.CalcHostility(pState);
+                int iHostility2 = pState.Society.CalcHostility(this);
 
                 if (iHostility2 > iHostility)
                     iHostility = iHostility2;
@@ -428,8 +428,8 @@ namespace Socium
                 if (pState.Forbidden)
                     continue;
 
-                int iHostility = m_pSociety.CalcHostility(pState);
-                int iHostility2 = pState.m_pSociety.CalcHostility(this);
+                int iHostility = Society.CalcHostility(pState);
+                int iHostility2 = pState.Society.CalcHostility(this);
 
                 if (iHostility2 > iHostility)
                     iHostility = iHostility2;
@@ -445,86 +445,86 @@ namespace Socium
 
         public void BuildForts(Dictionary<State, Dictionary<State, int>> cHostility, bool bFast)
         {
-            if (!InfrastructureLevels[m_pSociety.InfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Fort))
+            if (!InfrastructureLevels[Society.InfrastructureLevel].AvailableSettlements.Contains(SettlementSize.Fort))
                 return;
 
             foreach (Province pProvince in Contents)
+            {
                 foreach (Region pRegion in pProvince.Contents)
+                {
+                    float fTreat = 0;
+                    float fBorder = 0;
+
+                    int iMaxHostility = 0;
+                    State pMainEnemy = null;
+
+                    foreach (var pLink in pRegion.BorderWith)
                     {
-                        float fTreat = 0;
-                        float fBorder = 0;
+                        Region pLinkedRegion = pLink.Key;
 
-                        int iMaxHostility = 0;
-                        State pMainEnemy = null;
+                        if (pLinkedRegion.Forbidden)
+                            continue;
 
-                        foreach (var pLink in pRegion.BorderWith)
+                        if (pLinkedRegion.HasOwner() && pLinkedRegion.GetOwner().GetOwner() == this)
+                            continue;
+
+                        int iHostility = 0;
+                        if (pLinkedRegion.HasOwner())
                         {
-                            Region pLinkedRegion = pLink.Key;
+                            State pLinkedState = pLinkedRegion.GetOwner().GetOwner();
 
-                            if (pLinkedRegion.Forbidden)
-                                continue;
-
-                            if (pLinkedRegion.HasOwner() && pLinkedRegion.GetOwner().GetOwner() == this)
-                                continue;
-
-                            int iHostility = 0;
-                            if (pLinkedRegion.HasOwner())
+                            if (!cHostility.TryGetValue(pLinkedState, out Dictionary<State, int> cLinkedStateHostility))
                             {
-                                State pLinkedState = pLinkedRegion.GetOwner().GetOwner();
-
-                                Dictionary<State, int> cLinkedStateHostility;
-                                if (!cHostility.TryGetValue(pLinkedState, out cLinkedStateHostility))
-                                {
-                                    cLinkedStateHostility = new Dictionary<State, int>();
-                                    cHostility[pLinkedState] = cLinkedStateHostility;
-                                }
-
-                                if (!cLinkedStateHostility.TryGetValue(this, out iHostility))
-                                {
-                                    iHostility = pLinkedState.m_pSociety.CalcHostility(this);
-                                    cLinkedStateHostility[this] = iHostility;
-                                }
-
-                                if (iHostility <= 0)
-                                    continue;
-
-                                if (iHostility > iMaxHostility)
-                                {
-                                    iMaxHostility = iHostility;
-                                    pMainEnemy = pLinkedState;
-                                }
+                                cLinkedStateHostility = new Dictionary<State, int>();
+                                cHostility[pLinkedState] = cLinkedStateHostility;
                             }
 
-                            VoronoiEdge[] cLines = pLink.Value.ToArray();
-                            foreach (var pLine in cLines)
+                            if (!cLinkedStateHostility.TryGetValue(this, out iHostility))
                             {
-                                fBorder += pLine.Length / pLinkedRegion.MovementCost;
-                                if (!pLinkedRegion.HasOwner())
-                                    fTreat += pLine.Length / pLinkedRegion.MovementCost;
-                                else
-                                    fTreat += pLine.Length * (float)Math.Sqrt(iHostility) / pLinkedRegion.MovementCost;
+                                iHostility = pLinkedState.Society.CalcHostility(this);
+                                cLinkedStateHostility[this] = iHostility;
+                            }
+
+                            if (iHostility <= 0)
+                                continue;
+
+                            if (iHostility > iMaxHostility)
+                            {
+                                iMaxHostility = iHostility;
+                                pMainEnemy = pLinkedState;
                             }
                         }
 
-                        if (fTreat == 0)
-                            continue;
-
-                        if (Rnd.ChooseOne(fTreat, fBorder))// - fTreat))
-                            //if (m_iSize > 1 || Rnd.OneChanceFrom(2))
-                            {
-                                Location pFort = pRegion.BuildFort(pMainEnemy, bFast);
-                                if (pFort != null)
-                                {
-                                    pRegion.GetOwner().LocalSociety.Settlements.Add(pFort.As<LocationX>());
-                                    //bHaveOne = true;
-                                }
-                            }
+                        VoronoiEdge[] cLines = pLink.Value.ToArray();
+                        foreach (var fLineLength in cLines.Select(x => x.Length))
+                        {
+                            fBorder += fLineLength / pLinkedRegion.MovementCost;
+                            if (!pLinkedRegion.HasOwner())
+                                fTreat += fLineLength / pLinkedRegion.MovementCost;
+                            else
+                                fTreat += fLineLength * (float)Math.Sqrt(iHostility) / pLinkedRegion.MovementCost;
                         }
                     }
 
+                    if (fTreat == 0)
+                        continue;
+
+                    if (Rnd.ChooseOne(fTreat, fBorder))// - fTreat))
+                    {
+                        Location pFort = pRegion.BuildFort(pMainEnemy, bFast);
+                        if (pFort != null)
+                        {
+                            pRegion.GetOwner().LocalSociety.Settlements.Add(pFort.As<LocationX>());
+                            //bHaveOne = true;
+                        }
+                    }
+                }
+            }
+        }
+
         public override string ToString()
         {
-            return m_pSociety.ToString();
+            return Society.ToString();
         }
 
         public override float GetMovementCost()
@@ -538,31 +538,45 @@ namespace Socium
         /// <param name="fCycleShift"></param>
         internal void FixRoads(float fCycleShift)
         {
-            RoadQuality eRoadLevel = State.InfrastructureLevels[m_pSociety.InfrastructureLevel].m_eMaxGroundRoad;
+            RoadQuality eRoadLevel = InfrastructureLevels[Society.InfrastructureLevel].MaxGroundRoad;
 
             if (eRoadLevel == RoadQuality.None)
                 return;
 
             //Закрываем границы, чтобы нельзя было "срезать" путь по чужой территории
             foreach (Province pProvince in Contents)
+            {
                 foreach (Region pRegion in pProvince.Contents)
+                {
                     foreach (LandX pLand in pRegion.Contents)
-                        foreach (Location pLoc in pLand.As<Land>().Contents)
-                            foreach (var pLinked in pLoc.Links)
+                    {
+                        foreach (var pLinks in pLand.As<Land>().Contents.Select(x => x.Links))
+                        {
+                            foreach (var pLinked in pLinks)
                             {
-                                if (pLinked.Key is Location)
+                                LandX pLinkedLandX = (pLinked.Key as Location)?.GetOwner().As<LandX>();
+                                if (pLinkedLandX != null)
                                 {
-                                    LandX pLinkedLandX = (pLinked.Key as Location).GetOwner().As<LandX>();
-                                    if (!pLinkedLandX.HasOwner() || !pLinkedLandX.GetOwner().HasOwner() || pLinkedLandX.GetOwner().GetOwner().GetOwner() != this || pLinked.Value.Sea)
-                                        pLoc.Links[pLinked.Key].IsClosed = true;
+                                    if (!pLinkedLandX.HasOwner() ||
+                                        !pLinkedLandX.GetOwner().HasOwner() ||
+                                        pLinkedLandX.GetOwner().GetOwner().GetOwner() != this ||
+                                        pLinked.Value.Sea)
+                                    {
+                                        pLinked.Value.IsClosed = true;
+                                    }
                                 }
                                 else
-                                    pLoc.Links[pLinked.Key].IsClosed = true;
+                                {
+                                    pLinked.Value.IsClosed = true;
+                                }
                             }
+                        }
+                    }
+                }
+            }
 
             //Сначала соеденим все центры провинций
-            List<LocationX> cConnected = new List<LocationX>();
-            cConnected.Add(m_pMethropoly.AdministrativeCenter);
+            List<LocationX> cConnected = new List<LocationX> { Methropoly.AdministrativeCenter };
 
             while (cConnected.Count < Contents.Count)
             {
@@ -570,10 +584,8 @@ namespace Socium
                 LocationX pBestTown2 = null;
                 float fMinLength = float.MaxValue;
 
-                foreach (Province pProvince in Contents)
+                foreach (LocationX pTown in Contents.Select(x => x.AdministrativeCenter))
                 {
-                    LocationX pTown = pProvince.AdministrativeCenter;
-
                     if (cConnected.Contains(pTown))
                         continue;
 
@@ -622,7 +634,7 @@ namespace Socium
 
             //теперь займёмся фортами
             cConnected.Clear();
-            cConnected.Add(m_pMethropoly.AdministrativeCenter);
+            cConnected.Add(Methropoly.AdministrativeCenter);
 
             List<LocationX> cSettlements = new List<LocationX>();
             foreach (Province pProvince in Contents)
@@ -630,21 +642,26 @@ namespace Socium
             LocationX[] aSettlements = cSettlements.ToArray();
 
             eRoadLevel = RoadQuality.Normal;
-            if (eRoadLevel > State.InfrastructureLevels[m_pSociety.InfrastructureLevel].m_eMaxGroundRoad)
-                eRoadLevel = State.InfrastructureLevels[m_pSociety.InfrastructureLevel].m_eMaxGroundRoad;
+            if (eRoadLevel > InfrastructureLevels[Society.InfrastructureLevel].MaxGroundRoad)
+                eRoadLevel = InfrastructureLevels[Society.InfrastructureLevel].MaxGroundRoad;
 
             List<LocationX> cForts = new List<LocationX>();
             foreach (LocationX pTown in aSettlements)
             {
-                if (!cConnected.Contains(pTown) && (pTown.Roads[RoadQuality.Normal].Count > 0 || pTown.Roads[RoadQuality.Good].Count > 0))
+                if (!cConnected.Contains(pTown) &&
+                    (pTown.Roads[RoadQuality.Normal].Count > 0 ||
+                     pTown.Roads[RoadQuality.Good].Count > 0))
+                {
                     cConnected.Add(pTown);
+                }
                 else
+                {
                     if (pTown.Settlement.Profile.Size == SettlementSize.Fort)
                         cForts.Add(pTown);
+                }
             }
-            LocationX[] aForts = cForts.ToArray();
 
-            foreach (LocationX pFort in aForts)
+            foreach (LocationX pFort in cForts.ToArray())
             {
                 LocationX pBestTown = null;
                 float fMinLength = float.MaxValue;
@@ -692,9 +709,9 @@ namespace Socium
             foreach (Province pProvince in Contents)
                 foreach (Region pRegion in pProvince.Contents)
                     foreach (LandX pLand in pRegion.Contents)
-                        foreach (Location pLoc in pLand.As<Land>().Contents)
-                            foreach (TransportationNode pLink in pLoc.Links.Keys)
-                                pLoc.Links[pLink].IsClosed = false;
+                        foreach (var pLocLinks in pLand.As<Land>().Contents.Select(x => x.Links))
+                            foreach (TransportationLinkBase pLink in pLocLinks.Values)
+                                pLink.IsClosed = false;
         }
 
         public void SpecializeSettlements()
@@ -725,18 +742,20 @@ namespace Socium
                             }
                             else
                             {
-                                List<float> cResources = new List<float>();
-                                cResources.Add(pLandX.GetResource(LandResource.Grain));
-                                cResources.Add(pLandX.GetResource(LandResource.Game));
+                                List<float> cResources = new List<float>
+                                {
+                                    pLandX.GetResource(LandResource.Grain),
+                                    pLandX.GetResource(LandResource.Game)
+                                };
 
                                 //в развитом обществе охота - это уже не способ добычи пищи, а больше развлечение
-                                if (m_pSociety.InfrastructureLevel > 2)
+                                if (Society.InfrastructureLevel > 2)
                                 {
                                     cResources[0] += cResources[1];
                                     cResources[1] = 0;
                                 }
 
-                                if (m_pSociety.InfrastructureLevel > 1)
+                                if (Society.InfrastructureLevel > 1)
                                 {
                                     cResources.Add(pLandX.GetResource(LandResource.Ore));
                                     cResources.Add(pLandX.GetResource(LandResource.Wood));
@@ -747,7 +766,7 @@ namespace Socium
                                 switch (iChoosen)
                                 {
                                     case 0:
-                                        pLoc.Settlement.Speciality = m_pSociety.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                        pLoc.Settlement.Speciality = Society.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
                                         break;
                                     case 1:
                                         pLoc.Settlement.Speciality = SettlementSpeciality.Hunters;
@@ -770,14 +789,16 @@ namespace Socium
                             }
                             else
                             {
-                                List<float> cResources = new List<float>();
-                                cResources.Add(pLandX.GetResource(LandResource.Grain));
-                                cResources.Add(pLandX.GetResource(LandResource.Game));
-                                cResources.Add(pLandX.GetResource(LandResource.Ore));
-                                cResources.Add(pLandX.GetResource(LandResource.Wood));
+                                List<float> cResources = new List<float>
+                                {
+                                    pLandX.GetResource(LandResource.Grain),
+                                    pLandX.GetResource(LandResource.Game),
+                                    pLandX.GetResource(LandResource.Ore),
+                                    pLandX.GetResource(LandResource.Wood)
+                                };
 
                                 //в развитом обществе охота - это уже не способ добычи пищи, а больше развлечение
-                                if (m_pSociety.InfrastructureLevel > 2)
+                                if (Society.InfrastructureLevel > 2)
                                 {
                                     cResources[0] += cResources[1];
                                     cResources[1] = 0;
@@ -788,7 +809,7 @@ namespace Socium
                                 switch (iChoosen)
                                 {
                                     case 0:
-                                        pLoc.Settlement.Speciality = m_pSociety.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
+                                        pLoc.Settlement.Speciality = Society.InfrastructureLevel >= 4 ? SettlementSpeciality.Farmers : SettlementSpeciality.Peasants;
                                         break;
                                     case 1:
                                         pLoc.Settlement.Speciality = SettlementSpeciality.Hunters;
@@ -817,11 +838,11 @@ namespace Socium
                                 List<float> cResources = new List<float>();
                                 //в толерантном обществе специализация городов выбирается исходя из общего состояния ресурсов в государстве,
                                 //а в эгоистичном обществе - в каждой провинции свои приоритеты
-                                if (m_pSociety.DominantCulture.GetTrait(Trait.Fanaticism) < 1 + Rnd.Get(1f))
+                                if (Society.DominantCulture.GetTrait(Trait.Fanaticism) < 1 + Rnd.Get(1f))
                                 {
-                                    cResources.Add(m_iFood);
-                                    cResources.Add(m_cResources[LandResource.Ore]);
-                                    cResources.Add(m_cResources[LandResource.Wood]);
+                                    cResources.Add(FoodAvailable);
+                                    cResources.Add(Resources[LandResource.Ore]);
+                                    cResources.Add(Resources[LandResource.Wood]);
                                 }
                                 else
                                 {
@@ -850,30 +871,38 @@ namespace Socium
                         #region case SettlementSize.City
                         case SettlementSize.City:
                             if (bCoast && Rnd.OneChanceFrom(2))
+                            {
                                 pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
+                            }
                             else
                             {
-                                if (bCoast && m_pSociety.InfrastructureLevel > 2 && m_pSociety.DominantCulture.GetTrait(Trait.Simplicity) > 1 + Rnd.Get(1f))
+                                if (bCoast &&
+                                    Society.InfrastructureLevel > 2 &&
+                                    Society.DominantCulture.GetTrait(Trait.Simplicity) > 1 + Rnd.Get(1f))
+                                {
                                     pLoc.Settlement.Speciality = SettlementSpeciality.Resort;
+                                }
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
                                     {
-                                        List<float> cResources = new List<float>();
-                                        cResources.Add(2 - m_pSociety.DominantCulture.GetTrait(Trait.Simplicity));
-                                        cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Piety));
-                                        cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Agression));
-                                        cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Treachery));
+                                        List<float> cResources = new List<float>
+                                        {
+                                            2 - Society.DominantCulture.GetTrait(Trait.Simplicity),
+                                            Society.DominantCulture.GetTrait(Trait.Piety),
+                                            Society.DominantCulture.GetTrait(Trait.Agression),
+                                            Society.DominantCulture.GetTrait(Trait.Treachery)
+                                        };
 
                                         float fScience = 0.05f;
-                                        if (m_pSociety.DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
+                                        if (Society.DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                             fScience = 0.25f;
-                                        else if (m_pSociety.DominantCulture.Customs.Has(Customs.MindSet.Logic))
+                                        else if (Society.DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                             fScience = 0.5f;
 
-                                        if (m_pSociety.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                                        if (Society.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                             fScience *= 2;
-                                        if (m_pSociety.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
+                                        if (Society.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                             fScience *= 4;
 
                                         cResources.Add(fScience);
@@ -905,11 +934,11 @@ namespace Socium
                                         List<float> cResources = new List<float>();
                                         //в толерантном обществе специализация городов выбирается исходя из общего состояния ресурсов в государстве,
                                         //а в эгоистичном обществе - в каждой провинции свои приоритеты
-                                        if (m_pSociety.DominantCulture.GetTrait(Trait.Fanaticism) < 1 + Rnd.Get(1f))
+                                        if (Society.DominantCulture.GetTrait(Trait.Fanaticism) < 1 + Rnd.Get(1f))
                                         {
-                                            cResources.Add(m_iFood);
-                                            cResources.Add(m_cResources[LandResource.Ore]);
-                                            cResources.Add(m_cResources[LandResource.Wood]);
+                                            cResources.Add(FoodAvailable);
+                                            cResources.Add(Resources[LandResource.Ore]);
+                                            cResources.Add(Resources[LandResource.Wood]);
                                         }
                                         else
                                         {
@@ -940,30 +969,36 @@ namespace Socium
                         #region case SettlementSize.Capital
                         case SettlementSize.Capital:
                             if (bCoast && Rnd.OneChanceFrom(2))
+                            {
                                 pLoc.Settlement.Speciality = Rnd.OneChanceFrom(3) ? SettlementSpeciality.NavalAcademy : SettlementSpeciality.Naval;
+                            }
                             else
                             {
-                                if (bCoast && m_pSociety.InfrastructureLevel > 2 && m_pSociety.DominantCulture.GetTrait(Trait.Simplicity) > 1 + Rnd.Get(1f))
+                                if (bCoast && Society.InfrastructureLevel > 2 && Society.DominantCulture.GetTrait(Trait.Simplicity) > 1 + Rnd.Get(1f))
+                                {
                                     pLoc.Settlement.Speciality = SettlementSpeciality.Resort;
+                                }
                                 else
                                 {
                                     if (Rnd.OneChanceFrom(2))
                                     {
-                                        List<float> cResources = new List<float>();
-                                        cResources.Add(2 - m_pSociety.DominantCulture.GetTrait(Trait.Simplicity));
-                                        cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Piety));
-                                        cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Agression));
-                                        cResources.Add(m_pSociety.DominantCulture.GetTrait(Trait.Treachery));
+                                        List<float> cResources = new List<float>
+                                        {
+                                            2 - Society.DominantCulture.GetTrait(Trait.Simplicity),
+                                            Society.DominantCulture.GetTrait(Trait.Piety),
+                                            Society.DominantCulture.GetTrait(Trait.Agression),
+                                            Society.DominantCulture.GetTrait(Trait.Treachery)
+                                        };
 
                                         float fScience = 0.05f;
-                                        if (m_pSociety.DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
+                                        if (Society.DominantCulture.Customs.Has(Customs.MindSet.Balanced_mind))
                                             fScience = 0.25f;
-                                        else if (m_pSociety.DominantCulture.Customs.Has(Customs.MindSet.Logic))
+                                        else if (Society.DominantCulture.Customs.Has(Customs.MindSet.Logic))
                                             fScience = 0.5f;
 
-                                        if (m_pSociety.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
+                                        if (Society.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Sapient)
                                             fScience *= 2;
-                                        if (m_pSociety.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
+                                        if (Society.TitularNation.DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious)
                                             fScience *= 4;
 
                                         cResources.Add(fScience);
@@ -995,11 +1030,11 @@ namespace Socium
                                         List<float> cResources = new List<float>();
                                         //в толерантном обществе специализация городов выбирается исходя из общего состояния ресурсов в государстве,
                                         //а в эгоистичном обществе - в каждой провинции свои приоритеты
-                                        if (m_pSociety.DominantCulture.GetTrait(Trait.Fanaticism) < 1 + Rnd.Get(1f))
+                                        if (Society.DominantCulture.GetTrait(Trait.Fanaticism) < 1 + Rnd.Get(1f))
                                         {
-                                            cResources.Add(m_iFood);
-                                            cResources.Add(m_cResources[LandResource.Ore]);
-                                            cResources.Add(m_cResources[LandResource.Wood]);
+                                            cResources.Add(FoodAvailable);
+                                            cResources.Add(Resources[LandResource.Ore]);
+                                            cResources.Add(Resources[LandResource.Wood]);
                                         }
                                         else
                                         {
@@ -1031,19 +1066,27 @@ namespace Socium
                         case SettlementSize.Fort:
                             if (bCoast)
                             {
-                                if (m_pSociety.DominantCulture.GetTrait(Trait.Agression) > 1.5 &&
-                                    m_pSociety.DominantCulture.GetTrait(Trait.Treachery) > 1.5)
+                                if (Society.DominantCulture.GetTrait(Trait.Agression) > 1.5 &&
+                                    Society.DominantCulture.GetTrait(Trait.Treachery) > 1.5)
+                                {
                                     pLoc.Settlement.Speciality = SettlementSpeciality.Pirates;
+                                }
                                 else
+                                {
                                     pLoc.Settlement.Speciality = SettlementSpeciality.Naval;
+                                }
                             }
                             else
                             {
-                                if (m_pSociety.DominantCulture.GetTrait(Trait.Agression) > 1.5 &&
-                                    m_pSociety.DominantCulture.GetTrait(Trait.Treachery) > 1.5)
+                                if (Society.DominantCulture.GetTrait(Trait.Agression) > 1.5 &&
+                                    Society.DominantCulture.GetTrait(Trait.Treachery) > 1.5)
+                                {
                                     pLoc.Settlement.Speciality = SettlementSpeciality.Raiders;
+                                }
                                 else
+                                {
                                     pLoc.Settlement.Speciality = SettlementSpeciality.Military;
+                                }
                             }
                             break;
                         #endregion

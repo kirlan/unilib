@@ -707,7 +707,7 @@ namespace MapDrawEngine
             Dictionary<Language, int> cLanguageCounter = new Dictionary<Language, int>();
             Dictionary<Language, int> cLanguageIndex = new Dictionary<Language, int>();
             int iCount = 0;
-            foreach (Language pLanguage in m_pWorld.m_aLocalNations.Select(x => x.Race.Language))
+            foreach (Language pLanguage in m_pWorld.LocalNations.Select(x => x.Race.Language))
             {
                 if (!cLanguages.TryGetValue(pLanguage, out int ik))
                 {
@@ -717,7 +717,7 @@ namespace MapDrawEngine
                 cLanguages[pLanguage] = ik + 1;
             }
 
-            foreach (Nation pNation in m_pWorld.m_aLocalNations)
+            foreach (Nation pNation in m_pWorld.LocalNations)
             {
                 KColor color = new KColor { Hue = 360.0 * cLanguageIndex[pNation.Race.Language] / cLanguages.Count };
                 float fK = ((float)cLanguageCounter[pNation.Race.Language]) / cLanguages[pNation.Race.Language];
@@ -850,9 +850,9 @@ namespace MapDrawEngine
                         pPath.AddPolygon(aPts);
 
                         //определим, каким цветом эта земля должна закрашиваться на карте технологий
-                        int iImported = pState.m_pSociety.GetImportedTech();
-                        Brush pTechBrush = m_aTechLevel[pState.m_pSociety.GetEffectiveTech(), iImported == -1 ? pState.m_pSociety.GetEffectiveTech() : iImported];
-                        Brush pCivBrush = m_aCivLevel[pState.m_pSociety.DominantCulture.ProgressLevel, pState.m_pSociety.Control];
+                        int iImported = pState.Society.GetImportedTech();
+                        Brush pTechBrush = m_aTechLevel[pState.Society.GetEffectiveTech(), iImported == -1 ? pState.Society.GetEffectiveTech() : iImported];
+                        Brush pCivBrush = m_aCivLevel[pState.Society.DominantCulture.ProgressLevel, pState.Society.Control];
 
                         foreach (MapQuadrant pQuad in aQuads)
                         {
@@ -893,14 +893,14 @@ namespace MapDrawEngine
                             pQuad.Modes[MapMode.Areas][pRegion.Type.Get<LandTypeDrawInfo>().m_pBrush].AddPolygon(aPts);
 
                             //если регион обитаем
-                            if (pRegion.m_pNatives != null)
+                            if (pRegion.Natives != null)
                             {
                                 //сохраним информацию о контуре региона и для этнографической карты
-                                Brush pBrush = m_cNationColorsID[pRegion.m_pNatives];
-                                if (pRegion.m_pNatives.IsAncient)
-                                    pBrush = m_cAncientNationColorsID[pRegion.m_pNatives];
-                                if (pRegion.m_pNatives.IsHegemon)
-                                    pBrush = m_cHegemonNationColorsID[pRegion.m_pNatives];
+                                Brush pBrush = m_cNationColorsID[pRegion.Natives];
+                                if (pRegion.Natives.IsAncient)
+                                    pBrush = m_cAncientNationColorsID[pRegion.Natives];
+                                if (pRegion.Natives.IsHegemon)
+                                    pBrush = m_cHegemonNationColorsID[pRegion.Natives];
 
                                 if (!pQuad.Modes[MapMode.Natives].ContainsKey(pBrush))
                                 {
@@ -915,7 +915,7 @@ namespace MapDrawEngine
             }
 
             //вычислим контуры провинций
-            foreach (Province pProvince in m_pWorld.m_aProvinces)
+            foreach (Province pProvince in m_pWorld.Provinces)
             {
                 aPoints = BuildPath(pProvince.FirstLines, true, out aQuads);
                 pPath = new GraphicsPath();
@@ -2143,7 +2143,7 @@ namespace MapDrawEngine
                 if (sToolTip.Length > 0)
                     sToolTip.Append("\n   - ");
 
-                sToolTip.AppendFormat("{1} {0} ({2})", m_pFocusedState.m_pSociety.Polity.Name, m_pFocusedState.m_pSociety.Name, m_pFocusedState.m_pSociety.TitularNation);
+                sToolTip.AppendFormat("{1} {0} ({2})", m_pFocusedState.Society.Polity.Name, m_pFocusedState.Society.Name, m_pFocusedState.Society.TitularNation);
             }
 
             if (bContinent && m_pFocusedProvince != null)
@@ -2188,7 +2188,7 @@ namespace MapDrawEngine
                 {
                     sToolTip.Append("\nHave roads to:");
                     foreach (var pRoad in pFocusedLocX.HaveRoadTo)
-                        sToolTip.Append("\n - ").Append(pRoad.Key.Settlement.Profile.Size.ToString()).Append(' ').Append(pRoad.Key.Settlement.Name).Append(" [").Append(pRoad.Value.m_eLevel.ToString()).Append(']');
+                        sToolTip.Append("\n - ").Append(pRoad.Key.Settlement.Profile.Size.ToString()).Append(' ').Append(pRoad.Key.Settlement.Name).Append(" [").Append(pRoad.Value.Level.ToString()).Append(']');
                 }
 
                 if (pFocusedLocX.HaveSeaRouteTo.Count > 0)

@@ -84,11 +84,11 @@ namespace Socium
 
             Center = pSeed;
 
-            LocalSociety = new NationalSociety(pSeed.m_pNatives);
+            LocalSociety = new NationalSociety(pSeed.Natives);
 
             Contents.Add(pSeed);
             pSeed.SetOwner(this);
-            pSeed.m_iProvincePresence = 1;
+            pSeed.ProvincePresence = 1;
 
             m_cGrowCosts.Clear();
 
@@ -149,7 +149,7 @@ namespace Socium
                     fCost *= 10;
             }
 
-            if (pRegion.m_pNatives != LocalSociety.TitularNation)
+            if (pRegion.Natives != LocalSociety.TitularNation)
             {
                 if (LocalSociety.TitularNation.IsAncient)
                     fCost *= 10000;
@@ -179,7 +179,7 @@ namespace Socium
         /// <returns></returns>
         private Region GrowPresence(Region pRegion, int iValue)
         {
-            pRegion.m_iProvincePresence += iValue;
+            pRegion.ProvincePresence += iValue;
 
             if (!m_cGrowCosts.TryGetValue(pRegion, out int iOwnCost))
             {
@@ -187,7 +187,7 @@ namespace Socium
                 m_cGrowCosts[pRegion] = iOwnCost;
             }
 
-            if (pRegion.m_iProvincePresence > iOwnCost)
+            if (pRegion.ProvincePresence > iOwnCost)
             {
                 float fBestValue = float.MaxValue;
                 int iBestCost = 0;
@@ -230,24 +230,24 @@ namespace Socium
                         fCostModified = Math.Max(1, fCostModified);
                     }
 
-                    if (pLinkedRegion.m_iProvincePresence + fCostModified < fBestValue ||
-                        (pLinkedRegion.m_iProvincePresence + fCostModified == fBestValue &&
+                    if (pLinkedRegion.ProvincePresence + fCostModified < fBestValue ||
+                        (pLinkedRegion.ProvincePresence + fCostModified == fBestValue &&
                          Rnd.OneChanceFrom(pRegion.BorderWith.Count)))
                     {
-                        fBestValue = pLinkedRegion.m_iProvincePresence + fCostModified;
+                        fBestValue = pLinkedRegion.ProvincePresence + fCostModified;
                         iBestCost = iCost;
                         pBestRegion = pLinkedRegion;
                     }
                 }
 
-                if (pBestRegion != null && pBestRegion.m_iProvincePresence + iBestCost < pRegion.m_iProvincePresence - iBestCost)
+                if (pBestRegion != null && pBestRegion.ProvincePresence + iBestCost < pRegion.ProvincePresence - iBestCost)
                 {
-                    pRegion.m_iProvincePresence -= iBestCost;
+                    pRegion.ProvincePresence -= iBestCost;
                     if (!pBestRegion.HasOwner())
                     {
-                        if (pBestRegion.m_pNatives != pRegion.m_pNatives)
+                        if (pBestRegion.Natives != pRegion.Natives)
                             GetGrowCost(pBestRegion);
-                        pBestRegion.m_iProvincePresence += iBestCost;
+                        pBestRegion.ProvincePresence += iBestCost;
                         return pBestRegion;
                     }
                     else
@@ -284,7 +284,7 @@ namespace Socium
                 if (pRegion.Forbidden)
                     continue;
 
-                if (pRegion.m_pNatives != LocalSociety.TitularNation)
+                if (pRegion.Natives != LocalSociety.TitularNation)
                     continue;
 
                 if (!pRegion.HasOwner() && !pRegion.IsWater)
@@ -324,7 +324,7 @@ namespace Socium
         public override Region Grow(int iMaxSize)
         {
             IsFullyGrown = false;
-            if (Contents.Count >= iMaxSize || Center.m_iProvincePresence > 200 * Math.Sqrt(iMaxSize / Math.PI))
+            if (Contents.Count >= iMaxSize || Center.ProvincePresence > 200 * Math.Sqrt(iMaxSize / Math.PI))
             {
                 //GrowForce(m_pCenter, 1);
                 IsFullyGrown = true;
@@ -396,12 +396,12 @@ namespace Socium
                 if (bRestricted)
                     continue;
 
-                cClaims.TryGetValue(pRegion.m_pNatives, out int iCount);
-                cClaims[pRegion.m_pNatives] = iCount + pRegion.Contents.Count;
-                if (cClaims[pRegion.m_pNatives] > iMaxPop)
+                cClaims.TryGetValue(pRegion.Natives, out int iCount);
+                cClaims[pRegion.Natives] = iCount + pRegion.Contents.Count;
+                if (cClaims[pRegion.Natives] > iMaxPop)
                 {
-                    iMaxPop = cClaims[pRegion.m_pNatives];
-                    pMaxNation = pRegion.m_pNatives;
+                    iMaxPop = cClaims[pRegion.Natives];
+                    pMaxNation = pRegion.Natives;
                 }
             }
 
@@ -409,7 +409,7 @@ namespace Socium
                 LocalSociety.UpdateTitularNation(pMaxNation);
 
             foreach (Region pRegion in Contents)
-                pRegion.m_pNatives = LocalSociety.TitularNation;
+                pRegion.Natives = LocalSociety.TitularNation;
         }
 
         public void BuildLairs(int iScale)
@@ -422,7 +422,7 @@ namespace Socium
         public void BuildSettlements(SettlementSize eSize, bool bFast)
         {
             //проверим для начала, а позволяет ли вообще текущий уровень инфраструктуры поселения такого размера?
-            if (!State.InfrastructureLevels[LocalSociety.InfrastructureLevel].m_cAvailableSettlements.Contains(eSize))
+            if (!State.InfrastructureLevels[LocalSociety.InfrastructureLevel].AvailableSettlements.Contains(eSize))
                 return;
 
             //определим, сколько поселений должно быть.
@@ -514,8 +514,8 @@ namespace Socium
         /// <param name="eRoadLevel">Уровень новых дорог: 1 - просёлок, 2 - обычная дорога, 3 - имперская дорога</param>
         public void BuildRoads(RoadQuality eRoadLevel, float fCycleShift)
         {
-            if (eRoadLevel > State.InfrastructureLevels[LocalSociety.InfrastructureLevel].m_eMaxGroundRoad)
-                eRoadLevel = State.InfrastructureLevels[LocalSociety.InfrastructureLevel].m_eMaxGroundRoad;
+            if (eRoadLevel > State.InfrastructureLevels[LocalSociety.InfrastructureLevel].MaxGroundRoad)
+                eRoadLevel = State.InfrastructureLevels[LocalSociety.InfrastructureLevel].MaxGroundRoad;
 
             if (eRoadLevel == RoadQuality.None)
                 return;
@@ -661,16 +661,16 @@ namespace Socium
 
             SettlementInfo pSettlementInfo = Settlement.Info[SettlementSize.Hamlet];
 
-            if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Capital))
+            if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].AvailableSettlements.Contains(SettlementSize.Capital))
                 pSettlementInfo = Settlement.Info[SettlementSize.Capital];
             else
-                if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.City))
+                if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].AvailableSettlements.Contains(SettlementSize.City))
                     pSettlementInfo = Settlement.Info[SettlementSize.City];
                 else
-                    if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Town))
+                    if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].AvailableSettlements.Contains(SettlementSize.Town))
                         pSettlementInfo = Settlement.Info[SettlementSize.Town];
                     else
-                        if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].m_cAvailableSettlements.Contains(SettlementSize.Village))
+                        if (State.InfrastructureLevels[LocalSociety.InfrastructureLevel].AvailableSettlements.Contains(SettlementSize.Village))
                             pSettlementInfo = Settlement.Info[SettlementSize.Village];
 
             BuildAdministrativeCenter(pSettlementInfo, bFast);

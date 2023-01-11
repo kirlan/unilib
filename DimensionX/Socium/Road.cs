@@ -15,12 +15,12 @@ namespace Socium
             get { return m_cRoad.ToArray(); }
         }
 
-        public RoadQuality m_eLevel;
+        public RoadQuality Level { get; }
 
         public Road(LocationX pStart, RoadQuality eLevel)
         {
             m_cRoad.Add(pStart);
-            m_eLevel = eLevel;
+            Level = eLevel;
         }
 
         public void BuidTo(LocationX pNext)

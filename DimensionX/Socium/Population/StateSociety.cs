@@ -269,16 +269,16 @@ namespace Socium.Population
         public Nation SlavesNation { get; private set; } = null;
 
         public StateSociety(State pState)
-            : base(pState.m_pMethropoly.LocalSociety.TitularNation)
+            : base(pState.Methropoly.LocalSociety.TitularNation)
         {
             m_pState = pState;
 
             TechLevel = 0;
             InfrastructureLevel = 0;
 
-            Culture[Gender.Male] = new Culture(pState.m_pMethropoly.LocalSociety.Culture[Gender.Male], Customs.Mutation.Possible);
+            Culture[Gender.Male] = new Culture(pState.Methropoly.LocalSociety.Culture[Gender.Male], Customs.Mutation.Possible);
             Culture[Gender.Male].Customs.ApplyFenotype(TitularNation.PhenotypeMale);
-            Culture[Gender.Female] = new Culture(pState.m_pMethropoly.LocalSociety.Culture[Gender.Female], Customs.Mutation.Possible);
+            Culture[Gender.Female] = new Culture(pState.Methropoly.LocalSociety.Culture[Gender.Female], Customs.Mutation.Possible);
             Culture[Gender.Female].Customs.ApplyFenotype(TitularNation.PhenotypeFemale);
 
             FixSexCustoms();
@@ -331,8 +331,8 @@ namespace Socium.Population
                 }
                 if (!bOnlyLocals)
                 {
-                    if (InfrastructureLevels[InfrastructureLevel].m_eMaxNavalPath == RoadQuality.Good ||
-                        InfrastructureLevels[InfrastructureLevel].m_iAerialAvailability > 1)
+                    if (InfrastructureLevels[InfrastructureLevel].MaxNavalPath == RoadQuality.Good ||
+                        InfrastructureLevels[InfrastructureLevel].AerialAvailability > 1)
                     {
                         var pWorld = pContinent.Origin.GetOwner();
                         foreach (var pOtherContinent in pWorld.Contents)
@@ -369,7 +369,7 @@ namespace Socium.Population
                         if (pOtherState.Forbidden)
                             continue;
 
-                        if (pOtherState.m_pSociety.TitularNation == pNation)
+                        if (pOtherState.Society.TitularNation == pNation)
                             cChances[pNation]++;
                     }
 
@@ -749,8 +749,8 @@ namespace Socium.Population
                 if (pState.Forbidden)
                     continue;
 
-                if (pState.m_pSociety.GetEffectiveTech() > iMaxTech)
-                    iMaxTech = pState.m_pSociety.GetEffectiveTech();
+                if (pState.Society.GetEffectiveTech() > iMaxTech)
+                    iMaxTech = pState.Society.GetEffectiveTech();
             }
 
             if (iMaxTech <= GetEffectiveTech())
@@ -771,9 +771,9 @@ namespace Socium.Population
                 if (pState.Forbidden)
                     continue;
 
-                if (pState.m_pSociety.GetEffectiveTech() > iMaxTech)
+                if (pState.Society.GetEffectiveTech() > iMaxTech)
                 {
-                    iMaxTech = pState.m_pSociety.GetEffectiveTech();
+                    iMaxTech = pState.Society.GetEffectiveTech();
                     pExporter = pState;
                 }
             }
@@ -781,7 +781,7 @@ namespace Socium.Population
             if (pExporter == null)
                 return "";
 
-            return GetTechString(pExporter.m_pSociety.TechLevel, pExporter.m_pSociety.DominantCulture.Customs.ValueOf<Customs.Science>());
+            return GetTechString(pExporter.Society.TechLevel, pExporter.Society.DominantCulture.Customs.ValueOf<Customs.Science>());
         }
         public override string ToString()
         {
@@ -1620,7 +1620,7 @@ namespace Socium.Population
         internal void CalculateSocietyFeatures(int iEmpireTreshold)
         {
             // Adjustiong TL due to lack or abundance of resouces
-            CheckResources(m_pState.m_cResources, m_pState.m_iLocationsCount, m_pState.Contents.Count);
+            CheckResources(m_pState.Resources, m_pState.LocationsCount, m_pState.Contents.Count);
 
             // Choose state system
             SelectGovernmentSystem(iEmpireTreshold);
@@ -1644,7 +1644,7 @@ namespace Socium.Population
                     InfrastructureLevel <= pInfo.MaxGovernmentLevel &&
                     (pInfo.Languages.Count == 0 ||
                      pInfo.Languages.Contains(TitularNation.Race.Language)) &&
-                    (m_pState.m_iLocationsCount > iEmpireTreshold * 80) == pInfo.IsEmpire)
+                    (m_pState.LocationsCount > iEmpireTreshold * 80) == pInfo.IsEmpire)
                 {
                     for (int i = 0; i < pInfo.Rank; i++)
                         cInfos.Add(pInfo);
@@ -1657,7 +1657,7 @@ namespace Socium.Population
                 {
                     if (InfrastructureLevel >= pInfo.MinGovernmentLevel &&
                         InfrastructureLevel <= pInfo.MaxGovernmentLevel &&
-                        (m_pState.m_iLocationsCount > iEmpireTreshold * 80) == pInfo.IsEmpire)
+                        (m_pState.LocationsCount > iEmpireTreshold * 80) == pInfo.IsEmpire)
                     {
                         for (int i = 0; i < pInfo.Rank; i++)
                             cInfos.Add(pInfo);
@@ -1720,11 +1720,11 @@ namespace Socium.Population
             if (DominantCulture.GetTrait(Trait.Fanaticism) < 1)
                 SocialEquality++;
 
-            if (SocialEquality > 0 && m_pState.m_iFood < m_pState.m_iLocationsCount)
+            if (SocialEquality > 0 && m_pState.FoodAvailable < m_pState.LocationsCount)
                 SocialEquality--;
-            if (m_pState.m_iFood > m_pState.m_iLocationsCount &&
-                m_pState.m_cResources[LandResource.Ore] > m_pState.m_iLocationsCount &&
-                m_pState.m_cResources[LandResource.Wood] > m_pState.m_iLocationsCount)
+            if (m_pState.FoodAvailable > m_pState.LocationsCount &&
+                m_pState.Resources[LandResource.Ore] > m_pState.LocationsCount &&
+                m_pState.Resources[LandResource.Wood] > m_pState.LocationsCount)
             {
                 SocialEquality++;
             }
@@ -1751,9 +1751,9 @@ namespace Socium.Population
                 SocialEquality = Math.Min(2, SocialEquality);
 
             //коммунизм возможен только в условиях изобилия ресурсов
-            if (m_pState.m_iFood < m_pState.m_iLocationsCount * 2 ||
-                m_pState.m_cResources[LandResource.Ore] < m_pState.m_iLocationsCount * 2 ||
-                m_pState.m_cResources[LandResource.Wood] < m_pState.m_iLocationsCount * 2)
+            if (m_pState.FoodAvailable < m_pState.LocationsCount * 2 ||
+                m_pState.Resources[LandResource.Ore] < m_pState.LocationsCount * 2 ||
+                m_pState.Resources[LandResource.Wood] < m_pState.LocationsCount * 2)
             {
                 SocialEquality = Math.Min(3, SocialEquality);
             }
@@ -1936,12 +1936,12 @@ namespace Socium.Population
             //    }
             //}
 
-            if (TitularNation != pOpponent.m_pSociety.TitularNation)
+            if (TitularNation != pOpponent.Society.TitularNation)
             {
                 iHostility++;
-                sNegativeReasons.Append(" (-1) ").AppendLine(pOpponent.m_pSociety.TitularNation.ToString());
+                sNegativeReasons.Append(" (-1) ").AppendLine(pOpponent.Society.TitularNation.ToString());
 
-                if (TitularNation.Race.Language != pOpponent.m_pSociety.TitularNation.Race.Language)
+                if (TitularNation.Race.Language != pOpponent.Society.TitularNation.Race.Language)
                 {
                     iHostility++;
                     sNegativeReasons.AppendLine(" (-1) Different language");
@@ -1950,62 +1950,62 @@ namespace Socium.Population
             else
             {
                 iHostility--;
-                sPositiveReasons.Append(" (+1) ").AppendLine(pOpponent.m_pSociety.TitularNation.ToString());
+                sPositiveReasons.Append(" (+1) ").AppendLine(pOpponent.Society.TitularNation.ToString());
             }
 
-            iHostility += DominantCulture.Customs.GetDifference(pOpponent.m_pSociety.DominantCulture.Customs, ref sPositiveReasons, ref sNegativeReasons);
+            iHostility += DominantCulture.Customs.GetDifference(pOpponent.Society.DominantCulture.Customs, ref sPositiveReasons, ref sNegativeReasons);
 
-            if (m_pState.m_iFood < m_pState.m_iLocationsCount && pOpponent.m_iFood > pOpponent.m_iLocationsCount * 2)
+            if (m_pState.FoodAvailable < m_pState.LocationsCount && pOpponent.FoodAvailable > pOpponent.LocationsCount * 2)
             {
                 iHostility++;
                 sNegativeReasons.AppendLine(" (-1) Envy for food");
             }
-            if (m_pState.m_cResources[LandResource.Wood] < m_pState.m_iLocationsCount && pOpponent.m_cResources[LandResource.Wood] > pOpponent.m_iLocationsCount * 2)
+            if (m_pState.Resources[LandResource.Wood] < m_pState.LocationsCount && pOpponent.Resources[LandResource.Wood] > pOpponent.LocationsCount * 2)
             {
                 iHostility++;
                 sNegativeReasons.AppendLine(" (-1) Envy for wood");
             }
-            if (m_pState.m_cResources[LandResource.Ore] < m_pState.m_iLocationsCount && pOpponent.m_cResources[LandResource.Ore] > pOpponent.m_iLocationsCount * 2)
+            if (m_pState.Resources[LandResource.Ore] < m_pState.LocationsCount && pOpponent.Resources[LandResource.Ore] > pOpponent.LocationsCount * 2)
             {
                 iHostility++;
                 sNegativeReasons.AppendLine(" (-1) Envy for ore");
             }
 
-            int iControlDifference = Math.Abs(pOpponent.m_pSociety.Control - Control);
+            int iControlDifference = Math.Abs(pOpponent.Society.Control - Control);
             if (iControlDifference != 1)
             {
                 iHostility += iControlDifference - 1;
                 if (iControlDifference > 1)
-                    sNegativeReasons.AppendFormat(" (-{1}) {0}", GetControlString(pOpponent.m_pSociety.Control), iControlDifference - 1).AppendLine();
+                    sNegativeReasons.AppendFormat(" (-{1}) {0}", GetControlString(pOpponent.Society.Control), iControlDifference - 1).AppendLine();
                 else
-                    sPositiveReasons.AppendFormat(" (+{1}) {0}", GetControlString(pOpponent.m_pSociety.Control), 1).AppendLine();
+                    sPositiveReasons.AppendFormat(" (+{1}) {0}", GetControlString(pOpponent.Society.Control), 1).AppendLine();
             }
 
-            if (pOpponent.m_pSociety.InfrastructureLevel > InfrastructureLevel + 1)
+            if (pOpponent.Society.InfrastructureLevel > InfrastructureLevel + 1)
             {
                 iHostility++;
                 sNegativeReasons.AppendFormat(" (-{0}) Envy for civilization", 1).AppendLine();
             }
             else
             {
-                if (pOpponent.m_pSociety.InfrastructureLevel < InfrastructureLevel - 1)
+                if (pOpponent.Society.InfrastructureLevel < InfrastructureLevel - 1)
                 {
                     iHostility++;
                     sNegativeReasons.AppendFormat(" (-{0}) Scorn for savagery", 1).AppendLine();
                 }
             }
 
-            int iEqualityDifference = Math.Abs(pOpponent.m_pSociety.SocialEquality - SocialEquality);
+            int iEqualityDifference = Math.Abs(pOpponent.Society.SocialEquality - SocialEquality);
             if (iEqualityDifference != 1)
             {
                 iHostility += iEqualityDifference - 1;
                 if (iEqualityDifference > 1)
-                    sNegativeReasons.AppendFormat(" (-{1}) {0}", GetEqualityString(pOpponent.m_pSociety.SocialEquality), iEqualityDifference - 1).AppendLine();
+                    sNegativeReasons.AppendFormat(" (-{1}) {0}", GetEqualityString(pOpponent.Society.SocialEquality), iEqualityDifference - 1).AppendLine();
                 else
-                    sPositiveReasons.AppendFormat(" (+{1}) {0}", GetEqualityString(pOpponent.m_pSociety.SocialEquality), 1).AppendLine();
+                    sPositiveReasons.AppendFormat(" (+{1}) {0}", GetEqualityString(pOpponent.Society.SocialEquality), 1).AppendLine();
             }
 
-            float iCultureDifference = DominantCulture.Mentality.GetDifference(pOpponent.m_pSociety.DominantCulture.Mentality, DominantCulture.ProgressLevel, pOpponent.m_pSociety.DominantCulture.ProgressLevel);
+            float iCultureDifference = DominantCulture.Mentality.GetDifference(pOpponent.Society.DominantCulture.Mentality, DominantCulture.ProgressLevel, pOpponent.Society.DominantCulture.ProgressLevel);
             if (iCultureDifference < -0.75)
             {
                 iHostility -= 2;

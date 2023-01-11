@@ -80,7 +80,7 @@ namespace Socium
 
         public bool HaveEstate(Estate.SocialRank eEstate)
         {
-            StateSociety pOwnerSociety = OwnerState.m_pSociety;
+            StateSociety pOwnerSociety = OwnerState.Society;
 
             if (Settlement != null && pOwnerSociety.Estates.ContainsKey(eEstate))
             {

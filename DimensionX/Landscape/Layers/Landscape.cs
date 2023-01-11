@@ -13,28 +13,17 @@ namespace LandscapeGeneration
 {
     public class Landscape: Territory<Landscape>
     {
-        public LocationsGrid LocationsGrid { get; } = null;
-
-        public Land[] Lands { get; private set; } = null;
-
-        public LandMass[] LandMasses { get; private set; } = null;
-
-        public Continent[] Contents { get; private set; } = null;
-
-        public override float GetMovementCost()
-        {
-            throw new NotImplementedException();
-        }
+        private readonly bool m_bGreatOcean = true;
+        /// <summary>
+        /// Y-координата экватора
+        /// </summary>
+        private readonly int m_iEquator = 0;
 
         /// <summary>
-        /// Общее количество `земель` - групп соседних локаций с одинаковым типом территории
+        /// Расстояние от экватора до полюсов
         /// </summary>
-        private readonly int m_iLandsCount = 500;
-        /// <summary>
-        /// Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.
-        /// Каждая тектоническая плита полностью содержит в себе одно или несколько государств.
-        /// </summary>
-        private readonly int m_iLandMassesCount = 50;
+        private readonly int m_iPole = 0;
+
         /// <summary>
         /// Процент тектонических плит, лежащих на дне океана.
         /// </summary>
@@ -42,40 +31,29 @@ namespace LandscapeGeneration
 
         private readonly int m_iContinentsCount = 5;
 
-        private readonly bool m_bGreatOcean = true;
         /// <summary>
-        /// Y-координата экватора
+        /// Общее количество тектонических плит, являющихся строительными блоками при составлении континентов.
+        /// Каждая тектоническая плита полностью содержит в себе одно или несколько государств.
         /// </summary>
-        private readonly int m_iEquator = 0;
+        private readonly int m_iLandMassesCount = 50;
         /// <summary>
-        /// Расстояние от экватора до полюсов
+        /// Общее количество `земель` - групп соседних локаций с одинаковым типом территории
         /// </summary>
-        private readonly int m_iPole = 0;
+        private readonly int m_iLandsCount = 500;
 
-        public void PresetLandTypesInfo()
-        {
-            LandTypes.Coastral.Init(10, 1, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "sea");
+        private static int s_iGreenLightCode = 0;
 
-            LandTypes.Ocean.Init(10, 5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "ocean");
+        public LocationsGrid LocationsGrid { get; } = null;
+        public Land[] Lands { get; private set; } = null;
+        public LandMass[] LandMasses { get; private set; } = null;
+        public Continent[] Contents { get; private set; } = null;
 
-            LandTypes.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, "plains");
+        public float MaxDepth { get; private set; } = 0;
+        public float MaxHeight { get; private set; } = 0;
 
-            LandTypes.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, "savanna");
-
-            LandTypes.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, "tundra");
-
-            LandTypes.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, "desert");
-
-            LandTypes.Forest.Init(3, 2, Environment.Habitable, "forest");
-
-            LandTypes.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, "taiga");
-
-            LandTypes.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, "swamp");
-
-            LandTypes.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, "mountains");
-
-            LandTypes.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, "jungle");
-        }
+        public List<TransportationLinkBase> TransportGrid { get; } = new List<TransportationLinkBase>();
+        public List<TransportationLinkBase> LandsTransportGrid { get; } = new List<TransportationLinkBase>();
+        public List<TransportationLinkBase> LandMassTransportGrid { get; } = new List<TransportationLinkBase>();
 
         public Landscape()
         { }
@@ -111,6 +89,34 @@ namespace LandscapeGeneration
             ShapeWorld(BeginStep, ProgressStep);
         }
 
+        public override float GetMovementCost()
+        {
+            throw new NotImplementedException();
+        }
+        public void PresetLandTypesInfo()
+        {
+            LandTypes.Coastral.Init(10, 1, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "sea");
+
+            LandTypes.Ocean.Init(10, 5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "ocean");
+
+            LandTypes.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, "plains");
+
+            LandTypes.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, "savanna");
+
+            LandTypes.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, "tundra");
+
+            LandTypes.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, "desert");
+
+            LandTypes.Forest.Init(3, 2, Environment.Habitable, "forest");
+
+            LandTypes.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, "taiga");
+
+            LandTypes.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, "swamp");
+
+            LandTypes.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, "mountains");
+
+            LandTypes.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, "jungle");
+        }
         private void ShapeWorld(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BuildLands(BeginStep, ProgressStep);
@@ -921,9 +927,6 @@ namespace LandscapeGeneration
                 ProgressStep();
             }
         }
-        public float MaxDepth { get; private set; } = 0;
-        public float MaxHeight { get; private set; } = 0;
-
         protected void CalculateElevations(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BeginStep("Calculating elevation...", LocationsGrid.Locations.Length);
@@ -1290,11 +1293,6 @@ namespace LandscapeGeneration
         {
             return pLTI.Elevation / 2 + Rnd.Get(pLTI.Elevation);
         }
-
-        public List<TransportationLinkBase> TransportGrid { get; } = new List<TransportationLinkBase>();
-        public List<TransportationLinkBase> LandsTransportGrid { get; } = new List<TransportationLinkBase>();
-        public List<TransportationLinkBase> LandMassTransportGrid { get; } = new List<TransportationLinkBase>();
-
         /// <summary>
         /// Устанавливает возможность перехода между указанными локациями при поиске пути.
         /// </summary>
@@ -1434,9 +1432,6 @@ namespace LandscapeGeneration
                 ProgressStep();
             }
         }
-
-        private static int s_iGreenLightCode = 0;
-
         public static ShortestPath FindReallyBestPath(Location pStart, Location pFinish, float fCycleShift, bool bNavalOnly)
         {
             ShortestPath pBestPath1 = FindBestPath(pStart, pFinish, fCycleShift, bNavalOnly);
