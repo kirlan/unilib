@@ -112,7 +112,7 @@ namespace LandscapeGeneration.FastGrid
             {
                 var loc = locations[i];
                 Location myLocation = new Location();
-                myLocation.Create(loc.ID, (float)loc.Position[0] + fDX - fWholeGridSize / 2, (float)loc.Position[1] + fDY - fWholeGridSize / 2, loc.m_eShadowDir);
+                myLocation.Create(loc.ID, (float)loc.Position[0] + fDX - fWholeGridSize / 2, (float)loc.Position[1] + fDY - fWholeGridSize / 2, loc.ShadowDir);
                 Locations[i] = myLocation;
                 loc.Tag = myLocation;
                 m_cLocations[loc.ID] = myLocation;
@@ -155,8 +155,7 @@ namespace LandscapeGeneration.FastGrid
                     VoronoiVertex pVertex1 = (VoronoiVertex)edge.Value.From.Tag;
                     VoronoiVertex pVertex2 = (VoronoiVertex)edge.Value.To.Tag;
 
-                    myLocation.BorderWith[(Location)edge.Key.Tag] = new List<VoronoiEdge>();
-                    myLocation.BorderWith[(Location)edge.Key.Tag].Add(new VoronoiEdge(pVertex1, pVertex2));
+                    myLocation.BorderWith[(Location)edge.Key.Tag] = new List<VoronoiEdge> { new VoronoiEdge(pVertex1, pVertex2) };
 
                     if (!pVertex1.Locations.Contains(myLocation))
                         pVertex1.Locations.Add(myLocation);

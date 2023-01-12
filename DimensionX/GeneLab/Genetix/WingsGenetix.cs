@@ -58,7 +58,7 @@ namespace GeneLab.Genetix
         Flying
     }
 
-    public class WingsGenetix: GenetixBase
+    public class WingsGenetix: IGenetix
     {
         /// <summary>
         /// 2 pairs of strong leather wings
@@ -156,7 +156,7 @@ namespace GeneLab.Genetix
 
         public WingsForce WingsForce { get; private set; } = WingsForce.Flying;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is WingsGenetix pAnother))
                 return false;
@@ -192,7 +192,7 @@ namespace GeneLab.Genetix
                 WingsForce = WingsForce.None;
         }
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -233,7 +233,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(20))
             {
@@ -259,7 +259,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(20))
             {
@@ -293,12 +293,12 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             if (Rnd.OneChanceFrom(50))
             {

@@ -20,7 +20,7 @@ namespace LandscapeGeneration
 
         public bool IsWater
         {
-            get { return LandType != null && LandType.Environment.HasFlag(Environment.Liquid); }
+            get { return LandType != null && LandType.Environment.HasFlag(Environments.Liquid); }
         }
 
         public bool IsBorder()

@@ -46,7 +46,7 @@ namespace GeneLab.Genetix
         Top
     }
 
-    public class EarsGenetix : GenetixBase
+    public class EarsGenetix : IGenetix
     {
         /// <summary>
         /// long pointy ears at the sides
@@ -132,7 +132,7 @@ namespace GeneLab.Genetix
 
         public EarsPlacement EarsPlacement { get; } = EarsPlacement.Side;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is EarsGenetix pAnother))
                 return false;
@@ -156,7 +156,7 @@ namespace GeneLab.Genetix
             EarsPlacement = eEarsPlacement;
         }
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -175,7 +175,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(50))
             {
@@ -194,17 +194,17 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }

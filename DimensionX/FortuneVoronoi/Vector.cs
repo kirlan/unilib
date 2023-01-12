@@ -310,7 +310,6 @@ namespace BenTools.Mathematics
 				E+=D*D;
 			}
 			return E;
-
 		}
 
 		/// <summary>
@@ -348,5 +347,4 @@ namespace BenTools.Mathematics
 			return new BTVector(data);
 		}
 	}
-
 }

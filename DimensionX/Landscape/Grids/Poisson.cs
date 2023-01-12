@@ -17,9 +17,9 @@ namespace LandscapeGeneration
     {
         public const int DefaultPointsPerIteration = 30;
 
-        static readonly float SquareRootTwo = (float)Math.Sqrt(2);
+        private static readonly float SquareRootTwo = (float)Math.Sqrt(2);
 
-        struct Settings
+        private struct Settings
         {
             public SimpleVector3d TopLeft, LowerRight, Center;
             public SimpleVector3d Dimensions;
@@ -29,7 +29,7 @@ namespace LandscapeGeneration
             public int GridWidth, GridHeight;
         }
 
-        struct State
+        private struct State
         {
             public SimpleVector3d[,] Grid;
             public List<SimpleVector3d> ActivePoints, Points;
@@ -53,7 +53,7 @@ namespace LandscapeGeneration
             return Sample(topLeft, lowerRight, null, minimumDistance, pointsPerIteration);
         }
 
-        static List<SimpleVector3d> Sample(SimpleVector3d topLeft, SimpleVector3d lowerRight, float? rejectionDistance, float minimumDistance, int pointsPerIteration)
+        private static List<SimpleVector3d> Sample(SimpleVector3d topLeft, SimpleVector3d lowerRight, float? rejectionDistance, float minimumDistance, int pointsPerIteration)
         {
             var settings = new Settings
             {
@@ -94,7 +94,7 @@ namespace LandscapeGeneration
             return state.Points;
         }
 
-        static void AddFirstPoint(ref Settings settings, ref State state)
+        private static void AddFirstPoint(ref Settings settings, ref State state)
         {
             var added = false;
             while (!added)
@@ -117,7 +117,7 @@ namespace LandscapeGeneration
             }
         }
 
-        static bool AddNextPoint(SimpleVector3d point, ref Settings settings, ref State state)
+        private static bool AddNextPoint(SimpleVector3d point, ref Settings settings, ref State state)
         {
             var found = false;
             var q = GenerateRandomAround(point, settings.MinimumDistance);
@@ -130,9 +130,13 @@ namespace LandscapeGeneration
                 var tooClose = false;
 
                 for (var i = (int)Math.Max(0, qIndex.X - 2); i < Math.Min(settings.GridWidth, qIndex.X + 3) && !tooClose; i++)
+                {
                     for (var j = (int)Math.Max(0, qIndex.Y - 2); j < Math.Min(settings.GridHeight, qIndex.Y + 3) && !tooClose; j++)
+                    {
                         if (state.Grid[i, j] != null && SimpleVector3d.Distance(state.Grid[i, j], q) < settings.MinimumDistance)
                             tooClose = true;
+                    }
+                }
 
                 if (!tooClose)
                 {
@@ -145,7 +149,7 @@ namespace LandscapeGeneration
             return found;
         }
 
-        static SimpleVector3d GenerateRandomAround(SimpleVector3d center, float minimumDistance)
+        private static SimpleVector3d GenerateRandomAround(SimpleVector3d center, float minimumDistance)
         {
             var radius = minimumDistance + Rnd.Get(minimumDistance);
 
@@ -157,7 +161,7 @@ namespace LandscapeGeneration
             return new SimpleVector3d((float)(center.X + newX), (float)(center.Y + newY), 0);
         }
 
-        static SimpleVector3d Denormalize(SimpleVector3d point, SimpleVector3d origin, double cellSize)
+        private static SimpleVector3d Denormalize(SimpleVector3d point, SimpleVector3d origin, double cellSize)
         {
             return new SimpleVector3d((int)((point.X - origin.X) / cellSize), (int)((point.Y - origin.Y) / cellSize), 0);
         }

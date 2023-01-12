@@ -8,10 +8,10 @@ using System.Globalization;
 namespace NameGen
 {
     /// <summary>
-    /// The language confluxer takes a list of words and associates every sequential pair of letters 
-    /// with the list of letters that might possibly follow the pair. The program chooses a pair that 
+    /// The language confluxer takes a list of words and associates every sequential pair of letters
+    /// with the list of letters that might possibly follow the pair. The program chooses a pair that
     /// can occur at the beginning of a word, then selects one of the letters from the associated list,
-    /// and forms a new pair, repeating until a whitespace character is found or until a max-length 
+    /// and forms a new pair, repeating until a whitespace character is found or until a max-length
     /// is reached. Simple.
     /// </summary>
     public class Confluxer
@@ -59,7 +59,7 @@ namespace NameGen
 
                 if(!m_cLengthProbability.ContainsKey(sWord.Length))
                     m_cLengthProbability[sWord.Length] = 0;
-                
+
                 m_cLengthProbability[sWord.Length]++;
 
                 if (sWord.Length <= m_iSize)
@@ -133,7 +133,7 @@ namespace NameGen
                 while (pNextVoxel.m_sPair == pVoxel.m_sPair);
 
                 sWord.Append(pNextVoxel.m_sPair);
-                
+
                 pVoxel = pNextVoxel;
             }
 

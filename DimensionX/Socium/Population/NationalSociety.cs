@@ -106,7 +106,7 @@ namespace Socium.Population
 
             //TODO: нужно учитывать размеры и телосложение - гиганты и толстяки едят больше, чем карлики и худышки
             if (fFood * 2 < iPopulation)
-                InfrastructureLevel--;            
+                InfrastructureLevel--;
             if (fFood < iPopulation || Rnd.OneChanceFrom(10))
                 InfrastructureLevel--;
             if (fFood > iPopulation * 2 && Rnd.OneChanceFrom(10))

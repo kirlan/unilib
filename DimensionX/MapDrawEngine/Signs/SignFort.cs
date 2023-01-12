@@ -8,9 +8,10 @@ namespace MapDrawEngine.Signs
 {
     public struct SignFort : ILandMark
     {
-        float x, y, r1, r2;
-        string name;
-        PointF[] points;
+        private float x, y;
+        private readonly float r1, r2;
+        private readonly string name;
+        private readonly PointF[] points;
 
         internal static Font s_pFont = new Font("Arial", 10);
 
@@ -22,14 +23,14 @@ namespace MapDrawEngine.Signs
             r1 = RX / 375;
             r2 = RX / 250;
 
-            List<PointF> cPoints = new List<PointF>();
-            cPoints.Add(new PointF(x, y + r1));
-            cPoints.Add(new PointF(x + r2, y));
-            cPoints.Add(new PointF(x + r1, y - r2));
-            cPoints.Add(new PointF(x - r1, y - r2));
-            cPoints.Add(new PointF(x - r2, y));
-
-            points = cPoints.ToArray();
+            points = new PointF[]
+            {
+                new PointF(x, y + r1),
+                new PointF(x + r2, y),
+                new PointF(x + r1, y - r2),
+                new PointF(x - r1, y - r2),
+                new PointF(x - r2, y)
+            };
 
             name = sName;
         }

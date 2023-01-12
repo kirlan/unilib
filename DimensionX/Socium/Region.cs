@@ -18,7 +18,7 @@ namespace Socium
 
         public bool IsWater
         {
-            get { return Type != null && Type.Environment.HasFlag(LandscapeGeneration.Environment.Liquid); }
+            get { return Type != null && Type.Environment.HasFlag(LandscapeGeneration.Environments.Liquid); }
         }
 
         public bool IsBorder()

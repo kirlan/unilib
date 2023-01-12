@@ -57,7 +57,6 @@
         /// </summary>
         public VoronoiEdge()
         {
-
         }
 
         /// <summary>

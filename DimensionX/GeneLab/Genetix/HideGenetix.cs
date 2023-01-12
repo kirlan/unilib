@@ -40,7 +40,7 @@ namespace GeneLab.Genetix
         Shell
     }
 
-    public class HideGenetix: GenetixBase
+    public class HideGenetix: IGenetix
     {
         /// <summary>
         /// jet-black fur with azure spots
@@ -191,7 +191,7 @@ namespace GeneLab.Genetix
         public Color SpotsColor { get; private set; } = Color.AntiqueWhite;
         public string SpotsColorStr { get; private set; } = "white";
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is HideGenetix pAnother))
                 return false;
@@ -207,7 +207,7 @@ namespace GeneLab.Genetix
                    Spots == pAnother.Spots &&
                    SpotsColorStr == pAnother.SpotsColorStr;
         }
-        
+
         public HideGenetix()
         { }
 
@@ -322,8 +322,7 @@ namespace GeneLab.Genetix
             {
                 Spots = false;
 
-                KColor pColor = new KColor();
-                pColor.RGB = HideColor;
+                KColor pColor = new KColor { RGB = HideColor };
 
                 if (Rnd.OneChanceFrom(2))
                     pColor.Hue += Math.Pow(Rnd.Get(8f), 2);
@@ -356,8 +355,7 @@ namespace GeneLab.Genetix
             {
                 Spots = Rnd.OneChanceFrom(2);
 
-                KColor pColor = new KColor();
-                pColor.RGB = HideColor;
+                KColor pColor = new KColor { RGB = HideColor };
 
                 if (HideType > HideType.FurLong)
                 {
@@ -448,7 +446,7 @@ namespace GeneLab.Genetix
                 if (pColor.Lightness > 0.75)
                     return "white";
                 if (pColor.Saturation > 0.75)
-                    return "bright orange"; 
+                    return "bright orange";
                 return "tanned";
             }
             else if (pColor.Hue < 75)
@@ -529,7 +527,7 @@ namespace GeneLab.Genetix
                     return "light violet";
                 if (pColor.Saturation > 0.75)
                     return "bright violet";
-                return "violet"; 
+                return "violet";
             }
             else if (pColor.Hue < 315)
             {
@@ -563,7 +561,7 @@ namespace GeneLab.Genetix
             }
         }
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             HideGenetix pMutant = new HideGenetix(this);
 
@@ -579,7 +577,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -611,7 +609,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -642,7 +640,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             if (HideType != HideType.BareSkin && Rnd.OneChanceFrom(5))
             {
@@ -657,7 +655,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             if (HideType != HideType.BareSkin && Rnd.OneChanceFrom(5))
             {

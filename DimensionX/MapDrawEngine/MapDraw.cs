@@ -575,9 +575,11 @@ namespace MapDrawEngine
         /// <returns>цвет</returns>
         private Brush GetHumidityColor(int iHumidity)
         {
-            KColor color = new KColor();
-            color.RGB = Color.LightBlue;
-            color.Lightness = 1.0 - (double)iHumidity / 200;
+            KColor color = new KColor
+            {
+                RGB = Color.LightBlue,
+                Lightness = 1.0 - (double)iHumidity / 200
+            };
             return new SolidBrush(color.RGB);
         }
         /// <summary>
@@ -588,13 +590,17 @@ namespace MapDrawEngine
         /// <returns>цвет</returns>
         private Brush GetTechLevelColor(int iBaseTechLevel, int iUsedTechLevel)
         {
-            KColor background = new KColor();
-            background.RGB = Color.ForestGreen;
-            background.Lightness = 1.0 - (double)iBaseTechLevel / 10;
+            KColor background = new KColor
+            {
+                RGB = Color.ForestGreen,
+                Lightness = 1.0 - (double)iBaseTechLevel / 10
+            };
 
-            KColor foreground = new KColor();
-            foreground.RGB = Color.ForestGreen;
-            foreground.Lightness = 1.0 - (double)iUsedTechLevel / 10;
+            KColor foreground = new KColor
+            {
+                RGB = Color.ForestGreen,
+                Lightness = 1.0 - (double)iUsedTechLevel / 10
+            };
             return new HatchBrush(HatchStyle.LargeConfetti, foreground.RGB, background.RGB);
         }
         /// <summary>
@@ -606,12 +612,16 @@ namespace MapDrawEngine
         /// <exception cref="ArgumentException"></exception>
         private Brush GetPsiLevelColor(int iMaxPsiLevel, Customs.Magic ePrevalence)
         {
-            KColor background = new KColor();
-            background.RGB = Color.Orchid;
-            background.Lightness = 0.9 - (double)iMaxPsiLevel / 10;
+            KColor background = new KColor
+            {
+                RGB = Color.Orchid,
+                Lightness = 0.9 - (double)iMaxPsiLevel / 10
+            };
 
-            KColor foreground = new KColor();
-            foreground.RGB = Color.Gray;
+            KColor foreground = new KColor
+            {
+                RGB = Color.Gray
+            };
 
             switch (ePrevalence)
             {
@@ -663,9 +673,9 @@ namespace MapDrawEngine
         /// <summary>
         /// Привязка цветов для конкретных рас
         /// </summary>
-        private Dictionary<Nation, Brush> m_cNationColorsID = new Dictionary<Nation, Brush>();
-        private Dictionary<Nation, Brush> m_cAncientNationColorsID = new Dictionary<Nation, Brush>();
-        private Dictionary<Nation, Brush> m_cHegemonNationColorsID = new Dictionary<Nation, Brush>();
+        private readonly Dictionary<Nation, Brush> m_cNationColorsID = new Dictionary<Nation, Brush>();
+        private readonly Dictionary<Nation, Brush> m_cAncientNationColorsID = new Dictionary<Nation, Brush>();
+        private readonly Dictionary<Nation, Brush> m_cHegemonNationColorsID = new Dictionary<Nation, Brush>();
 
         #endregion Функции для работы с цветами
 
@@ -997,8 +1007,7 @@ namespace MapDrawEngine
 
             ScaleMultiplier = 1;
 
-            if (m_pMiniMap != null)
-                m_pMiniMap.WorldAssigned();
+            m_pMiniMap?.WorldAssigned();
 
             SetPan(0, 0);
         }
@@ -1013,10 +1022,9 @@ namespace MapDrawEngine
             if (fMaxHeight == 0)
                 fMaxHeight = fHeight;
 
-            KColor color = new KColor();
-            color.RGB = Color.Cyan;
+            KColor color = new KColor { RGB = Color.Cyan };
 
-            if (fHeight < 0 || pType.Environment.HasFlag(LandscapeGeneration.Environment.Liquid))
+            if (fHeight < 0 || pType.Environment.HasFlag(LandscapeGeneration.Environments.Liquid))
             {
                 color.RGB = Color.Green;
                 color.Hue = Math.Min(360, 200 + 40 * fHeight / fMinHeight);
@@ -1034,7 +1042,7 @@ namespace MapDrawEngine
 
         /// <summary>
         /// Строит сложный контур в ОРИГИНАЛЬНЫХ координатах (с отражениями)
-        /// Сложный контур - это когда например, у континента есть две замкнутые береговые линии - 
+        /// Сложный контур - это когда например, у континента есть две замкнутые береговые линии -
         /// одна с внешним океаном, а другая с внутренним морем. Каждая из них - простой контур,
         /// а в совокупности - сложный.
         /// </summary>
@@ -1069,9 +1077,9 @@ namespace MapDrawEngine
                 {
                     //определяем, на западе или на востоке будем строить отражение
                     if (pFirstLine.Point1.X > 0)
-                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                        cPath.Add(BuildBorder(pFirstLine, -m_pWorld.LocationsGrid.RX * 2, out _, out aQuads));
                     else
-                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                        cPath.Add(BuildBorder(pFirstLine, m_pWorld.LocationsGrid.RX * 2, out _, out aQuads));
 
                     //определяем, через какие квадранты оно проходит
                     for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1110,10 +1118,11 @@ namespace MapDrawEngine
         private PointF[][] BuildPath(VoronoiEdge pFirstLine, bool bMirror, out MapQuadrant[] aQuadrants)
         {
             bool[,] aQuadsAll = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
-            List<PointF[]> cPath = new List<PointF[]>();
-
-            //получаем простой одиночный контур
-            cPath.Add(BuildBorder(pFirstLine, 0, out bool bCross, out bool[,] aQuads));
+            List<PointF[]> cPath = new List<PointF[]>
+            {
+                //получаем простой одиночный контур
+                BuildBorder(pFirstLine, 0, out bool bCross, out bool[,] aQuads)
+            };
 
             //определяем, через какие квадранты он проходит
             for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1131,9 +1140,9 @@ namespace MapDrawEngine
             {
                 //определяем, на западе или на востоке будем строить отражение
                 if (pFirstLine.Point1.X > 0)
-                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                    cPath.Add(BuildBorder(pFirstLine, -m_pWorld.LocationsGrid.RX * 2, out _, out aQuads));
                 else
-                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                    cPath.Add(BuildBorder(pFirstLine, m_pWorld.LocationsGrid.RX * 2, out _, out aQuads));
 
                 //определяем, через какие квадранты оно проходит
                 for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1347,8 +1356,7 @@ namespace MapDrawEngine
                     break;
             }
 
-            bool[,] aQuadrants;
-            PointF[][] aLinks = GetTransportationLink(pRoad, out aQuadrants);
+            PointF[][] aLinks = GetTransportationLink(pRoad, out bool[,] aQuadrants);
 
             for (int i = 0; i < QUADRANTS_COUNT; i++)
             {
@@ -1382,10 +1390,11 @@ namespace MapDrawEngine
         {
             aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
 
-            List<PointF[]> cPathLines = new List<PointF[]>();
-
-            //получаем линию без отражений
-            cPathLines.Add(BuildPathLine(pRoad, 0, out bool bCross, out bool[,] aQuads));
+            List<PointF[]> cPathLines = new List<PointF[]>
+            {
+                //получаем линию без отражений
+                BuildPathLine(pRoad, 0, out bool bCross, out bool[,] aQuads)
+            };
 
             //если мир закольцован и построенная линия пересекает нулевой меридиан,
             //то построим для неё отражение
@@ -1393,11 +1402,11 @@ namespace MapDrawEngine
             {
                 if (pRoad.Points[0].X > 0)
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, -m_pWorld.LocationsGrid.RX * 2, out _, out aQuads));
                 }
                 else
                 {
-                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                    cPathLines.Add(BuildPathLine(pRoad, m_pWorld.LocationsGrid.RX * 2, out _, out aQuads));
                 }
             }
 
@@ -1572,8 +1581,7 @@ namespace MapDrawEngine
 
             //если есть связанная миникарта - сигнализируем ей о том, что 
             //координаты и размеры области отображения изменились
-            if (m_pMiniMap != null)
-                m_pMiniMap.SinchronizeDrawFrame();
+            m_pMiniMap?.SinchronizeDrawFrame();
         }
 
         /// <summary>
@@ -1614,8 +1622,7 @@ namespace MapDrawEngine
             Draw();
 
             //если у нас есть связанная миникарта - сигнализируем ей о том, что область просмотра сдвинулась
-            if (m_pMiniMap != null)
-                m_pMiniMap.SinchronizeDrawFrame();
+            m_pMiniMap?.SinchronizeDrawFrame();
         }
 
         public void SinchronizeDrawFrame()
@@ -1640,7 +1647,7 @@ namespace MapDrawEngine
 
             Draw();
         }
-        
+
         #endregion
 
         /// <summary>
@@ -1698,59 +1705,66 @@ namespace MapDrawEngine
             //закрашиваем карту в соответствии с выбранным режимом отображения карты
             for (int i = 0; i < m_iQuadsWidth; i++)
                 for (int j = 0; j < m_iQuadsHeight; j++)
-                    if (aVisibleQuads[i, j] != null)
-                        aVisibleQuads[i, j].FillPath(gr, m_eMode, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                    aVisibleQuads[i, j]?.FillPath(gr, m_eMode, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
 
             if (m_bShowLocationsBorders)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawPath(gr, MapLayer.Locations, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.Locations, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             if (m_bShowLands)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawPath(gr, MapLayer.Lands, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.Lands, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             if (m_bShowRegions)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawPath(gr, MapLayer.Regions, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.Regions, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             if (m_bShowProvincies)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawPath(gr, MapLayer.Provincies, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.Provincies, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             foreach (TransportationNode[] aPath in m_cPaths.Keys)
                 DrawPath(gr, aPath, m_cPaths[aPath]);
 
             if (m_bShowRoads)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawRoads(gr, m_fScaleMultiplier, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawRoads(gr, m_fScaleMultiplier, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             if (m_bShowStates)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawPath(gr, MapLayer.States, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.States, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             if (m_bShowLocations)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawLandMarks(gr, m_fScaleMultiplier, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawLandMarks(gr, m_fScaleMultiplier, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             if (m_bShowLandMasses)
+            {
                 for (int i = 0; i < m_iQuadsWidth; i++)
                     for (int j = 0; j < m_iQuadsHeight; j++)
-                        if (aVisibleQuads[i, j] != null)
-                            aVisibleQuads[i, j].DrawPath(gr, MapLayer.LandMasses, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+                        aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.LandMasses, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
 
             if (m_pSelectedState != null)
                 DrawStateBorder(gr, m_pSelectedState);
@@ -1768,8 +1782,7 @@ namespace MapDrawEngine
             {
                 if (pLastNode != null)
                 {
-                    bool[,] aQuads;
-                    PointF[][] aLinks = GetTransportationLink(pLastNode.Links[pNode], out aQuads);
+                    PointF[][] aLinks = GetTransportationLink(pLastNode.Links[pNode], out bool[,] aQuads);
                     foreach (var aLink in aLinks)
                     {
                         pPath.StartFigure();
@@ -1919,7 +1932,9 @@ namespace MapDrawEngine
             m_pLastMouseLocation = e.Location;
 
             if (m_bScrolling)
+            {
                 SetPan(p.X, p.Y);
+            }
             else
             {
                 string sToolTip = GetTooltipString();
@@ -2012,7 +2027,6 @@ namespace MapDrawEngine
                     }
                 }
             }
-
 
             if (m_pFocusedLandMass != null &&
                 (m_pFocusedLand == null || !m_cLandBorders[m_pFocusedLand].IsVisible(iX, iY)))
@@ -2169,14 +2183,13 @@ namespace MapDrawEngine
 
                 sToolTip.Append(pFocusedLocX.ToString());
 
-                if (pFocusedLocX.Settlement != null && pFocusedLocX.Settlement.Buildings.Count > 0)
+                if (pFocusedLocX.Settlement?.Buildings.Count > 0)
                 {
                     Dictionary<string, int> cBuildings = new Dictionary<string, int>();
 
                     foreach (Building pBuilding in pFocusedLocX.Settlement.Buildings)
                     {
-                        int iCount = 0;
-                        cBuildings.TryGetValue(pBuilding.ToString(), out iCount);
+                        cBuildings.TryGetValue(pBuilding.ToString(), out int iCount);
                         cBuildings[pBuilding.ToString()] = iCount + 1;
                     }
 
@@ -2232,7 +2245,7 @@ namespace MapDrawEngine
         /// <returns></returns>
         public Point GetCentralPoint(State pState)
         {
-            PointF[][] aPoints = BuildPath(pState.FirstLines, false, out MapQuadrant[] aQuads);
+            PointF[][] aPoints = BuildPath(pState.FirstLines, false, out _);
             GraphicsPath pPath = new GraphicsPath();
             foreach (var aPts in aPoints)
                 pPath.AddPolygon(aPts);
@@ -2262,8 +2275,7 @@ namespace MapDrawEngine
         /// <param name="pColor">цвет для отображения маршрута</param>
         public void AddPath(TransportationNode[] aPath, Color pColor)
         {
-            Pen pPen = new Pen(pColor, 5);
-            pPen.DashPattern = new float[] { 2, 3 };
+            Pen pPen = new Pen(pColor, 5) { DashPattern = new float[] { 2, 3 } };
             m_cPaths[aPath] = pPen;
             Draw();
         }

@@ -95,27 +95,27 @@ namespace LandscapeGeneration
         }
         public void PresetLandTypesInfo()
         {
-            LandTypes.Coastral.Init(10, -0.0001f, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, new string[] { "sea" });
+            LandTypes.Coastral.Init(10, -0.0001f, Environments.Flat | Environments.Open | Environments.Liquid | Environments.Wet, new string[] { "sea" });
 
-            LandTypes.Ocean.Init(10, -5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, new string[] { "ocean" });
+            LandTypes.Ocean.Init(10, -5, Environments.Flat | Environments.Open | Environments.Liquid | Environments.Wet, new string[] { "ocean" });
 
-            LandTypes.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, new string[] { "plains", "meadows", "fields" });
+            LandTypes.Plains.Init(1, 1, Environments.Flat | Environments.Open | Environments.Habitable, new string[] { "plains", "meadows", "fields" });
 
-            LandTypes.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, new string[] { "savanna", "plains" });
+            LandTypes.Savanna.Init(1, 1, Environments.Flat | Environments.Open | Environments.Hot | Environments.Habitable, new string[] { "savanna", "plains" });
 
-            LandTypes.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, new string[] { "tundra", "wastes" });
+            LandTypes.Tundra.Init(2, 0.5f, Environments.Flat | Environments.Open | Environments.Cold | Environments.Habitable, new string[] { "tundra", "wastes" });
 
-            LandTypes.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, new string[] { "desert", "sands" });
+            LandTypes.Desert.Init(2, 0.1f, Environments.Flat | Environments.Open | Environments.Hot | Environments.Soft | Environments.Habitable, new string[] { "desert", "sands" });
 
-            LandTypes.Forest.Init(3, 2, Environment.Habitable, new string[] { "forest", "woods" });
+            LandTypes.Forest.Init(3, 2, Environments.Habitable, new string[] { "forest", "woods" });
 
-            LandTypes.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, new string[] { "taiga" });
+            LandTypes.Taiga.Init(3, 2, Environments.Cold | Environments.Habitable, new string[] { "taiga" });
 
-            LandTypes.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, new string[] { "swamp", "marshes" });
+            LandTypes.Swamp.Init(4, 0.1f, Environments.Flat | Environments.Open | Environments.Soft | Environments.Wet | Environments.Habitable, new string[] { "swamp", "marshes" });
 
-            LandTypes.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, new string[] { "mountains" });
+            LandTypes.Mountains.Init(5, 10, Environments.Open | Environments.Barrier | Environments.Habitable, new string[] { "mountains" });
 
-            LandTypes.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, new string[] { "jungle" });
+            LandTypes.Jungle.Init(6, 2, Environments.Hot | Environments.Wet | Environments.Habitable, new string[] { "jungle" });
         }
         private void ShapeWorld(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
@@ -363,8 +363,8 @@ namespace LandscapeGeneration
             }
             Lands = cLands.ToArray();
 
-//            BeginStep("Growing lands seeds...", m_pGrid.m_aLocations.Length / m_aLands.Length);
-            bool bContinue = false;
+            //            BeginStep("Growing lands seeds...", m_pGrid.m_aLocations.Length / m_aLands.Length);
+            bool bContinue;
             do
             {
                 bContinue = false;
@@ -426,8 +426,8 @@ namespace LandscapeGeneration
 
             LandMasses = cLandMasses.ToArray();
 
-//            BeginStep("Growing landmasses seeds...", m_aLands.Length / m_aLandMasses.Length); 
-            bool bContinue = false;
+            //            BeginStep("Growing landmasses seeds...", m_aLands.Length / m_aLandMasses.Length); 
+            bool bContinue;
             do
             {
                 bContinue = false;
@@ -802,7 +802,7 @@ namespace LandscapeGeneration
                             fTemperatureMod = 1.5f / (fTemperatureMod * fTemperatureMod) + 300 * fTemperatureMod * fTemperatureMod;
                             pLinkedLand.Humidity = (int)(fTemperatureMod - 5 + Rnd.Get(10.0f));
 
-                            if (pLinkedLand.LandType != null && pLinkedLand.LandType.Environment.HasFlag(Environment.Barrier))
+                            if (pLinkedLand.LandType?.Environment.HasFlag(Environments.Barrier) == true)
                                 pLinkedLand.Humidity /= 2;
 
                             if (!cHumidityFront.Contains(pLinkedLand))
@@ -834,7 +834,7 @@ namespace LandscapeGeneration
                             {
                                 pLinkedLand.Humidity = pLand.Humidity - 10 - Rnd.Get(5);
 
-                                if (pLinkedLand.LandType != null && pLinkedLand.LandType.Environment.HasFlag(Environment.Barrier))
+                                if (pLinkedLand.LandType?.Environment.HasFlag(Environments.Barrier) == true)
                                     pLinkedLand.Humidity /= 2;
 
                                 if (!cNewWave.Contains(pLinkedLand))
@@ -991,7 +991,7 @@ namespace LandscapeGeneration
                                 if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
                                     continue;
 
-                                if (!pLink.GetOwner().LandType.Environment.HasFlag(Environment.Liquid))
+                                if (!pLink.GetOwner().LandType.Environment.HasFlag(Environments.Liquid))
                                 {
                                     if (!cOcean.Contains(pLoc))
                                         cOcean.Add(pLoc);
@@ -1093,9 +1093,9 @@ namespace LandscapeGeneration
             SmoothMap(0.1f);
             //PlainMap();
 
-            //CalculateVertexes();
-            //SmoothVertexes();
-            //SmoothVertexes();
+            CalculateVertexes();
+            SmoothVertexes();
+            SmoothVertexes();
 
             foreach (Location pLoc in LocationsGrid.Locations)
             {
@@ -1280,7 +1280,7 @@ namespace LandscapeGeneration
                     // Third octave
                     (perlinNoise.Noise(64 * pLoc.X * widthDivisor, 64 * pLoc.Y * heightDivisor, +0.5) + 1) / 2 * 0.2);
 
-                v = v - 0.5f;
+                v -= 0.5f;
 
                 if (v < vMin)
                     vMin = v;

@@ -70,7 +70,7 @@ namespace GeneLab.Genetix
         Big
     }
 
-    public class HeadGenetix: GenetixBase
+    public class HeadGenetix: IGenetix
     {
         /// <summary>
         /// 2 ugly heads on long, flexible necks
@@ -201,11 +201,9 @@ namespace GeneLab.Genetix
 
         public Horns Horns { get; private set; } = Horns.None;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
-            HeadGenetix pAnother = pOther as HeadGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is HeadGenetix pAnother))
                 return false;
 
             return HeadsCount == pAnother.HeadsCount &&
@@ -213,7 +211,7 @@ namespace GeneLab.Genetix
                 HeadForm == pAnother.HeadForm &&
                 Horns == pAnother.Horns;
         }
-        
+
         public HeadGenetix()
         { }
 
@@ -235,7 +233,7 @@ namespace GeneLab.Genetix
 
         #region GenetixBase Members
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -316,7 +314,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -343,7 +341,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -370,12 +368,12 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }

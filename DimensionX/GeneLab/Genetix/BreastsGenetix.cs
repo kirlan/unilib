@@ -25,7 +25,7 @@ namespace GeneLab.Genetix
         Big
     }
 
-    public class BreastsGenetix : GenetixBase
+    public class BreastsGenetix : IGenetix
     {
         /// <summary>
         /// 'have 2 small breasts'
@@ -214,7 +214,7 @@ namespace GeneLab.Genetix
 
         public BreastSize BreastSize { get; private set; } = BreastSize.None;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is BreastsGenetix pAnother))
                 return false;
@@ -240,7 +240,7 @@ namespace GeneLab.Genetix
 
         #region GenetixBase Members
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -291,7 +291,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(2))
             {
@@ -320,7 +320,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -345,7 +345,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -370,7 +370,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             BreastsGenetix pMutant = new BreastsGenetix(this);
 

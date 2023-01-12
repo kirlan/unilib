@@ -2066,7 +2066,7 @@ namespace Socium.Population
         }
 
         /// <summary>
-        /// Учитываем дополнительные факторы, влияющие на гендерные предпочтения - например, 
+        /// Учитываем дополнительные факторы, влияющие на гендерные предпочтения - например,
         /// определяемый фенотипом перекос в родаемости детей определённого пола...
         /// </summary>
         /// <param name="ePriority"></param>
@@ -2077,17 +2077,25 @@ namespace Socium.Population
             {
                 if (TitularNation.PhenotypeFemale.m_pValues.Get<LifeCycleGenetix>().BirthRate >
                     TitularNation.PhenotypeMale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                {
                     return Customs.GenderPriority.Genders_equality;
+                }
                 else
+                {
                     return Customs.GenderPriority.Patriarchy;
+                }
             }
             if (Culture[Gender.Male].Customs.Has(Customs.GenderPriority.Patriarchy))
             {
                 if (TitularNation.PhenotypeMale.m_pValues.Get<LifeCycleGenetix>().BirthRate >
                     TitularNation.PhenotypeFemale.m_pValues.Get<LifeCycleGenetix>().BirthRate)
+                {
                     return Customs.GenderPriority.Genders_equality;
+                }
                 else
+                {
                     return Customs.GenderPriority.Matriarchy;
+                }
             }
 
             return base.GetMinorGender();

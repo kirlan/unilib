@@ -14,6 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <CodeAnalysisRuleSet>..\..\.sonarlint\kirlan_unilibcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>..\..\.sonarlint\kirlan_unilibcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>..\..\.sonarlint\kirlan_unilibcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -65,7 +68,7 @@
     <Compile Include="Genetix\BreastsGenetix.cs" />
     <Compile Include="Genetix\NutritionGenetix.cs" />
     <Compile Include="Phenotype.cs" />
-    <Compile Include="GenetixBase.cs" />
+    <Compile Include="IGenetix.cs" />
     <Compile Include="Genetix\BodyGenetix.cs" />
     <Compile Include="Genetix\BrainGenetix.cs" />
     <Compile Include="Genetix\EarsGenetix.cs" />
@@ -95,8 +98,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\.sonarlint\kirlan_unilibcsharp.ruleset">
+      <Link>kirlan_unilibcsharp.ruleset</Link>
+    </None>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\.sonarlint\kirlan_unilib\CSharp\SonarLint.xml">
+      <Link>SonarLint.xml</Link>
+    </AdditionalFiles>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

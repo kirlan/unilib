@@ -23,7 +23,7 @@ namespace LandscapeGeneration
     }
 
     [Flags]
-    public enum Environment
+    public enum Environments
     {
         None = 0,
         /// <summary>
@@ -33,35 +33,35 @@ namespace LandscapeGeneration
         /// <summary>
         /// Не твёрдая поверхность - песок или грязь...
         /// </summary>
-        Soft = 2,
+        Soft = 1 << 1,
         /// <summary>
         /// Жидкость
         /// </summary>
-        Liquid = 4,
+        Liquid = 1 << 2,
         /// <summary>
         /// Ландшафт с сильными перепадами высот
         /// </summary>
-        Barrier = 8,
+        Barrier = 1 << 3,
         /// <summary>
         /// Местность с хорошим обзором, т.е. без крупной растительности
         /// </summary>
-        Open = 16,
+        Open = 1 << 4,
         /// <summary>
         /// Высокая влажность
         /// </summary>
-        Wet = 32,
+        Wet = 1 << 5,
         /// <summary>
         /// Температура выше среднего
         /// </summary>
-        Hot = 64,
+        Hot = 1 << 6,
         /// <summary>
         /// Температура ниже среднего
         /// </summary>
-        Cold = 128,
+        Cold = 1 << 7,
         /// <summary>
         /// Вообще обитаемые земли
         /// </summary>
-        Habitable = 256
+        Habitable = 1 << 8
     }
 
     public interface ILandTypeInfoExt
@@ -88,7 +88,7 @@ namespace LandscapeGeneration
 
         public int MovementCost { get; private set; }  = 100;
 
-        public Environment Environment { get; private set; } = Environment.None;
+        public Environments Environment { get; private set; } = Environments.None;
 
         public string[] Names { get; private set; }
 
@@ -99,7 +99,7 @@ namespace LandscapeGeneration
             Type = eType;
         }
 
-        public void Init(int iMovementCost, float fElevation, Environment eEnvironment, string[] cNames)
+        public void Init(int iMovementCost, float fElevation, Environments eEnvironment, string[] cNames)
         {
             MovementCost = iMovementCost;
             Elevation = fElevation;

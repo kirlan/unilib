@@ -19,5 +19,4 @@ namespace MapDrawEngine
             m_pBrush = new SolidBrush(m_pColor);
         }
     }
-
 }

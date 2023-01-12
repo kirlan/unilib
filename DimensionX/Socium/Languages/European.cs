@@ -18,7 +18,7 @@ namespace Socium.Languages
         }
 
         #region ILanguage Members
-        
+
         protected override string GetNationName()
         {
             return m_pNations.Generate();

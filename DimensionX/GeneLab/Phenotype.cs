@@ -9,25 +9,25 @@ using Random;
 
 namespace GeneLab
 {
-    public class Phenotype : GenetixBase
+    public class Phenotype : IGenetix
     {
         public class PhensStorage
         {
             public Dictionary<Type, dynamic> Internal { get; } = new Dictionary<Type, dynamic>();
 
-            public PhensStorage Set<T>(T value) where T : GenetixBase
+            public PhensStorage Set<T>(T value) where T : IGenetix
             {
                 Internal[typeof(T)] = value;
 
                 return this;
             }
 
-            public T Get<T>() where T : GenetixBase
+            public T Get<T>() where T : IGenetix
             {
                 return Internal[typeof(T)];
             }
 
-            public bool HasIdentical<T>(PhensStorage pOther) where T : GenetixBase
+            public bool HasIdentical<T>(PhensStorage pOther) where T : IGenetix
             {
                 return HasIdentical(typeof(T), pOther);
             }
@@ -393,7 +393,7 @@ namespace GeneLab
 
         #endregion
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is Phenotype pAnother))
                 return false;
@@ -403,7 +403,7 @@ namespace GeneLab
 
         #region Mutations
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             Phenotype pMutant = Clone();
 
@@ -429,7 +429,7 @@ namespace GeneLab
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             Phenotype pMutant = Clone();
 
@@ -455,7 +455,7 @@ namespace GeneLab
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             Phenotype pMutant = Clone();
 
@@ -472,7 +472,7 @@ namespace GeneLab
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             Phenotype pMutant = Clone();
 
@@ -489,7 +489,7 @@ namespace GeneLab
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             Phenotype pMutant = Clone();
 
@@ -628,13 +628,13 @@ namespace GeneLab
         /// <param name="eAllowedProp"></param>
         /// <param name="eForbiddenProp"></param>
         /// <returns></returns>
-        private LandTypeInfo[] GetLands(LandscapeGeneration.Environment eAllowedProp, LandscapeGeneration.Environment eForbiddenProp)
+        private LandTypeInfo[] GetLands(LandscapeGeneration.Environments eAllowedProp, LandscapeGeneration.Environments eForbiddenProp)
         {
             List<LandTypeInfo> cResult = new List<LandTypeInfo>();
             foreach (LandTypeInfo pLand in LandTypes.Instance.Lands.Values)
             {
-                if ((eAllowedProp == LandscapeGeneration.Environment.None || pLand.Environment.HasFlag(eAllowedProp)) &&
-                    (eForbiddenProp == LandscapeGeneration.Environment.None || !pLand.Environment.HasFlag(eForbiddenProp)))
+                if ((eAllowedProp == LandscapeGeneration.Environments.None || pLand.Environment.HasFlag(eAllowedProp)) &&
+                    (eForbiddenProp == LandscapeGeneration.Environments.None || !pLand.Environment.HasFlag(eForbiddenProp)))
                 {
                     cResult.Add(pLand);
                 }
@@ -679,7 +679,7 @@ namespace GeneLab
                 {
                     //копыта дают премущества на равнинах и в горах
                     case LegsType.Hoofs:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Open, LandscapeGeneration.Environment.Soft))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Open, LandscapeGeneration.Environments.Soft))
                             cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //case LegsType.Foots:
@@ -689,22 +689,22 @@ namespace GeneLab
                     //    break;
                     //звериные лапы с когтями - на равнинах и в лесах
                     case LegsType.Paws:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Soft))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Soft))
                             cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //птичьи лапы с когтями - в лесах и в горах
                     case LegsType.Claws:
-                        foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
+                        foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Flat))
                             cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //паучьи лапы - в песках и горах
                     case LegsType.Spidery:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Wet))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Wet))
                             cLandTypes[pLand.Type] += iMultiplier;
                         break;
                     //щупальца - в болотах
                     case LegsType.Tentacles:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft | LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.Cold))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Soft | LandscapeGeneration.Environments.Wet, LandscapeGeneration.Environments.Cold))
                             cLandTypes[pLand.Type] += iMultiplier;
                         break;
                 }
@@ -712,7 +712,7 @@ namespace GeneLab
             else
             {
                 //безногие расы более комфортно себя чувствуют в пустынях и болотах
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft, LandscapeGeneration.Environment.None))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Soft, LandscapeGeneration.Environments.None))
                     cLandTypes[pLand.Type] += iMultiplier;
             }
 
@@ -722,12 +722,12 @@ namespace GeneLab
                 {
                     //длинный плохоуправляемый хвост помогает удерживать равновесие, что важно в лесах и горах
                     case TailControl.Crude:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Flat))
                             cLandTypes[pLand.Type] *= 2;
                         break;
                     //длинный и ловкий хвост помогает скакать по веткам деревьев
                     case TailControl.Skillful:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat | LandscapeGeneration.Environment.Open))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Flat | LandscapeGeneration.Environments.Open))
                             cLandTypes[pLand.Type] *= 2;
                         break;
                 }
@@ -739,12 +739,12 @@ namespace GeneLab
                 {
                     //слабые крылья хороши там, где есть высокие места, откуда можно планировать - в лесах и горах
                     case WingsForce.Gliding:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Flat))
                             cLandTypes[pLand.Type] *= 2;
                         break;
                     //сильные крылья хороши так же и на равнинах, где можно высоко взлететь и получить дополнительный обзор
                     case WingsForce.Flying:
-                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Soft))
+                        foreach(LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Soft))
                             cLandTypes[pLand.Type] *= 2;
                         break;
                 }
@@ -752,7 +752,7 @@ namespace GeneLab
                 //в болотах живут крылатые только с кожистыми или насекомыми крыльями
                 if (m_pValues.Get<WingsGenetix>().WingsType == WingsType.Feathered)
                 {
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft | LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Soft | LandscapeGeneration.Environments.Wet, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] = 0;
                 }
             }
@@ -764,45 +764,45 @@ namespace GeneLab
                     //cLandTypes[LandType.Plains] *= 2;
                     //cLandTypes[LandType.Savanna] *= 2;
 
-                   foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Soft | LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
+                   foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Soft | LandscapeGeneration.Environments.Wet, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] = 0;
                     break;
                 //длинный мех подходит для холодных регионов и не подходит для жарких и влажных
                 case HideType.FurLong:
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Cold, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] *= 2;
 
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] = 0;
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Wet, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] = 0;
                     break;
                 //хитин, наоборот, подходит для жарких и влажных мест, но не подходит для холодных
                 case HideType.Chitin:
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] *= 2;
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Wet, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] *= 2;
 
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Cold, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] = 0;
                     break;
                 //аналогично чешуя
                 case HideType.Scales:
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] *= 2;
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Wet, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] *= 2;
 
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Cold, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] = 0;
                     break;
                 //костяные панцири хороши для болота и не подходят для холодных регионов
                 case HideType.Shell:
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Wet | LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Wet | LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] *= 2;
 
-                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
+                    foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Cold, LandscapeGeneration.Environments.None))
                         cLandTypes[pLand.Type] = 0;
                     break;
             }
@@ -812,17 +812,17 @@ namespace GeneLab
             //светлая кожа не подходит для жарких регионов
             if (pColor.Lightness > 0.75)
             {
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                     cLandTypes[pLand.Type] = 0;
             }
 
             //тёмная кожа не подходит для холодных регионов и даёт бонусы в особо жарких местах
             if (pColor.Lightness < 0.25)
             {
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                     cLandTypes[pLand.Type] *= 2;
 
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Cold, LandscapeGeneration.Environment.None))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Cold, LandscapeGeneration.Environments.None))
                     cLandTypes[pLand.Type] = 0;
             }
 
@@ -848,42 +848,42 @@ namespace GeneLab
             //светловолосые расы не живут в жарких странах
             if (iPigmentless > iPigmented * 2)
             {
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                     cLandTypes[pLand.Type] = 0;
             }
 
             //с другой стороны, тёмные волосы более свойственны жителям жарких стран
             if (iPigmented > iPigmentless * 2)
             {
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Hot, LandscapeGeneration.Environment.None))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Hot, LandscapeGeneration.Environments.None))
                     cLandTypes[pLand.Type] *= 2;
             }
 
             //ловкость и стройность отлично подходит для лесов, но плохо сочетается с горами
             if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Skinny)
             {
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Open))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Open))
                     cLandTypes[pLand.Type] *= 2;
 
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Open, LandscapeGeneration.Environment.Flat))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Open, LandscapeGeneration.Environments.Flat))
                     cLandTypes[pLand.Type] = 0;
             }
 
             //склонность к тучности мешает выживанию на пересечённой местности
             if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Fat)
             {
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Flat))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Flat))
                     cLandTypes[pLand.Type] = 0;
             }
 
             //повышенная мускулистость отлично сочетается с горами
             if (m_pValues.Get<BodyGenetix>().BodyBuild == BodyBuild.Muscular)
             {
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.Open, LandscapeGeneration.Environment.Flat))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.Open, LandscapeGeneration.Environments.Flat))
                     cLandTypes[pLand.Type] *= 2;
             }
 
-            foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Habitable))
+            foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Habitable))
                 cLandTypes[pLand.Type] = 0;
 
             //ищем наиболее предпочтительные регионы
@@ -900,7 +900,7 @@ namespace GeneLab
                 foreach (LandTypeInfo pLand in Enum.GetValues(typeof(LandType)))
                     cLandTypes[pLand.Type] = 1;
 
-                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environment.None, LandscapeGeneration.Environment.Habitable))
+                foreach (LandTypeInfo pLand in GetLands(LandscapeGeneration.Environments.None, LandscapeGeneration.Environments.Habitable))
                     cLandTypes[pLand.Type] = 0;
 
                 iMax = 1;

@@ -72,47 +72,38 @@ namespace Socium
             LandTypes.Tundra.AddLayer(new ResourcesInfo(0, 0.1f, 0, 0));
             LandTypes.Tundra.AddLayer(new StandAloneBuildingsInfo(1, 0, 10));
             LandTypes.Tundra.AddLayer(new SettlementsInfo(0.004f, 0.02f, 0.05f));
-            //            LandTypes.Tundra.SetSettlementsDensity(0.004f, 0.01f, 0.003f);
 
             LandTypes.Plains.AddLayer(new ResourcesInfo(3, 0, 0, 0));
             LandTypes.Plains.AddLayer(new StandAloneBuildingsInfo(1, 3, 30));
             LandTypes.Plains.AddLayer(new SettlementsInfo(0.02f, 0.1f, 0.3f));
-            //            LandTypes.Plains.SetSettlementsDensity(0.01f, 0.026f, 0.1f);
 
             LandTypes.Savanna.AddLayer(new ResourcesInfo(0.1f, 0.2f, 0, 0));
             LandTypes.Savanna.AddLayer(new StandAloneBuildingsInfo(1, 3, 20));
             LandTypes.Savanna.AddLayer(new SettlementsInfo(0.01f, 0.05f, 0.2f));
-            //            LandTypes.Savanna.SetSettlementsDensity(0.01f, 0.023f, 0.02f);
 
             LandTypes.Desert.AddLayer(new ResourcesInfo(0, 0.1f, 0, 0));
             LandTypes.Desert.AddLayer(new StandAloneBuildingsInfo(1, 2, 30));
             LandTypes.Desert.AddLayer(new SettlementsInfo(0.01f, 0.03f, 0.025f));
-            //            LandTypes.Desert.SetSettlementsDensity(0.006f, 0.01f, 0.003f);
 
             LandTypes.Forest.AddLayer(new ResourcesInfo(0, 1, 5, 0));
             LandTypes.Forest.AddLayer(new StandAloneBuildingsInfo(10, 5, 10));
             LandTypes.Forest.AddLayer(new SettlementsInfo(0.01f, 0.05f, 0.05f));
-            //            LandTypes.Forest.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
 
             LandTypes.Taiga.AddLayer(new ResourcesInfo(0, 1, 5, 0));
             LandTypes.Taiga.AddLayer(new StandAloneBuildingsInfo(10, 5, 10));
             LandTypes.Taiga.AddLayer(new SettlementsInfo(0.01f, 0.05f, 0.05f));
-            //            LandTypes.Taiga.SetSettlementsDensity(0.008f, 0.01f, 0.01f);
 
             LandTypes.Jungle.AddLayer(new ResourcesInfo(0, 0.5f, 2, 0));
             LandTypes.Jungle.AddLayer(new StandAloneBuildingsInfo(10, 5, 10));
             LandTypes.Jungle.AddLayer(new SettlementsInfo(0.002f, 0.01f, 0.05f));
-            //            LandTypes.Jungle.SetSettlementsDensity(0.008f, 0.006f, 0.006f);
 
             LandTypes.Swamp.AddLayer(new ResourcesInfo(0, 0.2f, 1, 0));
             LandTypes.Swamp.AddLayer(new StandAloneBuildingsInfo(10, 8, 0));
             LandTypes.Swamp.AddLayer(new SettlementsInfo(0.002f, 0.01f, 0.04f));
-            //            LandTypes.Swamp.SetSettlementsDensity(0.003f, 0.005f, 0.026f);
 
             LandTypes.Mountains.AddLayer(new ResourcesInfo(0, 0.5f, 0, 10));
             LandTypes.Mountains.AddLayer(new StandAloneBuildingsInfo(1, 1, 7));
             LandTypes.Mountains.AddLayer(new SettlementsInfo(0.01f, 0.075f, 0.06f));
-            //            LandTypes.Mountains.SetSettlementsDensity(0.004f, 0.005f, 0.006f);
         }
 
         private void Create(int iProvinces,
@@ -208,16 +199,20 @@ namespace Socium
 
                             bool bHated = false;
                             foreach (LandTypeInfo pLTI in pProvince.LocalSociety.TitularNation.HatedLands)
+                            {
                                 if (pLand.Origin.LandType == pLTI)
                                     bHated = true;
+                            }
 
                             if (bHated)
                                 continue;
 
                             bool bPreferred = false;
                             foreach (LandTypeInfo pLTI in pProvince.LocalSociety.TitularNation.PreferredLands)
+                            {
                                 if (pLand.Origin.LandType == pLTI)
                                     bPreferred = true;
+                            }
 
                             if (pProvince.LocalSociety.TitularNation.IsHegemon || bPreferred || Rnd.OneChanceFrom(2))
                             {
@@ -256,11 +251,13 @@ namespace Socium
                         pNation.Age();
                     }
                     else
+                    {
                         //if (Rnd.OneChanceFrom(3))
                         //    cEraseRace.Add(pRace);
                         //else
                         if (Rnd.OneChanceFrom(LocalNations.Length))
-                        pNation.Grow();
+                            pNation.Grow();
+                    }
                 }
                 //else
                 //    if (Rnd.OneChanceFrom(10))
@@ -342,10 +339,10 @@ namespace Socium
                         pRegion.ClearOwner();
                         pRegion.ProvincePresence = 0;
                         //все земли в каждом регионе
-                        foreach (LandX pLand in pRegion.Contents)
+                        foreach (Land pLand in pRegion.Contents.Select(x =>x.Origin))
                         {
                             //все локации в каждой земле
-                            foreach (Location pLoc in pLand.Origin.Contents)
+                            foreach (Location pLoc in pLand.Contents)
                             {
                                 LocationX pLocX = pLoc.As<LocationX>();
                                 //если есть поселение
@@ -356,7 +353,7 @@ namespace Socium
                                     {
                                         //в зависимости от проходимости местности
                                         //либо наращиваем возраст руин - в труднодоступных местах
-                                        if (Rnd.OneChanceFrom((int)pLand.Origin.MovementCost) || pLocX.Settlement.Ruin())
+                                        if (Rnd.OneChanceFrom((int)pLand.MovementCost) || pLocX.Settlement.Ruin())
                                         {
                                             //либо окончательно уничтожаем все следы цивилизации - в легкодоступных местах
                                             pLocX.Settlement = null;
@@ -402,15 +399,21 @@ namespace Socium
                                         if (pLocX == pState.Methropoly.AdministrativeCenter &&
                                             pLocX.Settlement.Profile.Size > SettlementSize.Village &&
                                             pLocX.Settlement.RuinsAge == 0)
+                                        {
                                             pLocX.Settlement.Ruin();
+                                        }
 
                                         //если поселение не превратилось в руины - значит оно полностью погибло и не оставило никаких следов
                                         if (pLocX.Settlement.RuinsAge == 0 || pLocX.Settlement.Buildings.Count == 0)
+                                        {
                                             pLocX.Settlement = null;
+                                        }
                                         else
+                                        {
                                             //если же оно таки стало руинами - помечаем соответсвенно все пути ведущие в эту локацию, чтобы дороги обходили её стороной
                                             foreach (var pLink in pLoc.Links)
                                                 pLink.Value.Ruins = true;
+                                        }
                                     }
                                 }
 
@@ -907,8 +910,7 @@ namespace Socium
                 {
                     if (!pRegion.IsWater && pRegion.Natives == null)
                     {
-                        List<LandMass> cLandMasses = new List<LandMass>();
-                        cLandMasses.Add(pRegion.LandMass);
+                        List<LandMass> cLandMasses = new List<LandMass> { pRegion.LandMass };
 
                         //составим список рас, которые могут претендовать на эту территорию
                         List<Nation> cAvailableNations = GetAvailableNations(cLandMasses);
@@ -999,7 +1001,7 @@ namespace Socium
                 //Для каждого анклава древней цивилизации создаём собственную провинцию
                 foreach (Region pRegion in pContiX.Regions)
                 {
-                    if (pRegion.Natives != null && pRegion.Natives.IsAncient)
+                    if (pRegion.Natives?.IsAncient == true)
                     {
                         if (!pRegion.HasOwner())
                         {
@@ -1028,9 +1030,13 @@ namespace Socium
 
                         bool bBorder = false;
                         foreach (LandX pLand in pSeed.Contents)
+                        {
                             foreach (Location pLoc in pLand.As<Land>().Contents)
+                            {
                                 if (pLoc.IsBorder)
                                     bBorder = true;
+                            }
+                        }
 
                         if (pSeed.Natives.IsAncient || (bBorder && !Rnd.OneChanceFrom(25)))
                             pSeed = null;
@@ -1066,7 +1072,7 @@ namespace Socium
                             pSeed.HasOwner() ||
                             pSeed.IsWater ||
                             pSeed.LandMass.IsWater ||
-                            (pSeed.Natives != null && pSeed.Natives.IsAncient))
+                            pSeed.Natives?.IsAncient == true)
                         {
                             pSeed = null;
                         }
@@ -1120,17 +1126,15 @@ namespace Socium
                 }
             }
             while (cFinished.Count < cProvinces.Count);
-
-            //убедимся, что провинции заняли весь континент.
-            //если остались ничейные земли - будем принудительно наращивать все провинции, пока пустых мест не останется.
-            bool bAlreadyFinished = true;
             int iCnt = 0;
             foreach (Province pProvince in cProvinces)
                 pProvince.IsFullyGrown = false;
 
             do
             {
-                bAlreadyFinished = true;
+                //убедимся, что провинции заняли весь континент.
+                //если остались ничейные земли - будем принудительно наращивать все провинции, пока пустых мест не останется.
+                bool bAlreadyFinished = true;
                 foreach (Continent pConti in Contents)
                 {
                     foreach (Region pRegion in pConti.As<ContinentX>().Regions)
@@ -1326,7 +1330,7 @@ namespace Socium
             //догоняем количество государств до заданного числа
             while (cStates.Count < m_iStatesCount)
             {
-                Province pSeed = null;
+                Province pSeed;
                 do
                 {
                     int iIndex = Rnd.Get(Provinces.Length);
@@ -1353,7 +1357,7 @@ namespace Socium
 
             //приращиваем территории всех государств до заданного лимита
             int iMaxStateSize = Provinces.Length / cStates.Count;
-            bool bContinue = false;
+            bool bContinue;
             do
             {
                 bContinue = false;
@@ -1366,15 +1370,13 @@ namespace Socium
             while (bContinue);
 
             ProgressStep();
-
-            //убедимся, что государства заняли весь континент.
-            //если остались ничейные провинции - будем принудительно наращивать все государства, пока пустых мест не останется.
-            bool bAlreadyFinished = true;
             int iCnt = 0;
 
             do
             {
-                bAlreadyFinished = true;
+                //убедимся, что государства заняли весь континент.
+                //если остались ничейные провинции - будем принудительно наращивать все государства, пока пустых мест не останется.
+                bool bAlreadyFinished = true;
                 foreach (Province pProvince in Provinces)
                 {
                     if (!pProvince.Forbidden && !pProvince.HasOwner())
@@ -1528,11 +1530,15 @@ namespace Socium
                             {
                                 RoadQuality eMaxRoadLevel = RoadQuality.Country;
                                 foreach (var pRoad in pBestTown1.Roads)
+                                {
                                     if (pRoad.Value.Count > 0 && pRoad.Key > eMaxRoadLevel)
                                         eMaxRoadLevel = pRoad.Key;
+                                }
                                 foreach (var pRoad in pBestTown2.Roads)
+                                {
                                     if (pRoad.Value.Count > 0 && pRoad.Key > eMaxRoadLevel)
                                         eMaxRoadLevel = pRoad.Key;
+                                }
                                 //int iRoadLevel = 2;
                                 //if (State.LifeLevels[pState.m_iLifeLevel].m_iMaxGroundRoad <= 1 && State.LifeLevels[pBorderState.m_iLifeLevel].m_iMaxGroundRoad <= 1)
                                 //    iRoadLevel = 1;
@@ -1541,7 +1547,9 @@ namespace Socium
 
                                 if (State.InfrastructureLevels[pProvince.LocalSociety.InfrastructureLevel].MaxGroundRoad == 0 ||
                                     State.InfrastructureLevels[pLinkedProvince.LocalSociety.InfrastructureLevel].MaxGroundRoad == 0)
+                                {
                                     eMaxRoadLevel = RoadQuality.Country;
+                                }
 
                                 BuildRoad(pBestTown1, pBestTown2, eMaxRoadLevel, fCycleShift);
                                 pProvince.DebugConnectionString[pLinkedProvince] = "ok";
@@ -1571,8 +1579,7 @@ namespace Socium
 
                 if (pLinkedLoc.Origin.GetOwner().IsWater)
                 {
-                    SeaRouteBuilderInfo pInfo = null;
-                    if (!pLinkedLoc.m_cSeaRouteBuildInfo.TryGetValue(pHarbor, out pInfo))
+                    if (!pLinkedLoc.m_cSeaRouteBuildInfo.TryGetValue(pHarbor, out SeaRouteBuilderInfo pInfo))
                     {
                         pInfo = new SeaRouteBuilderInfo();
                         pLinkedLoc.m_cSeaRouteBuildInfo[pHarbor] = pInfo;
@@ -1661,7 +1668,9 @@ namespace Socium
                         if (pTown.Settlement.Profile.Size == SettlementSize.Fort ||
                             //pTown.m_pSettlement.m_pInfo.m_eSize == SettlementSize.Village ||
                             pTown.Settlement.Profile.Size == SettlementSize.Hamlet)
+                        {
                             continue;
+                        }
 
                         bool bCoastral = false;
                         foreach (Location pTerr in pTown.Origin.BorderWithKeys)
@@ -1727,30 +1736,40 @@ namespace Socium
 
                     if (pHarbor.Settlement.Profile.Size == SettlementSize.Village &&
                         pOtherHarbor.Key.Settlement.Profile.Size != SettlementSize.Village)
+                    {
                         continue;
+                    }
 
                     if (pHarbor.Settlement.Profile.Size == SettlementSize.Town &&
                         (pOtherHarbor.Key.Settlement.Profile.Size == SettlementSize.City ||
                          pOtherHarbor.Key.Settlement.Profile.Size == SettlementSize.Capital))
+                    {
                         continue;
+                    }
 
                     if (iMaxHostility <= 0 ||
                         Rnd.OneChanceFrom(iMaxHostility))
                     {
                         if (pHarbor.Settlement.Profile.Size == SettlementSize.Town &&
                             pOtherHarbor.Key.Settlement.Profile.Size == SettlementSize.Town)
+                        {
                             ePathLevel = RoadQuality.Normal;
+                        }
 
                         if ((pHarbor.Settlement.Profile.Size == SettlementSize.City ||
                              pHarbor.Settlement.Profile.Size == SettlementSize.Capital) &&
                             pOtherHarbor.Key.Settlement.Profile.Size == SettlementSize.Town)
+                        {
                             ePathLevel = RoadQuality.Normal;
+                        }
 
                         if ((pHarbor.Settlement.Profile.Size == SettlementSize.City ||
                              pHarbor.Settlement.Profile.Size == SettlementSize.Capital) &&
                             (pOtherHarbor.Key.Settlement.Profile.Size == SettlementSize.City ||
                              pOtherHarbor.Key.Settlement.Profile.Size == SettlementSize.Capital))
+                        {
                             ePathLevel = RoadQuality.Good;
+                        }
                     }
 
                     eMaxNavalPath = State.InfrastructureLevels[pOtherState.Society.InfrastructureLevel].MaxNavalPath;
@@ -1774,8 +1793,7 @@ namespace Socium
                     if (pOtherHarbor.Value.m_fCost > iMaxLength)
                         continue;
 
-                    List<TransportationNode> pPath = new List<TransportationNode>();
-                    pPath.Add(pHarbor);
+                    List<TransportationNode> pPath = new List<TransportationNode> { pHarbor };
 
                     LocationX pPosition = pHarbor;
                     while (pPosition != pOtherHarbor.Key)
@@ -1860,7 +1878,7 @@ namespace Socium
             //FinishSeaRoutes(fCycleShift);
         }
 
-        private Dictionary<ShortestPath, int> m_cSeaRoutesProjects = new Dictionary<ShortestPath, int>();
+        private readonly Dictionary<ShortestPath, int> m_cSeaRoutesProjects = new Dictionary<ShortestPath, int>();
 
         //private void BuildSeaRoute(LocationX pTown1, LocationX pTown2, int iPathLevel, float fCycleShift, int iMaxLength)
         //{
@@ -1934,9 +1952,11 @@ namespace Socium
                 pLastNode = pNode;
             }
 
-            TransportationLinkBase pNewLink = new TransportationLinkBase(aNodes);
-            pNewLink.Embark = true;
-            pNewLink.Sea = true;
+            TransportationLinkBase pNewLink = new TransportationLinkBase(aNodes)
+            {
+                Embark = true,
+                Sea = true
+            };
             pNewLink.BuildRoad(eLevel);
 
             SetLink(aNodes[0], aNodes[aNodes.Length - 1], pNewLink);//aSeaRoute);
@@ -2098,13 +2118,14 @@ namespace Socium
             foreach (LocationX pNode in pOldRoad.Locations)
             {
                 if (pNewRoad == null)
+                {
                     pNewRoad = new Road(pNode, pOldRoad.Level);
+                }
                 else
                 {
                     pNewRoad.BuidTo(pNode);
 
-                    if (pNode.Settlement != null &&
-                        pNode.Settlement.RuinsAge == 0 &&
+                    if (pNode.Settlement?.RuinsAge == 0 &&
                         (pNode.Settlement.Profile.Size > SettlementSize.Village ||
                          pTown1.Settlement.Profile.Size <= SettlementSize.Village ||
                          pTown2.Settlement.Profile.Size <= SettlementSize.Village))
@@ -2141,7 +2162,7 @@ namespace Socium
             //PathFinder pBestPath = new PathFinder(pTown1, pTown2, fCycleShift, -1);
             ShortestPath pBestPath = FindReallyBestPath(pTown1.Origin, pTown2.Origin, fCycleShift, false);
 
-            if (pBestPath.Nodes != null && pBestPath.Nodes.Length > 1)
+            if (pBestPath.Nodes?.Length > 1)
             {
                 //разобьем найденный путь на участки от одного населённого пункта до другого
                 List<Road> cRoadsChain = new List<Road>();
@@ -2151,16 +2172,17 @@ namespace Socium
                     LocationX pLocX = pNode.As<LocationX>();
 
                     if (pNewRoad == null)
+                    {
                         pNewRoad = new Road(pLocX, eRoadLevel);
+                    }
                     else
                     {
                         pNewRoad.BuidTo(pLocX);
 
-                        if (pLocX.Settlement != null &&
-                            pLocX.Settlement.RuinsAge == 0 &&
+                        if (pLocX.Settlement?.RuinsAge == 0 &&
                             (pLocX.Settlement.Profile.Size > SettlementSize.Village ||
-                            pTown1.Settlement.Profile.Size <= SettlementSize.Village ||
-                            pTown2.Settlement.Profile.Size <= SettlementSize.Village))
+                             pTown1.Settlement.Profile.Size <= SettlementSize.Village ||
+                             pTown2.Settlement.Profile.Size <= SettlementSize.Village))
                         {
                             cRoadsChain.Add(pNewRoad);
                             pNewRoad = new Road(pLocX, eRoadLevel);
@@ -2188,7 +2210,7 @@ namespace Socium
         /// <returns></returns>
         public LocationX GetRandomSettlement(LocationX pPreferredLoc, Estate.SocialRank eEstate)
         {
-            if (pPreferredLoc != null && pPreferredLoc.HaveEstate(eEstate))
+            if (pPreferredLoc?.HaveEstate(eEstate) == true)
                 return pPreferredLoc;
 
             List<LocationX> pPossibleSettlements = new List<LocationX>();

@@ -78,7 +78,7 @@ namespace GeneLab.Genetix
         Hide
     }
 
-    public class HairsGenetix : GenetixBase
+    public class HairsGenetix : IGenetix
     {
         /// <summary>
         /// Males usually are bald, but have dense beard and moustache, while females have long hairs and no beard or moustache. Most common colors are blue and green.
@@ -144,7 +144,9 @@ namespace GeneLab.Genetix
                 }
             }
             if (!bColorsFull)
+            {
                 sColors.Clear();
+            }
             else
             {
                 if (HairColors.Count == 1)
@@ -554,7 +556,7 @@ namespace GeneLab.Genetix
 
         public List<HairsColor> HairColors { get; } = new List<HairsColor>(new HairsColor[] { HairsColor.Brunette, HairsColor.Blonde, HairsColor.DarkBlond, HairsColor.Red });
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is HairsGenetix pAnother))
                 return false;
@@ -623,8 +625,8 @@ namespace GeneLab.Genetix
 
             CheckHairColors();
         }
-        
-        public GenetixBase MutateRace()
+
+        public IGenetix MutateRace()
         {
             CheckHairColors();
 
@@ -740,7 +742,7 @@ namespace GeneLab.Genetix
             return (HairsAmount)Rnd.Get(typeof(HairsAmount));
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             CheckHairColors();
 
@@ -762,7 +764,9 @@ namespace GeneLab.Genetix
 
                 if (pMutant.Beard == HairsAmount.None &&
                     pMutant.HairsType == HairsType.Whiskers)
+                {
                     pMutant.HairsType = HairsType.Hair;
+                }
 
                 int iCount = pMutant.HairColors.Count;
                 for (int i = 0; i < iCount; i++)
@@ -831,7 +835,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             CheckHairColors();
 
@@ -848,7 +852,9 @@ namespace GeneLab.Genetix
 
                 if (pMutant.Beard == HairsAmount.None &&
                     pMutant.HairsType == HairsType.Whiskers)
+                {
                     pMutant.HairsType = HairsType.Hair;
+                }
 
                 int iCount = pMutant.HairColors.Count;
                 for (int i = 0; i < iCount; i++)
@@ -917,7 +923,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             CheckHairColors();
 
@@ -953,7 +959,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             CheckHairColors();
 

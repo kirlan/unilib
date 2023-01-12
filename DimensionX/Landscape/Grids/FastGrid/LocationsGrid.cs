@@ -32,7 +32,7 @@ namespace LandscapeGeneration.FastGrid
     {
         private readonly Chunk[,] m_cChunk;
 
-        static int IsLeft(Point a, Point b, Point c)
+        private static int IsLeft(Point a, Point b, Point c)
         {
             decimal ax = (decimal)a.X;
             decimal bx = (decimal)b.X;
@@ -338,7 +338,7 @@ namespace LandscapeGeneration.FastGrid
                 m_cNewCells.Add(pInnerLeft);
                 m_cNewCells.Add(pInnerRight);
 
-                if (pLeft.m_eShadowDir == VertexCH.Direction.CenterNone || pRight.m_eShadowDir == VertexCH.Direction.CenterNone)
+                if (pLeft.ShadowDir == VertexCH.Direction.CenterNone || pRight.ShadowDir == VertexCH.Direction.CenterNone)
                 {
                     if (from.Circumcenter.X < fMinX)
                         fMinX = (float)from.Circumcenter.X;
@@ -423,7 +423,7 @@ namespace LandscapeGeneration.FastGrid
             get { return m_iChunkSize / 100;  }
         }
 
-        public WorldShape Shape { get; private set; } = WorldShape.Plain;
+        public WorldShape Shape { get; } = WorldShape.Plain;
 
         public float CycleShift
         {
@@ -441,15 +441,14 @@ namespace LandscapeGeneration.FastGrid
 
             BeginStep?.Invoke("Building grid...", 5);
 
-            int iInnerCount;
-            List<VertexCH> border = BuildBorder(out iInnerCount, kHR, m_iChunkSize);
+            List<VertexCH> border = BuildBorder(out int iInnerCount, kHR, m_iChunkSize);
             List<VertexCH> locationsHR = new List<VertexCH>(border);
 
             ProgressStep?.Invoke();
 
             //Территорию внутри построенной границы заполним случайными точками с распределением по Поиссону (чтобы случайно, но в общем равномерно).
             List<SimpleVector3d> cPointsHR = BuildPoisson(m_iChunkSize, locationsCount - iInnerCount, kHR);
-            
+
             //перенесём построенное облако Поиссона в основной рабочий массив
             for (var i = 0; i < cPointsHR.Count; i++)
             {
@@ -477,10 +476,11 @@ namespace LandscapeGeneration.FastGrid
                 if (!ploc.IsBorder)
                 {
                     foreach (var pedge in ploc.Edges)
-                        if (pedge.Key.m_eShadowDir != VertexCH.Direction.CenterNone)
+                    {
+                        if (pedge.Key.ShadowDir != VertexCH.Direction.CenterNone)
                             throw new InvalidOperationException();
+                    }
                 }
-
             }
 
             ProgressStep?.Invoke();
@@ -490,8 +490,10 @@ namespace LandscapeGeneration.FastGrid
             m_cChunk = new Chunk[iFaceSize, iFaceSize];
 
             for (int x = 0; x < iFaceSize; x++)
+            {
                 for (int y = 0; y < iFaceSize; y++)
                     m_cChunk[x, y] = new Chunk(ref locsHR, pBoundingRectHR, ref vertsHR, m_iChunkSize * x, m_iChunkSize * y, RX * 2);
+            }
 
             LinkNeighbours();
 

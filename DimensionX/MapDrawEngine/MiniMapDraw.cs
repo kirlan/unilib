@@ -161,9 +161,9 @@ namespace MapDrawEngine
                 {
                     //определяем, на западе или на востоке будем строить отражение
                     if (pFirstLine.Point1.X > 0)
-                        cPath.Add(BuildBorder(pFirstLine, -m_pMasterMap.m_pWorld.LocationsGrid.RX * 2, out bCross));
+                        cPath.Add(BuildBorder(pFirstLine, -m_pMasterMap.m_pWorld.LocationsGrid.RX * 2, out _));
                     else
-                        cPath.Add(BuildBorder(pFirstLine, m_pMasterMap.m_pWorld.LocationsGrid.RX * 2, out bCross));
+                        cPath.Add(BuildBorder(pFirstLine, m_pMasterMap.m_pWorld.LocationsGrid.RX * 2, out _));
                 }
             }
 
@@ -255,7 +255,7 @@ namespace MapDrawEngine
 
             //соотношение высоты и ширины координатной сетки мира
             float fK = 1;
-            if (m_pMasterMap != null && m_pMasterMap.m_pWorld != null)
+            if (m_pMasterMap?.m_pWorld != null)
                 fK = (float)m_pMasterMap.m_pWorld.LocationsGrid.RY / m_pMasterMap.m_pWorld.LocationsGrid.RX;
 
             //ширина и высота карты мира в экранных координатах

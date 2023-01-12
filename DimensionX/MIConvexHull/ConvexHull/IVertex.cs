@@ -22,5 +22,4 @@ namespace MIConvexHull
         /// </summary>
         public double[] Position { get; set; }
     }
-
 }

@@ -5,31 +5,30 @@ using System.Text;
 
 namespace LandscapeGeneration.PathFind
 {
-    class PriorityQueue<P, V>
+    internal class PriorityQueue<P, V>
     {
-        private SortedDictionary<P, Queue<V>> list = new SortedDictionary<P, Queue<V>>();
+        private SortedDictionary<P, Queue<V>> List { get; } = new SortedDictionary<P, Queue<V>>();
         public void Enqueue(P priority, V value)
         {
-            Queue<V> q;
-            if (!list.TryGetValue(priority, out q))
+            if (!List.TryGetValue(priority, out Queue<V> q))
             {
                 q = new Queue<V>();
-                list.Add(priority, q);
+                List.Add(priority, q);
             }
             q.Enqueue(value);
         }
         public V Dequeue()
         {
             // will throw if there isn’t any first element!
-            var pair = list.First();
+            var pair = List.First();
             var v = pair.Value.Dequeue();
             if (pair.Value.Count == 0) // nothing left of the top priority.
-                list.Remove(pair.Key);
+                List.Remove(pair.Key);
             return v;
         }
         public bool IsEmpty
         {
-            get { return !list.Any(); }
+            get { return List.Count == 0; }
         }
     }
 }

@@ -56,7 +56,7 @@ namespace GeneLab.Genetix
         Female
     }
 
-    public class BodyGenetix: GenetixBase
+    public class BodyGenetix: IGenetix
     {
         /// <summary>
         /// small and agile bodies
@@ -217,7 +217,7 @@ namespace GeneLab.Genetix
 
         public BodyBuild BodyBuild { get; private set; } = BodyBuild.Slim;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is BodyGenetix pAnother))
                 return false;
@@ -243,7 +243,7 @@ namespace GeneLab.Genetix
 
         #region GenetixBase Members
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -297,7 +297,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(2))
             {
@@ -348,7 +348,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(20))
             {
@@ -376,7 +376,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             if (Rnd.OneChanceFrom(20))
             {
@@ -404,7 +404,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             if (Rnd.OneChanceFrom(3))
             {

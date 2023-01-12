@@ -32,7 +32,7 @@ namespace LandscapeGeneration
         //public List<long> m_cLocationsTmp = new List<long>();
 
         /// <summary>
-        /// Чанк, в который входит данная вершина. 
+        /// Чанк, в который входит данная вершина.
         /// Используется в Chunk::RebuildVertexArray() при просмотре соседей как маркер того, что эта вершина уже была обработана.
         /// </summary>
         public object ChunkMarker { get; set; } = null;
@@ -49,11 +49,11 @@ namespace LandscapeGeneration
             foreach (Location pLinkedLoc in cTemp)
                 pLinkedLoc.ReplaceVertex(this, pGood);
 
-            foreach (VoronoiVertex pLinkedVertex in LinkedVertexes)
+            foreach (var pLinkedVertexes in LinkedVertexes.Select(x => x.LinkedVertexes))
             {
-                pLinkedVertex.LinkedVertexes.Remove(this);
-                if (!pLinkedVertex.LinkedVertexes.Contains(pGood))
-                    pLinkedVertex.LinkedVertexes.Add(pGood);
+                pLinkedVertexes.Remove(this);
+                if (!pLinkedVertexes.Contains(pGood))
+                    pLinkedVertexes.Add(pGood);
             }
         }
 
@@ -89,8 +89,10 @@ namespace LandscapeGeneration
         internal void PointOnCurve(VoronoiVertex p0, VoronoiVertex p1, VoronoiVertex p2, VoronoiVertex p3, float t, float fCycle, float smoothRate)
         {
             for (int i = 0; i < Locations.Count; i++)
+            {
                 if (Locations[i].Forbidden || !Locations[i].HasOwner())
                     return;
+            }
 
             if (smoothRate > 1.0f)
                 smoothRate = 1.0f;

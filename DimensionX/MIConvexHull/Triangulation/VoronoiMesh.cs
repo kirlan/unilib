@@ -42,7 +42,7 @@
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static VoronoiMesh<DefaultVertex, DefaultTriangulationCell<DefaultVertex>, VoronoiEdge<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>> 
+        public static VoronoiMesh<DefaultVertex, DefaultTriangulationCell<DefaultVertex>, VoronoiEdge<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>>
             Create(IEnumerable<double[]> data)
         {
             var points = data.Select(p => new DefaultVertex { Position = p.ToArray() });
@@ -98,7 +98,7 @@
         public IEnumerable<TCell> Vertices { get; private set; }
 
         /// <summary>
-        /// Edges connecting the cells. 
+        /// Edges connecting the cells.
         /// The same information can be retrieved Cells' Adjacency.
         /// </summary>
         public IEnumerable<TEdge> Edges { get; private set; }
@@ -138,7 +138,6 @@
         /// </summary>
         private VoronoiMesh()
         {
-
         }
     }
 }

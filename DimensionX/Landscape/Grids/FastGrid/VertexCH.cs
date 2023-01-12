@@ -18,7 +18,7 @@ namespace LandscapeGeneration.FastGrid
             ID = pOrigin.ID;
 
             Position = new double[] { pOrigin.Position[0], pOrigin.Position[1] };
-            m_eShadowDir = pOrigin.m_eShadowDir;
+            ShadowDir = pOrigin.ShadowDir;
             m_eSide = pOrigin.m_eSide;
 
             IsBorder = pOrigin.IsBorder;
@@ -34,7 +34,7 @@ namespace LandscapeGeneration.FastGrid
             ID = ID_counter++;
 
             Position = new double[] { x, y };
-            m_eShadowDir = eShadowDir;
+            ShadowDir = eShadowDir;
             m_eSide = eSide;
 
             IsBorder = bBorder;
@@ -91,7 +91,7 @@ namespace LandscapeGeneration.FastGrid
             DownRight
         }
 
-        public Direction m_eShadowDir { get; }
+        public Direction ShadowDir { get; }
 
         public object Tag { get; set; } = null;
 
@@ -141,7 +141,7 @@ namespace LandscapeGeneration.FastGrid
 
         public override string ToString()
         {
-            return string.Format("{0}{4} ({1}, {2}, {3})", m_eShadowDir != Direction.CenterNone ? "x" : "", Position[0], Position[1], IsBorder, ID);
+            return string.Format("{0}{4} ({1}, {2}, {3})", ShadowDir != Direction.CenterNone ? "x" : "", Position[0], Position[1], IsBorder, ID);
         }
     }
 }

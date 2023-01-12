@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LandscapeGeneration.PathFind
 {
-    class BasicHeap<V>
+    internal class BasicHeap<V>
     {
         public struct HeapNode
         {
@@ -13,7 +13,6 @@ namespace LandscapeGeneration.PathFind
             {
                 value = val;
                 priority = prio;
-
             }
             public V value;
             public double priority;
@@ -24,7 +23,7 @@ namespace LandscapeGeneration.PathFind
             }
         }
 
-        private List<HeapNode> InnerList = new List<HeapNode>();
+        private readonly List<HeapNode> InnerList = new List<HeapNode>();
 
         public BasicHeap() { }
 
@@ -44,11 +43,8 @@ namespace LandscapeGeneration.PathFind
         {
             int p = InnerList.Count, p2;
             InnerList.Add(new HeapNode(value, priority)); // E[p] = O
-            do
+            while (p != 0)
             {
-                if (p == 0)
-                    break;
-
                 p2 = (p - 1) >> 1;
                 if (InnerList[p].priority < InnerList[p2].priority)
                 {
@@ -59,8 +55,10 @@ namespace LandscapeGeneration.PathFind
                     p = p2;
                 }
                 else
+                {
                     break;
-            } while (true);
+                }
+            }
         }
 
         public V Dequeue()
@@ -73,12 +71,12 @@ namespace LandscapeGeneration.PathFind
             if (InnerList.Count == 0)
                 return result.value;
 
-            do
+            while (true)
             {
                 pn = p;
                 p1 = (p << 1) + 1;
                 p2 = (p << 1) + 2;
-                
+
                 if (InnerList.Count > p1 && InnerList[p].priority > InnerList[p1].priority)
                     p = p1;
                 if (InnerList.Count > p2 && InnerList[p].priority > InnerList[p2].priority)
@@ -90,9 +88,8 @@ namespace LandscapeGeneration.PathFind
                 HeapNode h = InnerList[p];
                 InnerList[p] = InnerList[pn];
                 InnerList[pn] = h;
-            } 
-            while (true);
-            
+            }
+
             return result.value;
         }
     }

@@ -16,12 +16,12 @@ namespace WorldGeneration
 {
     public partial class GenerationForm : Form
     {
-        public class Settings
+        public class Setting
         {
-            public List<string> m_cLastUsedPresets = new List<string>();
+            public List<string> LastUsedPresets { get; } = new List<string>();
         }
 
-        public Settings m_pSettings = null;
+        public Setting Settings { get; private set; } = null;
 
         private World m_pWorld = null;
 
@@ -33,7 +33,7 @@ namespace WorldGeneration
         public GenerationForm()
         {
             InitializeComponent();
-        
+
             m_pWorld = null;
 
             StartGenerationButton.Enabled = false;
@@ -61,7 +61,7 @@ namespace WorldGeneration
             groupBox5.Enabled = true;
             mapProperties1.Enabled = true;
 
-            StartGenerationButton.Text = "Start generation!"; 
+            StartGenerationButton.Text = "Start generation!";
 
             DialogResult = DialogResult.OK;
         }
@@ -71,7 +71,7 @@ namespace WorldGeneration
             List<Epoch> cEpoches = new List<Epoch>();
 
             foreach (ListViewItem pItem in AgesView.Items)
-                cEpoches.Add((pItem.Tag as EpochWrapper).GetEpochInfo());
+                cEpoches.Add((pItem.Tag as EpochWrapper)?.GetEpochInfo());
 
             WaitForm.StartWait(pOwnerWindow, "World generation...");
 
@@ -97,21 +97,21 @@ namespace WorldGeneration
             e.Cancel = !groupBox5.Enabled;
         }
 
-        public bool Preload(Settings settings)
+        public bool Preload(Setting settings)
         {
-            m_pSettings = settings;
+            Settings = settings;
 
-            foreach (string sPrset in settings.m_cLastUsedPresets.ToArray())
+            foreach (string sPrset in settings.LastUsedPresets.ToArray())
                 if (!File.Exists(sPrset))
-                    settings.m_cLastUsedPresets.Remove(sPrset);
+                    settings.LastUsedPresets.Remove(sPrset);
 
             groupBox5.Enabled = true;
             mapProperties1.Enabled = true;
             StartGenerationButton.Enabled = true;
             mapProperties1.UpdatePresets(25000, 0);
-            
+
             if (AgesView.Items.Count == 0)
-                AddNewAge_Click(this, new EventArgs());
+                AddNewAge_Click(this, EventArgs.Empty);
 
             return true;
         }
@@ -226,7 +226,7 @@ namespace WorldGeneration
                 List<Epoch> cEpoches = new List<Epoch>();
 
                 foreach (ListViewItem pItem in AgesView.Items)
-                    cEpoches.Add((pItem.Tag as EpochWrapper).GetEpochInfo());
+                    cEpoches.Add((pItem.Tag as EpochWrapper)?.GetEpochInfo());
 
                 WorldPreset pWorldPreset = new WorldPreset(mapProperties1.ContinentsCount,
                     !mapProperties1.PartialMap,
@@ -240,13 +240,13 @@ namespace WorldGeneration
 
                 pWorldPreset.Save(saveFileDialog1.FileName);
 
-                if (m_pSettings.m_cLastUsedPresets.Contains(saveFileDialog1.FileName))
-                    m_pSettings.m_cLastUsedPresets.Remove(saveFileDialog1.FileName);
+                if (Settings.LastUsedPresets.Contains(saveFileDialog1.FileName))
+                    Settings.LastUsedPresets.Remove(saveFileDialog1.FileName);
 
-                m_pSettings.m_cLastUsedPresets.Insert(0, saveFileDialog1.FileName);
+                Settings.LastUsedPresets.Insert(0, saveFileDialog1.FileName);
 
-                while (m_pSettings.m_cLastUsedPresets.Count > 5)
-                    m_pSettings.m_cLastUsedPresets.RemoveAt(5);
+                while (Settings.LastUsedPresets.Count > 5)
+                    Settings.LastUsedPresets.RemoveAt(5);
             }
         }
 
@@ -260,13 +260,13 @@ namespace WorldGeneration
         {
             WorldPreset pWorldPreset = new WorldPreset(sFileName);
 
-            if (m_pSettings.m_cLastUsedPresets.Contains(sFileName))
-                m_pSettings.m_cLastUsedPresets.Remove(sFileName);
+            if (Settings.LastUsedPresets.Contains(sFileName))
+                Settings.LastUsedPresets.Remove(sFileName);
 
-            m_pSettings.m_cLastUsedPresets.Insert(0, sFileName);
+            Settings.LastUsedPresets.Insert(0, sFileName);
 
-            while (m_pSettings.m_cLastUsedPresets.Count > 5)
-                m_pSettings.m_cLastUsedPresets.RemoveAt(5);
+            while (Settings.LastUsedPresets.Count > 5)
+                Settings.LastUsedPresets.RemoveAt(5);
 
             checkBox1.Checked = true;
 

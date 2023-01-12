@@ -6,9 +6,9 @@ namespace Random
 {
     public class Rnd
     {
-        static System.Random rnd = new System.Random();
+        private static System.Random rnd = new System.Random();
 
-        static int seed = 0;
+        private static int seed = 0;
 
         public static int GetNewSeed()
         {
@@ -26,8 +26,8 @@ namespace Random
             //int iTest = rnd.Next();
         }
 
-        static List<double> s_cDebug = new List<double>();
-        static List<double> s_cDebug2 = new List<double>();
+        private static readonly List<double> s_cDebug = new List<double>();
+        private static readonly List<double> s_cDebug2 = new List<double>();
 
         static private bool s_bDebug = false;
 
@@ -50,6 +50,27 @@ namespace Random
         public static int Toss1d6()
         {
             return GetInRange(1, 6);
+        }
+
+        /// <summary>
+        /// A double-precision floating point number greater than or equal to 0.0, and less than 1.0.
+        /// </summary>
+        /// <returns>random double in 0..1</returns>
+        public static double Sample()
+        {
+            double fNext = rnd.NextDouble();
+            if (s_bDebug)
+            {
+                s_cDebug.Add(fNext);
+
+                if (s_cDebug.Count <= s_cDebug2.Count)
+                {
+                    if (fNext != s_cDebug2[s_cDebug.Count - 1])
+                        return fNext;
+                }
+            }
+
+            return fNext;
         }
 
         /// <summary>
@@ -86,27 +107,6 @@ namespace Random
             }
 
             return iNext;
-        }
-
-        /// <summary>
-        /// A double-precision floating point number greater than or equal to 0.0, and less than 1.0.
-        /// </summary>
-        /// <returns>random double in 0..1</returns>
-        public static double Sample()
-        {
-            double fNext = rnd.NextDouble();
-            if (s_bDebug)
-            {
-                s_cDebug.Add(fNext);
-
-                if (s_cDebug.Count <= s_cDebug2.Count)
-                {
-                    if (fNext != s_cDebug2[s_cDebug.Count - 1])
-                        return fNext;
-                }
-            }
-
-            return fNext;
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Random
             return Get(fTotal) < fChances;
         }
 
-        private static double SqrtPI = Math.Sqrt(Math.PI);
+        private static readonly double SqrtPI = Math.Sqrt(Math.PI);
 
         public static bool Gauss(int iValue, int k)
         {
@@ -290,7 +290,9 @@ namespace Random
             foreach (float fChance in cChances)
             {
                 if (fBest == fChance)
+                {
                     cBests.Add(iIndex);
+                }
                 else if (fBest < fChance)
                 {
                     fBest = fChance;
@@ -314,7 +316,9 @@ namespace Random
             foreach (int iChance in cChances)
             {
                 if (iBest == iChance)
+                {
                     cBests.Add(iIndex);
+                }
                 else if (iBest < iChance)
                 {
                     iBest = iChance;

@@ -37,8 +37,10 @@ namespace Socium
         public bool IsBorder()
         {
             foreach (var pRegion in Contents)
+            {
                 if (pRegion.IsBorder())
                     return true;
+            }
 
             return false;
         }
@@ -475,10 +477,9 @@ namespace Socium
                 foreach (LandX pLand in pRegion.Contents)
                 {
                     int iSettlements = 0;
-                    foreach (Location pLoc in pLand.Origin.Contents)
+                    foreach (LocationX pLocX in pLand.Origin.Contents.Select(x => x.As<LocationX>()))
                     {
-                        LocationX pLocX = pLoc.As<LocationX>();
-                        if (pLocX.Settlement != null && pLocX.Settlement.RuinsAge == 0)
+                        if (pLocX.Settlement?.RuinsAge == 0)
                         {
                             iSettlements++;
                         }
@@ -526,23 +527,24 @@ namespace Socium
                 {
                     foreach (Location pLoc in pLand.Origin.Contents)
                     {
-                        foreach (TransportationNode pLinked in pLoc.Links.Keys)
+                        foreach (var pLinked in pLoc.Links)
                         {
-                            if (pLinked is Location)
+                            if (pLinked.Key is Location location)
                             {
-                                Land pLinkedOwner = (pLinked as Location).GetOwner();
-                                if (!pLinkedOwner.As<LandX>().HasOwner() || pLinkedOwner.As<LandX>().GetOwner().GetOwner() != this)
-                                    pLoc.Links[pLinked].IsClosed = true;
+                                LandX pLinkedOwner = location.GetOwner().As<LandX>();
+                                if (pLinkedOwner.GetOwner() == null || pLinkedOwner.GetOwner().GetOwner() != this)
+                                    pLinked.Value.IsClosed = true;
                             }
                             else
-                                pLoc.Links[pLinked].IsClosed = true;
+                            {
+                                pLinked.Value.IsClosed = true;
+                            }
                         }
                     }
                 }
             }
 
-            List<LocationX> cConnected = new List<LocationX>();
-            cConnected.Add(AdministrativeCenter);
+            List<LocationX> cConnected = new List<LocationX> { AdministrativeCenter };
 
             LocationX[] aSettlements = LocalSociety.Settlements.ToArray();
 
@@ -609,8 +611,8 @@ namespace Socium
             foreach (Region pRegion in Contents)
                 foreach (LandX pLand in pRegion.Contents)
                     foreach (Location pLoc in pLand.Origin.Contents)
-                        foreach (TransportationNode pLink in pLoc.Links.Keys)
-                            pLoc.Links[pLink].IsClosed = false;
+                        foreach (var pLink in pLoc.Links)
+                            pLink.Value.IsClosed = false;
         }
 
         /// <summary>
@@ -655,7 +657,7 @@ namespace Socium
                 }
             }
 
-            iAverageMagicLimit = iAverageMagicLimit / LocationsCount;
+            iAverageMagicLimit /= LocationsCount;
 
             LocalSociety.CheckResources(Resources, LocationsCount, Contents.Count);
 
@@ -788,7 +790,9 @@ namespace Socium
                     iHostility++;
             }
             else
+            {
                 iHostility--;
+            }
 
             iHostility += LocalSociety.DominantCulture.Customs.GetDifference(pOpponent.LocalSociety.DominantCulture.Customs);
 

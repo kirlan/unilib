@@ -14,7 +14,7 @@ namespace WorldGeneration
 {
     public partial class MapProperties : UserControl
     {
-        MapPreset[] m_aWorldMaps = new MapPreset[] 
+        private readonly MapPreset[] m_aWorldMaps = new MapPreset[]
         {
             new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 15, 25, 5, 66, 50, 45),
             new MapPreset("Continents 2", "Earth-like world. 5 big continents ocuppies 33% of world surface. There could be a continents in polar regions in this template.", true, false, 15, 25, 5, 66, 50, 50),
@@ -22,7 +22,7 @@ namespace WorldGeneration
             new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 100, 100, 30, 66, 50, 45),
         };
 
-        MapPreset[] m_aPartialMaps = new MapPreset[] 
+        private readonly MapPreset[] m_aPartialMaps = new MapPreset[]
         {
             new MapPreset("Coast", "Traditional adventure map of big coastral region, like Europe, Middlearth, Hyperborea or Faerun. This is a part of a one big continent from arctic to tropics, with a long coastral line.", false, false, 15, 25, 1, 50, 95, 95),
             new MapPreset("Mediterranean", "Mediterranean-like region - there are parts of 3 big continents, divided by a sea. Continents extends from arctic to tropics.", false, false, 15, 25, 3, 50, 95, 95),
@@ -53,8 +53,8 @@ namespace WorldGeneration
         public bool AdvancedMode
         {
             get { return m_bAdvancedMode; }
-            set 
-            { 
+            set
+            {
                 m_bAdvancedMode = value;
                 PresetsPanel.Visible = !m_bAdvancedMode;
                 AdvancedPanel.Visible = m_bAdvancedMode;
@@ -114,7 +114,7 @@ namespace WorldGeneration
             //LandMassesCountBar.Maximum = Math.Min(300, iLocationsCount / 4) + LandMassesCountBar.LargeChange - 1;
             //LandMassesCountBar.Minimum = Math.Min(30, iLocationsCount / 20);
 
-            int iNotOcean = iLocationsCount * (100 - (int)WaterPercentBar.Value) / 100;
+            int iNotOcean = iLocationsCount * (100 - WaterPercentBar.Value) / 100;
 
             //if (StatesCountBar.Minimum > Math.Min(1, iNotOcean / 40))
                 StatesCountBar.Minimum = Math.Min(1, iNotOcean / 40);
@@ -148,7 +148,6 @@ namespace WorldGeneration
 
         private void label9_Click(object sender, EventArgs e)
         {
-
         }
 
         private void MapPresets_SelectedIndexChanged(object sender, EventArgs e)
@@ -242,7 +241,7 @@ namespace WorldGeneration
 
         private void ScrollBar_ValueChanged(object sender, EventArgs e)
         {
-            toolTip1.SetToolTip(sender as HScrollBar, (sender as HScrollBar).Value.ToString());
+            toolTip1.SetToolTip(sender as HScrollBar, (sender as HScrollBar)?.Value.ToString());
         }
     }
 }

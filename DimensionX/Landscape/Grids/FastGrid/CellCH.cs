@@ -13,7 +13,7 @@ namespace LandscapeGeneration.FastGrid
 
         public object Tag { get; set; } = null;
 
-        Point GetCircumcenter()
+        private Point GetCircumcenter()
         {
             // From MathWorld: http://mathworld.wolfram.com/Circumcircle.html
 

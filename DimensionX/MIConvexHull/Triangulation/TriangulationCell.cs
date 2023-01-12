@@ -11,7 +11,6 @@
         where TVertex : IVertex
         where TCell : ConvexFace<TVertex, TCell>
     {
-
     }
 
     /// <summary>

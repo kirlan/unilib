@@ -329,9 +329,13 @@ namespace Socium.Psychology
 
                     bool bReverse = false;
                     if (Traits[eTrait][iLevel] > pOther.Traits[eTrait][iOtherlevel] + 0.33)
+                    {
                         sResult.Append("much more ");
+                    }
                     else if (Traits[eTrait][iLevel] > pOther.Traits[eTrait][iOtherlevel])
+                    {
                         sResult.Append("more ");
+                    }
                     else if (Traits[eTrait][iLevel] < pOther.Traits[eTrait][iOtherlevel] - 0.33)
                     {
                         sResult.Append("much more ");

@@ -82,7 +82,6 @@
         /// </summary>
         private ConvexHull()
         {
-
         }
     }
 }

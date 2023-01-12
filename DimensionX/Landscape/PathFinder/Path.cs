@@ -5,11 +5,11 @@ using System.Text;
 
 namespace LandscapeGeneration.PathFind
 {
-    class Path<Node> : IEnumerable<Node>
+    internal class Path<Node> : IEnumerable<Node>
     {
         public Node LastStep { get; private set; }
-        public Path<Node> PreviousSteps { get; private set; }
-        public double TotalCost { get; private set; }
+        public Path<Node> PreviousSteps { get; }
+        public double TotalCost { get; }
         private Path(Node lastStep, Path<Node> previousSteps, double totalCost)
         {
             LastStep = lastStep;

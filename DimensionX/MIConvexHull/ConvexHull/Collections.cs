@@ -7,11 +7,11 @@
     /// Used to effectively store vertices beyond.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    sealed class VertexBuffer
+    internal sealed class VertexBuffer
     {
-        VertexWrap[] items;
-        int count;
-        int capacity;
+        private VertexWrap[] items;
+        private int count;
+        private int capacity;
 
         /// <summary>
         /// Number of elements present in the buffer.
@@ -31,7 +31,7 @@
         /// <summary>
         /// Size matters.
         /// </summary>
-        void EnsureCapacity()
+        private void EnsureCapacity()
         {
             if (count + 1 > capacity)
             {
@@ -59,13 +59,13 @@
             count = 0;
         }
     }
-    
+
     /// <summary>
     /// A priority based linked list.
     /// </summary>
-    sealed class FaceList
+    internal sealed class FaceList
     {
-        ConvexFaceInternal first, last;
+        private ConvexFaceInternal first, last;
 
         /// <summary>
         /// Get the first element.
@@ -76,7 +76,7 @@
         /// Adds the element to the beginning.
         /// </summary>
         /// <param name="face"></param>
-        void AddFirst(ConvexFaceInternal face)
+        private void AddFirst(ConvexFaceInternal face)
         {
             face.InList = true;
             this.first.Previous = face;

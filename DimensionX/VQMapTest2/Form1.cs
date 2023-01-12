@@ -630,16 +630,16 @@ namespace VQMapTest2
                 ShowWorld();
             }
 
-            if (m_pGenerationForm.m_pSettings.m_cLastUsedPresets.Count > 0)
-                Properties.Settings.Default.preset1 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[0];
-            if (m_pGenerationForm.m_pSettings.m_cLastUsedPresets.Count > 1)
-                Properties.Settings.Default.preset2 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[1];
-            if (m_pGenerationForm.m_pSettings.m_cLastUsedPresets.Count > 2)
-                Properties.Settings.Default.preset3 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[2];
-            if (m_pGenerationForm.m_pSettings.m_cLastUsedPresets.Count > 3)
-                Properties.Settings.Default.preset4 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[3];
-            if (m_pGenerationForm.m_pSettings.m_cLastUsedPresets.Count > 4)
-                Properties.Settings.Default.preset5 = m_pGenerationForm.m_pSettings.m_cLastUsedPresets[4];
+            if (m_pGenerationForm.Settings.LastUsedPresets.Count > 0)
+                Properties.Settings.Default.preset1 = m_pGenerationForm.Settings.LastUsedPresets[0];
+            if (m_pGenerationForm.Settings.LastUsedPresets.Count > 1)
+                Properties.Settings.Default.preset2 = m_pGenerationForm.Settings.LastUsedPresets[1];
+            if (m_pGenerationForm.Settings.LastUsedPresets.Count > 2)
+                Properties.Settings.Default.preset3 = m_pGenerationForm.Settings.LastUsedPresets[2];
+            if (m_pGenerationForm.Settings.LastUsedPresets.Count > 3)
+                Properties.Settings.Default.preset4 = m_pGenerationForm.Settings.LastUsedPresets[3];
+            if (m_pGenerationForm.Settings.LastUsedPresets.Count > 4)
+                Properties.Settings.Default.preset5 = m_pGenerationForm.Settings.LastUsedPresets[4];
 
             Properties.Settings.Default.Save();
         }
@@ -651,27 +651,27 @@ namespace VQMapTest2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            GenerationForm.Settings settings = new GenerationForm.Settings();
+            GenerationForm.Setting settings = new GenerationForm.Setting();
 
             string sPreset = Properties.Settings.Default.preset1;
-            if (sPreset != "" && !settings.m_cLastUsedPresets.Contains(sPreset))
-                settings.m_cLastUsedPresets.Add(sPreset);
+            if (sPreset != "" && !settings.LastUsedPresets.Contains(sPreset))
+                settings.LastUsedPresets.Add(sPreset);
 
             sPreset = Properties.Settings.Default.preset2;
-            if (sPreset != "" && !settings.m_cLastUsedPresets.Contains(sPreset))
-                settings.m_cLastUsedPresets.Add(sPreset);
+            if (sPreset != "" && !settings.LastUsedPresets.Contains(sPreset))
+                settings.LastUsedPresets.Add(sPreset);
 
             sPreset = Properties.Settings.Default.preset3;
-            if (sPreset != "" && !settings.m_cLastUsedPresets.Contains(sPreset))
-                settings.m_cLastUsedPresets.Add(sPreset);
+            if (sPreset != "" && !settings.LastUsedPresets.Contains(sPreset))
+                settings.LastUsedPresets.Add(sPreset);
 
             sPreset = Properties.Settings.Default.preset4;
-            if (sPreset != "" && !settings.m_cLastUsedPresets.Contains(sPreset))
-                settings.m_cLastUsedPresets.Add(sPreset);
+            if (sPreset != "" && !settings.LastUsedPresets.Contains(sPreset))
+                settings.LastUsedPresets.Add(sPreset);
 
             sPreset = Properties.Settings.Default.preset5;
-            if (sPreset != "" && !settings.m_cLastUsedPresets.Contains(sPreset))
-                settings.m_cLastUsedPresets.Add(sPreset);
+            if (sPreset != "" && !settings.LastUsedPresets.Contains(sPreset))
+                settings.LastUsedPresets.Add(sPreset);
 
             if (m_pGenerationForm.Preload(settings))
             {
@@ -818,7 +818,7 @@ namespace VQMapTest2
         {
             repeatCreationFromPresetToolStripMenuItem.DropDownItems.Clear();
 
-            foreach (string sPreset in m_pGenerationForm.m_pSettings.m_cLastUsedPresets)
+            foreach (string sPreset in m_pGenerationForm.Settings.LastUsedPresets)
             {
                 repeatCreationFromPresetToolStripMenuItem.DropDownItems.Add(sPreset).Click += new EventHandler(UsedPresetClick);
             }

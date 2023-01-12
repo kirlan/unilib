@@ -66,7 +66,7 @@ namespace GeneLab.Genetix
         Tentacles
     }
 
-    public class LegsGenetix : GenetixBase
+    public class LegsGenetix : IGenetix
     {
         /// <summary>
         /// 6 insectoid legs
@@ -242,11 +242,9 @@ namespace GeneLab.Genetix
 
         public LegsType LegsType { get; private set; } = LegsType.Foots;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
-            LegsGenetix pAnother = pOther as LegsGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is LegsGenetix pAnother))
                 return false;
 
             return LegsCount == pAnother.LegsCount &&
@@ -268,7 +266,7 @@ namespace GeneLab.Genetix
             LegsType = eLegsType;
         }
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -405,7 +403,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(50))
             {
@@ -491,17 +489,17 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }

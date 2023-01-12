@@ -118,8 +118,10 @@ namespace Socium.Nations
             }
             while (!bNew);
 
-            ProtoSociety = new NationalSociety(pRace, pEpoch, this);
-            ProtoSociety.Name = Race.Language.RandomNationName();
+            ProtoSociety = new NationalSociety(pRace, pEpoch, this)
+            {
+                Name = Race.Language.RandomNationName()
+            };
 
             DominantPhenotype.GetTerritoryPreferences(out m_aPreferredLands, out m_aHatedLands);
 
@@ -167,9 +169,13 @@ namespace Socium.Nations
                 int iTechLevel = (int)(Math.Pow(Rnd.Get(15), 3) / 1000);
                 if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence != Intelligence.Primitive &&
                     (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(10)))
+                {
                     ProtoSociety.TechLevel += iTechLevel;
+                }
                 else
+                {
                     ProtoSociety.TechLevel -= iTechLevel;
+                }
 
                 if (ProtoSociety.MagicLimit < pEpoch.InvadersMinMagicLevel)
                     ProtoSociety.MagicLimit = pEpoch.InvadersMinMagicLevel;
@@ -208,11 +214,15 @@ namespace Socium.Nations
                 int iOldTechLevel = ProtoSociety.TechLevel;
 
                 int iTechLevel = (int)(Math.Pow(Rnd.Get(13), 3) / 1000);
-                if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence != Intelligence.Primitive && 
+                if (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence != Intelligence.Primitive &&
                     (DominantPhenotype.m_pValues.Get<BrainGenetix>().Intelligence == Intelligence.Ingenious || Rnd.OneChanceFrom(5)))
+                {
                     ProtoSociety.TechLevel += iTechLevel;
+                }
                 else
+                {
                     ProtoSociety.TechLevel -= iTechLevel;
+                }
 
                 if (!IsAncient)
                 {
@@ -276,7 +286,7 @@ namespace Socium.Nations
             if (pLandType == null)
                 return -1;
 
-            if (!pLandType.Environment.HasFlag(LandscapeGeneration.Environment.Habitable))
+            if (!pLandType.Environment.HasFlag(LandscapeGeneration.Environments.Habitable))
                 return -1;
 
             float fCost = pLandType.MovementCost; // 1 - 10

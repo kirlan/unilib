@@ -26,7 +26,7 @@ namespace BenTools.Mathematics
 			{
 				if(S is ICloneable)
 					E = ((ICloneable)S).Clone() as IList;
-				else 
+				else
 					throw new Exception("You want it copied, but it can't!");
 			}
 			int i,r;
@@ -137,7 +137,7 @@ namespace BenTools.Mathematics
 				}
 				if(CurrentBracket.Count>0)
 					continue;
-				c = Array.IndexOf(C,S[i]); 
+				c = Array.IndexOf(C,S[i]);
 				if(c!=-1)
 				{
 					if(C[c]=='\n')
@@ -175,7 +175,6 @@ namespace BenTools.Mathematics
 			W = Target.Width;
 			H = Target.Width/Source.Width*Source.Height;
 			return new RectangleF(Target.X,Target.Y+Target.Height/2-H/2,W,H);
-
 		}
 		public static double DASkalar(double[] A, double[] B)
 		{
@@ -294,9 +293,9 @@ namespace BenTools.Mathematics
 				max = max * brightness / 120.0;
 			}
 
-			for (j = 0; j < 3; j++) 
+			for (j = 0; j < 3; j++)
 			{
-				switch(HSB_map[i][j]) 
+				switch(HSB_map[i][j])
 				{
 					case '0':
 						C[j] = min;
@@ -309,7 +308,7 @@ namespace BenTools.Mathematics
 						break;
 					case '-':
 						C[j] = (max - (hue % 60)/60.0 * (max - min));
-						break; 
+						break;
 				}
 			}
 			return C;
@@ -345,7 +344,7 @@ namespace BenTools.Mathematics
 			dy = y; ay = Math.Abs(dy);
 			t = (ax+ay == 0) ? 0 : dy/(ax+ay);
 			if (dx < 0) t = 2-t; else if (dy < 0) t = 4+t;
-			return t*90.0;		
+			return t*90.0;
 		}
 		public static int ccw(Point P0, Point P1, Point P2, bool PlusOneOnZeroDegrees)
 		{
@@ -355,7 +354,7 @@ namespace BenTools.Mathematics
 			if (dx1*dy2 > dy1*dx2) return +1;
 			if (dx1*dy2 < dy1*dx2) return -1;
 			if ((dx1*dx2 < 0) || (dy1*dy2 < 0)) return -1;
-			if ((dx1*dx1+dy1*dy1) < (dx2*dx2+dy2*dy2) && PlusOneOnZeroDegrees) 
+			if ((dx1*dx1+dy1*dy1) < (dx2*dx2+dy2*dy2) && PlusOneOnZeroDegrees)
 				return +1;
 			return 0;
 		}
@@ -367,7 +366,7 @@ namespace BenTools.Mathematics
 			if (dx1*dy2 > dy1*dx2) return +1;
 			if (dx1*dy2 < dy1*dx2) return -1;
 			if ((dx1*dx2 < 0) || (dy1*dy2 < 0)) return -1;
-			if ((dx1*dx1+dy1*dy1) < (dx2*dx2+dy2*dy2) && PlusOneOnZeroDegrees) 
+			if ((dx1*dx1+dy1*dy1) < (dx2*dx2+dy2*dy2) && PlusOneOnZeroDegrees)
 				return +1;
 			return 0;
 		}

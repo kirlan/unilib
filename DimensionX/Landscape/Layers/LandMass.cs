@@ -24,7 +24,7 @@ namespace LandscapeGeneration
             : base()
         {
             Drift = new SimpleVector3d(1.0 - Rnd.Get(2.0f), 1.0 - Rnd.Get(2.0f), 0);
-            Drift = Drift / !Drift;
+            Drift /= !Drift;
         }
 
         public override void Start(Land pSeed)

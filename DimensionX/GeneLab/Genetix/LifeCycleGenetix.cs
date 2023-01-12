@@ -9,7 +9,7 @@ namespace GeneLab.Genetix
     public enum BirthRate
     {
         /// <summary>
-        /// Низкая рождаемость - среднее число детей, рождённых одним взрослым за всю жизнь - 1-2 
+        /// Низкая рождаемость - среднее число детей, рождённых одним взрослым за всю жизнь - 1-2
         /// (рождаемость ниже 1 не рассматриваем, т.к. в этом случае раса вымирает)
         /// </summary>
         Low,
@@ -68,7 +68,7 @@ namespace GeneLab.Genetix
     //    OnlyMales
     //}
 
-    public class LifeCycleGenetix: GenetixBase
+    public class LifeCycleGenetix: IGenetix
     {
         /// <summary>
         /// lives really long and could have only a few children during whole lifetime, which are mostly females
@@ -111,7 +111,7 @@ namespace GeneLab.Genetix
 
             return "have " + sDeath + sBirth;
         }
-        
+
         /// <summary>
         /// average population, moderate lifespan
         /// </summary>
@@ -204,17 +204,15 @@ namespace GeneLab.Genetix
 
         public DyingRate DyingRate { get; private set; } = DyingRate.Moderate;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
-            LifeCycleGenetix pAnother = pOther as LifeCycleGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is LifeCycleGenetix pAnother))
                 return false;
 
             return BirthRate == pAnother.BirthRate &&
                 DyingRate == pAnother.DyingRate;
         }
-        
+
         public LifeCycleGenetix()
         { }
 
@@ -238,7 +236,7 @@ namespace GeneLab.Genetix
 
         #region GenetixBase Members
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -277,7 +275,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -316,7 +314,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(20))
             {
@@ -355,7 +353,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -394,7 +392,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             if (Rnd.OneChanceFrom(10))
             {

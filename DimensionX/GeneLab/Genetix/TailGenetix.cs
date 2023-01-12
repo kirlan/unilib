@@ -38,7 +38,7 @@ namespace GeneLab.Genetix
         Skillful
     }
 
-    public class TailGenetix: GenetixBase
+    public class TailGenetix: IGenetix
     {
         /// <summary>
         /// a long, but almost useless tail
@@ -112,7 +112,7 @@ namespace GeneLab.Genetix
 
         public TailControl TailControl { get; private set; } = TailControl.None;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is TailGenetix pAnother))
                 return false;
@@ -144,8 +144,8 @@ namespace GeneLab.Genetix
             if (TailLength == TailLength.Long && TailControl == TailControl.None)
                 TailControl = TailControl.Crude;
         }
-        
-        public GenetixBase MutateRace()
+
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -172,7 +172,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -199,7 +199,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(20))
             {
@@ -226,12 +226,12 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }

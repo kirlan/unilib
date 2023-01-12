@@ -88,7 +88,6 @@ namespace GeneLabTest
                     foreach (Phenotype<LandTypeInfoX> pOldMutation in cMutants)
                         if (pMutant.IsIdentical(pOldMutation))
                             bNew = false;
-
                 }
                 while (!bNew);
 
@@ -112,7 +111,7 @@ namespace GeneLabTest
                     bSemicolon = true;
                 }
                 richTextBox1.AppendText("\n");
-                
+
                 bSemicolon = false;
                 richTextBox1.AppendText("Hated territories: ");
                 foreach (LandTypeInfoX pLand in cHated)

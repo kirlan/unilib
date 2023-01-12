@@ -50,7 +50,7 @@ namespace GeneLab.Genetix
     //    AlmostEveryone
     //}
 
-    public class BrainGenetix: GenetixBase
+    public class BrainGenetix: IGenetix
     {
         /// <summary>
         /// are very clever creatures and can use some psionic abilities
@@ -167,25 +167,22 @@ namespace GeneLab.Genetix
             get { return new BrainGenetix(Intelligence.Primitive, /*MagicAbilityPrevalence.Rare,*/ 2); }
         }
 
-
         public Intelligence Intelligence { get; private set; } = Intelligence.Sapient;
 
         //public MagicAbilityPrevalence m_eMagicAbilityPrevalence = MagicAbilityPrevalence.Rare;
 
         public int MagicAbilityPotential { get; private set; } = 0;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
-            BrainGenetix pAnother = pOther as BrainGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is BrainGenetix pAnother))
                 return false;
 
             return Intelligence == pAnother.Intelligence &&
                 //m_eMagicAbilityPrevalence == pAnother.m_eMagicAbilityPrevalence &&
                 MagicAbilityPotential == pAnother.MagicAbilityPotential;
         }
-        
+
         public BrainGenetix()
         { }
 
@@ -213,7 +210,9 @@ namespace GeneLab.Genetix
 
             if (Intelligence == Intelligence.Basic ||
                 Intelligence == Intelligence.Capable)
+            {
                 MagicAbilityPotential = Math.Min(3, MagicAbilityPotential); //для животных базовый уровень - хоть до джедаев/супергероев включительно... например, все единороги неразумны, но владеют магией на уровне джедаев
+            }
 
             if (Intelligence == Intelligence.Primitive)
                 MagicAbilityPotential = 0; //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями
@@ -227,7 +226,7 @@ namespace GeneLab.Genetix
 
         #region GenetixBase Members
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -277,7 +276,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.Intelligence == Intelligence.Basic ||
                         pMutant.Intelligence == Intelligence.Capable)
+                    {
                         pMutant.MagicAbilityPotential = Rnd.Get(4); //для животных базовый уровень - хоть до джедаев/супергероев включительно... например, все единороги неразумны, но владеют магией на уровне джедаев
+                    }
 
                     if (pMutant.Intelligence == Intelligence.Primitive)
                         pMutant.MagicAbilityPotential = Rnd.Get(2); //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями
@@ -307,7 +308,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -357,7 +358,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.Intelligence == Intelligence.Basic ||
                         pMutant.Intelligence == Intelligence.Capable)
+                    {
                         pMutant.MagicAbilityPotential = Rnd.Get(4); //для животных базовый уровень - хоть до джедаев/супергероев включительно... например, все единороги неразумны, но владеют магией на уровне джедаев
+                    }
 
                     if (pMutant.Intelligence == Intelligence.Primitive)
                         pMutant.MagicAbilityPotential = Rnd.Get(2); //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями
@@ -387,7 +390,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             if (Rnd.OneChanceFrom(20))
             {
@@ -412,7 +415,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.Intelligence == Intelligence.Basic ||
                         pMutant.Intelligence == Intelligence.Capable)
+                    {
                         pMutant.MagicAbilityPotential = Rnd.Get(4); //для животных базовый уровень - хоть до джедаев/супергероев включительно... например, все единороги неразумны, но владеют магией на уровне джедаев
+                    }
 
                     if (pMutant.Intelligence == Intelligence.Primitive)
                         pMutant.MagicAbilityPotential = Rnd.Get(2); //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями
@@ -442,7 +447,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -489,7 +494,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.Intelligence == Intelligence.Basic ||
                         pMutant.Intelligence == Intelligence.Capable)
+                    {
                         pMutant.MagicAbilityPotential = Rnd.Get(4); //для животных базовый уровень - хоть до джедаев/супергероев включительно... например, все единороги неразумны, но владеют магией на уровне джедаев
+                    }
 
                     if (pMutant.Intelligence == Intelligence.Primitive)
                         pMutant.MagicAbilityPotential = Rnd.Get(2); //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями
@@ -519,7 +526,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             if (Rnd.OneChanceFrom(5))
             {
@@ -554,7 +561,9 @@ namespace GeneLab.Genetix
 
                     if (pMutant.Intelligence == Intelligence.Basic ||
                         pMutant.Intelligence == Intelligence.Capable)
+                    {
                         pMutant.MagicAbilityPotential = Rnd.Get(4); //для животных базовый уровень - хоть до джедаев/супергероев включительно... например, все единороги неразумны, но владеют магией на уровне джедаев
+                    }
 
                     if (pMutant.Intelligence == Intelligence.Primitive)
                         pMutant.MagicAbilityPotential = Rnd.Get(2); //примитивные народы в массе своей магией не владеют вообще, могущественными магами могут быть только единицы, даже если весь народ обладает магическими способностями

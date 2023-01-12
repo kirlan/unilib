@@ -34,7 +34,7 @@ namespace GeneLab.Genetix
         Nippers,
     }
 
-    public class ArmsGenetix : GenetixBase
+    public class ArmsGenetix : IGenetix
     {
         /// <summary>
         /// No arms
@@ -95,7 +95,7 @@ namespace GeneLab.Genetix
             ArmsType = eArmsType;
         }
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -119,7 +119,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(50))
             {
@@ -143,26 +143,24 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
-            ArmsGenetix pAnother = pOther as ArmsGenetix;
-
-            if(pAnother == null)
+            if (!(pOther is ArmsGenetix pAnother))
                 return false;
 
             return ArmsCount == pAnother.ArmsCount && ArmsType == pAnother.ArmsType;

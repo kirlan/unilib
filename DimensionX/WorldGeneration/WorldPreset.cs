@@ -94,7 +94,6 @@ namespace WorldGeneration
             UniLibXML pXml = new UniLibXML("DimensionX_WorldPreset");
 
             XmlNode pWorldPropertiesNode = pXml.CreateNode(pXml.Root, "World");
-            
 
             pXml.AddAttribute(pWorldPropertiesNode, "continents", m_iContinents);
             pXml.AddAttribute(pWorldPropertiesNode, "borderless", m_bGreatOcean);

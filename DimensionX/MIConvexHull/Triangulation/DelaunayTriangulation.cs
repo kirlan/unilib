@@ -114,7 +114,6 @@
         /// </summary>
         private DelaunayTriangulation()
         {
-
         }
     }
 }

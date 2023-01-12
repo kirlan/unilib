@@ -46,7 +46,7 @@ namespace GeneLab.Genetix
         Tentackles
     }
 
-    public class FaceGenetix : GenetixBase
+    public class FaceGenetix : IGenetix
     {
         /// <summary>
         /// a muzzle with a long proboscis and a tangle of wiggling tentackles instead of mouth
@@ -134,7 +134,7 @@ namespace GeneLab.Genetix
 
         public MouthType MouthType { get; } = MouthType.Normal;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is FaceGenetix pAnother))
                 return false;
@@ -158,7 +158,7 @@ namespace GeneLab.Genetix
             MouthType = eMouthType;
         }
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -180,22 +180,22 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }

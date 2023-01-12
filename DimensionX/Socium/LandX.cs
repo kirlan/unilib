@@ -169,7 +169,7 @@ namespace Socium
                     iChances = 0;
 
                 //если в локации уже есть поселение - ловить нечего. На руинах, однако, строить можно.
-                if (pLocX.Settlement != null && pLocX.Settlement.RuinsAge == 0)
+                if (pLocX.Settlement?.RuinsAge == 0)
                     iChances = 0;
 
                 //если в локации есть какая-то одиночная постройка (монстрячье логово, например), опять ловить нечего.
@@ -324,7 +324,7 @@ namespace Socium
             foreach (var pLink in Origin.Border)
             {
                 Land pOtherLand = pLink.Key.GetOwner();
-                if (!pOtherLand.HasOwner() && pOtherLand.LandType.Environment.HasFlag(LandscapeGeneration.Environment.Habitable))
+                if (!pOtherLand.HasOwner() && pOtherLand.LandType.Environment.HasFlag(LandscapeGeneration.Environments.Habitable))
                     fCost += (double)pNation.GetClaimingCost(pOtherLand.LandType) / Origin.Border.Count;
             }
 

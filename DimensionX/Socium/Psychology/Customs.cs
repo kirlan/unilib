@@ -172,12 +172,16 @@ namespace Socium.Psychology
             }
 
             foreach (BodyModificationsTypes eMod in pDifferencesSample.MandatoryBodyModifications)
+            {
                 if (!pBaseSample.MandatoryBodyModifications.Contains(eMod) && !pNew.MandatoryBodyModifications.Contains(eMod))
                     pNew.MandatoryBodyModifications.Add(eMod);
+            }
 
             foreach (BodyModificationsTypes eMod in pBaseSample.MandatoryBodyModifications)
+            {
                 if (!pDifferencesSample.MandatoryBodyModifications.Contains(eMod) && pNew.MandatoryBodyModifications.Contains(eMod))
                     pNew.MandatoryBodyModifications.Remove(eMod);
+            }
 
             return pNew;
         }
@@ -263,7 +267,7 @@ namespace Socium.Psychology
                     TrySimpleMutation(mutatedCustomType, Hairstyle.Practical_Hairsyles, Hairstyle.Gorgeous_Hairstyles, Hairstyle.Bald_Heads, 2) ||
                     TrySimpleMutation(mutatedCustomType, Beard.Common_Beards, Beard.Shaved_Faces, Beard.Groomed_Beards) ||
                     TrySimpleMutation(mutatedCustomType, Adornments.Some_Adornments, Adornments.Lavish_Adornments, Adornments.No_Adornments, 2))
-                { 
+                {
                     // just to keep pretty if-else-if-else-if... structure
                 }
                 else if (mutatedCustomType == typeof(GenderPriority))
@@ -726,7 +730,9 @@ namespace Socium.Psychology
                         }
                     }
                     else
+                    {
                         sResult.Append("lives in big homosexual families");
+                    }
                 }
                 else if (Has(SexualOrientation.Bisexual))
                 {
@@ -752,12 +758,16 @@ namespace Socium.Psychology
                 return false;
 
             foreach (var pItem1 in pList1)
+            {
                 if (!pList2.Contains(pItem1))
                     return false;
+            }
 
             foreach (var pItem2 in pList2)
+            {
                 if (!pList1.Contains(pItem2))
                     return false;
+            }
 
             return true;
         }
@@ -793,7 +803,7 @@ namespace Socium.Psychology
             {
                 if (sResult.Length > 0)
                     sResult.Append(", ");
-                
+
                 if (Has(Magic.Magic_Feared))
                     sResult.Append("fears all magic");
                 else if (Has(Magic.Magic_Praised))
@@ -808,17 +818,19 @@ namespace Socium.Psychology
                     sResult.Append(", ");
 
                 if (Has(BodyModifications.Body_Modifications_Blamed))
+                {
                     sResult.Append("condemns any tatoo or pierceing");
+                }
                 else if (Has(BodyModifications.Body_Modifications_Mandatory))
                 {
                     List<BodyModificationsTypes> cOthers = new List<BodyModificationsTypes>();
-                    if(pOther.Has(BodyModifications.Body_Modifications_Mandatory))
+                    if (pOther.Has(BodyModifications.Body_Modifications_Mandatory))
                         cOthers.AddRange(pOther.MandatoryBodyModifications);
 
                     bool bFirst2 = true;
                     foreach (BodyModificationsTypes eMod in MandatoryBodyModifications)
                     {
-                        if(cOthers.Contains(eMod))
+                        if (cOthers.Contains(eMod))
                             continue;
                         if (bFirst2)
                             sResult.Append("should have ");
@@ -832,7 +844,7 @@ namespace Socium.Psychology
                     bool bFirst3 = true;
                     foreach (BodyModificationsTypes eMod in cOthers)
                     {
-                        if(MandatoryBodyModifications.Contains(eMod))
+                        if (MandatoryBodyModifications.Contains(eMod))
                             continue;
                         if (bFirst3)
                         {
@@ -847,7 +859,9 @@ namespace Socium.Psychology
                     }
                 }
                 else if (Has(BodyModifications.Body_Modifications_Allowed))
+                {
                     sResult.Append(pOther.Has(BodyModifications.Body_Modifications_Blamed) ? "allowed to have some tatoo or pierceing" : "could have tatoo or pierceing on their choice");
+                }
             }
 
             if (!HasIdentical<Clothes>(pOther))
@@ -1050,7 +1064,9 @@ namespace Socium.Psychology
                             }
                         }
                         else
+                        {
                             sResult.Append("lives in big homosexual families");
+                        }
                     }
                     else if (Has(SexualOrientation.Bisexual))
                     {
@@ -1160,8 +1176,7 @@ namespace Socium.Psychology
 
         public override bool Equals(object obj)
         {
-            Customs pOther = obj as Customs;
-            if (pOther == null)
+            if (!(obj is Customs pOther))
                 return false;
 
             if (m_cCustoms.Count != pOther.m_cCustoms.Count)
@@ -1173,9 +1188,11 @@ namespace Socium.Psychology
                     return false;
             }
 
-            if (Has(BodyModifications.Body_Modifications_Mandatory) && 
+            if (Has(BodyModifications.Body_Modifications_Mandatory) &&
                 !ListsEqual(MandatoryBodyModifications, pOther.MandatoryBodyModifications))
+            {
                 return false;
+            }
 
             return true;
         }
@@ -1187,9 +1204,11 @@ namespace Socium.Psychology
                 hash.Add(custom);
 
             if (Has(BodyModifications.Body_Modifications_Mandatory))
+            {
                 foreach (var bodyModification in MandatoryBodyModifications)
                     hash.Add(bodyModification);
-            
+            }
+
             return hash.ToHashCode();
         }
     }

@@ -42,7 +42,7 @@ namespace GeneLab.Genetix
         Facetted
     }
 
-    public class EyesGenetix : GenetixBase
+    public class EyesGenetix : IGenetix
     {
         /// <summary>
         /// 3 facetted eyes, placed on flexible stalks
@@ -146,7 +146,7 @@ namespace GeneLab.Genetix
 
         public EyesType EyesType { get; private set; } = EyesType.Normal;
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
             if (!(pOther is EyesGenetix pAnother))
                 return false;
@@ -173,7 +173,7 @@ namespace GeneLab.Genetix
             EyesCount = iEyesCount;
         }
 
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             if (Rnd.OneChanceFrom(10))
             {
@@ -218,7 +218,7 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             if (Rnd.OneChanceFrom(50))
             {
@@ -257,17 +257,17 @@ namespace GeneLab.Genetix
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }

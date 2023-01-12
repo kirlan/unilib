@@ -166,7 +166,7 @@ namespace NameGen
                     s_cRules[Language.VictorianEnglish]['E'] = new string[] { "shaw", "man", "stone", "son", "ham", "gold", "banks", "foot", "worth", "way", "hall", "dock", "ford", "well", "bury", "stock", "field", "lock", "dale", "water", "hood", "ridge", "ville", "spear", "forth", "will" };
                     s_cRules[Language.VictorianEnglish]['Z'] = new string[] { "hanson", "winner", "smythe", "carlton", "adams", "foster", "case", "burton", "bates", "beck", "baker", "burdick", "dudley", "duncan", "goodwin", "hope", "lewis", "turner", "macaulay", "bennett", "harris" };
                 }
-                return s_cRules; 
+                return s_cRules;
             }
         }
 
@@ -194,6 +194,5 @@ namespace NameGen
 
             return Capitalize(sWord);
         }
-
     }
 }

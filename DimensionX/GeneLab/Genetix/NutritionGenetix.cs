@@ -59,7 +59,7 @@ namespace GeneLab.Genetix
         Mineral
     }
 
-    public class NutritionGenetix : GenetixBase
+    public class NutritionGenetix : IGenetix
     {
         /// <summary>
         /// eats only vegetables
@@ -194,11 +194,9 @@ namespace GeneLab.Genetix
                 NutritionType == NutritionType.ParasitismMeat;
         }
 
-        public bool IsIdentical(GenetixBase pOther)
+        public bool IsIdentical(IGenetix pOther)
         {
-            NutritionGenetix pAnother = pOther as NutritionGenetix;
-
-            if (pAnother == null)
+            if (!(pOther is NutritionGenetix pAnother))
                 return false;
 
             return NutritionType == pAnother.NutritionType;
@@ -383,7 +381,7 @@ namespace GeneLab.Genetix
         /// Do nothing, use MutateNutritionType instead
         /// </summary>
         /// <returns></returns>
-        public GenetixBase MutateRace()
+        public IGenetix MutateRace()
         {
             return this;
         }
@@ -392,22 +390,22 @@ namespace GeneLab.Genetix
         /// Do nothing, use MutateNutritionType instead
         /// </summary>
         /// <returns></returns>
-        public GenetixBase MutateGender()
+        public IGenetix MutateGender()
         {
             return this;
         }
 
-        public GenetixBase MutateNation()
+        public IGenetix MutateNation()
         {
             return this;
         }
 
-        public GenetixBase MutateFamily()
+        public IGenetix MutateFamily()
         {
             return this;
         }
 
-        public GenetixBase MutateIndividual()
+        public IGenetix MutateIndividual()
         {
             return this;
         }
