@@ -95,27 +95,27 @@ namespace LandscapeGeneration
         }
         public void PresetLandTypesInfo()
         {
-            LandTypes.Coastral.Init(10, 1, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "sea");
+            LandTypes.Coastral.Init(10, -0.0001f, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, new string[] { "sea" });
 
-            LandTypes.Ocean.Init(10, 5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, "ocean");
+            LandTypes.Ocean.Init(10, -5, Environment.Flat | Environment.Open | Environment.Liquid | Environment.Wet, new string[] { "ocean" });
 
-            LandTypes.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, "plains");
+            LandTypes.Plains.Init(1, 1, Environment.Flat | Environment.Open | Environment.Habitable, new string[] { "plains", "meadows", "fields" });
 
-            LandTypes.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, "savanna");
+            LandTypes.Savanna.Init(1, 1, Environment.Flat | Environment.Open | Environment.Hot | Environment.Habitable, new string[] { "savanna", "plains" });
 
-            LandTypes.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, "tundra");
+            LandTypes.Tundra.Init(2, 0.5f, Environment.Flat | Environment.Open | Environment.Cold | Environment.Habitable, new string[] { "tundra", "wastes" });
 
-            LandTypes.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, "desert");
+            LandTypes.Desert.Init(2, 0.1f, Environment.Flat | Environment.Open | Environment.Hot | Environment.Soft | Environment.Habitable, new string[] { "desert", "sands" });
 
-            LandTypes.Forest.Init(3, 2, Environment.Habitable, "forest");
+            LandTypes.Forest.Init(3, 2, Environment.Habitable, new string[] { "forest", "woods" });
 
-            LandTypes.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, "taiga");
+            LandTypes.Taiga.Init(3, 2, Environment.Cold | Environment.Habitable, new string[] { "taiga" });
 
-            LandTypes.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, "swamp");
+            LandTypes.Swamp.Init(4, 0.1f, Environment.Flat | Environment.Open | Environment.Soft | Environment.Wet | Environment.Habitable, new string[] { "swamp", "marshes" });
 
-            LandTypes.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, "mountains");
+            LandTypes.Mountains.Init(5, 10, Environment.Open | Environment.Barrier | Environment.Habitable, new string[] { "mountains" });
 
-            LandTypes.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, "jungle");
+            LandTypes.Jungle.Init(6, 2, Environment.Hot | Environment.Wet | Environment.Habitable, new string[] { "jungle" });
         }
         private void ShapeWorld(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {

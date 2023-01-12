@@ -293,7 +293,7 @@ namespace Socium
         public void Populate(Nation pNation, string sName)
         {
             DominantNation = pNation;
-            m_sName = sName;
+            m_sName = sName + " " + Rnd.Get(Origin.LandType.Names);
         }
 
         public override string ToString()
@@ -302,7 +302,7 @@ namespace Socium
             if (sRace != GetLesserRaceString())
                 sRace = sRace + "/" + GetLesserRaceString();
 
-            return string.Format("{0} {1} ({2}, {3}) (H:{4}%)", m_sName, Origin.LandType.Name, Origin.Contents.Count, sRace, Origin.Humidity);
+            return string.Format("{0} ({1}, {2}, {3}) (H:{4}%)", m_sName, Origin.LandType.Type.ToString(), Origin.Contents.Count, sRace, Origin.Humidity);
         }
 
         /// <summary>

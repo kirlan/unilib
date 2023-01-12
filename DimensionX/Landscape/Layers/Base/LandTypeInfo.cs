@@ -90,7 +90,7 @@ namespace LandscapeGeneration
 
         public Environment Environment { get; private set; } = Environment.None;
 
-        public string Name { get; private set; }
+        public string[] Names { get; private set; }
 
         public float Elevation { get; private set; } = 0;
 
@@ -99,12 +99,12 @@ namespace LandscapeGeneration
             Type = eType;
         }
 
-        public void Init(int iMovementCost, float fElevation, Environment eEnvironment, string sName)
+        public void Init(int iMovementCost, float fElevation, Environment eEnvironment, string[] cNames)
         {
             MovementCost = iMovementCost;
             Elevation = fElevation;
             Environment = eEnvironment;
-            Name = sName;
+            Names = cNames;
         }
     }
 

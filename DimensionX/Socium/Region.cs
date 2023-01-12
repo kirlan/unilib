@@ -377,7 +377,7 @@ namespace Socium
 
         public override string ToString()
         {
-            return string.Format("{0} {1} ({2}, {3})", Name, Type.Name, Contents.Count, GetNativeRaceString());
+            return string.Format("{0} {1} ({2}, {3})", Name, Type.Type.ToString(), Contents.Count, GetNativeRaceString());
         }
     }
 }

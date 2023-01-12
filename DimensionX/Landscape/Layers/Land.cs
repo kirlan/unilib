@@ -84,7 +84,7 @@ namespace LandscapeGeneration
 
         public override string ToString()
         {
-            return string.Format("{0} ({1})", LandType.Name, Contents.Count);
+            return string.Format("{0} ({1})", LandType.Type.ToString(), Contents.Count);
         }
     }
 }
