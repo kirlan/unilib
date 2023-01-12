@@ -80,7 +80,7 @@ namespace WorldGeneration
                 mapProperties1.ContinentsCount,
                 !mapProperties1.PartialMap,
                 mapProperties1.LandsDiversity,
-                Math.Max(10, Math.Min(mapProperties1.StatesCount * 7, 300)),
+                Math.Max(10, Math.Min(mapProperties1.StatesCount * 3, 300)),
                 mapProperties1.StatesCount,
                 mapProperties1.LandMassesDiversity,
                 mapProperties1.WaterPercent,
