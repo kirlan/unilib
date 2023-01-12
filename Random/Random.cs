@@ -110,27 +110,27 @@ namespace Random
         }
 
         /// <summary>
-        /// Returns nonnegative float, lesser then val
+        /// Returns float, lesser then val by absolute value
         /// </summary>
         /// <param name="val">max (can't be returned)</param>
         /// <returns>random float</returns>
         public static float Get(float val)
         {
             if (val <= 0.0f)
-                return 0.0f;
+                return -Get(-val);
 
             return val * (float)Sample();
         }
 
         /// <summary>
-        /// Returns nonnegative double, lesser then val
+        /// Returns double, lesser then val by absolute value
         /// </summary>
         /// <param name="val">max (can't be returned)</param>
         /// <returns>random double</returns>
         public static double Get(double val)
         {
             if (val <= 0.0)
-                return 0.0;
+                return -Get(-val);
 
             return val * Sample();
         }
