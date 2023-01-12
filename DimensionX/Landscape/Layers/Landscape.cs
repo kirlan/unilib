@@ -125,7 +125,7 @@ namespace LandscapeGeneration
 
             BuildContinents(BeginStep, ProgressStep);
 
-            BuildRegions(BeginStep, ProgressStep);
+            AssignLandTypes(BeginStep, ProgressStep);
 
             CalculateElevations(BeginStep, ProgressStep);
 
@@ -771,7 +771,7 @@ namespace LandscapeGeneration
                     }
 
                     if (bCouldBe && Rnd.OneChanceFrom(iOneChanceFrom))
-                        pLand.LandType = LandTypes.Ocean;
+                        pLand.LandType = LandTypes.Coastral;
                 }
 
                 ProgressStep();
@@ -855,7 +855,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildRegions(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        private void AssignLandTypes(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             //Make seas
             foreach (Land pLand in Lands)
@@ -938,59 +938,66 @@ namespace LandscapeGeneration
 
             //Плясать будем от шельфа - у него фиксированная глубина -1
             //весь остальной океан - глубже, вся суша - выше
-            foreach (Land pLand in Lands)
+            //foreach (Land pLand in Lands)
+            foreach (LandMass pLandMass in LandMasses)
             {
-                if (pLand.Forbidden)
-                {
-                    foreach (Location pLoc in pLand.Contents)
-                        ProgressStep();
+                if (!pLandMass.IsWater)
                     continue;
-                }
 
-                if (pLand.LandType == LandTypes.Coastral)
+                foreach (Land pLand in pLandMass.Contents)
                 {
-                    foreach (Location pLoc in pLand.Contents)
+                    if (pLand.Forbidden)
                     {
-                        pLoc.H = -1;
+                        foreach (Location pLoc in pLand.Contents)
+                            ProgressStep();
+                        continue;
+                    }
 
-                        ProgressStep();
-
-                        foreach (Location pLink in pLoc.BorderWithKeys)
+                    if (pLand.LandType == LandTypes.Coastral)
+                    {
+                        foreach (Location pLoc in pLand.Contents)
                         {
-                            if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
-                                continue;
+                            pLoc.H = -1;
 
-                            if (pLink.GetOwner().LandType == LandTypes.Ocean)
+                            ProgressStep();
+
+                            foreach (Location pLink in pLoc.BorderWithKeys)
                             {
-                                if (!cOcean.Contains(pLink))
-                                    cOcean.Add(pLink);
-                            }
-                            else
-                            {
-                                if (pLink.GetOwner().LandType != LandTypes.Coastral && !cLand.Contains(pLink))
-                                    cLand.Add(pLink);
+                                if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
+                                    continue;
+
+                                if (pLink.GetOwner().LandType == LandTypes.Ocean)
+                                {
+                                    if (!cOcean.Contains(pLink))
+                                        cOcean.Add(pLink);
+                                }
+                                else
+                                {
+                                    if (pLink.GetOwner().LandType != LandTypes.Coastral && !cLand.Contains(pLink))
+                                        cLand.Add(pLink);
+                                }
                             }
                         }
                     }
-                }
 
-                //Бывают прибрежные участки океана, где нет шельфа...
-                //Их тоже надо учесть!
-                if (pLand.LandType == LandTypes.Ocean)
-                {
-                    foreach (Location pLoc in pLand.Contents)
+                    //Бывают прибрежные участки океана, где нет шельфа...
+                    //Их тоже надо учесть!
+                    if (pLand.LandType == LandTypes.Ocean)
                     {
-                        foreach (Location pLink in pLoc.BorderWithKeys)
+                        foreach (Location pLoc in pLand.Contents)
                         {
-                            if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
-                                continue;
-
-                            if (!pLink.GetOwner().LandType.Environment.HasFlag(Environment.Liquid))
+                            foreach (Location pLink in pLoc.BorderWithKeys)
                             {
-                                if (!cOcean.Contains(pLoc))
-                                    cOcean.Add(pLoc);
-                                if (!cLand.Contains(pLink))
-                                    cLand.Add(pLink);
+                                if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
+                                    continue;
+
+                                if (!pLink.GetOwner().LandType.Environment.HasFlag(Environment.Liquid))
+                                {
+                                    if (!cOcean.Contains(pLoc))
+                                        cOcean.Add(pLoc);
+                                    if (!cLand.Contains(pLink))
+                                        cLand.Add(pLink);
+                                }
                             }
                         }
                     }

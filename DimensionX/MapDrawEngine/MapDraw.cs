@@ -808,7 +808,7 @@ namespace MapDrawEngine
                             pPath.AddPolygon(aPts);
 
                             //определим, каким цветом эта земля должна закрашиваться на карте высот
-                            Brush pBrush = GetElevationColor(pLoc.H, m_pWorld.MaxDepth, m_pWorld.MaxHeight);
+                            Brush pBrush = GetElevationColor(pLoc.H, m_pWorld.MaxDepth, m_pWorld.MaxHeight, pLand.LandType);
 
                             foreach (MapQuadrant pQuad in aQuads)
                             {
@@ -1003,7 +1003,7 @@ namespace MapDrawEngine
             SetPan(0, 0);
         }
 
-        private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight)
+        private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight, LandTypeInfo pType)
         {
             if (float.IsNaN(fHeight))
                 return new SolidBrush(Color.Black);
@@ -1016,10 +1016,10 @@ namespace MapDrawEngine
             KColor color = new KColor();
             color.RGB = Color.Cyan;
 
-            if (fHeight < 0)
+            if (fHeight < 0 || pType.Environment.HasFlag(LandscapeGeneration.Environment.Liquid))
             {
                 color.RGB = Color.Green;
-                color.Hue = 200 + 40 * fHeight / fMinHeight;
+                color.Hue = Math.Min(360, 200 + 40 * fHeight / fMinHeight);
             }
             else if (fHeight > 0)
             {
