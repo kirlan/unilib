@@ -125,11 +125,13 @@ namespace LandscapeGeneration
 
             BuildContinents(BeginStep, ProgressStep);
 
-            BuildAreas(BeginStep, ProgressStep);
-
-            SmoothBiomes();
+            BuildRegions(BeginStep, ProgressStep);
 
             CalculateElevations(BeginStep, ProgressStep);
+
+            //AddRivers(BeginStep, ProgressStep);
+
+            SmoothBiomes();
 
             AddPeaks();
 
@@ -853,7 +855,7 @@ namespace LandscapeGeneration
         /// </summary>
         /// <param name="BeginStep"></param>
         /// <param name="ProgressStep"></param>
-        private void BuildAreas(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        private void BuildRegions(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             //Make seas
             foreach (Land pLand in Lands)
@@ -983,8 +985,7 @@ namespace LandscapeGeneration
                             if (pLink.Forbidden || !pLink.HasOwner() || pLink.GetOwner() == pLand)
                                 continue;
 
-                            if (pLink.GetOwner().LandType != LandTypes.Ocean &&
-                                pLink.GetOwner().LandType != LandTypes.Coastral)
+                            if (!pLink.GetOwner().LandType.Environment.HasFlag(Environment.Liquid))
                             {
                                 if (!cOcean.Contains(pLoc))
                                     cOcean.Add(pLoc);
