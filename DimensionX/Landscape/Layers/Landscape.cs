@@ -45,6 +45,9 @@ namespace LandscapeGeneration
 
         public LocationsGrid LocationsGrid { get; } = null;
         public Land[] Lands { get; private set; } = null;
+
+        public River[] Rivers { get; private set; } = null;
+
         public LandMass[] LandMasses { get; private set; } = null;
         public Continent[] Contents { get; private set; } = null;
 
@@ -129,7 +132,7 @@ namespace LandscapeGeneration
 
             CalculateElevations(BeginStep, ProgressStep);
 
-            //AddRivers(BeginStep, ProgressStep);
+            AddRivers(BeginStep, ProgressStep);
 
             SmoothBiomes();
 
@@ -137,177 +140,6 @@ namespace LandscapeGeneration
 
             BuildTransportGrid(BeginStep, ProgressStep);
         }
-
-        private void AddPeaks()
-        {
-            foreach (Location pLoc in LocationsGrid.Locations)
-            {
-                if (pLoc.Forbidden || !pLoc.HasOwner())
-                    continue;
-
-                if (pLoc.GetOwner().LandType == LandTypes.Mountains)
-                {
-                    bool bPeak = true;
-                    foreach (Location pLink in pLoc.BorderWithKeys)
-                    {
-                        if (pLink.Forbidden || !pLink.HasOwner())
-                            continue;
-
-                        if (pLink.GetOwner().LandType != LandTypes.Mountains ||
-                            pLink.H >= pLoc.H)
-                        {
-                            bPeak = false;
-                        }
-                    }
-                    if (bPeak)
-                    {
-                        if (Rnd.OneChanceFrom(5))
-                            pLoc.Landmark = LandmarkType.Volcano;
-                        else
-                            pLoc.Landmark = LandmarkType.Peak;
-                    }
-                }
-            }
-        }
-
-        private sealed class LandBiome : TerritoryExtended<LandBiome, Biome, Land>
-        {
-            public LandBiome(Land pLand) : base(pLand)
-            { }
-
-            public LandBiome()
-            { }
-        }
-
-        /// <summary>
-        /// Биом - группа ВСЕХ сопредельных земель (<see cref="Land"/>/<see cref="LandBiome"/>) одного типа <see cref="LandTypeInfo"/>.
-        /// Используется ТОЛЬКО при сглаживании границ локаций - внутри <see cref="SmoothBiomes"/>
-        /// </summary>
-        private sealed class Biome : TerritoryCluster<Biome, Landscape, LandBiome>
-        {
-            public Biome()
-            { }
-
-            public Biome(LandBiome pSeed, float fCycleShift)
-            {
-                InitBorder(pSeed);
-
-                Contents.Add(pSeed);
-
-                bool bAdded;
-                do
-                {
-                    bAdded = false;
-
-                    LandBiome[] aBorderLands = new List<LandBiome>(Border.Keys).ToArray();
-                    foreach (LandBiome pLand in aBorderLands)
-                    {
-                        if (pLand.Forbidden)
-                            continue;
-
-                        if (pLand.Origin.LandType == pSeed.Origin.LandType && !Contents.Contains(pLand))
-                        {
-                            Contents.Add(pLand);
-
-                            Border[pLand].Clear();
-                            Border.Remove(pLand);
-
-                            foreach (var pBorderLand in pLand.BorderWith)
-                            {
-                                if (Contents.Contains(pBorderLand.Key))
-                                    continue;
-
-                                if (!Border.ContainsKey(pBorderLand.Key))
-                                    Border[pBorderLand.Key] = new List<VoronoiEdge>();
-                                VoronoiEdge[] cLines = pBorderLand.Value.ToArray();
-                                foreach (var pLine in cLines)
-                                    Border[pBorderLand.Key].Add(new VoronoiEdge(pLine));
-                            }
-
-                            bAdded = true;
-                        }
-                    }
-                }
-                while (bAdded);
-
-                ChainBorder(fCycleShift);
-            }
-
-            public override float GetMovementCost() { return 0; }
-        }
-
-        private void SmoothBiomes()
-        {
-            foreach (Land pLand in Lands)
-            {
-                pLand.AddLayer(new LandBiome(pLand));
-            }
-
-            foreach (Land pLand in Lands)
-            {
-                pLand.As<LandBiome>().FillBorderWithKeys();
-            }
-
-            foreach (Continent pCont in Contents)
-            {
-                Dictionary<LandTypeInfo, List<Biome>> cBiomes = new Dictionary<LandTypeInfo, List<Biome>>();
-                foreach (var pLandType in LandTypes.Instance.Lands)
-                    cBiomes[pLandType.Value] = new List<Biome>();
-
-                HashSet<LandBiome> cProcessedLands = new HashSet<LandBiome>();
-                foreach (var pLandMass in pCont.Contents)
-                {
-                    foreach (var pLand in pLandMass.Contents)
-                    {
-                        if (!pLand.Forbidden && !cProcessedLands.Contains(pLand.As<LandBiome>()))
-                        {
-                            Biome pNewBiome = new Biome(pLand.As<LandBiome>(), LocationsGrid.CycleShift);
-                            cBiomes[pLand.LandType].Add(pNewBiome);
-
-                            cProcessedLands.UnionWith(pNewBiome.Contents);
-                        }
-                    }
-                }
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Plains])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Savanna])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Tundra])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Swamp])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Desert])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Forest])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Jungle])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Taiga])
-                    SmoothBorder(pBiome.BorderOrdered);
-
-                SmoothBorder(pCont.BorderOrdered);
-
-                foreach (Biome pBiome in cBiomes[LandTypes.Mountains])
-                    SmoothBorder(pBiome.BorderOrdered);
-            }
-
-            foreach (Location pLoc in LocationsGrid.Locations)
-            {
-                if (pLoc.Forbidden || !pLoc.HasOwner())
-                    continue;
-
-                pLoc.CorrectCenter();
-            }
-        }
-
         private void SmoothBorder(List<List<VoronoiVertex>> cFirstLines)
         {
             foreach (var ordered in cFirstLines)
@@ -610,6 +442,86 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
+        /// Распределяет типы территорий и объединяет смежные земли с одинаковым типом территории в "зоны"
+        /// </summary>
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
+        private void AssignLandTypes(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        {
+            //Make seas
+            foreach (Land pLand in Lands)
+            {
+                if (!pLand.HasOwner() || pLand.GetOwner().IsWater)
+                    pLand.LandType = LandTypes.Ocean;
+                else
+                    pLand.LandType = null;
+            }
+
+            AddCoastral(BeginStep, ProgressStep);
+
+            AddMountains(BeginStep, ProgressStep);
+
+            AddLakes(50, BeginStep, ProgressStep);
+
+            CalculateHumidity(BeginStep, ProgressStep);
+
+            BeginStep("Setting other regions types...", Lands.Length);
+            //Assign other land types
+            foreach (Land pLand in Lands)
+            {
+                if (pLand.LandType == null)
+                {
+                    float fTemperature = GetTemperature(pLand) * 8.0f;
+
+                    fTemperature = (float)(0.1875 * Math.Pow(2, fTemperature));
+
+                    if (fTemperature < 0.25 || (pLand.Humidity < 5 && fTemperature < 0.35))
+                    {
+                        pLand.LandType = LandTypes.Tundra;
+                        continue;
+                    }
+
+                    if (pLand.Humidity > 80 && Rnd.OneChanceFrom(10))
+                    {
+                        pLand.LandType = LandTypes.Swamp;
+                        continue;
+                    }
+
+                    if (pLand.Humidity < 40 && fTemperature > 5)
+                    {
+                        pLand.LandType = LandTypes.Desert;
+                        continue;
+                    }
+
+                    if (fTemperature > 8)
+                    {
+                        if (pLand.Humidity < 75 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))
+                            pLand.LandType = LandTypes.Savanna;
+                        else
+                            pLand.LandType = LandTypes.Jungle;
+                        continue;
+                    }
+
+                    if (fTemperature < 0.475)
+                    {
+                        if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))
+                            pLand.LandType = LandTypes.Plains;
+                        else
+                            pLand.LandType = LandTypes.Taiga;
+                        continue;
+                    }
+
+                    if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))// || Rnd.OneChanceFrom(2))
+                        pLand.LandType = LandTypes.Plains;
+                    else
+                        pLand.LandType = LandTypes.Forest;
+                }
+
+                ProgressStep();
+            }
+        }
+
+        /// <summary>
         /// Формирует шельфовое "мелководье" там, где океанические и континентальные тектонические плиты расходятся
         /// </summary>
         /// <param name="BeginStep"></param>
@@ -778,11 +690,6 @@ namespace LandscapeGeneration
             }
         }
 
-        private float GetTemperature(VoronoiVertex pVertex)
-        {
-            return 1 - Math.Abs((m_iEquator - pVertex.Y) / m_iPole);
-        }
-
         private void CalculateHumidity(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
             BeginStep("Calculating humidity...", Lands.Length);
@@ -850,84 +757,9 @@ namespace LandscapeGeneration
             while (aHumidityFront.Length > 0);
         }
 
-        /// <summary>
-        /// Распределяет типы территорий и объединяет смежные земли с одинаковым типом территории в "зоны"
-        /// </summary>
-        /// <param name="BeginStep"></param>
-        /// <param name="ProgressStep"></param>
-        private void AssignLandTypes(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        private float GetTemperature(VoronoiVertex pVertex)
         {
-            //Make seas
-            foreach (Land pLand in Lands)
-            {
-                if (!pLand.HasOwner() || pLand.GetOwner().IsWater)
-                    pLand.LandType = LandTypes.Ocean;
-                else
-                    pLand.LandType = null;
-            }
-
-            AddCoastral(BeginStep, ProgressStep);
-
-            AddMountains(BeginStep, ProgressStep);
-
-            AddLakes(50, BeginStep, ProgressStep);
-
-            CalculateHumidity(BeginStep, ProgressStep);
-
-            BeginStep("Setting other regions types...", Lands.Length);
-            //Assign other land types
-            foreach (Land pLand in Lands)
-            {
-                if (pLand.LandType == null)
-                {
-                    float fTemperature = GetTemperature(pLand) * 8.0f;
-
-                    fTemperature = (float)(0.1875 * Math.Pow(2, fTemperature));
-
-                    if (fTemperature < 0.25 || (pLand.Humidity < 5 && fTemperature < 0.35))
-                    {
-                        pLand.LandType = LandTypes.Tundra;
-                        continue;
-                    }
-
-                    if (pLand.Humidity > 80 && Rnd.OneChanceFrom(10))
-                    {
-                        pLand.LandType = LandTypes.Swamp;
-                        continue;
-                    }
-
-                    if (pLand.Humidity < 40 && fTemperature > 5)
-                    {
-                        pLand.LandType = LandTypes.Desert;
-                        continue;
-                    }
-
-                    if (fTemperature > 8)
-                    {
-                        if (pLand.Humidity < 75 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))
-                            pLand.LandType = LandTypes.Savanna;
-                        else
-                            pLand.LandType = LandTypes.Jungle;
-                        continue;
-                    }
-
-                    if (fTemperature < 0.475)
-                    {
-                        if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))
-                            pLand.LandType = LandTypes.Plains;
-                        else
-                            pLand.LandType = LandTypes.Taiga;
-                        continue;
-                    }
-
-                    if (pLand.Humidity < 50 || Rnd.ChooseOne(Math.Sqrt(100 - pLand.Humidity), Math.Sqrt(pLand.Humidity)))// || Rnd.OneChanceFrom(2))
-                        pLand.LandType = LandTypes.Plains;
-                    else
-                        pLand.LandType = LandTypes.Forest;
-                }
-
-                ProgressStep();
-            }
+            return 1 - Math.Abs((m_iEquator - pVertex.Y) / m_iPole);
         }
         protected void CalculateElevations(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
@@ -1148,6 +980,108 @@ namespace LandscapeGeneration
             }
         }
 
+        private float GetElevationRnd(LandTypeInfo pLTI)
+        {
+            return pLTI.Elevation / 2 + Rnd.Get(pLTI.Elevation);
+        }
+
+        private void NoiseMap()
+        {
+            PerlinNoise perlinNoise = new PerlinNoise(99);
+            double widthDivisor = 0.5 / (double)LocationsGrid.RX;
+            double heightDivisor = 0.5 / (double)LocationsGrid.RY;
+
+            float vMin = 0;
+            float vMax = 0;
+            foreach (Location pLoc in LocationsGrid.Locations)
+            {
+                if (pLoc.Forbidden || pLoc.H < 0)
+                    continue;
+
+                // Note that the result from the noise function is in the range -1 to 1, but I want it in the range of 0 to 1
+                // that's the reason of the strange code
+                float v = (float)(
+                    // First octave
+                    (perlinNoise.Noise(16 * pLoc.X * widthDivisor, 16 * pLoc.Y * heightDivisor, -0.5) + 1) / 2 * 0.5 +
+                    // Second octave
+                    (perlinNoise.Noise(32 * pLoc.X * widthDivisor, 32 * pLoc.Y * heightDivisor, 0) + 1) / 2 * 0.3 +
+                    // Third octave
+                    (perlinNoise.Noise(64 * pLoc.X * widthDivisor, 64 * pLoc.Y * heightDivisor, +0.5) + 1) / 2 * 0.2);
+
+                v -= 0.5f;
+
+                if (v < vMin)
+                    vMin = v;
+                if (v > vMax)
+                    vMax = v;
+
+                v = Math.Min(1, Math.Max(-1, v * 5));
+
+                if (pLoc.H > 0)
+                {
+                    float fLinkElevation = Math.Min(pLoc.H - 0.5f, 10);
+                    pLoc.H += v * fLinkElevation;
+                }
+                else
+                {
+                    float fLinkElevation = Math.Max(pLoc.H + 0.5f, -10);
+                    pLoc.H -= v * fLinkElevation;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Сглаживает карту.
+        /// Локации с типом, предполагающим более высокий перепад уровней, чем заданный, не затрагиваются
+        /// </summary>
+        /// <param name="fMaxElevation"></param>
+        private void SmoothMap(float fMaxElevation)
+        {
+            foreach (Location pLoc in LocationsGrid.Locations)
+            {
+                if (pLoc.Forbidden || !pLoc.HasOwner())
+                    continue;
+
+                float fLokElevation = pLoc.GetOwner().LandType.Elevation;
+                if (fLokElevation <= fMaxElevation)
+                {
+                    float fTotal = pLoc.H;
+                    float fTotalWeight = 1;
+                    foreach (Location pLink in pLoc.BorderWithKeys)
+                    {
+                        if (pLink.Forbidden || !pLink.HasOwner())
+                            continue;
+
+                        float fLinkElevation = pLink.GetOwner().LandType.Elevation;
+                        float fWeight = 1;
+                        if (fLinkElevation > fMaxElevation)
+                            fWeight = 0.5f;
+                        ////if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
+                        //{
+                        //    float fAverage = (pLoc.m_fHeight + pLink.m_fHeight)/2;
+                        //    if (pLoc.m_fHeight > 0)
+                        //        pLoc.m_fHeight = Math.Max(0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
+                        //    else
+                        //        pLoc.m_fHeight = Math.Min(-0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
+
+                        //    if (pLink.m_fHeight > 0)
+                        //        pLink.m_fHeight = Math.Max(0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
+                        //    else
+                        //        pLink.m_fHeight = Math.Min(-0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
+                        //}
+
+                        fTotal += pLink.H * fWeight;
+                        fTotalWeight += fWeight;
+                    }
+
+                    if (pLoc.H > 0)
+                        pLoc.H = Math.Max(0.1f, fTotal / fTotalWeight);
+                    else
+                        pLoc.H = Math.Min(-0.5f, fTotal / fTotalWeight);
+                }
+            }
+        }
+
         private void CalculateVertexes()
         {
             foreach (VoronoiVertex pVertex in LocationsGrid.Vertexes)
@@ -1206,105 +1140,312 @@ namespace LandscapeGeneration
         }
 
         /// <summary>
-        /// Сглаживает карту.
-        /// Локации с типом, предполагающим более высокий перепад уровней, чем заданный, не затрагиваются
+        /// Добавляет реки
         /// </summary>
-        /// <param name="fMaxElevation"></param>
-        private void SmoothMap(float fMaxElevation)
+        /// <param name="BeginStep"></param>
+        /// <param name="ProgressStep"></param>
+        private void AddRivers(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        {
+            float fMinRiverLength = LocationsGrid.RX / 4;
+            float fMaxTotalRiverLength = LocationsGrid.RX * 10;
+
+            BeginStep("Adding rivers...", (int)(fMaxTotalRiverLength / fMinRiverLength));
+
+            Dictionary<Location, float> cSourceChance = new Dictionary<Location, float>();
+            foreach (LandMass pLandMass in LandMasses)
+            {
+                if (pLandMass.IsWater)
+                    continue;
+
+                //bool bIsCoastral = false;
+                //foreach (LandMass pLinkedLandMass in pLandMass.BorderWithKeys)
+                //{
+                //    if (pLinkedLandMass.IsWater)
+                //    {
+                //        bIsCoastral = true;
+                //        break;
+                //    }
+                //}
+
+                //if (bIsCoastral)
+                //    continue;
+
+                foreach (Land pLand in pLandMass.Contents)
+                {
+                    if (pLand.LandType.Environment.HasFlag(Environments.Liquid))
+                        continue;
+
+                    foreach (Location pLoc in pLand.Contents)
+                    {
+                        bool bAlreadyOccupied = false;
+                        foreach (var pLinkedLoc in pLoc.BorderWith)
+                        {
+                            if ((pLinkedLoc.Key.HasOwner() && pLinkedLoc.Key.GetOwner().IsWater) || pLinkedLoc.Value[0].Point1.Depth > 0 || pLinkedLoc.Value[0].Point2.Depth > 0)
+                            {
+                                bAlreadyOccupied = true;
+                                break;
+                            }
+                        }
+
+                        if (bAlreadyOccupied)
+                            continue;
+
+                        cSourceChance[pLoc] = pLand.Humidity * pLoc.H;
+                    }
+                }
+            }
+
+            float fTotalRiversLength = 0f;
+            List<River> cRivers = new List<River>();
+            while (fTotalRiversLength < fMaxTotalRiverLength && cSourceChance.Count > 0)
+            {
+                int iChances = Rnd.ChooseOne(cSourceChance.Values);
+
+                Location pSource = cSourceChance.Keys.ElementAt(iChances);
+                cSourceChance.Remove(pSource);
+
+                River pRiver = new River(pSource);
+                if (pRiver.Finished && pRiver.Length > fMinRiverLength)
+                {
+                    cRivers.Add(pRiver);
+                    fTotalRiversLength += pRiver.Length;
+                }
+                else
+                {
+                    pRiver.Remove();
+                }
+            }
+
+            Rivers = cRivers.ToArray();
+
+            ProgressStep();
+        }
+
+        private sealed class LandBiome : TerritoryExtended<LandBiome, Biome, Land>
+        {
+            public LandBiome(Land pLand) : base(pLand)
+            { }
+
+            public LandBiome()
+            { }
+        }
+        /// <summary>
+        /// Биом - группа ВСЕХ сопредельных земель (<see cref="Land"/>/<see cref="LandBiome"/>) одного типа <see cref="LandTypeInfo"/>.
+        /// Используется ТОЛЬКО при сглаживании границ локаций - внутри <see cref="SmoothBiomes"/>
+        /// </summary>
+        private sealed class Biome : TerritoryCluster<Biome, Landscape, LandBiome>
+        {
+            public Biome()
+            { }
+
+            public Biome(LandBiome pSeed, float fCycleShift)
+            {
+                InitBorder(pSeed);
+
+                Contents.Add(pSeed);
+
+                bool bAdded;
+                do
+                {
+                    bAdded = false;
+
+                    LandBiome[] aBorderLands = new List<LandBiome>(Border.Keys).ToArray();
+                    foreach (LandBiome pLand in aBorderLands)
+                    {
+                        if (pLand.Forbidden)
+                            continue;
+
+                        if (pLand.Origin.LandType == pSeed.Origin.LandType && !Contents.Contains(pLand))
+                        {
+                            Contents.Add(pLand);
+
+                            Border[pLand].Clear();
+                            Border.Remove(pLand);
+
+                            foreach (var pBorderLand in pLand.BorderWith)
+                            {
+                                if (Contents.Contains(pBorderLand.Key))
+                                    continue;
+
+                                if (!Border.ContainsKey(pBorderLand.Key))
+                                    Border[pBorderLand.Key] = new List<VoronoiEdge>();
+                                VoronoiEdge[] cLines = pBorderLand.Value.ToArray();
+                                foreach (var pLine in cLines)
+                                    Border[pBorderLand.Key].Add(new VoronoiEdge(pLine));
+                            }
+
+                            bAdded = true;
+                        }
+                    }
+                }
+                while (bAdded);
+
+                ChainBorder(fCycleShift);
+            }
+
+            public override float GetMovementCost() { return 0; }
+        }
+
+        private void SmoothBiomes()
+        {
+            foreach (Land pLand in Lands)
+            {
+                pLand.AddLayer(new LandBiome(pLand));
+            }
+
+            foreach (Land pLand in Lands)
+            {
+                pLand.As<LandBiome>().FillBorderWithKeys();
+            }
+
+            foreach (Continent pCont in Contents)
+            {
+                Dictionary<LandTypeInfo, List<Biome>> cBiomes = new Dictionary<LandTypeInfo, List<Biome>>();
+                foreach (var pLandType in LandTypes.Instance.Lands)
+                    cBiomes[pLandType.Value] = new List<Biome>();
+
+                HashSet<LandBiome> cProcessedLands = new HashSet<LandBiome>();
+                foreach (var pLandMass in pCont.Contents)
+                {
+                    foreach (var pLand in pLandMass.Contents)
+                    {
+                        if (!pLand.Forbidden && !cProcessedLands.Contains(pLand.As<LandBiome>()))
+                        {
+                            Biome pNewBiome = new Biome(pLand.As<LandBiome>(), LocationsGrid.CycleShift);
+                            cBiomes[pLand.LandType].Add(pNewBiome);
+
+                            cProcessedLands.UnionWith(pNewBiome.Contents);
+                        }
+                    }
+                }
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Plains])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Savanna])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Tundra])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Swamp])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Desert])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Forest])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Jungle])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Taiga])
+                    SmoothBorder(pBiome.BorderOrdered);
+
+                SmoothBorder(pCont.BorderOrdered);
+
+                foreach (Biome pBiome in cBiomes[LandTypes.Mountains])
+                    SmoothBorder(pBiome.BorderOrdered);
+            }
+
+            foreach (Location pLoc in LocationsGrid.Locations)
+            {
+                if (pLoc.Forbidden || !pLoc.HasOwner())
+                    continue;
+
+                pLoc.CorrectCenter();
+            }
+        }
+
+        private void AddPeaks()
         {
             foreach (Location pLoc in LocationsGrid.Locations)
             {
                 if (pLoc.Forbidden || !pLoc.HasOwner())
                     continue;
 
-                float fLokElevation = pLoc.GetOwner().LandType.Elevation;
-                if (fLokElevation <= fMaxElevation)
+                if (pLoc.GetOwner().LandType == LandTypes.Mountains)
                 {
-                    float fTotal = pLoc.H;
-                    float fTotalWeight = 1;
+                    bool bPeak = true;
                     foreach (Location pLink in pLoc.BorderWithKeys)
                     {
                         if (pLink.Forbidden || !pLink.HasOwner())
                             continue;
 
-                        float fLinkElevation = pLink.GetOwner().LandType.Elevation;
-                        float fWeight = 1;
-                        if (fLinkElevation > fMaxElevation)
-                            fWeight = 0.5f;
-                        ////if(Math.Abs(pLoc.m_fHeight - pLink.m_fHeight) > (fLokElevation + fLinkElevation)/2)
-                        //{
-                        //    float fAverage = (pLoc.m_fHeight + pLink.m_fHeight)/2;
-                        //    if (pLoc.m_fHeight > 0)
-                        //        pLoc.m_fHeight = Math.Max(0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
-                        //    else
-                        //        pLoc.m_fHeight = Math.Min(-0.1f, (pLink.m_fHeight + pLoc.m_fHeight * (fLokElevation + 1)) / (fLokElevation + 2));
-
-                        //    if (pLink.m_fHeight > 0)
-                        //        pLink.m_fHeight = Math.Max(0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
-                        //    else
-                        //        pLink.m_fHeight = Math.Min(-0.1f, (pLoc.m_fHeight + pLink.m_fHeight * (fLinkElevation + 1)) / (fLinkElevation + 2));
-                        //}
-
-                        fTotal += pLink.H * fWeight;
-                        fTotalWeight += fWeight;
+                        if (pLink.GetOwner().LandType != LandTypes.Mountains ||
+                            pLink.H >= pLoc.H)
+                        {
+                            bPeak = false;
+                        }
                     }
-
-                    if (pLoc.H > 0)
-                        pLoc.H = Math.Max(0.1f, fTotal / fTotalWeight);
-                    else
-                        pLoc.H = Math.Min(-0.5f, fTotal / fTotalWeight);
+                    if (bPeak)
+                    {
+                        if (Rnd.OneChanceFrom(5))
+                            pLoc.Landmark = LandmarkType.Volcano;
+                        else
+                            pLoc.Landmark = LandmarkType.Peak;
+                    }
                 }
             }
         }
 
-        private void NoiseMap()
+        private void BuildTransportGrid(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            PerlinNoise perlinNoise = new PerlinNoise(99);
-            double widthDivisor = 0.5 / (double)LocationsGrid.RX;
-            double heightDivisor = 0.5 / (double)LocationsGrid.RY;
+            BeginStep("Building transportation links...", LocationsGrid.Locations.Length + Lands.Length + LandMasses.Length);
 
-            float vMin = 0;
-            float vMax = 0;
             foreach (Location pLoc in LocationsGrid.Locations)
             {
-                if (pLoc.Forbidden || pLoc.H < 0)
+                if (pLoc.Forbidden || !pLoc.HasOwner())
                     continue;
 
-                // Note that the result from the noise function is in the range -1 to 1, but I want it in the range of 0 to 1
-                // that's the reason of the strange code
-                float v = (float)(
-                    // First octave
-                    (perlinNoise.Noise(16 * pLoc.X * widthDivisor, 16 * pLoc.Y * heightDivisor, -0.5) + 1) / 2 * 0.5 +
-                    // Second octave
-                    (perlinNoise.Noise(32 * pLoc.X * widthDivisor, 32 * pLoc.Y * heightDivisor, 0) + 1) / 2 * 0.3 +
-                    // Third octave
-                    (perlinNoise.Noise(64 * pLoc.X * widthDivisor, 64 * pLoc.Y * heightDivisor, +0.5) + 1) / 2 * 0.2);
-
-                v -= 0.5f;
-
-                if (v < vMin)
-                    vMin = v;
-                if (v > vMax)
-                    vMax = v;
-
-                v = Math.Min(1, Math.Max(-1, v * 5));
-
-                if (pLoc.H > 0)
+                foreach (Location pLink in pLoc.BorderWithKeys)
                 {
-                    float fLinkElevation = Math.Min(pLoc.H - 0.5f, 10);
-                    pLoc.H += v * fLinkElevation;
+                    if (pLink.Forbidden || !pLink.HasOwner())
+                        continue;
+
+                    TransportationLinkBase pTransLink = SetLink(pLoc, pLink);
+                    pTransLink.Sea = pLink.GetOwner().IsWater && pLoc.GetOwner().IsWater;
+                    pTransLink.Embark = pLink.GetOwner().IsWater != pLoc.GetOwner().IsWater;
                 }
-                else
-                {
-                    float fLinkElevation = Math.Max(pLoc.H + 0.5f, -10);
-                    pLoc.H -= v * fLinkElevation;
-                }
+
+                ProgressStep();
             }
-        }
 
-        private float GetElevationRnd(LandTypeInfo pLTI)
-        {
-            return pLTI.Elevation / 2 + Rnd.Get(pLTI.Elevation);
+            foreach (Land pLand in Lands)
+            {
+                if (pLand.Forbidden || !pLand.HasOwner())
+                    continue;
+
+                foreach (Land pLinked in pLand.BorderWithKeys)
+                {
+                    if (pLinked.Forbidden || !pLinked.HasOwner())
+                        continue;
+
+                    TransportationLinkBase pLink = SetLink(pLand, pLinked);
+                    pLink.Sea = pLinked.GetOwner().IsWater && pLand.GetOwner().IsWater;
+                    pLink.Embark = pLinked.GetOwner().IsWater != pLand.GetOwner().IsWater;
+                }
+
+                ProgressStep();
+            }
+            foreach (LandMass pLandMass in LandMasses)
+            {
+                if (pLandMass.Forbidden)
+                    continue;
+
+                foreach (LandMass pLinked in pLandMass.BorderWithKeys)
+                {
+                    if (pLinked.Forbidden)
+                        continue;
+
+                    TransportationLinkBase pLink = SetLink(pLandMass, pLinked);
+                    pLink.Sea = !pLinked.HasOwner() && !pLandMass.HasOwner();
+                    pLink.Embark = (pLinked.HasOwner()) != (pLandMass.HasOwner());
+                }
+
+                ProgressStep();
+            }
         }
         /// <summary>
         /// Устанавливает возможность перехода между указанными локациями при поиске пути.
@@ -1386,64 +1527,6 @@ namespace LandscapeGeneration
                 }
 
             return pNode2.Links[pNode1];
-        }
-
-        private void BuildTransportGrid(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
-        {
-            BeginStep("Building transportation links...", LocationsGrid.Locations.Length + Lands.Length + LandMasses.Length);
-
-            foreach (Location pLoc in LocationsGrid.Locations)
-            {
-                if (pLoc.Forbidden || !pLoc.HasOwner())
-                    continue;
-
-                foreach (Location pLink in pLoc.BorderWithKeys)
-                {
-                    if (pLink.Forbidden || !pLink.HasOwner())
-                        continue;
-
-                    TransportationLinkBase pTransLink = SetLink(pLoc, pLink);
-                    pTransLink.Sea = pLink.GetOwner().IsWater && pLoc.GetOwner().IsWater;
-                    pTransLink.Embark = pLink.GetOwner().IsWater != pLoc.GetOwner().IsWater;
-                }
-
-                ProgressStep();
-            }
-
-            foreach (Land pLand in Lands)
-            {
-                if (pLand.Forbidden || !pLand.HasOwner())
-                    continue;
-
-                foreach (Land pLinked in pLand.BorderWithKeys)
-                {
-                    if (pLinked.Forbidden || !pLinked.HasOwner())
-                        continue;
-
-                    TransportationLinkBase pLink = SetLink(pLand, pLinked);
-                    pLink.Sea = pLinked.GetOwner().IsWater && pLand.GetOwner().IsWater;
-                    pLink.Embark = pLinked.GetOwner().IsWater != pLand.GetOwner().IsWater;
-                }
-
-                ProgressStep();
-            }
-            foreach (LandMass pLandMass in LandMasses)
-            {
-                if (pLandMass.Forbidden)
-                    continue;
-
-                foreach (LandMass pLinked in pLandMass.BorderWithKeys)
-                {
-                    if (pLinked.Forbidden)
-                        continue;
-
-                    TransportationLinkBase pLink = SetLink(pLandMass, pLinked);
-                    pLink.Sea = !pLinked.HasOwner() && !pLandMass.HasOwner();
-                    pLink.Embark = (pLinked.HasOwner()) != (pLandMass.HasOwner());
-                }
-
-                ProgressStep();
-            }
         }
         public static ShortestPath FindReallyBestPath(Location pStart, Location pFinish, float fCycleShift, bool bNavalOnly)
         {

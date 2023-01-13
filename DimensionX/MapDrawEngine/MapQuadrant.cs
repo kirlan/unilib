@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing;
 using LandscapeGeneration;
 using Socium;
+using nsUniLibControls;
 
 namespace MapDrawEngine
 {
@@ -74,6 +75,7 @@ namespace MapDrawEngine
         internal Dictionary<MapLayer, GraphicsPath> Layers { get; } = new Dictionary<MapLayer, GraphicsPath>();
         internal Dictionary<MapMode, Dictionary<Brush, GraphicsPath>> Modes { get; } = new Dictionary<MapMode, Dictionary<Brush, GraphicsPath>>();
         internal Dictionary<RoadType, GraphicsPath> RoadsMap { get; } = new Dictionary<RoadType, GraphicsPath>();
+        internal Dictionary<int, GraphicsPath> RiversMap { get; } = new Dictionary<int, GraphicsPath>();
 
         public MapQuadrant()
         {
@@ -85,6 +87,8 @@ namespace MapDrawEngine
 
             foreach (RoadType eRoadType in Enum.GetValues(typeof(RoadType)))
                 RoadsMap[eRoadType] = new GraphicsPath();
+
+            RiversMap[1] = new GraphicsPath();
         }
 
         internal void Clear()
@@ -99,6 +103,9 @@ namespace MapDrawEngine
 
             foreach (var pRoadType in RoadsMap.Values)
                 pRoadType.Reset();
+
+            foreach (var pRiverType in RiversMap)
+                pRiverType.Value.Reset();
         }
 
         /// <summary>
@@ -108,7 +115,7 @@ namespace MapDrawEngine
         /// <param name="fStartY">Y-координата верхнего левого угла квадранта в абсолютных координатах</param>
         internal void Normalize(float fStartX, float fStartY)
         {
-            DateTime pTime1 = DateTime.Now;
+            //DateTime pTime1 = DateTime.Now;
 
             Matrix pMatrix = new Matrix();
             pMatrix.Translate(-fStartX, -fStartY);
@@ -126,7 +133,10 @@ namespace MapDrawEngine
             foreach (var pRoadType in RoadsMap.Values)
                 pRoadType.Transform(pMatrix);
 
-            DateTime pTime2 = DateTime.Now;
+            foreach (var pRiverType in RiversMap)
+                pRiverType.Value.Transform(pMatrix);
+
+            //DateTime pTime2 = DateTime.Now;
         }
 
         /// <summary>
@@ -220,6 +230,30 @@ namespace MapDrawEngine
                 //pPath.Transform(pMatrix);
                 //gr.DrawPath(MapDraw.s_pAqua1DotPen, pPath);
             }
+        }
+
+        /// <summary>
+        /// Рисует реки
+        /// </summary>
+        /// <param name="gr">куда рисовать</param>
+        /// <param name="fScaleMultiplier">уровень мастабирования (в зависимости от него будем выбирать толщину перьев)</param>
+        /// <param name="fDX">экранная X-координата левого верхнего угла квадранта</param>
+        /// <param name="fDY">экранная Y-координата левого верхнего угла квадранта</param>
+        /// <param name="fScale">масштаб (экранные кординаты : абсолютные)</param>
+        internal void DrawRivers(Graphics gr, float fScaleMultiplier, float fDX, float fDY, float fScale)
+        {
+            Matrix pMatrix = new Matrix();
+            pMatrix.Translate(fDX, fDY);
+            pMatrix.Scale(fScale, fScale);
+
+            GraphicsPath pPath = (GraphicsPath)RiversMap[1].Clone();
+            pPath.Transform(pMatrix);
+
+            KColor color = new KColor { RGB = Color.Green };
+            color.RGB = Color.Green;
+            color.Hue = 200 - 20;
+
+            gr.DrawPath(new Pen(color.RGB, 2), pPath);
         }
 
         /// <summary>

@@ -16,6 +16,8 @@ namespace LandscapeGeneration
 
         public VoronoiEdge Next { get; set; } = null;
 
+        public IRiver River { get; set; } = null;
+
         public VoronoiEdge(VoronoiVertex pPoint1, VoronoiVertex pPoint2)
         {
             Point1 = pPoint1;

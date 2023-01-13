@@ -568,6 +568,32 @@ namespace MapDrawEngine
 
         #region Функции для работы с цветами
 
+        private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight, LandTypeInfo pType)
+        {
+            if (float.IsNaN(fHeight))
+                return new SolidBrush(Color.Black);
+
+            if (fMinHeight == 0)
+                fMinHeight = fHeight;
+            if (fMaxHeight == 0)
+                fMaxHeight = fHeight;
+
+            KColor color = new KColor { RGB = Color.Cyan };
+
+            if (fHeight < 0 || pType.Environment.HasFlag(LandscapeGeneration.Environments.Liquid))
+            {
+                color.RGB = Color.Green;
+                color.Hue = Math.Min(360, 200 + 40 * fHeight / fMinHeight);
+            }
+            else if (fHeight > 0)
+            {
+                color.RGB = Color.Goldenrod;
+                color.Hue = 100 * (fMaxHeight - fHeight) * (fMaxHeight - fHeight) / (fMaxHeight * fMaxHeight);
+            }
+
+            return new SolidBrush(color.RGB);
+        }
+
         /// <summary>
         /// Вычисляет цвет для отображения заданного уровня влажности
         /// </summary>
@@ -968,6 +994,12 @@ namespace MapDrawEngine
                 AddRoad(pRoad);
             }
 
+            //вычислим реки
+            foreach (IRiver pRiver in m_pWorld.Rivers)
+            {
+                AddRiver(pRiver);
+            }
+
             //нормализуем все квадранты таким образом, чтобы внутри каждого квадранта координаты считались от
             //верхнего левого угла самого квадранта, а не от центра оригинальной системы координат
             for (int i = 0; i < QUADRANTS_COUNT; i++)
@@ -1011,33 +1043,6 @@ namespace MapDrawEngine
 
             SetPan(0, 0);
         }
-
-        private Brush GetElevationColor(float fHeight, float fMinHeight, float fMaxHeight, LandTypeInfo pType)
-        {
-            if (float.IsNaN(fHeight))
-                return new SolidBrush(Color.Black);
-
-            if (fMinHeight == 0)
-                fMinHeight = fHeight;
-            if (fMaxHeight == 0)
-                fMaxHeight = fHeight;
-
-            KColor color = new KColor { RGB = Color.Cyan };
-
-            if (fHeight < 0 || pType.Environment.HasFlag(LandscapeGeneration.Environments.Liquid))
-            {
-                color.RGB = Color.Green;
-                color.Hue = Math.Min(360, 200 + 40 * fHeight / fMinHeight);
-            }
-            else if (fHeight > 0)
-            {
-                color.RGB = Color.Goldenrod;
-                color.Hue = 100 * (fMaxHeight - fHeight) * (fMaxHeight - fHeight) / (fMaxHeight * fMaxHeight);
-            }
-
-            return new SolidBrush(color.RGB);
-        }
-
         #region Вспомогательные функции, используемые в Assign
 
         /// <summary>
@@ -1381,6 +1386,31 @@ namespace MapDrawEngine
         }
 
         /// <summary>
+        /// Сохраняет информацию об участке реки в соответствующем квадранте
+        /// </summary>
+        /// <param name="pRoad">участок дороги</param>
+        private void AddRiver(IRiver pRiver)
+        {
+            if (pRiver.Length < 2)
+                return;
+
+            bool[,] aQuadrants;
+            PointF[][] aLinks = GetRiver(pRiver, out aQuadrants);
+
+            for (int i = 0; i < QUADRANTS_COUNT; i++)
+                for (int j = 0; j < QUADRANTS_COUNT; j++)
+                    if (aQuadrants[i, j])
+                    {
+                        foreach (var aLink in aLinks)
+                        {
+                            m_aQuadrants[i, j].RiversMap[1].StartFigure();
+                            //m_aQuadrants[i, j].m_cRoadsMap[eRoadType].AddLines(aLink);
+                            m_aQuadrants[i, j].RiversMap[1].AddCurve(aLink);
+                        }
+                    }
+        }
+
+        /// <summary>
         /// строит линию, отображающую участок дороги - в ОРИГИНАЛЬНЫХ координатах (с отражениями)
         /// </summary>
         /// <param name="pRoad">участок дороги</param>
@@ -1470,6 +1500,93 @@ namespace MapDrawEngine
             }
 
             return cRoadLine.ToArray();
+        }
+
+        /// <summary>
+        /// строит линию, отображающую участок реки - в ОРИГИНАЛЬНЫХ координатах (с отражениями)
+        /// </summary>
+        /// <param name="pRoad">участок дороги</param>
+        /// <param name="aQuadrants">список квадрантов, через которые проходит река</param>
+        /// <returns></returns>
+        private PointF[][] GetRiver(IRiver pRiver, out bool[,] aQuadrants)
+        {
+            aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
+
+            bool[,] aQuads;
+            List<PointF[]> cPathLines = new List<PointF[]>();
+
+            bool bCross;
+            //получаем линию без отражений
+            cPathLines.Add(BuildRiverLine(pRiver, 0, out bCross, out aQuads));
+
+            //если мир закольцован и построенная линия пересекает нулевой меридиан,
+            //то построим для неё отражение
+            if (m_pWorld.LocationsGrid.CycleShift != 0 && bCross)
+            {
+                if (pRiver.Vertexes[0].X > 0)
+                {
+                    cPathLines.Add(BuildRiverLine(pRiver, -m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                }
+                else
+                {
+                    cPathLines.Add(BuildRiverLine(pRiver, m_pWorld.LocationsGrid.RX * 2, out bCross, out aQuads));
+                }
+            }
+
+            //переносим информацию о квадрантах, через которые проходит линия, в общую матрицу
+            for (int i = 0; i < QUADRANTS_COUNT; i++)
+                for (int j = 0; j < QUADRANTS_COUNT; j++)
+                    if (aQuads[i, j])
+                        aQuadrants[i, j] = true;
+
+            return cPathLines.ToArray();
+        }
+
+        /// <summary>
+        /// строит линию, отображающую участок реки - в ОРИГИНАЛЬНЫХ координатах (без отражений)
+        /// </summary>
+        /// <param name="pPath">участок дороги</param>
+        /// <param name="fShift">сдвиг координат - для построения отражений</param>
+        /// <param name="bCross">признак того, что дорога пересекает нулевой меридиан</param>
+        /// <param name="aQuadrants">список квадрантов, через которые проходит дорога</param>
+        /// <returns>массив вершин ломаной линии</returns>
+        private PointF[] BuildRiverLine(IRiver pRiver, float fShift, out bool bCross, out bool[,] aQuadrants)
+        {
+            bCross = false;
+            aQuadrants = new bool[QUADRANTS_COUNT, QUADRANTS_COUNT];
+
+            List<PointF> cRiverLine = new List<PointF>();
+            float fLastPointX = pRiver.Vertexes[0].X + fShift;
+            foreach (VoronoiVertex pPoint in pRiver.Vertexes)
+            {
+                //пересекает-ли линия от предыдущей точки к текущей нулевой меридиан?
+                float fDX = fShift;
+                if (Math.Abs(fLastPointX - pPoint.X - fShift) > m_pWorld.LocationsGrid.RX)
+                {
+                    //определимся, где у нас была предыдущая часть линии - на западе или на востоке?
+                    //в зависимости от этого вычислим смещение для оставшейся части линии, чтобы 
+                    //не было разрыва
+                    fDX += fLastPointX < fShift ? -m_pWorld.LocationsGrid.RX * 2 : m_pWorld.LocationsGrid.RX * 2;
+                    bCross = true;
+                }
+
+                if (pPoint.X > m_pWorld.LocationsGrid.RX ||
+                    pPoint.X < -m_pWorld.LocationsGrid.RX)
+                    bCross = true;
+
+                cRiverLine.Add(ShiftPoint(pPoint, fDX));
+
+                //в каком квадранте лежит новая точка линии
+                int iQuadX = (int)(QUADRANTS_COUNT * (pPoint.X + m_pWorld.LocationsGrid.RX) / (2 * m_pWorld.LocationsGrid.RX));
+                int iQuadY = (int)(QUADRANTS_COUNT * (pPoint.Y + m_pWorld.LocationsGrid.RY) / (2 * m_pWorld.LocationsGrid.RY));
+
+                if (iQuadX >= 0 && iQuadX < QUADRANTS_COUNT && iQuadY >= 0 && iQuadY < QUADRANTS_COUNT)
+                    aQuadrants[iQuadX, iQuadY] = true;
+
+                fLastPointX = pPoint.X + fDX;
+            }
+
+            return cRiverLine.ToArray();
         }
         #endregion
 
@@ -1768,6 +1885,10 @@ namespace MapDrawEngine
 
             if (m_pSelectedState != null)
                 DrawStateBorder(gr, m_pSelectedState);
+
+            for (int i = 0; i < m_iQuadsWidth; i++)
+                for (int j = 0; j < m_iQuadsHeight; j++)
+                    aVisibleQuads[i, j]?.DrawRivers(gr, m_fScaleMultiplier, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
 
             Refresh();
 

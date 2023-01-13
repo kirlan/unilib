@@ -14,6 +14,7 @@ namespace LandscapeGeneration
         public virtual float X { get; set; } = 0;
         public virtual float Y { get; set; } = 0;
         public virtual float H { get; set; } = float.NaN;
+        public virtual float Depth { get; set; } = 0;
 
         private static long s_iCounter = 0;
 
