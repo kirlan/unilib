@@ -116,7 +116,7 @@ namespace Random
         /// <returns>random float</returns>
         public static float Get(float val)
         {
-            if (val <= 0.0f)
+            if (val < 0.0f)
                 return -Get(-val);
 
             return val * (float)Sample();
@@ -129,7 +129,7 @@ namespace Random
         /// <returns>random double</returns>
         public static double Get(double val)
         {
-            if (val <= 0.0)
+            if (val < 0.0)
                 return -Get(-val);
 
             return val * Sample();
