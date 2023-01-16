@@ -34,6 +34,25 @@ namespace LandscapeGeneration
             return false;
         }
 
+        public bool HasRiver()
+        {
+            if (!IsWater)
+            {
+                foreach (Location pLoc in Contents)
+                {
+                    foreach (var pEdge in pLoc.BorderWith.Values)
+                    {
+                        if (pEdge[0].River != null)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public float MovementCost
         {
             get { return LandType == null ? 100 : LandType.MovementCost; }

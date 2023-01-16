@@ -622,12 +622,12 @@ namespace MapDrawEngine
 
             KColor color = new KColor { RGB = Color.Cyan };
 
-            if (pType.Environment.HasFlag(LandscapeGeneration.Environments.Liquid))
+            if (pType != null && pType.Environment.HasFlag(LandscapeGeneration.Environments.Liquid))
             {
                 color.RGB = Color.Green;
                 color.Hue = Math.Min(360, 200 - 40.0f * iDistance.Value / m_pWorld.MaxBasinDistance);
             }
-            else 
+            else
             {
                 color.RGB = Color.Goldenrod;
                 color.Hue = 100 * (1.0f - (float)iDistance.Value / m_pWorld.MaxBasinDistance);

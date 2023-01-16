@@ -63,7 +63,7 @@ namespace LandscapeGeneration
             // пока список возможных вертексов не опустеет - наращиваем реку
             while (cNextRiverVertexes.Count > 0)
             {
-                int iChances = Rnd.ChooseBest(cNextRiverVertexes.Values);
+                int iChances = Rnd.ChooseOne(cNextRiverVertexes.Values, 3);
                 VoronoiVertex pNextRiverVertex = cNextRiverVertexes.Keys.ElementAt(iChances);
                 if (!AddVertex(pNextRiverVertex))
                 {
@@ -76,7 +76,7 @@ namespace LandscapeGeneration
                 foreach (var pPossibleNextVertex in pNextRiverVertex.LinkedVertexes)
                 {
                     float fChances = GetRiverChances(pPossibleNextVertex);
-                    if (fChances > 0.0f)
+                    if (fChances > 0.0f && GetVertexDistance(pPossibleNextVertex) <= GetVertexDistance(pNextRiverVertex))
                         cNextRiverVertexes[pPossibleNextVertex] = fChances;// * (float)Math.Exp(pNextRiverVertex.H - pPossibleNextVertex.H);
                 }
 
@@ -122,6 +122,22 @@ namespace LandscapeGeneration
             if (iTotalRivers > 2)
                 return 0.0f;
 
+            int iMinDistance = GetVertexDistance(pVertex);
+
+            //if (iTotalRivers > 0)
+            //    return 0.0f;
+
+            //fTotalHumidity /= iTotalRivers * 10 + 1;
+
+            //float fAveragePreference = fTotalPreference / iLocationsCounted;
+
+            //return fAveragePreference;// * fAverageHumidity / 100.0f;
+
+            return m_pSource.As<LocationBasin>().GetOwner().MaxDistance - iMinDistance;
+        }
+
+        private int GetVertexDistance(VoronoiVertex pVertex)
+        {
             int iMinDistance = int.MaxValue;
             //iTotalRivers = 0;
             foreach (Location pLoc in pVertex.Locations)
@@ -138,34 +154,9 @@ namespace LandscapeGeneration
                 int iDist = pLoc.As<LocationBasin>().Distance ?? 0;
                 if (iDist < iMinDistance)
                     iMinDistance = iDist;
-
-                //if (pLoc.GetOwner().LandType.Environment.HasFlag(Environments.Liquid))
-                //    fTotalPreference += 100.0f;
-                //else if (pLoc.As<LocationBasin>().GetOwner() == m_pSource.As<LocationBasin>().GetOwner())
-                //    fTotalPreference += /*pLoc.GetOwner().Humidity **/ (m_pSource.As<LocationBasin>().GetOwner().MaxDistance - (pLoc.As<LocationBasin>().Distance ?? 0));
-
-                //foreach (var pLinked in pLoc.BorderWith)
-                //{
-                //    if (pLinked.Key.HasOwner() && pLinked.Key.GetOwner().LandType.Environment.HasFlag(Environments.Liquid))
-                //        fTotalPreference += 50.0f;
-
-                //    //if (pLinked.Value[0].Point1.Depth > 0 || pLinked.Value[0].Point2.Depth > 0)
-                //    //    iTotalRivers++;
-                //}
-
-                //iLocationsCounted++;
             }
 
-            //if (iTotalRivers > 0)
-            //    return 0.0f;
-
-            //fTotalHumidity /= iTotalRivers * 10 + 1;
-
-            //float fAveragePreference = fTotalPreference / iLocationsCounted;
-
-            //return fAveragePreference;// * fAverageHumidity / 100.0f;
-
-            return m_pSource.As<LocationBasin>().GetOwner().MaxDistance - iMinDistance;
+            return iMinDistance;
         }
 
         private readonly List<VoronoiEdge> m_cEdges = new List<VoronoiEdge>();
@@ -197,7 +188,7 @@ namespace LandscapeGeneration
                     if (pLoc.Forbidden || !pLoc.HasOwner())
                         continue;
 
-                    if (pLoc.GetOwner().LandType.Environment.HasFlag(Environments.Liquid))
+                    if (pLoc.GetOwner().IsWater)
                         bMouth = true;
                 }
 
