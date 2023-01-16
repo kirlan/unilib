@@ -319,6 +319,27 @@ namespace MapDrawEngine
         }
 
         /// <summary>
+        /// Отрисовывать ли на карте границы водосборных бассейнов?
+        /// </summary>
+        private bool m_bShowBasins = false;
+
+        /// <summary>
+        /// Отрисовывать ли на карте границы водосборных бассейнов?
+        /// </summary>
+        public bool ShowBasins
+        {
+            get { return m_bShowBasins; }
+            set
+            {
+                if (m_bShowBasins != value)
+                {
+                    m_bShowBasins = value;
+                    Draw();
+                }
+            }
+        }
+
+        /// <summary>
         /// Отрисовывать ли на карте границы регионов?
         /// </summary>
         private bool m_bShowRegions = false;
@@ -594,6 +615,27 @@ namespace MapDrawEngine
             return new SolidBrush(color.RGB);
         }
 
+        private Brush GetBasinColor(int? iDistance, LandTypeInfo pType)
+        {
+            if (!iDistance.HasValue)
+                return new SolidBrush(Color.White);
+
+            KColor color = new KColor { RGB = Color.Cyan };
+
+            if (pType.Environment.HasFlag(LandscapeGeneration.Environments.Liquid))
+            {
+                color.RGB = Color.Green;
+                color.Hue = Math.Min(360, 200 - 40.0f * iDistance.Value / m_pWorld.MaxBasinDistance);
+            }
+            else 
+            {
+                color.RGB = Color.Goldenrod;
+                color.Hue = 100 * (1.0f - (float)iDistance.Value / m_pWorld.MaxBasinDistance);
+            }
+
+            return new SolidBrush(color.RGB);
+        }
+
         /// <summary>
         /// Вычисляет цвет для отображения заданного уровня влажности
         /// </summary>
@@ -844,21 +886,40 @@ namespace MapDrawEngine
                             pPath.AddPolygon(aPts);
 
                             //определим, каким цветом эта земля должна закрашиваться на карте высот
-                            Brush pBrush = GetElevationColor(pLoc.H, m_pWorld.MaxDepth, m_pWorld.MaxHeight, pLand.LandType);
+                            Brush pElevationBrush = GetElevationColor(pLoc.H, m_pWorld.MaxDepth, m_pWorld.MaxHeight, pLand.LandType);
+
+                            Brush pBasinBrush = GetBasinColor(pLoc.As<LocationBasin>().Distance, pLand.LandType);
 
                             foreach (MapQuadrant pQuad in aQuads)
                             {
                                 pQuad.Layers[MapLayer.Locations].StartFigure();
                                 pQuad.Layers[MapLayer.Locations].AddLines(aPts);
 
-                                if (!pQuad.Modes[MapMode.Elevation].ContainsKey(pBrush))
-                                    pQuad.Modes[MapMode.Elevation][pBrush] = new GraphicsPath();
-                                pQuad.Modes[MapMode.Elevation][pBrush].AddPolygon(aPts);
+                                if (!pQuad.Modes[MapMode.Elevation].ContainsKey(pElevationBrush))
+                                    pQuad.Modes[MapMode.Elevation][pElevationBrush] = new GraphicsPath();
+                                pQuad.Modes[MapMode.Elevation][pElevationBrush].AddPolygon(aPts);
+
+                                if (!pQuad.Modes[MapMode.Basins].ContainsKey(pBasinBrush))
+                                    pQuad.Modes[MapMode.Basins][pBasinBrush] = new GraphicsPath();
+                                pQuad.Modes[MapMode.Basins][pBasinBrush].AddPolygon(aPts);
                             }
                         }
                         m_cLocationBorders[pLoc] = pPath;
                         //добавим информацию о метке на карте
                         AddLocationSign(pLoc);
+                    }
+                }
+            }
+
+            foreach (Basin pBasin in m_pWorld.Basins)
+            {
+                aPoints = BuildPath(pBasin.FirstLines, true, out aQuads);
+                foreach (var aPts in aPoints)
+                {
+                    foreach (var pQuadLayers in aQuads.Select(x => x.Layers))
+                    {
+                        pQuadLayers[MapLayer.Basins].StartFigure();
+                        pQuadLayers[MapLayer.Basins].AddLines(aPts);
                     }
                 }
             }
@@ -1838,6 +1899,13 @@ namespace MapDrawEngine
                         aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.Lands, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
             }
 
+            if (m_bShowBasins)
+            {
+                for (int i = 0; i < m_iQuadsWidth; i++)
+                    for (int j = 0; j < m_iQuadsHeight; j++)
+                        aVisibleQuads[i, j]?.DrawPath(gr, MapLayer.Basins, i * m_fOneQuadWidth + iQuadDX, j * m_fOneQuadHeight + iQuadDY, m_fActualScale);
+            }
+
             if (m_bShowRegions)
             {
                 for (int i = 0; i < m_iQuadsWidth; i++)
@@ -2303,6 +2371,7 @@ namespace MapDrawEngine
                 LocationX pFocusedLocX = m_pFocusedLocation.As<LocationX>();
 
                 sToolTip.Append(pFocusedLocX.ToString());
+                sToolTip.Append(m_pFocusedLocation.As<LocationBasin>().ToString());
 
                 if (pFocusedLocX.Settlement?.Buildings.Count > 0)
                 {

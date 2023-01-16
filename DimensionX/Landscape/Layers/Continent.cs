@@ -56,6 +56,8 @@ namespace LandscapeGeneration
                         cBorderLength[pLM] = 0;
                         foreach (var pLine in pLandMass.Value)
                             cBorderLength[pLM] += pLine.Length;
+
+                        cBorderLength[pLM] /= pLandMass.Key.PerimeterLength;
                     }
                 }
             }
@@ -69,6 +71,13 @@ namespace LandscapeGeneration
 
             LandMass pAddon = cBorderLength.ElementAt(iChoice).Key;
 
+            Add(pAddon);
+
+            return pAddon;
+        }
+
+        public void Add(LandMass pAddon)
+        {
             Contents.Add(pAddon);
             pAddon.SetOwner(this);
 
@@ -85,8 +94,6 @@ namespace LandscapeGeneration
                 foreach (var pLine in pLandMass.Value)
                     Border[pLandMass.Key].Add(new VoronoiEdge(pLine));
             }
-
-            return pAddon;
         }
     }
 }

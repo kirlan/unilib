@@ -73,6 +73,10 @@
     <Compile Include="Grids\GenerationDelegates.cs" />
     <Compile Include="Layers\Base\IInfoLayer.cs" />
     <Compile Include="Layers\Base\LandTypeInfo.cs" />
+    <Compile Include="Layers\Basin.cs" />
+    <Compile Include="Layers\Biome.cs" />
+    <Compile Include="Layers\LandBiome.cs" />
+    <Compile Include="Layers\LocationBasin.cs" />
     <Compile Include="PathFinder\BasicHeap.cs" />
     <Compile Include="PathFinder\Path.cs" />
     <Compile Include="PathFinder\PriorityQueue.cs" />

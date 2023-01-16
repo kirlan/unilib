@@ -193,6 +193,9 @@ namespace LandscapeGeneration
         {
         }
 
+        /// <summary>
+        /// Заполняет <typeparamref name="LAYER"/>::BorderWith на основании значений из <typeparamref name="BASE"/>::BorderWith
+        /// </summary>
         public void FillBorderWithKeys()
         {
             foreach (var pLink in Origin.BorderWith)

@@ -48,6 +48,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage10 = new System.Windows.Forms.TabPage();
+            this.tabPage11 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -95,6 +96,9 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.miniMapDraw1 = new MapDrawEngine.MiniMapDraw();
             this.mapDraw1 = new MapDrawEngine.MapDraw();
+            this.showBasinsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showRegionsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.showBasinsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -320,6 +324,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage10);
+            this.tabControl1.Controls.Add(this.tabPage11);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
@@ -336,7 +341,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(538, 4);
+            this.tabPage1.Location = new System.Drawing.Point(593, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(0, 699);
@@ -346,7 +351,7 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(538, 4);
+            this.tabPage2.Location = new System.Drawing.Point(593, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(0, 699);
@@ -356,16 +361,25 @@
             // 
             // tabPage10
             // 
-            this.tabPage10.Location = new System.Drawing.Point(538, 4);
+            this.tabPage10.Location = new System.Drawing.Point(593, 4);
             this.tabPage10.Name = "tabPage10";
             this.tabPage10.Size = new System.Drawing.Size(0, 699);
             this.tabPage10.TabIndex = 7;
             this.tabPage10.Text = "Elevation";
             this.tabPage10.UseVisualStyleBackColor = true;
             // 
+            // tabPage11
+            // 
+            this.tabPage11.Location = new System.Drawing.Point(593, 4);
+            this.tabPage11.Name = "tabPage11";
+            this.tabPage11.Size = new System.Drawing.Size(0, 699);
+            this.tabPage11.TabIndex = 8;
+            this.tabPage11.Text = "Basins";
+            this.tabPage11.UseVisualStyleBackColor = true;
+            // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(538, 4);
+            this.tabPage3.Location = new System.Drawing.Point(593, 4);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(0, 699);
             this.tabPage3.TabIndex = 2;
@@ -374,7 +388,7 @@
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(538, 4);
+            this.tabPage4.Location = new System.Drawing.Point(593, 4);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(0, 699);
             this.tabPage4.TabIndex = 3;
@@ -383,7 +397,7 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(538, 4);
+            this.tabPage5.Location = new System.Drawing.Point(593, 4);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(0, 699);
             this.tabPage5.TabIndex = 4;
@@ -392,7 +406,7 @@
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(538, 4);
+            this.tabPage6.Location = new System.Drawing.Point(593, 4);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Size = new System.Drawing.Size(0, 699);
             this.tabPage6.TabIndex = 5;
@@ -401,7 +415,7 @@
             // 
             // tabPage9
             // 
-            this.tabPage9.Location = new System.Drawing.Point(538, 4);
+            this.tabPage9.Location = new System.Drawing.Point(593, 4);
             this.tabPage9.Name = "tabPage9";
             this.tabPage9.Size = new System.Drawing.Size(0, 699);
             this.tabPage9.TabIndex = 6;
@@ -571,6 +585,7 @@
             this.debugToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showLocationsToolStripMenuItem,
             this.showLandsToolStripMenuItem,
+            this.showBasinsToolStripMenuItem,
             this.showRegionsToolStripMenuItem,
             this.showLandMassesToolStripMenuItem});
             this.debugToolStripMenuItem1.Name = "debugToolStripMenuItem1";
@@ -695,6 +710,8 @@
             this.toolStripMenuItem7.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem8,
             this.toolStripMenuItem9,
+            this.showBasinsToolStripMenuItem1,
+            this.showRegionsToolStripMenuItem1,
             this.toolStripMenuItem10});
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
             this.toolStripMenuItem7.Size = new System.Drawing.Size(203, 22);
@@ -746,6 +763,7 @@
             this.toolTip1.AutoPopDelay = 32766;
             this.toolTip1.InitialDelay = 0;
             this.toolTip1.ReshowDelay = 0;
+            this.toolTip1.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip1_Popup);
             // 
             // miniMapDraw1
             // 
@@ -779,6 +797,30 @@
             this.mapDraw1.Size = new System.Drawing.Size(601, 703);
             this.mapDraw1.TabIndex = 20;
             this.mapDraw1.SelectedStateChanged += new System.EventHandler<MapDrawEngine.MapDraw.SelectedStateChangedEventArgs>(this.worldMap1_StateSelectedEvent);
+            // 
+            // showBasinsToolStripMenuItem
+            // 
+            this.showBasinsToolStripMenuItem.CheckOnClick = true;
+            this.showBasinsToolStripMenuItem.Name = "showBasinsToolStripMenuItem";
+            this.showBasinsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showBasinsToolStripMenuItem.Text = "Show Basins";
+            this.showBasinsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.MapLayersChanged);
+            // 
+            // showRegionsToolStripMenuItem1
+            // 
+            this.showRegionsToolStripMenuItem1.CheckOnClick = true;
+            this.showRegionsToolStripMenuItem1.Name = "showRegionsToolStripMenuItem1";
+            this.showRegionsToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
+            this.showRegionsToolStripMenuItem1.Text = "Show Regions";
+            this.showRegionsToolStripMenuItem1.CheckedChanged += new System.EventHandler(this.MapLayersChanged2);
+            // 
+            // showBasinsToolStripMenuItem1
+            // 
+            this.showBasinsToolStripMenuItem1.CheckOnClick = true;
+            this.showBasinsToolStripMenuItem1.Name = "showBasinsToolStripMenuItem1";
+            this.showBasinsToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
+            this.showBasinsToolStripMenuItem1.Text = "Show Basins";
+            this.showBasinsToolStripMenuItem1.CheckedChanged += new System.EventHandler(this.MapLayersChanged2);
             // 
             // Form1
             // 
@@ -885,6 +927,10 @@
         private System.Windows.Forms.TabPage tabPage10;
         private System.Windows.Forms.ToolStripMenuItem hideMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showRegionsToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabPage11;
+        private System.Windows.Forms.ToolStripMenuItem showBasinsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showBasinsToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem showRegionsToolStripMenuItem1;
     }
 }
 

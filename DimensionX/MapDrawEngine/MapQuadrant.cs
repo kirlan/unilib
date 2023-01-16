@@ -14,6 +14,7 @@ namespace MapDrawEngine
     {
         Continents,
         Locations,
+        Basins,
         Lands,
         Regions,
         Provincies,
@@ -43,6 +44,10 @@ namespace MapDrawEngine
         /// карта высот
         /// </summary>
         Elevation,
+        /// <summary>
+        /// карта бассеинов водосбора
+        /// </summary>
+        Basins,
         /// <summary>
         /// уровень технического развития
         /// </summary>

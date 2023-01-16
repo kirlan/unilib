@@ -45,6 +45,7 @@ namespace LandscapeGeneration
 
         public LocationsGrid LocationsGrid { get; } = null;
         public Land[] Lands { get; private set; } = null;
+        public Basin[] Basins { get; private set; } = null;
 
         public River[] Rivers { get; private set; } = null;
 
@@ -53,6 +54,7 @@ namespace LandscapeGeneration
 
         public float MaxDepth { get; private set; } = 0;
         public float MaxHeight { get; private set; } = 0;
+        public int MaxBasinDistance { get; private set; } = 0;
 
         public List<TransportationLinkBase> TransportGrid { get; } = new List<TransportationLinkBase>();
         public List<TransportationLinkBase> LandsTransportGrid { get; } = new List<TransportationLinkBase>();
@@ -132,9 +134,11 @@ namespace LandscapeGeneration
 
             CalculateElevations(BeginStep, ProgressStep);
 
+            BuildBasins(BeginStep, ProgressStep);
+
             AddRivers(BeginStep, ProgressStep);
 
-            SmoothBiomes();
+            SmoothBiomesBorders();
 
             AddPeaks();
 
@@ -461,7 +465,7 @@ namespace LandscapeGeneration
 
             AddMountains(BeginStep, ProgressStep);
 
-            AddLakes(50, BeginStep, ProgressStep);
+            AddLakes(150, BeginStep, ProgressStep);
 
             CalculateHumidity(BeginStep, ProgressStep);
 
@@ -1075,9 +1079,9 @@ namespace LandscapeGeneration
                     }
 
                     if (pLoc.H > 0)
-                        pLoc.H = Math.Max(0.1f, fTotal / fTotalWeight);
+                        pLoc.H = Math.Max(0.1f + Rnd.Get(0.01f), fTotal / fTotalWeight);
                     else
-                        pLoc.H = Math.Min(-0.5f, fTotal / fTotalWeight);
+                        pLoc.H = Math.Min(-0.5f - Rnd.Get(0.1f), fTotal / fTotalWeight);
                 }
             }
         }
@@ -1139,6 +1143,121 @@ namespace LandscapeGeneration
             }
         }
 
+        protected void BuildBasins(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
+        {
+            BeginStep("Building basins...", Lands.Length);
+
+            foreach (Location pLoc in LocationsGrid.Locations)
+            {
+                pLoc.AddLayer(new LocationBasin(pLoc));
+            }
+
+            foreach (LocationBasin pLoc in LocationsGrid.Locations.Select(x => x.As<LocationBasin>()))
+            {
+                pLoc.FillBorderWithKeys();
+            }
+
+            List<Basin> cBasins = new List<Basin>();
+            foreach (LandMass pLandMass in LandMasses)
+            {
+                bool bAdded = false;
+                foreach (Land pLand in pLandMass.Contents)
+                {
+                    if (pLand.Forbidden || !pLand.IsWater)
+                        continue;
+
+                    foreach (Location pLoc in pLand.Contents)
+                    {
+                        if (pLoc.Forbidden)
+                            continue;
+
+                        //Проверим, является ли pLoc самой глубокой точкой 
+                        bool bIsLowest = true;
+                        foreach (Location pLinkedLoc in pLoc.BorderWithKeys)
+                        {
+                            //игнорируем запретные, ничейные и надводные локации - считаем они все выше текущей, независимо от реального значения высоты
+                            //TODO: добавить в CalculateElevations код для автоматического предотвращения таких ситуаций!
+                            if (pLinkedLoc.Forbidden || !pLinkedLoc.HasOwner() || !pLinkedLoc.GetOwner().IsWater)
+                                continue;
+
+                            //если найдём хоть одну соседнюю водную локацию, которая глубже - значит текущая уже не самая глубокая!
+                            if (pLinkedLoc.H <= pLoc.H)
+                            {
+                                bIsLowest = false;
+                                break;
+                            }
+                        }
+
+                        if (bIsLowest)
+                        {
+                            Basin pNewBasin = new Basin();
+                            pNewBasin.Start(pLoc.As<LocationBasin>());
+                            cBasins.Add(pNewBasin);
+                            bAdded = true;
+
+                            //не больше 1 бассеина на каждую подводную землю
+                            break;
+                        }
+                    }
+
+                    // не больше 1 бассеина на каждую подводную плиту
+                    if (pLandMass.IsWater && bAdded)
+                        break;
+                }
+            }
+
+            Basins = cBasins.ToArray();
+
+            bool bCanGrow;
+            do
+            {
+                bCanGrow = false;
+                foreach (Basin pBasin in Basins)
+                {
+                    if (pBasin.GrowOcean())
+                        bCanGrow = true;
+                }
+                ProgressStep();
+            }
+            while (bCanGrow);
+
+            do
+            {
+                bCanGrow = false;
+                foreach (Basin pBasin in Basins)
+                {
+                    if (pBasin.GrowLand())
+                        bCanGrow = true;
+                }
+                ProgressStep();
+            }
+            while (bCanGrow);
+
+            foreach (Basin pBasin in Basins)
+                pBasin.ResetGrow();
+
+            do
+            {
+                bCanGrow = false;
+                foreach (Basin pBasin in Basins)
+                {
+                    if (pBasin.GrowForced())
+                        bCanGrow = true;
+                }
+                ProgressStep();
+            }
+            while (bCanGrow);
+
+            MaxBasinDistance = 0;
+            foreach (Basin pBasin in Basins)
+            {
+                pBasin.Finish(LocationsGrid.CycleShift);
+
+                if (MaxBasinDistance < pBasin.MaxDistance)
+                    MaxBasinDistance = pBasin.MaxDistance;
+            }
+        }
+
         /// <summary>
         /// Добавляет реки
         /// </summary>
@@ -1146,73 +1265,61 @@ namespace LandscapeGeneration
         /// <param name="ProgressStep"></param>
         private void AddRivers(BeginStepDelegate BeginStep, ProgressStepDelegate ProgressStep)
         {
-            float fMinRiverLength = LocationsGrid.RX / 4;
+            float fMinRiverLength = LocationsGrid.RX / 8;
             float fMaxTotalRiverLength = LocationsGrid.RX * 10;
 
             BeginStep("Adding rivers...", (int)(fMaxTotalRiverLength / fMinRiverLength));
 
-            Dictionary<Location, float> cSourceChance = new Dictionary<Location, float>();
-            foreach (LandMass pLandMass in LandMasses)
+            List<River> cRivers = new List<River>();
+            foreach (Basin pBasin in Basins)
             {
-                if (pLandMass.IsWater)
+                if (pBasin.Contents.Count < 10)
                     continue;
 
-                //bool bIsCoastral = false;
-                //foreach (LandMass pLinkedLandMass in pLandMass.BorderWithKeys)
-                //{
-                //    if (pLinkedLandMass.IsWater)
-                //    {
-                //        bIsCoastral = true;
-                //        break;
-                //    }
-                //}
+                //fMinRiverLength = (float)Math.Sqrt(pBasin.Contents.Count) / 2;
 
-                //if (bIsCoastral)
-                //    continue;
-
-                foreach (Land pLand in pLandMass.Contents)
+                Dictionary<Location, float> cSourceChance = new Dictionary<Location, float>();
+                foreach (LocationBasin pLoc in pBasin.Contents)
                 {
-                    if (pLand.LandType.Environment.HasFlag(Environments.Liquid))
+                    if (pLoc.Origin.GetOwner().IsWater)
                         continue;
 
-                    foreach (Location pLoc in pLand.Contents)
+                    bool bAlreadyOccupied = false;
+                    foreach (var pLinkedLoc in pLoc.BorderWith)
                     {
-                        bool bAlreadyOccupied = false;
-                        foreach (var pLinkedLoc in pLoc.BorderWith)
+                        Land pLand = pLinkedLoc.Key.Origin.GetOwner();
+                        if ((pLand != null && pLand.IsWater) ||
+                            pLinkedLoc.Value[0].Point1.Depth > 0 ||
+                            pLinkedLoc.Value[0].Point2.Depth > 0)
                         {
-                            if ((pLinkedLoc.Key.HasOwner() && pLinkedLoc.Key.GetOwner().IsWater) || pLinkedLoc.Value[0].Point1.Depth > 0 || pLinkedLoc.Value[0].Point2.Depth > 0)
-                            {
-                                bAlreadyOccupied = true;
-                                break;
-                            }
+                            bAlreadyOccupied = true;
+                            break;
                         }
-
-                        if (bAlreadyOccupied)
-                            continue;
-
-                        cSourceChance[pLoc] = pLand.Humidity * pLoc.H;
                     }
+
+                    if (bAlreadyOccupied)
+                        continue;
+
+                    cSourceChance[pLoc.Origin] = /*pLoc.Origin.GetOwner().Humidity * */pLoc.Distance ?? 0;
                 }
-            }
 
-            float fTotalRiversLength = 0f;
-            List<River> cRivers = new List<River>();
-            while (fTotalRiversLength < fMaxTotalRiverLength && cSourceChance.Count > 0)
-            {
-                int iChances = Rnd.ChooseOne(cSourceChance.Values);
-
-                Location pSource = cSourceChance.Keys.ElementAt(iChances);
-                cSourceChance.Remove(pSource);
-
-                River pRiver = new River(pSource);
-                if (pRiver.Finished && pRiver.Length > fMinRiverLength)
+                while (cSourceChance.Count > 0)
                 {
-                    cRivers.Add(pRiver);
-                    fTotalRiversLength += pRiver.Length;
-                }
-                else
-                {
-                    pRiver.Remove();
+                    int iChances = Rnd.ChooseBest(cSourceChance.Values);
+
+                    Location pSource = cSourceChance.Keys.ElementAt(iChances);
+                    cSourceChance.Remove(pSource);
+
+                    River pRiver = new River(pSource);
+                    if (/*pRiver.Finished && */pRiver.Length > fMinRiverLength)
+                    {
+                        cRivers.Add(pRiver);
+                        break;
+                    }
+                    else
+                    {
+                        pRiver.Remove();
+                    }
                 }
             }
 
@@ -1221,72 +1328,7 @@ namespace LandscapeGeneration
             ProgressStep();
         }
 
-        private sealed class LandBiome : TerritoryExtended<LandBiome, Biome, Land>
-        {
-            public LandBiome(Land pLand) : base(pLand)
-            { }
-
-            public LandBiome()
-            { }
-        }
-        /// <summary>
-        /// Биом - группа ВСЕХ сопредельных земель (<see cref="Land"/>/<see cref="LandBiome"/>) одного типа <see cref="LandTypeInfo"/>.
-        /// Используется ТОЛЬКО при сглаживании границ локаций - внутри <see cref="SmoothBiomes"/>
-        /// </summary>
-        private sealed class Biome : TerritoryCluster<Biome, Landscape, LandBiome>
-        {
-            public Biome()
-            { }
-
-            public Biome(LandBiome pSeed, float fCycleShift)
-            {
-                InitBorder(pSeed);
-
-                Contents.Add(pSeed);
-
-                bool bAdded;
-                do
-                {
-                    bAdded = false;
-
-                    LandBiome[] aBorderLands = new List<LandBiome>(Border.Keys).ToArray();
-                    foreach (LandBiome pLand in aBorderLands)
-                    {
-                        if (pLand.Forbidden)
-                            continue;
-
-                        if (pLand.Origin.LandType == pSeed.Origin.LandType && !Contents.Contains(pLand))
-                        {
-                            Contents.Add(pLand);
-
-                            Border[pLand].Clear();
-                            Border.Remove(pLand);
-
-                            foreach (var pBorderLand in pLand.BorderWith)
-                            {
-                                if (Contents.Contains(pBorderLand.Key))
-                                    continue;
-
-                                if (!Border.ContainsKey(pBorderLand.Key))
-                                    Border[pBorderLand.Key] = new List<VoronoiEdge>();
-                                VoronoiEdge[] cLines = pBorderLand.Value.ToArray();
-                                foreach (var pLine in cLines)
-                                    Border[pBorderLand.Key].Add(new VoronoiEdge(pLine));
-                            }
-
-                            bAdded = true;
-                        }
-                    }
-                }
-                while (bAdded);
-
-                ChainBorder(fCycleShift);
-            }
-
-            public override float GetMovementCost() { return 0; }
-        }
-
-        private void SmoothBiomes()
+        private void SmoothBiomesBorders()
         {
             foreach (Land pLand in Lands)
             {

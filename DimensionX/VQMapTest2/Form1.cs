@@ -180,18 +180,21 @@ namespace VQMapTest2
                     mapDraw1.Mode = MapMode.Elevation;
                     break;
                 case 3:
-                    mapDraw1.Mode = MapMode.Natives;
+                    mapDraw1.Mode = MapMode.Basins;
                     break;
                 case 4:
-                    mapDraw1.Mode = MapMode.Nations;
+                    mapDraw1.Mode = MapMode.Natives;
                     break;
                 case 5:
-                    mapDraw1.Mode = MapMode.TechLevel;
+                    mapDraw1.Mode = MapMode.Nations;
                     break;
                 case 6:
-                    mapDraw1.Mode = MapMode.PsiLevel;
+                    mapDraw1.Mode = MapMode.TechLevel;
                     break;
                 case 7:
+                    mapDraw1.Mode = MapMode.PsiLevel;
+                    break;
+                case 8:
                     mapDraw1.Mode = MapMode.Infrastructure;
                     break;
             }
@@ -209,6 +212,7 @@ namespace VQMapTest2
             mapDraw1.ShowLands = showLandsToolStripMenuItem.Checked;
             mapDraw1.ShowRegions = showRegionsToolStripMenuItem.Checked;
             mapDraw1.ShowLandMasses = showLandMassesToolStripMenuItem.Checked;
+            mapDraw1.ShowBasins = showBasinsToolStripMenuItem.Checked;
 
             if (toolStripMenuItem3.Checked != showLandmarksToolStripMenuItem.Checked)
                 toolStripMenuItem3.Checked = showLandmarksToolStripMenuItem.Checked;
@@ -224,6 +228,10 @@ namespace VQMapTest2
                 toolStripMenuItem9.Checked = showLandsToolStripMenuItem.Checked;
             if (toolStripMenuItem10.Checked != showLandMassesToolStripMenuItem.Checked)
                 toolStripMenuItem10.Checked = showLandMassesToolStripMenuItem.Checked;
+            if (showBasinsToolStripMenuItem1.Checked != showBasinsToolStripMenuItem.Checked)
+                showBasinsToolStripMenuItem1.Checked = showBasinsToolStripMenuItem.Checked;
+            if (showRegionsToolStripMenuItem1.Checked != showRegionsToolStripMenuItem.Checked)
+                showRegionsToolStripMenuItem1.Checked = showRegionsToolStripMenuItem.Checked;
 
             comboBox1.Focus();
         }
@@ -236,7 +244,9 @@ namespace VQMapTest2
             mapDraw1.ShowProvincies = toolStripMenuItem6.Checked;
             mapDraw1.ShowLocationsBorders = toolStripMenuItem8.Checked;
             mapDraw1.ShowLands = toolStripMenuItem9.Checked;
+            mapDraw1.ShowRegions = showRegionsToolStripMenuItem1.Checked;
             mapDraw1.ShowLandMasses = toolStripMenuItem10.Checked;
+            mapDraw1.ShowBasins = showBasinsToolStripMenuItem1.Checked;
 
             if (showLandmarksToolStripMenuItem.Checked != toolStripMenuItem3.Checked)
                 showLandmarksToolStripMenuItem.Checked = toolStripMenuItem3.Checked;
@@ -252,6 +262,10 @@ namespace VQMapTest2
                 showLandsToolStripMenuItem.Checked = toolStripMenuItem9.Checked;
             if (showLandMassesToolStripMenuItem.Checked != toolStripMenuItem10.Checked)
                 showLandMassesToolStripMenuItem.Checked = toolStripMenuItem10.Checked;
+            if (showBasinsToolStripMenuItem.Checked != showBasinsToolStripMenuItem1.Checked)
+                showBasinsToolStripMenuItem.Checked = showBasinsToolStripMenuItem1.Checked;
+            if (showRegionsToolStripMenuItem.Checked != showRegionsToolStripMenuItem1.Checked)
+                showRegionsToolStripMenuItem.Checked = showRegionsToolStripMenuItem1.Checked;
 
             comboBox1.Focus();
         }
@@ -856,6 +870,11 @@ namespace VQMapTest2
             //==========================================DEBUG=================================================
             hideMapToolStripMenuItem_Click(this, null);
             //==========================================DEBUG=================================================
+        }
+
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
+        {
+
         }
     }
 }
