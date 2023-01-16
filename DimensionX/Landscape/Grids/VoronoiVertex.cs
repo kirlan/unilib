@@ -50,11 +50,14 @@ namespace LandscapeGeneration
             foreach (Location pLinkedLoc in cTemp)
                 pLinkedLoc.ReplaceVertex(this, pGood);
 
-            foreach (var pLinkedVertexes in LinkedVertexes.Select(x => x.LinkedVertexes))
+            foreach (var pLinkedVertex in LinkedVertexes)
             {
-                pLinkedVertexes.Remove(this);
-                if (!pLinkedVertexes.Contains(pGood))
-                    pLinkedVertexes.Add(pGood);
+                pLinkedVertex.LinkedVertexes.Remove(this);
+                if (!pLinkedVertex.LinkedVertexes.Contains(pGood))
+                    pLinkedVertex.LinkedVertexes.Add(pGood);
+
+                if (!pGood.LinkedVertexes.Contains(pLinkedVertex))
+                    pGood.LinkedVertexes.Add(pLinkedVertex);
             }
         }
 
