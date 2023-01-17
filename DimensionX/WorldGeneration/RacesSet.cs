@@ -7,7 +7,7 @@ namespace WorldGeneration
 {
     public class RacesSet
     {
-        public static RacesSet[] s_aSets =
+        public static readonly RacesSet[] s_aSets =
         {
             new RacesSet("humans (west europe)", new[]{"white", "barb"}),
             new RacesSet("humans (east europe)", new[]{"white", "slavic", "hellene", "imperial"}),
