@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -314,7 +314,7 @@ namespace GeneLab
                     sBody2 += sBreastsDescription;
                 }
 
-                if (sBody2 != "")
+                if (!string.IsNullOrEmpty(sBody2))
                 {
                     if (sResult.Length > 0)
                         sResult.Append(" They ");
@@ -371,7 +371,7 @@ namespace GeneLab
                 if (sResult.Length > 0)
                     sResult.Append(" They ");
 
-                if (m_pValues.Get<HairsGenetix>().GetDescription() != "")
+                if (!string.IsNullOrEmpty(m_pValues.Get<HairsGenetix>().GetDescription()))
                     sResult.Append(m_pValues.Get<HairsGenetix>().GetDescription());
                 else
                     sResult.Append("are bald, and have no beard or moustache.");

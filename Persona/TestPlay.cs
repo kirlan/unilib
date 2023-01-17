@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -195,7 +195,7 @@ namespace Persona
             ReactionPanel.Visible = true;
             EventPanel.Visible = false;
 
-            if (ReactionTextBox.Text != "")
+            if (!string.IsNullOrEmpty(ReactionTextBox.Text))
                 ShowAllParams();
             else
                 ReactionEndButton_Click(null, null);

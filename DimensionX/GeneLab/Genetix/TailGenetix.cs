@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,7 +57,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            if (sTail != "")
+            if (!string.IsNullOrEmpty(sTail))
             {
                 switch (TailControl)
                 {

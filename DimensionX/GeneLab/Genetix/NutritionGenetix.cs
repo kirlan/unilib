@@ -123,7 +123,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            if (sMeals != "")
+            if (!string.IsNullOrEmpty(sMeals))
             {
                 if (eGender.HasValue)
                     return (eGender == Gender.Male ? "He " : "She ") + sMeals + ".";

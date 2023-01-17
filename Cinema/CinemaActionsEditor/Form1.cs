@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -163,7 +163,7 @@ namespace CinemaActionsEditor
                     string sSubGenreString = "";
                     foreach (GenreTag pTag in pAction.Tags)
                     {
-                        if (sSubGenreString == "")
+                        if (string.IsNullOrEmpty(sSubGenreString))
                             sSubGenreString += pTag.Name;
                         else
                             sSubGenreString += ", " + pTag.Name;

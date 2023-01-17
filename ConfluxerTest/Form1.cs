@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,7 +20,7 @@ namespace ConfluxerTest
         //Beloslav Berimir Berislav Blagoslav Bogdan Boleslav Borimir Borislav Bratislav Bronislav Bryacheslav Budimir Velimir Velislav Vladimir Vladislav Vsevolod Vseslav Vyacheslav Gorislav Gostemil Gostomisl Gradimir Gradislav Granislav Dobromil Dobromir Dobromisl Dragomir Zvenislav Zlatomir Izyaslav Istislav Ladislav Lubomir Lubomisl Mechislav Milorad Miloslav Miroslav Mstislav Nevzor Ostromir Peresvet Putimir Putislav Radimir Radislav Ratibor Rodislav Rostislav Svetovid Svetozar Svyatogor Svyatopolk Svyatoslav Stanimir Stanislav Sudimir Sudislav Tverdimir Tverdislav Tihomir Yaromir Yaropolk Yaroslav
         private void button1_Click(object sender, EventArgs e)
         {
-            if(richTextBox1.Text == "")
+            if(string.IsNullOrEmpty(richTextBox1.Text))
                 return;
 
             Confluxer pConf = new Confluxer(richTextBox1.Text, (int)numericUpDown1.Value);

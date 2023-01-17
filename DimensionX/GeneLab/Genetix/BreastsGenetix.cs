@@ -1,4 +1,4 @@
-﻿using Random;
+using Random;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +67,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            if (sBreasts != "")
+            if (!string.IsNullOrEmpty(sBreasts))
             {
                 sBreasts += " ";
                 switch (BreastSize)
@@ -93,7 +93,7 @@ namespace GeneLab.Genetix
                 }
             }
 
-            if (sBreasts != "")
+            if (!string.IsNullOrEmpty(sBreasts))
             {
                 if (eGender.HasValue)
                     return (eGender == Gender.Male ? " He" : " She") + " has " + sBreasts + ".";

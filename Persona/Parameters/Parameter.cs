@@ -32,7 +32,7 @@ namespace Persona.Parameters
         {
             get
             {
-                if (m_sCollection == "")
+                if (string.IsNullOrEmpty(m_sCollection))
                     return m_sName;
                 else
                     return m_sCollection + "." + m_sName;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -106,7 +106,7 @@ namespace Persona
             pXml.GetStringAttribute(pParamNode, "id", ref m_sID);
 
             string sAction = "";
-            if(pXml.GetStringAttribute(pParamNode, "domain", ref sAction) == "")
+            if(string.IsNullOrEmpty(pXml.GetStringAttribute(pParamNode, "domain", ref sAction)))
                 pXml.GetStringAttribute(pParamNode, "action", ref sAction);
             foreach (Action pAction in cActions)
                 if (pAction.m_sName == sAction)

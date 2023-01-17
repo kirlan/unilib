@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -3009,7 +3009,7 @@ namespace Socium
                 !pOriginal.HasIdentical<WingsGenetix>(Phenotype.m_pValues) ||
                 !pOriginal.HasIdentical<TailGenetix>(Phenotype.m_pValues))
             {
-                if (sResult != "")
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " ";
 
                 sResult += Gender == Gender.Male ? "He has " : "She has ";
@@ -3088,7 +3088,7 @@ namespace Socium
             if (!pOriginal.HasIdentical<BodyGenetix>(Phenotype.m_pValues) ||
                 !pOriginal.HasIdentical<HideGenetix>(Phenotype.m_pValues))
             {
-                if (sResult != "")
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " ";
 
                 bool bSemicolon = false;
@@ -3118,7 +3118,7 @@ namespace Socium
                 !pOriginal.HasIdentical<EarsGenetix>(Phenotype.m_pValues) ||
                 !pOriginal.HasIdentical<FaceGenetix>(Phenotype.m_pValues))
             {
-                if (sResult != "")
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " ";
 
                 bool bSemicolon = false;
@@ -3165,10 +3165,10 @@ namespace Socium
             //    (Gender == CPerson.Gender.Male && (pOriginal.m_pHairs.m_eHairsM != m_pFenotype.m_pHairs.m_eHairsM || pOriginal.m_pHairs.m_eBeardM != m_pFenotype.m_pHairs.m_eBeardM)) ||
             //    (Gender == CPerson.Gender.Female && (pOriginal.m_pHairs.m_eHairsF != m_pFenotype.m_pHairs.m_eHairsF || pOriginal.m_pHairs.m_eBeardF != m_pFenotype.m_pHairs.m_eBeardF)))
             //{
-                if (sResult != "")
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " ";
 
-                if (Phenotype.m_pValues.Get<HairsGenetix>().GetDescription() != "")
+                if (!string.IsNullOrEmpty(Phenotype.m_pValues.Get<HairsGenetix>().GetDescription()))
                     sResult += Phenotype.m_pValues.Get<HairsGenetix>().GetDescription(Gender);
                 else
                     sResult = "Both males and females are bald, and have no beard or moustache.";
@@ -3177,7 +3177,7 @@ namespace Socium
             if ((pOriginal.Get<LifeCycleGenetix>().DyingRate == DyingRate.High && Age > AgeCategory.Adult) ||
                 (pOriginal.Get<LifeCycleGenetix>().DyingRate == DyingRate.Moderate && Age > AgeCategory.Aged))
             {
-                if (sResult != "")
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " ";
 
                 sResult += (Gender == Gender.Male ? "He" : "She") + " looks very old for " + (Gender == Gender.Male ? "his" : "her") + " age.";
@@ -3185,7 +3185,7 @@ namespace Socium
 
             if (pOriginal.Get<LifeCycleGenetix>().DyingRate == DyingRate.Low && Age > AgeCategory.Adult)
             {
-                if (sResult != "")
+                if (!string.IsNullOrEmpty(sResult))
                     sResult += " ";
 
                 sResult += (Gender == Gender.Male ? "He" : "She") + " looks surprisingly young for " + (Gender == Gender.Male ? "his" : "her") + " age.";
@@ -3274,7 +3274,7 @@ namespace Socium
             //if (m_eBodyModifications == BodyModifications.Body_Modifications_Allowed)
             //    sResult += pOther.m_eBodyModifications == BodyModifications.Body_Modifications_Blamed ? "could have some tatoo or pierceing" : "could have tatoo or pierceing on their choice";
 
-            if (sResult != "")
+            if (!string.IsNullOrEmpty(sResult))
                 sResult += ", ";
 
             if (Culture.Customs.Has(Customs.Clothes.Covering_Clothes))
@@ -3304,7 +3304,7 @@ namespace Socium
             //if (m_pCustoms.m_eFamilyValues == Customs.FamilyValues.Moderate_Family_Values)
             //    sResult += "have not so tight family bonds";
 
-            if (sResult != "")
+            if (!string.IsNullOrEmpty(sResult))
                 sResult += ". ";
 
             sResult += Gender == Gender.Male ? "He is " : "She is ";

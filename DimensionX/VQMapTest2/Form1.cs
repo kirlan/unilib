@@ -324,16 +324,16 @@ namespace VQMapTest2
                 }
                 else
                 {
-                    if (sFenotypeNationM != "")
+                    if (!string.IsNullOrEmpty(sFenotypeNationM))
                     {
                         if (!sFenotypeNationM.StartsWith("are"))
                             sFenotypeNationM = "are common " + pNation.Race.Name + "s, however they " + sFenotypeNationM.Substring(0, 1).ToLower() + sFenotypeNationM.Substring(1);
                         richTextBox1.AppendText(pNation.ProtoSociety.Name + " males " + sFenotypeNationM);
                     }
 
-                    if (sFenotypeNationF != "")
+                    if (!string.IsNullOrEmpty(sFenotypeNationF))
                     {
-                        if (sFenotypeNationM != "")
+                        if (!string.IsNullOrEmpty(sFenotypeNationM))
                             richTextBox1.AppendText("\n");
 
                         if (!sFenotypeNationF.StartsWith("are"))
@@ -439,11 +439,11 @@ namespace VQMapTest2
                 {
                     string sMajors = pEstate.DominantCulture.Customs.Has(Customs.GenderPriority.Patriarchy) ? "males" : "females";
                     string sMinors = pEstate.DominantCulture.Customs.Has(Customs.GenderPriority.Patriarchy) ? "females" : "males";
-                    if (sMinorsCustoms != "")
+                    if (!string.IsNullOrEmpty(sMinorsCustoms))
                         richTextBox1.AppendText(" Their " + sMinors + " commonly " + sMinorsCustoms + ".");
-                    if (sMinorsCulture != "")
+                    if (!string.IsNullOrEmpty(sMinorsCulture))
                     {
-                        if (sMinorsCustoms == "")
+                        if (string.IsNullOrEmpty(sMinorsCustoms))
                             richTextBox1.AppendText(" Their " + sMinors + " usually " + sMinorsCulture + " then " + sMajors + ".");
                         else
                             richTextBox1.AppendText(" They are usually " + sMinorsCulture + " then " + sMajors + ".");
@@ -489,11 +489,11 @@ namespace VQMapTest2
                     sGenderPriority = "gender equality";
                 }
 
-                if (sCustoms != "")
+                if (!string.IsNullOrEmpty(sCustoms))
                     richTextBox1.AppendText("This is a " + sGenderPriority + " society, which members " + sCustoms + ".");
-                if (sCulture != "")
+                if (!string.IsNullOrEmpty(sCulture))
                 {
-                    if (sCustoms == "")
+                    if (string.IsNullOrEmpty(sCustoms))
                         richTextBox1.AppendText("This is a " + sGenderPriority + " society, which members " + sCulture + " then common citizens.");
                     else
                         richTextBox1.AppendText(" They are usually " + sCulture + " then common citizens.");
@@ -507,11 +507,11 @@ namespace VQMapTest2
                     {
                         richTextBox1.AppendText("This is a " + sGenderPriority + " society, which members are just a common citizens.");
                     }
-                    if (sMinorsCustoms != "")
+                    if (!string.IsNullOrEmpty(sMinorsCustoms))
                         richTextBox1.AppendText(" Their " + sMinors + " commonly " + sMinorsCustoms + ".");
-                    if (sMinorsCulture != "")
+                    if (!string.IsNullOrEmpty(sMinorsCulture))
                     {
-                        if (sMinorsCustoms == "")
+                        if (string.IsNullOrEmpty(sMinorsCustoms))
                             richTextBox1.AppendText(" Their " + sMinors + " usually " + sMinorsCulture + " then " + sMajors + ".");
                         else
                             richTextBox1.AppendText(" They are usually " + sMinorsCulture + " then " + sMajors + ".");
@@ -737,7 +737,7 @@ namespace VQMapTest2
                 return;
 
             string sLink = richTextBox1.GetLink(e.Location);
-            if (sLink != "")
+            if (!string.IsNullOrEmpty(sLink))
             {
                 int iPos = sLink.IndexOf('#');
                 if (iPos != -1)

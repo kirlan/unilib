@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -470,7 +470,7 @@ namespace GeneLab.Genetix
                     break;
             }
 
-            if (sResult != "")
+            if (!string.IsNullOrEmpty(sResult))
                 sResult += ".";
 
             return sResult;
