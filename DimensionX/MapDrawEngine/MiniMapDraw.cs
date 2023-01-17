@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -103,7 +103,7 @@ namespace MapDrawEngine
 
         internal void WorldAssigned()
         {
-            if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null)
+            if (m_pMasterMap?.m_pWorld == null)
                 return;
 
             m_pContinents.Reset();
@@ -415,7 +415,7 @@ namespace MapDrawEngine
         /// <param name="iY">Y-координата левого верхнего угла области просмотра</param>
         public void SetPan(int iX, int iY)
         {
-            if (m_pMasterMap == null || m_pMasterMap.m_pWorld == null)
+            if (m_pMasterMap?.m_pWorld == null)
                 return;
 
             if (m_pMasterMap.m_pWorld.LocationsGrid.CycleShift != 0)
