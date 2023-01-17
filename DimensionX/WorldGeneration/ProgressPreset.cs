@@ -7,8 +7,7 @@ namespace WorldGeneration
 {
     class ProgressPreset
     {
-        public static ProgressPreset[] s_aSocietyPresets = new[]        
-        {
+        public static ProgressPreset[] s_aSocietyPresets =         {
             new ProgressPreset("Historical - antiquity", "An antique world without magic - like Ancient Greece, Rome, Egypt, Assyria, etc.", 0, 1, 0, 0),
             new ProgressPreset("Historical - medieval", "A medieval world without magic - castles, knights, tournaments, etc.", 0, 2, 0, 0),
             new ProgressPreset("Historical - renaissance", "A renaissance world without magic - musketeers, geographic exploration, etc.", 1, 3, 0, 0),

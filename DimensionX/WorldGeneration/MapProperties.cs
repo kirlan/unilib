@@ -14,16 +14,14 @@ namespace WorldGeneration
 {
     public partial class MapProperties : UserControl
     {
-        private readonly MapPreset[] m_aWorldMaps = new[]
-        {
+        private readonly MapPreset[] m_aWorldMaps =         {
             new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 15, 25, 5, 66, 50, 45),
             new MapPreset("Continents 2", "Earth-like world. 5 big continents ocuppies 33% of world surface. There could be a continents in polar regions in this template.", true, false, 15, 25, 5, 66, 50, 50),
             new MapPreset("Gondwana", "One big continent ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 15, 25, 1, 66, 50, 45),
             new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 100, 100, 30, 66, 50, 45),
         };
 
-        private readonly MapPreset[] m_aPartialMaps = new[]
-        {
+        private readonly MapPreset[] m_aPartialMaps =         {
             new MapPreset("Coast", "Traditional adventure map of big coastral region, like Europe, Middlearth, Hyperborea or Faerun. This is a part of a one big continent from arctic to tropics, with a long coastral line.", false, false, 15, 25, 1, 50, 95, 95),
             new MapPreset("Mediterranean", "Mediterranean-like region - there are parts of 3 big continents, divided by a sea. Continents extends from arctic to tropics.", false, false, 15, 25, 3, 50, 95, 95),
             new MapPreset("Atlantis", "One big continent in middle latitudes, surrounded by ocean.", false, true, 15, 25, 1, 50, 120, 130),
