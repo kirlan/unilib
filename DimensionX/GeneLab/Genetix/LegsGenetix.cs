@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -278,43 +278,43 @@ namespace GeneLab.Genetix
                 {
                     case LegsCount.NoneHover:
                         {
-                            int[] aChances = new int[] { 8, 1, 4, 0, 0, 0, 0 };
+                            int[] aChances = new[]{ 8, 1, 4, 0, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.NoneBlob:
                         {
-                            int[] aChances = new int[] { 2, 8, 4, 0, 0, 0, 0 };
+                            int[] aChances = new[]{ 2, 8, 4, 0, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.NoneTail:
                         {
-                            int[] aChances = new int[] { 2, 2, 8, 0, 0, 0, 0 };
+                            int[] aChances = new[]{ 2, 2, 8, 0, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Bipedal:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 8, 0, 0, 0 };
+                            int[] aChances = new[]{ 0, 0, 0, 8, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Quadrupedal:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 0, 8, 2, 2 };
+                            int[] aChances = new[]{ 0, 0, 0, 0, 8, 2, 2 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Hexapod:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 0, 0, 8, 4 };
+                            int[] aChances = new[]{ 0, 0, 0, 0, 0, 8, 4 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Octapod:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 0, 0, 4, 8 };
+                            int[] aChances = new[]{ 0, 0, 0, 0, 0, 4, 8 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
@@ -415,43 +415,43 @@ namespace GeneLab.Genetix
                 {
                     case LegsCount.NoneHover:
                         {
-                            int[] aChances = new int[] { 8, 1, 4, 0, 0, 0, 0 };
+                            int[] aChances = new[]{ 8, 1, 4, 0, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.NoneBlob:
                         {
-                            int[] aChances = new int[] { 2, 8, 4, 0, 0, 0, 0 };
+                            int[] aChances = new[]{ 2, 8, 4, 0, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.NoneTail:
                         {
-                            int[] aChances = new int[] { 2, 2, 8, 0, 0, 0, 0 };
+                            int[] aChances = new[]{ 2, 2, 8, 0, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Bipedal:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 8, 0, 0, 0 };
+                            int[] aChances = new[]{ 0, 0, 0, 8, 0, 0, 0 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Quadrupedal:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 0, 8, 2, 2 };
+                            int[] aChances = new[]{ 0, 0, 0, 0, 8, 2, 2 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Hexapod:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 0, 0, 8, 4 };
+                            int[] aChances = new[]{ 0, 0, 0, 0, 0, 8, 4 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;
                     case LegsCount.Octapod:
                         {
-                            int[] aChances = new int[] { 0, 0, 0, 0, 0, 4, 8 };
+                            int[] aChances = new[]{ 0, 0, 0, 0, 0, 4, 8 };
                             iChance = Rnd.ChooseOne(aChances, 1);
                         }
                         break;

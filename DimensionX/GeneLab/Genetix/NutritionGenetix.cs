@@ -1,4 +1,4 @@
-﻿using Random;
+using Random;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -217,62 +217,62 @@ namespace GeneLab.Genetix
 
         public void MutateNutritionType(BodyGenetix pBody)
         {
-            int[] aChances = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+            int[] aChances = new[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
             switch (NutritionType)
             {
                 case NutritionType.Eternal:
                     {
-                        aChances = new int[] { 8, 4, 4, 1, 0, 0, 0, 0, 2, 4, 1 };
+                        aChances = new[]{ 8, 4, 4, 1, 0, 0, 0, 0, 2, 4, 1 };
                     }
                     break;
                 case NutritionType.Photosynthesis:
                     {
-                        aChances = new int[] { 1, 8, 4, 2, 0, 0, 0, 0, 2, 2, 1 };
+                        aChances = new[]{ 1, 8, 4, 2, 0, 0, 0, 0, 2, 2, 1 };
                     }
                     break;
                 case NutritionType.Thermosynthesis:
                     {
-                        aChances = new int[] { 1, 4, 8, 2, 0, 0, 0, 0, 2, 4, 1 };
+                        aChances = new[]{ 1, 4, 8, 2, 0, 0, 0, 0, 2, 4, 1 };
                     }
                     break;
                 case NutritionType.Vegetarian:
                     {
-                        aChances = new int[] { 0, 1, 0, 8, 4, 0, 0, 0, 2, 2, 0 };
+                        aChances = new[]{ 0, 1, 0, 8, 4, 0, 0, 0, 2, 2, 0 };
                     }
                     break;
                 case NutritionType.Organic:
                     {
-                        aChances = new int[] { 0, 0, 0, 4, 8, 4, 2, 2, 1, 1, 0 };
+                        aChances = new[]{ 0, 0, 0, 4, 8, 4, 2, 2, 1, 1, 0 };
                     }
                     break;
                 case NutritionType.Carnivorous:
                     {
-                        aChances = new int[] { 0, 0, 0, 0, 4, 8, 2, 4, 0, 0, 0 };
+                        aChances = new[]{ 0, 0, 0, 0, 4, 8, 2, 4, 0, 0, 0 };
                     }
                     break;
                 case NutritionType.ParasitismBlood:
                     {
-                        aChances = new int[] { 0, 0, 0, 0, 1, 4, 8, 4, 1, 1, 0 };
+                        aChances = new[]{ 0, 0, 0, 0, 1, 4, 8, 4, 1, 1, 0 };
                     }
                     break;
                 case NutritionType.ParasitismMeat:
                     {
-                        aChances = new int[] { 0, 0, 0, 0, 1, 4, 4, 8, 1, 1, 0 };
+                        aChances = new[]{ 0, 0, 0, 0, 1, 4, 4, 8, 1, 1, 0 };
                     }
                     break;
                 case NutritionType.ParasitismEmote:
                     {
-                        aChances = new int[] { 0, 0, 0, 0, 0, 0, 2, 2, 8, 4, 0 };
+                        aChances = new[]{ 0, 0, 0, 0, 0, 0, 2, 2, 8, 4, 0 };
                     }
                     break;
                 case NutritionType.ParasitismEnergy:
                     {
-                        aChances = new int[] { 0, 0, 0, 0, 0, 0, 2, 2, 4, 8, 0 };
+                        aChances = new[]{ 0, 0, 0, 0, 0, 0, 2, 2, 4, 8, 0 };
                     }
                     break;
                 case NutritionType.Mineral:
                     {
-                        aChances = new int[] { 1, 2, 4, 0, 0, 0, 0, 0, 1, 2, 8 };
+                        aChances = new[]{ 1, 2, 4, 0, 0, 0, 0, 0, 1, 2, 8 };
                     }
                     break;
             }

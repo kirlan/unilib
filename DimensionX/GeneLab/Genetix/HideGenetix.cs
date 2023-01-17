@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -249,43 +249,43 @@ namespace GeneLab.Genetix
             {
                 case HideType.BareSkin:
                     {
-                        int[] aChances = new int[] { 8, 2, 0, 0, 0, 0, 0 };
+                        int[] aChances = new[]{ 8, 2, 0, 0, 0, 0, 0 };
                         iChance = Rnd.ChooseOne(aChances, 1);
                     }
                     break;
                 case HideType.FurShort:
                     {
-                        int[] aChances = new int[] { 2, 8, 8, 0, 0, 1, 0 };
+                        int[] aChances = new[]{ 2, 8, 8, 0, 0, 1, 0 };
                         iChance = Rnd.ChooseOne(aChances, 1);
                     }
                     break;
                 case HideType.FurLong:
                     {
-                        int[] aChances = new int[] { 2, 8, 8, 0, 0, 1, 0 };
+                        int[] aChances = new[]{ 2, 8, 8, 0, 0, 1, 0 };
                         iChance = Rnd.ChooseOne(aChances, 1);
                     }
                     break;
                 case HideType.Feathers:
                     {
-                        int[] aChances = new int[] { 0, 2, 0, 8, 0, 0, 0 };
+                        int[] aChances = new[]{ 0, 2, 0, 8, 0, 0, 0 };
                         iChance = Rnd.ChooseOne(aChances, 1);
                     }
                     break;
                 case HideType.Chitin:
                     {
-                        int[] aChances = new int[] { 0, 0, 0, 0, 8, 0, 2 };
+                        int[] aChances = new[]{ 0, 0, 0, 0, 8, 0, 2 };
                         iChance = Rnd.ChooseOne(aChances, 1);
                     }
                     break;
                 case HideType.Scales:
                     {
-                        int[] aChances = new int[] { 2, 0, 0, 0, 0, 8, 4 };
+                        int[] aChances = new[]{ 2, 0, 0, 0, 0, 8, 4 };
                         iChance = Rnd.ChooseOne(aChances, 1);
                     }
                     break;
                 case HideType.Shell:
                     {
-                        int[] aChances = new int[] { 1, 0, 0, 0, 2, 4, 8 };
+                        int[] aChances = new[]{ 1, 0, 0, 0, 2, 4, 8 };
                         iChance = Rnd.ChooseOne(aChances, 1);
                     }
                     break;

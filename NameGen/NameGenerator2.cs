@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,25 +28,25 @@ namespace NameGen
 
         public static string GetCountryName()
         {
-            string[] syllable_1 = new string[] { "Aqu", "Bos", "Ven", "Cor", "Aghr", "Aren", "Shad", "Bel", "Dar", "Nem", "Han", "Num", "Py", "Nord", "Oph", "Fr", "I", "L", "Mec", "Ron", "Sh", "Ter", "Abb", "Akb", "An", "Asg", "Er", "Gh", "K", "Lib", "Pel", "Sab", "St", "Har", "Kh", "Neb", "Nil", "T", "Th", "Ak", "Khor", "Sam", "Vil", "Cyl", "Mik", "Gon", "R", "Mor", "Cim" };
-            string[] syllable_2 = new string[] { "i", "o", "a", "e", "u", "y", "ai", "", "ae", "ea", "ia" };
-            string[] syllable_3 = new string[] { "lonia", "nia", "rium", "nthium", "pur", "jun", "zar", "verus", "far", "dia", "mar", "lia", "thon", "heim", "r", "sol", "nthe", "dier", "nta", "co", "mu", "m", "son", "drah", "tania", "kia", "lum", "k", "za", "ros", "num", "shtia", "tea", "mir", "shan", "gia", "kh", "jar", "mi", "xur", "thu", "lus", "khmet", "a", "ran", "f", "sun", "ra", "hpur", "yet", "ska", "lannon", "land", "dor", "han", "ria" };
+            string[] syllable_1 = new[]{ "Aqu", "Bos", "Ven", "Cor", "Aghr", "Aren", "Shad", "Bel", "Dar", "Nem", "Han", "Num", "Py", "Nord", "Oph", "Fr", "I", "L", "Mec", "Ron", "Sh", "Ter", "Abb", "Akb", "An", "Asg", "Er", "Gh", "K", "Lib", "Pel", "Sab", "St", "Har", "Kh", "Neb", "Nil", "T", "Th", "Ak", "Khor", "Sam", "Vil", "Cyl", "Mik", "Gon", "R", "Mor", "Cim" };
+            string[] syllable_2 = new[]{ "i", "o", "a", "e", "u", "y", "ai", "", "ae", "ea", "ia" };
+            string[] syllable_3 = new[]{ "lonia", "nia", "rium", "nthium", "pur", "jun", "zar", "verus", "far", "dia", "mar", "lia", "thon", "heim", "r", "sol", "nthe", "dier", "nta", "co", "mu", "m", "son", "drah", "tania", "kia", "lum", "k", "za", "ros", "num", "shtia", "tea", "mir", "shan", "gia", "kh", "jar", "mi", "xur", "thu", "lus", "khmet", "a", "ran", "f", "sun", "ra", "hpur", "yet", "ska", "lannon", "land", "dor", "han", "ria" };
             return BuildName(syllable_1, syllable_2, syllable_3);
         }
 
         public static string GetTownName()
         {
-            string[] syllable_1 = new string[] { "Abing", "Al", "Ald", "Aln", "Ames", "Amp", "Ash", "At", "Ave", "Aving", "Ax", "Back", "Bake", "Bamp", "Ban", "Beck", "Ber", "Berke", "Bevers", "Bi", "Bick", "Bin", "Block", "Bol", "Bos", "Bottes", "Bow", "Brad", "Brans", "Brat", "Bre", "Bree", "Bridg", "Brink", "Bris", "Brom", "Broom", "Bud", "Cad", "Caer", "Came", "Car", "Cart", "Castle", "Cavers", "Charter", "Ched", "Chew", "Chippen", "Coly", "Corn", "Cors", "Cran", "Credi", "Crick", "Crow", "Culm", "Dagger", "Dart", "Dedding", "Deer", "Din", "Ditte", "Dittis", "Dor", "Dragon", "Drif", "Dry", "Dun", "Dur", "Dwarf", "East", "Ebring", "Eding", "Elf", "Elk", "En", "Erming", "Exe", "Fair", "Faring", "Flad", "Fording", "Forth", "Framp", "From", "Gis", "Glas", "Gnome", "Goblin", "Gras", "Grey", "Guis", "Hail", "Hart", "Haver", "Helm", "Here", "Hex", "Hol", "Hop", "In", "Kelm", "Ken", "Kew", "Kil", "King", "Kirk", "Knight", "La", "Lam", "Lan", "Laner", "Laving", "Led", "Leo", "Lindis", "Lyd", "Lymp", "Mal", "Malmes", "Marsh", "Mel", "Mell", "Minchin", "Monk", "Mont", "Mow", "Muchel", "Net", "Nether", "Nev", "New", "Nib", "North", "Pen", "Per", "Pether", "Pew", "Pris", "Rad", "Rend", "Ring", "Rip", "Rock", "Rom", "Roth", "Sapper", "Sel", "Seming", "Shaftes", "Shield", "Shob", "Shrews", "Sid", "Sken", "Skip", "Somer", "South", "Spear", "Staf", "Stan", "Stan", "Staple", "Staun", "Stoke", "Sword", "Syd", "Taun", "Tavi", "Tel", "Tewkes", "Tint", "Titch", "Tiver", "Tort", "Tot", "Trout", "Uff", "Uffing", "Ulvers", "Uplea", "Urch", "Wan", "War", "Wel", "Wen", "West", "Whit", "Wide", "Wim", "Winch", "Wit", "Withing", "Wood", "Woot", "Wor", "Wot", "Wring", "Yat" };
-            string[] syllable_2 = new string[] { "bane", "beck", "borne", "borough", "bourn", "bourne", "bray", "bridge", "burgh", "burn", "burton", "bury", "by", "chester", "comb", "combe", "con", "cost", "culme", "dal", "der", "dish", "don", "dor", "e", "east", "ent", "ern", "es", "farn", "fel", "field", "font", "ford", "frith", "glade", "glen", "gold", "gomery", "ham", "hampton", "house", "how", "hurst", "iard", "keep", "kirk", "lade", "land", "leigh", "leon", "ley", "lingham", "low", "meet", "mel", "mere", "minster", "moot", "mouth", "nard", "ne", "nes", "newton", "ney", "noller", "nor", "on", "pas", "peck", "rest", "ridge", "scott", "sey", "shire", "silver", "sley", "spring", "stock", "stoke", "ston", "stone", "sward", "swear", "tage", "ter", "tol", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "town", "vale", "vern", "wall", "water", "well", "went", "west", "wick", "wood", "worth", "worthy", "yard" };
+            string[] syllable_1 = new[]{ "Abing", "Al", "Ald", "Aln", "Ames", "Amp", "Ash", "At", "Ave", "Aving", "Ax", "Back", "Bake", "Bamp", "Ban", "Beck", "Ber", "Berke", "Bevers", "Bi", "Bick", "Bin", "Block", "Bol", "Bos", "Bottes", "Bow", "Brad", "Brans", "Brat", "Bre", "Bree", "Bridg", "Brink", "Bris", "Brom", "Broom", "Bud", "Cad", "Caer", "Came", "Car", "Cart", "Castle", "Cavers", "Charter", "Ched", "Chew", "Chippen", "Coly", "Corn", "Cors", "Cran", "Credi", "Crick", "Crow", "Culm", "Dagger", "Dart", "Dedding", "Deer", "Din", "Ditte", "Dittis", "Dor", "Dragon", "Drif", "Dry", "Dun", "Dur", "Dwarf", "East", "Ebring", "Eding", "Elf", "Elk", "En", "Erming", "Exe", "Fair", "Faring", "Flad", "Fording", "Forth", "Framp", "From", "Gis", "Glas", "Gnome", "Goblin", "Gras", "Grey", "Guis", "Hail", "Hart", "Haver", "Helm", "Here", "Hex", "Hol", "Hop", "In", "Kelm", "Ken", "Kew", "Kil", "King", "Kirk", "Knight", "La", "Lam", "Lan", "Laner", "Laving", "Led", "Leo", "Lindis", "Lyd", "Lymp", "Mal", "Malmes", "Marsh", "Mel", "Mell", "Minchin", "Monk", "Mont", "Mow", "Muchel", "Net", "Nether", "Nev", "New", "Nib", "North", "Pen", "Per", "Pether", "Pew", "Pris", "Rad", "Rend", "Ring", "Rip", "Rock", "Rom", "Roth", "Sapper", "Sel", "Seming", "Shaftes", "Shield", "Shob", "Shrews", "Sid", "Sken", "Skip", "Somer", "South", "Spear", "Staf", "Stan", "Stan", "Staple", "Staun", "Stoke", "Sword", "Syd", "Taun", "Tavi", "Tel", "Tewkes", "Tint", "Titch", "Tiver", "Tort", "Tot", "Trout", "Uff", "Uffing", "Ulvers", "Uplea", "Urch", "Wan", "War", "Wel", "Wen", "West", "Whit", "Wide", "Wim", "Winch", "Wit", "Withing", "Wood", "Woot", "Wor", "Wot", "Wring", "Yat" };
+            string[] syllable_2 = new[]{ "bane", "beck", "borne", "borough", "bourn", "bourne", "bray", "bridge", "burgh", "burn", "burton", "bury", "by", "chester", "comb", "combe", "con", "cost", "culme", "dal", "der", "dish", "don", "dor", "e", "east", "ent", "ern", "es", "farn", "fel", "field", "font", "ford", "frith", "glade", "glen", "gold", "gomery", "ham", "hampton", "house", "how", "hurst", "iard", "keep", "kirk", "lade", "land", "leigh", "leon", "ley", "lingham", "low", "meet", "mel", "mere", "minster", "moot", "mouth", "nard", "ne", "nes", "newton", "ney", "noller", "nor", "on", "pas", "peck", "rest", "ridge", "scott", "sey", "shire", "silver", "sley", "spring", "stock", "stoke", "ston", "stone", "sward", "swear", "tage", "ter", "tol", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "ton", "town", "vale", "vern", "wall", "water", "well", "went", "west", "wick", "wood", "worth", "worthy", "yard" };
             return BuildName(syllable_1, syllable_2);
         }
 
         public static string GetTavernName()
         {
-            string[] adjective_1 = new string[] { "Dancing", "Laughing", "Running", "Prancing", "Drunken", "Flying", "Sleeping", "Leaping", "Fighting", "Sleeping", "Red", "Green", "Blue", "Yellow", "White", "Black", "Rusty", "Silver", "Golden", "Shiny", "Bronze", "Iron" };
-            string[] noun_1 = new string[] { "Badger", "Bear", "Beaver", "Boar", "Bull", "Cat", "Cow", "Dragon", "Dog", "Deer", "Duck", "Dwarf", "Elf", "Elk", "Eagle", "Fairy", "Ferret", "Gnome", "Goblin", "Goat", "Goose", "Hen", "Lamb", "Lion", "Orc", "Ogre", "Pig", "Pony", "Rooster", "Sheep", "Troll", "Unicorn" };
-            string[] adjective_2 = new string[] { "Red", "Green", "Blue", "Yellow", "White", "Black", "Rusty", "Silver", "Golden", "Shiny", "Bronze", "Iron" };
-            string[] noun_2 = new string[] { "Tree", "Bucket", "Shield", "Sword", "Spear", "Bow", "Arrow", "Axe", "Barrel", "Keg", "Tap", "Mug", "Chalice", "Helm", "Wheel", "Saw", "Plow", "Bell", "Crown", "Ship", "Sun", "Moon", "Star", "Coin", "Bottle" };
+            string[] adjective_1 = new[]{ "Dancing", "Laughing", "Running", "Prancing", "Drunken", "Flying", "Sleeping", "Leaping", "Fighting", "Sleeping", "Red", "Green", "Blue", "Yellow", "White", "Black", "Rusty", "Silver", "Golden", "Shiny", "Bronze", "Iron" };
+            string[] noun_1 = new[]{ "Badger", "Bear", "Beaver", "Boar", "Bull", "Cat", "Cow", "Dragon", "Dog", "Deer", "Duck", "Dwarf", "Elf", "Elk", "Eagle", "Fairy", "Ferret", "Gnome", "Goblin", "Goat", "Goose", "Hen", "Lamb", "Lion", "Orc", "Ogre", "Pig", "Pony", "Rooster", "Sheep", "Troll", "Unicorn" };
+            string[] adjective_2 = new[]{ "Red", "Green", "Blue", "Yellow", "White", "Black", "Rusty", "Silver", "Golden", "Shiny", "Bronze", "Iron" };
+            string[] noun_2 = new[]{ "Tree", "Bucket", "Shield", "Sword", "Spear", "Bow", "Arrow", "Axe", "Barrel", "Keg", "Tap", "Mug", "Chalice", "Helm", "Wheel", "Saw", "Plow", "Bell", "Crown", "Ship", "Sun", "Moon", "Star", "Coin", "Bottle" };
             int nameType = Rnd.Get(5);
             switch (nameType)
             {
@@ -122,63 +122,63 @@ namespace NameGen
 
         private static string DwarfNames()
         {
-            string[] syllable_1 = new string[] {"B", "D", "F", "G", "Gl", "H", "K", "L", "M", "N", "R", "S", "T", "Th", "V"};
-            string[] syllable_2 = new string[] {"a", "e", "i", "o", "oi", "u"};
-            string[] syllable_3 = new string[] {"bur", "fur", "gan", "gnus", "gnar", "li", "lin", "lir", "mli", "nar", "nus", "rin", "ran", "sin", "sil", "sur"};
+            string[] syllable_1 = new[]{"B", "D", "F", "G", "Gl", "H", "K", "L", "M", "N", "R", "S", "T", "Th", "V"};
+            string[] syllable_2 = new[]{"a", "e", "i", "o", "oi", "u"};
+            string[] syllable_3 = new[]{"bur", "fur", "gan", "gnus", "gnar", "li", "lin", "lir", "mli", "nar", "nus", "rin", "ran", "sin", "sil", "sur"};
             return BuildName(syllable_1, syllable_2, syllable_3);
         }
 
         private static string ElfNames()
         {
-            string[] syllable_1 = new string[] {"Al", "An", "Bal", "Bel", "Cal", "Cel", "El", "Ell", "Elr", "Elv", "Eow", "Eдr", "F", "Fal", "Fel", "Fin", "G", "Gal", "Gel", "Gl", "Is", "Lan", "Leg", "Lуm", "N", "Nal", "Nel", "S", "Sal", "Sel", "T", "Tal", "Tel", "Thr", "Tin"};
-            string[] syllable_2 = new string[] {"a", "б", "adrie", "ara", "e", "й", "ebri", "ele", "ere", "i", "io", "ithra", "ilma", "il-Ga", "ili", "o", "orfi", "у", "u", "y"};
-            string[] syllable_3 = new string[] {"l", "las", "lad", "ldor", "ldur", "lindл", "lith", "mir", "n", "nd", "ndel", "ndil", "ndir", "nduil", "ng", "mbor", "r", "rith", "ril", "riand", "rion", "s", "ssar", "thien", "viel", "wen", "wyn"};
+            string[] syllable_1 = new[]{"Al", "An", "Bal", "Bel", "Cal", "Cel", "El", "Ell", "Elr", "Elv", "Eow", "Eдr", "F", "Fal", "Fel", "Fin", "G", "Gal", "Gel", "Gl", "Is", "Lan", "Leg", "Lуm", "N", "Nal", "Nel", "S", "Sal", "Sel", "T", "Tal", "Tel", "Thr", "Tin"};
+            string[] syllable_2 = new[]{"a", "б", "adrie", "ara", "e", "й", "ebri", "ele", "ere", "i", "io", "ithra", "ilma", "il-Ga", "ili", "o", "orfi", "у", "u", "y"};
+            string[] syllable_3 = new[]{"l", "las", "lad", "ldor", "ldur", "lindл", "lith", "mir", "n", "nd", "ndel", "ndil", "ndir", "nduil", "ng", "mbor", "r", "rith", "ril", "riand", "rion", "s", "ssar", "thien", "viel", "wen", "wyn"};
             return BuildName(syllable_1, syllable_2, syllable_3);
         }
 
         private static string GnomeNames()
         {
-            string[] syllable_1 = new string[] {"Aar", "An", "Ar", "As", "C", "H", "Han", "Har", "Hel", "Iir", "J", "Jan", "Jar", "K", "L", "M", "Mar", "N", "Nik", "Os", "Ol", "P", "R", "S", "Sam", "San", "T", "Ter", "Tom", "Ul", "V", "W", "Y"};
-            string[] syllable_2 = new string[] {"a", "aa", "ai", "e", "ei", "i", "o", "uo", "u", "uu"};
-            string[] syllable_3 = new string[] {"ron", "re", "la", "ki", "kseli", "ksi", "ku", "ja", "ta", "na", "namari", "neli", "nika", "nikki", "nu", "nukka", "ka", "ko", "li", "kki", "rik", "po", "to", "pekka", "rjaana", "rjatta", "rjukka", "la", "lla", "lli", "mo", "nni"};
+            string[] syllable_1 = new[]{"Aar", "An", "Ar", "As", "C", "H", "Han", "Har", "Hel", "Iir", "J", "Jan", "Jar", "K", "L", "M", "Mar", "N", "Nik", "Os", "Ol", "P", "R", "S", "Sam", "San", "T", "Ter", "Tom", "Ul", "V", "W", "Y"};
+            string[] syllable_2 = new[]{"a", "aa", "ai", "e", "ei", "i", "o", "uo", "u", "uu"};
+            string[] syllable_3 = new[]{"ron", "re", "la", "ki", "kseli", "ksi", "ku", "ja", "ta", "na", "namari", "neli", "nika", "nikki", "nu", "nukka", "ka", "ko", "li", "kki", "rik", "po", "to", "pekka", "rjaana", "rjatta", "rjukka", "la", "lla", "lli", "mo", "nni"};
             return BuildName(syllable_1, syllable_2, syllable_3);
         }
 
         private static string HalflingNames()
         {
-            string[] syllable_1 = new string[] {"B", "Ber", "Br", "D", "Der", "Dr", "F", "Fr", "G", "H", "L", "Ler", "M", "Mer", "N", "P", "Pr", "Per", "R", "S", "T", "W"};
-            string[] syllable_2 = new string[] {"a", "e", "i", "ia", "o", "oi", "u"};
-            string[] syllable_3 = new string[] {"bo", "ck", "decan", "degar", "do", "doc", "go", "grin", "lba", "lbo", "lda", "ldo", "lla", "ll", "lo", "m", "mwise", "nac", "noc", "nwise", "p", "ppin", "pper", "sha", "tho", "to"};
+            string[] syllable_1 = new[]{"B", "Ber", "Br", "D", "Der", "Dr", "F", "Fr", "G", "H", "L", "Ler", "M", "Mer", "N", "P", "Pr", "Per", "R", "S", "T", "W"};
+            string[] syllable_2 = new[]{"a", "e", "i", "ia", "o", "oi", "u"};
+            string[] syllable_3 = new[]{"bo", "ck", "decan", "degar", "do", "doc", "go", "grin", "lba", "lbo", "lda", "ldo", "lla", "ll", "lo", "m", "mwise", "nac", "noc", "nwise", "p", "ppin", "pper", "sha", "tho", "to"};
             return BuildName(syllable_1, syllable_2, syllable_3);
         }
 
         private static string SaxonNames()
         {
-            string[] syllable_1 = new string[] {"Ald", "Aeld", "Alf", "Aelf", "Alh", "Aelh", "Athel", "Aethel", "Beo", "Beor", "Berh", "Brih", "Briht", "Cad", "Cead", "Cen", "Coel", "Cuth", "Cyne", "Ed", "Ead", "El", "Eal", "Eld", "Eg", "Ecg", "Eorp", "God", "Guth", "Har", "Hwaet", "Leo", "Leof", "Oft", "Ot", "Oth", "Os", "Osw", "Peht", "Pleg", "Rad", "Raed", "Sig", "Sige", "Si", "Sihr", "Tat", "Tath", "Tost", "Ut", "Uht", "Ul", "Ulf", "Wal", "Walth", "Wer", "Wit", "Wiht", "Wil", "Wulf"};
-            string[] syllable_2 = new string[] {"gar", "heah", "here", "bald", "war", "weard", "wulf", "dred", "red", "stan", "wold", "tric", "ric", "wald", "mon", "wal", "walla", "wealh", "frith", "gyth", "rum", "bert", "berht", "gar", "win", "wine", "wiu", "for", "mund", "thoef", "eof", "had", "erth", "ferth", "thin", "er", "ther", "tar", "thar", "wig", "wicg", "mer", "floed", "ith", "hild", "run", "drun", "ny"};
+            string[] syllable_1 = new[]{"Ald", "Aeld", "Alf", "Aelf", "Alh", "Aelh", "Athel", "Aethel", "Beo", "Beor", "Berh", "Brih", "Briht", "Cad", "Cead", "Cen", "Coel", "Cuth", "Cyne", "Ed", "Ead", "El", "Eal", "Eld", "Eg", "Ecg", "Eorp", "God", "Guth", "Har", "Hwaet", "Leo", "Leof", "Oft", "Ot", "Oth", "Os", "Osw", "Peht", "Pleg", "Rad", "Raed", "Sig", "Sige", "Si", "Sihr", "Tat", "Tath", "Tost", "Ut", "Uht", "Ul", "Ulf", "Wal", "Walth", "Wer", "Wit", "Wiht", "Wil", "Wulf"};
+            string[] syllable_2 = new[]{"gar", "heah", "here", "bald", "war", "weard", "wulf", "dred", "red", "stan", "wold", "tric", "ric", "wald", "mon", "wal", "walla", "wealh", "frith", "gyth", "rum", "bert", "berht", "gar", "win", "wine", "wiu", "for", "mund", "thoef", "eof", "had", "erth", "ferth", "thin", "er", "ther", "tar", "thar", "wig", "wicg", "mer", "floed", "ith", "hild", "run", "drun", "ny"};
             return BuildName(syllable_1, syllable_2);
         }
 
         private static string OrcNames()
         {
-            string[] syllable_1 = new string[] {"B", "Er", "G", "Gr", "H", "P", "Pr", "R", "V", "Vr", "T", "Tr", "M", "Dr"};
-            string[] syllable_2 = new string[] {"a", "i", "o", "oo", "u", "ui"};
-            string[] syllable_3 = new string[] {"dash", "dish", "dush", "gar", "gor", "gdush", "lo", "gdish", "k", "lg", "nak", "rag", "rbag", "rg", "rk", "ng", "nk", "rt", "ol", "urk", "shnak", "mog", "mak", "rak"};
+            string[] syllable_1 = new[]{"B", "Er", "G", "Gr", "H", "P", "Pr", "R", "V", "Vr", "T", "Tr", "M", "Dr"};
+            string[] syllable_2 = new[]{"a", "i", "o", "oo", "u", "ui"};
+            string[] syllable_3 = new[]{"dash", "dish", "dush", "gar", "gor", "gdush", "lo", "gdish", "k", "lg", "nak", "rag", "rbag", "rg", "rk", "ng", "nk", "rt", "ol", "urk", "shnak", "mog", "mak", "rak"};
             return BuildName(syllable_1, syllable_2, syllable_3);
         }
 
         private static string Japan1Names()
         {
-            string[] syllable_1 = new string[] {"aka", "aki", "bashi", "gawa", "kawa", "furu", "fuku", "fuji", "hana", "hara", "haru", "hashi", "hira", "hon", "hoshi", "ichi", "iwa", "kami", "kawa", "ki", "kita", "kuchi", "kuro", "marui", "matsu", "miya", "mori", "moto", "mura", "nabe", "naka", "nishi", "no", "da", "ta", "o", "oo", "oka", "saka", "saki", "sawa", "shita", "shima", "i", "suzu", "taka", "take", "to", "toku", "toyo", "ue", "wa", "wara", "wata", "yama", "yoshi", "kei", "ko", "zawa", "zen", "sen", "ao", "gin", "kin", "ken", "shiro", "zaki", "yuki", "asa"};
-            string[] syllable_2 = new string[] {"", "", "", "", "", "", "", "", "", "", "bashi", "gawa", "kawa", "furu", "fuku", "fuji", "hana", "hara", "haru", "hashi", "hira", "hon", "hoshi", "chi", "wa", "ka", "kami", "kawa", "ki", "kita", "kuchi", "kuro", "marui", "matsu", "miya", "mori", "moto", "mura", "nabe", "naka", "nishi", "no", "da", "ta", "o", "oo", "oka", "saka", "saki", "sawa", "shita", "shima", "suzu", "taka", "take", "to", "toku", "toyo", "ue", "wa", "wara", "wata", "yama", "yoshi", "kei", "ko", "zawa", "zen", "sen", "ao", "gin", "kin", "ken", "shiro", "zaki", "yuki", "sa"};
+            string[] syllable_1 = new[]{"aka", "aki", "bashi", "gawa", "kawa", "furu", "fuku", "fuji", "hana", "hara", "haru", "hashi", "hira", "hon", "hoshi", "ichi", "iwa", "kami", "kawa", "ki", "kita", "kuchi", "kuro", "marui", "matsu", "miya", "mori", "moto", "mura", "nabe", "naka", "nishi", "no", "da", "ta", "o", "oo", "oka", "saka", "saki", "sawa", "shita", "shima", "i", "suzu", "taka", "take", "to", "toku", "toyo", "ue", "wa", "wara", "wata", "yama", "yoshi", "kei", "ko", "zawa", "zen", "sen", "ao", "gin", "kin", "ken", "shiro", "zaki", "yuki", "asa"};
+            string[] syllable_2 = new[]{"", "", "", "", "", "", "", "", "", "", "bashi", "gawa", "kawa", "furu", "fuku", "fuji", "hana", "hara", "haru", "hashi", "hira", "hon", "hoshi", "chi", "wa", "ka", "kami", "kawa", "ki", "kita", "kuchi", "kuro", "marui", "matsu", "miya", "mori", "moto", "mura", "nabe", "naka", "nishi", "no", "da", "ta", "o", "oo", "oka", "saka", "saki", "sawa", "shita", "shima", "suzu", "taka", "take", "to", "toku", "toyo", "ue", "wa", "wara", "wata", "yama", "yoshi", "kei", "ko", "zawa", "zen", "sen", "ao", "gin", "kin", "ken", "shiro", "zaki", "yuki", "sa"};
             return Capitalize(BuildName(syllable_1, syllable_2));
         }
 
         private static string Japan2Names()
         {
-            string[] syllable_1 = new string[] {"a", "i", "u", "e", "o", "", "", "", "", ""};
-            string[] syllable_2 = new string[] {"ka", "ki", "ki", "ku", "ku", "ke", "ke", "ko", "ko", "sa", "sa", "sa", "shi", "shi", "shi", "su", "su", "se", "so", "ta", "ta", "chi", "chi", "tsu", "te", "to", "na", "ni", "ni", "nu", "nu", "ne", "no", "no", "ha", "hi", "fu", "fu", "he", "ho", "ma", "ma", "ma", "mi", "mi", "mi", "mu", "mu", "mu", "mu", "me", "mo", "mo", "mo", "ya", "yu", "yu", "yu", "yo", "ra", "ra", "ra", "ri", "ru", "ru", "ru", "re", "ro", "ro", "ro", "wa", "wa", "wa", "wa", "wo", "wo"};
-            string[] syllable_3 = new string[] {"", "", "", "n"};
+            string[] syllable_1 = new[]{"a", "i", "u", "e", "o", "", "", "", "", ""};
+            string[] syllable_2 = new[]{"ka", "ki", "ki", "ku", "ku", "ke", "ke", "ko", "ko", "sa", "sa", "sa", "shi", "shi", "shi", "su", "su", "se", "so", "ta", "ta", "chi", "chi", "tsu", "te", "to", "na", "ni", "ni", "nu", "nu", "ne", "no", "no", "ha", "hi", "fu", "fu", "he", "ho", "ma", "ma", "ma", "mi", "mi", "mi", "mu", "mu", "mu", "mu", "me", "mo", "mo", "mo", "ya", "yu", "yu", "yu", "yo", "ra", "ra", "ra", "ri", "ru", "ru", "ru", "re", "ro", "ro", "ro", "wa", "wa", "wa", "wa", "wo", "wo"};
+            string[] syllable_3 = new[]{"", "", "", "n"};
             string sName = BuildName(syllable_1, syllable_2, syllable_2);
             int nameType = Rnd.Get(3);
             switch(nameType)
@@ -199,12 +199,12 @@ namespace NameGen
 
         private static string ChinaNames()
         {
-            string[] syllable_1 = new string[] {"zh", "x", "q", "sh", "h"};
-            string[] syllable_2 = new string[] {"ao", "ian", "uo", "ou", "ia"};
-            string[] syllable_3 = new string[] {"l", "w", "c", "p", "b", "m"};
-            string[] syllable_4 = new string[] {"", "n"};
-            string[] syllable_5 = new string[] {"d", "j", "q", "l"};
-            string[] syllable_6 = new string[] {"a", "ai", "iu", "ao", "i"};
+            string[] syllable_1 = new[]{"zh", "x", "q", "sh", "h"};
+            string[] syllable_2 = new[]{"ao", "ian", "uo", "ou", "ia"};
+            string[] syllable_3 = new[]{"l", "w", "c", "p", "b", "m"};
+            string[] syllable_4 = new[]{"", "n"};
+            string[] syllable_5 = new[]{"d", "j", "q", "l"};
+            string[] syllable_6 = new[]{"a", "ai", "iu", "ao", "i"};
 
             string sName = BuildName(syllable_1, syllable_2);
             int nameType = Rnd.Get(3);
@@ -225,8 +225,8 @@ namespace NameGen
 
         private static string Hawaii1Names()
         {
-            string[] syllable_1 = new string[] {"h", "k", "l", "m", "n", "p", "w", "'"};
-            string[] syllable_2 = new string[] {"a", "e", "i", "o", "u"};
+            string[] syllable_1 = new[]{"h", "k", "l", "m", "n", "p", "w", "'"};
+            string[] syllable_2 = new[]{"a", "e", "i", "o", "u"};
 
             string sName = "";
 
@@ -277,9 +277,9 @@ namespace NameGen
 
         private static string Hawaii2Names()
         {
-            string[] syllable_1 = new string[] {"h", "k", "l", "m", "n", "p", "w", ""};
-            string[] syllable_2 = new string[] {"a", "e", "i", "o", "u", "a'", "e'", "i'", "o'", "u'", "ae", "ai", "ao", "au", "oi", "ou", "eu", "ei"};
-            string[] syllable_3 = new string[] {"k", "l", "m", "n", "p", ""};
+            string[] syllable_1 = new[]{"h", "k", "l", "m", "n", "p", "w", ""};
+            string[] syllable_2 = new[]{"a", "e", "i", "o", "u", "a'", "e'", "i'", "o'", "u'", "ae", "ai", "ao", "au", "oi", "ou", "eu", "ei"};
+            string[] syllable_3 = new[]{"k", "l", "m", "n", "p", ""};
             string sName = BuildName(syllable_1, syllable_2, syllable_3);
             if(Rnd.OneChanceFrom(2))
                 sName += BuildName(syllable_1, syllable_2, syllable_3);
@@ -288,7 +288,7 @@ namespace NameGen
 
         private static string HinduNames()
         {
-            string[] nameParts = new string[] {"dip", "pan", "jit", "parm", "dit", "gur", "preet", "san", "pra", "mit", "harm", "deep", "nav", "ak", "am", "far", "meen", "amar", "rik", "bal", "war", "gurd", "inder", "man", "suk"};
+            string[] nameParts = new[]{"dip", "pan", "jit", "parm", "dit", "gur", "preet", "san", "pra", "mit", "harm", "deep", "nav", "ak", "am", "far", "meen", "amar", "rik", "bal", "war", "gurd", "inder", "man", "suk"};
             int pos1 = 0;
             int pos2 = 0;
 
