@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,12 +23,12 @@ namespace Persona.Conditions
         /// </summary>
         public bool m_bNot;
 
-        public Condition(Parameter pParam1)
+        protected Condition(Parameter pParam1)
         {
             m_pParam1 = pParam1;
         }
 
-        public Condition(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
+        protected Condition(UniLibXML pXml, XmlNode pParamNode, List<Parameter> cParams)
         {
             string sParam = "";
             pXml.GetStringAttribute(pParamNode, "param", ref sParam);

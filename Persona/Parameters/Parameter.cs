@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -72,11 +72,11 @@ namespace Persona.Parameters
 
         public abstract void SetValue(string sValue);
 
-        public Parameter()
+        protected Parameter()
         { 
         }
 
-        public Parameter(Parameter pOrigin, bool bClone)
+        protected Parameter(Parameter pOrigin, bool bClone)
         {
             m_sName = pOrigin.m_sName;
             if(bClone)
@@ -87,7 +87,7 @@ namespace Persona.Parameters
             m_bHidden = pOrigin.m_bHidden;
         }
 
-        public Parameter(UniLibXML pXml, XmlNode pParamNode, string sCollection)
+        protected Parameter(UniLibXML pXml, XmlNode pParamNode, string sCollection)
         {
             pXml.GetStringAttribute(pParamNode, "name", ref m_sName);
             pXml.GetStringAttribute(pParamNode, "group", ref m_sGroup);

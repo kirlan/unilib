@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,10 +28,10 @@ namespace CinemaEngine.RoleConditions
 
         //protected abstract bool CheckCondition();
 
-        public RoleCondition()
+        protected RoleCondition()
         { }
 
-        public RoleCondition(RoleCondition pCondition)
+        protected RoleCondition(RoleCondition pCondition)
         {
         }
 
@@ -39,7 +39,7 @@ namespace CinemaEngine.RoleConditions
         {
         }
 
-        public RoleCondition(UniLibXML pXml, XmlNode pConditionNode)
+        protected RoleCondition(UniLibXML pXml, XmlNode pConditionNode)
         {
         }
 
