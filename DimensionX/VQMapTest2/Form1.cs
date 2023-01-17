@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -828,9 +828,8 @@ namespace VQMapTest2
 
         private void UsedPresetClick(object sender, EventArgs e)
         {
-            ToolStripItem pItem = sender as ToolStripItem;
 
-            if (pItem != null)
+            if (sender is ToolStripItem pItem)
             {
                 m_pGenerationForm.LoadPreset(pItem.Text);
                 m_pGenerationForm.GenerateWorld(this);
