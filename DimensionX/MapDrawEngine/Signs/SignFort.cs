@@ -23,7 +23,8 @@ namespace MapDrawEngine.Signs
             r1 = RX / 375;
             r2 = RX / 250;
 
-            points = new[]            {
+            points = new[]
+            {
                 new PointF(x, y + r1),
                 new PointF(x + r2, y),
                 new PointF(x + r1, y - r2),
