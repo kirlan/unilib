@@ -1,4 +1,4 @@
-﻿using BenTools.Mathematics;
+using BenTools.Mathematics;
 using Random;
 using System;
 using System.Collections.Generic;
@@ -240,7 +240,7 @@ namespace Socium.Psychology
             {
                 return s_cTraitPhases ?? (s_cTraitPhases = new Dictionary<Trait, TraitPhase[]>
                     {
-                        [Trait.Agression] = new TraitPhase[]
+                        [Trait.Agression] = new[]
                         {   new TraitPhase(Trait.Agression, 0.0f, 0.33f, "(+3) completely pacifistic"),
                             new TraitPhase(Trait.Agression, 0.33f, 0.66f, "(+2) quite amiable"),
                             new TraitPhase(Trait.Agression, 0.66f, 1.0f, "(+1) peaceful"),
@@ -248,7 +248,7 @@ namespace Socium.Psychology
                             new TraitPhase(Trait.Agression, 1.33f, 1.66f, "(-2) agressive"),
                             new TraitPhase(Trait.Agression, 1.66f, 2.0f, "(-3) extremely agressive"),
                         },
-                        [Trait.Selfishness] = new TraitPhase[]
+                        [Trait.Selfishness] = new[]
                         {   new TraitPhase(Trait.Selfishness, 0.0f, 0.33f, "(+3) completely selfless"),
                             new TraitPhase(Trait.Selfishness, 0.33f, 0.66f, "(+2) quite selfless"),
                             new TraitPhase(Trait.Selfishness, 0.66f, 1.0f, "(+1) not so egoistic"),
@@ -256,7 +256,7 @@ namespace Socium.Psychology
                             new TraitPhase(Trait.Selfishness, 1.33f, 1.66f, "(-2) very selfish"),
                             new TraitPhase(Trait.Selfishness, 1.66f, 2.0f, "(-3) completely selfish"),
                         },
-                        [Trait.Simplicity] = new TraitPhase[]
+                        [Trait.Simplicity] = new[]
                         {   new TraitPhase(Trait.Simplicity, 0.0f, 0.33f, "(+3) creativity as a supreme value"),
                             new TraitPhase(Trait.Simplicity, 0.33f, 0.66f, "(+2) true art"),
                             new TraitPhase(Trait.Simplicity, 0.66f, 1.0f, "(+1) pop art"),
@@ -264,7 +264,7 @@ namespace Socium.Psychology
                             new TraitPhase(Trait.Simplicity, 1.33f, 1.66f, "(-2) primitive pleasures"),
                             new TraitPhase(Trait.Simplicity, 1.66f, 2.0f, "(-3) only natural needs satisfaction"),
                         },
-                        [Trait.Fanaticism] = new TraitPhase[]
+                        [Trait.Fanaticism] = new[]
                         {   new TraitPhase(Trait.Fanaticism, 0.0f, 0.33f, "(+3) fully tolerant"),
                             new TraitPhase(Trait.Fanaticism, 0.33f, 0.66f, "(+2) liberal"),
                             new TraitPhase(Trait.Fanaticism, 0.66f, 1.0f, "(+1) open-minded"),
@@ -272,7 +272,7 @@ namespace Socium.Psychology
                             new TraitPhase(Trait.Fanaticism, 1.33f, 1.66f, "(-2) intolerant"),
                             new TraitPhase(Trait.Fanaticism, 1.66f, 2.0f, "(-3) fanatical"),
                         },
-                        [Trait.Piety] = new TraitPhase[]
+                        [Trait.Piety] = new[]
                         {   new TraitPhase(Trait.Piety, 0.0f, 0.33f, "(+3) atheism"),
                             new TraitPhase(Trait.Piety, 0.33f, 0.66f, "(+2) syntheism"),
                             new TraitPhase(Trait.Piety, 0.66f, 1.0f, "(+1) pantheism"),
@@ -280,7 +280,7 @@ namespace Socium.Psychology
                             new TraitPhase(Trait.Piety, 1.33f, 1.66f, "(-2) polytheism"),
                             new TraitPhase(Trait.Piety, 1.66f, 2.0f, "(-3) animism"),
                         },
-                        [Trait.Treachery] = new TraitPhase[]
+                        [Trait.Treachery] = new[]
                         {   new TraitPhase(Trait.Treachery, 0.0f, 0.33f, "(+3) righteous"),
                             new TraitPhase(Trait.Treachery, 0.33f, 0.66f, "(+2) honest"),
                             new TraitPhase(Trait.Treachery, 0.66f, 1.0f, "(+1) lawful"),

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +23,7 @@ namespace MapDrawEngine.Signs
             r1 = RX / 375;
             r2 = RX / 250;
 
-            points = new PointF[]
+            points = new[]
             {
                 new PointF(x, y + r1),
                 new PointF(x + r2, y),

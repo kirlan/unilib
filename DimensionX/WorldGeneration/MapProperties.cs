@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -14,7 +14,7 @@ namespace WorldGeneration
 {
     public partial class MapProperties : UserControl
     {
-        private readonly MapPreset[] m_aWorldMaps = new MapPreset[]
+        private readonly MapPreset[] m_aWorldMaps = new[]
         {
             new MapPreset("Continents", "Earth-like world. 5 big continents ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 15, 25, 5, 66, 50, 45),
             new MapPreset("Continents 2", "Earth-like world. 5 big continents ocuppies 33% of world surface. There could be a continents in polar regions in this template.", true, false, 15, 25, 5, 66, 50, 50),
@@ -22,7 +22,7 @@ namespace WorldGeneration
             new MapPreset("Archipelago", "About 30 big islands are evenly dispersed over the map and totally ocuppies 33% of world surface. Polar regions are lands-free in this template.", true, true, 100, 100, 30, 66, 50, 45),
         };
 
-        private readonly MapPreset[] m_aPartialMaps = new MapPreset[]
+        private readonly MapPreset[] m_aPartialMaps = new[]
         {
             new MapPreset("Coast", "Traditional adventure map of big coastral region, like Europe, Middlearth, Hyperborea or Faerun. This is a part of a one big continent from arctic to tropics, with a long coastral line.", false, false, 15, 25, 1, 50, 95, 95),
             new MapPreset("Mediterranean", "Mediterranean-like region - there are parts of 3 big continents, divided by a sea. Continents extends from arctic to tropics.", false, false, 15, 25, 3, 50, 95, 95),
